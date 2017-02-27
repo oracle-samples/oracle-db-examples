@@ -3,3 +3,6 @@ This folder stores SQL (Structured Query Lanugage) based examples for Oracle Dat
 
 ## dw-vldb-samples
 Legacy repository of Data Warehousing SQL based examples.
+
+## analytical-sql-examples
+Legacy repository of Analytical SQL based examples.
