@@ -1,11 +1,11 @@
 # oracle-db-examples
-This repository stores a variety of examples demonstrating how to use the Oracle Database.
+This repository stores a variety of examples demonstrating how to use the Oracle Database. 
 
 ## Documentation
 You can find the online documentation of the Oracle Database under [http://docs.oracle.com/en/database/](http://docs.oracle.com/en/database/)
 
 ## LiveSQL
-A lot of the examples that you see within this repository can be executed in the free web-based [LiveSQL.oracle.com](https://livesql.oracle.com) tool.  
+Some of the examples that you see within this repository can be executed in the free web-based tool: [LiveSQL.oracle.com](https://livesql.oracle.com).
 LiveSQL is also an excellent resource for getting started with Oracle Database.
 
 ## COPYRIGHT
