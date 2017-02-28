@@ -1,0 +1,343 @@
+SQL> @09_part_zm
+SQL> -- DISCLAIMER:
+SQL> -- This script is provided for educational purposes only. It is
+SQL> -- NOT supported by Oracle World Wide Technical Support.
+SQL> -- The script has been tested and appears to work as intended.
+SQL> -- You should always run new scripts initially
+SQL> -- on a test instance.
+SQL> 
+SQL> set timing off
+SQL> set echo off
+SQL> set autotrace off
+SQL> column plan_table_output format a150
+SQL> set trims on
+SQL> 
+SQL> PROMPT Connect to the Attribute Clusters/Zone Map Schema
+Connect to the Attribute Clusters/Zone Map Schema
+SQL> connect aczm12c/oracle_4U
+Connected.
+SQL> 
+SQL> --
+SQL> PROMPT Drop the partitioned sales table (SALES_P) if it exists
+Drop the partitioned sales table (SALES_P) if it exists
+SQL> --
+SQL> DROP TABLE sales_p
+  2  /
+
+Table dropped.
+
+SQL> 
+SQL> --
+SQL> PROMPT Create a range partitioned sales_p table
+Create a range partitioned sales_p table
+SQL> PROMPT with join attribute clustering and a zone map
+with join attribute clustering and a zone map
+SQL> --
+SQL> CREATE TABLE sales_p (
+  2    order_id 	  number(20)	 not null
+  3  , order_item_number  number(3)	 not null
+  4  , sale_date	  date		 not null
+  5  , delivered	  date
+  6  , sale_agent	  varchar2(100)  not null
+  7  , product_id	  number(10)	 not null
+  8  , amount		  number(10,2)	 not null
+  9  , quantity 	  number(5)	 not null
+ 10  , location_id	  number(20)	 not null
+ 11  , warehouse	  varchar2(100)  not null
+ 12  )
+ 13  CLUSTERING sales_p
+ 14  JOIN locations ON (sales_p.location_id = locations.location_id)
+ 15  JOIN products  ON (sales_p.product_id = products.product_id)
+ 16  BY INTERLEAVED ORDER ((locations.state, locations.county),products.product_name, sales_p.delivered)
+ 17  WITH MATERIALIZED ZONEMAP
+ 18  PARTITION BY RANGE(sale_date) (
+ 19   PARTITION p1 VALUES LESS THAN (to_date('2005-01-01','YYYY-MM-DD'))
+ 20  ,PARTITION p2 VALUES LESS THAN (to_date('2010-01-01','YYYY-MM-DD'))
+ 21  )
+ 22  /
+
+Table created.
+
+SQL> 
+SQL> --
+SQL> PROMPT Fill SALES_P with data
+Fill SALES_P with data
+SQL> --
+SQL> INSERT /*+ APPEND */ INTO sales_p SELECT * FROM sales_source
+  2  /
+
+1952120 rows created.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> --
+SQL> PROMPT Gather statistics on the table
+Gather statistics on the table
+SQL> --
+SQL> EXECUTE dbms_stats.gather_table_stats(ownname=>NULL,tabname=>'sales_p');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> PROMPT Confirm that the query plan includes a zone map filter
+Confirm that the query plan includes a zone map filter
+SQL> --
+SQL> SELECT SUM(amount)
+  2  FROM   sales_p
+  3  JOIN   locations  ON (sales_p.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county  = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+SQL> 
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  apmzythd75fjb, child number 0
+-------------------------------------
+SELECT SUM(amount) FROM   sales_p JOIN   locations  ON
+(sales_p.location_id = locations.location_id) WHERE  locations.state  =
+'California' AND    locations.county  = 'Alpine County'
+
+Plan hash value: 421480268
+
+------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                                  | Name      | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |
+------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                           |           |       |       |   139 (100)|          |       |       |
+|   1 |  SORT AGGREGATE                            |           |     1 |    39 |            |          |       |       |
+|*  2 |   HASH JOIN                                |           |   621 | 24219 |   139  (18)| 00:00:01 |       |       |
+|   3 |    JOIN FILTER CREATE                      | :BF0000   |     1 |    30 |     2   (0)| 00:00:01 |       |       |
+|*  4 |     TABLE ACCESS STORAGE FULL              | LOCATIONS |     1 |    30 |     2   (0)| 00:00:01 |       |       |
+|   5 |    JOIN FILTER USE                         | :BF0000   |  1952K|    16M|   131  (15)| 00:00:01 |       |       |
+|   6 |     PARTITION RANGE ITERATOR               |           |  1952K|    16M|   131  (15)| 00:00:01 |KEY(ZM)|KEY(ZM)|
+|*  7 |      TABLE ACCESS STORAGE FULL WITH ZONEMAP| SALES_P   |  1952K|    16M|   131  (15)| 00:00:01 |KEY(ZM)|KEY(ZM)|
+------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("SALES_P"."LOCATION_ID"="LOCATIONS"."LOCATION_ID")
+   4 - storage(("LOCATIONS"."COUNTY"='Alpine County' AND "LOCATIONS"."STATE"='California'))
+       filter(("LOCATIONS"."COUNTY"='Alpine County' AND "LOCATIONS"."STATE"='California'))
+   7 - storage(SYS_OP_BLOOM_FILTER(:BF0000,"SALES_P"."LOCATION_ID"))
+       filter((SYS_ZMAP_FILTER('/* ZM_PRUNING */ SELECT "ZONE_ID$", CASE WHEN BITAND(zm."ZONE_STATE$",1)=1 THEN
+              1 ELSE CASE WHEN (zm."MIN_1_STATE" > :1 OR zm."MAX_1_STATE" < :2 OR zm."MIN_2_COUNTY" > :3 OR zm."MAX_2_COUNTY"
+              < :4) THEN 3 ELSE 2 END END FROM "ACZM12C"."ZMAP$_SALES_P" zm WHERE zm."ZONE_LEVEL$"=0 ORDER BY
+              zm."ZONE_ID$"',SYS_OP_ZONE_ID(ROWID),'California','California','Alpine County','Alpine County')<3 AND
+              SYS_OP_BLOOM_FILTER(:BF0000,"SALES_P"."LOCATION_ID")))
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=7)
+
+
+38 rows selected.
+
+SQL> 
+SQL> column zone_id$ format 99999999999999
+SQL> 
+SQL> --
+SQL> PROMPT Observe the zone id and the min and max order_id
+Observe the zone id and the min and max order_id
+SQL> PROMPT for each zone. The zone map state for each zone
+for each zone. The zone map state for each zone
+SQL> PROMPT will be "0", which equates to "valid".
+will be "0", which equates to "valid".
+SQL> PROMPT Zone level "1" represents partitions and "0" represents zones.
+Zone level "1" represents partitions and "0" represents zones.
+SQL> PROMPT "Delivered" date correlates well with the partition key: "Sale Date".
+"Delivered" date correlates well with the partition key: "Sale Date".
+SQL> PROMPT This is because we can expect a delivery to occur soon after a sale.
+This is because we can expect a delivery to occur soon after a sale.
+SQL> PROMPT So, because the delivered date correlates well with the partition key,
+So, because the delivered date correlates well with the partition key,
+SQL> PROMPT each partition will contain a subset of "delivered" values.
+each partition will contain a subset of "delivered" values.
+SQL> PROMPT We should expect to be able to prune partitions from
+We should expect to be able to prune partitions from
+SQL> PROMPT queries that filter on the "delivered" date.
+queries that filter on the "delivered" date.
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    min_4_delivered ,
+  3    max_4_delivered ,
+  4    zone_level$,
+  5    zone_state$ ,
+  6    zone_rows$
+  7  FROM ZMAP$_SALES_P;
+
+       ZONE_ID$ MIN_4_DELI MAX_4_DELI ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+--------------- ---------- ---------- ----------- ----------- ----------
+   383850123339 2000-01-04 2002-01-29           0           0     188631
+   383854317641 2009-01-04 2010-01-30           0           0      62699
+   383854317640 2009-01-04 2010-01-30           0           0      62740
+   383854317645 2009-01-03 2010-01-30           0           0     125392
+   383854317642 2009-01-04 2010-01-30           0           0      62834
+   383850123342 2000-01-04 2002-01-29           0           0     194035
+   383850123335 2000-01-04 2002-01-29           0           0     141472
+   383850123340 2000-01-04 2002-01-29           0           0     204370
+   383850123325 2000-01-06 2002-01-26           0           0       5677
+   383850123341 2000-01-04 2002-01-29           0           0     125737
+   383850123337 2000-01-04 2002-01-29           0           0     188637
+   383850123336 2000-01-04 2002-01-29           0           0     188748
+   383854317629 2009-01-05 2010-01-27           0           0       1727
+   383850123329 2000-01-04 2002-01-29           0           0      25707
+   383854317643 2009-01-04 2010-01-29           0           0      62676
+   383850123338 2000-01-04 2002-01-29           0           0     189105
+   383854317639 2009-01-03 2010-01-30           0           0      47011
+   383854317647 2009-01-04 2010-01-28           0           0      14120
+   383854317633 2009-01-03 2010-01-29           0           0      13766
+   383854317644 2009-01-04 2010-01-29           0           0      47036
+          91517 2000-01-04 2002-01-29           1           0    1452119
+          91518 2009-01-03 2010-01-30           1           0     500001
+
+22 rows selected.
+
+SQL> 
+SQL> PROMPT Observe that Pstart, Pstop shows, KEY(ZM),
+Observe that Pstart, Pstop shows, KEY(ZM),
+SQL> PROMPT indicating the potential to prune partitions
+indicating the potential to prune partitions
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_p
+  3  WHERE  delivered  between TO_DATE('18-SEP-00', 'DD-MON-YY') and TO_DATE('19-SEP-00', 'DD-MON-YY')
+  4  /
+
+SUM(AMOUNT)
+-----------
+ 2800312.59
+
+1 row selected.
+
+SQL> 
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  gk1za5gqcsaa5, child number 0
+-------------------------------------
+SELECT SUM(amount) FROM   sales_p WHERE  delivered  between
+TO_DATE('18-SEP-00', 'DD-MON-YY') and TO_DATE('19-SEP-00', 'DD-MON-YY')
+
+Plan hash value: 1397730817
+
+---------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                                 | Name    | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |
+---------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                          |         |       |       |   155 (100)|          |       |       |
+|   1 |  SORT AGGREGATE                           |         |     1 |    13 |            |          |       |       |
+|*  2 |   FILTER                                  |         |       |       |            |          |       |       |
+|   3 |    PARTITION RANGE ITERATOR               |         |  1972 | 25636 |   155  (28)| 00:00:01 |KEY(ZM)|KEY(ZM)|
+|*  4 |     TABLE ACCESS STORAGE FULL WITH ZONEMAP| SALES_P |  1972 | 25636 |   155  (28)| 00:00:01 |KEY(ZM)|KEY(ZM)|
+---------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter(TO_DATE('19-SEP-00','DD-MON-YY')>=TO_DATE('18-SEP-00','DD-MON-YY'))
+   4 - storage(("DELIVERED"<=TO_DATE('19-SEP-00','DD-MON-YY') AND
+              "DELIVERED">=TO_DATE('18-SEP-00','DD-MON-YY')))
+       filter((SYS_ZMAP_FILTER('/* ZM_PRUNING */ SELECT "ZONE_ID$", CASE WHEN BITAND(zm."ZONE_STATE$",1)=1
+              THEN 1 ELSE CASE WHEN (zm."MAX_4_DELIVERED" < :1 OR zm."MIN_4_DELIVERED" > :2) THEN 3 ELSE 2 END END FROM
+              "ACZM12C"."ZMAP$_SALES_P" zm WHERE zm."ZONE_LEVEL$"=0 ORDER BY
+              zm."ZONE_ID$"',SYS_OP_ZONE_ID(ROWID),TO_DATE('18-SEP-00','DD-MON-YY'),TO_DATE('19-SEP-00','DD-MON-YY'))<3
+              AND "DELIVERED"<=TO_DATE('19-SEP-00','DD-MON-YY') AND "DELIVERED">=TO_DATE('18-SEP-00','DD-MON-YY')))
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=7)
+
+
+33 rows selected.
+
+SQL> 
+SQL> PROMPT Observe the effects of IO pruning
+Observe the effects of IO pruning
+SQL> PROMPT Exadata storage indexes may effect the
+Exadata storage indexes may effect the
+SQL> PROMPT actual number of blocks read from storage cells.
+actual number of blocks read from storage cells.
+SQL> PROMPT However, using zone maps will ensure that pruning can
+However, using zone maps will ensure that pruning can
+SQL> PROMPT ooccur in all appropriate circumstances.
+ooccur in all appropriate circumstances.
+SQL> 
+SQL> SET AUTOTRACE ON STATISTICS
+SQL> 
+SQL> PROMPT Conventional table
+Conventional table
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  WHERE  delivered  between TO_DATE('18-SEP-00', 'DD-MON-YY') and TO_DATE('19-SEP-00', 'DD-MON-YY')
+  4  /
+
+SUM(AMOUNT)
+-----------
+ 2800312.59
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       7165  consistent gets
+          0  physical reads
+        124  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_p
+  3  WHERE  delivered  between TO_DATE('18-SEP-00', 'DD-MON-YY') and TO_DATE('19-SEP-00', 'DD-MON-YY')
+  4  /
+
+SUM(AMOUNT)
+-----------
+ 2800312.59
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+         61  recursive calls
+          0  db block gets
+       5972  consistent gets
+          0  physical reads
+          0  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> SET AUTOTRACE OFF
+SQL> 
+SQL> spool off

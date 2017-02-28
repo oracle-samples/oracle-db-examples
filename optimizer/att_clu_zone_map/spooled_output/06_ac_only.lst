@@ -1,0 +1,380 @@
+SQL> @06_ac_only.sql
+SQL> -- DISCLAIMER:
+SQL> -- This script is provided for educational purposes only. It is
+SQL> -- NOT supported by Oracle World Wide Technical Support.
+SQL> -- The script has been tested and appears to work as intended.
+SQL> -- You should always run new scripts initially
+SQL> -- on a test instance.
+SQL> 
+SQL> set timing off
+SQL> set echo off
+SQL> 
+SQL> PROMPT Connect to the Attribute Clusters/Zone Map Schema
+Connect to the Attribute Clusters/Zone Map Schema
+SQL> connect aczm12c/oracle_4U
+Connected.
+SQL> 
+SQL> PROMPT The full potential of attribute clusters are realised
+The full potential of attribute clusters are realised
+SQL> PROMPT when used in conjunction with zone maps, Exadata storage indexes
+when used in conjunction with zone maps, Exadata storage indexes
+SQL> PROMPT and In-Memory min/max pruning. However, they also improve
+and In-Memory min/max pruning. However, they also improve
+SQL> PROMPT index clustering. This is demonstrated here.
+index clustering. This is demonstrated here.
+SQL> 
+SQL> PROMPT Create indexes on location id for the standard SALES
+Create indexes on location id for the standard SALES
+SQL> PROMPT table and the attribute clustered SALES_AC table
+table and the attribute clustered SALES_AC table
+SQL> 
+SQL> CREATE INDEX sales_loc_i ON sales (location_id)
+  2  /
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX sales_ac_loc_i ON sales_ac (location_id)
+  2  /
+
+Index created.
+
+SQL> 
+SQL> column index_name format a40
+SQL> 
+SQL> PROMPT Observe the improved value of "Average Blocks Per Key"
+Observe the improved value of "Average Blocks Per Key"
+SQL> PROMPT for the attribute clustered table. This will
+for the attribute clustered table. This will
+SQL> PROMPT result in fewer consistend gets for table lookups from
+result in fewer consistend gets for table lookups from
+SQL> PROMPT index range scans.
+index range scans.
+SQL> 
+SQL> SELECT index_name, clustering_factor,avg_data_blocks_per_key
+  2  FROM   user_indexes
+  3  WHERE  index_name LIKE 'SALES%LOC%'
+  4  ORDER BY index_name
+  5  /
+
+INDEX_NAME                               CLUSTERING_FACTOR AVG_DATA_BLOCKS_PER_KEY
+---------------------------------------- ----------------- -----------------------
+SALES_AC_LOC_I                                        7950                       2
+SALES_LOC_I                                        1877968                     597
+
+2 rows selected.
+
+SQL> 
+SQL> PROMPT Confirm that index range scans are occuring in both query examples
+Confirm that index range scans are occuring in both query examples
+SQL> PROMPT Hints are used in this case because the table is relatively small
+Hints are used in this case because the table is relatively small
+SQL> PROMPT so Exadata may choose a bloom filter plan.
+so Exadata may choose a bloom filter plan.
+SQL> 
+SQL> SELECT /*+ INDEX(sales sales_loc_i) */ SUM(amount)
+  2  FROM   sales
+  3  JOIN   locations  ON (sales.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  brscsf8u3nmym, child number 0
+-------------------------------------
+SELECT /*+ INDEX(sales sales_loc_i) */ SUM(amount) FROM   sales JOIN
+locations  ON (sales.location_id = locations.location_id) WHERE
+locations.state  = 'California' AND    locations.county = 'Alpine
+County'
+
+Plan hash value: 1895572434
+
+---------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name        | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |             |       |       |   602 (100)|          |
+|   1 |  SORT AGGREGATE               |             |     1 |    39 |            |          |
+|   2 |   NESTED LOOPS                |             |   621 | 24219 |   602   (0)| 00:00:01 |
+|   3 |    NESTED LOOPS               |             |   621 | 24219 |   602   (0)| 00:00:01 |
+|*  4 |     TABLE ACCESS STORAGE FULL | LOCATIONS   |     1 |    30 |     2   (0)| 00:00:01 |
+|*  5 |     INDEX RANGE SCAN          | SALES_LOC_I |   621 |       |     2   (0)| 00:00:01 |
+|   6 |    TABLE ACCESS BY INDEX ROWID| SALES       |   621 |  5589 |   600   (0)| 00:00:01 |
+---------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - storage(("LOCATIONS"."COUNTY"='Alpine County' AND
+              "LOCATIONS"."STATE"='California'))
+       filter(("LOCATIONS"."COUNTY"='Alpine County' AND
+              "LOCATIONS"."STATE"='California'))
+   5 - access("SALES"."LOCATION_ID"="LOCATIONS"."LOCATION_ID")
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=7)
+   - this is an adaptive plan
+
+
+35 rows selected.
+
+SQL> 
+SQL> SELECT /*+ INDEX(sales_ac sales_ac_loc_i) */ SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   locations  ON (sales_ac.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  dn138c8mn4h90, child number 0
+-------------------------------------
+SELECT /*+ INDEX(sales_ac sales_ac_loc_i) */ SUM(amount) FROM
+sales_ac JOIN   locations  ON (sales_ac.location_id =
+locations.location_id) WHERE  locations.state  = 'California' AND
+locations.county = 'Alpine County'
+
+Plan hash value: 918547280
+
+------------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name           | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |                |       |       |     7 (100)|          |
+|   1 |  SORT AGGREGATE               |                |     1 |    39 |            |          |
+|   2 |   NESTED LOOPS                |                |   621 | 24219 |     7   (0)| 00:00:01 |
+|   3 |    NESTED LOOPS               |                |   621 | 24219 |     7   (0)| 00:00:01 |
+|*  4 |     TABLE ACCESS STORAGE FULL | LOCATIONS      |     1 |    30 |     2   (0)| 00:00:01 |
+|*  5 |     INDEX RANGE SCAN          | SALES_AC_LOC_I |   621 |       |     2   (0)| 00:00:01 |
+|   6 |    TABLE ACCESS BY INDEX ROWID| SALES_AC       |   621 |  5589 |     5   (0)| 00:00:01 |
+------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - storage(("LOCATIONS"."COUNTY"='Alpine County' AND
+              "LOCATIONS"."STATE"='California'))
+       filter(("LOCATIONS"."COUNTY"='Alpine County' AND
+              "LOCATIONS"."STATE"='California'))
+   5 - access("SALES_AC"."LOCATION_ID"="LOCATIONS"."LOCATION_ID")
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=7)
+   - this is an adaptive plan
+
+
+35 rows selected.
+
+SQL> 
+SQL> PROMPT Run two test queries to cache all relevant data
+Run two test queries to cache all relevant data
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  JOIN   locations  ON (sales.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   locations  ON (sales_ac.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+SQL> 
+SQL> PROMPT Run queries again and observe
+Run queries again and observe
+SQL> PROMPT the reduced number of consistent
+the reduced number of consistent
+SQL> PROMPT gets for the attribute cluster example.
+gets for the attribute cluster example.
+SQL> 
+SQL> SET AUTOTRACE ON STATISTICS
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  JOIN   locations  ON (sales.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       7979  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   locations  ON (sales_ac.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+          4  recursive calls
+          0  db block gets
+         45  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> SET AUTOTRACE OFF
+SQL> 
+SQL> PROMPT Drop the test indexes
+Drop the test indexes
+SQL> 
+SQL> DROP INDEX sales_loc_i
+  2  /
+
+Index dropped.
+
+SQL> 
+SQL> DROP INDEX sales_ac_loc_i
+  2  /
+
+Index dropped.
+
+SQL> 
+SQL> PROMPT Compression can benefit from sorted/clustered row data
+Compression can benefit from sorted/clustered row data
+SQL> 
+SQL> ALTER TABLE sales COMPRESS BASIC
+  2  /
+
+Table altered.
+
+SQL> ALTER TABLE sales_ac COMPRESS BASIC
+  2  /
+
+Table altered.
+
+SQL> ALTER TABLE sales MOVE
+  2  /
+
+Table altered.
+
+SQL> ALTER TABLE sales_ac MOVE
+  2  /
+
+Table altered.
+
+SQL> 
+SQL> PROMPT Compare the resulting segment sizes
+Compare the resulting segment sizes
+SQL> 
+SQL> SELECT segment_name, bytes
+  2  FROM   user_segments
+  3  WHERE  segment_name IN ('SALES','SALES_AC')
+  4  /
+
+SEGMENT_NAME                                                                                                                          BYTES
+-------------------------------------------------------------------------------------------------------------------------------- ----------
+SALES                                                                                                                              50331648
+SALES_AC                                                                                                                           75497472
+
+2 rows selected.
+
+SQL> 
+SQL> PROMPT Clean Up
+Clean Up
+SQL> 
+SQL> ALTER TABLE sales NOCOMPRESS
+  2  /
+
+Table altered.
+
+SQL> ALTER TABLE sales_ac NOCOMPRESS
+  2  /
+
+Table altered.
+
+SQL> ALTER TABLE sales MOVE
+  2  /
+
+Table altered.
+
+SQL> ALTER TABLE sales_ac MOVE
+  2  /
+
+Table altered.
+
+SQL> 
+SQL> SELECT segment_name, bytes
+  2  FROM   user_segments
+  3  WHERE  segment_name IN ('SALES','SALES_AC')
+  4  /
+
+SEGMENT_NAME                                                                                                                          BYTES
+-------------------------------------------------------------------------------------------------------------------------------- ----------
+SALES                                                                                                                             117440512
+SALES_AC                                                                                                                          117440512
+
+2 rows selected.
+
+SQL> 
+SQL> 
+SQL> spool off

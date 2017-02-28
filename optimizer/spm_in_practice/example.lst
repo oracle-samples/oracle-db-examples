@@ -1,0 +1,759 @@
+SQL> 
+SQL> alter system flush shared_pool;
+
+System altered.
+
+SQL> 
+SQL> @user
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> create user spmtest identified by spmtest;
+create user spmtest identified by spmtest
+            *
+ERROR at line 1:
+ORA-01920: user name 'SPMTEST' conflicts with another user or role name 
+
+
+SQL> grant dba to spmtest;
+
+Grant succeeded.
+
+SQL> 
+SQL> connect spmtest/spmtest
+Connected.
+SQL> 
+SQL> PROMPT
+
+SQL> PROMPT **** It is easy to drop SQL plan baselines for a specific schema...
+**** It is easy to drop SQL plan baselines for a specific schema...
+SQL> PROMPT
+
+SQL> @util/dropu SPMTEST
+SQL> REM
+SQL> REM Drop SQL plan baselines for a specified user
+SQL> REM
+SQL> 
+SQL> DECLARE
+  2    l_plans_dropped	PLS_INTEGER;
+  3  BEGIN
+  4    FOR REC IN (SELECT DISTINCT SQL_HANDLE FROM DBA_SQL_PLAN_BASELINES WHERE parsing_schema_name = '&1')
+  5    LOOP
+  6  	   L_PLANS_DROPPED := DBMS_SPM.DROP_SQL_PLAN_BASELINE (
+  7  	     sql_handle => rec.sql_handle,
+  8  	     PLAN_NAME	=> NULL);
+  9    END LOOP;
+ 10  
+ 11  END;
+ 12  /
+old   4:   FOR REC IN (SELECT DISTINCT SQL_HANDLE FROM DBA_SQL_PLAN_BASELINES WHERE parsing_schema_name = '&1')
+new   4:   FOR REC IN (SELECT DISTINCT SQL_HANDLE FROM DBA_SQL_PLAN_BASELINES WHERE parsing_schema_name = 'SPMTEST')
+
+PL/SQL procedure successfully completed.
+
+SQL> @table
+SQL> DROP TABLE tab1 purge;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE tab1 (id, txt)
+  2    AS SELECT level, CAST (to_char(level) AS varchar2(10)) FROM dual
+  3    CONNECT BY level <= 10000
+  4  /
+
+Table created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX tabi ON tab1(id);
+
+Index created.
+
+SQL> 
+SQL> EXEC dbms_stats.gather_table_stats(USER, 'tab1');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @q1
+SQL> select /* MYSPMTEST */ count(*) from tab1 where id = 100;
+
+  COUNT(*)                                                                      
+----------                                                                      
+         1                                                                      
+
+SQL> 
+SQL> PROMPT **** Capture our query
+**** Capture our query
+SQL> 
+SQL> @load
+SQL> DECLARE
+  2    my_plans pls_integer;
+  3  BEGIN
+  4    my_plans := DBMS_SPM.LOAD_PLANS_FROM_CURSOR_CACHE(
+  5  	 attribute_name => 'SQL_TEXT'
+  6  	,attribute_value => '%MYSPMTEST%');
+  7  END;
+  8  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT **** Display the SQL Plan Baselines
+**** Display the SQL Plan Baselines
+SQL> 
+SQL> @util/listu SPMTEST
+SQL> REM
+SQL> REM  List SQL plan baselines for a specified user
+SQL> REM
+SQL> 
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> column last_executed format a30
+SQL> column sql_text format a40
+SQL> column sql_handle format a40
+SQL> column plan_name format a35
+SQL> column signature format 999999999999999999999
+SQL> 
+SQL> select signature,plan_name,sql_handle,sql_text, accepted, enabled
+  2  from dba_sql_plan_baselines
+  3  where parsing_schema_name = '&1'
+  4  /
+old   3: where parsing_schema_name = '&1'
+new   3: where parsing_schema_name = 'SPMTEST'
+
+             SIGNATURE PLAN_NAME                           SQL_HANDLE                               SQL_TEXT                                 ACC ENA
+---------------------- ----------------------------------- ---------------------------------------- ---------------------------------------- --- ---
+  10438310272222376619 SQL_PLAN_91r2mwdbk0cpbf7f677e5      SQL_90dc53e3572032ab                     select /* MYSPMTEST */ count(*) from tab YES YES
+                                                                                                    1 where id = 100
+
+
+SQL> 
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** Display the plan for our SQL plan baseline
+**** Display the plan for our SQL plan baseline
+SQL> 
+SQL> var handle varchar2(50)
+SQL> begin
+  2    select sql_handle into :handle from dba_sql_plan_baselines where parsing_schema_name = 'SPMTEST';
+  3  end;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE(:handle,NULL)) t;
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+SQL handle: SQL_90dc53e3572032ab
+SQL text: select /* MYSPMTEST */ count(*) from tab1 where id = 100
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Plan name: SQL_PLAN_91r2mwdbk0cpbf7f677e5         Plan id: 4160124901
+Enabled: YES     Fixed: NO      Accepted: YES     Origin: MANUAL-LOAD
+Plan rows: From dictionary
+--------------------------------------------------------------------------------
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Plan hash value: 4160124901
+
+---------------------------------------------------------------------------
+| Id  | Operation          | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |      |       |       |     1 (100)|          |
+|   1 |  SORT AGGREGATE    |      |     1 |     4 |     0   (0)|          |
+|*  2 |   INDEX UNIQUE SCAN| TABI |     1 |     4 |     1   (0)| 00:00:01 |
+---------------------------------------------------------------------------
+
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("ID"=100)
+
+26 rows selected.
+
+SQL> 
+SQL> PROMPT **** Note that the index is used in the exeution plan
+**** Note that the index is used in the exeution plan
+SQL> PROMPT
+
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** Execute the query again and confirm that it is using the SQL plan baseline
+**** Execute the query again and confirm that it is using the SQL plan baseline
+SQL> 
+SQL> @q1
+SQL> select /* MYSPMTEST */ count(*) from tab1 where id = 100;
+
+  COUNT(*)
+----------
+         1
+
+SQL> @util/plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  00axwq5w1q7x3, child number 0
+-------------------------------------
+select /* MYSPMTEST */ count(*) from tab1 where id = 100
+
+Plan hash value: 4160124901
+
+---------------------------------------------------------------------------
+| Id  | Operation          | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |      |       |       |     1 (100)|          |
+|   1 |  SORT AGGREGATE    |      |     1 |     4 |            |          |
+|*  2 |   INDEX UNIQUE SCAN| TABI |     1 |     4 |     1   (0)| 00:00:01 |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("ID"=100)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_91r2mwdbk0cpbf7f677e5 used for this statement
+
+
+23 rows selected.
+
+SQL> 
+SQL> PROMPT **** Note (above) that the SQL plan baseline is being used
+**** Note (above) that the SQL plan baseline is being used
+SQL> PROMPT
+
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** We do not expect to see non-matching SQL execution plans...
+**** We do not expect to see non-matching SQL execution plans...
+SQL> 
+SQL> @util/nomatchu SPMTEST
+SQL> REM
+SQL> REM List SQL statements in the cursor cache that are not
+SQL> REM matching a SQL plan baseline but a SQL plan baseline exists.
+SQL> REM
+SQL> REM You may want to investigate these cases because it implies
+SQL> REM that there may have been a change preventing the plan in the
+SQL> REM SQL plan baseline from being used.
+SQL> REM
+SQL> REM This query allows you to specify a particular schema.
+SQL> REM
+SQL> 
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> column sql_text format a50
+SQL> column parsing_schema_name format a30
+SQL> column exact_matching_signature format 99999999999999999999
+SQL> 
+SQL> SELECT sql_text,
+  2         cpu_time,
+  3         buffer_gets,
+  4         executions,
+  5         parsing_schema_name,
+  6         sql_id,
+  7         exact_matching_signature
+  8  FROM   v$sql v
+  9  WHERE  executions>0
+ 10  AND    sql_plan_baseline IS NULL
+ 11  AND    EXISTS (SELECT 1
+ 12                 FROM   dba_sql_plan_baselines
+ 13                 WHERE  signature = v.exact_matching_signature
+ 14                 AND    accepted = 'YES'
+ 15                 AND    enabled  = 'YES'
+ 16                 AND    parsing_schema_name = '&1')
+ 17  ORDER BY cpu_time;
+old  16:                AND    parsing_schema_name = '&1')
+new  16:                AND    parsing_schema_name = 'SPMTEST')
+
+no rows selected
+
+SQL> 
+SQL> PROMPT **** Query above returns no rows because all out queries
+**** Query above returns no rows because all out queries
+SQL> PROMPT **** with SQL plan baselines are using them
+**** with SQL plan baselines are using them
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** Drop the index
+**** Drop the index
+SQL> 
+SQL> DROP INDEX tabi;
+
+Index dropped.
+
+SQL> 
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** Execute the query again and confirm that it is NOT using the baselines
+**** Execute the query again and confirm that it is NOT using the baselines
+SQL> PROMPT      because the plan cannot be used - the index has gone
+because the plan cannot be used - the index has gone
+SQL> 
+SQL> @q1
+SQL> select /* MYSPMTEST */ count(*) from tab1 where id = 100;
+
+  COUNT(*)
+----------
+         1
+
+SQL> @q1
+SQL> select /* MYSPMTEST */ count(*) from tab1 where id = 100;
+
+  COUNT(*)
+----------
+         1
+
+SQL> @util/plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  00axwq5w1q7x3, child number 0
+-------------------------------------
+select /* MYSPMTEST */ count(*) from tab1 where id = 100
+
+Plan hash value: 3961288195
+
+---------------------------------------------------------------------------
+| Id  | Operation          | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |      |       |       |     7 (100)|          |
+|   1 |  SORT AGGREGATE    |      |     1 |     4 |            |          |
+|*  2 |   TABLE ACCESS FULL| TAB1 |     1 |     4 |     7  (29)| 00:00:01 |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"=100)
+
+
+19 rows selected.
+
+SQL> 
+SQL> PROMPT **** Note (above) that the SQL plan baseline is NOT being used
+**** Note (above) that the SQL plan baseline is NOT being used
+SQL> PROMPT **** because the index has gone.
+**** because the index has gone.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> var planname varchar2(100)
+SQL> begin
+  2    select plan_name into :planname from dba_sql_plan_baselines where parsing_schema_name = 'SPMTEST' and accepted = 'YES';
+  3  end;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> column hint format a100
+SQL> SELECT  extractValue(value(h),'.') AS hint
+  2  FROM    sys.sqlobj$plan od,
+  3          TABLE(xmlsequence(
+  4            extract(xmltype(od.other_xml),'/*/outline_data/hint'))) h
+  5  WHERE od.other_xml is not null
+  6  AND   (signature,category,obj_type,plan_id) = (select signature,
+  7                               category,
+  8                               obj_type,
+  9                               plan_id
+ 10                        from   sys.sqlobj$ so
+ 11                         where so.name = :planname);
+
+HINT
+----------------------------------------------------------------------------------------------------
+IGNORE_OPTIM_EMBEDDED_HINTS
+OPTIMIZER_FEATURES_ENABLE('12.1.0.2')
+DB_VERSION('12.1.0.2')
+ALL_ROWS
+OUTLINE_LEAF(@"SEL$1")
+INDEX(@"SEL$1" "TAB1"@"SEL$1" ("TAB1"."ID"))
+
+6 rows selected.
+
+SQL> 
+SQL> PROMPT **** Above - the SQL plan baseline outline hints include an INDEX hint for the index we dropped.
+**** Above - the SQL plan baseline outline hints include an INDEX hint for the index we dropped.
+SQL> PROMPT **** The query is no longer able to obey this hint.
+**** The query is no longer able to obey this hint.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** We now expect to find our problem query...
+**** We now expect to find our problem query...
+SQL> @util/nomatchu SPMTEST
+SQL> REM
+SQL> REM List SQL statements in the cursor cache that are not
+SQL> REM matching a SQL plan baseline but a SQL plan baseline exists.
+SQL> REM
+SQL> REM You may want to investigate these cases because it implies
+SQL> REM that there may have been a change preventing the plan in the
+SQL> REM SQL plan baseline from being used.
+SQL> REM
+SQL> REM This query allows you to specify a particular schema.
+SQL> REM
+SQL> 
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> column sql_text format a50
+SQL> column parsing_schema_name format a30
+SQL> column exact_matching_signature format 99999999999999999999
+SQL> 
+SQL> SELECT sql_text,
+  2         cpu_time,
+  3         buffer_gets,
+  4         executions,
+  5         parsing_schema_name,
+  6         sql_id,
+  7         exact_matching_signature
+  8  FROM   v$sql v
+  9  WHERE  executions>0
+ 10  AND    sql_plan_baseline IS NULL
+ 11  AND    EXISTS (SELECT 1
+ 12                 FROM   dba_sql_plan_baselines
+ 13                 WHERE  signature = v.exact_matching_signature
+ 14                 AND    accepted = 'YES'
+ 15                 AND    enabled  = 'YES'
+ 16                 AND    parsing_schema_name = '&1')
+ 17  ORDER BY cpu_time;
+old  16:                AND    parsing_schema_name = '&1')
+new  16:                AND    parsing_schema_name = 'SPMTEST')
+
+SQL_TEXT                                             CPU_TIME BUFFER_GETS EXECUTIONS PARSING_SCHEMA_NAME            SQL_ID        EXACT_MATCHING_SIGNATURE
+-------------------------------------------------- ---------- ----------- ---------- ------------------------------ ------------- ------------------------
+select /* MYSPMTEST */ count(*) from tab1 where id       4000          23          1 SPMTEST                        00axwq5w1q7x3     10438310272222376619
+ = 100
+
+
+SQL> 
+SQL> PROMPT **** Above, we can see that a SQL statement with a SQL plan baseline
+**** Above, we can see that a SQL statement with a SQL plan baseline
+SQL> PROMPT **** is not using the SQL plan baseline. In this case, it's because
+**** is not using the SQL plan baseline. In this case, it's because
+SQL> PROMPT **** we dropped the index so the accepted SQL plan baseline cannot be used.
+**** we dropped the index so the accepted SQL plan baseline cannot be used.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** We have captured a new plan in SQL plan history...
+**** We have captured a new plan in SQL plan history...
+SQL> @util/listu SPMTEST
+SQL> REM
+SQL> REM  List SQL plan baselines for a specified user
+SQL> REM
+SQL> 
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> column last_executed format a30
+SQL> column sql_text format a40
+SQL> column sql_handle format a40
+SQL> column plan_name format a35
+SQL> column signature format 999999999999999999999
+SQL> 
+SQL> select signature,plan_name,sql_handle,sql_text, accepted, enabled
+  2  from dba_sql_plan_baselines
+  3  where parsing_schema_name = '&1'
+  4  /
+old   3: where parsing_schema_name = '&1'
+new   3: where parsing_schema_name = 'SPMTEST'
+
+             SIGNATURE PLAN_NAME                           SQL_HANDLE                               SQL_TEXT                                 ACC ENA
+---------------------- ----------------------------------- ---------------------------------------- ---------------------------------------- --- ---
+  10438310272222376619 SQL_PLAN_91r2mwdbk0cpbec1c7603      SQL_90dc53e3572032ab                     select /* MYSPMTEST */ count(*) from tab NO  YES
+                                                                                                    1 where id = 100
+
+  10438310272222376619 SQL_PLAN_91r2mwdbk0cpbf7f677e5      SQL_90dc53e3572032ab                     select /* MYSPMTEST */ count(*) from tab YES YES
+                                                                                                    1 where id = 100
+
+
+SQL> PROMPT **** Above, there are now two SQL plan history entries for our query. The new plan has not been accepted yet.
+**** Above, there are now two SQL plan history entries for our query. The new plan has not been accepted yet.
+SQL> PROMPT **** We can choose to evolve it if we wish and then the query will be under the control of SPM.
+**** We can choose to evolve it if we wish and then the query will be under the control of SPM.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** The query will show up as a candidate for evolution
+**** The query will show up as a candidate for evolution
+SQL> @util/evou SPMTEST
+SQL> REM
+SQL> REM Query SQL plan history for evolve candidates
+SQL> REM for a specified user
+SQL> REM
+SQL> 
+SQL> SELECT sql_text,
+  2         signature,
+  3         sql_handle,
+  4         plan_name
+  5  FROM   dba_sql_plan_baselines
+  6  WHERE  enabled  = 'YES'
+  7  AND    accepted = 'NO'
+  8  AND    parsing_schema_name = '&1';
+old   8: AND    parsing_schema_name = '&1'
+new   8: AND    parsing_schema_name = 'SPMTEST'
+
+SQL_TEXT                                              SIGNATURE SQL_HANDLE                               PLAN_NAME
+---------------------------------------- ---------------------- ---------------------------------------- -----------------------------------
+select /* MYSPMTEST */ count(*) from tab   10438310272222376619 SQL_90dc53e3572032ab                     SQL_PLAN_91r2mwdbk0cpbec1c7603
+1 where id = 100
+
+
+SQL> PROMPT **** Above, we have identified a SQL plan history entry that is a candidate for evolving.
+**** Above, we have identified a SQL plan history entry that is a candidate for evolving.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> PROMPT **** Evolve our SQL plan history entry...
+**** Evolve our SQL plan history entry...
+SQL> DECLARE
+  2    ret CLOB;
+  3  BEGIN
+  4    ret := DBMS_SPM.EVOLVE_SQL_PLAN_BASELINE(sql_handle=>:handle, verify=>'NO');
+  5  END;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> @util/evou SPMTEST
+SQL> REM
+SQL> REM Query SQL plan history for evolve candidates
+SQL> REM for a specified user
+SQL> REM
+SQL> 
+SQL> SELECT sql_text,
+  2         signature,
+  3         sql_handle,
+  4         plan_name
+  5  FROM   dba_sql_plan_baselines
+  6  WHERE  enabled  = 'YES'
+  7  AND    accepted = 'NO'
+  8  AND    parsing_schema_name = '&1';
+old   8: AND    parsing_schema_name = '&1'
+new   8: AND    parsing_schema_name = 'SPMTEST'
+
+no rows selected
+
+SQL> PROMPT **** Above, there are no longer candidates for evolving.
+**** Above, there are no longer candidates for evolving.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> @util/listu SPMTEST
+SQL> REM
+SQL> REM  List SQL plan baselines for a specified user
+SQL> REM
+SQL> 
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> column last_executed format a30
+SQL> column sql_text format a40
+SQL> column sql_handle format a40
+SQL> column plan_name format a35
+SQL> column signature format 999999999999999999999
+SQL> 
+SQL> select signature,plan_name,sql_handle,sql_text, accepted, enabled
+  2  from dba_sql_plan_baselines
+  3  where parsing_schema_name = '&1'
+  4  /
+old   3: where parsing_schema_name = '&1'
+new   3: where parsing_schema_name = 'SPMTEST'
+
+             SIGNATURE PLAN_NAME                           SQL_HANDLE                               SQL_TEXT                                 ACC ENA
+---------------------- ----------------------------------- ---------------------------------------- ---------------------------------------- --- ---
+  10438310272222376619 SQL_PLAN_91r2mwdbk0cpbec1c7603      SQL_90dc53e3572032ab                     select /* MYSPMTEST */ count(*) from tab YES YES
+                                                                                                    1 where id = 100
+
+  10438310272222376619 SQL_PLAN_91r2mwdbk0cpbf7f677e5      SQL_90dc53e3572032ab                     select /* MYSPMTEST */ count(*) from tab YES YES
+                                                                                                    1 where id = 100
+
+
+SQL> PROMPT **** Above, all out SQL plan baselines are accepted
+**** Above, all out SQL plan baselines are accepted
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> @q1
+SQL> select /* MYSPMTEST */ count(*) from tab1 where id = 100;
+
+  COUNT(*)
+----------
+         1
+
+SQL> @q1
+SQL> select /* MYSPMTEST */ count(*) from tab1 where id = 100;
+
+  COUNT(*)
+----------
+         1
+
+SQL> @q1
+SQL> select /* MYSPMTEST */ count(*) from tab1 where id = 100;
+
+  COUNT(*)
+----------
+         1
+
+SQL> @util/plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  00axwq5w1q7x3, child number 0
+-------------------------------------
+select /* MYSPMTEST */ count(*) from tab1 where id = 100
+
+Plan hash value: 3961288195
+
+---------------------------------------------------------------------------
+| Id  | Operation          | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |      |       |       |     7 (100)|          |
+|   1 |  SORT AGGREGATE    |      |     1 |     4 |            |          |
+|*  2 |   TABLE ACCESS FULL| TAB1 |     1 |     4 |     7  (29)| 00:00:01 |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"=100)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_91r2mwdbk0cpbec1c7603 used for this statement
+
+
+23 rows selected.
+
+SQL> 
+SQL> PROMPT **** Above, our query is using a SQL plan baseline again.
+**** Above, our query is using a SQL plan baseline again.
+SQL> PROMPT **** It's a full table scan this time because there is no index.
+**** It's a full table scan this time because there is no index.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> @util/nomatchu SPMTEST
+SQL> REM
+SQL> REM List SQL statements in the cursor cache that are not
+SQL> REM matching a SQL plan baseline but a SQL plan baseline exists.
+SQL> REM
+SQL> REM You may want to investigate these cases because it implies
+SQL> REM that there may have been a change preventing the plan in the
+SQL> REM SQL plan baseline from being used.
+SQL> REM
+SQL> REM This query allows you to specify a particular schema.
+SQL> REM
+SQL> 
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> column sql_text format a50
+SQL> column parsing_schema_name format a30
+SQL> column exact_matching_signature format 99999999999999999999
+SQL> 
+SQL> SELECT sql_text,
+  2         cpu_time,
+  3         buffer_gets,
+  4         executions,
+  5         parsing_schema_name,
+  6         sql_id,
+  7         exact_matching_signature
+  8  FROM   v$sql v
+  9  WHERE  executions>0
+ 10  AND    sql_plan_baseline IS NULL
+ 11  AND    EXISTS (SELECT 1
+ 12                 FROM   dba_sql_plan_baselines
+ 13                 WHERE  signature = v.exact_matching_signature
+ 14                 AND    accepted = 'YES'
+ 15                 AND    enabled  = 'YES'
+ 16                 AND    parsing_schema_name = '&1')
+ 17  ORDER BY cpu_time;
+old  16:                AND    parsing_schema_name = '&1')
+new  16:                AND    parsing_schema_name = 'SPMTEST')
+
+no rows selected
+
+SQL> 
+SQL> PROMPT **** Now all the queries with SQL plan baselines are matching
+**** Now all the queries with SQL plan baselines are matching
+SQL> PROMPT **** successfully, so the above query returns no rows.
+**** successfully, so the above query returns no rows.
+SQL> PROMPT **** Press <CR> to continue...
+**** Press <CR> to continue...
+SQL> PAUSE
+
+SQL> 
+SQL> spool off

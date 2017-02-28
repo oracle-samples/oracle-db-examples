@@ -1,0 +1,243 @@
+SQL> @05_create_fact.sql
+SQL> -- DISCLAIMER:
+SQL> -- This script is provided for educational purposes only. It is
+SQL> -- NOT supported by Oracle World Wide Technical Support.
+SQL> -- The script has been tested and appears to work as intended.
+SQL> -- You should always run new scripts initially
+SQL> -- on a test instance.
+SQL> 
+SQL> set timing off
+SQL> set echo off
+SQL> set autotrace off
+SQL> column plan_table_output format a150
+SQL> set trims on
+SQL> 
+SQL> PROMPT Connect to the Attribute Clusters/Zone Map Schema
+Connect to the Attribute Clusters/Zone Map Schema
+SQL> connect aczm12c/oracle_4U
+Connected.
+SQL> 
+SQL> PURGE recyclebin
+  2  /
+
+Recyclebin purged.
+
+SQL> 
+SQL> PROMPT	Drop SALES table (if it exists)
+Drop SALES table (if it exists)
+SQL> DROP TABLE sales
+  2  /
+DROP TABLE sales
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> 
+SQL> PROMPT	Drop SALES_AC table (if it exists)
+Drop SALES_AC table (if it exists)
+SQL> DROP TABLE sales_ac
+  2  /
+DROP TABLE sales_ac
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> 
+SQL> --
+SQL> PROMPT Create the SALES fact table
+Create the SALES fact table
+SQL> PROMPT This table will not have attribute clustering
+This table will not have attribute clustering
+SQL> PROMPT or zone maps. We will use it to compare with
+or zone maps. We will use it to compare with
+SQL> PROMPT an attribute clustered table.
+an attribute clustered table.
+SQL> --
+SQL> CREATE TABLE sales
+  2  AS
+  3  SELECT * FROM sales_source
+  4  WHERE 1 = -1
+  5  /
+
+Table created.
+
+SQL> 
+SQL> --
+SQL> PROMPT Create a SALES_AC fact table
+Create a SALES_AC fact table
+SQL> PROMPT The data will be the same as SALES
+The data will be the same as SALES
+SQL> PROMPT but it will be used to demontrate
+but it will be used to demontrate
+SQL> PROMPT attribute clustering and zone maps
+attribute clustering and zone maps
+SQL> PROMPT in comparison to the standard SALES table.
+in comparison to the standard SALES table.
+SQL> --
+SQL> CREATE TABLE sales_ac
+  2  AS
+  3  SELECT * FROM sales_source
+  4  WHERE 1 = -1
+  5  /
+
+Table created.
+
+SQL> 
+SQL> --
+SQL> PROMPT Here we enable linear ordered attribute clustering
+Here we enable linear ordered attribute clustering
+SQL> PROMPT We will simply order rows by location_id, product_id
+We will simply order rows by location_id, product_id
+SQL> PROMPT To see the effects of attribute clustering in
+To see the effects of attribute clustering in
+SQL> PROMPT isolation, we will not create a zone map.
+isolation, we will not create a zone map.
+SQL> --
+SQL> ALTER TABLE sales_ac
+  2  ADD CLUSTERING BY LINEAR ORDER (location_id, product_id)
+  3  WITHOUT MATERIALIZED ZONEMAP
+  4  /
+
+Table altered.
+
+SQL> 
+SQL> set timing on
+SQL> --
+SQL> PROMPT Insert data into standard table
+Insert data into standard table
+SQL> --
+SQL> INSERT /*+ APPEND */ INTO sales SELECT * FROM sales_source
+  2  /
+
+1952120 rows created.
+
+Elapsed: 00:00:04.17
+SQL> --
+SQL> PROMPT Observe that insert plan is a simple insert
+Observe that insert plan is a simple insert
+SQL> --
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor)
+  2  /
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  6magg9dfwqvjt, child number 0
+-------------------------------------
+INSERT /*+ APPEND */ INTO sales SELECT * FROM sales_source
+
+Plan hash value: 1422891252
+
+-------------------------------------------------------------------------------------------------
+| Id  | Operation                        | Name         | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------
+|   0 | INSERT STATEMENT                 |              |       |       |   132 (100)|          |
+|   1 |  LOAD AS SELECT                  |              |       |       |            |          |
+|   2 |   OPTIMIZER STATISTICS GATHERING |              |  1952K|   100M|   132  (16)| 00:00:01 |
+|   3 |    TABLE ACCESS STORAGE FULL     | SALES_SOURCE |  1952K|   100M|   132  (16)| 00:00:01 |
+-------------------------------------------------------------------------------------------------
+
+
+15 rows selected.
+
+Elapsed: 00:00:00.12
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> --
+SQL> PROMPT Insert data into attribute clustered table.
+Insert data into attribute clustered table.
+SQL> PROMPT We must use a direct path operation to make
+We must use a direct path operation to make
+SQL> PROMPT use of attribute clustering.
+use of attribute clustering.
+SQL> PROMPT In real systems we will probably insert in
+In real systems we will probably insert in
+SQL> PROMPT multiple batches: each batch of inserts will be
+multiple batches: each batch of inserts will be
+SQL> PROMPT ordered appropriately. Later on,
+ordered appropriately. Later on,
+SQL> PROMPT if we want to re-order all rows into
+if we want to re-order all rows into
+SQL> PROMPT tightly grouped zones we can, for example, use
+tightly grouped zones we can, for example, use
+SQL> PROMPT partitioning and MOVE PARTITION to do this.
+partitioning and MOVE PARTITION to do this.
+SQL> PROMPT
+
+SQL> PROMPT Increased elapsed time is likely due
+Increased elapsed time is likely due
+SQL> PROMPT to the sort that is transparently performed to cluster
+to the sort that is transparently performed to cluster
+SQL> PROMPT the data as it is inserted into the SALES_AC table.
+the data as it is inserted into the SALES_AC table.
+SQL> --
+SQL> INSERT /*+ APPEND */ INTO sales_ac SELECT * FROM sales_source
+  2  /
+
+1952120 rows created.
+
+Elapsed: 00:00:05.64
+SQL> --
+SQL> PROMPT Observe the addition of "SORT ORDER BY" in the execution plan
+Observe the addition of "SORT ORDER BY" in the execution plan
+SQL> --
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor)
+  2  /
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8wzqwqgwwynya, child number 0
+-------------------------------------
+INSERT /*+ APPEND */ INTO sales_ac SELECT * FROM sales_source
+
+Plan hash value: 3351020411
+
+---------------------------------------------------------------------------------------------------------
+| Id  | Operation                        | Name         | Rows  | Bytes |TempSpc| Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------------
+|   0 | INSERT STATEMENT                 |              |       |       |       | 12803 (100)|          |
+|   1 |  LOAD AS SELECT                  |              |       |       |       |            |          |
+|   2 |   OPTIMIZER STATISTICS GATHERING |              |  1952K|   100M|       | 12803   (1)| 00:00:02 |
+|   3 |    SORT ORDER BY                 |              |  1952K|   100M|   149M| 12803   (1)| 00:00:02 |
+|   4 |     TABLE ACCESS STORAGE FULL    | SALES_SOURCE |  1952K|   100M|       |   132  (16)| 00:00:01 |
+---------------------------------------------------------------------------------------------------------
+
+
+16 rows selected.
+
+Elapsed: 00:00:00.03
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> set timing off
+SQL> 
+SQL> PROMPT Gather table statistics
+Gather table statistics
+SQL> EXECUTE dbms_stats.gather_table_stats(ownname=>NULL,tabname=>'sales');
+
+PL/SQL procedure successfully completed.
+
+SQL> EXECUTE dbms_stats.gather_table_stats(ownname=>NULL,tabname=>'sales_ac');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off

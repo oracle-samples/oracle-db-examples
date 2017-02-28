@@ -1,0 +1,365 @@
+SQL> @08_zm_prune
+SQL> column plan_table_output format a150
+SQL> set trims on
+SQL> 
+SQL> PROMPT Connect to the Attribute Clusters/Zone Map Schema
+Connect to the Attribute Clusters/Zone Map Schema
+SQL> connect aczm12c/oracle_4U
+Connected.
+SQL> 
+SQL> PROMPT Clean up
+Clean up
+SQL> 
+SQL> ALTER TABLE sales_ac DROP CLUSTERING
+  2  /
+
+Table altered.
+
+SQL> DROP MATERIALIZED ZONEMAP sales_ac_zmap
+  2  /
+
+Materialized zonemap dropped.
+
+SQL> DROP MATERIALIZED ZONEMAP	zmap$_sales_ac
+  2  /
+DROP MATERIALIZED ZONEMAP  zmap$_sales_ac
+*
+ERROR at line 1:
+ORA-12003: materialized view or zonemap "ACZM12C"."ZMAP$_SALES_AC" does not exist
+
+
+SQL> 
+SQL> PROMPT Cluster the table again
+Cluster the table again
+SQL> 
+SQL> ALTER TABLE sales_ac
+  2  ADD CLUSTERING sales_ac
+  3  JOIN locations ON (sales_ac.location_id = locations.location_id)
+  4  JOIN products  ON (sales_ac.product_id = products.product_id)
+  5  BY INTERLEAVED ORDER ((locations.state, locations.county), products.product_name, sales_ac.location_id)
+  6  WITHOUT MATERIALIZED ZONEMAP
+  7  /
+
+Table altered.
+
+SQL> 
+SQL> PROMPT Since we have changed the clustering columns, we need to
+Since we have changed the clustering columns, we need to
+SQL> PROMPT re-organize the table. This can be achieved using a move operation.
+re-organize the table. This can be achieved using a move operation.
+SQL> 
+SQL> ALTER TABLE sales_ac MOVE
+  2  /
+
+Table altered.
+
+SQL> 
+SQL> PROMPT
+
+SQL> PROMPT Manually create the zone map.
+Manually create the zone map.
+SQL> PROMPT
+
+SQL> 
+SQL> CREATE MATERIALIZED ZONEMAP sales_ac_zmap
+  2  AS
+  3  SELECT SYS_OP_ZONE_ID(s.rowid),
+  4  	    MIN(l.state) min_state,
+  5  	    MAX(l.state) max_state,
+  6  	    MIN(l.county) min_county,
+  7  	    MAX(l.county) max_county,
+  8  	    MIN(p.product_name) min_prod,
+  9  	    MAX(p.product_name) max_prod,
+ 10  	    MIN(s.location_id) min_loc,
+ 11  	    MAX(s.location_id) max_loc
+ 12  FROM sales_ac s,
+ 13  	  locations l,
+ 14  	  products p
+ 15  WHERE s.location_id = l.location_id(+)
+ 16  AND   s.product_id = p.product_id(+)
+ 17  GROUP BY SYS_OP_ZONE_ID(s.rowid)
+ 18  /
+
+Materialized zonemap created.
+
+SQL> 
+SQL> PROMPT Observe that we are achieving reduced IO for
+Observe that we are achieving reduced IO for
+SQL> PROMPT compared agains the non-zone mapped table (sales)
+compared agains the non-zone mapped table (sales)
+SQL> 
+SQL> SET AUTOTRACE ON STATISTICS
+SQL> 
+SQL> PROMPT Conventional
+Conventional
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  JOIN   locations  ON (sales.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        218  recursive calls
+          0  db block gets
+      11884  consistent gets
+          0  physical reads
+        124  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          5  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   locations  ON (sales_ac.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        952  recursive calls
+          0  db block gets
+       7143  consistent gets
+          0  physical reads
+        328  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+         13  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT Conventional
+Conventional
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  WHERE  location_id = 1000
+  4  /
+
+SUM(AMOUNT)
+-----------
+  621174.93
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+       7164  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  WHERE  location_id = 1000
+  4  /
+
+SUM(AMOUNT)
+-----------
+  621174.93
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        112  recursive calls
+          0  db block gets
+       5603  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> SET AUTOTRACE OFF
+SQL> 
+SQL> --
+SQL> PROMPT Scan and join pruning
+Scan and join pruning
+SQL> --
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   locations  ON (sales_ac.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+SQL> 
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d6p2mb4qnacur, child number 4
+-------------------------------------
+SELECT SUM(amount) FROM   sales_ac JOIN   locations  ON
+(sales_ac.location_id = locations.location_id) WHERE  locations.state
+= 'California' AND    locations.county = 'Alpine County'
+
+Plan hash value: 3649541064
+
+-------------------------------------------------------------------------------------------------------
+| Id  | Operation                                 | Name      | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                          |           |       |       |   127 (100)|          |
+|   1 |  SORT AGGREGATE                           |           |     1 |    39 |            |          |
+|*  2 |   HASH JOIN                               |           |   612 | 23868 |   127  (19)| 00:00:01 |
+|   3 |    JOIN FILTER CREATE                     | :BF0000   |     1 |    30 |     2   (0)| 00:00:01 |
+|*  4 |     TABLE ACCESS STORAGE FULL             | LOCATIONS |     1 |    30 |     2   (0)| 00:00:01 |
+|   5 |    JOIN FILTER USE                        | :BF0000   |  1952K|    16M|   120  (16)| 00:00:01 |
+|*  6 |     TABLE ACCESS STORAGE FULL WITH ZONEMAP| SALES_AC  |  1952K|    16M|   120  (16)| 00:00:01 |
+-------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("SALES_AC"."LOCATION_ID"="LOCATIONS"."LOCATION_ID")
+   4 - storage(("LOCATIONS"."COUNTY"='Alpine County' AND "LOCATIONS"."STATE"='California'))
+       filter(("LOCATIONS"."COUNTY"='Alpine County' AND "LOCATIONS"."STATE"='California'))
+   6 - storage(SYS_OP_BLOOM_FILTER(:BF0000,"SALES_AC"."LOCATION_ID"))
+       filter((SYS_ZMAP_FILTER('/* ZM_PRUNING */ SELECT "ZONE_ID$", CASE WHEN
+              BITAND(zm."ZONE_STATE$",1)=1 THEN 1 ELSE CASE WHEN ((ORA_RAWCOMPARE(zm."MIN_LOC",:1,8)>0 OR
+              ORA_RAWCOMPARE(zm."MAX_LOC",:2,8)<0)) THEN 3 ELSE 2 END END FROM "ACZM12C"."SALES_AC_ZMAP" zm
+              WHERE zm."ZONE_LEVEL$"=0 ORDER BY zm."ZONE_ID$"',SYS_OP_ZONE_ID(ROWID),SYSVARCOL,SYSVARCOL)<3
+              AND SYS_ZMAP_FILTER('/* ZM_PRUNING */ SELECT "ZONE_ID$", CASE WHEN
+              BITAND(zm."ZONE_STATE$",1)=1 THEN 1 ELSE CASE WHEN (zm."MIN_STATE" > :1 OR zm."MAX_STATE" < :2
+              OR zm."MIN_COUNTY" > :3 OR zm."MAX_COUNTY" < :4) THEN 3 ELSE 2 END END FROM
+              "ACZM12C"."SALES_AC_ZMAP" zm WHERE zm."ZONE_LEVEL$"=0 ORDER BY
+              zm."ZONE_ID$"',SYS_OP_ZONE_ID(ROWID),'California','California','Alpine County','Alpine
+              County')<3 AND SYS_OP_BLOOM_FILTER(:BF0000,"SALES_AC"."LOCATION_ID")))
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=7)
+   - statistics feedback used for this statement
+
+
+43 rows selected.
+
+SQL> 
+SQL> PROMPT Create an index on SALES_AC LOCATION_ID
+Create an index on SALES_AC LOCATION_ID
+SQL> 
+SQL> CREATE  INDEX sales_ac_loc_i on sales_ac(location_id)
+  2  /
+
+Index created.
+
+SQL> CREATE  INDEX sales_loc_i on sales(location_id)
+  2  /
+
+Index created.
+
+SQL> 
+SQL> --
+SQL> PROMPT Index rowids can be pruned by zone
+Index rowids can be pruned by zone
+SQL> --
+SQL> SELECT sum(amount)
+  2  FROM   sales_ac
+  3  WHERE  location_id = 1000
+  4  AND    order_item_number = 1
+  5  /
+
+SUM(AMOUNT)
+-----------
+   62181.06
+
+1 row selected.
+
+SQL> 
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  c17umdz5bsb78, child number 0
+-------------------------------------
+SELECT sum(amount) FROM   sales_ac WHERE  location_id = 1000 AND
+order_item_number = 1
+
+Plan hash value: 1816803117
+
+---------------------------------------------------------------------------------------------------------------
+| Id  | Operation                                    | Name           | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                             |                |       |       |    31 (100)|          |
+|   1 |  SORT AGGREGATE                              |                |     1 |    12 |            |          |
+|*  2 |   TABLE ACCESS BY INDEX ROWID BATCHED WITH ZO| SALES_AC       |    30 |   360 |    31   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN                          | SALES_AC_LOC_I |   621 |       |     3   (0)| 00:00:01 |
+---------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter((SYS_ZMAP_FILTER('/* ZM_PRUNING */ SELECT "ZONE_ID$", CASE WHEN
+              BITAND(zm."ZONE_STATE$",1)=1 THEN 1 ELSE CASE WHEN (zm."MIN_LOC" > :1 OR zm."MAX_LOC" < :2) THEN 3
+              ELSE 2 END END FROM "ACZM12C"."SALES_AC_ZMAP" zm WHERE zm."ZONE_LEVEL$"=0 ORDER BY
+              zm."ZONE_ID$"',SYS_OP_ZONE_ID(ROWID),1000,1000)<3 AND "ORDER_ITEM_NUMBER"=1))
+   3 - access("LOCATION_ID"=1000)
+
+
+25 rows selected.
+
+SQL> 
+SQL> DROP  INDEX sales_ac_loc_i
+  2  /
+
+Index dropped.
+
+SQL> DROP  INDEX sales_loc_i
+  2  /
+
+Index dropped.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off

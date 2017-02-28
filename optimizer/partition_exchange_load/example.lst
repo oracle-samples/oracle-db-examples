@@ -1,0 +1,266 @@
+SQL> @example
+SQL> -- ===================================================================================
+SQL> -- Complete example of a partition exchange load using incremental stats
+SQL> -- and a subpartitioned main table.
+SQL> -- ===================================================================================
+SQL> set linesize 2000
+SQL> set trims on
+SQL> set pagesize 50
+SQL> set echo on
+SQL> 
+SQL> drop table range_list_main_tab;
+
+Table dropped.
+
+SQL> drop table list_part_load_tab;
+
+Table dropped.
+
+SQL> 
+SQL> --
+SQL> -- interval range-list table
+SQL> --
+SQL> create table range_list_main_tab
+  2  	     (num number,
+  3  	      ten number)
+  4  partition by range (num)
+  5  interval (1000)
+  6  subpartition by list (ten)
+  7  subpartition template
+  8  	     (subpartition t_spart1 values (0,2,4,6,8),
+  9  	      subpartition t_spart2 values (1,3,5,7,9))
+ 10  	     (partition range_list_main_part1 values less than (1000),
+ 11  	      partition range_list_main_part2 values less than (2000));
+
+Table created.
+
+SQL> 
+SQL> create index range_list_main_tab_n on range_list_main_tab(num) local;
+
+Index created.
+
+SQL> 
+SQL> --
+SQL> -- list partitioned table
+SQL> --
+SQL> create table list_part_load_tab
+  2  	     (num number,
+  3  	      ten number)
+  4  partition by list (ten)
+  5  	     (partition list_part_load_part1 values (0,2,4,6,8),
+  6  	      partition list_part_load_part2 values  (1,3,5,7,9));
+
+Table created.
+
+SQL> 
+SQL> exec dbms_stats.set_table_prefs(null, 'range_list_main_tab', 'incremental', 'true');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.set_table_prefs(null, 'list_part_load_tab', 'incremental', 'true');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.set_table_prefs(null, 'range_list_main_tab', 'incremental_level', 'partition');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.set_table_prefs(null, 'list_part_load_tab', 'incremental_level', 'table');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- The main table will have 998 rows
+SQL> --
+SQL> insert into range_list_main_tab
+  2  	     select rownum,mod(rownum,10)
+  3  	     from   dual
+  4  	     connect by level<500
+  5  	     union all
+  6  	     select rownum+1000,mod(rownum,10)
+  7  	     from   dual
+  8  	     connect by level<500;
+
+998 rows created.
+
+SQL> 
+SQL> --
+SQL> -- The load table will have 999 rows
+SQL> --
+SQL> insert into list_part_load_tab
+  2  	     select rownum,mod(rownum,10)
+  3  	     from   dual
+  4  	     connect by level<1000;
+
+999 rows created.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(null, 'range_list_main_tab');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Let's sleep here to give the main table and load table
+SQL> -- different last_analyzed times
+SQL> --
+SQL> host sleep 5
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(null, 'list_part_load_tab');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Should be 1000 rows
+SQL> --
+SQL> select count(*) from range_list_main_tab;
+
+  COUNT(*)
+----------
+       998
+
+SQL> 
+SQL> select to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') table_ana
+  2  from   user_tables
+  3  where  table_name = upper('range_list_main_tab');
+
+TABLE_ANA
+--------------------
+16-dec-2016 07:53:44
+
+SQL> 
+SQL> select partition_name, to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') part_ana
+  2  from   user_tab_partitions
+  3  where  table_name = upper('range_list_main_tab')
+  4  order by partition_position;
+
+PARTITION_NAME                                                                                                                   PART_ANA
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+RANGE_LIST_MAIN_PART1                                                                                                            16-dec-2016 07:53:44
+RANGE_LIST_MAIN_PART2                                                                                                            16-dec-2016 07:53:44
+
+SQL> 
+SQL> select subpartition_name, to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') subpart_ana
+  2  from   user_tab_subpartitions
+  3  where  table_name = upper('range_list_main_tab')
+  4  order by subpartition_name;
+
+SUBPARTITION_NAME                                                                                                                SUBPART_ANA
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+RANGE_LIST_MAIN_PART1_T_SPART1                                                                                                   16-dec-2016 07:53:44
+RANGE_LIST_MAIN_PART1_T_SPART2                                                                                                   16-dec-2016 07:53:44
+RANGE_LIST_MAIN_PART2_T_SPART1                                                                                                   16-dec-2016 07:53:44
+RANGE_LIST_MAIN_PART2_T_SPART2                                                                                                   16-dec-2016 07:53:44
+
+SQL> 
+SQL> select to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') load_table_ana
+  2  from   user_tables
+  3  where  table_name = upper('list_part_load_tab');
+
+LOAD_TABLE_ANA
+--------------------
+16-dec-2016 07:53:50
+
+SQL> 
+SQL> select partition_name, to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') load_part_ana
+  2  from   user_tab_partitions
+  3  where  table_name = upper('list_part_load_tab')
+  4  order by partition_position;
+
+PARTITION_NAME                                                                                                                   LOAD_PART_ANA
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+LIST_PART_LOAD_PART1                                                                                                             16-dec-2016 07:53:50
+LIST_PART_LOAD_PART2                                                                                                             16-dec-2016 07:53:50
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- Perform the exchange after a delay
+SQL> --
+SQL> host sleep 5
+
+SQL> alter table range_list_main_tab
+  2  	     exchange partition range_list_main_part1
+  3  	     with table list_part_load_tab;
+
+Table altered.
+
+SQL> 
+SQL> --
+SQL> -- Exchange complete at:
+SQL> --
+SQL> select to_char(sysdate,'dd-mon-yyyy hh24:mi:ss') exchange_complete
+  2  from dual;
+
+EXCHANGE_COMPLETE
+--------------------
+16-dec-2016 07:53:55
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(null, 'range_list_main_tab');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Should now be 1498 rows
+SQL> --
+SQL> select count(*) from range_list_main_tab;
+
+  COUNT(*)
+----------
+      1498
+
+SQL> 
+SQL> --
+SQL> -- The time shown here will be the most recent because the global
+SQL> -- statistics must be updated after the partition has been exchanged.
+SQL> -- So, expect the time to be similar to the completion exchange time.
+SQL> --
+SQL> select to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') table_ana
+  2  from   user_tables
+  3  where  table_name = upper('range_list_main_tab');
+
+TABLE_ANA
+--------------------
+16-dec-2016 07:53:55
+
+SQL> 
+SQL> --
+SQL> -- Part 1 statistics were gathered earlier, because they came from the load
+SQL> -- table. They did not have to be regathered after the partition was echanged.
+SQL> -- Part 2 statistics have not been regathered - there is no need.
+SQL> --
+SQL> select partition_name, to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') part_ana
+  2  from   user_tab_partitions
+  3  where  table_name = upper('range_list_main_tab')
+  4  order by partition_position;
+
+PARTITION_NAME                                                                                                                   PART_ANA
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+RANGE_LIST_MAIN_PART1                                                                                                            16-dec-2016 07:53:50
+RANGE_LIST_MAIN_PART2                                                                                                            16-dec-2016 07:53:44
+
+SQL> 
+SQL> --
+SQL> -- The Part 1 subpartition stats came from the load table so they have not
+SQL> -- been regathered after the exchange.
+SQL> -- Part 2 subpartition stats have not been regathered - there is no need.
+SQL> --
+SQL> select subpartition_name, to_char(last_analyzed,'dd-mon-yyyy hh24:mi:ss') subpart_ana
+  2  from   user_tab_subpartitions
+  3  where  table_name = upper('range_list_main_tab')
+  4  order by subpartition_name;
+
+SUBPARTITION_NAME                                                                                                                SUBPART_ANA
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+RANGE_LIST_MAIN_PART1_T_SPART1                                                                                                   16-dec-2016 07:53:50
+RANGE_LIST_MAIN_PART1_T_SPART2                                                                                                   16-dec-2016 07:53:50
+RANGE_LIST_MAIN_PART2_T_SPART1                                                                                                   16-dec-2016 07:53:44
+RANGE_LIST_MAIN_PART2_T_SPART2                                                                                                   16-dec-2016 07:53:44
+
+SQL> 
+SQL> spool off

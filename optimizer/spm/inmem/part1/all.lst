@@ -1,0 +1,192 @@
+SQL> set echo on
+SQL> @all
+SQL> --@drop_base
+SQL> 
+SQL> @tab
+SQL> DROP table mysales;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE mysales (
+  2   id  NUMBER(10)
+  3  ,val VARCHAR2(100));
+
+Table created.
+
+SQL> 
+SQL> INSERT INTO mysales
+  2  SELECT ROWNUM,'X'
+  3  FROM   ( SELECT 1
+  4  	      FROM   dual
+  5  	      CONNECT BY LEVEL <= 100000
+  6  	    );
+
+100000 rows created.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> EXECUTE dbms_stats.gather_table_stats(ownname=>NULL,tabname=>'MYSALES');
+
+PL/SQL procedure successfully completed.
+
+SQL> @auto
+SQL> alter system set optimizer_capture_sql_plan_baselines=TRUE scope=memory;
+
+System altered.
+
+SQL> @query
+SQL> SELECT /* SPM */ COUNT(*)
+  2  FROM   mysales
+  3  WHERE  val = 'X';
+
+  COUNT(*)                                                                      
+----------                                                                      
+    100000                                                                      
+
+SQL> @query
+SQL> SELECT /* SPM */ COUNT(*)
+  2  FROM   mysales
+  3  WHERE  val = 'X';
+
+  COUNT(*)                                                                      
+----------                                                                      
+    100000                                                                      
+
+SQL> @autoo
+SQL> alter system set optimizer_capture_sql_plan_baselines=FALSE scope=memory;
+
+System altered.
+
+SQL> @base
+SQL> set linesize 150
+SQL> column sql_text format a100
+SQL> SELECT sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPM%';
+
+SQL_TEXT                                                                                             ENA ACC                                          
+---------------------------------------------------------------------------------------------------- --- ---                                          
+SELECT /* SPM */ COUNT(*)                                                                            YES YES                                          
+FROM   mysales                                                                                                                                        
+WHERE  val = 'X'                                                                                                                                      
+                                                                                                                                                      
+
+SQL> @query
+SQL> SELECT /* SPM */ COUNT(*)
+  2  FROM   mysales
+  3  WHERE  val = 'X';
+
+  COUNT(*)                                                                                                                                            
+----------                                                                                                                                            
+    100000                                                                                                                                            
+
+SQL> @plan
+SQL> SET LINESIZE 130
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);
+
+PLAN_TABLE_OUTPUT                                                                                                                 
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  4ss4zbb813250, child number 1                                                                                             
+-------------------------------------                                                                                             
+SELECT /* SPM */ COUNT(*) FROM   mysales WHERE  val = 'X'                                                                         
+                                                                                                                                  
+Plan hash value: 3332172831                                                                                                       
+                                                                                                                                  
+------------------------------------------------------------------------------                                                    
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                    
+------------------------------------------------------------------------------                                                    
+|   0 | SELECT STATEMENT   |         |       |       |    66 (100)|          |                                                    
+|   1 |  SORT AGGREGATE    |         |     1 |     2 |            |          |                                                    
+|*  2 |   TABLE ACCESS FULL| MYSALES |   100K|   195K|    66  (29)| 00:00:01 |                                                    
+------------------------------------------------------------------------------                                                    
+                                                                                                                                  
+Predicate Information (identified by operation id):                                                                               
+---------------------------------------------------                                                                               
+                                                                                                                                  
+   2 - filter("VAL"='X')                                                                                                          
+                                                                                                                                  
+Note                                                                                                                              
+-----                                                                                                                             
+   - SQL plan baseline SQL_PLAN_7469nmnn7nsu3c69cec1f used for this statement                                                     
+                                                                                                                                  
+
+23 rows selected.
+
+SQL> @in
+SQL> ALTER TABLE mysales INMEMORY;
+
+Table altered.
+
+SQL> @query
+SQL> SELECT /* SPM */ COUNT(*)
+  2  FROM   mysales
+  3  WHERE  val = 'X';
+
+  COUNT(*)                                                                                                                        
+----------                                                                                                                        
+    100000                                                                                                                        
+
+SQL> @query
+SQL> SELECT /* SPM */ COUNT(*)
+  2  FROM   mysales
+  3  WHERE  val = 'X';
+
+  COUNT(*)                                                                                                                        
+----------                                                                                                                        
+    100000                                                                                                                        
+
+SQL> @plan
+SQL> SET LINESIZE 130
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);
+
+PLAN_TABLE_OUTPUT                                                                                                                 
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  4ss4zbb813250, child number 1                                                                                             
+-------------------------------------                                                                                             
+SELECT /* SPM */ COUNT(*) FROM   mysales WHERE  val = 'X'                                                                         
+                                                                                                                                  
+Plan hash value: 3332172831                                                                                                       
+                                                                                                                                  
+---------------------------------------------------------------------------------------                                           
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                           
+---------------------------------------------------------------------------------------                                           
+|   0 | SELECT STATEMENT            |         |       |       |    66 (100)|          |                                           
+|   1 |  SORT AGGREGATE             |         |     1 |     2 |            |          |                                           
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES |   100K|   195K|    66  (29)| 00:00:01 |                                           
+---------------------------------------------------------------------------------------                                           
+                                                                                                                                  
+Predicate Information (identified by operation id):                                                                               
+---------------------------------------------------                                                                               
+                                                                                                                                  
+   2 - inmemory("VAL"='X')                                                                                                        
+       filter("VAL"='X')                                                                                                          
+                                                                                                                                  
+Note                                                                                                                              
+-----                                                                                                                             
+   - SQL plan baseline SQL_PLAN_7469nmnn7nsu3c69cec1f used for this statement                                                     
+                                                                                                                                  
+
+24 rows selected.
+
+SQL> @base
+SQL> set linesize 150
+SQL> column sql_text format a100
+SQL> SELECT sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPM%';
+
+SQL_TEXT                                                                                             ENA ACC                                          
+---------------------------------------------------------------------------------------------------- --- ---                                          
+SELECT /* SPM */ COUNT(*)                                                                            YES YES                                          
+FROM   mysales                                                                                                                                        
+WHERE  val = 'X'                                                                                                                                      
+                                                                                                                                                      
+
+SQL> exit

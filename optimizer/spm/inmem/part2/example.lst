@@ -1,0 +1,974 @@
+SQL> -- I created the test schema by running "tab.sql"
+SQL> set echo on
+SQL> -- Clean up. WARNING - this will delete your SQL Plan Baselines
+SQL> @drop_base
+SQL> DECLARE
+  2    l_plans_dropped	PLS_INTEGER;
+  3  BEGIN
+  4  
+  5    FOR REC IN (SELECT DISTINCT SQL_HANDLE FROM DBA_SQL_PLAN_BASELINES)
+  6    LOOP
+  7  	   L_PLANS_DROPPED := DBMS_SPM.DROP_SQL_PLAN_BASELINE (
+  8  	     sql_handle => rec.sql_handle,
+  9  	     PLAN_NAME	=> NULL);
+ 10    END LOOP;
+ 11  
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> @noin
+SQL> ALTER TABLE mysales NO INMEMORY;
+
+Table altered.
+
+SQL> ALTER SYSTEM flush shared_pool;
+
+System altered.
+
+SQL> @flush
+SQL> alter system flush shared_pool;
+
+System altered.
+
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                           
+---------- ----------                                                           
+   2000000 2.0000E+12                                                           
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 0                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                                                                            
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+|   0 | SELECT STATEMENT   |         |       |       |  2475 (100)|          |                                                                                                                                                                            
+|   1 |  SORT AGGREGATE    |         |     1 |    17 |            |          |                                                                                                                                                                            
+|*  2 |   TABLE ACCESS FULL| MYSALES |  2000K|    32M|  2475   (1)| 00:00:01 |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+
+19 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 0                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                                                                            
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+|   0 | SELECT STATEMENT   |         |       |       |  2475 (100)|          |                                                                                                                                                                            
+|   1 |  SORT AGGREGATE    |         |     1 |    17 |            |          |                                                                                                                                                                            
+|*  2 |   TABLE ACCESS FULL| MYSALES |  2000K|    32M|  2475   (1)| 00:00:01 |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+
+19 rows selected.
+
+SQL> --
+SQL> -- Both queries ran with FULL table scan, but run again
+SQL> -- and automatic reoptimization will adjust the plans.
+SQL> -- Bear in mind you might need to adjust the table row counts
+SQL> -- on your system to get the same behavior because
+SQL> -- the choices the Optimizer makes are affected by how
+SQL> -- a particular system is configured.
+SQL> --
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+   2000000 2.0000E+12                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 1                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                                                                            
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+|   0 | SELECT STATEMENT   |         |       |       |  2475 (100)|          |                                                                                                                                                                            
+|   1 |  SORT AGGREGATE    |         |     1 |    17 |            |          |                                                                                                                                                                            
+|*  2 |   TABLE ACCESS FULL| MYSALES |  2000K|    32M|  2475   (1)| 00:00:01 |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+
+19 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 2                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 1266559460                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------------------------                                                                                                                                                          
+| Id  | Operation                            | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                          
+------------------------------------------------------------------------------------------------                                                                                                                                                          
+|   0 | SELECT STATEMENT                     |         |       |       |   133 (100)|          |                                                                                                                                                          
+|   1 |  SORT AGGREGATE                      |         |     1 |    17 |            |          |                                                                                                                                                          
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| MYSALES | 20001 |   332K|   133   (0)| 00:00:01 |                                                                                                                                                          
+|*  3 |    INDEX RANGE SCAN                  | SI      | 20001 |       |    44   (0)| 00:00:01 |                                                                                                                                                          
+------------------------------------------------------------------------------------------------                                                                                                                                                          
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   3 - access("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+
+20 rows selected.
+
+SQL> --
+SQL> -- In my case, I get a FULL table scan when matching large
+SQL> -- numbers of rows and an INDEX lookup when matching a smaller
+SQL> -- number of rows. Makes sense.
+SQL> --
+SQL> -- Capture the SQL Plan Baselines from the cursor cache...
+SQL> --
+SQL> @load
+SQL> DECLARE
+  2  my_plans pls_integer;
+  3  BEGIN
+  4    my_plans := DBMS_SPM.LOAD_PLANS_FROM_CURSOR_CACHE(
+  5      attribute_name => 'sql_text',
+  6      attribute_value => '%SPM%');
+  7  END;
+  8  /
+
+PL/SQL procedure successfully completed.
+
+SQL> @base
+SQL> set linesize 150
+SQL> column sql_text format a50
+SQL> column plan_name format a35
+SQL> column sql_handle format a20
+SQL> SELECT sql_handle,plan_name,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPM%';
+
+SQL_HANDLE           PLAN_NAME                           SQL_TEXT                                           ENA ACC                                   
+-------------------- ----------------------------------- -------------------------------------------------- --- ---                                   
+SQL_91b329fce9bcaf50 SQL_PLAN_93ct9zmnvtbuh5d8bf80c      select /* SPM */ count(*),sum(val) from mysales wh YES YES                                   
+                                                         ere sale_type = :val                                                                         
+                                                                                                                                                      
+SQL_91b329fce9bcaf50 SQL_PLAN_93ct9zmnvtbuhc69cec1f      select /* SPM */ count(*),sum(val) from mysales wh YES YES                                   
+                                                         ere sale_type = :val                                                                         
+                                                                                                                                                      
+SQL_9762cf9882f83bc0 SQL_PLAN_9fsqgm21ghfy065788c8b      SELECT PARAMETER_VALUE FROM SMB$CONFIG WHERE PARAM YES YES                                   
+                                                         ETER_NAME = 'SPM_TRACING'                                                                    
+                                                                                                                                                      
+
+SQL> --
+SQL> -- There are two plans for the "SPM" test query
+SQL> --@show
+SQL> 
+SQL> @show
+SQL> SELECT PLAN_TABLE_OUTPUT
+  2  FROM
+  3         TABLE(
+  4           DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE('&sql_handle','&plan_name','basic')
+  5         ) t
+  6  /
+Enter value for sql_handle: SQL_91b329fce9bcaf50
+Enter value for plan_name: SQL_PLAN_93ct9zmnvtbuh5d8bf80c
+old   4:          DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE('&sql_handle','&plan_name','basic')
+new   4:          DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE('SQL_91b329fce9bcaf50','SQL_PLAN_93ct9zmnvtbuh5d8bf80c','basic')
+
+PLAN_TABLE_OUTPUT                                                                                                                                     
+------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                                      
+--------------------------------------------------------------------------------                                                                      
+SQL handle: SQL_91b329fce9bcaf50                                                                                                                      
+SQL text: select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                      
+--------------------------------------------------------------------------------                                                                      
+                                                                                                                                                      
+--------------------------------------------------------------------------------                                                                      
+Plan name: SQL_PLAN_93ct9zmnvtbuh5d8bf80c         Plan id: 1569454092                                                                                 
+Enabled: YES     Fixed: NO      Accepted: YES     Origin: MANUAL-LOAD                                                                                 
+Plan rows: From dictionary                                                                                                                            
+--------------------------------------------------------------------------------                                                                      
+                                                                                                                                                      
+Plan hash value: 1266559460                                                                                                                           
+                                                                                                                                                      
+--------------------------------------------------------                                                                                              
+| Id  | Operation                            | Name    |                                                                                              
+--------------------------------------------------------                                                                                              
+|   0 | SELECT STATEMENT                     |         |                                                                                              
+|   1 |  SORT AGGREGATE                      |         |                                                                                              
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| MYSALES |                                                                                              
+|   3 |    INDEX RANGE SCAN                  | SI      |                                                                                              
+--------------------------------------------------------                                                                                              
+
+22 rows selected.
+
+SQL> --This one is the INDEX lookup
+SQL> @show
+SQL> SELECT PLAN_TABLE_OUTPUT
+  2  FROM
+  3         TABLE(
+  4           DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE('&sql_handle','&plan_name','basic')
+  5         ) t
+  6  /
+Enter value for sql_handle: SQL_91b329fce9bcaf50
+Enter value for plan_name: SQL_PLAN_93ct9zmnvtbuhc69cec1f
+old   4:          DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE('&sql_handle','&plan_name','basic')
+new   4:          DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE('SQL_91b329fce9bcaf50','SQL_PLAN_93ct9zmnvtbuhc69cec1f','basic')
+
+PLAN_TABLE_OUTPUT                                                                                                                                     
+------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                                      
+--------------------------------------------------------------------------------                                                                      
+SQL handle: SQL_91b329fce9bcaf50                                                                                                                      
+SQL text: select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                      
+--------------------------------------------------------------------------------                                                                      
+                                                                                                                                                      
+--------------------------------------------------------------------------------                                                                      
+Plan name: SQL_PLAN_93ct9zmnvtbuhc69cec1f         Plan id: 3332172831                                                                                 
+Enabled: YES     Fixed: NO      Accepted: YES     Origin: MANUAL-LOAD                                                                                 
+Plan rows: From dictionary                                                                                                                            
+--------------------------------------------------------------------------------                                                                      
+                                                                                                                                                      
+Plan hash value: 3292460164                                                                                                                           
+                                                                                                                                                      
+--------------------------------------                                                                                                                
+| Id  | Operation          | Name    |                                                                                                                
+--------------------------------------                                                                                                                
+|   0 | SELECT STATEMENT   |         |                                                                                                                
+|   1 |  SORT AGGREGATE    |         |                                                                                                                
+|   2 |   TABLE ACCESS FULL| MYSALES |                                                                                                                
+--------------------------------------                                                                                                                
+
+21 rows selected.
+
+SQL> -- This one is the FULL table scan
+SQL> --
+SQL> -- Run the queries again...
+SQL> --
+SQL> 
+SQL> 
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                 
+---------- ----------                                                                                                                                 
+   2000000 2.0000E+12                                                                                                                                 
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 1                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                                                                            
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+|   0 | SELECT STATEMENT   |         |       |       |  2475 (100)|          |                                                                                                                                                                            
+|   1 |  SORT AGGREGATE    |         |     1 |    17 |            |          |                                                                                                                                                                            
+|*  2 |   TABLE ACCESS FULL| MYSALES |  2000K|    32M|  2475   (1)| 00:00:01 |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+23 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 1                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                                                                            
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+|   0 | SELECT STATEMENT   |         |       |       |  2475 (100)|          |                                                                                                                                                                            
+|   1 |  SORT AGGREGATE    |         |     1 |    17 |            |          |                                                                                                                                                                            
+|*  2 |   TABLE ACCESS FULL| MYSALES |  2000K|    32M|  2475   (1)| 00:00:01 |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+23 rows selected.
+
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+   2000000 2.0000E+12                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 2                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                                                                            
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+|   0 | SELECT STATEMENT   |         |       |       |  2475 (100)|          |                                                                                                                                                                            
+|   1 |  SORT AGGREGATE    |         |     1 |    17 |            |          |                                                                                                                                                                            
+|*  2 |   TABLE ACCESS FULL| MYSALES |  2000K|    32M|  2475   (1)| 00:00:01 |                                                                                                                                                                            
+------------------------------------------------------------------------------                                                                                                                                                                            
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+23 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 3                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 1266559460                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+------------------------------------------------------------------------------------------------                                                                                                                                                          
+| Id  | Operation                            | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                          
+------------------------------------------------------------------------------------------------                                                                                                                                                          
+|   0 | SELECT STATEMENT                     |         |       |       |   133 (100)|          |                                                                                                                                                          
+|   1 |  SORT AGGREGATE                      |         |     1 |    17 |            |          |                                                                                                                                                          
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| MYSALES | 20001 |   332K|   133   (0)| 00:00:01 |                                                                                                                                                          
+|*  3 |    INDEX RANGE SCAN                  | SI      | 20001 |       |    44   (0)| 00:00:01 |                                                                                                                                                          
+------------------------------------------------------------------------------------------------                                                                                                                                                          
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   3 - access("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuh5d8bf80c used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> --
+SQL> -- We are using the same plans and we are now
+SQL> -- using SQL Plan Baseline.
+SQL> --
+SQL> --
+SQL> -- Populate the In-Memory column store and run the query a few
+SQL> -- more times.
+SQL> --
+SQL> @in
+SQL> ALTER TABLE mysales INMEMORY;
+
+Table altered.
+
+SQL> ALTER SYSTEM FLUSH shared_pool;
+
+System altered.
+
+SQL> --
+SQL> -- Populate the In-Memory column store...
+SQL> --
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+   2000000 2.0000E+12                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 0                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   106 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES |  2000K|    32M|   106  (14)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 0                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   106 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES |  2000K|    32M|   106  (14)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> --
+SQL> -- It's worth waiting for a few moments here to
+SQL> -- wait for the store to populate - then re-run
+SQL> --
+SQL> @flush
+SQL> alter system flush shared_pool;
+
+System altered.
+
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+   2000000 2.0000E+12                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 0                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   115 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES |  2000K|    32M|   115  (20)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 0                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   115 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES |  2000K|    32M|   115  (20)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+   2000000 2.0000E+12                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 1                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   115 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES |  2000K|    32M|   115  (20)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 2                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   115 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES | 20001 |   332K|   115  (20)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> @t1
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=-1
+val=-1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+   2000000 2.0000E+12                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 2                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   115 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES | 20001 |   332K|   115  (20)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> prompt val=1
+val=1
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type = :val;
+
+  COUNT(*)   SUM(VAL)                                                                                                                                                                                                                                     
+---------- ----------                                                                                                                                                                                                                                     
+     20001  200010001                                                                                                                                                                                                                                     
+
+SQL> @plan
+SQL> set tab off
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d3u63rk540w0r, child number 2                                                                                                                                                                                                                     
+-------------------------------------                                                                                                                                                                                                                     
+select /* SPM */ count(*),sum(val) from mysales where sale_type = :val                                                                                                                                                                                    
+                                                                                                                                                                                                                                                          
+Plan hash value: 3292460164                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                          
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+|   0 | SELECT STATEMENT            |         |       |       |   115 (100)|          |                                                                                                                                                                   
+|   1 |  SORT AGGREGATE             |         |     1 |    17 |            |          |                                                                                                                                                                   
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES | 20001 |   332K|   115  (20)| 00:00:01 |                                                                                                                                                                   
+---------------------------------------------------------------------------------------                                                                                                                                                                   
+                                                                                                                                                                                                                                                          
+Predicate Information (identified by operation id):                                                                                                                                                                                                       
+---------------------------------------------------                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
+   2 - inmemory("SALE_TYPE"=:VAL)                                                                                                                                                                                                                         
+       filter("SALE_TYPE"=:VAL)                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                          
+Note                                                                                                                                                                                                                                                      
+-----                                                                                                                                                                                                                                                     
+   - SQL plan baseline SQL_PLAN_93ct9zmnvtbuhc69cec1f used for this statement                                                                                                                                                                             
+                                                                                                                                                                                                                                                          
+
+24 rows selected.
+
+SQL> --
+SQL> -- Both plans have now settled to INMEMORY FULL and
+SQL> -- both are using one of our original SQL Plan baselines.
+SQL> --
+SQL> exit

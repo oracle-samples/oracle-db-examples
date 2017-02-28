@@ -1,0 +1,523 @@
+SQL> @10_zm_maint
+SQL> set autotrace off
+SQL> column plan_table_output format a150
+SQL> set trims on
+SQL> 
+SQL> PROMPT Connect to the Attribute Clusters/Zone Map Schema
+Connect to the Attribute Clusters/Zone Map Schema
+SQL> connect aczm12c/oracle_4U
+Connected.
+SQL> 
+SQL> --
+SQL> PROMPT Delete operations do not invalidate zones or partitions
+Delete operations do not invalidate zones or partitions
+SQL> PROMPT because they will not invalidate MIN/MAX value ranges.
+because they will not invalidate MIN/MAX value ranges.
+SQL> 
+SQL> --
+SQL> DELETE FROM sales_p WHERE order_id = 10
+  2  /
+
+0 rows deleted.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> PROMPT Observe that the state remains "0" for all zones and partitions
+Observe that the state remains "0" for all zones and partitions
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    zone_level$,
+  3    zone_state$ ,
+  4    zone_rows$
+  5  FROM ZMAP$_SALES_P;
+
+  ZONE_ID$ ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+---------- ----------- ----------- ----------
+     91557           1           0    1452090
+3.8385E+11           0           0      62699
+3.8385E+11           0           0      62740
+3.8385E+11           0           0     125392
+3.8385E+11           0           0      62834
+3.8402E+11           0           0     141469
+3.8402E+11           0           0     188750
+3.8402E+11           0           0       5677
+3.8402E+11           0           0     194043
+3.8402E+11           0           0     204359
+3.8402E+11           0           0     125740
+3.8402E+11           0           0     188627
+3.8385E+11           0           0       1727
+3.8402E+11           0           0      25707
+3.8385E+11           0           0      62676
+3.8402E+11           0           0     188633
+3.8385E+11           0           0      47011
+3.8385E+11           0           0      14120
+3.8385E+11           0           0      13766
+3.8385E+11           0           0      47036
+3.8402E+11           0           0     189085
+     91518           1           0     500001
+
+22 rows selected.
+
+SQL> 
+SQL> PROMPT The zone map is not made stale...
+The zone map is not made stale...
+SQL> 
+SQL> SELECT stale
+  2  FROM   user_zonemaps
+  3  WHERE  zonemap_name = 'ZMAP$_SALES_P'
+  4  /
+
+STALE
+-------
+NO
+
+1 row selected.
+
+SQL> 
+SQL> --
+SQL> PROMPT Conventional path insert will invalidate
+Conventional path insert will invalidate
+SQL> PROMPT relevant zones and partitions unless
+relevant zones and partitions unless
+SQL> PROMPT the zone map is set to refresh on commit.
+the zone map is set to refresh on commit.
+SQL> --
+SQL> INSERT INTO sales_p
+  2  SELECT 10,1,TO_DATE('01-JAN-2000','DD-MON-YYYY'),TO_DATE('02-JAN-2000','DD-MON-YYYY'),'JANE',23,20,2,67,'WINSTON SALEM'
+  3  FROM   dual
+  4  /
+
+1 row created.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> PROMPT Individual zones are now invalidated...
+Individual zones are now invalidated...
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    zone_level$,
+  3    zone_state$ ,
+  4    zone_rows$
+  5  FROM ZMAP$_SALES_P;
+
+  ZONE_ID$ ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+---------- ----------- ----------- ----------
+     91557           1           1    1452090
+3.8385E+11           0           0      62699
+3.8385E+11           0           0      62740
+3.8385E+11           0           0     125392
+3.8385E+11           0           0      62834
+3.8402E+11           0           0     141469
+3.8402E+11           0           0     188750
+3.8402E+11           0           0       5677
+3.8402E+11           0           1     194043
+3.8402E+11           0           0     204359
+3.8402E+11           0           0     125740
+3.8402E+11           0           0     188627
+3.8385E+11           0           0       1727
+3.8402E+11           0           0      25707
+3.8385E+11           0           0      62676
+3.8402E+11           0           0     188633
+3.8385E+11           0           0      47011
+3.8385E+11           0           0      14120
+3.8385E+11           0           0      13766
+3.8385E+11           0           0      47036
+3.8402E+11           0           0     189085
+     91518           1           0     500001
+
+22 rows selected.
+
+SQL> 
+SQL> PROMPT But the zone map is not stale...
+But the zone map is not stale...
+SQL> 
+SQL> SELECT stale
+  2  FROM   user_zonemaps
+  3  WHERE  zonemap_name = 'ZMAP$_SALES_P'
+  4  /
+
+STALE
+-------
+NO
+
+1 row selected.
+
+SQL> 
+SQL> PROMPT If the zone map itself is not stale,
+If the zone map itself is not stale,
+SQL> PROMPT a fast refresh is possible.
+a fast refresh is possible.
+SQL> PROMPT Only stale zones are scanned to refresh
+Only stale zones are scanned to refresh
+SQL> PROMPT the zone map.
+the zone map.
+SQL> 
+SQL> EXECUTE dbms_mview.refresh('ZMAP$_SALES_P', 'f');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT The zones are valid (0) again...
+The zones are valid (0) again...
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    zone_level$,
+  3    zone_state$ ,
+  4    zone_rows$
+  5  FROM ZMAP$_SALES_P;
+
+  ZONE_ID$ ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+---------- ----------- ----------- ----------
+     91557           1           0    1452091
+3.8385E+11           0           0      62699
+3.8385E+11           0           0      62740
+3.8385E+11           0           0     125392
+3.8385E+11           0           0      62834
+3.8402E+11           0           0     141469
+3.8402E+11           0           0     188750
+3.8402E+11           0           0       5677
+3.8402E+11           0           0     194044
+3.8402E+11           0           0     204359
+3.8402E+11           0           0     125740
+3.8402E+11           0           0     188627
+3.8385E+11           0           0       1727
+3.8402E+11           0           0      25707
+3.8385E+11           0           0      62676
+3.8402E+11           0           0     188633
+3.8385E+11           0           0      47011
+3.8385E+11           0           0      14120
+3.8385E+11           0           0      13766
+3.8385E+11           0           0      47036
+3.8402E+11           0           0     189085
+     91518           1           0     500001
+
+22 rows selected.
+
+SQL> 
+SQL> PROMPT Remove the "test" row. Zones will remain valid.
+Remove the "test" row. Zones will remain valid.
+SQL> 
+SQL> DELETE FROM sales_p WHERE order_id = 10
+  2  /
+
+1 row deleted.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> PROMPT Direct path operations will maintain the zone map
+Direct path operations will maintain the zone map
+SQL> 
+SQL> INSERT /*+ APPEND */ INTO sales_p
+  2  SELECT 10,1,TO_DATE('01-JAN-2000','DD-MON-YYYY'),TO_DATE('02-JAN-2000','DD-MON-YYYY'),'JANE',23,20,2,67,'WINSTON SALEM'
+  3  FROM   dual
+  4  /
+
+1 row created.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> PROMPT All zones still valid...
+All zones still valid...
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    zone_level$,
+  3    zone_state$ ,
+  4    zone_rows$
+  5  FROM ZMAP$_SALES_P;
+
+  ZONE_ID$ ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+---------- ----------- ----------- ----------
+     91557           1           0    1452091
+3.8385E+11           0           0      62699
+3.8385E+11           0           0      62740
+3.8385E+11           0           0     125392
+3.8385E+11           0           0      62834
+3.8402E+11           0           0     141469
+3.8402E+11           0           0     188750
+3.8402E+11           0           0       5677
+3.8402E+11           0           0     194044
+3.8402E+11           0           0     204359
+3.8402E+11           0           0     125740
+3.8402E+11           0           0     188627
+3.8385E+11           0           0       1727
+3.8402E+11           0           0      25707
+3.8385E+11           0           0      62676
+3.8402E+11           0           0     188633
+3.8385E+11           0           0      47011
+3.8385E+11           0           0      14120
+3.8385E+11           0           0      13766
+3.8385E+11           0           0      47036
+3.8402E+11           0           0     189085
+     91518           1           0     500001
+
+22 rows selected.
+
+SQL> 
+SQL> --
+SQL> PROMPT Updates to non-zone map columns (and columns not
+Updates to non-zone map columns (and columns not
+SQL> PROMPT used to join with dimension tables)
+used to join with dimension tables)
+SQL> PROMPT do not invalidate the zones or partitions
+do not invalidate the zones or partitions
+SQL> PROMPT (unless there is row movement when a
+(unless there is row movement when a
+SQL> PROMPT  partition key is updated)
+partition key is updated)
+SQL> --
+SQL> UPDATE sales_p SET amount = amount + 100
+  2  WHERE location_id < 20
+  3  /
+
+11609 rows updated.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> PROMPT All zones are still valid...
+All zones are still valid...
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    zone_level$,
+  3    zone_state$ ,
+  4    zone_rows$
+  5  FROM ZMAP$_SALES_P;
+
+  ZONE_ID$ ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+---------- ----------- ----------- ----------
+     91557           1           0    1452091
+3.8385E+11           0           0      62699
+3.8385E+11           0           0      62740
+3.8385E+11           0           0     125392
+3.8385E+11           0           0      62834
+3.8402E+11           0           0     141469
+3.8402E+11           0           0     188750
+3.8402E+11           0           0       5677
+3.8402E+11           0           0     194044
+3.8402E+11           0           0     204359
+3.8402E+11           0           0     125740
+3.8402E+11           0           0     188627
+3.8385E+11           0           0       1727
+3.8402E+11           0           0      25707
+3.8385E+11           0           0      62676
+3.8402E+11           0           0     188633
+3.8385E+11           0           0      47011
+3.8385E+11           0           0      14120
+3.8385E+11           0           0      13766
+3.8385E+11           0           0      47036
+3.8402E+11           0           0     189085
+     91518           1           0     500001
+
+22 rows selected.
+
+SQL> 
+SQL> PROMPT Remove the "test" row. Zones will remain valid.
+Remove the "test" row. Zones will remain valid.
+SQL> 
+SQL> DELETE FROM sales_p WHERE order_id = 10
+  2  /
+
+1 row deleted.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> PROMPT A conventional path insert will invalidate zones...
+A conventional path insert will invalidate zones...
+SQL> 
+SQL> INSERT INTO sales_p
+  2  SELECT 10,1,TO_DATE('01-JAN-2000','DD-MON-YYYY'),TO_DATE('02-JAN-2000','DD-MON-YYYY'),'JANE',23,20,2,67,'WINSTON SALEM'
+  3  FROM   dual
+  4  /
+
+1 row created.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> PROMPT Note invalid zones (marked with "1")...
+Note invalid zones (marked with "1")...
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    zone_level$,
+  3    zone_state$ ,
+  4    zone_rows$
+  5  FROM ZMAP$_SALES_P;
+
+  ZONE_ID$ ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+---------- ----------- ----------- ----------
+     91557           1           1    1452091
+3.8385E+11           0           0      62699
+3.8385E+11           0           0      62740
+3.8385E+11           0           0     125392
+3.8385E+11           0           0      62834
+3.8402E+11           0           0     141469
+3.8402E+11           0           0     188750
+3.8402E+11           0           0       5677
+3.8402E+11           0           1     194044
+3.8402E+11           0           0     204359
+3.8402E+11           0           0     125740
+3.8402E+11           0           0     188627
+3.8385E+11           0           0       1727
+3.8402E+11           0           0      25707
+3.8385E+11           0           0      62676
+3.8402E+11           0           0     188633
+3.8385E+11           0           0      47011
+3.8385E+11           0           0      14120
+3.8385E+11           0           0      13766
+3.8385E+11           0           0      47036
+3.8402E+11           0           0     189085
+     91518           1           0     500001
+
+22 rows selected.
+
+SQL> 
+SQL> PROMPT Even if some zones are stale,
+Even if some zones are stale,
+SQL> PROMPT queries will continue to use the zone map where possible.
+queries will continue to use the zone map where possible.
+SQL> PROMPT The primary effect of zones being markes as stale
+The primary effect of zones being markes as stale
+SQL> PROMPT is that these zones cannot be skipped: stale zones
+is that these zones cannot be skipped: stale zones
+SQL> PROMPT and partitions will always be scanned.
+and partitions will always be scanned.
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_p
+  3  WHERE  delivered  between TO_DATE('18-SEP-2000', 'DD-MON-YY') and TO_DATE('19-SEP-2000', 'DD-MON-YY')
+  4  /
+
+SUM(AMOUNT)
+-----------
+ 2805712.59
+
+1 row selected.
+
+SQL> 
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  5y6k8fzgpdda0, child number 0
+-------------------------------------
+SELECT SUM(amount) FROM   sales_p WHERE  delivered  between
+TO_DATE('18-SEP-2000', 'DD-MON-YY') and TO_DATE('19-SEP-2000',
+'DD-MON-YY')
+
+Plan hash value: 3839357120
+
+--------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                                | Name    | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |
+--------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                         |         |       |       |   129 (100)|          |       |       |
+|   1 |  SORT AGGREGATE                          |         |     1 |    13 |            |          |       |       |
+|   2 |   PARTITION RANGE ITERATOR               |         |  2443 | 31759 |   129  (14)| 00:00:01 |KEY(ZM)|KEY(ZM)|
+|*  3 |    TABLE ACCESS STORAGE FULL WITH ZONEMAP| SALES_P |  2443 | 31759 |   129  (14)| 00:00:01 |KEY(ZM)|KEY(ZM)|
+--------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - storage(("DELIVERED"<=TO_DATE(' 2000-09-19 00:00:00', 'syyyy-mm-dd hh24:mi:ss') AND
+              "DELIVERED">=TO_DATE(' 2000-09-18 00:00:00', 'syyyy-mm-dd hh24:mi:ss')))
+       filter((SYS_ZMAP_FILTER('/* ZM_PRUNING */ SELECT "ZONE_ID$", CASE WHEN BITAND(zm."ZONE_STATE$",1)=1
+              THEN 1 ELSE CASE WHEN (zm."MAX_4_DELIVERED" < :1 OR zm."MIN_4_DELIVERED" > :2) THEN 3 ELSE 2 END END FROM
+              "ACZM12C"."ZMAP$_SALES_P" zm WHERE zm."ZONE_LEVEL$"=0 ORDER BY
+              zm."ZONE_ID$"',SYS_OP_ZONE_ID(ROWID),TO_DATE(' 2000-09-18 00:00:00', 'syyyy-mm-dd hh24:mi:ss'),TO_DATE('
+              2000-09-19 00:00:00', 'syyyy-mm-dd hh24:mi:ss'))<3 AND "DELIVERED"<=TO_DATE(' 2000-09-19 00:00:00',
+              'syyyy-mm-dd hh24:mi:ss') AND "DELIVERED">=TO_DATE(' 2000-09-18 00:00:00', 'syyyy-mm-dd hh24:mi:ss')))
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=7)
+
+
+33 rows selected.
+
+SQL> 
+SQL> PROMPT Data movement can maintain zone maps
+Data movement can maintain zone maps
+SQL> PROMPT and attribute clusters.
+and attribute clusters.
+SQL> 
+SQL> ALTER TABLE sales_p MOVE PARTITION p1
+  2  /
+
+Table altered.
+
+SQL> 
+SQL> PROMPT All zones are valid (0)...
+All zones are valid (0)...
+SQL> 
+SQL> SELECT zone_id$ ,
+  2    zone_level$,
+  3    zone_state$ ,
+  4    zone_rows$
+  5  FROM ZMAP$_SALES_P;
+
+  ZONE_ID$ ZONE_LEVEL$ ZONE_STATE$ ZONE_ROWS$
+---------- ----------- ----------- ----------
+     91558           1           0    1452091
+3.8385E+11           0           0      62699
+3.8385E+11           0           0      62740
+3.8385E+11           0           0     125392
+3.8385E+11           0           0      62834
+3.8385E+11           0           0       1727
+3.8385E+11           0           0      62676
+3.8385E+11           0           0      47011
+3.8385E+11           0           0      14120
+3.8385E+11           0           0      13766
+3.8385E+11           0           0      47036
+     91518           1           0     500001
+3.8402E+11           0           0     251534
+3.8402E+11           0           0       7644
+3.8402E+11           0           0     228075
+3.8402E+11           0           0       5410
+3.8402E+11           0           0     204327
+3.8402E+11           0           0     251504
+3.8402E+11           0           0     251620
+3.8402E+11           0           0     251977
+
+20 rows selected.
+
+SQL> 
+SQL> PROMPT Remove the "test" row. Zones will remain valid.
+Remove the "test" row. Zones will remain valid.
+SQL> 
+SQL> DELETE FROM sales_p WHERE order_id = 10
+  2  /
+
+1 row deleted.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> exit

@@ -1,0 +1,110 @@
+SQL> 
+SQL> --
+SQL> -- This will ensure that we are not using AutoDOP
+SQL> -- Auto DOP is not a "problem", but using manual
+SQL> -- DOP will mean that the script will work
+SQL> -- as intended in this test case.
+SQL> --
+SQL> alter session set parallel_degree_policy = 'MANUAL';
+
+Session altered.
+
+Elapsed: 00:00:00.00
+SQL> --
+SQL> -- Enable parallel DML so that the write into the
+SQL> -- staging table will be in parallel for maximum
+SQL> -- performance.
+SQL> --
+SQL> alter session enable parallel dml;
+
+Session altered.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> --
+SQL> -- Read the data files via the gzip external table
+SQL> -- and insert the rows into the staging table.
+SQL> -- We can read the gzip files at DOP 2 because there are
+SQL> -- two files - we can't read just part of a gzip file so if we
+SQL> -- want to read at DOP 4, then we will need 4 gzip files.
+SQL> --
+SQL> INSERT /*+ APPEND PARALLEL(itab,2) */ INTO sales_stage itab
+  2  SELECT /*+ PARALLEL(tab,2) */ *
+  3  FROM   salesz_ext tab
+  4  /
+
+2000 rows created.
+
+Elapsed: 00:00:00.07
+SQL> 
+SQL> SELECT *
+  2  FROM   table(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  4z4mu1yt280b3, child number 0
+-------------------------------------
+INSERT /*+ APPEND PARALLEL(itab,2) */ INTO sales_stage itab SELECT /*+
+PARALLEL(tab,2) */ * FROM   salesz_ext tab
+
+Plan hash value: 2329907319
+
+------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                          | Name       | Rows  | Bytes | Cost (%CPU)| Time     |    TQ  |IN-OUT| PQ Distrib |
+------------------------------------------------------------------------------------------------------------------------------
+|   0 | INSERT STATEMENT                   |            |       |       |   393 (100)|          |        |      |            |
+|   1 |  PX COORDINATOR                    |            |       |       |            |          |        |      |            |
+|   2 |   PX SEND QC (RANDOM)              | :TQ10000   |   204K|    22M|   393   (5)| 00:00:01 |  Q1,00 | P->S | QC (RAND)  |
+|   3 |    LOAD AS SELECT (HYBRID TSM/HWMB)|            |       |       |            |          |  Q1,00 | PCWP |            |
+|   4 |     PX BLOCK ITERATOR              |            |   204K|    22M|   393   (5)| 00:00:01 |  Q1,00 | PCWC |            |
+|   5 |      EXTERNAL TABLE ACCESS FULL    | SALESZ_EXT |   204K|    22M|   393   (5)| 00:00:01 |  Q1,00 | PCWP |            |
+------------------------------------------------------------------------------------------------------------------------------
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_2g0y79q5bypbf8adf9077 used for this statement
+
+
+22 rows selected.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> --
+SQL> -- Expect to see an error here!
+SQL> -- This is because you will need to
+SQL> -- commit the data before it is read.
+SQL> --
+SQL> SELECT count(*)
+  2  FROM   sales_stage
+  3  /
+SELECT count(*)
+*
+ERROR at line 1:
+ORA-12838: cannot read/modify an object after modifying it in parallel
+
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> --
+SQL> -- Commit the transaction
+SQL> --
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> --
+SQL> -- Now you can read the loaded data
+SQL> --
+SQL> SELECT count(*)
+  2  FROM   sales_stage
+  3  /
+
+  COUNT(*)
+----------
+      4000
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> spool off

@@ -1,0 +1,178 @@
+SQL> 
+SQL> DROP TABLE sales_dl;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE sales_dl (sale_id NUMBER(10), customer_id NUMBER(10));
+
+Table created.
+
+SQL> 
+SQL> DECLARE
+  2     i NUMBER(10);
+  3  BEGIN
+  4     FOR i IN 1..10
+  5     LOOP
+  6     INSERT INTO sales_dl
+  7        SELECT ROWNUM, MOD(ROWNUM,1000)
+  8        FROM   dual
+  9        CONNECT BY LEVEL <= 100000;
+ 10        COMMIT;
+ 11     END LOOP;
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> EXEC dbms_stats.gather_table_stats(ownname=>NULL, tabname=>'SALES_DL');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> alter table sales_dl parallel 4;
+
+Table altered.
+
+SQL> 
+SQL> alter session set parallel_force_local = FALSE;
+
+Session altered.
+
+SQL> alter session set parallel_degree_policy = 'MANUAL';
+
+Session altered.
+
+SQL> alter session enable parallel dml;
+
+Session altered.
+
+SQL> alter session enable parallel ddl;
+
+Session altered.
+
+SQL> 
+SQL> drop table sales_p1;
+
+Table dropped.
+
+SQL> drop table sales_p2;
+
+Table dropped.
+
+SQL> 
+SQL> --
+SQL> -- TSM PCTAS
+SQL> --
+SQL> create table sales_p1
+  2  partition by hash (sale_id)
+  3  partitions 64
+  4  parallel 4
+  5  as select * from sales_dl
+  6  /
+
+Table created.
+
+SQL> 
+SQL> select * from table(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2bptnfjagyuzy, child number 0
+-------------------------------------
+create table sales_p1 partition by hash (sale_id) partitions 64
+parallel 4 as select * from sales_dl
+
+Plan hash value: 1354270924
+
+-------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                             | Name     | Rows  | Bytes | Cost (%CPU)| Time     |    TQ  |IN-OUT| PQ Distrib |
+-------------------------------------------------------------------------------------------------------------------------------
+|   0 | CREATE TABLE STATEMENT                |          |       |       |  5494 (100)|          |        |      |            |
+|   1 |  PX COORDINATOR                       |          |       |       |            |          |        |      |            |
+|   2 |   PX SEND QC (RANDOM)                 | :TQ10001 |  1000K|  8789K|   153   (2)| 00:00:01 |  Q1,01 | P->S | QC (RAND)  |
+|   3 |    LOAD AS SELECT (TEMP SEGMENT MERGE)|          |       |       |            |          |  Q1,01 | PCWP |            |
+|   4 |     OPTIMIZER STATISTICS GATHERING    |          |  1000K|  8789K|   153   (2)| 00:00:01 |  Q1,01 | PCWP |            |
+|   5 |      PX RECEIVE                       |          |  1000K|  8789K|   153   (2)| 00:00:01 |  Q1,01 | PCWP |            |
+|   6 |       PX SEND PARTITION (KEY)         | :TQ10000 |  1000K|  8789K|   153   (2)| 00:00:01 |  Q1,00 | P->P | PART (KEY) |
+|   7 |        PX BLOCK ITERATOR              |          |  1000K|  8789K|   153   (2)| 00:00:01 |  Q1,00 | PCWC |            |
+|*  8 |         TABLE ACCESS FULL             | SALES_DL |  1000K|  8789K|   153   (2)| 00:00:01 |  Q1,00 | PCWP |            |
+-------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   8 - access(:Z>=:Z AND :Z<=:Z)
+
+Note
+-----
+   - Degree of Parallelism is 4 because of table property
+
+
+30 rows selected.
+
+SQL> 
+SQL> create table sales_p2
+  2  partition by hash (sale_id)
+  3  partitions 64
+  4  parallel 4
+  5  as select * from sales_dl where 1=-1
+  6  /
+
+Table created.
+
+SQL> 
+SQL> --
+SQL> -- An equi-partition PIDL
+SQL> --
+SQL> insert /*+ append */
+  2  into sales_p2 t1
+  3  select * from sales_p1 t2;
+
+1000000 rows created.
+
+SQL> 
+SQL> select * from table(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  0nyyb1183mp3f, child number 0
+-------------------------------------
+insert /*+ append */ into sales_p2 t1 select * from sales_p1 t2
+
+Plan hash value: 1476682445
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                          | Name     | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |    TQ  |IN-OUT| PQ Distrib |
+--------------------------------------------------------------------------------------------------------------------------------------------
+|   0 | INSERT STATEMENT                   |          |       |       |   266 (100)|          |       |       |        |      |            |
+|   1 |  PX COORDINATOR                    |          |       |       |            |          |       |       |        |      |            |
+|   2 |   PX SEND QC (RANDOM)              | :TQ10000 |  1000K|  8789K|   266   (1)| 00:00:01 |       |       |  Q1,00 | P->S | QC (RAND)  |
+|   3 |    LOAD AS SELECT (EQUI-PARTITION) |          |       |       |            |          |       |       |  Q1,00 | PCWP |            |
+|   4 |     OPTIMIZER STATISTICS GATHERING |          |  1000K|  8789K|   266   (1)| 00:00:01 |       |       |  Q1,00 | PCWP |            |
+|   5 |      PX PARTITION HASH ALL         |          |  1000K|  8789K|   266   (1)| 00:00:01 |     1 |    64 |  Q1,00 | PCWC |            |
+|   6 |       TABLE ACCESS FULL            | SALES_P1 |  1000K|  8789K|   266   (1)| 00:00:01 |     1 |    64 |  Q1,00 | PCWP |            |
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Note
+-----
+   - Degree of Parallelism is 4 because of table property
+
+
+22 rows selected.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> @hwmb
+SQL> set linesize 260
+SQL> column PLAN_TABLE_OUTPUT format a200
+SQL> set pagesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set echo on
+SQL> spool hwmb

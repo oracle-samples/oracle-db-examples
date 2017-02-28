@@ -1,0 +1,91 @@
+SQL> @test1
+SQL> set timing  on
+SQL> set linesize 1000
+SQL> set pagesize 100
+SQL> set trims on
+SQL> 
+SQL> drop table t1 purge;
+
+Table dropped.
+
+Elapsed: 00:00:07.33
+SQL> 
+SQL> --
+SQL> -- This is our main application table
+SQL> --
+SQL> create table t1 (id number(10),num1 number(10), num2 number(10),txt1 varchar2(20), txt2 varchar2(20))
+  2  partition by range (num1)
+  3  interval (1) (
+  4   partition p1 values less than (1)
+  5  ,partition p2 values less than (2));
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> --
+SQL> -- The the interval-partitioned table will have a large number of partitions
+SQL> -- once the INSERT has completed. Tables with a large number of partitions
+SQL> -- have more synopsis data (especially for adaptive sampling), so
+SQL> -- differences in the resource cost of managing the two synopsis formats
+SQL> -- is easier to see.
+SQL> --
+SQL> insert /*+ APPEND */ into t1
+  2  select rownum, mod(rownum,512), mod(rownum,1000),'X'||mod(rownum,10000),'Y'||mod(rownum,5)
+  3  from   (select 1 from dual connect by level <=3000),
+  4  	    (select 1 from dual connect by level <=3000);
+
+9000000 rows created.
+
+Elapsed: 00:00:18.54
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.13
+SQL> 
+SQL> drop table exch purge;
+
+Table dropped.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> --
+SQL> -- This is a table we can use for partition exchange load
+SQL> --
+SQL> create table exch as select * from t1 where 1=-1;
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> insert /*+ APPEND */ into exch
+  2  select rownum,0,mod(rownum,10000),'X'||mod(rownum,100000),'Y'||mod(rownum,5)
+  3  from   (select 1 from dual connect by level <=1000),
+  4  	    (select 1 from dual connect by level <=1000);
+
+1000000 rows created.
+
+Elapsed: 00:00:01.31
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> --
+SQL> -- Enable incremental statistics
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'t1','incremental','true')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.set_table_prefs(null,'exch','incremental','true')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> spool off

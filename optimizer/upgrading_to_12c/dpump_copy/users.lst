@@ -1,0 +1,237 @@
+SQL> @users
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> drop user s1 cascade;
+
+User dropped.
+
+SQL> drop user s2 cascade;
+
+User dropped.
+
+SQL> 
+SQL> create user s1 identified by s1;
+
+User created.
+
+SQL> grant dba to s1;
+
+Grant succeeded.
+
+SQL> 
+SQL> create user s2 identified by s2;
+
+User created.
+
+SQL> grant dba to s2;
+
+Grant succeeded.
+
+SQL> 
+SQL> connect s1/s1
+Connected.
+SQL> create table t1 (id number(10),c1 varchar2(15),c2 varchar2(10),c3 varchar2(10));
+
+Table created.
+
+SQL> insert into t1 values (1,'X','X','A');
+
+1 row created.
+
+SQL> insert into t1 values (2,'Y','Y','B');
+
+1 row created.
+
+SQL> insert into t1 values (3,'Z','Z','C');
+
+1 row created.
+
+SQL> begin
+  2  	for i in 1..10000
+  3  	loop
+  4  	  insert into t1 values (4,'W'||i,'W'||i,'D');
+  5  	end loop;
+  6  end;
+  7  /
+
+PL/SQL procedure successfully completed.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> create index t1i on t1 (c1);
+
+Index created.
+
+SQL> --
+SQL> -- This query will generate column usage information for S1.T1
+SQL> -- so we should get a histogram when we gather stats with
+SQL> -- FOR ALL COLUMNS SIZE AUTO
+SQL> --
+SQL> select count(*) from t1 where c1 between 'W1' and 'W5';
+
+  COUNT(*)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+      4446                                                                                                                                                                                              
+
+SQL> --
+SQL> -- Create extended stats
+SQL> --
+SQL> select dbms_stats.create_extended_stats(user,'t1','(c1,c2)') from dual;
+
+DBMS_STATS.CREATE_EXTENDED_STATS(USER,'T1','(C1,C2)')                                                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SYS_STUF3GLKIOP5F4B0BTTCFTMX0W                                                                                                                                                                          
+
+SQL> --
+SQL> -- Gather stats on S1.T1
+SQL> --
+SQL> exec dbms_stats.gather_table_stats(ownname=>null,tabname=>'t1',method_opt=>'for all columns size auto');
+
+PL/SQL procedure successfully completed.
+
+SQL> --
+SQL> -- Set a table preference to check that it is copied from one schema to another
+SQL> --
+SQL> select dbms_stats.get_prefs ('TABLE_CACHED_BLOCKS','s1','t1') from dual;
+
+DBMS_STATS.GET_PREFS('TABLE_CACHED_BLOCKS','S1','T1')                                                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1                                                                                                                                                                                                       
+
+SQL> exec dbms_stats.set_table_prefs ('s1','t1','TABLE_CACHED_BLOCKS',50)
+
+PL/SQL procedure successfully completed.
+
+SQL> select dbms_stats.get_prefs ('TABLE_CACHED_BLOCKS','s1','t1') from dual;
+
+DBMS_STATS.GET_PREFS('TABLE_CACHED_BLOCKS','S1','T1')                                                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+50                                                                                                                                                                                                      
+
+SQL> 
+SQL> connect s2/s2
+Connected.
+SQL> --
+SQL> -- Create S2.T1 with a slightly different number of rows
+SQL> --
+SQL> create table t1 (id number(10),c1 varchar2(15),c2 varchar2(10),c3 varchar2(10));
+
+Table created.
+
+SQL> insert into t1 values (1,'X','X','A');
+
+1 row created.
+
+SQL> insert into t1 values (2,'Y','Y','B');
+
+1 row created.
+
+SQL> insert into t1 values (3,'Z','Z','C');
+
+1 row created.
+
+SQL> begin
+  2  	for i in 1..10100
+  3  	loop
+  4  	  insert into t1 values (4,'W'||i,'W'||i,'D');
+  5  	end loop;
+  6  end;
+  7  /
+
+PL/SQL procedure successfully completed.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> --
+SQL> -- We'll get stats on the index, but we won't be gathering stats
+SQL> -- on the S2.T1 table because we want to copy everything from S1.T1
+SQL> --
+SQL> create index t1i on t1 (c1);
+
+Index created.
+
+SQL> 
+SQL> --
+SQL> -- Let's create some SQL plan directives
+SQL> --
+SQL> connect s1/s1
+Connected.
+
+SQL> 
+SQL> CREATE TABLE spdtab (
+  2    id	      NUMBER,
+  3    col1	      VARCHAR2(1),
+  4    col2	      VARCHAR2(1)
+  5  );
+
+Table created.
+
+SQL> 
+SQL> INSERT INTO spdtab
+  2  SELECT level, 'A', 'B'
+  3  FROM   dual
+  4  CONNECT BY level <= 10;
+
+10 rows created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO spdtab
+  2  SELECT 10+level, 'C', 'D'
+  3  FROM   dual
+  4  CONNECT BY level <= 90;
+
+90 rows created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> EXEC DBMS_STATS.gather_table_stats(USER, 'SPDTAB');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> SELECT *
+  2  FROM   spdtab
+  3  WHERE  col1 = 'A'
+  4  AND    col2 = 'B';
+
+        ID C C                                                                                                                                                                                          
+---------- - -                                                                                                                                                                                          
+         1 A B                                                                                                                                                                                          
+         2 A B                                                                                                                                                                                          
+         3 A B                                                                                                                                                                                          
+         4 A B                                                                                                                                                                                          
+         5 A B                                                                                                                                                                                          
+         6 A B                                                                                                                                                                                          
+         7 A B                                                                                                                                                                                          
+         8 A B                                                                                                                                                                                          
+         9 A B                                                                                                                                                                                          
+        10 A B                                                                                                                                                                                          
+
+10 rows selected.
+
+SQL> 
+SQL> connect s2/s2
+Connected.
+SQL> 
+SQL> CREATE TABLE spdtab (
+  2    id	      NUMBER,
+  3    col1	      VARCHAR2(1),
+  4    col2	      VARCHAR2(1)
+  5  );
+
+Table created.
+
+SQL> 
+SQL> spool off

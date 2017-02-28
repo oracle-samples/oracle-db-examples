@@ -1,0 +1,1540 @@
+SQL> @flush
+SQL> --
+SQL> -- Clean out the shared sql area to "start again"
+SQL> --
+SQL> alter system flush shared_pool;
+
+System altered.
+
+SQL> @drop
+SQL> --
+SQL> --
+SQL> -- Drop ALL baselines!!
+SQL> --
+SQL> --
+SQL> DECLARE
+  2    l_plans_dropped	PLS_INTEGER;
+  3  BEGIN
+  4  
+  5    FOR REC IN (SELECT DISTINCT SQL_HANDLE FROM DBA_SQL_PLAN_BASELINES)
+  6    LOOP
+  7  	   L_PLANS_DROPPED := DBMS_SPM.DROP_SQL_PLAN_BASELINE (
+  8  	     sql_handle => rec.sql_handle,
+  9  	     PLAN_NAME	=> NULL);
+ 10    END LOOP;
+ 11  
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> @sql
+SQL> --
+SQL> -- Take a look at the shared SQL areas cached in the shared pool
+SQL> --
+SQL> --
+SQL> set trims on
+SQL> set linesize 250
+SQL> column sql_text format a70
+SQL> column is_bind_sensitive format a20
+SQL> column is_bind_aware format a20
+SQL> column is_shareable format a20
+SQL> select sql_id,child_number,is_shareable,sql_text, executions,
+  2  is_bind_sensitive, is_bind_aware
+  3  from v$sql
+  4  where sql_text like '%sales%' order by 1, child_number;
+
+SQL_ID        CHILD_NUMBER IS_SHAREABLE         SQL_TEXT                                                               EXECUTIONS IS_BIND_SENSITIVE    IS_BIND_AWARE
+------------- ------------ -------------------- ---------------------------------------------------------------------- ---------- -------------------- --------------------
+9krhkg1bfr841            0 Y                    select sql_id,child_number,is_shareable,sql_text, executions, is_bind_          1 N                    N
+                                                sensitive, is_bind_aware from v$sql where sql_text like '%sales%' orde
+                                                r by 1, child_number
+
+
+SQL> @base
+SQL> --
+SQL> -- List SQL plan baselines
+SQL> --
+SQL> column enabled format a10
+SQL> column sql_text format a70
+SQL> column plan_name format a40
+SQL> column sql_handle format a25
+SQL> column accepted format a10
+SQL> set linesize 200
+SQL> SELECT sql_text,sql_handle, plan_name, enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  order by sql_handle
+  4  /
+
+no rows selected
+
+SQL> @q1
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 0
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   413 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |   599K|  7030K|   413   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"=:VAL)
+
+
+19 rows selected.
+
+SQL> @@q2
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 1
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1149653630
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                    | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |       |       |       |     4 (100)|          |
+|   1 |  SORT AGGREGATE              |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID| SALES |    53 |   636 |     4   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN          | SI    |    53 |       |     3   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"=:VAL)
+
+
+20 rows selected.
+
+SQL> @q1
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 2
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   413 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |   599K|  7030K|   413   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"=:VAL)
+
+
+19 rows selected.
+
+SQL> @q2
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 1
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1149653630
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                    | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |       |       |       |     4 (100)|          |
+|   1 |  SORT AGGREGATE              |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID| SALES |    53 |   636 |     4   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN          | SI    |    53 |       |     3   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"=:VAL)
+
+
+20 rows selected.
+
+SQL> @q1
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 2
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   413 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |   599K|  7030K|   413   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"=:VAL)
+
+
+19 rows selected.
+
+SQL> @q2
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 1
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1149653630
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                    | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |       |       |       |     4 (100)|          |
+|   1 |  SORT AGGREGATE              |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID| SALES |    53 |   636 |     4   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN          | SI    |    53 |       |     3   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"=:VAL)
+
+
+20 rows selected.
+
+SQL> @q3
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> 
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  3wnvcjjd1xww4, child number 0
+-------------------------------------
+select /* SPM_DEMO */ max(val) from sales
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   412 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS FULL| SALES |   600K|  7031K|   412   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+
+14 rows selected.
+
+SQL> @q3
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> 
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  3wnvcjjd1xww4, child number 0
+-------------------------------------
+select /* SPM_DEMO */ max(val) from sales
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   412 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS FULL| SALES |   600K|  7031K|   412   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+
+14 rows selected.
+
+SQL> @sql
+SQL> --
+SQL> -- Take a look at the shared SQL areas cached in the shared pool
+SQL> --
+SQL> --
+SQL> set trims on
+SQL> set linesize 250
+SQL> column sql_text format a70
+SQL> column is_bind_sensitive format a20
+SQL> column is_bind_aware format a20
+SQL> column is_shareable format a20
+SQL> select sql_id,child_number,is_shareable,sql_text, executions,
+  2  is_bind_sensitive, is_bind_aware
+  3  from v$sql
+  4  where sql_text like '%sales%' order by 1, child_number;
+
+SQL_ID        CHILD_NUMBER IS_SHAREABLE         SQL_TEXT                                                               EXECUTIONS IS_BIND_SENSITIVE    IS_BIND_AWARE
+------------- ------------ -------------------- ---------------------------------------------------------------------- ---------- -------------------- --------------------
+3wnvcjjd1xww4            0 Y                    select /* SPM_DEMO */ max(val) from sales                                      14 N                    N
+9krhkg1bfr841            0 Y                    select sql_id,child_number,is_shareable,sql_text, executions, is_bind_          2 N                    N
+                                                sensitive, is_bind_aware from v$sql where sql_text like '%sales%' orde
+                                                r by 1, child_number
+
+9xxdg2595ac32            0 N                    select /* SPM_DEMO */ sum(val) from sales where id = :val                      18 Y                    N
+9xxdg2595ac32            1 Y                    select /* SPM_DEMO */ sum(val) from sales where id = :val                      24 Y                    Y
+9xxdg2595ac32            2 Y                    select /* SPM_DEMO */ sum(val) from sales where id = :val                      18 Y                    Y
+
+SQL> !vi makeset*
+
+SQL> @makeset
+SQL> --
+SQL> -- Loads SQL from shared pool into a SQL tuning set
+SQL> -- Note: Requires Diagnostic and Tuning Pack Licence
+SQL> --
+SQL> BEGIN
+  2    DBMS_SQLTUNE.DROP_SQLSET( sqlset_name => 'my_workload' );
+  3  END;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> BEGIN
+  2    DBMS_SQLTUNE.CREATE_SQLSET(
+  3  	 sqlset_name => 'my_workload',
+  4  	 description  => 'My workload');
+  5  END;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> DECLARE
+  2    c_sqlarea_cursor DBMS_SQLTUNE.SQLSET_CURSOR;
+  3  BEGIN
+  4   OPEN c_sqlarea_cursor FOR
+  5  	SELECT VALUE(p)
+  6  	FROM   TABLE(
+  7  		 DBMS_SQLTUNE.SELECT_CURSOR_CACHE(
+  8  		 ' parsing_schema_name = ''ADHOC'' AND sql_text like ''%SPM_DEMO%'' ')
+  9  	       ) p;
+ 10  -- load the tuning set
+ 11    DBMS_SQLTUNE.LOAD_SQLSET (
+ 12  	 sqlset_name	 => 'my_workload'
+ 13  ,	 populate_cursor =>  c_sqlarea_cursor
+ 14  );
+ 15  END;
+ 16  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> COLUMN SQL_TEXT FORMAT a30
+SQL> COLUMN SCH FORMAT a3
+SQL> COLUMN ELAPSED FORMAT 999999999
+SQL> 
+SQL> column sql_text format a80
+SQL> set pagesize 1000
+SQL> SELECT SQL_ID, SQL_TEXT,
+  2  	    ELAPSED_TIME AS "ELAPSED", BUFFER_GETS
+  3  FROM   TABLE( DBMS_SQLTUNE.SELECT_SQLSET( 'my_workload' ) ) ;
+
+SQL_ID        SQL_TEXT                                                                            ELAPSED BUFFER_GETS
+------------- -------------------------------------------------------------------------------- ---------- -----------
+3wnvcjjd1xww4 select /* SPM_DEMO */ max(val) from sales                                            411852       20316
+6vyf6grn8g7qh SELECT VALUE(P) FROM TABLE( DBMS_SQLTUNE.SELECT_CURSOR_CACHE( ' parsing_schema_n      77932        3515
+9xxdg2595ac32 select /* SPM_DEMO */ sum(val) from sales where id = :val                           1374835       52363
+9xxdg2595ac32 select /* SPM_DEMO */ sum(val) from sales where id = :val                              3205          96
+adspb7pn7v0bz  SELECT /*+ first_rows(1) */ sql_id, force_matching_signature, sql_text, cast(NU      50157        2704
+
+SQL> @base
+SQL> --
+SQL> -- List SQL plan baselines
+SQL> --
+SQL> column enabled format a10
+SQL> column sql_text format a70
+SQL> column plan_name format a40
+SQL> column sql_handle format a25
+SQL> column accepted format a10
+SQL> set linesize 200
+SQL> SELECT sql_text,sql_handle, plan_name, enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  order by sql_handle
+  4  /
+
+no rows selected
+
+SQL> @loads
+SQL> --
+SQL> -- Load baselinese from a SQL Tuning Set
+SQL> --
+SQL> DECLARE
+  2  my_plans pls_integer;
+  3  BEGIN
+  4    my_plans := DBMS_SPM.LOAD_PLANS_FROM_SQLSET('my_workload');
+  5  END;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> @base
+SQL> --
+SQL> -- List SQL plan baselines
+SQL> --
+SQL> column enabled format a10
+SQL> column sql_text format a70
+SQL> column plan_name format a40
+SQL> column sql_handle format a25
+SQL> column accepted format a10
+SQL> set linesize 200
+SQL> SELECT sql_text,sql_handle, plan_name, enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  order by sql_handle
+  4  /
+
+SQL_TEXT                                                               SQL_HANDLE                PLAN_NAME                                ENABLED    ACCEPTED
+---------------------------------------------------------------------- ------------------------- ---------------------------------------- ---------- ----------
+SELECT VALUE(P) FROM TABLE( DBMS_SQLTUNE.SELECT_CURSOR_CACHE( ' parsin SQL_150dc537678a1048      SQL_PLAN_1a3f56xmsn428820ca01b           YES        YES
+g_schema_n
+
+select /* SPM_DEMO */ max(val) from sales                              SQL_8af80e6cfb9a7fdd      SQL_PLAN_8py0fdmxtnzyx35032dee           YES        YES
+select /* SPM_DEMO */ sum(val) from sales where id = :val              SQL_a1ffac10c5dfb04b      SQL_PLAN_a3zxc232xzc2b35032dee           YES        YES
+select /* SPM_DEMO */ sum(val) from sales where id = :val              SQL_a1ffac10c5dfb04b      SQL_PLAN_a3zxc232xzc2be87b6179           YES        YES
+ SELECT /*+ first_rows(1) */ sql_id, force_matching_signature, sql_tex SQL_c5fb3d2079bea8ab      SQL_PLAN_cbytx41wvxa5bb5bd2f6e           YES        YES
+t, cast(NU
+
+
+SQL> @q1
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 1
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   413 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |   599K|  7030K|   413   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"=:VAL)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_a3zxc232xzc2b35032dee used for this statement
+
+
+23 rows selected.
+
+SQL> @base
+SQL> --
+SQL> -- List SQL plan baselines
+SQL> --
+SQL> column enabled format a10
+SQL> column sql_text format a70
+SQL> column plan_name format a40
+SQL> column sql_handle format a25
+SQL> column accepted format a10
+SQL> set linesize 200
+SQL> SELECT sql_text,sql_handle, plan_name, enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  order by sql_handle
+  4  /
+
+SQL_TEXT                                                               SQL_HANDLE                PLAN_NAME                                ENABLED    ACCEPTED
+---------------------------------------------------------------------- ------------------------- ---------------------------------------- ---------- ----------
+SELECT VALUE(P) FROM TABLE( DBMS_SQLTUNE.SELECT_CURSOR_CACHE( ' parsin SQL_150dc537678a1048      SQL_PLAN_1a3f56xmsn428820ca01b           YES        YES
+g_schema_n
+
+select /* SPM_DEMO */ max(val) from sales                              SQL_8af80e6cfb9a7fdd      SQL_PLAN_8py0fdmxtnzyx35032dee           YES        YES
+select /* SPM_DEMO */ sum(val) from sales where id = :val              SQL_a1ffac10c5dfb04b      SQL_PLAN_a3zxc232xzc2b35032dee           YES        YES
+select /* SPM_DEMO */ sum(val) from sales where id = :val              SQL_a1ffac10c5dfb04b      SQL_PLAN_a3zxc232xzc2be87b6179           YES        YES
+ SELECT /*+ first_rows(1) */ sql_id, force_matching_signature, sql_tex SQL_c5fb3d2079bea8ab      SQL_PLAN_cbytx41wvxa5bb5bd2f6e           YES        YES
+t, cast(NU
+
+
+SQL> @q2
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 2
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1149653630
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                    | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |       |       |       |     4 (100)|          |
+|   1 |  SORT AGGREGATE              |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID| SALES |    53 |   636 |     4   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN          | SI    |    53 |       |     3   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"=:VAL)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_a3zxc232xzc2be87b6179 used for this statement
+
+
+24 rows selected.
+
+SQL> @q3
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> 
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  3wnvcjjd1xww4, child number 0
+-------------------------------------
+select /* SPM_DEMO */ max(val) from sales
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   412 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS FULL| SALES |   600K|  7031K|   412   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_8py0fdmxtnzyx35032dee used for this statement
+
+
+18 rows selected.
+
+SQL> @q1
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := -1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+1.8000E+11
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 3
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   413 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |   599K|  7030K|   413   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"=:VAL)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_a3zxc232xzc2b35032dee used for this statement
+
+
+23 rows selected.
+
+SQL> @q2
+SQL> set echo on
+SQL> 
+SQL> var val number
+SQL> 
+SQL> exec :val := 1
+
+PL/SQL procedure successfully completed.
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> select /* SPM_DEMO */ sum(val) from sales where id = :val;
+
+  SUM(VAL)
+----------
+         1
+
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9xxdg2595ac32, child number 4
+-------------------------------------
+select /* SPM_DEMO */ sum(val) from sales where id = :val
+
+Plan hash value: 1149653630
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                    | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |       |       |       |     4 (100)|          |
+|   1 |  SORT AGGREGATE              |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID| SALES |    53 |   636 |     4   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN          | SI    |    53 |       |     3   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"=:VAL)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_a3zxc232xzc2be87b6179 used for this statement
+
+
+24 rows selected.
+
+SQL> @q3
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> select /* SPM_DEMO */ max(val) from sales;
+
+  MAX(VAL)
+----------
+    600000
+
+SQL> 
+SQL> @p
+SQL> set linesize 130
+SQL> set pagesize 1000
+SQL> SELECT *
+  2  FROM   TABLE(DBMS_XPLAN.DISPLAY_CURSOR());
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  3wnvcjjd1xww4, child number 0
+-------------------------------------
+select /* SPM_DEMO */ max(val) from sales
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |   412 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    12 |            |          |
+|   2 |   TABLE ACCESS FULL| SALES |   600K|  7031K|   412   (1)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_8py0fdmxtnzyx35032dee used for this statement
+
+
+18 rows selected.
+
+SQL> spool off

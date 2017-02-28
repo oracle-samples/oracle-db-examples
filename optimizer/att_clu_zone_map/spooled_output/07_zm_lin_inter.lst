@@ -1,0 +1,715 @@
+SQL> @07_zm_lin_inter
+SQL> -- DISCLAIMER:
+SQL> -- This script is provided for educational purposes only. It is
+SQL> -- NOT supported by Oracle World Wide Technical Support.
+SQL> -- The script has been tested and appears to work as intended.
+SQL> -- You should always run new scripts initially
+SQL> -- on a test instance.
+SQL> 
+SQL> set timing off
+SQL> set echo off
+SQL> set autotrace off
+SQL> column plan_table_output format a150
+SQL> set trims on
+SQL> 
+SQL> PROMPT Connect to the Attribute Clusters/Zone Map Schema
+Connect to the Attribute Clusters/Zone Map Schema
+SQL> connect aczm12c/oracle_4U
+Connected.
+SQL> 
+SQL> PROMPT Observe how zone maps prune IO without
+Observe how zone maps prune IO without
+SQL> PROMPT the use of indexes
+the use of indexes
+SQL> 
+SQL> PROMPT Clean up first
+Clean up first
+SQL> 
+SQL> DROP INDEX sales_loc_i
+  2  /
+DROP INDEX sales_loc_i
+           *
+ERROR at line 1:
+ORA-01418: specified index does not exist
+
+
+SQL> DROP INDEX sales_ac_loc_i
+  2  /
+DROP INDEX sales_ac_loc_i
+           *
+ERROR at line 1:
+ORA-01418: specified index does not exist
+
+
+SQL> DROP MATERIALIZED ZONEMAP sales_ac_zmap
+  2  /
+DROP MATERIALIZED ZONEMAP sales_ac_zmap
+*
+ERROR at line 1:
+ORA-12003: materialized view or zonemap "ACZM12C"."SALES_AC_ZMAP" does not exist
+
+
+SQL> DROP MATERIALIZED ZONEMAP zmap$_sales_ac
+  2  /
+DROP MATERIALIZED ZONEMAP zmap$_sales_ac
+*
+ERROR at line 1:
+ORA-12003: materialized view or zonemap "ACZM12C"."ZMAP$_SALES_AC" does not exist
+
+
+SQL> ALTER TABLE sales_ac DROP CLUSTERING
+  2  /
+
+Table altered.
+
+SQL> 
+SQL> 
+SQL> PROMPT Create a zone map on the SALES_AC table
+Create a zone map on the SALES_AC table
+SQL> PROMPT using the same attribute clustering as before.
+using the same attribute clustering as before.
+SQL> PROMPT We do not need to re-organise or move the
+We do not need to re-organise or move the
+SQL> PROMPT data in the table as we are using the same
+data in the table as we are using the same
+SQL> PROMPT clustering as before.
+clustering as before.
+SQL> 
+SQL> ALTER TABLE sales_ac
+  2  ADD CLUSTERING BY LINEAR ORDER (location_id, product_id)
+  3  WITH MATERIALIZED ZONEMAP
+  4  /
+
+Table altered.
+
+SQL> 
+SQL> PROMPT Observe the differences in the plan between
+Observe the differences in the plan between
+SQL> PROMPT the conventional SALES table and the
+the conventional SALES table and the
+SQL> PROMPT attribute clusterd table SALES_AC
+attribute clusterd table SALES_AC
+SQL> PROMPT with a zone map
+with a zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  WHERE  location_id = 50
+  4  /
+
+SUM(AMOUNT)
+-----------
+  629560.92
+
+1 row selected.
+
+SQL> 
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  d4538r3rcjr6t, child number 0
+-------------------------------------
+SELECT SUM(amount) FROM   sales WHERE  location_id = 50
+
+Plan hash value: 1047182207
+
+------------------------------------------------------------------------------------
+| Id  | Operation                  | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT           |       |       |       |   134 (100)|          |
+|   1 |  SORT AGGREGATE            |       |     1 |     9 |            |          |
+|*  2 |   TABLE ACCESS STORAGE FULL| SALES |   621 |  5589 |   134  (17)| 00:00:01 |
+------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - storage("LOCATION_ID"=50)
+       filter("LOCATION_ID"=50)
+
+
+20 rows selected.
+
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  WHERE  location_id = 50
+  4  /
+
+SUM(AMOUNT)
+-----------
+  629560.92
+
+1 row selected.
+
+SQL> 
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  319c3616hqy3f, child number 0
+-------------------------------------
+SELECT SUM(amount) FROM   sales_ac WHERE  location_id = 50
+
+Plan hash value: 1269548508
+
+----------------------------------------------------------------------------------------------------
+| Id  | Operation                               | Name     | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                        |          |       |       |   134 (100)|          |
+|   1 |  SORT AGGREGATE                         |          |     1 |     9 |            |          |
+|*  2 |   TABLE ACCESS STORAGE FULL WITH ZONEMAP| SALES_AC |   621 |  5589 |   134  (17)| 00:00:01 |
+----------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - storage("LOCATION_ID"=50)
+       filter((SYS_ZMAP_FILTER('/* ZM_PRUNING */ SELECT "ZONE_ID$", CASE WHEN
+              BITAND(zm."ZONE_STATE$",1)=1 THEN 1 ELSE CASE WHEN (zm."MIN_1_LOCATION_ID" > :1 OR
+              zm."MAX_1_LOCATION_ID" < :2) THEN 3 ELSE 2 END END FROM "ACZM12C"."ZMAP$_SALES_AC" zm WHERE
+              zm."ZONE_LEVEL$"=0 ORDER BY zm."ZONE_ID$"',SYS_OP_ZONE_ID(ROWID),50,50)<3 AND
+              "LOCATION_ID"=50))
+
+
+24 rows selected.
+
+SQL> 
+SQL> SET AUTOTRACE ON STATISTICS
+SQL> 
+SQL> PROMPT Observe the IO differences for the zone mapped table.
+Observe the IO differences for the zone mapped table.
+SQL> PROMPT You may see Exadata that storage indexes
+You may see Exadata that storage indexes
+SQL> PROMPT eliminate some of the IO too since this
+eliminate some of the IO too since this
+SQL> PROMPT feature can work in combination with zone maps.
+feature can work in combination with zone maps.
+SQL> 
+SQL> PROMPT Conventional scan
+Conventional scan
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  WHERE  location_id = 50
+  4  /
+
+SUM(AMOUNT)
+-----------
+  629560.92
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       7164  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  WHERE  location_id = 50
+  4  /
+
+SUM(AMOUNT)
+-----------
+  629560.92
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        257  recursive calls
+          0  db block gets
+        441  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+         21  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT Conventional scan
+Conventional scan
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  WHERE  location_id = 50
+  4  AND    product_id = 10
+  5  /
+
+SUM(AMOUNT)
+-----------
+   15760.58
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+          9  recursive calls
+          0  db block gets
+       7401  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  WHERE  location_id = 50
+  4  AND    product_id = 10
+  5  /
+
+SUM(AMOUNT)
+-----------
+   15760.58
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        209  recursive calls
+          0  db block gets
+        652  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          9  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT In this case we have used an attribute cluster with LINEAR ordering
+In this case we have used an attribute cluster with LINEAR ordering
+SQL> PROMPT so we should use predicates on location_id or location_id and product_id
+so we should use predicates on location_id or location_id and product_id
+SQL> PROMPT A predicate on product_id alone will not prune effectively.
+A predicate on product_id alone will not prune effectively.
+SQL> PROMPT INTERLEAVED ordering removes this limitation.
+INTERLEAVED ordering removes this limitation.
+SQL> 
+SQL> PROMPT Conventional scan
+Conventional scan
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  WHERE  product_id = 10
+  4  /
+
+SUM(AMOUNT)
+-----------
+ 72137333.1
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+       7164  consistent gets
+          0  physical reads
+          0  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map - but no pruning on product_id alone
+With zone map - but no pruning on product_id alone
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  WHERE  product_id = 10
+  4  /
+
+SUM(AMOUNT)
+-----------
+ 72137333.1
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        139  recursive calls
+          0  db block gets
+       7311  consistent gets
+          0  physical reads
+          0  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          9  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> SET AUTOTRACE OFF
+SQL> 
+SQL> PROMPT Drop the attribute cluster
+Drop the attribute cluster
+SQL> PROMPT Because we created the zone map at the same
+Because we created the zone map at the same
+SQL> PROMPT time as the cluster, the zone map will be dropped too
+time as the cluster, the zone map will be dropped too
+SQL> 
+SQL> ALTER TABLE sales_ac DROP CLUSTERING
+  2  /
+
+Table altered.
+
+SQL> TRUNCATE TABLE sales_ac
+  2  /
+
+Table truncated.
+
+SQL> 
+SQL> --
+SQL> PROMPT Enable interleaved join attribute clustering
+Enable interleaved join attribute clustering
+SQL> PROMPT on SALES_AC table.
+on SALES_AC table.
+SQL> PROMPT For the sake of example, create
+For the sake of example, create
+SQL> PROMPT the zone map manually.
+the zone map manually.
+SQL> --
+SQL> ALTER TABLE sales_ac
+  2  ADD CLUSTERING sales_ac
+  3  JOIN locations ON (sales_ac.location_id = locations.location_id)
+  4  JOIN products  ON (sales_ac.product_id = products.product_id)
+  5  BY INTERLEAVED ORDER ((locations.state, locations.county),products.product_name)
+  6  WITHOUT MATERIALIZED ZONEMAP
+  7  /
+
+Table altered.
+
+SQL> 
+SQL> --
+SQL> PROMPT Manually create the zone map
+Manually create the zone map
+SQL> --
+SQL> 
+SQL> CREATE MATERIALIZED ZONEMAP sales_ac_zmap
+  2  AS
+  3  SELECT SYS_OP_ZONE_ID(s.rowid),
+  4  	    MIN(l.state) min_state,
+  5  	    MAX(l.state) max_state,
+  6  	    MIN(l.county) min_county,
+  7  	    MAX(l.county) max_county,
+  8  	    MIN(p.product_name) min_prod,
+  9  	    MAX(p.product_name) max_prod
+ 10  FROM sales_ac s,
+ 11  	  locations l,
+ 12  	  products p
+ 13  WHERE s.location_id = l.location_id(+)
+ 14  AND   s.product_id = p.product_id(+)
+ 15  GROUP BY SYS_OP_ZONE_ID(s.rowid)
+ 16  /
+
+Materialized zonemap created.
+
+SQL> 
+SQL> --
+SQL> PROMPT Insert data and observe that a
+Insert data and observe that a
+SQL> PROMPT sorts and joins are performed to cluster
+sorts and joins are performed to cluster
+SQL> PROMPT data in the SALES_AC table.
+data in the SALES_AC table.
+SQL> PROMPT The direct path insert operation will maintain
+The direct path insert operation will maintain
+SQL> PROMPT the zone map for us.
+the zone map for us.
+SQL> --
+SQL> --
+SQL> INSERT /*+ APPEND */ INTO sales_ac SELECT * FROM sales_source
+  2  /
+
+1952120 rows created.
+
+SQL> SELECT * FROM TABLE(dbms_xplan.display_cursor)
+  2  /
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8wzqwqgwwynya, child number 0
+-------------------------------------
+INSERT /*+ APPEND */ INTO sales_ac SELECT * FROM sales_source
+
+Plan hash value: 2808338825
+
+---------------------------------------------------------------------------------------------------------
+| Id  | Operation                        | Name         | Rows  | Bytes |TempSpc| Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------------
+|   0 | INSERT STATEMENT                 |              |       |       |       | 21290 (100)|          |
+|   1 |  LOAD AS SELECT                  |              |       |       |       |            |          |
+|   2 |   OPTIMIZER STATISTICS GATHERING |              |  1952K|   180M|       | 21290   (1)| 00:00:02 |
+|   3 |    SORT ORDER BY                 |              |  1952K|   180M|   202M| 21290   (1)| 00:00:02 |
+|*  4 |     HASH JOIN RIGHT OUTER        |              |  1952K|   180M|       |   147  (22)| 00:00:01 |
+|   5 |      TABLE ACCESS STORAGE FULL   | LOCATIONS    |  3143 | 94290 |       |     2   (0)| 00:00:01 |
+|*  6 |      HASH JOIN RIGHT OUTER       |              |  1952K|   124M|       |   140  (19)| 00:00:01 |
+|   7 |       TABLE ACCESS STORAGE FULL  | PRODUCTS     |    28 |   364 |       |     2   (0)| 00:00:01 |
+|   8 |       TABLE ACCESS STORAGE FULL  | SALES_SOURCE |  1952K|   100M|       |   132  (16)| 00:00:01 |
+---------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - access("SALES_SOURCE"."LOCATION_ID"="LOCATIONS"."LOCATION_ID")
+   6 - access("SALES_SOURCE"."PRODUCT_ID"="PRODUCTS"."PRODUCT_ID")
+
+
+26 rows selected.
+
+SQL> COMMIT
+  2  /
+
+Commit complete.
+
+SQL> 
+SQL> EXECUTE dbms_stats.gather_table_stats(ownname=>NULL,tabname=>'sales_ac');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> SET AUTOTRACE ON STATISTICS
+SQL> 
+SQL> PROMPT Compare the number of consistent gets of the
+Compare the number of consistent gets of the
+SQL> PROMPT zone map table against the standard table
+zone map table against the standard table
+SQL> 
+SQL> PROMPT Conventional
+Conventional
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  JOIN   locations  ON (sales.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  /
+
+SUM(AMOUNT)
+-----------
+ 35782231.8
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+         29  recursive calls
+          0  db block gets
+       7222  consistent gets
+          0  physical reads
+          0  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   locations  ON (sales_ac.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  /
+
+SUM(AMOUNT)
+-----------
+ 35782231.8
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        150  recursive calls
+          0  db block gets
+       4833  consistent gets
+          0  physical reads
+        124  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT Conventional
+Conventional
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  JOIN   locations  ON (sales.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+         61  recursive calls
+          0  db block gets
+       7281  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   locations  ON (sales_ac.location_id = locations.location_id)
+  4  WHERE  locations.state  = 'California'
+  5  AND    locations.county = 'Alpine County'
+  6  /
+
+SUM(AMOUNT)
+-----------
+  590776.51
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        152  recursive calls
+          0  db block gets
+       4851  consistent gets
+          0  physical reads
+          0  redo size
+        548  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT Since interleaved ordering was used to cluster the table,
+Since interleaved ordering was used to cluster the table,
+SQL> PROMPT predicates can be used in various combinations. In particular
+predicates can be used in various combinations. In particular
+SQL> PROMPT pruning is still effective if product_name is used alone.
+pruning is still effective if product_name is used alone.
+SQL> PROMPT Predicates for location dimensions do not need to be included.
+Predicates for location dimensions do not need to be included.
+SQL> 
+SQL> PROMPT Conventional
+Conventional
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales
+  3  JOIN   products  ON (sales.product_id = products.product_id)
+  4  WHERE  products.product_name  = 'DATEPALM'
+  5  /
+
+SUM(AMOUNT)
+-----------
+ 36446695.9
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+         29  recursive calls
+          0  db block gets
+       7207  consistent gets
+          0  physical reads
+          0  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> PROMPT With zone map
+With zone map
+SQL> 
+SQL> SELECT SUM(amount)
+  2  FROM   sales_ac
+  3  JOIN   products  ON (sales_ac.product_id = products.product_id)
+  4  WHERE  products.product_name  = 'DATEPALM'
+  5  /
+
+SUM(AMOUNT)
+-----------
+ 36446695.9
+
+1 row selected.
+
+
+Statistics
+----------------------------------------------------------
+        149  recursive calls
+          0  db block gets
+       2729  consistent gets
+          0  physical reads
+          0  redo size
+        549  bytes sent via SQL*Net to client
+        552  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> SET AUTOTRACE OFF
+SQL> spool off

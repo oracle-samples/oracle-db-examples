@@ -1,0 +1,7 @@
+SELECT PLAN_TABLE_OUTPUT
+FROM   V$SQL s, DBA_SQL_PLAN_BASELINES b, 
+       TABLE(
+         DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE(b.sql_handle,b.plan_name,'basic') 
+       ) t
+WHERE  s.EXACT_MATCHING_SIGNATURE=b.SIGNATURE
+AND    b.PLAN_NAME='&plan_name';

@@ -1,0 +1,708 @@
+SQL> @test3
+SQL> set echo on
+SQL> set timing  on
+SQL> set linesize 1000
+SQL> set pagesize 100
+SQL> set trims on
+SQL> 
+SQL> --
+SQL> -- We are going to perform a partition exchange load and
+SQL> -- take a look at the timings for HyperLogLog synopses.
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'t1','incremental_staleness', NULL)
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> exec DBMS_STATS.SET_TABLE_PREFS (null,'exch','INCREMENTAL_LEVEL','table');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL> exec dbms_stats.set_table_prefs(null,'exch', 'approximate_ndv_algorithm', 'hyperloglog')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.delete_table_stats(null,'exch')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.14
+SQL> exec dbms_stats.gather_table_stats(null,'exch');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.29
+SQL> 
+SQL> --
+SQL> -- The exchange table has synopses
+SQL> --
+SQL> select count(*) from sys.WRI$_OPTSTAT_SYNOPSIS$
+  2  where bo# = (select object_id from user_objects where object_name = 'EXCH' and object_type = 'TABLE');
+
+  COUNT(*)
+----------
+         0
+
+Elapsed: 00:00:00.04
+SQL> 
+SQL> --
+SQL> -- The exchange table has 5 columns...
+SQL> --
+SQL> select count(*) from sys.WRI$_OPTSTAT_SYNOPSIS_HEAD$
+  2  where bo# = (select object_id from user_objects where object_name = 'EXCH' and object_type = 'TABLE');
+
+  COUNT(*)
+----------
+         5
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> select spare1,spare2 from sys.WRI$_OPTSTAT_SYNOPSIS_HEAD$
+  2  where  bo# = (select object_id from user_objects where object_name = 'EXCH' and object_type = 'TABLE')
+  3  and rownum<11;
+
+    SPARE1 SPARE2
+---------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+         1 0D0C0000100000000000000ED1542081CB2092092881CA2CA20920820924624924A24920A24A20B2491C93482472C624D2482CA30A2CA20D1C91C91C920A34934C24720B28E28924C30B2891CA289287
+         1 0D0C08E900010000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+         1 0D0C00010E6900000000000027420020410C10C01051010840840010C00401C20030810020431410C50800C01001000C20C20430C10480821830851410C20C21010830811430C51030010C3042100044
+         1 0D0C00001000000000000001882D2441C61442861031C50C414910A1C81452841861091091481C31481C41460C81071441851472481C71871840CF1C41041471C51051871063051051C51091C4106184
+         1 0D0C058600050000000000000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+Elapsed: 00:00:00.07
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --
+SQL> -- Get stats up to date on our main table, T1
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'t1', 'approximate_ndv_algorithm', 'hyperloglog')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.delete_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:01.93
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:06.92
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --
+SQL> -- Perform the exchange - we expect it to be very fast
+SQL> --
+SQL> alter table t1 exchange partition p1 with table exch;
+
+Table altered.
+
+Elapsed: 00:00:00.19
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --
+SQL> -- Gather stats to refresh the global-level table stats
+SQL> -- We expect this to be very fast because the synopsis is used
+SQL> --
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.11
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --
+SQL> -- Confirm we have HyperLogLog synopses...
+SQL> --
+SQL> @look
+SQL> column partition_name format a40
+SQL> column synopsis_type format a40
+SQL> set pagesize 1000
+SQL> set linesize 500
+SQL> set trims on
+SQL> set tab off
+SQL> 
+SQL> select subobject_name                                          partition_name,
+  2         decode(h.spare1,NULL,'ADAPTIVE SAMPLING','HYPERLOGLOG') synopsis_type
+  3  from   dba_objects o,
+  4         sys.wri$_optstat_synopsis_head$ h
+  5  where  o.object_type = 'TABLE PARTITION'
+  6  and    o.object_name = 'T1'
+  7  and    o.owner       = USER
+  8  and    h.group#      = o.object_id*2
+  9  and    intcol#       = 1
+ 10  order by partition_name;
+
+PARTITION_NAME                           SYNOPSIS_TYPE
+---------------------------------------- ----------------------------------------
+P1                                       HYPERLOGLOG
+P2                                       HYPERLOGLOG
+SYS_P14942                               HYPERLOGLOG
+SYS_P14943                               HYPERLOGLOG
+SYS_P14944                               HYPERLOGLOG
+SYS_P14945                               HYPERLOGLOG
+SYS_P14946                               HYPERLOGLOG
+SYS_P14947                               HYPERLOGLOG
+SYS_P14948                               HYPERLOGLOG
+SYS_P14949                               HYPERLOGLOG
+SYS_P14950                               HYPERLOGLOG
+SYS_P14951                               HYPERLOGLOG
+SYS_P14952                               HYPERLOGLOG
+SYS_P14953                               HYPERLOGLOG
+SYS_P14954                               HYPERLOGLOG
+SYS_P14955                               HYPERLOGLOG
+SYS_P14956                               HYPERLOGLOG
+SYS_P14957                               HYPERLOGLOG
+SYS_P14958                               HYPERLOGLOG
+SYS_P14959                               HYPERLOGLOG
+SYS_P14960                               HYPERLOGLOG
+SYS_P14961                               HYPERLOGLOG
+SYS_P14962                               HYPERLOGLOG
+SYS_P14963                               HYPERLOGLOG
+SYS_P14964                               HYPERLOGLOG
+SYS_P14965                               HYPERLOGLOG
+SYS_P14966                               HYPERLOGLOG
+SYS_P14967                               HYPERLOGLOG
+SYS_P14968                               HYPERLOGLOG
+SYS_P14969                               HYPERLOGLOG
+SYS_P14970                               HYPERLOGLOG
+SYS_P14971                               HYPERLOGLOG
+SYS_P14972                               HYPERLOGLOG
+SYS_P14973                               HYPERLOGLOG
+SYS_P14974                               HYPERLOGLOG
+SYS_P14975                               HYPERLOGLOG
+SYS_P14976                               HYPERLOGLOG
+SYS_P14977                               HYPERLOGLOG
+SYS_P14978                               HYPERLOGLOG
+SYS_P14979                               HYPERLOGLOG
+SYS_P14980                               HYPERLOGLOG
+SYS_P14981                               HYPERLOGLOG
+SYS_P14982                               HYPERLOGLOG
+SYS_P14983                               HYPERLOGLOG
+SYS_P14984                               HYPERLOGLOG
+SYS_P14985                               HYPERLOGLOG
+SYS_P14986                               HYPERLOGLOG
+SYS_P14987                               HYPERLOGLOG
+SYS_P14988                               HYPERLOGLOG
+SYS_P14989                               HYPERLOGLOG
+SYS_P14990                               HYPERLOGLOG
+SYS_P14991                               HYPERLOGLOG
+SYS_P14992                               HYPERLOGLOG
+SYS_P14993                               HYPERLOGLOG
+SYS_P14994                               HYPERLOGLOG
+SYS_P14995                               HYPERLOGLOG
+SYS_P14996                               HYPERLOGLOG
+SYS_P14997                               HYPERLOGLOG
+SYS_P14998                               HYPERLOGLOG
+SYS_P14999                               HYPERLOGLOG
+SYS_P15000                               HYPERLOGLOG
+SYS_P15001                               HYPERLOGLOG
+SYS_P15002                               HYPERLOGLOG
+SYS_P15003                               HYPERLOGLOG
+SYS_P15004                               HYPERLOGLOG
+SYS_P15005                               HYPERLOGLOG
+SYS_P15006                               HYPERLOGLOG
+SYS_P15007                               HYPERLOGLOG
+SYS_P15008                               HYPERLOGLOG
+SYS_P15009                               HYPERLOGLOG
+SYS_P15010                               HYPERLOGLOG
+SYS_P15011                               HYPERLOGLOG
+SYS_P15012                               HYPERLOGLOG
+SYS_P15013                               HYPERLOGLOG
+SYS_P15014                               HYPERLOGLOG
+SYS_P15015                               HYPERLOGLOG
+SYS_P15016                               HYPERLOGLOG
+SYS_P15017                               HYPERLOGLOG
+SYS_P15018                               HYPERLOGLOG
+SYS_P15019                               HYPERLOGLOG
+SYS_P15020                               HYPERLOGLOG
+SYS_P15021                               HYPERLOGLOG
+SYS_P15022                               HYPERLOGLOG
+SYS_P15023                               HYPERLOGLOG
+SYS_P15024                               HYPERLOGLOG
+SYS_P15025                               HYPERLOGLOG
+SYS_P15026                               HYPERLOGLOG
+SYS_P15027                               HYPERLOGLOG
+SYS_P15028                               HYPERLOGLOG
+SYS_P15029                               HYPERLOGLOG
+SYS_P15030                               HYPERLOGLOG
+SYS_P15031                               HYPERLOGLOG
+SYS_P15032                               HYPERLOGLOG
+SYS_P15033                               HYPERLOGLOG
+SYS_P15034                               HYPERLOGLOG
+SYS_P15035                               HYPERLOGLOG
+SYS_P15036                               HYPERLOGLOG
+SYS_P15037                               HYPERLOGLOG
+SYS_P15038                               HYPERLOGLOG
+SYS_P15039                               HYPERLOGLOG
+SYS_P15040                               HYPERLOGLOG
+SYS_P15041                               HYPERLOGLOG
+SYS_P15042                               HYPERLOGLOG
+SYS_P15043                               HYPERLOGLOG
+SYS_P15044                               HYPERLOGLOG
+SYS_P15045                               HYPERLOGLOG
+SYS_P15046                               HYPERLOGLOG
+SYS_P15047                               HYPERLOGLOG
+SYS_P15048                               HYPERLOGLOG
+SYS_P15049                               HYPERLOGLOG
+SYS_P15050                               HYPERLOGLOG
+SYS_P15051                               HYPERLOGLOG
+SYS_P15052                               HYPERLOGLOG
+SYS_P15053                               HYPERLOGLOG
+SYS_P15054                               HYPERLOGLOG
+SYS_P15055                               HYPERLOGLOG
+SYS_P15056                               HYPERLOGLOG
+SYS_P15057                               HYPERLOGLOG
+SYS_P15058                               HYPERLOGLOG
+SYS_P15059                               HYPERLOGLOG
+SYS_P15060                               HYPERLOGLOG
+SYS_P15061                               HYPERLOGLOG
+SYS_P15062                               HYPERLOGLOG
+SYS_P15063                               HYPERLOGLOG
+SYS_P15064                               HYPERLOGLOG
+SYS_P15065                               HYPERLOGLOG
+SYS_P15066                               HYPERLOGLOG
+SYS_P15067                               HYPERLOGLOG
+SYS_P15068                               HYPERLOGLOG
+SYS_P15069                               HYPERLOGLOG
+SYS_P15070                               HYPERLOGLOG
+SYS_P15071                               HYPERLOGLOG
+SYS_P15072                               HYPERLOGLOG
+SYS_P15073                               HYPERLOGLOG
+SYS_P15074                               HYPERLOGLOG
+SYS_P15075                               HYPERLOGLOG
+SYS_P15076                               HYPERLOGLOG
+SYS_P15077                               HYPERLOGLOG
+SYS_P15078                               HYPERLOGLOG
+SYS_P15079                               HYPERLOGLOG
+SYS_P15080                               HYPERLOGLOG
+SYS_P15081                               HYPERLOGLOG
+SYS_P15082                               HYPERLOGLOG
+SYS_P15083                               HYPERLOGLOG
+SYS_P15084                               HYPERLOGLOG
+SYS_P15085                               HYPERLOGLOG
+SYS_P15086                               HYPERLOGLOG
+SYS_P15087                               HYPERLOGLOG
+SYS_P15088                               HYPERLOGLOG
+SYS_P15089                               HYPERLOGLOG
+SYS_P15090                               HYPERLOGLOG
+SYS_P15091                               HYPERLOGLOG
+SYS_P15092                               HYPERLOGLOG
+SYS_P15093                               HYPERLOGLOG
+SYS_P15094                               HYPERLOGLOG
+SYS_P15095                               HYPERLOGLOG
+SYS_P15096                               HYPERLOGLOG
+SYS_P15097                               HYPERLOGLOG
+SYS_P15098                               HYPERLOGLOG
+SYS_P15099                               HYPERLOGLOG
+SYS_P15100                               HYPERLOGLOG
+SYS_P15101                               HYPERLOGLOG
+SYS_P15102                               HYPERLOGLOG
+SYS_P15103                               HYPERLOGLOG
+SYS_P15104                               HYPERLOGLOG
+SYS_P15105                               HYPERLOGLOG
+SYS_P15106                               HYPERLOGLOG
+SYS_P15107                               HYPERLOGLOG
+SYS_P15108                               HYPERLOGLOG
+SYS_P15109                               HYPERLOGLOG
+SYS_P15110                               HYPERLOGLOG
+SYS_P15111                               HYPERLOGLOG
+SYS_P15112                               HYPERLOGLOG
+SYS_P15113                               HYPERLOGLOG
+SYS_P15114                               HYPERLOGLOG
+SYS_P15115                               HYPERLOGLOG
+SYS_P15116                               HYPERLOGLOG
+SYS_P15117                               HYPERLOGLOG
+SYS_P15118                               HYPERLOGLOG
+SYS_P15119                               HYPERLOGLOG
+SYS_P15120                               HYPERLOGLOG
+SYS_P15121                               HYPERLOGLOG
+SYS_P15122                               HYPERLOGLOG
+SYS_P15123                               HYPERLOGLOG
+SYS_P15124                               HYPERLOGLOG
+SYS_P15125                               HYPERLOGLOG
+SYS_P15126                               HYPERLOGLOG
+SYS_P15127                               HYPERLOGLOG
+SYS_P15128                               HYPERLOGLOG
+SYS_P15129                               HYPERLOGLOG
+SYS_P15130                               HYPERLOGLOG
+SYS_P15131                               HYPERLOGLOG
+SYS_P15132                               HYPERLOGLOG
+SYS_P15133                               HYPERLOGLOG
+SYS_P15134                               HYPERLOGLOG
+SYS_P15135                               HYPERLOGLOG
+SYS_P15136                               HYPERLOGLOG
+SYS_P15137                               HYPERLOGLOG
+SYS_P15138                               HYPERLOGLOG
+SYS_P15139                               HYPERLOGLOG
+SYS_P15140                               HYPERLOGLOG
+SYS_P15141                               HYPERLOGLOG
+SYS_P15142                               HYPERLOGLOG
+SYS_P15143                               HYPERLOGLOG
+SYS_P15144                               HYPERLOGLOG
+SYS_P15145                               HYPERLOGLOG
+SYS_P15146                               HYPERLOGLOG
+SYS_P15147                               HYPERLOGLOG
+SYS_P15148                               HYPERLOGLOG
+SYS_P15149                               HYPERLOGLOG
+SYS_P15150                               HYPERLOGLOG
+SYS_P15151                               HYPERLOGLOG
+SYS_P15152                               HYPERLOGLOG
+SYS_P15153                               HYPERLOGLOG
+SYS_P15154                               HYPERLOGLOG
+SYS_P15155                               HYPERLOGLOG
+SYS_P15156                               HYPERLOGLOG
+SYS_P15157                               HYPERLOGLOG
+SYS_P15158                               HYPERLOGLOG
+SYS_P15159                               HYPERLOGLOG
+SYS_P15160                               HYPERLOGLOG
+SYS_P15161                               HYPERLOGLOG
+SYS_P15162                               HYPERLOGLOG
+SYS_P15163                               HYPERLOGLOG
+SYS_P15164                               HYPERLOGLOG
+SYS_P15165                               HYPERLOGLOG
+SYS_P15166                               HYPERLOGLOG
+SYS_P15167                               HYPERLOGLOG
+SYS_P15168                               HYPERLOGLOG
+SYS_P15169                               HYPERLOGLOG
+SYS_P15170                               HYPERLOGLOG
+SYS_P15171                               HYPERLOGLOG
+SYS_P15172                               HYPERLOGLOG
+SYS_P15173                               HYPERLOGLOG
+SYS_P15174                               HYPERLOGLOG
+SYS_P15175                               HYPERLOGLOG
+SYS_P15176                               HYPERLOGLOG
+SYS_P15177                               HYPERLOGLOG
+SYS_P15178                               HYPERLOGLOG
+SYS_P15179                               HYPERLOGLOG
+SYS_P15180                               HYPERLOGLOG
+SYS_P15181                               HYPERLOGLOG
+SYS_P15182                               HYPERLOGLOG
+SYS_P15183                               HYPERLOGLOG
+SYS_P15184                               HYPERLOGLOG
+SYS_P15185                               HYPERLOGLOG
+SYS_P15186                               HYPERLOGLOG
+SYS_P15187                               HYPERLOGLOG
+SYS_P15188                               HYPERLOGLOG
+SYS_P15189                               HYPERLOGLOG
+SYS_P15190                               HYPERLOGLOG
+SYS_P15191                               HYPERLOGLOG
+SYS_P15192                               HYPERLOGLOG
+SYS_P15193                               HYPERLOGLOG
+SYS_P15194                               HYPERLOGLOG
+SYS_P15195                               HYPERLOGLOG
+SYS_P15196                               HYPERLOGLOG
+SYS_P15197                               HYPERLOGLOG
+SYS_P15198                               HYPERLOGLOG
+SYS_P15199                               HYPERLOGLOG
+SYS_P15200                               HYPERLOGLOG
+SYS_P15201                               HYPERLOGLOG
+SYS_P15202                               HYPERLOGLOG
+SYS_P15203                               HYPERLOGLOG
+SYS_P15204                               HYPERLOGLOG
+SYS_P15205                               HYPERLOGLOG
+SYS_P15206                               HYPERLOGLOG
+SYS_P15207                               HYPERLOGLOG
+SYS_P15208                               HYPERLOGLOG
+SYS_P15209                               HYPERLOGLOG
+SYS_P15210                               HYPERLOGLOG
+SYS_P15211                               HYPERLOGLOG
+SYS_P15212                               HYPERLOGLOG
+SYS_P15213                               HYPERLOGLOG
+SYS_P15214                               HYPERLOGLOG
+SYS_P15215                               HYPERLOGLOG
+SYS_P15216                               HYPERLOGLOG
+SYS_P15217                               HYPERLOGLOG
+SYS_P15218                               HYPERLOGLOG
+SYS_P15219                               HYPERLOGLOG
+SYS_P15220                               HYPERLOGLOG
+SYS_P15221                               HYPERLOGLOG
+SYS_P15222                               HYPERLOGLOG
+SYS_P15223                               HYPERLOGLOG
+SYS_P15224                               HYPERLOGLOG
+SYS_P15225                               HYPERLOGLOG
+SYS_P15226                               HYPERLOGLOG
+SYS_P15227                               HYPERLOGLOG
+SYS_P15228                               HYPERLOGLOG
+SYS_P15229                               HYPERLOGLOG
+SYS_P15230                               HYPERLOGLOG
+SYS_P15231                               HYPERLOGLOG
+SYS_P15232                               HYPERLOGLOG
+SYS_P15233                               HYPERLOGLOG
+SYS_P15234                               HYPERLOGLOG
+SYS_P15235                               HYPERLOGLOG
+SYS_P15236                               HYPERLOGLOG
+SYS_P15237                               HYPERLOGLOG
+SYS_P15238                               HYPERLOGLOG
+SYS_P15239                               HYPERLOGLOG
+SYS_P15240                               HYPERLOGLOG
+SYS_P15241                               HYPERLOGLOG
+SYS_P15242                               HYPERLOGLOG
+SYS_P15243                               HYPERLOGLOG
+SYS_P15244                               HYPERLOGLOG
+SYS_P15245                               HYPERLOGLOG
+SYS_P15246                               HYPERLOGLOG
+SYS_P15247                               HYPERLOGLOG
+SYS_P15248                               HYPERLOGLOG
+SYS_P15249                               HYPERLOGLOG
+SYS_P15250                               HYPERLOGLOG
+SYS_P15251                               HYPERLOGLOG
+SYS_P15252                               HYPERLOGLOG
+SYS_P15253                               HYPERLOGLOG
+SYS_P15254                               HYPERLOGLOG
+SYS_P15255                               HYPERLOGLOG
+SYS_P15256                               HYPERLOGLOG
+SYS_P15257                               HYPERLOGLOG
+SYS_P15258                               HYPERLOGLOG
+SYS_P15259                               HYPERLOGLOG
+SYS_P15260                               HYPERLOGLOG
+SYS_P15261                               HYPERLOGLOG
+SYS_P15262                               HYPERLOGLOG
+SYS_P15263                               HYPERLOGLOG
+SYS_P15264                               HYPERLOGLOG
+SYS_P15265                               HYPERLOGLOG
+SYS_P15266                               HYPERLOGLOG
+SYS_P15267                               HYPERLOGLOG
+SYS_P15268                               HYPERLOGLOG
+SYS_P15269                               HYPERLOGLOG
+SYS_P15270                               HYPERLOGLOG
+SYS_P15271                               HYPERLOGLOG
+SYS_P15272                               HYPERLOGLOG
+SYS_P15273                               HYPERLOGLOG
+SYS_P15274                               HYPERLOGLOG
+SYS_P15275                               HYPERLOGLOG
+SYS_P15276                               HYPERLOGLOG
+SYS_P15277                               HYPERLOGLOG
+SYS_P15278                               HYPERLOGLOG
+SYS_P15279                               HYPERLOGLOG
+SYS_P15280                               HYPERLOGLOG
+SYS_P15281                               HYPERLOGLOG
+SYS_P15282                               HYPERLOGLOG
+SYS_P15283                               HYPERLOGLOG
+SYS_P15284                               HYPERLOGLOG
+SYS_P15285                               HYPERLOGLOG
+SYS_P15286                               HYPERLOGLOG
+SYS_P15287                               HYPERLOGLOG
+SYS_P15288                               HYPERLOGLOG
+SYS_P15289                               HYPERLOGLOG
+SYS_P15290                               HYPERLOGLOG
+SYS_P15291                               HYPERLOGLOG
+SYS_P15292                               HYPERLOGLOG
+SYS_P15293                               HYPERLOGLOG
+SYS_P15294                               HYPERLOGLOG
+SYS_P15295                               HYPERLOGLOG
+SYS_P15296                               HYPERLOGLOG
+SYS_P15297                               HYPERLOGLOG
+SYS_P15298                               HYPERLOGLOG
+SYS_P15299                               HYPERLOGLOG
+SYS_P15300                               HYPERLOGLOG
+SYS_P15301                               HYPERLOGLOG
+SYS_P15302                               HYPERLOGLOG
+SYS_P15303                               HYPERLOGLOG
+SYS_P15304                               HYPERLOGLOG
+SYS_P15305                               HYPERLOGLOG
+SYS_P15306                               HYPERLOGLOG
+SYS_P15307                               HYPERLOGLOG
+SYS_P15308                               HYPERLOGLOG
+SYS_P15309                               HYPERLOGLOG
+SYS_P15310                               HYPERLOGLOG
+SYS_P15311                               HYPERLOGLOG
+SYS_P15312                               HYPERLOGLOG
+SYS_P15313                               HYPERLOGLOG
+SYS_P15314                               HYPERLOGLOG
+SYS_P15315                               HYPERLOGLOG
+SYS_P15316                               HYPERLOGLOG
+SYS_P15317                               HYPERLOGLOG
+SYS_P15318                               HYPERLOGLOG
+SYS_P15319                               HYPERLOGLOG
+SYS_P15320                               HYPERLOGLOG
+SYS_P15321                               HYPERLOGLOG
+SYS_P15322                               HYPERLOGLOG
+SYS_P15323                               HYPERLOGLOG
+SYS_P15324                               HYPERLOGLOG
+SYS_P15325                               HYPERLOGLOG
+SYS_P15326                               HYPERLOGLOG
+SYS_P15327                               HYPERLOGLOG
+SYS_P15328                               HYPERLOGLOG
+SYS_P15329                               HYPERLOGLOG
+SYS_P15330                               HYPERLOGLOG
+SYS_P15331                               HYPERLOGLOG
+SYS_P15332                               HYPERLOGLOG
+SYS_P15333                               HYPERLOGLOG
+SYS_P15334                               HYPERLOGLOG
+SYS_P15335                               HYPERLOGLOG
+SYS_P15336                               HYPERLOGLOG
+SYS_P15337                               HYPERLOGLOG
+SYS_P15338                               HYPERLOGLOG
+SYS_P15339                               HYPERLOGLOG
+SYS_P15340                               HYPERLOGLOG
+SYS_P15341                               HYPERLOGLOG
+SYS_P15342                               HYPERLOGLOG
+SYS_P15343                               HYPERLOGLOG
+SYS_P15344                               HYPERLOGLOG
+SYS_P15345                               HYPERLOGLOG
+SYS_P15346                               HYPERLOGLOG
+SYS_P15347                               HYPERLOGLOG
+SYS_P15348                               HYPERLOGLOG
+SYS_P15349                               HYPERLOGLOG
+SYS_P15350                               HYPERLOGLOG
+SYS_P15351                               HYPERLOGLOG
+SYS_P15352                               HYPERLOGLOG
+SYS_P15353                               HYPERLOGLOG
+SYS_P15354                               HYPERLOGLOG
+SYS_P15355                               HYPERLOGLOG
+SYS_P15356                               HYPERLOGLOG
+SYS_P15357                               HYPERLOGLOG
+SYS_P15358                               HYPERLOGLOG
+SYS_P15359                               HYPERLOGLOG
+SYS_P15360                               HYPERLOGLOG
+SYS_P15361                               HYPERLOGLOG
+SYS_P15362                               HYPERLOGLOG
+SYS_P15363                               HYPERLOGLOG
+SYS_P15364                               HYPERLOGLOG
+SYS_P15365                               HYPERLOGLOG
+SYS_P15366                               HYPERLOGLOG
+SYS_P15367                               HYPERLOGLOG
+SYS_P15368                               HYPERLOGLOG
+SYS_P15369                               HYPERLOGLOG
+SYS_P15370                               HYPERLOGLOG
+SYS_P15371                               HYPERLOGLOG
+SYS_P15372                               HYPERLOGLOG
+SYS_P15373                               HYPERLOGLOG
+SYS_P15374                               HYPERLOGLOG
+SYS_P15375                               HYPERLOGLOG
+SYS_P15376                               HYPERLOGLOG
+SYS_P15377                               HYPERLOGLOG
+SYS_P15378                               HYPERLOGLOG
+SYS_P15379                               HYPERLOGLOG
+SYS_P15380                               HYPERLOGLOG
+SYS_P15381                               HYPERLOGLOG
+SYS_P15382                               HYPERLOGLOG
+SYS_P15383                               HYPERLOGLOG
+SYS_P15384                               HYPERLOGLOG
+SYS_P15385                               HYPERLOGLOG
+SYS_P15386                               HYPERLOGLOG
+SYS_P15387                               HYPERLOGLOG
+SYS_P15388                               HYPERLOGLOG
+SYS_P15389                               HYPERLOGLOG
+SYS_P15390                               HYPERLOGLOG
+SYS_P15391                               HYPERLOGLOG
+SYS_P15392                               HYPERLOGLOG
+SYS_P15393                               HYPERLOGLOG
+SYS_P15394                               HYPERLOGLOG
+SYS_P15395                               HYPERLOGLOG
+SYS_P15396                               HYPERLOGLOG
+SYS_P15397                               HYPERLOGLOG
+SYS_P15398                               HYPERLOGLOG
+SYS_P15399                               HYPERLOGLOG
+SYS_P15400                               HYPERLOGLOG
+SYS_P15401                               HYPERLOGLOG
+SYS_P15402                               HYPERLOGLOG
+SYS_P15403                               HYPERLOGLOG
+SYS_P15404                               HYPERLOGLOG
+SYS_P15405                               HYPERLOGLOG
+SYS_P15406                               HYPERLOGLOG
+SYS_P15407                               HYPERLOGLOG
+SYS_P15408                               HYPERLOGLOG
+SYS_P15409                               HYPERLOGLOG
+SYS_P15410                               HYPERLOGLOG
+SYS_P15411                               HYPERLOGLOG
+SYS_P15412                               HYPERLOGLOG
+SYS_P15413                               HYPERLOGLOG
+SYS_P15414                               HYPERLOGLOG
+SYS_P15415                               HYPERLOGLOG
+SYS_P15416                               HYPERLOGLOG
+SYS_P15417                               HYPERLOGLOG
+SYS_P15418                               HYPERLOGLOG
+SYS_P15419                               HYPERLOGLOG
+SYS_P15420                               HYPERLOGLOG
+SYS_P15421                               HYPERLOGLOG
+SYS_P15422                               HYPERLOGLOG
+SYS_P15423                               HYPERLOGLOG
+SYS_P15424                               HYPERLOGLOG
+SYS_P15425                               HYPERLOGLOG
+SYS_P15426                               HYPERLOGLOG
+SYS_P15427                               HYPERLOGLOG
+SYS_P15428                               HYPERLOGLOG
+SYS_P15429                               HYPERLOGLOG
+SYS_P15430                               HYPERLOGLOG
+SYS_P15431                               HYPERLOGLOG
+SYS_P15432                               HYPERLOGLOG
+SYS_P15433                               HYPERLOGLOG
+SYS_P15434                               HYPERLOGLOG
+SYS_P15435                               HYPERLOGLOG
+SYS_P15436                               HYPERLOGLOG
+SYS_P15437                               HYPERLOGLOG
+SYS_P15438                               HYPERLOGLOG
+SYS_P15439                               HYPERLOGLOG
+SYS_P15440                               HYPERLOGLOG
+SYS_P15441                               HYPERLOGLOG
+SYS_P15442                               HYPERLOGLOG
+SYS_P15443                               HYPERLOGLOG
+SYS_P15444                               HYPERLOGLOG
+SYS_P15445                               HYPERLOGLOG
+SYS_P15446                               HYPERLOGLOG
+SYS_P15447                               HYPERLOGLOG
+SYS_P15448                               HYPERLOGLOG
+SYS_P15449                               HYPERLOGLOG
+SYS_P15450                               HYPERLOGLOG
+SYS_P15451                               HYPERLOGLOG
+
+512 rows selected.
+
+Elapsed: 00:00:00.06
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --
+SQL> -- Note these timings for HYPERLOGLOG
+SQL> -- Compare the timings with the next set of tests
+SQL> --
+SQL> alter table t1 exchange partition p1 with table exch;
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> alter table t1 exchange partition p1 with table exch;
+
+Table altered.
+
+Elapsed: 00:00:00.19
+SQL> alter table t1 exchange partition p1 with table exch;
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> alter table t1 exchange partition p1 with table exch;
+
+Table altered.
+
+Elapsed: 00:00:00.19
+SQL> --
+SQL> -- This last exchange and gather stats returns the T1 to the state it
+SQL> -- it was prior to the first exchange.
+SQL> --
+SQL> alter table t1 exchange partition p1 with table exch;
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.10

@@ -1,0 +1,245 @@
+SQL> 
+SQL> alter session enable parallel dml;
+
+Session altered.
+
+SQL> alter session set parallel_force_local = FALSE;
+
+Session altered.
+
+SQL> alter session set parallel_degree_policy = 'MANUAL';
+
+Session altered.
+
+SQL> 
+SQL> DROP TABLE sales_dl;
+
+Table dropped.
+
+SQL> DROP TABLE sales_dl_copy;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE sales_dl (sale_id NUMBER(10), customer_id NUMBER(10));
+
+Table created.
+
+SQL> 
+SQL> DECLARE
+  2     i NUMBER(10);
+  3  BEGIN
+  4     FOR i IN 1..10
+  5     LOOP
+  6     INSERT INTO sales_dl
+  7        SELECT ROWNUM, MOD(ROWNUM,1000)
+  8        FROM   dual
+  9        CONNECT BY LEVEL <= 100000;
+ 10        COMMIT;
+ 11     END LOOP;
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> EXEC dbms_stats.gather_table_stats(ownname=>NULL, tabname=>'SALES_DL');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> alter session enable parallel dml;
+
+Session altered.
+
+SQL> alter session set parallel_force_local = FALSE;
+
+Session altered.
+
+SQL> alter session set parallel_degree_policy = 'MANUAL';
+
+Session altered.
+
+SQL> 
+SQL> CREATE TABLE sales_dl_copy
+  2  AS
+  3  SELECT * FROM sales_dl WHERE 1=-1;
+
+Table created.
+
+SQL> 
+SQL> 
+SQL> INSERT  /*+ APPEND PARALLEL(t1,8) */
+  2  INTO    sales_dl_copy t1
+  3  SELECT  /*+ PARALLEL(t2,8) */ *
+  4  FROM    sales_dl t2;
+
+1000000 rows created.
+
+SQL> 
+SQL> select * from table(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  b1q66849v7g4v, child number 0
+-------------------------------------
+INSERT  /*+ APPEND PARALLEL(t1,8) */ INTO    sales_dl_copy t1 SELECT
+/*+ PARALLEL(t2,8) */ * FROM    sales_dl t2
+
+Plan hash value: 3834687307
+
+---------------------------------------------------------------------------------------------------------------
+| Id  | Operation             | Name     | Rows  | Bytes | Cost (%CPU)| Time     |    TQ  |IN-OUT| PQ Distrib |
+---------------------------------------------------------------------------------------------------------------
+|   0 | INSERT STATEMENT      |          |       |       |    76 (100)|          |        |      |            |
+|   1 |  PX COORDINATOR       |          |       |       |            |          |        |      |            |
+|   2 |   PX SEND QC (RANDOM) | :TQ10000 |  1000K|  8789K|    76   (0)| 00:00:01 |  Q1,00 | P->S | QC (RAND)  |
+|   3 |    LOAD AS SELECT     |          |       |       |            |          |  Q1,00 | PCWP |            |
+|   4 |     PX BLOCK ITERATOR |          |  1000K|  8789K|    76   (0)| 00:00:01 |  Q1,00 | PCWC |            |
+|*  5 |      TABLE ACCESS FULL| SALES_DL |  1000K|  8789K|    76   (0)| 00:00:01 |  Q1,00 | PCWP |            |
+---------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   5 - access(:Z>=:Z AND :Z<=:Z)
+
+
+23 rows selected.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> --
+SQL> -- Here are the exents for the SALES_DL_COPY table
+SQL> -- It should be similar in 11g and 12c
+SQL> --
+SQL> select segment_type,extent_id,bytes,blocks
+  2  from user_extents
+  3  where segment_name ='SALES_DL_COPY'
+  4  order by extent_id;
+
+SEGMENT_TYPE        EXTENT_ID      BYTES     BLOCKS
+------------------ ---------- ---------- ----------
+TABLE                       0      65536          8
+TABLE                       1    1048576        128
+TABLE                       2     917504        112
+TABLE                       3    1048576        128
+TABLE                       4    1048576        128
+TABLE                       5     196608         24
+TABLE                       6    1048576        128
+TABLE                       7     983040        120
+TABLE                       8    1048576        128
+TABLE                       9    1048576        128
+TABLE                      10     131072         16
+TABLE                      11    1048576        128
+TABLE                      12     917504        112
+TABLE                      13    1048576        128
+TABLE                      14     917504        112
+TABLE                      15    1048576        128
+TABLE                      16     786432         96
+TABLE                      17    1048576        128
+TABLE                      18    1048576        128
+
+19 rows selected.
+
+SQL> 
+SQL> --
+SQL> -- Perform four more PIDL operations
+SQL> --
+SQL> BEGIN
+  2     FOR i IN 1..4
+  3     LOOP
+  4        INSERT /*+ APPEND PARALLEL(t1,8) */ INTO sales_dl_copy t1
+  5        SELECT /*+ PARALLEL(t2,8) */ * FROM  sales_dl t2 WHERE rownum<10000;
+  6        COMMIT;
+  7     END LOOP;
+  8  END;
+  9  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Here are the extents for SALES_DL_COPY after
+SQL> -- five PIDL operations at DOP 8.
+SQL> -- Compare the 11g and 12c case.
+SQL> --
+SQL> -- Your exact results will depend on:
+SQL> --   DB block size (8K in my case)
+SQL> --   Tablespace storage defaults (I am using default USERS tablespace)
+SQL> --
+SQL> -- The number of extents in the 12c case will
+SQL> -- also depend on the number of active RAC instances.
+SQL> -- In my case it is two.
+SQL> --
+SQL> -- Expect fewer extents in the 12c case than the 11g case.
+SQL> --
+SQL> --
+SQL> 
+SQL> select segment_type,extent_id,bytes,blocks
+  2  from user_extents
+  3  where segment_name ='SALES_DL_COPY'
+  4  order by extent_id;
+
+SEGMENT_TYPE        EXTENT_ID      BYTES     BLOCKS
+------------------ ---------- ---------- ----------
+TABLE                       0      65536          8
+TABLE                       1    1048576        128
+TABLE                       2     917504        112
+TABLE                       3    1048576        128
+TABLE                       4    1048576        128
+TABLE                       5     196608         24
+TABLE                       6    1048576        128
+TABLE                       7     983040        120
+TABLE                       8    1048576        128
+TABLE                       9    1048576        128
+TABLE                      10     131072         16
+TABLE                      11    1048576        128
+TABLE                      12     917504        112
+TABLE                      13    1048576        128
+TABLE                      14     917504        112
+TABLE                      15    1048576        128
+TABLE                      16     786432         96
+TABLE                      17    1048576        128
+TABLE                      18    1048576        128
+TABLE                      19      65536          8
+TABLE                      20      65536          8
+TABLE                      21      65536          8
+TABLE                      22      65536          8
+TABLE                      23      65536          8
+TABLE                      24      65536          8
+TABLE                      25     131072         16
+TABLE                      26     131072         16
+TABLE                      27      65536          8
+TABLE                      28      65536          8
+TABLE                      29      65536          8
+TABLE                      30      65536          8
+TABLE                      31      65536          8
+TABLE                      32      65536          8
+TABLE                      33     131072         16
+TABLE                      34     131072         16
+TABLE                      35      65536          8
+TABLE                      36      65536          8
+TABLE                      37      65536          8
+TABLE                      38      65536          8
+TABLE                      39      65536          8
+TABLE                      40      65536          8
+TABLE                      41     131072         16
+TABLE                      42     131072         16
+TABLE                      43      65536          8
+TABLE                      44      65536          8
+TABLE                      45      65536          8
+TABLE                      46      65536          8
+TABLE                      47      65536          8
+TABLE                      48      65536          8
+TABLE                      49     131072         16
+TABLE                      50     131072         16
+
+51 rows selected.
+
+SQL> 
+SQL> spool off

@@ -1,0 +1,80 @@
+SQL> 
+SQL> DROP TABLE sales_dl;
+
+Table dropped.
+
+SQL> DROP TABLE sales_copy;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE sales_dl (sale_id NUMBER(10), customer_id NUMBER(10));
+
+Table created.
+
+SQL> 
+SQL> DECLARE
+  2    i NUMBER(10);
+  3  BEGIN
+  4    FOR i IN 1..10
+  5    LOOP
+  6      INSERT INTO sales_dl
+  7      SELECT ROWNUM, MOD(ROWNUM,1000)
+  8      FROM   dual
+  9      CONNECT BY LEVEL <= 100000;
+ 10      COMMIT;
+ 11    END LOOP;
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> EXEC dbms_stats.gather_table_stats(ownname=>NULL, tabname=>'SALES_DL');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> alter session enable parallel dml;
+
+Session altered.
+
+SQL> alter session set parallel_force_local = FALSE;
+
+Session altered.
+
+SQL> alter session set parallel_degree_policy = 'MANUAL';
+
+Session altered.
+
+SQL> 
+SQL> create table sales_copy as select * from sales_dl where 1=-1;
+
+Table created.
+
+SQL> 
+SQL> alter session set tracefile_identifier = 'TSM';
+
+Session altered.
+
+SQL> ALTER SESSION SET EVENTS='10053 trace name context forever, level 1';
+
+Session altered.
+
+SQL> 
+SQL> insert /*+ APPEND PARALLEL(t1,8) */ into sales_copy t1
+  2  select  /*+ PARALLEL(t2,8) */ * from sales_dl t2;
+
+1000000 rows created.
+
+SQL> 
+SQL> ALTER SESSION SET EVENTS '10053 trace name context off';
+
+Session altered.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> exit

@@ -1,0 +1,5 @@
+set tab off
+set trims on
+SET LINESIZE 250
+SET PAGESIZE 500
+SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);

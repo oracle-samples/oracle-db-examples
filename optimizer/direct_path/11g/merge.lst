@@ -1,0 +1,263 @@
+SQL> 
+SQL> alter session enable parallel dml;
+
+Session altered.
+
+SQL> alter session set parallel_force_local = FALSE;
+
+Session altered.
+
+SQL> alter session set parallel_degree_policy = 'MANUAL';
+
+Session altered.
+
+SQL> 
+SQL> DROP TABLE sales_dl;
+
+Table dropped.
+
+SQL> DROP TABLE sales_dl_copy;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE sales_dl (sale_id NUMBER(10), customer_id NUMBER(10), counter NUMBER(10));
+
+Table created.
+
+SQL> 
+SQL> BEGIN
+  2    INSERT INTO sales_dl
+  3       SELECT ROWNUM, MOD(ROWNUM,1000),ROWNUM*2
+  4       FROM   dual
+  5       CONNECT BY LEVEL <= 1000000;
+  6       COMMIT;
+  7  END;
+  8  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> EXEC dbms_stats.gather_table_stats(ownname=>NULL, tabname=>'SALES_DL');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> alter session enable parallel dml;
+
+Session altered.
+
+SQL> alter session set parallel_force_local = FALSE;
+
+Session altered.
+
+SQL> alter session set parallel_degree_policy = 'MANUAL';
+
+Session altered.
+
+SQL> 
+SQL> CREATE TABLE sales_dl_copy
+  2  AS
+  3  SELECT * FROM sales_dl;
+
+Table created.
+
+SQL> 
+SQL> EXEC dbms_stats.gather_table_stats(ownname=>NULL, tabname=>'SALES_DL_COPY');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> alter table sales_dl parallel 4;
+
+Table altered.
+
+SQL> alter table sales_dl_copy parallel 4;
+
+Table altered.
+
+SQL> 
+SQL> select segment_type,extent_id,bytes,blocks
+  2  from user_extents
+  3  where segment_name ='SALES_DL_COPY'
+  4  order by extent_id;
+
+SEGMENT_TYPE        EXTENT_ID      BYTES     BLOCKS
+------------------ ---------- ---------- ----------
+TABLE                       0      65536          8
+TABLE                       1      65536          8
+TABLE                       2      65536          8
+TABLE                       3      65536          8
+TABLE                       4      65536          8
+TABLE                       5      65536          8
+TABLE                       6      65536          8
+TABLE                       7      65536          8
+TABLE                       8      65536          8
+TABLE                       9      65536          8
+TABLE                      10      65536          8
+TABLE                      11      65536          8
+TABLE                      12      65536          8
+TABLE                      13      65536          8
+TABLE                      14      65536          8
+TABLE                      15      65536          8
+TABLE                      16    1048576        128
+TABLE                      17    1048576        128
+TABLE                      18    1048576        128
+TABLE                      19    1048576        128
+TABLE                      20    1048576        128
+TABLE                      21    1048576        128
+TABLE                      22    1048576        128
+TABLE                      23    1048576        128
+TABLE                      24    1048576        128
+TABLE                      25    1048576        128
+TABLE                      26    1048576        128
+TABLE                      27    1048576        128
+TABLE                      28    1048576        128
+TABLE                      29    1048576        128
+TABLE                      30    1048576        128
+TABLE                      31    1048576        128
+TABLE                      32    1048576        128
+TABLE                      33    1048576        128
+TABLE                      34    1048576        128
+TABLE                      35    1048576        128
+TABLE                      36    1048576        128
+
+37 rows selected.
+
+SQL> 
+SQL> MERGE INTO sales_dl_copy sdlc USING (
+  2  SELECT sale_id, customer_id
+  3  FROM  sales_dl WHERE sale_id < 10000
+  4  ) sdl
+  5  ON (sdlc.sale_id = sdl.sale_id - 5000)
+  6  WHEN MATCHED THEN
+  7           UPDATE SET sdlc.counter = - sdlc.counter
+  8  WHEN NOT MATCHED THEN
+  9           INSERT /*+ APPEND */ (sale_id,customer_id)
+ 10           VALUES (sdl.sale_id-5000,sdl.customer_id)
+ 11  ;
+
+9999 rows merged.
+
+SQL> 
+SQL> select * from table(dbms_xplan.display_cursor);
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9nttxsqsj9sxa, child number 0
+-------------------------------------
+MERGE INTO sales_dl_copy sdlc USING ( SELECT sale_id, customer_id FROM
+sales_dl WHERE sale_id < 10000 ) sdl ON (sdlc.sale_id = sdl.sale_id -
+5000) WHEN MATCHED THEN          UPDATE SET sdlc.counter = -
+sdlc.counter WHEN NOT MATCHED THEN          INSERT /*+ APPEND */
+(sale_id,customer_id)          VALUES (sdl.sale_id-5000,sdl.customer_id)
+
+Plan hash value: 581223539
+
+------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                       | Name          | Rows  | Bytes | Cost (%CPU)| Time     |    TQ  |IN-OUT| PQ Distrib |
+------------------------------------------------------------------------------------------------------------------------------
+|   0 | MERGE STATEMENT                 |               |       |       |   418 (100)|          |        |      |            |
+|   1 |  PX COORDINATOR                 |               |       |       |            |          |        |      |            |
+|   2 |   PX SEND QC (RANDOM)           | :TQ10003      |  9999 |   224K|   418   (1)| 00:00:01 |  Q1,03 | P->S | QC (RAND)  |
+|   3 |    MERGE                        | SALES_DL_COPY |       |       |            |          |  Q1,03 | PCWP |            |
+|   4 |     PX RECEIVE                  |               |  9999 |   224K|   418   (1)| 00:00:01 |  Q1,03 | PCWP |            |
+|   5 |      PX SEND HYBRID (ROWID PKEY)| :TQ10002      |  9999 |   224K|   418   (1)| 00:00:01 |  Q1,02 | P->P | HYBRID (ROW|
+|   6 |       VIEW                      |               |       |       |            |          |  Q1,02 | PCWP |            |
+|*  7 |        HASH JOIN OUTER BUFFERED |               |  9999 |   224K|   418   (1)| 00:00:01 |  Q1,02 | PCWP |            |
+|   8 |         PX RECEIVE              |               |  9999 | 89991 |   210   (1)| 00:00:01 |  Q1,02 | PCWP |            |
+|   9 |          PX SEND HASH           | :TQ10000      |  9999 | 89991 |   210   (1)| 00:00:01 |  Q1,00 | P->P | HASH       |
+|  10 |           PX BLOCK ITERATOR     |               |  9999 | 89991 |   210   (1)| 00:00:01 |  Q1,00 | PCWC |            |
+|* 11 |            TABLE ACCESS FULL    | SALES_DL      |  9999 | 89991 |   210   (1)| 00:00:01 |  Q1,00 | PCWP |            |
+|  12 |         PX RECEIVE              |               |  1000K|    13M|   207   (1)| 00:00:01 |  Q1,02 | PCWP |            |
+|  13 |          PX SEND HASH           | :TQ10001      |  1000K|    13M|   207   (1)| 00:00:01 |  Q1,01 | P->P | HASH       |
+|  14 |           PX BLOCK ITERATOR     |               |  1000K|    13M|   207   (1)| 00:00:01 |  Q1,01 | PCWC |            |
+|* 15 |            TABLE ACCESS FULL    | SALES_DL_COPY |  1000K|    13M|   207   (1)| 00:00:01 |  Q1,01 | PCWP |            |
+------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   7 - access("SDLC"."SALE_ID"="SALE_ID"-5000)
+  11 - access(:Z>=:Z AND :Z<=:Z)
+       filter("SALE_ID"<10000)
+  15 - access(:Z>=:Z AND :Z<=:Z)
+
+
+39 rows selected.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> --
+SQL> -- Here are the extents for SALES_DL_COPY after
+SQL> -- the MERGE operation
+SQL> -- Compare the 11g and 12c case.
+SQL> --
+SQL> -- Your exact results will depend on:
+SQL> --   DB block size (8K in my case)
+SQL> --   Tablespace storage defaults (I am using default USERS tablespace)
+SQL> --
+SQL> -- The number of extents in the 12c case will
+SQL> -- also depend on the number of active RAC instances.
+SQL> -- In my case it is two.
+SQL> --
+SQL> -- Expect fewer extents in the 12c case than the 11g case.
+SQL> --
+SQL> 
+SQL> select segment_type,extent_id,bytes,blocks
+  2  from user_extents
+  3  where segment_name ='SALES_DL_COPY'
+  4  order by extent_id;
+
+SEGMENT_TYPE        EXTENT_ID      BYTES     BLOCKS
+------------------ ---------- ---------- ----------
+TABLE                       0      65536          8
+TABLE                       1      65536          8
+TABLE                       2      65536          8
+TABLE                       3      65536          8
+TABLE                       4      65536          8
+TABLE                       5      65536          8
+TABLE                       6      65536          8
+TABLE                       7      65536          8
+TABLE                       8      65536          8
+TABLE                       9      65536          8
+TABLE                      10      65536          8
+TABLE                      11      65536          8
+TABLE                      12      65536          8
+TABLE                      13      65536          8
+TABLE                      14      65536          8
+TABLE                      15      65536          8
+TABLE                      16    1048576        128
+TABLE                      17    1048576        128
+TABLE                      18    1048576        128
+TABLE                      19    1048576        128
+TABLE                      20    1048576        128
+TABLE                      21    1048576        128
+TABLE                      22    1048576        128
+TABLE                      23    1048576        128
+TABLE                      24    1048576        128
+TABLE                      25    1048576        128
+TABLE                      26    1048576        128
+TABLE                      27    1048576        128
+TABLE                      28    1048576        128
+TABLE                      29    1048576        128
+TABLE                      30    1048576        128
+TABLE                      31    1048576        128
+TABLE                      32    1048576        128
+TABLE                      33    1048576        128
+TABLE                      34    1048576        128
+TABLE                      35    1048576        128
+TABLE                      36     393216         48
+TABLE                      37     131072         16
+TABLE                      38     131072         16
+TABLE                      39     131072         16
+TABLE                      40     131072         16
+
+41 rows selected.
+
+SQL> 
+SQL> exit

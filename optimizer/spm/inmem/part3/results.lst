@@ -1,0 +1,484 @@
+SQL> set echo on
+SQL> set tab off
+SQL> set trims on
+SQL> @flush
+SQL> alter system flush shared_pool;
+
+System altered.
+
+SQL> @drop_base
+SQL> DECLARE
+  2    l_plans_dropped  PLS_INTEGER;
+  3  BEGIN
+  4  
+  5    FOR REC IN (SELECT DISTINCT SQL_HANDLE FROM DBA_SQL_PLAN_BASELINES)
+  6    LOOP
+  7        L_PLANS_DROPPED := DBMS_SPM.DROP_SQL_PLAN_BASELINE (
+  8          sql_handle => rec.sql_handle,
+  9          PLAN_NAME  => NULL);
+ 10    END LOOP;
+ 11  
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> @tab
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 200
+SQL> drop table mysales;
+
+Table dropped.
+
+SQL> 
+SQL> create table mysales (
+  2   id number(10)
+  3  ,sale_type number(10)
+  4  ,txt varchar2(100)
+  5  ,val number(10))
+  6  /
+
+Table created.
+
+SQL> 
+SQL> begin
+  2  for j in 1..20
+  3  loop
+  4  for i in 1..10000
+  5  loop
+  6  insert into mysales values ((i+200)*j,j,'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',i);
+  7  end loop;
+  8  end loop;
+  9  commit;
+ 10  end;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> create index si on mysales(sale_type);
+
+Index created.
+
+SQL> 
+SQL> execute dbms_stats.gather_table_stats(ownname=>null,tabname=>'MYSALES');
+
+PL/SQL procedure successfully completed.
+
+SQL> @auto
+SQL> alter system set optimizer_capture_sql_plan_baselines=TRUE scope=memory;
+
+System altered.
+
+SQL> @q3
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3);
+
+  COUNT(*)   SUM(VAL)
+---------- ----------
+     20000  100010000
+
+SQL> @plan
+SQL> set tab off
+SQL> set trims on
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8xkx5abshb4rz, child number 0
+
+An uncaught error happened in prepare_sql_statement : ORA-01403: no data found
+
+NOTE: cannot fetch plan for SQL_ID: 8xkx5abshb4rz, CHILD_NUMBER: 0
+      Please verify value of SQL_ID and CHILD_NUMBER;
+      It could also be that the plan is no longer in cursor cache (check v$sql_plan)
+
+
+8 rows selected.
+
+SQL> @q3
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3);
+
+  COUNT(*)   SUM(VAL)
+---------- ----------
+     20000  100010000
+
+SQL> @plan
+SQL> set tab off
+SQL> set trims on
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8xkx5abshb4rz, child number 0
+-------------------------------------
+select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)
+
+Plan hash value: 719460714
+
+-------------------------------------------------------------------------------------------------
+| Id  | Operation                             | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                      |         |       |       |   246 (100)|          |
+|   1 |  SORT AGGREGATE                       |         |     1 |     7 |            |          |
+|   2 |   INLIST ITERATOR                     |         |       |       |            |          |
+|   3 |    TABLE ACCESS BY INDEX ROWID BATCHED| MYSALES | 20000 |   136K|   246   (0)| 00:00:01 |
+|*  4 |     INDEX RANGE SCAN                  | SI      | 20000 |       |    40   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - access(("SALE_TYPE"=2 OR "SALE_TYPE"=3))
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_bk42daz2f53zwb9fe04b5 used for this statement
+
+
+25 rows selected.
+
+SQL> @autoo
+SQL> alter system set optimizer_capture_sql_plan_baselines=FALSE scope=memory;
+
+System altered.
+
+SQL> @base
+SQL> set linesize 200
+SQL> column sql_text format a80
+SQL> column sql_handle format a20
+SQL> column plan_name format a35
+SQL> SELECT plan_name,sql_handle,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPM%';
+
+PLAN_NAME                           SQL_HANDLE           SQL_TEXT                                                                         ENA ACC
+----------------------------------- -------------------- -------------------------------------------------------------------------------- --- ---
+SQL_PLAN_bk42daz2f53zwb9fe04b5      SQL_b9104d57c4e28ffc select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)         YES YES
+
+SQL> @in
+SQL> ALTER TABLE mysales INMEMORY;
+
+Table altered.
+
+SQL> ALTER SYSTEM FLUSH shared_pool;
+
+System altered.
+
+SQL> select count(*) from mysales;
+
+  COUNT(*)
+----------
+    200000
+
+SQL> !cat seg.sql
+
+SQL> @seg
+SQL> SELECT segment_name,
+  2         bytes,
+  3         inmemory_size
+  4  FROM   v$im_segments;
+
+SEGMENT_NAME                                                                                                                          BYTES INMEMORY_SIZE
+-------------------------------------------------------------------------------------------------------------------------------- ---------- -------------
+MYSALES                                                                                                                            17825792       2228224
+
+SQL> 
+SQL> @q3
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3);
+
+  COUNT(*)   SUM(VAL)
+---------- ----------
+     20000  100010000
+
+SQL> @plan
+SQL> set tab off
+SQL> set trims on
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8xkx5abshb4rz, child number 1
+
+An uncaught error happened in prepare_sql_statement : ORA-01403: no data found
+
+NOTE: cannot fetch plan for SQL_ID: 8xkx5abshb4rz, CHILD_NUMBER: 1
+      Please verify value of SQL_ID and CHILD_NUMBER;
+      It could also be that the plan is no longer in cursor cache (check v$sql_plan)
+
+
+8 rows selected.
+
+SQL> @q3
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3);
+
+  COUNT(*)   SUM(VAL)
+---------- ----------
+     20000  100010000
+
+SQL> @plan
+SQL> set tab off
+SQL> set trims on
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8xkx5abshb4rz, child number 1
+-------------------------------------
+select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)
+
+Plan hash value: 719460714
+
+-------------------------------------------------------------------------------------------------
+| Id  | Operation                             | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                      |         |       |       |   246 (100)|          |
+|   1 |  SORT AGGREGATE                       |         |     1 |     7 |            |          |
+|   2 |   INLIST ITERATOR                     |         |       |       |            |          |
+|   3 |    TABLE ACCESS BY INDEX ROWID BATCHED| MYSALES | 20000 |   136K|   246   (0)| 00:00:01 |
+|*  4 |     INDEX RANGE SCAN                  | SI      | 20000 |       |    40   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - access(("SALE_TYPE"=2 OR "SALE_TYPE"=3))
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_bk42daz2f53zwb9fe04b5 used for this statement
+
+
+25 rows selected.
+
+SQL> @base
+SQL> set linesize 200
+SQL> column sql_text format a80
+SQL> column sql_handle format a20
+SQL> column plan_name format a35
+SQL> SELECT plan_name,sql_handle,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPM%';
+
+PLAN_NAME                           SQL_HANDLE           SQL_TEXT                                                                         ENA ACC
+----------------------------------- -------------------- -------------------------------------------------------------------------------- --- ---
+SQL_PLAN_bk42daz2f53zwb9fe04b5      SQL_b9104d57c4e28ffc select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)         YES YES
+SQL_PLAN_bk42daz2f53zwc69cec1f      SQL_b9104d57c4e28ffc select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)         YES NO
+
+SQL> !cat show.sql
+
+SQL> @show
+SQL> SELECT PLAN_TABLE_OUTPUT
+  2  FROM   V$SQL s, DBA_SQL_PLAN_BASELINES b,
+  3         TABLE(
+  4           DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE(b.sql_handle,b.plan_name,'basic')
+  5         ) t
+  6  WHERE  s.EXACT_MATCHING_SIGNATURE=b.SIGNATURE
+  7  AND    b.PLAN_NAME='&plan_name';
+Enter value for plan_name: SQL_PLAN_bk42daz2f53zwc69cec1f
+old   7: AND    b.PLAN_NAME='&plan_name'
+new   7: AND    b.PLAN_NAME='SQL_PLAN_bk42daz2f53zwc69cec1f'
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+SQL handle: SQL_b9104d57c4e28ffc
+SQL text: select /* SPM */ count(*),sum(val) from mysales where sale_type in
+          (2,3)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Plan name: SQL_PLAN_bk42daz2f53zwc69cec1f         Plan id: 3332172831
+Enabled: YES     Fixed: NO      Accepted: NO      Origin: AUTO-CAPTURE
+Plan rows: From dictionary
+--------------------------------------------------------------------------------
+
+Plan hash value: 3292460164
+
+-----------------------------------------------
+| Id  | Operation                   | Name    |
+-----------------------------------------------
+|   0 | SELECT STATEMENT            |         |
+|   1 |  SORT AGGREGATE             |         |
+|   2 |   TABLE ACCESS INMEMORY FULL| MYSALES |
+-----------------------------------------------
+
+22 rows selected.
+
+SQL> @base
+SQL> set linesize 200
+SQL> column sql_text format a80
+SQL> column sql_handle format a20
+SQL> column plan_name format a35
+SQL> SELECT plan_name,sql_handle,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPM%';
+
+PLAN_NAME                           SQL_HANDLE           SQL_TEXT                                                                         ENA ACC
+----------------------------------- -------------------- -------------------------------------------------------------------------------- --- ---
+SQL_PLAN_bk42daz2f53zwb9fe04b5      SQL_b9104d57c4e28ffc select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)         YES YES
+SQL_PLAN_bk42daz2f53zwc69cec1f      SQL_b9104d57c4e28ffc select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)         YES NO
+
+SQL> @evo2
+SQL> set serveroutput on
+SQL> DECLARE
+  2   cVal CLOB;
+  3  BEGIN
+  4    cVal := dbms_spm.evolve_sql_plan_baseline(sql_handle=>'&sql_handle',verify=>'NO');
+  5    dbms_output.put_line(cVal);
+  6  END;
+  7  /
+Enter value for sql_handle: SQL_b9104d57c4e28ffc
+old   4:   cVal := dbms_spm.evolve_sql_plan_baseline(sql_handle=>'&sql_handle',verify=>'NO');
+new   4:   cVal := dbms_spm.evolve_sql_plan_baseline(sql_handle=>'SQL_b9104d57c4e28ffc',verify=>'NO');
+GENERAL INFORMATION SECTION
+---------------------------------------------------------------------------------------------
+
+ Task Information:                             
+
+--------------------------------------------- 
+ Task Name            : TASK_485            
+ Task Owner           : ADHOC               
+ Execution Name       : EXEC_475            
+ Execution Type
+: SPM EVOLVE          
+ Scope                : COMPREHENSIVE       
+ Status               : COMPLETED           
+ Started              : 09/07/2015 10:08:09 
+ Finished             : 09/07/2015
+10:08:09 
+ Last Updated         : 09/07/2015 10:08:09 
+ Global Time Limit    : 2147483646          
+ Per-Plan Time Limit  : UNUSED              
+ Number of Errors     : 0
+
+---------------------------------------------------------------------------------------------
+
+SUMMARY
+SECTION
+---------------------------------------------------------------------------------------------
+  Number of plans processed  : 1  
+  Number of findings         : 2  
+  Number of recommendations
+: 1  
+  Number of errors           : 0  
+---------------------------------------------------------------------------------------------
+
+DETAILS
+SECTION
+---------------------------------------------------------------------------------------------
+ Object ID          : 2                                                         
+ Test Plan Name
+: SQL_PLAN_bk42daz2f53zwc69cec1f                            
+ Base Plan Name     : Cost-based plan                                           
+ SQL Handle         : SQL_b9104d57c4e28ffc
+
+ Parsing Schema     : ADHOC                                                     
+ Test Plan Creator  : ADHOC                                                     
+ SQL Text           : select /* SPM
+*/ count(*),sum(val) from mysales where     
+                    sale_type in (2,3)                                          
+
+FINDINGS
+SECTION
+---------------------------------------------------------------------------------------------
+
+Findings (2):
+-----------------------------
+ 1. The plan was not verified.
+
+ 2. The plan was automatically accepted.                                        
+
+Recommendation:
+-----------------------------
+ Consider accepting the plan.
+
+
+
+---------------------------------------------------------------------------------------------
+
+PL/SQL procedure successfully completed.
+
+SQL> set serveroutput off
+SQL> @base
+SQL> set linesize 200
+SQL> column sql_text format a80
+SQL> column sql_handle format a20
+SQL> column plan_name format a35
+SQL> SELECT plan_name,sql_handle,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPM%';
+
+PLAN_NAME                           SQL_HANDLE           SQL_TEXT                                                                         ENA ACC
+----------------------------------- -------------------- -------------------------------------------------------------------------------- --- ---
+SQL_PLAN_bk42daz2f53zwb9fe04b5      SQL_b9104d57c4e28ffc select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)         YES YES
+SQL_PLAN_bk42daz2f53zwc69cec1f      SQL_b9104d57c4e28ffc select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)         YES YES
+
+SQL> @q3
+SQL> set tab off
+SQL> var val number
+SQL> 
+SQL> select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3);
+
+  COUNT(*)   SUM(VAL)
+---------- ----------
+     20000  100010000
+
+SQL> @plan
+SQL> set tab off
+SQL> set trims on
+SQL> SET LINESIZE 250
+SQL> SET PAGESIZE 500
+SQL> SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR);
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8xkx5abshb4rz, child number 0
+-------------------------------------
+select /* SPM */ count(*),sum(val) from mysales where sale_type in (2,3)
+
+Plan hash value: 3292460164
+
+---------------------------------------------------------------------------------------
+| Id  | Operation                   | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |         |       |       |    24 (100)|          |
+|   1 |  SORT AGGREGATE             |         |     1 |     7 |            |          |
+|*  2 |   TABLE ACCESS INMEMORY FULL| MYSALES | 20000 |   136K|    24   (9)| 00:00:01 |
+---------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - inmemory(("SALE_TYPE"=2 OR "SALE_TYPE"=3))
+       filter(("SALE_TYPE"=2 OR "SALE_TYPE"=3))
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_bk42daz2f53zwc69cec1f used for this statement
+
+
+24 rows selected.
+
+SQL> spool off
