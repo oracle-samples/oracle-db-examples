@@ -1,6 +1,14 @@
 # oracle-db-examples
 This repository stores a variety of examples demonstrating how to use the Oracle Database. 
 
+| Repo name  | Description |
+| ------------- | ------------- |
+| db-sample-schemas | This is a mirror of the Oracle Database Sample Schemas |
+| dotnet | .NET based examples |
+| java  | Java based examples |
+| javascript | JavaScript based examples |
+| sql | SQL based examples |
+
 ## Documentation
 You can find the online documentation of the Oracle Database under [http://docs.oracle.com/en/database/](http://docs.oracle.com/en/database/)
 
