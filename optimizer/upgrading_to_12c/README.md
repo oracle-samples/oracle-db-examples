@@ -15,15 +15,15 @@ You may need to:
 
 In the directories below are some *experimental* scripts to help you manage statistics. The aim here is for you to take and adapt them to you own needs. They are broken down into three categories:
 
-### [show_stats](https://github.com/oracle/dw-vldb/tree/master/upgrading_to_12c/show_stats)
+### [show_stats](https://github.com/oracle/oracle-db-examples/blob/master/optimizer/upgrading_to_12c/show_stats)
 
 These scripts demonstrate how to view extended statistics, histograms, SQL plan directives and column usage information. They also demonstrate how you can see which histograms and extended statistics have been created automatically.
 
-### [duplicate](https://github.com/oracle/dw-vldb/tree/master/upgrading_to_12c/duplicate)
+### [duplicate](https://github.com/oracle/oracle-db-examples/blob/master/optimizer/upgrading_to_12c/duplicate)
 
 These scripts query a database schema to spool scripts that can be used to create matching histograms and extended statistics on another database.
 
-### [dpump_copy](https://github.com/oracle/dw-vldb/tree/master/upgrading_to_12c/dpump_copy)
+### [dpump_copy](https://github.com/oracle/oracle-db-examples/blob/master/optimizer/upgrading_to_12c/dpump_copy)
 
 These scripts demonstrate how easy it is to use Data Pump to copy all relevant statistics from one database schema to another.
 

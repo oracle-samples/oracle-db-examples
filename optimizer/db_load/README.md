@@ -6,6 +6,6 @@ The Java was tested on JDK 7 and Oracle Database 12.1.0.2, but it will work with
 
 The Python example requires <a href="http://cx-oracle.sourceforge.net/">cx_Oracle</a>, which in turn depends an Oracle client installation (for example, the <a href="http://www.oracle.com/technetwork/database/features/instant-client/index.html">basic instant client plus the SDK).</a>
 
-The <a href="https://github.com/oracle/dw-vldb/blob/master/db_load/example_output.txt">example output file</a> is included so that you can see how the Java code behaves. Note that it shows what happens if you use a transatlantic SQLNet connection: any optimization that reduces the number of network rountrips results in a very significant performance improvment - above all others! If you are using a local database, you will want to increase *rowCount* significantly.
+The example_output.txt file is included so that you can see how the Java code behaves. Note that it shows what happens if you use a transatlantic SQLNet connection: any optimization that reduces the number of network rountrips results in a very significant performance improvment - above all others! If you are using a local database, you will want to increase *rowCount* significantly.
 
 A SQL script is included to create the test table. Your Oracle user will need to have database resource/create table permissions to create it. Also, make sure that you can "select \* from" v$mystat and v$statname using your Oracle user account (a DBA account holder can grant your user access to these data dictionary views if necessary).
