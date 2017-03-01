@@ -44,11 +44,11 @@ begin
   for t in tlist
   loop
      dbms_output.put('exec dbms_stats.set_table_prefs('''||t.owner||''','''||t.table_name||''',''METHOD_OPT'',');
-     dbms_output.put('''FOR ALL COLUMNS SIZE 1, FOR COLUMNS ');
+     dbms_output.put('''FOR ALL COLUMNS SIZE 1 FOR COLUMNS SIZE 254 ');
      tname := t.table_name;
      for c in collist
      loop
-        dbms_output.put(c.column_name||' SIZE 254 ');
+        dbms_output.put(c.column_name||' ');
      end loop;
      dbms_output.put(''')');
      dbms_output.put_line('');
