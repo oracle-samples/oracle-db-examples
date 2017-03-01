@@ -7,6 +7,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | dotnet | .NET based examples |
 | java  | Java based examples |
 | javascript | JavaScript based examples |
+| optimizer | Oracle Optmizer and Optimizer Stats examples |
 | sql | SQL based examples |
 
 ## Documentation
