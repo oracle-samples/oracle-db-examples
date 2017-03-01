@@ -50,9 +50,9 @@ begin
      tname := t.table_name;
      for c in collist
      loop
-        dbms_output.put(c.column_name||' ');
+        dbms_output.put(c.column_name||' SIZE 254 ');
      end loop;
-     dbms_output.put('SIZE 254'')');
+     dbms_output.put(''')');
      dbms_output.put_line('');
   end loop;
 end;
