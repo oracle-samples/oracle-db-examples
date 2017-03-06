@@ -1,17 +1,17 @@
 # oracle-db-examples
 This repository stores a variety of examples demonstrating how to use the Oracle Database. 
 
-| Repo name  | Description |
+| Repo/Folder name  | Description |
 | ------------- | ------------- |
-| db-sample-schemas | This is a mirror of the Oracle Database Sample Schemas |
-| dotnet | .NET based examples |
-| java  | Java based examples |
-| javascript | JavaScript based examples |
-| optimizer | Oracle Optmizer and Optimizer Stats examples |
-| sql | SQL based examples |
+| [db-sample-schemas[(https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
+| [dotnet](./dotnet) | .NET based examples |
+| [java](./java)  | Java based examples |
+| [javascript](./javascript) | JavaScript based examples |
+| [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
+| [sql](./sql) | SQL based examples |
 
 ## Documentation
-You can find the online documentation of the Oracle Database under [http://docs.oracle.com/en/database/](http://docs.oracle.com/en/database/)
+You can find the online documentation of the Oracle Database under [docs.oracle.com/en/database/](http://docs.oracle.com/en/database/)
 
 ## LiveSQL
 Some of the examples that you see within this repository can be executed in the free web-based tool: [LiveSQL.oracle.com](https://livesql.oracle.com).
