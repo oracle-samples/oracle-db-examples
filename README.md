@@ -3,7 +3,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 
 | Repo/Folder name  | Description |
 | ------------- | ------------- |
-| [db-sample-schemas[(https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
+| [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
 | [dotnet](./dotnet) | .NET based examples |
 | [java](./java)  | Java based examples |
 | [javascript](./javascript) | JavaScript based examples |
@@ -21,7 +21,7 @@ LiveSQL is also an excellent resource for getting started with Oracle Database.
 ## COPYRIGHT
 You may not use the identified files except in compliance with the Universal Permissive License (UPL), Version 1.0 (the "License.")
 
-You may obtain a copy of the License at https://opensource.org/licenses/UPL. A copy of the license is also reproduced below.
+You may obtain a copy of the License at [opensource.org/licenses/UPL](https://opensource.org/licenses/UPL). A copy of the license is also reproduced below.
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an
 "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
