@@ -1,8 +1,19 @@
 #------------------------------------------------------------------------------
+# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+#
+# Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
+#
+# Portions Copyright 2001-2007, Computronix (Canada) Ltd., Edmonton, Alberta,
+# Canada. All rights reserved.
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 # RowsAsInstance.py
 #   Returns rows as instances instead of tuples. See the ceDatabase.Row class
 # in the cx_PyGenLib project (http://cx-pygenlib.sourceforge.net) for a more
 # advanced example.
+#
+# This script requires cx_Oracle 4.3 and higher.
 #------------------------------------------------------------------------------
 
 from __future__ import print_function
