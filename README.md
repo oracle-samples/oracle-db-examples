@@ -8,6 +8,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [java](./java)  | Java based examples |
 | [javascript](./javascript) | JavaScript based examples |
 | [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
+| [python](./python) | Python based examples |
 | [sql](./sql) | SQL based examples |
 
 ## Documentation
