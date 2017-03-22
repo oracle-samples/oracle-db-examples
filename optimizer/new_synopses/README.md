@@ -8,6 +8,8 @@ You will see how to create new-style synopses get an indication of their space a
 
 A DBA account is required if you want to view synopses data in the data dictionary, otherwise, a non-DBA account is OK.
 
+The "test" scripts show you the "nuts and bolts" of synopses and demonstrate performance benefits. The other numbered scripts demonstrate some of the different options for controlling synopses. The check.sql script shows you how to see what type of synopsis a partition has.
+
 ### Note
 
 All of the scripts are designed to work with Oracle Database 12c Release 2.
