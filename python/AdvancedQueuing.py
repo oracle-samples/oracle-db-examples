@@ -1,7 +1,18 @@
 #------------------------------------------------------------------------------
+# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+#
+# Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
+#
+# Portions Copyright 2001-2007, Computronix (Canada) Ltd., Edmonton, Alberta,
+# Canada. All rights reserved.
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 # AdvancedQueuing.py
 #   This script demonstrates how to use advanced queuing using cx_Oracle. It
 # creates a simple type and enqueues and dequeues a few objects.
+#
+# This script requires cx_Oracle 5.3 and higher.
 #------------------------------------------------------------------------------
 
 from __future__ import print_function

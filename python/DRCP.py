@@ -1,4 +1,13 @@
 #------------------------------------------------------------------------------
+# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+#
+# Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
+#
+# Portions Copyright 2001-2007, Computronix (Canada) Ltd., Edmonton, Alberta,
+# Canada. All rights reserved.
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 # DRCP.py
 #   This script demonstrates the use of Database Resident Connection Pooling
 # (DRCP) which provides a connection pool in the database server, thereby
@@ -15,6 +24,8 @@
 #
 # There is no difference in how a connection is used once it has been
 # established.
+#
+# This script requires cx_Oracle 5.0 and higher.
 #------------------------------------------------------------------------------
 
 from __future__ import print_function
