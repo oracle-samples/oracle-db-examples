@@ -1,0 +1,168 @@
+SQL> @01_mixed
+SQL> set timing  on
+SQL> set linesize 1000
+SQL> set pagesize 100
+SQL> set trims on
+SQL> column partition_name format a40
+SQL> column ndv_alg format a30
+SQL> column inc_stale format a30
+SQL> 
+SQL> drop table t1 purge;
+
+Table dropped.
+
+Elapsed: 00:00:00.15
+SQL> 
+SQL> create table t1 (id number(10),num1 number(10), num2 number(10),txt varchar2(20))
+  2  partition by range (num1)
+  3  interval (1) (
+  4   partition p1 values less than (1)
+  5  ,partition p2 values less than (2));
+
+Table created.
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> insert /*+ APPEND */ into t1
+  2  select rownum, mod(rownum,5), mod(rownum,1000),'X'||mod(rownum,10000)
+  3  from   (select 1 from dual connect by level <=1000);
+
+1000 rows created.
+
+Elapsed: 00:00:00.23
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> --
+SQL> -- Enable incremental statistics
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'t1','incremental','true')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.02
+SQL> --
+SQL> --No need to set because this is the default
+SQL> --
+SQL> --exec dbms_stats.set_table_prefs(null,'t1', 'incremental_staleness', 'allow_mixed_format')
+SQL> 
+SQL> --
+SQL> -- Create old-style synopses
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'t1', 'approximate_ndv_algorithm', 'adaptive sampling')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.54
+SQL> 
+SQL> select dbms_stats.get_prefs('approximate_ndv_algorithm',user,'t1') ndv_alg from dual;
+
+NDV_ALG
+------------------------------
+ADAPTIVE SAMPLING
+
+Elapsed: 00:00:00.01
+SQL> select dbms_stats.get_prefs('incremental_staleness',user,'t1') inc_stale from dual;
+
+INC_STALE
+------------------------------
+ALLOW_MIXED_FORMAT
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> @t1check
+SQL> select subobject_name					    partition_name,
+  2  	    decode(h.spare1,NULL,'ADAPTIVE SAMPLING','HYPERLOGLOG') synopsis_type
+  3  from   dba_objects o,
+  4  	    sys.wri$_optstat_synopsis_head$ h
+  5  where  o.object_type = 'TABLE PARTITION'
+  6  and    o.object_name = 'T1'
+  7  and    o.owner	  = USER
+  8  and    h.group#	  = o.object_id*2
+  9  and    intcol#	  = 1
+ 10  order by partition_name;
+
+PARTITION_NAME                           SYNOPSIS_TYPE
+---------------------------------------- -----------------
+P1                                       ADAPTIVE SAMPLING
+P2                                       ADAPTIVE SAMPLING
+SYS_P2875                                ADAPTIVE SAMPLING
+SYS_P2876                                ADAPTIVE SAMPLING
+SYS_P2877                                ADAPTIVE SAMPLING
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> 
+SQL> 
+SQL> --
+SQL> -- Make one existing partition stale and add a new partition
+SQL> --
+SQL> insert /*+ APPEND */ into t1
+  2  select rownum, mod(rownum,2)+4, mod(rownum,1000),'X'||mod(rownum,10000)
+  3  from   (select 1 from dual connect by level <=1000);
+
+1000 rows created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> exec dbms_stats.set_table_prefs(null,'t1', 'approximate_ndv_algorithm', 'hyperloglog')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> select dbms_stats.get_prefs('approximate_ndv_algorithm',user,'t1') ndv_alg from dual;
+
+NDV_ALG
+------------------------------
+HYPERLOGLOG
+
+Elapsed: 00:00:00.00
+SQL> select dbms_stats.get_prefs('incremental_staleness',user,'t1') inc_stale from dual;
+
+INC_STALE
+------------------------------
+ALLOW_MIXED_FORMAT
+
+Elapsed: 00:00:00.01
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.25
+SQL> 
+SQL> @t1check
+SQL> select subobject_name					    partition_name,
+  2  	    decode(h.spare1,NULL,'ADAPTIVE SAMPLING','HYPERLOGLOG') synopsis_type
+  3  from   dba_objects o,
+  4  	    sys.wri$_optstat_synopsis_head$ h
+  5  where  o.object_type = 'TABLE PARTITION'
+  6  and    o.object_name = 'T1'
+  7  and    o.owner	  = USER
+  8  and    h.group#	  = o.object_id*2
+  9  and    intcol#	  = 1
+ 10  order by partition_name;
+
+PARTITION_NAME                           SYNOPSIS_TYPE
+---------------------------------------- -----------------
+P1                                       ADAPTIVE SAMPLING
+P2                                       ADAPTIVE SAMPLING
+SYS_P2875                                ADAPTIVE SAMPLING
+SYS_P2876                                ADAPTIVE SAMPLING
+SYS_P2877                                HYPERLOGLOG
+SYS_P2913                                HYPERLOGLOG
+
+6 rows selected.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> exit
