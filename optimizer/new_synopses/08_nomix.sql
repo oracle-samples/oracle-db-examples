@@ -48,7 +48,7 @@ exec dbms_stats.gather_table_stats(null,'exch');
 
 --
 -- The partitioned table has new-style synopses
--- Also, disalow mixed format.
+-- Also, disallow mixed format.
 -- Compare the behavior here to the previous example (07_defaultmx)
 --
 exec dbms_stats.set_table_prefs(null,'t1', 'approximate_ndv_algorithm', 'hyperloglog')
