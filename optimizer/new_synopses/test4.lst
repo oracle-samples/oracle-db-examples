@@ -9,11 +9,11 @@ SQL> -- We are going to perform a partition exchange load and
 SQL> -- take a look at the timings for Adaptive Sampling synopses.
 SQL> -- Compare the results here with "test3".
 SQL> --
-SQL> exec dbms_stats.set_table_prefs(null,'t1','incremental_staleness', NULL)
+SQL> exec dbms_stats.set_table_prefs(null,'t1','incremental_staleness', 'NULL')
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:00.02
+Elapsed: 00:00:00.01
 SQL> 
 SQL> exec DBMS_STATS.SET_TABLE_PREFS (null,'exch','INCREMENTAL_LEVEL','table');
 
@@ -29,12 +29,12 @@ SQL> exec dbms_stats.delete_table_stats(null,'exch')
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:00.04
+Elapsed: 00:00:00.02
 SQL> exec dbms_stats.gather_table_stats(null,'exch');
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:00.38
+Elapsed: 00:00:00.27
 SQL> 
 SQL> --
 SQL> -- The exchange table has synopses
@@ -46,7 +46,7 @@ SQL> select count(*) from sys.WRI$_OPTSTAT_SYNOPSIS$
 ----------
      38289
 
-Elapsed: 00:00:00.02
+Elapsed: 00:00:00.03
 SQL> 
 SQL> --
 SQL> -- The exchange table has 5 columns...
@@ -58,7 +58,7 @@ SQL> select count(*) from sys.WRI$_OPTSTAT_SYNOPSIS_HEAD$
 ----------
          5
 
-Elapsed: 00:00:00.00
+Elapsed: 00:00:00.01
 SQL> 
 SQL> select spare1,spare2 from sys.WRI$_OPTSTAT_SYNOPSIS_HEAD$
   2  where  bo# = (select object_id from user_objects where object_name = 'EXCH' and object_type = 'TABLE')
@@ -84,17 +84,17 @@ SQL> exec dbms_stats.set_table_prefs(null,'t1', 'approximate_ndv_algorithm', 'ad
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:00.00
+Elapsed: 00:00:00.01
 SQL> exec dbms_stats.delete_table_stats(null,'t1')
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:00.60
+Elapsed: 00:00:00.56
 SQL> exec dbms_stats.gather_table_stats(null,'t1')
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:14.41
+Elapsed: 00:00:14.42
 SQL> 
 SQL> pause
 
@@ -108,7 +108,7 @@ SQL> alter table t1 exchange partition p1 with table exch;
 
 Table altered.
 
-Elapsed: 00:00:01.08
+Elapsed: 00:00:01.03
 SQL> 
 SQL> pause
 
@@ -121,7 +121,7 @@ SQL> exec dbms_stats.gather_table_stats(null,'t1')
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:01.57
+Elapsed: 00:00:01.54
 SQL> 
 SQL> pause
 
@@ -152,520 +152,520 @@ PARTITION_NAME                           SYNOPSIS_TYPE
 ---------------------------------------- ----------------------------------------
 P1                                       ADAPTIVE SAMPLING
 P2                                       ADAPTIVE SAMPLING
-SYS_P14942                               ADAPTIVE SAMPLING
-SYS_P14943                               ADAPTIVE SAMPLING
-SYS_P14944                               ADAPTIVE SAMPLING
-SYS_P14945                               ADAPTIVE SAMPLING
-SYS_P14946                               ADAPTIVE SAMPLING
-SYS_P14947                               ADAPTIVE SAMPLING
-SYS_P14948                               ADAPTIVE SAMPLING
-SYS_P14949                               ADAPTIVE SAMPLING
-SYS_P14950                               ADAPTIVE SAMPLING
-SYS_P14951                               ADAPTIVE SAMPLING
-SYS_P14952                               ADAPTIVE SAMPLING
-SYS_P14953                               ADAPTIVE SAMPLING
-SYS_P14954                               ADAPTIVE SAMPLING
-SYS_P14955                               ADAPTIVE SAMPLING
-SYS_P14956                               ADAPTIVE SAMPLING
-SYS_P14957                               ADAPTIVE SAMPLING
-SYS_P14958                               ADAPTIVE SAMPLING
-SYS_P14959                               ADAPTIVE SAMPLING
-SYS_P14960                               ADAPTIVE SAMPLING
-SYS_P14961                               ADAPTIVE SAMPLING
-SYS_P14962                               ADAPTIVE SAMPLING
-SYS_P14963                               ADAPTIVE SAMPLING
-SYS_P14964                               ADAPTIVE SAMPLING
-SYS_P14965                               ADAPTIVE SAMPLING
-SYS_P14966                               ADAPTIVE SAMPLING
-SYS_P14967                               ADAPTIVE SAMPLING
-SYS_P14968                               ADAPTIVE SAMPLING
-SYS_P14969                               ADAPTIVE SAMPLING
-SYS_P14970                               ADAPTIVE SAMPLING
-SYS_P14971                               ADAPTIVE SAMPLING
-SYS_P14972                               ADAPTIVE SAMPLING
-SYS_P14973                               ADAPTIVE SAMPLING
-SYS_P14974                               ADAPTIVE SAMPLING
-SYS_P14975                               ADAPTIVE SAMPLING
-SYS_P14976                               ADAPTIVE SAMPLING
-SYS_P14977                               ADAPTIVE SAMPLING
-SYS_P14978                               ADAPTIVE SAMPLING
-SYS_P14979                               ADAPTIVE SAMPLING
-SYS_P14980                               ADAPTIVE SAMPLING
-SYS_P14981                               ADAPTIVE SAMPLING
-SYS_P14982                               ADAPTIVE SAMPLING
-SYS_P14983                               ADAPTIVE SAMPLING
-SYS_P14984                               ADAPTIVE SAMPLING
-SYS_P14985                               ADAPTIVE SAMPLING
-SYS_P14986                               ADAPTIVE SAMPLING
-SYS_P14987                               ADAPTIVE SAMPLING
-SYS_P14988                               ADAPTIVE SAMPLING
-SYS_P14989                               ADAPTIVE SAMPLING
-SYS_P14990                               ADAPTIVE SAMPLING
-SYS_P14991                               ADAPTIVE SAMPLING
-SYS_P14992                               ADAPTIVE SAMPLING
-SYS_P14993                               ADAPTIVE SAMPLING
-SYS_P14994                               ADAPTIVE SAMPLING
-SYS_P14995                               ADAPTIVE SAMPLING
-SYS_P14996                               ADAPTIVE SAMPLING
-SYS_P14997                               ADAPTIVE SAMPLING
-SYS_P14998                               ADAPTIVE SAMPLING
-SYS_P14999                               ADAPTIVE SAMPLING
-SYS_P15000                               ADAPTIVE SAMPLING
-SYS_P15001                               ADAPTIVE SAMPLING
-SYS_P15002                               ADAPTIVE SAMPLING
-SYS_P15003                               ADAPTIVE SAMPLING
-SYS_P15004                               ADAPTIVE SAMPLING
-SYS_P15005                               ADAPTIVE SAMPLING
-SYS_P15006                               ADAPTIVE SAMPLING
-SYS_P15007                               ADAPTIVE SAMPLING
-SYS_P15008                               ADAPTIVE SAMPLING
-SYS_P15009                               ADAPTIVE SAMPLING
-SYS_P15010                               ADAPTIVE SAMPLING
-SYS_P15011                               ADAPTIVE SAMPLING
-SYS_P15012                               ADAPTIVE SAMPLING
-SYS_P15013                               ADAPTIVE SAMPLING
-SYS_P15014                               ADAPTIVE SAMPLING
-SYS_P15015                               ADAPTIVE SAMPLING
-SYS_P15016                               ADAPTIVE SAMPLING
-SYS_P15017                               ADAPTIVE SAMPLING
-SYS_P15018                               ADAPTIVE SAMPLING
-SYS_P15019                               ADAPTIVE SAMPLING
-SYS_P15020                               ADAPTIVE SAMPLING
-SYS_P15021                               ADAPTIVE SAMPLING
-SYS_P15022                               ADAPTIVE SAMPLING
-SYS_P15023                               ADAPTIVE SAMPLING
-SYS_P15024                               ADAPTIVE SAMPLING
-SYS_P15025                               ADAPTIVE SAMPLING
-SYS_P15026                               ADAPTIVE SAMPLING
-SYS_P15027                               ADAPTIVE SAMPLING
-SYS_P15028                               ADAPTIVE SAMPLING
-SYS_P15029                               ADAPTIVE SAMPLING
-SYS_P15030                               ADAPTIVE SAMPLING
-SYS_P15031                               ADAPTIVE SAMPLING
-SYS_P15032                               ADAPTIVE SAMPLING
-SYS_P15033                               ADAPTIVE SAMPLING
-SYS_P15034                               ADAPTIVE SAMPLING
-SYS_P15035                               ADAPTIVE SAMPLING
-SYS_P15036                               ADAPTIVE SAMPLING
-SYS_P15037                               ADAPTIVE SAMPLING
-SYS_P15038                               ADAPTIVE SAMPLING
-SYS_P15039                               ADAPTIVE SAMPLING
-SYS_P15040                               ADAPTIVE SAMPLING
-SYS_P15041                               ADAPTIVE SAMPLING
-SYS_P15042                               ADAPTIVE SAMPLING
-SYS_P15043                               ADAPTIVE SAMPLING
-SYS_P15044                               ADAPTIVE SAMPLING
-SYS_P15045                               ADAPTIVE SAMPLING
-SYS_P15046                               ADAPTIVE SAMPLING
-SYS_P15047                               ADAPTIVE SAMPLING
-SYS_P15048                               ADAPTIVE SAMPLING
-SYS_P15049                               ADAPTIVE SAMPLING
-SYS_P15050                               ADAPTIVE SAMPLING
-SYS_P15051                               ADAPTIVE SAMPLING
-SYS_P15052                               ADAPTIVE SAMPLING
-SYS_P15053                               ADAPTIVE SAMPLING
-SYS_P15054                               ADAPTIVE SAMPLING
-SYS_P15055                               ADAPTIVE SAMPLING
-SYS_P15056                               ADAPTIVE SAMPLING
-SYS_P15057                               ADAPTIVE SAMPLING
-SYS_P15058                               ADAPTIVE SAMPLING
-SYS_P15059                               ADAPTIVE SAMPLING
-SYS_P15060                               ADAPTIVE SAMPLING
-SYS_P15061                               ADAPTIVE SAMPLING
-SYS_P15062                               ADAPTIVE SAMPLING
-SYS_P15063                               ADAPTIVE SAMPLING
-SYS_P15064                               ADAPTIVE SAMPLING
-SYS_P15065                               ADAPTIVE SAMPLING
-SYS_P15066                               ADAPTIVE SAMPLING
-SYS_P15067                               ADAPTIVE SAMPLING
-SYS_P15068                               ADAPTIVE SAMPLING
-SYS_P15069                               ADAPTIVE SAMPLING
-SYS_P15070                               ADAPTIVE SAMPLING
-SYS_P15071                               ADAPTIVE SAMPLING
-SYS_P15072                               ADAPTIVE SAMPLING
-SYS_P15073                               ADAPTIVE SAMPLING
-SYS_P15074                               ADAPTIVE SAMPLING
-SYS_P15075                               ADAPTIVE SAMPLING
-SYS_P15076                               ADAPTIVE SAMPLING
-SYS_P15077                               ADAPTIVE SAMPLING
-SYS_P15078                               ADAPTIVE SAMPLING
-SYS_P15079                               ADAPTIVE SAMPLING
-SYS_P15080                               ADAPTIVE SAMPLING
-SYS_P15081                               ADAPTIVE SAMPLING
-SYS_P15082                               ADAPTIVE SAMPLING
-SYS_P15083                               ADAPTIVE SAMPLING
-SYS_P15084                               ADAPTIVE SAMPLING
-SYS_P15085                               ADAPTIVE SAMPLING
-SYS_P15086                               ADAPTIVE SAMPLING
-SYS_P15087                               ADAPTIVE SAMPLING
-SYS_P15088                               ADAPTIVE SAMPLING
-SYS_P15089                               ADAPTIVE SAMPLING
-SYS_P15090                               ADAPTIVE SAMPLING
-SYS_P15091                               ADAPTIVE SAMPLING
-SYS_P15092                               ADAPTIVE SAMPLING
-SYS_P15093                               ADAPTIVE SAMPLING
-SYS_P15094                               ADAPTIVE SAMPLING
-SYS_P15095                               ADAPTIVE SAMPLING
-SYS_P15096                               ADAPTIVE SAMPLING
-SYS_P15097                               ADAPTIVE SAMPLING
-SYS_P15098                               ADAPTIVE SAMPLING
-SYS_P15099                               ADAPTIVE SAMPLING
-SYS_P15100                               ADAPTIVE SAMPLING
-SYS_P15101                               ADAPTIVE SAMPLING
-SYS_P15102                               ADAPTIVE SAMPLING
-SYS_P15103                               ADAPTIVE SAMPLING
-SYS_P15104                               ADAPTIVE SAMPLING
-SYS_P15105                               ADAPTIVE SAMPLING
-SYS_P15106                               ADAPTIVE SAMPLING
-SYS_P15107                               ADAPTIVE SAMPLING
-SYS_P15108                               ADAPTIVE SAMPLING
-SYS_P15109                               ADAPTIVE SAMPLING
-SYS_P15110                               ADAPTIVE SAMPLING
-SYS_P15111                               ADAPTIVE SAMPLING
-SYS_P15112                               ADAPTIVE SAMPLING
-SYS_P15113                               ADAPTIVE SAMPLING
-SYS_P15114                               ADAPTIVE SAMPLING
-SYS_P15115                               ADAPTIVE SAMPLING
-SYS_P15116                               ADAPTIVE SAMPLING
-SYS_P15117                               ADAPTIVE SAMPLING
-SYS_P15118                               ADAPTIVE SAMPLING
-SYS_P15119                               ADAPTIVE SAMPLING
-SYS_P15120                               ADAPTIVE SAMPLING
-SYS_P15121                               ADAPTIVE SAMPLING
-SYS_P15122                               ADAPTIVE SAMPLING
-SYS_P15123                               ADAPTIVE SAMPLING
-SYS_P15124                               ADAPTIVE SAMPLING
-SYS_P15125                               ADAPTIVE SAMPLING
-SYS_P15126                               ADAPTIVE SAMPLING
-SYS_P15127                               ADAPTIVE SAMPLING
-SYS_P15128                               ADAPTIVE SAMPLING
-SYS_P15129                               ADAPTIVE SAMPLING
-SYS_P15130                               ADAPTIVE SAMPLING
-SYS_P15131                               ADAPTIVE SAMPLING
-SYS_P15132                               ADAPTIVE SAMPLING
-SYS_P15133                               ADAPTIVE SAMPLING
-SYS_P15134                               ADAPTIVE SAMPLING
-SYS_P15135                               ADAPTIVE SAMPLING
-SYS_P15136                               ADAPTIVE SAMPLING
-SYS_P15137                               ADAPTIVE SAMPLING
-SYS_P15138                               ADAPTIVE SAMPLING
-SYS_P15139                               ADAPTIVE SAMPLING
-SYS_P15140                               ADAPTIVE SAMPLING
-SYS_P15141                               ADAPTIVE SAMPLING
-SYS_P15142                               ADAPTIVE SAMPLING
-SYS_P15143                               ADAPTIVE SAMPLING
-SYS_P15144                               ADAPTIVE SAMPLING
-SYS_P15145                               ADAPTIVE SAMPLING
-SYS_P15146                               ADAPTIVE SAMPLING
-SYS_P15147                               ADAPTIVE SAMPLING
-SYS_P15148                               ADAPTIVE SAMPLING
-SYS_P15149                               ADAPTIVE SAMPLING
-SYS_P15150                               ADAPTIVE SAMPLING
-SYS_P15151                               ADAPTIVE SAMPLING
-SYS_P15152                               ADAPTIVE SAMPLING
-SYS_P15153                               ADAPTIVE SAMPLING
-SYS_P15154                               ADAPTIVE SAMPLING
-SYS_P15155                               ADAPTIVE SAMPLING
-SYS_P15156                               ADAPTIVE SAMPLING
-SYS_P15157                               ADAPTIVE SAMPLING
-SYS_P15158                               ADAPTIVE SAMPLING
-SYS_P15159                               ADAPTIVE SAMPLING
-SYS_P15160                               ADAPTIVE SAMPLING
-SYS_P15161                               ADAPTIVE SAMPLING
-SYS_P15162                               ADAPTIVE SAMPLING
-SYS_P15163                               ADAPTIVE SAMPLING
-SYS_P15164                               ADAPTIVE SAMPLING
-SYS_P15165                               ADAPTIVE SAMPLING
-SYS_P15166                               ADAPTIVE SAMPLING
-SYS_P15167                               ADAPTIVE SAMPLING
-SYS_P15168                               ADAPTIVE SAMPLING
-SYS_P15169                               ADAPTIVE SAMPLING
-SYS_P15170                               ADAPTIVE SAMPLING
-SYS_P15171                               ADAPTIVE SAMPLING
-SYS_P15172                               ADAPTIVE SAMPLING
-SYS_P15173                               ADAPTIVE SAMPLING
-SYS_P15174                               ADAPTIVE SAMPLING
-SYS_P15175                               ADAPTIVE SAMPLING
-SYS_P15176                               ADAPTIVE SAMPLING
-SYS_P15177                               ADAPTIVE SAMPLING
-SYS_P15178                               ADAPTIVE SAMPLING
-SYS_P15179                               ADAPTIVE SAMPLING
-SYS_P15180                               ADAPTIVE SAMPLING
-SYS_P15181                               ADAPTIVE SAMPLING
-SYS_P15182                               ADAPTIVE SAMPLING
-SYS_P15183                               ADAPTIVE SAMPLING
-SYS_P15184                               ADAPTIVE SAMPLING
-SYS_P15185                               ADAPTIVE SAMPLING
-SYS_P15186                               ADAPTIVE SAMPLING
-SYS_P15187                               ADAPTIVE SAMPLING
-SYS_P15188                               ADAPTIVE SAMPLING
-SYS_P15189                               ADAPTIVE SAMPLING
-SYS_P15190                               ADAPTIVE SAMPLING
-SYS_P15191                               ADAPTIVE SAMPLING
-SYS_P15192                               ADAPTIVE SAMPLING
-SYS_P15193                               ADAPTIVE SAMPLING
-SYS_P15194                               ADAPTIVE SAMPLING
-SYS_P15195                               ADAPTIVE SAMPLING
-SYS_P15196                               ADAPTIVE SAMPLING
-SYS_P15197                               ADAPTIVE SAMPLING
-SYS_P15198                               ADAPTIVE SAMPLING
-SYS_P15199                               ADAPTIVE SAMPLING
-SYS_P15200                               ADAPTIVE SAMPLING
-SYS_P15201                               ADAPTIVE SAMPLING
-SYS_P15202                               ADAPTIVE SAMPLING
-SYS_P15203                               ADAPTIVE SAMPLING
-SYS_P15204                               ADAPTIVE SAMPLING
-SYS_P15205                               ADAPTIVE SAMPLING
-SYS_P15206                               ADAPTIVE SAMPLING
-SYS_P15207                               ADAPTIVE SAMPLING
-SYS_P15208                               ADAPTIVE SAMPLING
-SYS_P15209                               ADAPTIVE SAMPLING
-SYS_P15210                               ADAPTIVE SAMPLING
-SYS_P15211                               ADAPTIVE SAMPLING
-SYS_P15212                               ADAPTIVE SAMPLING
-SYS_P15213                               ADAPTIVE SAMPLING
-SYS_P15214                               ADAPTIVE SAMPLING
-SYS_P15215                               ADAPTIVE SAMPLING
-SYS_P15216                               ADAPTIVE SAMPLING
-SYS_P15217                               ADAPTIVE SAMPLING
-SYS_P15218                               ADAPTIVE SAMPLING
-SYS_P15219                               ADAPTIVE SAMPLING
-SYS_P15220                               ADAPTIVE SAMPLING
-SYS_P15221                               ADAPTIVE SAMPLING
-SYS_P15222                               ADAPTIVE SAMPLING
-SYS_P15223                               ADAPTIVE SAMPLING
-SYS_P15224                               ADAPTIVE SAMPLING
-SYS_P15225                               ADAPTIVE SAMPLING
-SYS_P15226                               ADAPTIVE SAMPLING
-SYS_P15227                               ADAPTIVE SAMPLING
-SYS_P15228                               ADAPTIVE SAMPLING
-SYS_P15229                               ADAPTIVE SAMPLING
-SYS_P15230                               ADAPTIVE SAMPLING
-SYS_P15231                               ADAPTIVE SAMPLING
-SYS_P15232                               ADAPTIVE SAMPLING
-SYS_P15233                               ADAPTIVE SAMPLING
-SYS_P15234                               ADAPTIVE SAMPLING
-SYS_P15235                               ADAPTIVE SAMPLING
-SYS_P15236                               ADAPTIVE SAMPLING
-SYS_P15237                               ADAPTIVE SAMPLING
-SYS_P15238                               ADAPTIVE SAMPLING
-SYS_P15239                               ADAPTIVE SAMPLING
-SYS_P15240                               ADAPTIVE SAMPLING
-SYS_P15241                               ADAPTIVE SAMPLING
-SYS_P15242                               ADAPTIVE SAMPLING
-SYS_P15243                               ADAPTIVE SAMPLING
-SYS_P15244                               ADAPTIVE SAMPLING
-SYS_P15245                               ADAPTIVE SAMPLING
-SYS_P15246                               ADAPTIVE SAMPLING
-SYS_P15247                               ADAPTIVE SAMPLING
-SYS_P15248                               ADAPTIVE SAMPLING
-SYS_P15249                               ADAPTIVE SAMPLING
-SYS_P15250                               ADAPTIVE SAMPLING
-SYS_P15251                               ADAPTIVE SAMPLING
-SYS_P15252                               ADAPTIVE SAMPLING
-SYS_P15253                               ADAPTIVE SAMPLING
-SYS_P15254                               ADAPTIVE SAMPLING
-SYS_P15255                               ADAPTIVE SAMPLING
-SYS_P15256                               ADAPTIVE SAMPLING
-SYS_P15257                               ADAPTIVE SAMPLING
-SYS_P15258                               ADAPTIVE SAMPLING
-SYS_P15259                               ADAPTIVE SAMPLING
-SYS_P15260                               ADAPTIVE SAMPLING
-SYS_P15261                               ADAPTIVE SAMPLING
-SYS_P15262                               ADAPTIVE SAMPLING
-SYS_P15263                               ADAPTIVE SAMPLING
-SYS_P15264                               ADAPTIVE SAMPLING
-SYS_P15265                               ADAPTIVE SAMPLING
-SYS_P15266                               ADAPTIVE SAMPLING
-SYS_P15267                               ADAPTIVE SAMPLING
-SYS_P15268                               ADAPTIVE SAMPLING
-SYS_P15269                               ADAPTIVE SAMPLING
-SYS_P15270                               ADAPTIVE SAMPLING
-SYS_P15271                               ADAPTIVE SAMPLING
-SYS_P15272                               ADAPTIVE SAMPLING
-SYS_P15273                               ADAPTIVE SAMPLING
-SYS_P15274                               ADAPTIVE SAMPLING
-SYS_P15275                               ADAPTIVE SAMPLING
-SYS_P15276                               ADAPTIVE SAMPLING
-SYS_P15277                               ADAPTIVE SAMPLING
-SYS_P15278                               ADAPTIVE SAMPLING
-SYS_P15279                               ADAPTIVE SAMPLING
-SYS_P15280                               ADAPTIVE SAMPLING
-SYS_P15281                               ADAPTIVE SAMPLING
-SYS_P15282                               ADAPTIVE SAMPLING
-SYS_P15283                               ADAPTIVE SAMPLING
-SYS_P15284                               ADAPTIVE SAMPLING
-SYS_P15285                               ADAPTIVE SAMPLING
-SYS_P15286                               ADAPTIVE SAMPLING
-SYS_P15287                               ADAPTIVE SAMPLING
-SYS_P15288                               ADAPTIVE SAMPLING
-SYS_P15289                               ADAPTIVE SAMPLING
-SYS_P15290                               ADAPTIVE SAMPLING
-SYS_P15291                               ADAPTIVE SAMPLING
-SYS_P15292                               ADAPTIVE SAMPLING
-SYS_P15293                               ADAPTIVE SAMPLING
-SYS_P15294                               ADAPTIVE SAMPLING
-SYS_P15295                               ADAPTIVE SAMPLING
-SYS_P15296                               ADAPTIVE SAMPLING
-SYS_P15297                               ADAPTIVE SAMPLING
-SYS_P15298                               ADAPTIVE SAMPLING
-SYS_P15299                               ADAPTIVE SAMPLING
-SYS_P15300                               ADAPTIVE SAMPLING
-SYS_P15301                               ADAPTIVE SAMPLING
-SYS_P15302                               ADAPTIVE SAMPLING
-SYS_P15303                               ADAPTIVE SAMPLING
-SYS_P15304                               ADAPTIVE SAMPLING
-SYS_P15305                               ADAPTIVE SAMPLING
-SYS_P15306                               ADAPTIVE SAMPLING
-SYS_P15307                               ADAPTIVE SAMPLING
-SYS_P15308                               ADAPTIVE SAMPLING
-SYS_P15309                               ADAPTIVE SAMPLING
-SYS_P15310                               ADAPTIVE SAMPLING
-SYS_P15311                               ADAPTIVE SAMPLING
-SYS_P15312                               ADAPTIVE SAMPLING
-SYS_P15313                               ADAPTIVE SAMPLING
-SYS_P15314                               ADAPTIVE SAMPLING
-SYS_P15315                               ADAPTIVE SAMPLING
-SYS_P15316                               ADAPTIVE SAMPLING
-SYS_P15317                               ADAPTIVE SAMPLING
-SYS_P15318                               ADAPTIVE SAMPLING
-SYS_P15319                               ADAPTIVE SAMPLING
-SYS_P15320                               ADAPTIVE SAMPLING
-SYS_P15321                               ADAPTIVE SAMPLING
-SYS_P15322                               ADAPTIVE SAMPLING
-SYS_P15323                               ADAPTIVE SAMPLING
-SYS_P15324                               ADAPTIVE SAMPLING
-SYS_P15325                               ADAPTIVE SAMPLING
-SYS_P15326                               ADAPTIVE SAMPLING
-SYS_P15327                               ADAPTIVE SAMPLING
-SYS_P15328                               ADAPTIVE SAMPLING
-SYS_P15329                               ADAPTIVE SAMPLING
-SYS_P15330                               ADAPTIVE SAMPLING
-SYS_P15331                               ADAPTIVE SAMPLING
-SYS_P15332                               ADAPTIVE SAMPLING
-SYS_P15333                               ADAPTIVE SAMPLING
-SYS_P15334                               ADAPTIVE SAMPLING
-SYS_P15335                               ADAPTIVE SAMPLING
-SYS_P15336                               ADAPTIVE SAMPLING
-SYS_P15337                               ADAPTIVE SAMPLING
-SYS_P15338                               ADAPTIVE SAMPLING
-SYS_P15339                               ADAPTIVE SAMPLING
-SYS_P15340                               ADAPTIVE SAMPLING
-SYS_P15341                               ADAPTIVE SAMPLING
-SYS_P15342                               ADAPTIVE SAMPLING
-SYS_P15343                               ADAPTIVE SAMPLING
-SYS_P15344                               ADAPTIVE SAMPLING
-SYS_P15345                               ADAPTIVE SAMPLING
-SYS_P15346                               ADAPTIVE SAMPLING
-SYS_P15347                               ADAPTIVE SAMPLING
-SYS_P15348                               ADAPTIVE SAMPLING
-SYS_P15349                               ADAPTIVE SAMPLING
-SYS_P15350                               ADAPTIVE SAMPLING
-SYS_P15351                               ADAPTIVE SAMPLING
-SYS_P15352                               ADAPTIVE SAMPLING
-SYS_P15353                               ADAPTIVE SAMPLING
-SYS_P15354                               ADAPTIVE SAMPLING
-SYS_P15355                               ADAPTIVE SAMPLING
-SYS_P15356                               ADAPTIVE SAMPLING
-SYS_P15357                               ADAPTIVE SAMPLING
-SYS_P15358                               ADAPTIVE SAMPLING
-SYS_P15359                               ADAPTIVE SAMPLING
-SYS_P15360                               ADAPTIVE SAMPLING
-SYS_P15361                               ADAPTIVE SAMPLING
-SYS_P15362                               ADAPTIVE SAMPLING
-SYS_P15363                               ADAPTIVE SAMPLING
-SYS_P15364                               ADAPTIVE SAMPLING
-SYS_P15365                               ADAPTIVE SAMPLING
-SYS_P15366                               ADAPTIVE SAMPLING
-SYS_P15367                               ADAPTIVE SAMPLING
-SYS_P15368                               ADAPTIVE SAMPLING
-SYS_P15369                               ADAPTIVE SAMPLING
-SYS_P15370                               ADAPTIVE SAMPLING
-SYS_P15371                               ADAPTIVE SAMPLING
-SYS_P15372                               ADAPTIVE SAMPLING
-SYS_P15373                               ADAPTIVE SAMPLING
-SYS_P15374                               ADAPTIVE SAMPLING
-SYS_P15375                               ADAPTIVE SAMPLING
-SYS_P15376                               ADAPTIVE SAMPLING
-SYS_P15377                               ADAPTIVE SAMPLING
-SYS_P15378                               ADAPTIVE SAMPLING
-SYS_P15379                               ADAPTIVE SAMPLING
-SYS_P15380                               ADAPTIVE SAMPLING
-SYS_P15381                               ADAPTIVE SAMPLING
-SYS_P15382                               ADAPTIVE SAMPLING
-SYS_P15383                               ADAPTIVE SAMPLING
-SYS_P15384                               ADAPTIVE SAMPLING
-SYS_P15385                               ADAPTIVE SAMPLING
-SYS_P15386                               ADAPTIVE SAMPLING
-SYS_P15387                               ADAPTIVE SAMPLING
-SYS_P15388                               ADAPTIVE SAMPLING
-SYS_P15389                               ADAPTIVE SAMPLING
-SYS_P15390                               ADAPTIVE SAMPLING
-SYS_P15391                               ADAPTIVE SAMPLING
-SYS_P15392                               ADAPTIVE SAMPLING
-SYS_P15393                               ADAPTIVE SAMPLING
-SYS_P15394                               ADAPTIVE SAMPLING
-SYS_P15395                               ADAPTIVE SAMPLING
-SYS_P15396                               ADAPTIVE SAMPLING
-SYS_P15397                               ADAPTIVE SAMPLING
-SYS_P15398                               ADAPTIVE SAMPLING
-SYS_P15399                               ADAPTIVE SAMPLING
-SYS_P15400                               ADAPTIVE SAMPLING
-SYS_P15401                               ADAPTIVE SAMPLING
-SYS_P15402                               ADAPTIVE SAMPLING
-SYS_P15403                               ADAPTIVE SAMPLING
-SYS_P15404                               ADAPTIVE SAMPLING
-SYS_P15405                               ADAPTIVE SAMPLING
-SYS_P15406                               ADAPTIVE SAMPLING
-SYS_P15407                               ADAPTIVE SAMPLING
-SYS_P15408                               ADAPTIVE SAMPLING
-SYS_P15409                               ADAPTIVE SAMPLING
-SYS_P15410                               ADAPTIVE SAMPLING
-SYS_P15411                               ADAPTIVE SAMPLING
-SYS_P15412                               ADAPTIVE SAMPLING
-SYS_P15413                               ADAPTIVE SAMPLING
-SYS_P15414                               ADAPTIVE SAMPLING
-SYS_P15415                               ADAPTIVE SAMPLING
-SYS_P15416                               ADAPTIVE SAMPLING
-SYS_P15417                               ADAPTIVE SAMPLING
-SYS_P15418                               ADAPTIVE SAMPLING
-SYS_P15419                               ADAPTIVE SAMPLING
-SYS_P15420                               ADAPTIVE SAMPLING
-SYS_P15421                               ADAPTIVE SAMPLING
-SYS_P15422                               ADAPTIVE SAMPLING
-SYS_P15423                               ADAPTIVE SAMPLING
-SYS_P15424                               ADAPTIVE SAMPLING
-SYS_P15425                               ADAPTIVE SAMPLING
-SYS_P15426                               ADAPTIVE SAMPLING
-SYS_P15427                               ADAPTIVE SAMPLING
-SYS_P15428                               ADAPTIVE SAMPLING
-SYS_P15429                               ADAPTIVE SAMPLING
-SYS_P15430                               ADAPTIVE SAMPLING
-SYS_P15431                               ADAPTIVE SAMPLING
-SYS_P15432                               ADAPTIVE SAMPLING
-SYS_P15433                               ADAPTIVE SAMPLING
-SYS_P15434                               ADAPTIVE SAMPLING
-SYS_P15435                               ADAPTIVE SAMPLING
-SYS_P15436                               ADAPTIVE SAMPLING
-SYS_P15437                               ADAPTIVE SAMPLING
-SYS_P15438                               ADAPTIVE SAMPLING
-SYS_P15439                               ADAPTIVE SAMPLING
-SYS_P15440                               ADAPTIVE SAMPLING
-SYS_P15441                               ADAPTIVE SAMPLING
-SYS_P15442                               ADAPTIVE SAMPLING
-SYS_P15443                               ADAPTIVE SAMPLING
-SYS_P15444                               ADAPTIVE SAMPLING
-SYS_P15445                               ADAPTIVE SAMPLING
-SYS_P15446                               ADAPTIVE SAMPLING
-SYS_P15447                               ADAPTIVE SAMPLING
-SYS_P15448                               ADAPTIVE SAMPLING
-SYS_P15449                               ADAPTIVE SAMPLING
-SYS_P15450                               ADAPTIVE SAMPLING
-SYS_P15451                               ADAPTIVE SAMPLING
+SYS_P16732                               ADAPTIVE SAMPLING
+SYS_P16733                               ADAPTIVE SAMPLING
+SYS_P16734                               ADAPTIVE SAMPLING
+SYS_P16735                               ADAPTIVE SAMPLING
+SYS_P16736                               ADAPTIVE SAMPLING
+SYS_P16737                               ADAPTIVE SAMPLING
+SYS_P16738                               ADAPTIVE SAMPLING
+SYS_P16739                               ADAPTIVE SAMPLING
+SYS_P16740                               ADAPTIVE SAMPLING
+SYS_P16741                               ADAPTIVE SAMPLING
+SYS_P16742                               ADAPTIVE SAMPLING
+SYS_P16743                               ADAPTIVE SAMPLING
+SYS_P16744                               ADAPTIVE SAMPLING
+SYS_P16745                               ADAPTIVE SAMPLING
+SYS_P16746                               ADAPTIVE SAMPLING
+SYS_P16747                               ADAPTIVE SAMPLING
+SYS_P16748                               ADAPTIVE SAMPLING
+SYS_P16749                               ADAPTIVE SAMPLING
+SYS_P16750                               ADAPTIVE SAMPLING
+SYS_P16751                               ADAPTIVE SAMPLING
+SYS_P16752                               ADAPTIVE SAMPLING
+SYS_P16753                               ADAPTIVE SAMPLING
+SYS_P16754                               ADAPTIVE SAMPLING
+SYS_P16755                               ADAPTIVE SAMPLING
+SYS_P16756                               ADAPTIVE SAMPLING
+SYS_P16757                               ADAPTIVE SAMPLING
+SYS_P16758                               ADAPTIVE SAMPLING
+SYS_P16759                               ADAPTIVE SAMPLING
+SYS_P16760                               ADAPTIVE SAMPLING
+SYS_P16761                               ADAPTIVE SAMPLING
+SYS_P16762                               ADAPTIVE SAMPLING
+SYS_P16763                               ADAPTIVE SAMPLING
+SYS_P16764                               ADAPTIVE SAMPLING
+SYS_P16765                               ADAPTIVE SAMPLING
+SYS_P16766                               ADAPTIVE SAMPLING
+SYS_P16767                               ADAPTIVE SAMPLING
+SYS_P16768                               ADAPTIVE SAMPLING
+SYS_P16769                               ADAPTIVE SAMPLING
+SYS_P16770                               ADAPTIVE SAMPLING
+SYS_P16771                               ADAPTIVE SAMPLING
+SYS_P16772                               ADAPTIVE SAMPLING
+SYS_P16773                               ADAPTIVE SAMPLING
+SYS_P16774                               ADAPTIVE SAMPLING
+SYS_P16775                               ADAPTIVE SAMPLING
+SYS_P16776                               ADAPTIVE SAMPLING
+SYS_P16777                               ADAPTIVE SAMPLING
+SYS_P16778                               ADAPTIVE SAMPLING
+SYS_P16779                               ADAPTIVE SAMPLING
+SYS_P16780                               ADAPTIVE SAMPLING
+SYS_P16781                               ADAPTIVE SAMPLING
+SYS_P16782                               ADAPTIVE SAMPLING
+SYS_P16783                               ADAPTIVE SAMPLING
+SYS_P16784                               ADAPTIVE SAMPLING
+SYS_P16785                               ADAPTIVE SAMPLING
+SYS_P16786                               ADAPTIVE SAMPLING
+SYS_P16787                               ADAPTIVE SAMPLING
+SYS_P16788                               ADAPTIVE SAMPLING
+SYS_P16789                               ADAPTIVE SAMPLING
+SYS_P16790                               ADAPTIVE SAMPLING
+SYS_P16791                               ADAPTIVE SAMPLING
+SYS_P16792                               ADAPTIVE SAMPLING
+SYS_P16793                               ADAPTIVE SAMPLING
+SYS_P16794                               ADAPTIVE SAMPLING
+SYS_P16795                               ADAPTIVE SAMPLING
+SYS_P16796                               ADAPTIVE SAMPLING
+SYS_P16797                               ADAPTIVE SAMPLING
+SYS_P16798                               ADAPTIVE SAMPLING
+SYS_P16799                               ADAPTIVE SAMPLING
+SYS_P16800                               ADAPTIVE SAMPLING
+SYS_P16801                               ADAPTIVE SAMPLING
+SYS_P16802                               ADAPTIVE SAMPLING
+SYS_P16803                               ADAPTIVE SAMPLING
+SYS_P16804                               ADAPTIVE SAMPLING
+SYS_P16805                               ADAPTIVE SAMPLING
+SYS_P16806                               ADAPTIVE SAMPLING
+SYS_P16807                               ADAPTIVE SAMPLING
+SYS_P16808                               ADAPTIVE SAMPLING
+SYS_P16809                               ADAPTIVE SAMPLING
+SYS_P16810                               ADAPTIVE SAMPLING
+SYS_P16811                               ADAPTIVE SAMPLING
+SYS_P16812                               ADAPTIVE SAMPLING
+SYS_P16813                               ADAPTIVE SAMPLING
+SYS_P16814                               ADAPTIVE SAMPLING
+SYS_P16815                               ADAPTIVE SAMPLING
+SYS_P16816                               ADAPTIVE SAMPLING
+SYS_P16817                               ADAPTIVE SAMPLING
+SYS_P16818                               ADAPTIVE SAMPLING
+SYS_P16819                               ADAPTIVE SAMPLING
+SYS_P16820                               ADAPTIVE SAMPLING
+SYS_P16821                               ADAPTIVE SAMPLING
+SYS_P16822                               ADAPTIVE SAMPLING
+SYS_P16823                               ADAPTIVE SAMPLING
+SYS_P16824                               ADAPTIVE SAMPLING
+SYS_P16825                               ADAPTIVE SAMPLING
+SYS_P16826                               ADAPTIVE SAMPLING
+SYS_P16827                               ADAPTIVE SAMPLING
+SYS_P16828                               ADAPTIVE SAMPLING
+SYS_P16829                               ADAPTIVE SAMPLING
+SYS_P16830                               ADAPTIVE SAMPLING
+SYS_P16831                               ADAPTIVE SAMPLING
+SYS_P16832                               ADAPTIVE SAMPLING
+SYS_P16833                               ADAPTIVE SAMPLING
+SYS_P16834                               ADAPTIVE SAMPLING
+SYS_P16835                               ADAPTIVE SAMPLING
+SYS_P16836                               ADAPTIVE SAMPLING
+SYS_P16837                               ADAPTIVE SAMPLING
+SYS_P16838                               ADAPTIVE SAMPLING
+SYS_P16839                               ADAPTIVE SAMPLING
+SYS_P16840                               ADAPTIVE SAMPLING
+SYS_P16841                               ADAPTIVE SAMPLING
+SYS_P16842                               ADAPTIVE SAMPLING
+SYS_P16843                               ADAPTIVE SAMPLING
+SYS_P16844                               ADAPTIVE SAMPLING
+SYS_P16845                               ADAPTIVE SAMPLING
+SYS_P16846                               ADAPTIVE SAMPLING
+SYS_P16847                               ADAPTIVE SAMPLING
+SYS_P16848                               ADAPTIVE SAMPLING
+SYS_P16849                               ADAPTIVE SAMPLING
+SYS_P16850                               ADAPTIVE SAMPLING
+SYS_P16851                               ADAPTIVE SAMPLING
+SYS_P16852                               ADAPTIVE SAMPLING
+SYS_P16853                               ADAPTIVE SAMPLING
+SYS_P16854                               ADAPTIVE SAMPLING
+SYS_P16855                               ADAPTIVE SAMPLING
+SYS_P16856                               ADAPTIVE SAMPLING
+SYS_P16857                               ADAPTIVE SAMPLING
+SYS_P16858                               ADAPTIVE SAMPLING
+SYS_P16859                               ADAPTIVE SAMPLING
+SYS_P16860                               ADAPTIVE SAMPLING
+SYS_P16861                               ADAPTIVE SAMPLING
+SYS_P16862                               ADAPTIVE SAMPLING
+SYS_P16863                               ADAPTIVE SAMPLING
+SYS_P16864                               ADAPTIVE SAMPLING
+SYS_P16865                               ADAPTIVE SAMPLING
+SYS_P16866                               ADAPTIVE SAMPLING
+SYS_P16867                               ADAPTIVE SAMPLING
+SYS_P16868                               ADAPTIVE SAMPLING
+SYS_P16869                               ADAPTIVE SAMPLING
+SYS_P16870                               ADAPTIVE SAMPLING
+SYS_P16871                               ADAPTIVE SAMPLING
+SYS_P16872                               ADAPTIVE SAMPLING
+SYS_P16873                               ADAPTIVE SAMPLING
+SYS_P16874                               ADAPTIVE SAMPLING
+SYS_P16875                               ADAPTIVE SAMPLING
+SYS_P16876                               ADAPTIVE SAMPLING
+SYS_P16877                               ADAPTIVE SAMPLING
+SYS_P16878                               ADAPTIVE SAMPLING
+SYS_P16879                               ADAPTIVE SAMPLING
+SYS_P16880                               ADAPTIVE SAMPLING
+SYS_P16881                               ADAPTIVE SAMPLING
+SYS_P16882                               ADAPTIVE SAMPLING
+SYS_P16883                               ADAPTIVE SAMPLING
+SYS_P16884                               ADAPTIVE SAMPLING
+SYS_P16885                               ADAPTIVE SAMPLING
+SYS_P16886                               ADAPTIVE SAMPLING
+SYS_P16887                               ADAPTIVE SAMPLING
+SYS_P16888                               ADAPTIVE SAMPLING
+SYS_P16889                               ADAPTIVE SAMPLING
+SYS_P16890                               ADAPTIVE SAMPLING
+SYS_P16891                               ADAPTIVE SAMPLING
+SYS_P16892                               ADAPTIVE SAMPLING
+SYS_P16893                               ADAPTIVE SAMPLING
+SYS_P16894                               ADAPTIVE SAMPLING
+SYS_P16895                               ADAPTIVE SAMPLING
+SYS_P16896                               ADAPTIVE SAMPLING
+SYS_P16897                               ADAPTIVE SAMPLING
+SYS_P16898                               ADAPTIVE SAMPLING
+SYS_P16899                               ADAPTIVE SAMPLING
+SYS_P16900                               ADAPTIVE SAMPLING
+SYS_P16901                               ADAPTIVE SAMPLING
+SYS_P16902                               ADAPTIVE SAMPLING
+SYS_P16903                               ADAPTIVE SAMPLING
+SYS_P16904                               ADAPTIVE SAMPLING
+SYS_P16905                               ADAPTIVE SAMPLING
+SYS_P16906                               ADAPTIVE SAMPLING
+SYS_P16907                               ADAPTIVE SAMPLING
+SYS_P16908                               ADAPTIVE SAMPLING
+SYS_P16909                               ADAPTIVE SAMPLING
+SYS_P16910                               ADAPTIVE SAMPLING
+SYS_P16911                               ADAPTIVE SAMPLING
+SYS_P16912                               ADAPTIVE SAMPLING
+SYS_P16913                               ADAPTIVE SAMPLING
+SYS_P16914                               ADAPTIVE SAMPLING
+SYS_P16915                               ADAPTIVE SAMPLING
+SYS_P16916                               ADAPTIVE SAMPLING
+SYS_P16917                               ADAPTIVE SAMPLING
+SYS_P16918                               ADAPTIVE SAMPLING
+SYS_P16919                               ADAPTIVE SAMPLING
+SYS_P16920                               ADAPTIVE SAMPLING
+SYS_P16921                               ADAPTIVE SAMPLING
+SYS_P16922                               ADAPTIVE SAMPLING
+SYS_P16923                               ADAPTIVE SAMPLING
+SYS_P16924                               ADAPTIVE SAMPLING
+SYS_P16925                               ADAPTIVE SAMPLING
+SYS_P16926                               ADAPTIVE SAMPLING
+SYS_P16927                               ADAPTIVE SAMPLING
+SYS_P16928                               ADAPTIVE SAMPLING
+SYS_P16929                               ADAPTIVE SAMPLING
+SYS_P16930                               ADAPTIVE SAMPLING
+SYS_P16931                               ADAPTIVE SAMPLING
+SYS_P16932                               ADAPTIVE SAMPLING
+SYS_P16933                               ADAPTIVE SAMPLING
+SYS_P16934                               ADAPTIVE SAMPLING
+SYS_P16935                               ADAPTIVE SAMPLING
+SYS_P16936                               ADAPTIVE SAMPLING
+SYS_P16937                               ADAPTIVE SAMPLING
+SYS_P16938                               ADAPTIVE SAMPLING
+SYS_P16939                               ADAPTIVE SAMPLING
+SYS_P16940                               ADAPTIVE SAMPLING
+SYS_P16941                               ADAPTIVE SAMPLING
+SYS_P16942                               ADAPTIVE SAMPLING
+SYS_P16943                               ADAPTIVE SAMPLING
+SYS_P16944                               ADAPTIVE SAMPLING
+SYS_P16945                               ADAPTIVE SAMPLING
+SYS_P16946                               ADAPTIVE SAMPLING
+SYS_P16947                               ADAPTIVE SAMPLING
+SYS_P16948                               ADAPTIVE SAMPLING
+SYS_P16949                               ADAPTIVE SAMPLING
+SYS_P16950                               ADAPTIVE SAMPLING
+SYS_P16951                               ADAPTIVE SAMPLING
+SYS_P16952                               ADAPTIVE SAMPLING
+SYS_P16953                               ADAPTIVE SAMPLING
+SYS_P16954                               ADAPTIVE SAMPLING
+SYS_P16955                               ADAPTIVE SAMPLING
+SYS_P16956                               ADAPTIVE SAMPLING
+SYS_P16957                               ADAPTIVE SAMPLING
+SYS_P16958                               ADAPTIVE SAMPLING
+SYS_P16959                               ADAPTIVE SAMPLING
+SYS_P16960                               ADAPTIVE SAMPLING
+SYS_P16961                               ADAPTIVE SAMPLING
+SYS_P16962                               ADAPTIVE SAMPLING
+SYS_P16963                               ADAPTIVE SAMPLING
+SYS_P16964                               ADAPTIVE SAMPLING
+SYS_P16965                               ADAPTIVE SAMPLING
+SYS_P16966                               ADAPTIVE SAMPLING
+SYS_P16967                               ADAPTIVE SAMPLING
+SYS_P16968                               ADAPTIVE SAMPLING
+SYS_P16969                               ADAPTIVE SAMPLING
+SYS_P16970                               ADAPTIVE SAMPLING
+SYS_P16971                               ADAPTIVE SAMPLING
+SYS_P16972                               ADAPTIVE SAMPLING
+SYS_P16973                               ADAPTIVE SAMPLING
+SYS_P16974                               ADAPTIVE SAMPLING
+SYS_P16975                               ADAPTIVE SAMPLING
+SYS_P16976                               ADAPTIVE SAMPLING
+SYS_P16977                               ADAPTIVE SAMPLING
+SYS_P16978                               ADAPTIVE SAMPLING
+SYS_P16979                               ADAPTIVE SAMPLING
+SYS_P16980                               ADAPTIVE SAMPLING
+SYS_P16981                               ADAPTIVE SAMPLING
+SYS_P16982                               ADAPTIVE SAMPLING
+SYS_P16983                               ADAPTIVE SAMPLING
+SYS_P16984                               ADAPTIVE SAMPLING
+SYS_P16985                               ADAPTIVE SAMPLING
+SYS_P16986                               ADAPTIVE SAMPLING
+SYS_P16987                               ADAPTIVE SAMPLING
+SYS_P16988                               ADAPTIVE SAMPLING
+SYS_P16989                               ADAPTIVE SAMPLING
+SYS_P16990                               ADAPTIVE SAMPLING
+SYS_P16991                               ADAPTIVE SAMPLING
+SYS_P16992                               ADAPTIVE SAMPLING
+SYS_P16993                               ADAPTIVE SAMPLING
+SYS_P16994                               ADAPTIVE SAMPLING
+SYS_P16995                               ADAPTIVE SAMPLING
+SYS_P16996                               ADAPTIVE SAMPLING
+SYS_P16997                               ADAPTIVE SAMPLING
+SYS_P16998                               ADAPTIVE SAMPLING
+SYS_P16999                               ADAPTIVE SAMPLING
+SYS_P17000                               ADAPTIVE SAMPLING
+SYS_P17001                               ADAPTIVE SAMPLING
+SYS_P17002                               ADAPTIVE SAMPLING
+SYS_P17003                               ADAPTIVE SAMPLING
+SYS_P17004                               ADAPTIVE SAMPLING
+SYS_P17005                               ADAPTIVE SAMPLING
+SYS_P17006                               ADAPTIVE SAMPLING
+SYS_P17007                               ADAPTIVE SAMPLING
+SYS_P17008                               ADAPTIVE SAMPLING
+SYS_P17009                               ADAPTIVE SAMPLING
+SYS_P17010                               ADAPTIVE SAMPLING
+SYS_P17011                               ADAPTIVE SAMPLING
+SYS_P17012                               ADAPTIVE SAMPLING
+SYS_P17013                               ADAPTIVE SAMPLING
+SYS_P17014                               ADAPTIVE SAMPLING
+SYS_P17015                               ADAPTIVE SAMPLING
+SYS_P17016                               ADAPTIVE SAMPLING
+SYS_P17017                               ADAPTIVE SAMPLING
+SYS_P17018                               ADAPTIVE SAMPLING
+SYS_P17019                               ADAPTIVE SAMPLING
+SYS_P17020                               ADAPTIVE SAMPLING
+SYS_P17021                               ADAPTIVE SAMPLING
+SYS_P17022                               ADAPTIVE SAMPLING
+SYS_P17023                               ADAPTIVE SAMPLING
+SYS_P17024                               ADAPTIVE SAMPLING
+SYS_P17025                               ADAPTIVE SAMPLING
+SYS_P17026                               ADAPTIVE SAMPLING
+SYS_P17027                               ADAPTIVE SAMPLING
+SYS_P17028                               ADAPTIVE SAMPLING
+SYS_P17029                               ADAPTIVE SAMPLING
+SYS_P17030                               ADAPTIVE SAMPLING
+SYS_P17031                               ADAPTIVE SAMPLING
+SYS_P17032                               ADAPTIVE SAMPLING
+SYS_P17033                               ADAPTIVE SAMPLING
+SYS_P17034                               ADAPTIVE SAMPLING
+SYS_P17035                               ADAPTIVE SAMPLING
+SYS_P17036                               ADAPTIVE SAMPLING
+SYS_P17037                               ADAPTIVE SAMPLING
+SYS_P17038                               ADAPTIVE SAMPLING
+SYS_P17039                               ADAPTIVE SAMPLING
+SYS_P17040                               ADAPTIVE SAMPLING
+SYS_P17041                               ADAPTIVE SAMPLING
+SYS_P17042                               ADAPTIVE SAMPLING
+SYS_P17043                               ADAPTIVE SAMPLING
+SYS_P17044                               ADAPTIVE SAMPLING
+SYS_P17045                               ADAPTIVE SAMPLING
+SYS_P17046                               ADAPTIVE SAMPLING
+SYS_P17047                               ADAPTIVE SAMPLING
+SYS_P17048                               ADAPTIVE SAMPLING
+SYS_P17049                               ADAPTIVE SAMPLING
+SYS_P17050                               ADAPTIVE SAMPLING
+SYS_P17051                               ADAPTIVE SAMPLING
+SYS_P17052                               ADAPTIVE SAMPLING
+SYS_P17053                               ADAPTIVE SAMPLING
+SYS_P17054                               ADAPTIVE SAMPLING
+SYS_P17055                               ADAPTIVE SAMPLING
+SYS_P17056                               ADAPTIVE SAMPLING
+SYS_P17057                               ADAPTIVE SAMPLING
+SYS_P17058                               ADAPTIVE SAMPLING
+SYS_P17059                               ADAPTIVE SAMPLING
+SYS_P17060                               ADAPTIVE SAMPLING
+SYS_P17061                               ADAPTIVE SAMPLING
+SYS_P17062                               ADAPTIVE SAMPLING
+SYS_P17063                               ADAPTIVE SAMPLING
+SYS_P17064                               ADAPTIVE SAMPLING
+SYS_P17065                               ADAPTIVE SAMPLING
+SYS_P17066                               ADAPTIVE SAMPLING
+SYS_P17067                               ADAPTIVE SAMPLING
+SYS_P17068                               ADAPTIVE SAMPLING
+SYS_P17069                               ADAPTIVE SAMPLING
+SYS_P17070                               ADAPTIVE SAMPLING
+SYS_P17071                               ADAPTIVE SAMPLING
+SYS_P17072                               ADAPTIVE SAMPLING
+SYS_P17073                               ADAPTIVE SAMPLING
+SYS_P17074                               ADAPTIVE SAMPLING
+SYS_P17075                               ADAPTIVE SAMPLING
+SYS_P17076                               ADAPTIVE SAMPLING
+SYS_P17077                               ADAPTIVE SAMPLING
+SYS_P17078                               ADAPTIVE SAMPLING
+SYS_P17079                               ADAPTIVE SAMPLING
+SYS_P17080                               ADAPTIVE SAMPLING
+SYS_P17081                               ADAPTIVE SAMPLING
+SYS_P17082                               ADAPTIVE SAMPLING
+SYS_P17083                               ADAPTIVE SAMPLING
+SYS_P17084                               ADAPTIVE SAMPLING
+SYS_P17085                               ADAPTIVE SAMPLING
+SYS_P17086                               ADAPTIVE SAMPLING
+SYS_P17087                               ADAPTIVE SAMPLING
+SYS_P17088                               ADAPTIVE SAMPLING
+SYS_P17089                               ADAPTIVE SAMPLING
+SYS_P17090                               ADAPTIVE SAMPLING
+SYS_P17091                               ADAPTIVE SAMPLING
+SYS_P17092                               ADAPTIVE SAMPLING
+SYS_P17093                               ADAPTIVE SAMPLING
+SYS_P17094                               ADAPTIVE SAMPLING
+SYS_P17095                               ADAPTIVE SAMPLING
+SYS_P17096                               ADAPTIVE SAMPLING
+SYS_P17097                               ADAPTIVE SAMPLING
+SYS_P17098                               ADAPTIVE SAMPLING
+SYS_P17099                               ADAPTIVE SAMPLING
+SYS_P17100                               ADAPTIVE SAMPLING
+SYS_P17101                               ADAPTIVE SAMPLING
+SYS_P17102                               ADAPTIVE SAMPLING
+SYS_P17103                               ADAPTIVE SAMPLING
+SYS_P17104                               ADAPTIVE SAMPLING
+SYS_P17105                               ADAPTIVE SAMPLING
+SYS_P17106                               ADAPTIVE SAMPLING
+SYS_P17107                               ADAPTIVE SAMPLING
+SYS_P17108                               ADAPTIVE SAMPLING
+SYS_P17109                               ADAPTIVE SAMPLING
+SYS_P17110                               ADAPTIVE SAMPLING
+SYS_P17111                               ADAPTIVE SAMPLING
+SYS_P17112                               ADAPTIVE SAMPLING
+SYS_P17113                               ADAPTIVE SAMPLING
+SYS_P17114                               ADAPTIVE SAMPLING
+SYS_P17115                               ADAPTIVE SAMPLING
+SYS_P17116                               ADAPTIVE SAMPLING
+SYS_P17117                               ADAPTIVE SAMPLING
+SYS_P17118                               ADAPTIVE SAMPLING
+SYS_P17119                               ADAPTIVE SAMPLING
+SYS_P17120                               ADAPTIVE SAMPLING
+SYS_P17121                               ADAPTIVE SAMPLING
+SYS_P17122                               ADAPTIVE SAMPLING
+SYS_P17123                               ADAPTIVE SAMPLING
+SYS_P17124                               ADAPTIVE SAMPLING
+SYS_P17125                               ADAPTIVE SAMPLING
+SYS_P17126                               ADAPTIVE SAMPLING
+SYS_P17127                               ADAPTIVE SAMPLING
+SYS_P17128                               ADAPTIVE SAMPLING
+SYS_P17129                               ADAPTIVE SAMPLING
+SYS_P17130                               ADAPTIVE SAMPLING
+SYS_P17131                               ADAPTIVE SAMPLING
+SYS_P17132                               ADAPTIVE SAMPLING
+SYS_P17133                               ADAPTIVE SAMPLING
+SYS_P17134                               ADAPTIVE SAMPLING
+SYS_P17135                               ADAPTIVE SAMPLING
+SYS_P17136                               ADAPTIVE SAMPLING
+SYS_P17137                               ADAPTIVE SAMPLING
+SYS_P17138                               ADAPTIVE SAMPLING
+SYS_P17139                               ADAPTIVE SAMPLING
+SYS_P17140                               ADAPTIVE SAMPLING
+SYS_P17141                               ADAPTIVE SAMPLING
+SYS_P17142                               ADAPTIVE SAMPLING
+SYS_P17143                               ADAPTIVE SAMPLING
+SYS_P17144                               ADAPTIVE SAMPLING
+SYS_P17145                               ADAPTIVE SAMPLING
+SYS_P17146                               ADAPTIVE SAMPLING
+SYS_P17147                               ADAPTIVE SAMPLING
+SYS_P17148                               ADAPTIVE SAMPLING
+SYS_P17149                               ADAPTIVE SAMPLING
+SYS_P17150                               ADAPTIVE SAMPLING
+SYS_P17151                               ADAPTIVE SAMPLING
+SYS_P17152                               ADAPTIVE SAMPLING
+SYS_P17153                               ADAPTIVE SAMPLING
+SYS_P17154                               ADAPTIVE SAMPLING
+SYS_P17155                               ADAPTIVE SAMPLING
+SYS_P17156                               ADAPTIVE SAMPLING
+SYS_P17157                               ADAPTIVE SAMPLING
+SYS_P17158                               ADAPTIVE SAMPLING
+SYS_P17159                               ADAPTIVE SAMPLING
+SYS_P17160                               ADAPTIVE SAMPLING
+SYS_P17161                               ADAPTIVE SAMPLING
+SYS_P17162                               ADAPTIVE SAMPLING
+SYS_P17163                               ADAPTIVE SAMPLING
+SYS_P17164                               ADAPTIVE SAMPLING
+SYS_P17165                               ADAPTIVE SAMPLING
+SYS_P17166                               ADAPTIVE SAMPLING
+SYS_P17167                               ADAPTIVE SAMPLING
+SYS_P17168                               ADAPTIVE SAMPLING
+SYS_P17169                               ADAPTIVE SAMPLING
+SYS_P17170                               ADAPTIVE SAMPLING
+SYS_P17171                               ADAPTIVE SAMPLING
+SYS_P17172                               ADAPTIVE SAMPLING
+SYS_P17173                               ADAPTIVE SAMPLING
+SYS_P17174                               ADAPTIVE SAMPLING
+SYS_P17175                               ADAPTIVE SAMPLING
+SYS_P17176                               ADAPTIVE SAMPLING
+SYS_P17177                               ADAPTIVE SAMPLING
+SYS_P17178                               ADAPTIVE SAMPLING
+SYS_P17179                               ADAPTIVE SAMPLING
+SYS_P17180                               ADAPTIVE SAMPLING
+SYS_P17181                               ADAPTIVE SAMPLING
+SYS_P17182                               ADAPTIVE SAMPLING
+SYS_P17183                               ADAPTIVE SAMPLING
+SYS_P17184                               ADAPTIVE SAMPLING
+SYS_P17185                               ADAPTIVE SAMPLING
+SYS_P17186                               ADAPTIVE SAMPLING
+SYS_P17187                               ADAPTIVE SAMPLING
+SYS_P17188                               ADAPTIVE SAMPLING
+SYS_P17189                               ADAPTIVE SAMPLING
+SYS_P17190                               ADAPTIVE SAMPLING
+SYS_P17191                               ADAPTIVE SAMPLING
+SYS_P17192                               ADAPTIVE SAMPLING
+SYS_P17193                               ADAPTIVE SAMPLING
+SYS_P17194                               ADAPTIVE SAMPLING
+SYS_P17195                               ADAPTIVE SAMPLING
+SYS_P17196                               ADAPTIVE SAMPLING
+SYS_P17197                               ADAPTIVE SAMPLING
+SYS_P17198                               ADAPTIVE SAMPLING
+SYS_P17199                               ADAPTIVE SAMPLING
+SYS_P17200                               ADAPTIVE SAMPLING
+SYS_P17201                               ADAPTIVE SAMPLING
+SYS_P17202                               ADAPTIVE SAMPLING
+SYS_P17203                               ADAPTIVE SAMPLING
+SYS_P17204                               ADAPTIVE SAMPLING
+SYS_P17205                               ADAPTIVE SAMPLING
+SYS_P17206                               ADAPTIVE SAMPLING
+SYS_P17207                               ADAPTIVE SAMPLING
+SYS_P17208                               ADAPTIVE SAMPLING
+SYS_P17209                               ADAPTIVE SAMPLING
+SYS_P17210                               ADAPTIVE SAMPLING
+SYS_P17211                               ADAPTIVE SAMPLING
+SYS_P17212                               ADAPTIVE SAMPLING
+SYS_P17213                               ADAPTIVE SAMPLING
+SYS_P17214                               ADAPTIVE SAMPLING
+SYS_P17215                               ADAPTIVE SAMPLING
+SYS_P17216                               ADAPTIVE SAMPLING
+SYS_P17217                               ADAPTIVE SAMPLING
+SYS_P17218                               ADAPTIVE SAMPLING
+SYS_P17219                               ADAPTIVE SAMPLING
+SYS_P17220                               ADAPTIVE SAMPLING
+SYS_P17221                               ADAPTIVE SAMPLING
+SYS_P17222                               ADAPTIVE SAMPLING
+SYS_P17223                               ADAPTIVE SAMPLING
+SYS_P17224                               ADAPTIVE SAMPLING
+SYS_P17225                               ADAPTIVE SAMPLING
+SYS_P17226                               ADAPTIVE SAMPLING
+SYS_P17227                               ADAPTIVE SAMPLING
+SYS_P17228                               ADAPTIVE SAMPLING
+SYS_P17229                               ADAPTIVE SAMPLING
+SYS_P17230                               ADAPTIVE SAMPLING
+SYS_P17231                               ADAPTIVE SAMPLING
+SYS_P17232                               ADAPTIVE SAMPLING
+SYS_P17233                               ADAPTIVE SAMPLING
+SYS_P17234                               ADAPTIVE SAMPLING
+SYS_P17235                               ADAPTIVE SAMPLING
+SYS_P17236                               ADAPTIVE SAMPLING
+SYS_P17237                               ADAPTIVE SAMPLING
+SYS_P17238                               ADAPTIVE SAMPLING
+SYS_P17239                               ADAPTIVE SAMPLING
+SYS_P17240                               ADAPTIVE SAMPLING
+SYS_P17241                               ADAPTIVE SAMPLING
 
 512 rows selected.
 
-Elapsed: 00:00:00.05
+Elapsed: 00:00:00.03
 SQL> 
 SQL> pause
 
@@ -678,22 +678,22 @@ SQL> alter table t1 exchange partition p1 with table exch;
 
 Table altered.
 
-Elapsed: 00:00:01.20
+Elapsed: 00:00:01.04
 SQL> alter table t1 exchange partition p1 with table exch;
 
 Table altered.
 
-Elapsed: 00:00:02.78
+Elapsed: 00:00:02.89
 SQL> alter table t1 exchange partition p1 with table exch;
 
 Table altered.
 
-Elapsed: 00:00:01.15
+Elapsed: 00:00:01.05
 SQL> alter table t1 exchange partition p1 with table exch;
 
 Table altered.
 
-Elapsed: 00:00:02.30
+Elapsed: 00:00:02.69
 SQL> --
 SQL> -- This last exchange and gather stats returns the T1 to the state it
 SQL> -- it was prior to the first exchange.
@@ -702,12 +702,10 @@ SQL> alter table t1 exchange partition p1 with table exch;
 
 Table altered.
 
-Elapsed: 00:00:01.08
+Elapsed: 00:00:01.02
 SQL> exec dbms_stats.gather_table_stats(null,'t1')
 
 PL/SQL procedure successfully completed.
 
-Elapsed: 00:00:03.82
-SQL> 
-SQL> 
+Elapsed: 00:00:03.58
 SQL> exit

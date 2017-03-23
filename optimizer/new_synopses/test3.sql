@@ -8,7 +8,7 @@ set trims on
 -- We are going to perform a partition exchange load and 
 -- take a look at the timings for HyperLogLog synopses.
 --
-exec dbms_stats.set_table_prefs(null,'t1','incremental_staleness', NULL)
+exec dbms_stats.set_table_prefs(null,'t1','incremental_staleness', 'NULL')
 
 exec DBMS_STATS.SET_TABLE_PREFS (null,'exch','INCREMENTAL_LEVEL','table');
 exec dbms_stats.set_table_prefs(null,'exch', 'approximate_ndv_algorithm', 'hyperloglog')
