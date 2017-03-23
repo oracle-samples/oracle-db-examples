@@ -1,0 +1,256 @@
+SQL> set timing  on
+SQL> set linesize 1000
+SQL> set pagesize 100
+SQL> set trims on
+SQL> column partition_name format a40
+SQL> column ndv_alg format a30
+SQL> column inc_stale format a30
+SQL> 
+SQL> drop table t1 purge;
+
+Table dropped.
+
+Elapsed: 00:00:00.08
+SQL> drop table exch purge;
+
+Table dropped.
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> create table t1 (id number(10),num1 number(10), num2 number(10),txt varchar2(20))
+  2  partition by range (num1)
+  3  interval (1) (
+  4   partition p1 values less than (1)
+  5  ,partition p2 values less than (2));
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> insert /*+ APPEND */ into t1
+  2  select rownum, mod(rownum,2), mod(rownum,1000),'X'||mod(rownum,10000)
+  3  from   (select 1 from dual connect by level <=1000);
+
+1000 rows created.
+
+Elapsed: 00:00:00.04
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> create table exch as select * from t1 where 1=-1;
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> insert /*+ APPEND */ into exch
+  2  select rownum,0,mod(rownum,10000),'X'||mod(rownum,100000)
+  3  from   (select 1 from dual connect by level <=100);
+
+100 rows created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> --
+SQL> -- Enable incremental statistics
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'t1','incremental','true')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.set_table_prefs(null,'exch','incremental','true')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> --
+SQL> -- Prepare to create a synopsis on the EXCH table
+SQL> --
+SQL> exec DBMS_STATS.SET_TABLE_PREFS (null,'exch','INCREMENTAL_LEVEL','table');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> --
+SQL> -- The exchange table has an old-style synopsis
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'exch', 'approximate_ndv_algorithm', 'adaptive sampling')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.gather_table_stats(null,'exch');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.13
+SQL> 
+SQL> --
+SQL> -- The partitioned table has new-style synopses
+SQL> -- Also, disalow mixed format.
+SQL> -- Compare the behavior here to the previous example (07_defaultmx)
+SQL> --
+SQL> exec dbms_stats.set_table_prefs(null,'t1', 'approximate_ndv_algorithm', 'hyperloglog')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.set_table_prefs(null,'t1', 'incremental_staleness', 'null')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.09
+SQL> 
+SQL> @t1check
+SQL> select subobject_name                                          partition_name,
+  2         decode(h.spare1,NULL,'ADAPTIVE SAMPLING','HYPERLOGLOG') synopsis_type
+  3  from   dba_objects o,
+  4         sys.wri$_optstat_synopsis_head$ h
+  5  where  o.object_type = 'TABLE PARTITION'
+  6  and    o.object_name = 'T1'
+  7  and    o.owner       = USER
+  8  and    h.group#      = o.object_id*2
+  9  and    intcol#       = 1
+ 10  order by partition_name;
+
+PARTITION_NAME                           SYNOPSIS_TYPE
+---------------------------------------- -----------------
+P1                                       HYPERLOGLOG
+P2                                       HYPERLOGLOG
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter table t1 exchange partition p1 with table exch;
+
+Table altered.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> @t1check
+SQL> select subobject_name                                          partition_name,
+  2         decode(h.spare1,NULL,'ADAPTIVE SAMPLING','HYPERLOGLOG') synopsis_type
+  3  from   dba_objects o,
+  4         sys.wri$_optstat_synopsis_head$ h
+  5  where  o.object_type = 'TABLE PARTITION'
+  6  and    o.object_name = 'T1'
+  7  and    o.owner       = USER
+  8  and    h.group#      = o.object_id*2
+  9  and    intcol#       = 1
+ 10  order by partition_name;
+
+PARTITION_NAME                           SYNOPSIS_TYPE
+---------------------------------------- -----------------
+P1                                       ADAPTIVE SAMPLING
+P2                                       HYPERLOGLOG
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --
+SQL> -- Add a partition
+SQL> --
+SQL> insert /*+ APPEND */ into t1
+  2  select rownum, 2, mod(rownum,1000),'X'||mod(rownum,10000)
+  3  from   (select 1 from dual connect by level <=1000);
+
+1000 rows created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.09
+SQL> 
+SQL> @t1check
+SQL> select subobject_name                                          partition_name,
+  2         decode(h.spare1,NULL,'ADAPTIVE SAMPLING','HYPERLOGLOG') synopsis_type
+  3  from   dba_objects o,
+  4         sys.wri$_optstat_synopsis_head$ h
+  5  where  o.object_type = 'TABLE PARTITION'
+  6  and    o.object_name = 'T1'
+  7  and    o.owner       = USER
+  8  and    h.group#      = o.object_id*2
+  9  and    intcol#       = 1
+ 10  order by partition_name;
+
+PARTITION_NAME                           SYNOPSIS_TYPE
+---------------------------------------- -----------------
+P1                                       HYPERLOGLOG
+P2                                       HYPERLOGLOG
+SYS_P3604                                HYPERLOGLOG
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --
+SQL> -- Make P1 stale
+SQL> --
+SQL> insert /*+ APPEND */ into t1
+  2  select rownum, 0, mod(rownum,1000),'X'||mod(rownum,10000)
+  3  from   (select 1 from dual connect by level <=1000);
+
+1000 rows created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(null,'t1')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.06
+SQL> 
+SQL> @t1check
+SQL> select subobject_name                                          partition_name,
+  2         decode(h.spare1,NULL,'ADAPTIVE SAMPLING','HYPERLOGLOG') synopsis_type
+  3  from   dba_objects o,
+  4         sys.wri$_optstat_synopsis_head$ h
+  5  where  o.object_type = 'TABLE PARTITION'
+  6  and    o.object_name = 'T1'
+  7  and    o.owner       = USER
+  8  and    h.group#      = o.object_id*2
+  9  and    intcol#       = 1
+ 10  order by partition_name;
+
+PARTITION_NAME                           SYNOPSIS_TYPE
+---------------------------------------- -----------------
+P1                                       HYPERLOGLOG
+P2                                       HYPERLOGLOG
+SYS_P3604                                HYPERLOGLOG
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> exit
+
