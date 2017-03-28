@@ -14,7 +14,7 @@ and other Oracle .NET components. .NET products for Oracle Database are free of 
 Oracle .NET components are bundled together and installed as part of Oracle Data Access Components (ODAC). Downloads and installation instructions are available from the <a href="http://www.oracle.com/technetwork/topics/dotnet/downloads/index.html">OTN .NET Tech Center download page</a>. Beginners should download <a href="http://www.oracle.com/technetwork/topics/dotnet/utilsoft-086879.html">32-bit ODAC with Oracle Developer Tools for Visual Studio</a>, which will provide a guided, smoother installation experience. Installation instructions are available as part of each download page. The installation instructions list the software prerequisites for the version downloaded.
 
 <H2>Tutorials</H2>
-For beginning Oracle .NET developers, these <a href="http://www.oracle.com/technetwork/topics/dotnet/for-beginners/index.html">tutorials and videos</a> will assist you in developing .NET applications for Oracle Database. Instructions for compiling, testing, deploying, and running Oracle .NET apps are part of the  <a href="https://apex.oracle.com/pls/apex/f?p=44785:24:0::NO::P24_CONTENT_ID,P24_PREV_PAGE:10117,1">Oracle By Example tutorials</a>.
+For beginning Oracle .NET developers, these <a href="http://www.oracle.com/technetwork/topics/dotnet/for-beginners/index.html">tutorials and videos</a> will assist you in developing .NET applications for Oracle Database. Instructions for compiling, testing, deploying, and running Oracle .NET apps are part of the  <a href="https://apexapps.oracle.com/pls/apex/f?p=44785:24:0::NO:24:P24_CONTENT_ID:13260">Oracle By Example tutorials</a>.
 
 <H2>More Information</H2>
 <ul>
