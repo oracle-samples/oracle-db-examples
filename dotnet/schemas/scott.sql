@@ -4,7 +4,7 @@ Rem  You may not use the identified files except in compliance with The MIT
 Rem  License (the "License.")
 Rem
 Rem  You may obtain a copy of the License at
-Rem  https://github.com/oracle/Oracle.NET/blob/master/LICENSE
+Rem  https://github.com/oracle/oracle-db-examples/blob/master/dotnet/LICENSE
 Rem
 Rem  Unless required by applicable law or agreed to in writing, software
 Rem  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
