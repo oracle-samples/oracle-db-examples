@@ -6,7 +6,7 @@
  * License, Version 2.0 (the "License.")
  *
  * You may obtain a copy of the License at
- * https://github.com/oracle/Oracle.NET/blob/master/LICENSE
+ * https://github.com/oracle/oracle-db-examples/blob/master/dotnet/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
