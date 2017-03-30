@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+
+<!-- 
+ Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+
+   NAME
+     build.xml - For compiling and running connection management samples
+
+   DESCRIPTION
+     Use this build.xml for compiling and running connection 
+     management related code samples. 
+
+   MODIFIED   (MM/DD/YY)
+   nbsundar    01/14/16 - update
+   nbsundar    02/16/15 - Creation
+
+-->
+<project name="OracleJdbcSamples" default="compile">
+  <description>Build and run Oracle Jdbc Samples</description>
+
+
+  <property environment="env" />
+  <property name="ORACLE_HOME" value="${env.ORACLE_HOME}" />
+  <property name="JDK8" location="${ORACLE_HOME}/jdk8" />
+  <property name="jdk.javac" location="${JDK8}/bin/javac" />
+  <property name="jdk.java" location="${JDK8}/bin/java" />
+  <property name="jdk.jar" location="${JDK8}/bin/jar" />
+
+
+  <!-- ///////////////////// classpath /////////////////////////// -->
+  <path id="java.classpath">
+    <pathelement path="lib/ojdbc7.jar" />
+    <pathelement path="lib/ucp.jar" />
+    <pathelement path="lib/ons.jar" /> 
+    <pathelement location="classes/" />
+  </path>
+
+  <!-- ///////////////////////////////////////////////////////////// -->
+  <!--                             TARGETS                           -->
+  <!-- ///////////////////////////////////////////////////////////// -->
+  <target name="compile">
+    <mkdir dir="classes"/>
+    <!-- ////////////////// Compile java file //////////////// -->
+    <javac srcdir="src" destdir="classes" debug="yes" includeantruntime="false" fork="yes" executable="${jdk.javac}">
+      <classpath refid="java.classpath" />
+      <include name="**/*.java" />
+      <exclude name="**/.ade_path/*.java" />   
+ </javac>
+
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="classes" includes="*"/>
+    </delete>
+  </target>
+
+  <target name="run" depends="compile">
+    <java classname="${class.file.name}" fork="true" jvm="${jdk.java}" >
+      <classpath refid="java.classpath" />
+     <arg value="${arg.one}" />
+   </java>
+  </target>
+
+  <echo> Connection Management Samples: Commands to Run </echo> 
+  <echo> ============================================== </echo>
+  <echo> (1) ant DataSourceSample  </echo>
+  <echo> (2) ant ProxySessionSample </echo> 
+  <echo> (3) ant UCPSample </echo>
+  <echo> (4) ant UCPWithDRCPSample </echo>
+  <echo> (5) ant DRCPSample </echo>
+  <echo> (6) ant UCPInactiveConnectionTimeout </echo> 
+  <echo> (7) ant UCPConnectionWaitTimeout </echo>
+  <echo> (8) ant UCPAbandonedConnectionTimeout </echo>
+  <echo> (9) ant UCPAbandonedConnectionTimeout </echo>
+  <echo> (10) ant UCPTimeToLiveConnectionTimeout </echo>
+  <echo> (11) ant UCPConnectionHarvestingSample </echo>
+  <echo> (12) ant UCPConnectionLabelingSample </echo>
+  <echo> (13) ant UCPWebSessionAffinitySample </echo>
+  <echo> ============================================== </echo>
+
+<target name="DataSourceSample" description="Run a sample that exhibits the usage of DataSource with and without properties"> <antcall target="run">
+      <param name="class.file.name" value="DataSourceSample" />
+    </antcall>
+  </target>
+
+<target name="ProxySessionSample" description="Run a proxy session sample">
+ <antcall target="run">
+   <param name="class.file.name" value="ProxySessionSample" />
+ </antcall>
+</target>
+
+
+<target name="UCPSample" description="Run a sample that exhibits the use Universal Connection Pool (UCP) "> <antcall target="run">
+      <param name="class.file.name" value="UCPSample" />
+    </antcall>
+  </target>
+
+
+<target name="UCPWithDRCPSample" description="Run a sample that exhibits the use DRCP "> <antcall target="run">
+      <param name="class.file.name" value="UCPWithDRCPSample" />
+    </antcall>
+  </target>
+
+
+<target name="UCPWithTimeoutProperties" description="Run a sample that exhibits different UCP timeout properties  "> <antcall target="run">
+      <param name="class.file.name" value="UCPWithTimeoutProperties" />
+    </antcall>
+  </target>
+
+  <target name="UCPTimeToLiveConnectionTimeout" description="Run a sample that exhibits UCP's TimeToLiveConnectionTimeout property"> 
+    <antcall target="run">
+      <param name="class.file.name" value="UCPWithTimeoutProperties" />
+      <param name="arg.one" value="runTimeToLive" />
+    </antcall>
+  </target>
+
+
+<target name="UCPAbandonedConnectionTimeout" description="Run a sample that exhibits UCP's AbandonedConnectionTimeout property"> <antcall target="run">
+      <param name="class.file.name" value="UCPWithTimeoutProperties" />
+      <param name="arg.one" value="runAbandonedTimeout" />
+    </antcall>
+  </target>
+
+
+<target name="UCPInactiveConnectionTimeout" description="Run a sample that exhibits UCP's InactiveConnectionTimeout property"> <antcall target="run">
+      <param name="class.file.name" value="UCPWithTimeoutProperties" />
+      <param name="arg.one" value="runInactiveTimeout" />
+    </antcall>
+  </target>
+
+
+<target name="UCPConnectionWaitTimeout" description="Run a sample that exhibits UCP's ConnectionWaitTimeout property"> <antcall target="run">
+      <param name="class.file.name" value="UCPWithTimeoutProperties" />
+      <param name="arg.one" value="runConnectionWaitTimeout" />
+    </antcall>
+  </target>
+
+<target name="DRCPSample" description="Run a sample that shows how to use DRCP"> <antcall target="run">
+      <param name="class.file.name" value="DRCPSample" />
+    </antcall>
+  </target>
+
+<target name="UCPConnectionHarvestingSample" description="Run a sample that exhibits Connection Harvesting feature of UCP"> <antcall target="run">
+<param name="class.file.name" value="UCPConnectionHarvestingSample" />
+ </antcall>
+</target>
+
+<target name="UCPConnectionLabelingSample" description="Run a sample that exhibits Connection Labeling feature of UCP"> <antcall target="run">
+ <param name="class.file.name" value="UCPConnectionLabelingSample" />
+ </antcall>
+ </target>
+
+<target name="UCPWebSessionAffinitySample" description="Run a sample that exhibits the use of Web Session Affinity"> <antcall target="run">
+  <param name="class.file.name" value="UCPWebSessionAffinitySample" />
+  </antcall>
+</target>
+
+</project>
+
