@@ -1,6 +1,6 @@
-# Connection Management Samples in JDBC using UCP, Universal Connection Pool
+# Connection Management Samples in JDBC 
 
-Brief descriptions of connection management related code samples.
+Brief description of connection management related code samples.
 
 |Author | Date |
 |-------|------|
@@ -22,6 +22,11 @@ connection management strategy. The section below provides more details on
 specific connection management strategy. 
 
 ----
+## DataSourceSample.java:
+This sample shows how to connect to a simple DataSource 
+(oracle.jdbc.pool.OracleDataSource) and how to set connection related 
+properties such as `defaultRowPrefetch`, `defaultBatchValue` etc., 
+
 ## InternalT2Driver.sql & InternalT2Driver.java: 
 The server-side Type 2 (T2S) driver (aka KPRB driver) is for Java in the 
 database. It uses database session directly for accessing local data. 
@@ -32,11 +37,6 @@ between the Java code and the RDBMS SQL engine.
 The server side Type 4(T4S) driver (aka thin/T4 driver) is used for code 
 running Java in database session needing access to another session either on
 the same RDBMS instance/server or on a remote RDBMS instance/server.
-
-## DataSourceSample.java:
-This sample shows how to connect to a simple DataSource 
-(oracle.jdbc.pool.OracleDataSource) and how to set connection related 
-properties such as `defaultRowPrefetch`, `defaultBatchValue` etc., 
 
 ## ProxySessionSample.java and ProxySessionSample.sql:
 This sample shows connecting to the Oracle Database using Proxy 
