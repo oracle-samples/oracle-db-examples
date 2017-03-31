@@ -6,8 +6,7 @@ Brief description of connection management related code samples.
 |-------|------|
 |nirmala.sundarappa|06/14/16|
 
-
-==============================================================================
+----
 Creating a connection is an expensive database operation which
 involves several background operations such as network communication, reading 
 connection strings, authentication, transaction enlistment, foreground process 
