@@ -15,12 +15,12 @@ This allows combining a number of xml definitions together as well as the abilit
 
 ### Contents
  
-* [individual](individual/README.md)  
+* [individual](individual)  
 Examples for ACTION, EDITOR, NAVIGATOR
   
-* [packaged](packaged/README.md)  
+* [packaged](packaged)  
 Examples packaged as an extension.jar  
 **See the [java](../java/README.md) example.** It is loading XML as well as java.
   
-* [schema](schema/README.md)  
+* [schema](schema)  
 XML schema for the three extension types. Note that the dialogs(ACTION) schema is heavily annotated and has been run through [xsddoc](http://xframe.sourceforge.net/xsddoc/index.html) to produce javadoc-like documentation [here](http://xmlns.oracle.com/sqldeveloper/3_1/dialogs).     

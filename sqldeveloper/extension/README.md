@@ -8,7 +8,7 @@ Depending on requirements, this can be done in either XML or java and deployed b
 
 ### Contents
 
-* ["Simple" User Extensions (XML)](xml/README.md)
-* [Standard Extensions (java)](java/README.md)
-* [Check For Updates (cfu)](cfu/README.md)
+* ["Simple" User Extensions (XML)](xml)
+* [Standard Extensions (java)](java)
+* [Check For Updates (cfu)](cfu)
  
