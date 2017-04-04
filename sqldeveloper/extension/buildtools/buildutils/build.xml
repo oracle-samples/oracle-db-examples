@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<project name="buildutils" default="jar">
+	<property name="buildtools.root" value="../../buildtools"/>
+
+	<property name="buildutils.root.dir" value="${buildtools.root}/buildutils"/>
+	<property name="src.dir" value="${buildutils.root.dir}/src"/>
+	<property name="jar" value="${buildutils.root.dir}/${ant.project.name}.jar"/>
+	<property name="built.dir" value="${buildutils.root.dir}/built"/>
+	<property name="classes.dir" value="${built.dir}/classes"/>
+
+    <target name="clean" description="Delete all generated files">
+        <delete dir="${built.dir}" failonerror="false"/>
+        <delete file="${jar}"/>
+    </target>
+
+    <target name="compile" depends="clean" description="Compiles the Task">
+        <mkdir dir="${classes.dir}"/>
+        <javac compiler="javac1.8" debug="true" destdir="${classes.dir}" source="1.8" target="1.8">
+        	<src path="${src.dir}"/>
+        </javac>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}" includes="**/*.template"/>
+		</copy>
+    </target>
+
+    <target name="jar" description="JARs the Task" depends="compile">
+        <jar destfile="${jar}" basedir="${classes.dir}"/>
+    </target>
+	
+</project>

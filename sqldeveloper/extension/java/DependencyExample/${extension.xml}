@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<extension xmlns="http://jcp.org/jsr/198/extension-manifest"
+           id="oracle.db.example.sqldeveloper.extension.dependency" version="1.0.0.17.093.1333"
+           esdk-version="1.0"
+           rsbundle-class="oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleResources">
+    <name>Example Dependency Viewer</name>
+    <owner>Oracle Examples https://github.com/oracle/oracle-db-examples/sqldeveloper</owner>
+    <feature id="oracle.db.example.sqldeveloper.extension.dependency" xmlns="http://xmlns.oracle.com/ide/extension">
+        <category-id>db-category</category-id>
+        <name>Example Dependency Viewer</name>
+        <description>Object viewer(s) for dependency analysis</description>
+        <type>
+            <service can-user-disable="true" reload-if-used="true"/>
+        </type>
+    </feature>
+	<trigger-hooks xmlns="http://xmlns.oracle.com/ide/extension">
+		<rules>
+			<!--  Object, not folder TODO: Make our own RuleFunction to check all elements? -->
+			<rule id="context-has-object-node" type="context-has-element">
+				<parameters>
+					<param name="element-class" value="oracle.dbtools.raptor.navigator.impl.ObjectNode"/>
+				</parameters>
+			</rule>
+			<composite-rule id="context-has-object-node(s)">
+				<and>
+					<!-- Don't really need this, just showing composite and how to specify
+					     multiple/single selection constraints -->
+					<or>
+						<rule-reference id="on-multiple-selection"/>
+						<rule-reference id="on-single-selection"/>
+					</or>
+					<rule-reference id="context-has-object-node"/>
+				</and>
+			</composite-rule>
+		</rules>
+   		<triggers xmlns:c="http://xmlns.oracle.com/ide/customization">
+			<actions xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension">
+				<action id="DependencyExample.SHOW_VIEWER">
+					<properties>
+						<property name="Name">${DEPENDENCY_VIEWER_ACTION_LABEL}</property>
+						<property name="MnemonicKey">${DEPENDENCY_VIEWER_MNEMONIC}</property>
+						<!-- You could also use your own by putting path in rsbundle 
+						     e.g., MY_ICON = /oracle/db/example/sqldeveloper/extension/dependency/icons/my_icon.png
+						     and referencing its key as res:${MY_ICON} -->
+						<property name="SmallIcon">${OracleIcons.ACTIVITY}</property>
+					</properties>
+				</action>
+			</actions>
+			<controllers xmlns="http://xmlns.oracle.com/ide/extension">
+				<controller class="oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleController">
+				<!-- Not needed if the context-menu-hook is using a rule to determine if it shows up at all? -->
+					<update-rules>
+						<update-rule rule="context-has-object-node(s)">
+							<action id="DependencyExample.SHOW_VIEWER"/>
+						</update-rule>
+					</update-rules>
+				</controller>
+			</controllers>
+			<context-menu-hook rule="context-has-object-node(s)">
+				<site idref="db_nav"/>
+				<menu>
+					<section xmlns="http://jcp.org/jsr/198/extension-manifest" id="SECTION_WINDOW_CTXT_MENU" weight="1.0">
+						<item action-ref="DependencyExample.SHOW_VIEWER" weight="1.0"/>
+					</section>
+				</menu>
+			</context-menu-hook>
+
+			<!--  When placed here in the trigger-hooks section, these will be loaded right away -->
+			<sqldev-action-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-actions">
+			    <!-- This is the directory to read all action *.xml from -->
+				<actionDescriptor package="oracle.db.example.sqldeveloper.extension.dependency.action"/>
+				<!--  -->
+			</sqldev-action-hook>
+	        <sqldev-navigator-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-navigator">
+	            <!--  These are the navigator XML files to read -->
+	            <descriptor>/oracle/db/example/sqldeveloper/extension/dependency/navigator/DependencyExampleNavigator.xml</descriptor>
+	             <!-- -->
+	        </sqldev-navigator-hook>
+	        <!-- viewer-hook cannot be a trigger -->
+	        <!-- BUT doing this will add a menu toggle entry in the connection
+	             context menu for Manage Features->your feature for users to
+	             enable/disable xml based things with requiredFeatures="your dynamic id"
+	             See oracle.db.example.sqldeveloper.extension.dependency.viewer.DependencyExampleGraphViewer.xml
+	             AS A SIDE EFFECT, enabling it the 1st time will fully load the extension  
+	         -->
+			<sqldev-feature-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-feature">
+	        	<dynamicFeature id="dependencyObjectViewerExample">${DEPENDENCY_VIEWER_TAB_LABEL}</dynamicFeature>
+	        </sqldev-feature-hook>
+   		</triggers>
+   	</trigger-hooks>
+    <hooks>
+        <jdeveloper-hook xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension"> 
+            <addins>
+            	<addin>oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleAddin</addin>
+    		</addins> 																																																																																																																																																																																																																																																																																																																																																																																					
+		</jdeveloper-hook> 
+		<!-- When placed here in the hooks section, these won't be loaded until the extension is by one of the above triggers --> 
+		<sqldev-action-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-actions">
+		    <!-- This is the directory to read all action *.xml from
+			<actionDescriptor package="oracle.db.example.sqldeveloper.extension.dependency.action.xml"/>
+			  -->
+		</sqldev-action-hook>
+        <sqldev-navigator-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-navigator">
+            <!--  These are the navigator XML files to read
+            <descriptor>oracle.db.example.sqldeveloper.extension.dependency/navigator/DependencyExampleNavigator.xml</descriptor>
+             -->
+        </sqldev-navigator-hook>
+        <!-- viewer-hook cannot be a trigger -->
+		<sqldev-viewer-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-viewers">
+		    <!-- This is the directory to read all viewer *.xml from -->
+			<viewerDescriptor package="oracle.db.example.sqldeveloper.extension.dependency.viewer"/>
+			<!--  -->
+		</sqldev-viewer-hook>
+    	
+    	<editors xmlns="http://xmlns.oracle.com/ide/extension">
+            <editor id="DependencyExampleGraphViewer"
+                editor-class="oracle.db.example.sqldeveloper.extension.dependency.viewer.DependencyExampleGraphViewer"
+                label="${DEPENDENCY_VIEWER_LABEL}"
+                default="false">
+                <node-type class="oracle.dbtools.raptor.navigator.impl.ObjectNode" />
+            </editor>            
+        </editors>
+    </hooks>  
+   	
+</extension>
