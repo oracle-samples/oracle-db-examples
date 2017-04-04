@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<project name="targets">
+<!-- The basic build flow outline. Most of the nasty bits are in includes.xml -->
+
+	<!-- create a build number file if it doesn't exist, so that the build shares a consistent build number -->
+	<target name="-create-build-number" unless="build.number.exists">
+		<!-- new build number format -->
+		<tstamp>
+			<format property="ts.number" pattern="yy.DDD.HHmm" locale="en" />
+			<format property="ts.timestamp" pattern="HH:mm dd MMM YYY" />
+			<format property="ts.number.raw" pattern="yyDDDHHmm" locale="en" />
+		</tstamp>
+		<mkdir dir="${root.directory}/built"/>
+		<touch file="${build.number.filename}"/>
+		<propertyfile file="${build.number.filename}">
+			<entry key="number" value="${ts.number}"/>
+			<entry key="timestamp" value="${ts.timestamp}"/>
+			<entry key="number.raw" value="${ts.number.raw}"/>
+		</propertyfile>
+	</target>	
+
+	<target name="init-version">
+		<!-- use antcall to call -create-build-number instead of a dependency so that we can 
+		     force the reevaluation of the build.number.exists property -->
+		<antcall target="-create-build-number" inheritall="false"/>
+    	<property file="${build.number.filename}" prefix="build"/>
+    	<property name="version.full" value="${extension.version}.${build.number}" />
+	</target>
+	
+    <target name="init" depends="init-version">
+        <antcall target="init-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+    <target name="clean">
+        <antcall target="clean-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+    <target name="resgen" depends="init" description="Generate java files for internationalized strings.">
+        <antcall target="resgen-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+    <target name="copy" depends="init" description="Copy files to the output directory">
+        <antcall target="copy-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+    <target name="compile" depends="resgen,copy,init" description="Compile java code">
+        <antcall target="compile-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+    <target name="jar" depends="compile" description="Create the extension jar">
+        <antcall target="jar-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+	<target name="manifest" depends="jar" description="Create the jar manifest">
+        <antcall target="manifest-inc" inheritAll="true" inheritRefs="true" />
+	</target>
+	<target name="rebuild" depends="clean,deploy" description="Shortcut to clean and then rebuild/deploy"/>
+    <target name="deploy" depends="jar, manifest" description="Deploy into the SQLDeveloper extensions directory">
+        <antcall target="deploy-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+	<target name="cfu" depends="jar,manifest" description="Create CFU bundle">
+        <antcall target="cfu-inc" inheritAll="true" inheritRefs="true" />
+	</target>
+
+</project>

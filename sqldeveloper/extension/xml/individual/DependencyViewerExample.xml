@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<displays>
+	<display type="editor" style="null" enable="true"
+	    connType="Oracle" objectType="TABLE,VIEW,MATERIALIZED_VIEW,TRIGGER,INDEX,PROCEDURE,FUNCTION,PACKAGE,PACKAGE BODY,TYPE,TYPE BODY" >
+		<name><![CDATA[Dependency Edges Query]]></name>
+		<description><![CDATA[*IF* PL/Scope is active, shows detailed reference information]]></description>
+		<tooltip><![CDATA[*IF* PL/Scope is active, shows detailed reference information]]></tooltip>
+		<drillclass><![CDATA[null]]></drillclass>
+<!--  Note: OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME are standard binds for any db node -->
+<!-- Note: The following construct creates a drillable link in the output that will open
+           and editor at that location. :<LINE>:<COL> can be omitted if not available.  
+SQLDEV:LINK:<OBJECT_OWNER>:<OBJECT_TYPE>:<OBJECT_NAME>:<LINE>:<COL>:<LABEL>:<DRILL_CLASS>
+oracle.dbtools.raptor.controls.grid.DefaultDrillLink
+ -->				
+		<query id="DependencyViewerExample">
+			<sql>
+				<![CDATA[
+    WITH
+    DECLARATION AS (
+        SELECT
+            SIGNATURE declSignature
+            , OWNER declOwner
+            , OBJECT_NAME as declObject
+            , OBJECT_TYPE as declType
+            , NAME as declName
+            , LINE as declLine
+            , COL as declCol
+        FROM ALL_IDENTIFIERS
+        WHERE USAGE IN ('DECLARATION','DEFINITION')
+          AND OWNER = :OBJECT_OWNER
+          AND OBJECT_NAME = :OBJECT_NAME
+          AND OBJECT_TYPE = :OBJECT_TYPE
+    ),
+    OUTER_REFERENCE AS (
+        SELECT
+            declOwner, declObject, declType, declName, declLine, declCol 
+            , SIGNATURE, NAME, TYPE -- these refer to the identifier 
+            , USAGE_CONTEXT_ID -- reflexive foreign key to USAGE_ID *WITHIN THE PARENT (usage context id = 0) COMPILATION UNIT*
+            , USAGE, USAGE_ID -- usage type and usage id within referencing object for the usage
+            , OWNER, OBJECT_NAME, OBJECT_TYPE, LINE, COL -- these refer to the referencing (defining, calling, type usage, etc) object
+            , ORIGIN_CON_ID -- no clue but sys level seems to be 1, user schema level 3
+        FROM ALL_IDENTIFIERS, DECLARATION
+        WHERE SIGNATURE = declSignature
+          AND (OWNER != declOwner OR OBJECT_NAME != declObject)
+    )
+        SELECT OWNER, OBJECT_TYPE TYPE 
+			, 'SQLDEV:LINK:'||OWNER||':'||OBJECT_TYPE||':'||OBJECT_NAME||':'||TRIM(LEADING FROM TO_CHAR(LINE,'0000009'))||':'||TRIM(LEADING FROM TO_CHAR(COL,'0000009'))||':'||OBJECT_NAME||':oracle.dbtools.raptor.controls.grid.DefaultDrillLink' LINK
+			, LINE, COL, USAGE, USAGE_ID, USAGE_CONTEXT_ID
+			, declOwner REFERENCED_OWNER, TYPE REFERENCED_TYPE, declObject REFERENCED_OBJECT
+			, 'SQLDEV:LINK:'||declOwner||':'||declType||':'||declObject||':'||TRIM(LEADING FROM TO_CHAR(declLine,'0000009'))||':'||TRIM(LEADING FROM TO_CHAR(declCol,'0000009'))||':'||declName||':oracle.dbtools.raptor.controls.grid.DefaultDrillLink' REFERENCED_LINK
+			, SIGNATURE, OBJECT_NAME
+        FROM OUTER_REFERENCE
+    ORDER BY LINK
+				]]>
+			</sql>
+		</query>
+	</display>
+</displays>

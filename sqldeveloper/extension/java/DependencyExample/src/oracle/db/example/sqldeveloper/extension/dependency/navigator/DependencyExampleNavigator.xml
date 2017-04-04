@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<navigator RESOURCE_FILE="oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleResources"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="navigator.xsd">
+	
+	<!-- weight for table is 100 so lots of room for user folders to come first -->
+	<objectType connType="Oracle" id="DependencyExampleNav" weight="95.0">
+	
+		<folder> <!-- level1 -->
+			<icon RSKEY="OracleIcons.LIGHTBULB" />
+			<!-- Unfortunately, putting text that isn't an rskey will work as
+			     far as what the user sees, but will also log a severe error.
+			     A java implementation *like this one* could include a real resource file &
+			     avoid this problem.  -->
+			<label RSKEY="DEPENDENCY_NAVIGATOR_LABEL" />
+			<queries> <!-- level2 -->
+				<query minversion="8">
+				    <!-- constrained means a single row can be returned by adding 
+				         where name=. Only matters for insert AFAIK so it doesn't
+				         have to redo the entire query. -->
+					<sql constrained="true">
+            <![CDATA[SELECT 'a' name, 2 value FROM DUAL UNION 
+                     SELECT 'b' name, 2 value FROM DUAL UNION 
+                     SELECT 'c' name, 2 value FROM DUAL]]>
+					</sql>
+				</query>
+			</queries>
+		</folder> 
+	
+		<node> <!-- level2's details -->
+			<icon RSKEY="OracleIcons.NAVIGATION" />
+			<childType id="Level3" nodeType="Level3Type"> <!-- Level3 -->
+				<icon RSKEY="OracleIcons.NAVIGATION" />
+				<queries>
+					<query>
+						<sql> SELECT '1' || :PARENT_NAME name, 3 value FROM DUAL 
+						      UNION SELECT '2' || :PARENT_NAME name, 3 value FROM DUAL 
+						      UNION SELECT '3' || :PARENT_NAME name, 3 value FROM DUAL </sql>
+					</query>
+				</queries>
+			</childType>
+		</node>
+	</objectType>
+
+	<objectType connType="Oracle" id="Level3Type" weight="">
+		<node>
+			<icon RSKEY="OracleIcons.KEY" />
+			<childType id="Level4" nodeType="Level4Type">
+			    <!-- If an objectType declaration for these child nodes exists,
+			         it will control the icon. -->
+				<icon RSKEY="OracleIcons.NOACCESS" />
+				<queries>
+					<query>
+						<sql> SELECT '+' || :PARENT_NAME name, 4 value FROM DUAL 
+						UNION SELECT '%' || :PARENT_NAME name, 4 value FROM DUAL 
+						UNION SELECT '*' || :PARENT_NAME name, 4 value FROM DUAL
+					</sql>
+					</query>
+				</queries>
+			</childType>
+		</node>
+	</objectType>
+	
+	<!-- This isn't needed for the nodes to display or have actions, but 
+	     is needed for viewers to work. -->
+	<objectType connType="Oracle" id="Level4Type" weight="">
+		<node>
+		  <icon RSKEY="OracleIcons.CHECK" />
+		</node>   
+	</objectType>
+
+</navigator>
