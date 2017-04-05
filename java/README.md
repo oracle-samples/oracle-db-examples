@@ -1,5 +1,5 @@
 # Java based examples
-This folder stores Java based examples for Oracle Database including JDBC, the Universal Connection Pool (UCP) and the embedded JVM in the database a.k.a. OJVM.
+This is a repository of sample code that will demonstrate various concepts to assist Java and JavaScript developers in designing applications for accessing and processing data from the Oracle Database, leveraging Java Database Connectivity (JDBC), Univeral Connection Pool (UCP), and Java 8 Nashorn; or running Java or JavaScript code directly in the database leveraging the embedded JVM (a.k.a. OJVM and Java 8 Nashorn engine).
 
 ## What's in Oracle database 12c Release 2 for Java Developers? 
 - Java 8: Java 8 in JDBC/UCP and OJVM; JDBC 4.2
