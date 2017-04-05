@@ -33,6 +33,13 @@ The JDBC standard is defined and implemented through the standard `java.sql` int
 
 # Other Resources 
 
+* [JDBC and Oracle Database Service on Cloud](http://www.oracle.com/technetwork/database/application-development/jdbc/documentation/index.html)
+
+* [JDBC Landing Page and Other JDBC Whitepapers](http://www.oracle.com/technetwork/database/application-development/jdbc/overview/index.html)
+
+* [Oracle JDBC Forum](https://community.oracle.com/community/java/database_connectivity/java_database_connectivity/)
+
+
 
 
 
