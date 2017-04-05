@@ -20,7 +20,7 @@ Some of the examples that you see within this repository can be executed in the 
 
 LiveSQL is also an excellent resource for getting started with Oracle Database.
 
-## COPYRIGHT
+## License
 
 You may not use the identified files except in compliance with the
 Apache License, Version 2.0 (the "License.")
