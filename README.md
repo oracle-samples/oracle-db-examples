@@ -10,6 +10,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
 | [python](./python) | Python based examples |
 | [sql](./sql) | SQL based examples |
+| [sqldeveloper](./sqldeveloper) | [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) Examples |
 
 ## Documentation
 You can find the online documentation of the Oracle Database under [docs.oracle.com/en/database/](http://docs.oracle.com/en/database/)

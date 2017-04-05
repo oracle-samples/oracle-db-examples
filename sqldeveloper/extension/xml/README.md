@@ -1,4 +1,4 @@
-# SQL Developer Examples
+# [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) Examples
 ## "Simple" User Extensions (XML)
 Simple user extensions can be defined to SQL Developer in three different ways.
 
@@ -20,7 +20,7 @@ Examples for ACTION, EDITOR, NAVIGATOR
   
 * [packaged](packaged)  
 Examples packaged as an extension.jar  
-**See the [java](../java/README.md) example.** It is loading XML as well as java.
+**See the [java](../java) example.** It is loading XML as well as java.
   
 * [schema](schema)  
 XML schema for the three extension types. Note that the dialogs(ACTION) schema is heavily annotated and has been run through [xsddoc](http://xframe.sourceforge.net/xsddoc/index.html) to produce javadoc-like documentation [here](http://xmlns.oracle.com/sqldeveloper/3_1/dialogs).     

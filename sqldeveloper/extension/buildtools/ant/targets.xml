@@ -17,9 +17,10 @@ limitations under the License.
 
 <project name="targets">
 <!-- The basic build flow outline. Most of the nasty bits are in includes.xml -->
+	<import file="./includes.xml"/>
 
 	<!-- create a build number file if it doesn't exist, so that the build shares a consistent build number -->
-	<target name="-create-build-number" unless="build.number.exists">
+	<target name="create-build-number" unless="build.number.exists">
 		<!-- new build number format -->
 		<tstamp>
 			<format property="ts.number" pattern="yy.DDD.HHmm" locale="en" />
@@ -38,7 +39,7 @@ limitations under the License.
 	<target name="init-version">
 		<!-- use antcall to call -create-build-number instead of a dependency so that we can 
 		     force the reevaluation of the build.number.exists property -->
-		<antcall target="-create-build-number" inheritall="false"/>
+		<antcall target="create-build-number" inheritall="false"/>
     	<property file="${build.number.filename}" prefix="build"/>
     	<property name="version.full" value="${extension.version}.${build.number}" />
 	</target>

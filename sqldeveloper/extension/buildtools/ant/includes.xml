@@ -17,6 +17,7 @@ limitations under the License.
 
 <project name="includes">
 	<import file="./buildutils.xml"/>
+    <import file="./classpaths.xml"/>
 	
 	<!-- This classpath is considered the 'base' compile classpath and is shared by all modules. -->
     <path id="compile.classpath">
@@ -52,7 +53,7 @@ limitations under the License.
     </target>
 
 	<target name="resgen-inc" depends="buildutils-task" description="Generate java files for internationalized strings.">
-        <taskdef name="resgen" classname="oracle.dbtools.resgen.ResGenTask" classpath="buildutils.task.classpath" />
+        <taskdef name="resgen" classname="oracle.dbtools.resgen.ResGenTask" classpathref="buildutils.task.classpath" />
         <!-- make generated source dir  -->
         <mkdir dir="${gen-src.dir}" />
         <resgen inputfile="resfiles.properties"  sourceroot="src" outputroot="${built}/gen-src" >
@@ -113,7 +114,7 @@ limitations under the License.
         </javac>
     </target>
 	
-	<property name="extension.xml" value="${extension.xml}"/>
+	<property name="extension.xml" value="${built}/extension.xml"/>
 	<target name="extension-inc">
         <!-- copy the extension.xml to the stage area -->
         <copy file="etc/extension.xml" tofile="${extension.xml}" />
