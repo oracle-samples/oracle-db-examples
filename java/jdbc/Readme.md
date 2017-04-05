@@ -2,7 +2,7 @@
 Oracle Java Database Connectivity (JDBC) driver is used by Java applications to establish connection to the Oracle Database. The Oracle JDBC drivers implement and comply with the latest JDBC specifications.  JDBC specification is a Java standard that provides the interface for connecting from Java to relational databases. 
 The JDBC standard is defined and implemented through the standard `java.sql` interfaces. 
 
-**The JDBC Thin driver or a Type 4 driver** is a pure Java driver that can be used in Java applications and applets.  It communicates with the server using Oracle Net Services to access the Oracle Database.  We recommend everyone to use JDBC Thin driver in their applications. 
+**The JDBC Thin driver or a Type 4 driver** is a pure Java driver that can be used in Java applications and applets.  It communicates with the server using Oracle Net Services to access the Oracle Database.  We recommend everyone to use JDBC Thin driver in their applications.  Java applications need to have **ojdbc8.jar** (for JDK8) in their classpath to establish a connection to the database.   
 
 # What's New in JDBC in 12.2 ?
 
@@ -27,6 +27,9 @@ The JDBC standard is defined and implemented through the standard `java.sql` int
 
 # White Papers 
 
+* [Performance, Scalability, Availability, Security, and Manageability with JDBC in 12.2](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbcanducp122-3628966.pdf)
+
+* [Connection Management Strategies for Java Applications using JDBC and UCP](http://www.oracle.com/technetwork/database/application-development/jdbc-ucp-conn-mgmt-strategies-3045654.pdf)
 
 # Other Resources 
 
