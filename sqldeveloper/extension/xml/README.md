@@ -19,8 +19,8 @@ This allows combining a number of xml definitions together as well as the abilit
 Examples for ACTION, EDITOR, NAVIGATOR
   
 * [packaged](packaged)  
-Examples packaged as an extension.jar  
-**See the [java](../java) example.** It is loading XML as well as java.
+XML Examples packaged as an extension.jar  
+
   
 * [schema](schema)  
 XML schema for the three extension types. Note that the dialogs(ACTION) schema is heavily annotated and has been run through [xsddoc](http://xframe.sourceforge.net/xsddoc/index.html) to produce javadoc-like documentation [here](http://xmlns.oracle.com/sqldeveloper/3_1/dialogs).     

@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 -->
 
-<project name="includes">
+<project name="includes" xmlns:if="ant:if">
 	<import file="./buildutils.xml"/>
     <import file="./classpaths.xml"/>
 	
@@ -45,7 +45,7 @@ limitations under the License.
 	<target name="clean-inc">
         <!-- wipe them out, all of them -->
         <delete dir="${built}" failonerror="false" />
-        <echo>${extension.filename}</echo>
+        <echo>Deleting ${ide.home}/sqldeveloper/extensions/${extension.id}[.jar, /*]</echo>
         <delete failonerror="false">
             <fileset dir="${ide.home}/sqldeveloper/extensions" includes="${extension.filename}"></fileset>
             <fileset dir="${ide.home}/sqldeveloper/extensions/${extension.id}"></fileset>
@@ -200,12 +200,68 @@ limitations under the License.
     		<param name="bundle.location" value="../sqldeveloper/extensions/${extension.filename}"/>
     	</antcall>
     </target>
-   	<target name="bundleupdate-inc" description="Update the bundle.info file">
+   	<target name="bundleupdate-inc" description="Update the bundle.info file in the deployment target">
    		<echo message="${extension.id},${extension.version},${bundle.location},4,false"/>
    		<echo file="${ide.home}/configuration/bundles.info" append="yes">
 ${extension.id},${extension.version},${bundle.location},4,false</echo>
 	</target>
-	
-	
 
+    <property name="update.snippet" value="${built}/update.snippet"/>
+    <property name="bundle.xml" value="${built}/bundle.xml"/>
+    <property name="update-center.xml" value="${cfu.dir}/update-center.xml"/>
+    <property name="bundle.filename" value="${extension.id}-${extension.version}.zip"/>
+    <property name="extension.bundle.url" value="${update.url}/${bundle.filename}"/>
+    <target name="cfu-inc" description="Create CFU bundle">
+    	<mkdir dir="${cfu.dir}"/>
+        <mkdir dir="${cfu.dir}/tmp"/>
+    	<!-- ${built} has the jar and lib if any -->
+        <antcall target="create-update-snippet"/>
+        <antcall target="create-bundle-xml"/>
+        <antcall target="create-update-center-xml"/>
+        <antcall target="create-update-bundle"/>
+    </target>
+    <target name="create-update-snippet" description="Create the update snippet to be used in bundle and center xml files">
+        <loadmf jar="${ide.home}/sqldeveloper/extensions/oracle.sqldeveloper.jar" prefix="oracle.sqldeveloper.jar" />
+        <copy file="${buildtools.dir}/update.template.xml" tofile="${update.snippet}" />
+        <!-- replace some strings -->
+        <replace file="${update.snippet}">
+            <replacefilter token="@@extension.owner@@" value="${extension.owner}" />
+            <replacefilter token="@@extension.owner.url@@" value="${extension.owner.url}" />
+            <replacefilter token="@@extension.id@@" value="${extension.id}" />
+            <replacefilter token="@@extension.name@@" value="${extension.name}" />
+            <replacefilter token="@@extension.resources@@" value="${extension.resources}" />
+            <replacefilter token="@@extension.descr@@" value="${extension.descr}" />
+            <replacefilter token="@@extension.version@@" value="${extension.version}" />
+            <replacefilter token="@@extension.build@@" value="${build.number}" />
+            <replacefilter token="@@extension.agreement@@" value="${extension.agreement}" />
+            <replacefilter token="@@extension.bundle.url@@" value="${extension.bundle.url}" />
+            <replacefilter token="@@sqldeveloper.min.version@@" value="${oracle.sqldeveloper.jar.Bundle-Version}" />
+        </replace>
+    </target>
+    <target name="create-bundle-xml" description="">
+        <copy file="${buildtools.dir}/update-bundle.template.xml" tofile="${bundle.xml}" />
+    	<loadfile property="update" srcFile="${update.snippet}"/>
+        <replace file="${bundle.xml}">
+            <replacefilter token="@@update@@" value="${update}" />
+         </replace>	
+	</target>
+    <target name="create-update-center-xml" description="">
+        <copy file="${buildtools.dir}/update-center.template.xml" tofile="${update-center.xml}" />
+        <loadfile property="update" srcFile="${update.snippet}"/>
+        <replace file="${update-center.xml}">
+            <replacefilter token="@@update@@" value="${update}" />
+         </replace> 
+    </target>
+    <target name="create-update-bundle" description="">
+    	<!-- zip extension, lib, and bundle.xml to bundle.filename in cfu dir -->
+        <move file="${built.destination.file}" tofile="${cfu.dir}/tmp/sqldeveloper/extensions/${extension.filename}" />
+        <!-- If there is a lib file or other resource file, it will get put in "extension name" dir in extension -->
+        <copy todir="${cfu.dir}/tmp/sqldeveloper/extensions/${extension.id}/lib" failonerror="false">
+            <fileset dir="${built}/lib" />
+        </copy>
+        <zip basedir="${cfu.dir}/tmp" destfile="${cfu.dir}/${bundle.filename}">
+            <zipfileset prefix="META-INF" dir="${built}" includes="bundle.xml" />
+        </zip>
+        <delete dir="${cfu.dir}/tmp" failonerror="false" />
+    </target>
 </project>

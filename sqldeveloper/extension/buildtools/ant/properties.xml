@@ -15,11 +15,12 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 -->
 
-<project name="properties">
+<project name="properties" xmlns:if="ant:if" xmlns:unless="ant:unless">
 <!-- buildtools -->
 	<dirname property="ant.build.dir" file="${ant.file.props}"/>
 	<property name="root.directory" value="${ant.build.dir}/../.."/>
-    <property name="buildutils.dir" value="${root.directory}/buildtools/buildutils" />
+    <property name="buildtools.dir" value="${root.directory}/buildtools" />
+    <property name="buildutils.dir" value="${buildtools.dir}/buildutils" />
 
 <!-- master properties -->
 	<property file="${root.directory}/build.properties" />
@@ -52,7 +53,8 @@ limitations under the License.
 	<property name="built.classpath" value="${built}/classes"/>
 	<property name="gen-src.dir" value="${built}/gen-src"/>
 	<property name="built.destination.file" value="${built}/${extension.filename}"/>
-
+    <property name="cfu.dir" value="${built}/cfu"/>
+    
 	<property name="jar.manifest.template" value="${built}/manifest.template" />
     <property name="module.default.exported.packages" value=""/>
 
@@ -64,5 +66,8 @@ limitations under the License.
 	<property name="cfu.bundle.template" value="cfu.bundle.template"/>
 	<property name="cfu.master.template" value="cfu.master.template"/>
 	<property name="built.cfu" value="${built.dir}/cfu"/>	
-	
+	<property if:set="extension.agreement.url" name="extension.agreement" 
+	 value="
+		&lt;requires-agreement url=&quot;${extension.agreement.url}&quot;/>"/>
+    <property unless:set="extension.agreement.url" name="extension.agreement" value=""/>
 </project>
