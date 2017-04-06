@@ -1,10 +1,10 @@
-# Java Database Connectivity (JDBC) driver 
-Oracle Java Database Connectivity (JDBC) driver is used by Java applications to establish connection to the Oracle Database. The Oracle JDBC drivers implement and comply with the latest JDBC specifications.  JDBC specification is a Java standard that provides the interface for connecting from Java to relational databases. 
-The JDBC standard is defined and implemented through the standard `java.sql` interfaces. 
+# JDBC based examples  
+The Oracle JDBC driver is used for connecting and processing data in the Oracle Database. It is fully compliant with the latest JDBC specifications.  The JDBC standard defines the `java.sql` interfaces. 
 
-**The JDBC Thin driver or a Type 4 driver** is a pure Java driver that can be used in Java applications and applets.  It communicates with the server using Oracle Net Services to access the Oracle Database.  We recommend everyone to use JDBC Thin driver in their applications.  Java applications need to have **ojdbc8.jar** (for JDK8) in their classpath to establish a connection to the database. 
+**The JDBC Thin driver or Type 4 driver** is a pure Java driver which communicates with the database server using Oracle Net Services.  Oracle furnishes also the type 2 JDBc-OCI driver however, JDBC-Thin  is the most used and recommended driver type.  Java applications simply need to have **ojdbc8.jar** (for JDK8) in their classpath. 
 
-JDBC Thin driver is used by Java applications to connect to various Database Service offerings such as Oracle Database Service **(DBCS)**, Oracle Exadata Express Cloud Service **(EECS)**, and Oracle Database Serice on Bare Metal **(BMCS)**.  Refer to [JDBC and Oracle Database Service on Cloud](http://www.oracle.com/technetwork/database/application-development/jdbc/documentation/index.html) for detailed instructions. 
+The JDBC THin driver allows connecting to the Oracle Database Cloud Services including: the Oracle Database Service **(DBCS)**, the Oracle Exadata Express Cloud Service **(EECS)**, and the Oracle Database Service on Bare Metal **(BMCS)**.  
+Please refer to [JDBC and Oracle Database Service on Cloud](http://www.oracle.com/technetwork/database/application-development/jdbc/documentation/index.html) for detailed instructions. 
 
 # What's New in JDBC in 12.2 ?
 
@@ -32,6 +32,8 @@ JDBC Thin driver is used by Java applications to connect to various Database Ser
 * [Performance, Scalability, Availability, Security, and Manageability with JDBC in 12.2](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbcanducp122-3628966.pdf)
 
 * [Connection Management Strategies for Java Applications using JDBC and UCP](http://www.oracle.com/technetwork/database/application-development/jdbc-ucp-conn-mgmt-strategies-3045654.pdf)
+
+* [What's in Oracle database 12c Release 2 for Java & JavaScript Developers?](http://bit.ly/2orH5jf)
 
 # Other Resources 
 
