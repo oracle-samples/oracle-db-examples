@@ -3,7 +3,7 @@ This repository stores examples that demonstrate various concepts to assist Java
 
 The examples let you run client-side database bound Java or JavaScript code either on HotSpot JDK/JRE (or other JVMs) or server-side Java or JavaScript directly in the database leveraging the embedded JVM (a.k.a. OJVM and Java 8 Nashorn engine). In addition, OJVM allows invoking remote SOAP or REST Web Services from within your database session (using SQL, PL/SQL or Java). 
 
-# What's in Oracle database 12c Release 2 for Java Developers? 
+## What's in Oracle database 12c Release 2 for Java Developers? 
 * **Java 8**: Java 8 in JDBC/UCP and OJVM; JDBC 4.2
 * **JavaScript with Nashorn**: JDBC/UCP, OJVM
 * **Performance**: JIT (OJVM), Network Compression over WAN (JDBC), Configurable connection health check frequency (UCP), PL/SQL Callbace interface (JDBC)
@@ -13,4 +13,5 @@ The examples let you run client-side database bound Java or JavaScript code eith
 * **Manageability**: XMLconfiguration (UCP), Enable/disable/suspend/resume feature level logging (JDBC), MAX_THINK_TIME for Transactions in progress (DRCP), new statistics view and AWR reports  
 * **Ease of Use** : Web Services Callout (OJVMWCU), Long Identifiers (OJVM), PL/SQL Boolean (JDBC), Debugger for OJVM (Java Debug Wire Protocol)
 
-# [White paper](http://bit.ly/2orH5jf)
+## [White paper](http://bit.ly/2orH5jf)
+## [See our OTN landing page for more information and resources](http://www.oracle.com/technetwork/database/application-development/java/overview/index.html) 
