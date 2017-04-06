@@ -1,18 +1,13 @@
-# Universal Connection Pool (UCP) [[DRAFT]] 
-Oracle Universal Connection Pool (UCP) is a Java Connection Pool used by Java applications to establish connection to the Oracle Database. The Oracle JDBC drivers implement and comply with the latest JDBC specifications.  JDBC specification is a Java standard that provides the interface for connecting from Java to relational databases. 
-The JDBC standard is defined and implemented through the standard `java.sql` interfaces. 
-
-**The JDBC Thin driver or a Type 4 driver** is a pure Java driver that can be used in Java applications and applets.  It communicates with the server using Oracle Net Services to access the Oracle Database.  We recommend everyone to use JDBC Thin driver in their applications.  Java applications need to have **ojdbc8.jar** (for JDK8) in their classpath to establish a connection to the database. 
-
-JDBC Thin driver is used by Java applications to connect to various Database Service offerings such as Oracle Database Service **(DBCS)**, Oracle Exadata Express Cloud Service **(EECS)**, and Oracle Database Serice on Bare Metal **(BMCS)**.  Refer to [JDBC and Oracle Database Service on Cloud](http://www.oracle.com/technetwork/database/application-development/jdbc/documentation/index.html) for detailed instructions. 
+# Universal Connection Pool (UCP)
+Oracle Universal Connection Pool (UCP) is a feature rich Java connection pool tightly integrated with all Oracle database configurations, providing high availability, scalability and work load balancing; 
 
 # What's new in 12.2 ? 
 
 * **New Java Standards**: Java SE 8 and JDBC 4.2 are supported by UCP (ucp.jar) 
-* **New Performance features**: 
-* **New Scalability features**: 
-* **New High Availability features**: 
-* 
+* **New Performance features**: UCP redesign of thread handling using Multi-dimension Search Tree, Configurable connection health check frequency (UCP)
+* **New Scalability features**: Shared Pool for Multitenant Database (UCP), Shared Pool for Sharded database (UCP), Sharding APIs for UCP
+* **New High Availability features**: FAN and ONS are auto-enabled in UCP, Application Continuity for XA Datasources, Transaction Guard for XA Datasource
+* **New Manageability features**: UCP XML configuration file
 
 # Downloads
 
@@ -33,6 +28,8 @@ JDBC Thin driver is used by Java applications to connect to various Database Ser
 * [Connection Management Strategies for Java Applications using JDBC and UCP](http://www.oracle.com/technetwork/database/application-development/jdbc-ucp-conn-mgmt-strategies-3045654.pdf)
 
 # Other Resources 
+
+* [UCP and Oracle Database Service on Cloud](http://www.oracle.com/technetwork/database/application-development/jdbc/documentation/index.html) 
 
 * [UCP Landing Page and Other UCP Whitepapers](http://www.oracle.com/technetwork/database/application-development/jdbc/overview/index.html)
 
