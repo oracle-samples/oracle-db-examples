@@ -7,6 +7,8 @@ Nashorn allows interoperability between Java and JavaScript, therefore, the SQL 
 
 [A reprint of my blog post](https://blogs.oracle.com/nashorn/entry/javascript_stored_procedures_and_node) 
 
+[Nashorn jsr223 engine notes](https://wiki.openjdk.java.net/display/Nashorn/Nashorn+jsr223+engine+notes)
+
 [Documentation](http://bit.ly/2nstiYQ)
 
 [White paper](http://bit.ly/2orH5jf) What's in Oracle database 12c Release 2 for Java & JavaScript Developers? 
