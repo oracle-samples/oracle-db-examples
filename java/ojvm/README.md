@@ -10,10 +10,12 @@ The motivations for running Java code directly in the database include:
   pure Java sligthly faster than OJVM (but no one runs pure Java code i.e., Fibonnaci computation in the database), running Java in
   the database cuts the network traffic incurred by the steps involved in processing SQL statements (i.e., parse, and/or bind, and/or
   execute, and fetches).
-  You can see for yourself with the TrimBlog and Workers examples (running both inside and outside the database).
+  You can see for yourself with the Trimlob and Workers examples (running both inside and outside the database).
+  
+ * OJVM allows calling out external SOAP and REST Web Services. [See the landing page for more details](http://www.oracle.com/technetwork/database/database-083829.html)  
 
-[Documentation](http://docs.oracle.com/database/122/JJDEV/toc.htm)
+## [Documentation](http://docs.oracle.com/database/122/JJDEV/toc.htm)
 
-[What's in Oracle database 12c Release 2 for Java & JavaScript Developers?](http://bit.ly/2orH5jf)
-
-[Community Forum](https://community.oracle.com/community/database/developer-tools/jvm)
+## [What's in Oracle database 12c Release 2 for Java & JavaScript Developers?](http://bit.ly/2orH5jf)
+## [OTN Landing page](http://www.oracle.com/technetwork/database/application-development/java-db/overview/index.html)
+## [Community Forum](https://community.oracle.com/community/database/developer-tools/jvm)
