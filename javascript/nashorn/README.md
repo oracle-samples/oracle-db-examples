@@ -5,10 +5,10 @@ This folder stores database related Nashorn based examples (i.e., plain JavaScri
 
 Nashorn allows interoperability between Java and JavaScript, therefore, the SQL statements are invoked using JDBC which is a portable standard Java API. 
 
-#[A reprint of my blog post](https://blogs.oracle.com/nashorn/entry/javascript_stored_procedures_and_node) 
+[A reprint of my blog post](https://blogs.oracle.com/nashorn/entry/javascript_stored_procedures_and_node) 
 
-#[Documentation](http://bit.ly/2nstiYQ)
+[Documentation](http://bit.ly/2nstiYQ)
 
-#[White paper](http://bit.ly/2orH5jf) What's in Oracle database 12c Release 2 for Java & JavaScript Developers? 
+[White paper](http://bit.ly/2orH5jf) What's in Oracle database 12c Release 2 for Java & JavaScript Developers? 
 
-#[Community Forum](https://community.oracle.com/community/database/developer-tools/jvm)
+[Community Forum](https://community.oracle.com/community/database/developer-tools/jvm)
