@@ -1,5 +1,5 @@
 # Universal Connection Pool (UCP)
-Oracle Universal Connection Pool (UCP) is a feature rich Java connection pool tightly integrated with all Oracle database configurations, providing high availability, scalability and work load balancing; 
+Oracle Universal Connection Pool (UCP) is a feature rich Java connection pool tightly integrated with all Oracle database configurations, providing high availability, scalability and work load balancing; To use UCP, Java applications or containers must have **ucp.jar** in their class path along with **ojdbc8.jar** (for JDK8).
 
 # What's new in 12.2 ? 
 
