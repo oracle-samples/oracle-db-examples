@@ -1,10 +1,14 @@
 
 # Nashorn based examples
 Java 8 furnishes Nashorn, a JavaScript engine which runs on the JVM including JDK, JRE, and the embeded JVM in the Oracle database a..k.a. OJVM.
-This folder stores the Nashorn based examples for the Oracle Database 12c Release 2 including JavaScript with OJVM, JavaScript with JDK/JRE.
+This folder stores database related Nashorn based examples (i.e., plain JavaScript + SQL statements) including JavaScript with OJVM, and JavaScript with JDK/JRE. 
 
-Documentation http://bit.ly/2nstiYQ
+Nashorn allows interoperability between Java and JavaScript, therefore, the SQL statements are invoked using JDBC which is a portable standard Java API. 
 
-What's in Oracle database 12c Release 2 for Java & JavaScript Developers? http://bit.ly/2orH5jf
+#[A reprint of my blog post](https://blogs.oracle.com/nashorn/entry/javascript_stored_procedures_and_node) 
 
-Community Forum https://community.oracle.com/community/database/developer-tools/jvm
+#[Documentation](http://bit.ly/2nstiYQ)
+
+#[White paper](http://bit.ly/2orH5jf) What's in Oracle database 12c Release 2 for Java & JavaScript Developers? 
+
+#[Community Forum](https://community.oracle.com/community/database/developer-tools/jvm)
