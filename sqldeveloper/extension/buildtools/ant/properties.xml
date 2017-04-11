@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<project name="properties" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<!-- buildtools -->
+	<dirname property="ant.build.dir" file="${ant.file.props}"/>
+	<property name="root.directory" value="${ant.build.dir}/../.."/>
+    <property name="buildtools.dir" value="${root.directory}/buildtools" />
+    <property name="buildutils.dir" value="${buildtools.dir}/buildutils" />
+
+<!-- master properties -->
+	<property file="${root.directory}/build.properties" />
+	
+<!-- -->
+	<property name="build.number.filename" value="${root.directory}/built/build.number"/>
+	<condition property="build.number.exists">
+		<resourceexists>
+		  <file file="${build.number.filename}"/>
+		</resourceexists>
+	</condition>
+
+<!-- local properties -->
+	<property file="build.properties" />
+
+<!-- dependency locations -->
+	<property name="ide.home" value="${sqldev.dir}" />
+	<property name="ide.modules" value="${ide.home}/modules" />
+	<property name="ide.lib" value="${ide.home}/ide/lib" />
+	<property name="ide.extensions" value="${ide.home}/ide/extensions" />
+	<property name="jdev.lib" value="${ide.home}/jdev/lib" />
+	<property name="jdev.extensions" value="${ide.home}/jdev/extensions" />
+	<property name="sqldev.lib" value="${ide.home}/sqldeveloper/lib" />
+	<property name="sqldev.extensions" value="${ide.home}/sqldeveloper/extensions" />
+
+<!-- processing properties -->
+	<property name="extension.filename" value="${extension.id}.jar" />
+
+	<property name="built" value="${basedir}/built" />
+	<property name="built.classpath" value="${built}/classes"/>
+	<property name="gen-src.dir" value="${built}/gen-src"/>
+	<property name="built.destination.file" value="${built}/${extension.filename}"/>
+    <property name="cfu.dir" value="${built}/cfu"/>
+    
+	<property name="jar.manifest.template" value="${built}/manifest.template" />
+    <property name="module.default.exported.packages" value=""/>
+
+	<property name="osgi.bundle.classpath" value="." />
+	<property name="osgi.exported.jars" value="${built.destination.file}"/>
+
+<!-- check for updates bundling (cfu) -->
+	<property name="cfu.bundle.filename" value="${extension.id}-${extension.version}.zip"/>
+	<property name="cfu.bundle.template" value="cfu.bundle.template"/>
+	<property name="cfu.master.template" value="cfu.master.template"/>
+	<property name="built.cfu" value="${built.dir}/cfu"/>	
+	<property if:set="extension.agreement.url" name="extension.agreement" 
+	 value="
+		&lt;requires-agreement url=&quot;${extension.agreement.url}&quot;/>"/>
+    <property unless:set="extension.agreement.url" name="extension.agreement" value=""/>
+</project>

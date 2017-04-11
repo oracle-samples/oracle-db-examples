@@ -1,0 +1,45 @@
+<extension xmlns="http://jcp.org/jsr/198/extension-manifest"
+           id="@@extension.id@@" version="@@extension.version@@.@@extension.build@@"
+           esdk-version="1.0"
+           rsbundle-class="oracle.db.examples.sqldeveloper.ExampleResources">
+
+    <name>@@extension.name@@</name>
+    <owner>@@extension.owner@@</owner>
+
+    <feature-category xmlns="http://xmlns.oracle.com/ide/extension" id="example-category">
+		<name>${CATEGORY_NAME}</name>
+		<description>${CATEGORY_DESCRIPTION}</description>
+	</feature-category>
+
+    <feature id="@@extension.id@@" xmlns="http://xmlns.oracle.com/ide/extension">
+        <!-- standard: <category-id>db-category</category-id> -->
+        <category-id>example-category</category-id>
+        <name>@@extension.name@@</name>
+        <description>@@extension.descr@@</description>
+        <type>
+            <service can-user-disable="true" reload-if-used="true"/>
+        </type>
+    </feature>
+    <!--  These are automatically loaded and will cause the extension to be fully loaded if used -->
+	<trigger-hooks xmlns="http://xmlns.oracle.com/ide/extension">
+   		<triggers xmlns:c="http://xmlns.oracle.com/ide/customization">
+			<sqldev-action-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-actions">
+				<actionDescriptor package="oracle.db.examples.sqldeveloper.action.xml"/>
+			</sqldev-action-hook>
+            <sqldev-navigator-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-navigator">
+                <descriptor>/oracle/db/examples/sqldeveloper/navigator/xml/fourLevel_nav.xml</descriptor>
+            </sqldev-navigator-hook>
+   		</triggers>
+   	</trigger-hooks>
+    <!--  These are only loaded once the extension is "triggered" -->
+    <hooks>
+        <jdeveloper-hook xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension"> 
+            <addins> 
+            </addins>
+		</jdeveloper-hook> 
+        <sqldev-viewer-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-viewers">
+            <viewerDescriptor package="oracle.db.examples.sqldeveloper.viewer.xml"/>
+        </sqldev-viewer-hook>
+    </hooks>  
+   	
+</extension>

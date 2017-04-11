@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<project name="includes" xmlns:if="ant:if">
+	<import file="./buildutils.xml"/>
+    <import file="./classpaths.xml"/>
+	
+	<!-- This classpath is considered the 'base' compile classpath and is shared by all modules. -->
+    <path id="compile.classpath">
+		<path refid="javatools.jar"/>
+		<path refid="oracle.ide"/>
+		<path refid="oracle.dbapi"/>
+		<path refid="oracle.bali"/>
+        <path refid="oracle.xml"/>
+        <path refid="oracle.jdbc"/>
+		<path refid="orai18n" />
+        <path refid="oracle.dbui"/>
+    	<path refid="oracle.jdev.core"/>
+    </path>
+	
+	<target name="init-inc">
+        <echo>
+            build.number:${build.number} 
+            extension.id:${extension.id} 
+            built: ${built}
+            sqldev.dir:${ide.home} 
+        </echo>
+    	<mkdir dir="${built}" />
+    </target>
+
+	<target name="clean-inc">
+        <!-- wipe them out, all of them -->
+        <delete dir="${built}" failonerror="false" />
+        <echo>Deleting ${ide.home}/sqldeveloper/extensions/${extension.id}[.jar, /*]</echo>
+        <delete failonerror="false">
+            <fileset dir="${ide.home}/sqldeveloper/extensions" includes="${extension.filename}"></fileset>
+            <fileset dir="${ide.home}/sqldeveloper/extensions/${extension.id}"></fileset>
+        </delete>
+    </target>
+
+	<target name="resgen-inc" depends="buildutils-task" description="Generate java files for internationalized strings.">
+        <taskdef name="resgen" classname="oracle.dbtools.resgen.ResGenTask" classpathref="buildutils.task.classpath" />
+        <!-- make generated source dir  -->
+        <mkdir dir="${gen-src.dir}" />
+        <resgen inputfile="resfiles.properties"  sourceroot="src" outputroot="${built}/gen-src" >
+        </resgen>
+    </target>
+	
+	<patternset id="copy.targets"
+		includes="**/*.xls,**/*.sti, **/*.stg, **/*.sql,**/*.plsql, **/*bat, **/*.sh, **/*.ocp, **/*.jpg, **/*.gif,**/*.png,**/*.svg,**/*.properties,**/*.xml,**/*.fxml,**/*.js,**/*.css,**/*.html,**/*.TXT,**/*.BAT,**/*.chm,**/*.mde,**/*.dtd,**/*.jar,**/*.bteq,**/*.serial,**/*.prg,**/*.arbori,**/*.db,**/*.grammar,**/*.pkb,**/*.pks,**/*.json,**/*.pl"/>
+
+	<target name="copy-inc" description="Copy files to the output directory">
+        <!-- make temp class dir -->
+        <mkdir dir="${built.classpath}" />
+        <!-- copy static content  -->
+        <copy todir="${built.classpath}" includeEmptyDirs="false" failonerror="false">
+            <fileset dir="src">
+            	<patternset refid="copy.targets"/>
+            </fileset>
+            <fileset dir="translations" erroronmissingdir="false"/>
+        </copy>
+        <copy todir="${built}/lib" failonerror="false">
+        	<fileset dir="lib" />
+        </copy>
+    	<copy todir="${built}" failonerror="false">
+    		<fileset dir="etc">
+    			<patternset includes="**/*.xsd"/>
+    		</fileset>
+    	</copy>
+    	<!-- copy services -->
+		<copy todir="${built.classpath}" includeemptydirs="false" failonerror="false">
+			<fileset dir="etc/services">
+				<patternset includes="**/*"/>
+			</fileset>
+			<globmapper from="*" to="META-INF/services/*"/>
+		</copy>
+    </target>
+	
+    <target name="compile-inc" description="Compile java code">
+        <!-- make temp class dir -->
+        <mkdir dir="${built.classpath}" />
+        <!-- compile it all  -->
+    	<javac destdir="${built}/classes"
+               fork="true"
+               listfiles="true"
+               memoryInitialSize="128m"
+               memoryMaximumSize="1024m"
+               debug="true" debugLevel="lines,source,vars" 
+               source="1.8"
+               target="1.8"
+               nowarn="${javac.nowarn}" 
+               verbose="false" 
+               includeantruntime="false"
+        	   encoding="iso-8859-1">
+        	<extdirs/>
+            <src path="src"/>
+            <src path="${gen-src.dir}" />
+            <classpath refid="local.classpath" />
+            <classpath refid="compile.classpath" />
+        </javac>
+    </target>
+	
+	<property name="extension.xml" value="${built}/extension.xml"/>
+	<target name="extension-inc">
+        <!-- copy the extension.xml to the stage area -->
+        <copy file="etc/extension.xml" tofile="${extension.xml}" />
+        <!-- replace some strings -->
+        <replace file="${extension.xml}">
+            <replacefilter token="@@extension.owner@@" value="${extension.owner}" />
+            <replacefilter token="@@extension.owner.url@@" value="${extension.owner.url}" />
+            <replacefilter token="@@extension.id@@" value="${extension.id}" />
+            <replacefilter token="@@extension.name@@" value="${extension.name}" />
+            <replacefilter token="@@extension.resources@@" value="${extension.resources}" />
+            <replacefilter token="@@extension.descr@@" value="${extension.descr}" />
+            <replacefilter token="@@extension.version@@" value="${extension.version}" />
+            <replacefilter token="@@extension.build@@" value="${build.number}" />
+        </replace>
+	</target>
+    
+	<target name="jar-inc" description="Create the extension jar">
+    	<antcall target="extension-inc"/>
+        <!-- jar it all up -->
+        <jar basedir="${built}/classes" destfile="${built.destination.file}">
+            <zipfileset prefix="META-INF" dir="${built}" includes="extension.xml" />
+            <zipfileset prefix="META-INF" dir="${built}" includes="*.xsd" />
+        </jar>
+    </target>
+
+	<target name="manifest-template-check">
+        <condition property="manifest.template.exists">
+			<available file="etc/manifest.template" />
+        </condition>
+	</target>
+	
+	<target name="manifest-template-copy" depends="manifest-template-check" if="manifest.template.exists">
+        <copy file="etc/manifest.template" tofile="${jar.manifest.template}"/>
+	</target>
+	
+	<target name="manifest1-inc" depends="manifest-template-copy">
+        <manifest file="${jar.manifest.template}" mode="update">
+            <attribute name="Bundle-SymbolicName" value="${extension.id}"/>
+            <attribute name="Bundle-Version" value="${extension.version}"/> <!-- OSGI allows only three numbers -->
+            <attribute name="Bundle-ManifestVersion" value="2" />
+            <attribute name="Bundle-ClassPath" value="${osgi.bundle.classpath}" />
+        </manifest>
+	</target>
+	<target name="manifest2-inc" if="osgi.required.bundles">
+		<echo>osgi.required.bundles=${osgi.required.bundles}</echo>
+        <manifest file="${jar.manifest.template}" mode="update">
+            <attribute name="Require-Bundle" value="${osgi.required.bundles}" />
+        </manifest>
+	</target>
+
+    <condition property="hasExports" value="true">
+    <not>
+        <equals arg1="${module.default.exported.packages}" arg2="" />
+    </not>
+    </condition>
+	<target name="manifest3-inc" if="hasExports">
+            <manifest file="${jar.manifest.template}" mode="update">
+                <attribute name="Export-Package" value="${module.default.exported.packages}"/>
+            </manifest>
+	</target>
+	<target name="manifest-activation-inc" if="osgi.bundle.activationPolicy">
+		<echo>osgi.bundle.activationPolicy:${osgi.bundle.activationPolicy}</echo>
+        <manifest file="${jar.manifest.template}" mode="update">
+            <attribute name="Bundle-ActivationPolicy" value="${osgi.bundle.activationPolicy}"/>
+        </manifest>
+	</target>
+
+	<target name="manifest-inc" unless="module.excluded" description="Create default manifest file">
+		<antcall target="manifest1-inc"/>
+		<antcall target="manifest2-inc"/>
+		<antcall target="manifest3-inc"/>
+		<antcall target="manifest-activation-inc"/>
+		<jar destfile="${built.destination.file}" update="true" manifest="${jar.manifest.template}" />
+	</target>
+	
+    <target name="deploy-inc" description="Deploy into the SQLDeveloper extensions directory">
+        <move file="${built.destination.file}" tofile="${ide.home}/sqldeveloper/extensions/${extension.filename}" />
+        <!-- If there is a lib file or other resource file, it will get put in "extension name" dir in extension -->
+    	<copy todir="${ide.home}/sqldeveloper/extensions/${extension.id}/lib" failonerror="false">
+        	<fileset dir="${built}/lib" />
+        </copy>
+    	<antcall target="bundleupdate-inc">
+    		<param name="bundle.location" value="../sqldeveloper/extensions/${extension.filename}"/>
+    	</antcall>
+    </target>
+   	<target name="bundleupdate-inc" description="Update the bundle.info file in the deployment target">
+   		<echo message="${extension.id},${extension.version},${bundle.location},4,false"/>
+   		<echo file="${ide.home}/configuration/bundles.info" append="yes">
+${extension.id},${extension.version},${bundle.location},4,false</echo>
+	</target>
+
+    <property name="update.snippet" value="${built}/update.snippet"/>
+    <property name="bundle.xml" value="${built}/bundle.xml"/>
+    <property name="update-center.xml" value="${cfu.dir}/update-center.xml"/>
+    <property name="bundle.filename" value="${extension.id}-${extension.version}.zip"/>
+    <property name="extension.bundle.url" value="${update.url}/${bundle.filename}"/>
+    <target name="cfu-inc" description="Create CFU bundle">
+    	<mkdir dir="${cfu.dir}"/>
+        <mkdir dir="${cfu.dir}/tmp"/>
+    	<!-- ${built} has the jar and lib if any -->
+        <antcall target="create-update-snippet"/>
+        <antcall target="create-bundle-xml"/>
+        <antcall target="create-update-center-xml"/>
+        <antcall target="create-update-bundle"/>
+    </target>
+    <target name="create-update-snippet" description="Create the update snippet to be used in bundle and center xml files">
+        <loadmf jar="${ide.home}/sqldeveloper/extensions/oracle.sqldeveloper.jar" prefix="oracle.sqldeveloper.jar" />
+        <copy file="${buildtools.dir}/update.template.xml" tofile="${update.snippet}" />
+        <!-- replace some strings -->
+        <replace file="${update.snippet}">
+            <replacefilter token="@@extension.owner@@" value="${extension.owner}" />
+            <replacefilter token="@@extension.owner.url@@" value="${extension.owner.url}" />
+            <replacefilter token="@@extension.id@@" value="${extension.id}" />
+            <replacefilter token="@@extension.name@@" value="${extension.name}" />
+            <replacefilter token="@@extension.resources@@" value="${extension.resources}" />
+            <replacefilter token="@@extension.descr@@" value="${extension.descr}" />
+            <replacefilter token="@@extension.version@@" value="${extension.version}" />
+            <replacefilter token="@@extension.build@@" value="${build.number}" />
+            <replacefilter token="@@extension.agreement@@" value="${extension.agreement}" />
+            <replacefilter token="@@extension.bundle.url@@" value="${extension.bundle.url}" />
+            <replacefilter token="@@sqldeveloper.min.version@@" value="${oracle.sqldeveloper.jar.Bundle-Version}" />
+        </replace>
+    </target>
+    <target name="create-bundle-xml" description="">
+        <copy file="${buildtools.dir}/update-bundle.template.xml" tofile="${bundle.xml}" />
+    	<loadfile property="update" srcFile="${update.snippet}"/>
+        <replace file="${bundle.xml}">
+            <replacefilter token="@@update@@" value="${update}" />
+         </replace>	
+	</target>
+    <target name="create-update-center-xml" description="">
+        <copy file="${buildtools.dir}/update-center.template.xml" tofile="${update-center.xml}" />
+        <loadfile property="update" srcFile="${update.snippet}"/>
+        <replace file="${update-center.xml}">
+            <replacefilter token="@@update@@" value="${update}" />
+         </replace> 
+    </target>
+    <target name="create-update-bundle" description="">
+    	<!-- zip extension, lib, and bundle.xml to bundle.filename in cfu dir -->
+        <move file="${built.destination.file}" tofile="${cfu.dir}/tmp/sqldeveloper/extensions/${extension.filename}" />
+        <!-- If there is a lib file or other resource file, it will get put in "extension name" dir in extension -->
+        <copy todir="${cfu.dir}/tmp/sqldeveloper/extensions/${extension.id}/lib" failonerror="false">
+            <fileset dir="${built}/lib" />
+        </copy>
+        <zip basedir="${cfu.dir}/tmp" destfile="${cfu.dir}/${bundle.filename}">
+            <zipfileset prefix="META-INF" dir="${built}" includes="bundle.xml" />
+        </zip>
+        <delete dir="${cfu.dir}/tmp" failonerror="false" />
+    </target>
+</project>

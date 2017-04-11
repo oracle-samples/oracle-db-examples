@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<project name="buildutils" default="buildutils-task">
+    <target name="buildutils-check">
+        <condition property="buildutils.build">
+            <not>
+                <available file="${buildutils.dir}/buildutils.jar" />
+            </not>
+        </condition>
+    </target>
+    <target name="buildutils-task" depends="buildutils-check" if="buildutils.build">
+        <ant dir="${buildutils.dir}" target="jar" />
+    </target>
+    
+    <!--
+    Loads entries from a manifest file.
+    @jar     The jar from where to read
+    @prefix  A prefix to prepend
+    -->
+    <macrodef name="loadmf">
+        <attribute name="jar"/>
+        <attribute name="prefix" default=""/>
+        <sequential>
+            <loadproperties prefix="@{prefix}">
+                <zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF"/>
+            </loadproperties>
+        </sequential>
+    </macrodef>
+
+</project>

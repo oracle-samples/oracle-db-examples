@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<project name="classpaths">
+	<import file="./properties.xml"/>
+	
+<!-- build classpaths -->
+	<path id="buildutils.task.classpath">
+		<fileset dir="${buildutils.dir}" includes="buildutils.jar" />
+	</path>
+	
+<!-- osgi.bundle.default.dependencies -->	
+	<property name="osgi.bundle.oracle.core" value="oracle.external.nlsrtl,oracle.external.xmlparser"/>
+	<path id="oracle.xml">
+		<pathelement location="${ide.modules}/oracle.xdk/xmlparserv2.jar" />
+	</path>
+	<path id="orai18n">
+		<pathelement location="${ide.home}/jlib/orai18n.jar" />
+	</path>
+	
+	<property name="osgi.bundle.javatools" value="oracle.javatools,oracle.javatools-nodeps" />
+	<path id="javatools.jar">
+		<pathelement location="${ide.lib}/javatools.jar" />
+		<pathelement location="${ide.modules}/oracle.javatools/javatools-nodeps.jar" />
+	</path>
+
+	<property name="osgi.bundle.ide" value="oracle.ide,oracle.ide.ceditor,oracle.ide.status,oracle.ide.audit,oracle.peek,oracle.ide.navigator,oracle.ide.runner,oracle.ide.webbrowser,oracle.ide.externaltools,oracle.ide.inspector,oracle.ide.palette2,oracle.uic,oracle.idert,oracle.javaxide,oracle.icons" />
+	<path id="oracle.ide">
+		<pathelement location="${ide.extensions}/oracle.ide.jar" />
+		<pathelement location="${ide.extensions}/oracle.ide.ceditor.jar" />
+		<pathelement location="${jdev.extensions}/oracle.ide.status.jar" />
+		<pathelement location="${jdev.extensions}/oracle.ide.audit.jar" />
+		<pathelement location="${ide.lib}/peek.jar" />
+		<pathelement location="${ide.extensions}/oracle.ide.navigator.jar" />
+		<pathelement location="${ide.extensions}/oracle.ide.runner.jar" />
+		<pathelement location="${ide.extensions}/oracle.ide.webbrowser.jar" />
+		<pathelement location="${ide.extensions}/oracle.ide.externaltools.jar" />
+		<pathelement location="${ide.extensions}/oracle.ide.inspector.jar" />
+		<pathelement location="${ide.extensions}/oracle.ide.palette2.jar" />
+		<pathelement location="${ide.lib}/uic.jar" />
+		<pathelement location="${ide.lib}/idert.jar" />
+		<pathelement location="${ide.lib}/javax-ide.jar" />
+		<pathelement location="${ide.modules}/oracle.javatools/oicons.jar" />
+	</path>
+
+	<property name="osgi.bundle.jdev.core" value="oracle.jdeveloper.java.core,oracle.jdeveloper.common,oracle.layout-managers"/>
+	<path id="oracle.jdev.core">
+		<pathelement location="${jdev.extensions}/oracle.jdeveloper.java.core.jar" />
+		<pathelement location="${jdev.extensions}/oracle.jdeveloper.common.jar" />
+		<pathelement location="${jdev.lib}/jdev-rt.jar" />
+	</path>
+	
+	<property name="osgi.bundle.dbapi" value="oracle.db-api,oracle.db-api-impl,oracle.db-ca,oracle.jdev-cm" />
+	<path id="oracle.dbapi">
+		<pathelement location="${ide.lib}/dbapi.jar" />
+		<pathelement location="${ide.lib}/dbapi-impl.jar" />
+		<pathelement location="${ide.modules}/oracle.adf.model/db-ca.jar" />
+		<pathelement location="${ide.modules}/oracle.adf.model/jdev-cm.jar" />
+	</path>
+	
+	<property name="osgi.bundle.dbui" value="oracle.ide.db,oracle.jdeveloper.db.connection,oracle.ide.db.explorer" />
+	<path id="oracle.dbui">
+		<pathelement location="${ide.extensions}/oracle.ide.db.jar" />
+		<pathelement location="${jdev.extensions}/oracle.jdeveloper.db.connection.jar" />
+		<pathelement location="${jdev.extensions}/oracle.ide.db.explorer.jar" />
+	</path>
+	
+	<property name="osgi.bundle.bali" value="oracle.jewt-dbui,oracle.orahelp-helpshare,oracle.orahelp-ohj,oracle.external.oracle-ice,oracle.balipi,oracle.jewt-core,oracle.external.balishare" />
+		<path id="oracle.bali">
+			<pathelement location="${ide.home}/jlib/dbui4.jar" />
+			<pathelement location="${ide.home}/jlib/help-share.jar" />
+			<pathelement location="${ide.home}/jlib/inspect4.jar" />
+			<pathelement location="${ide.modules}/oracle.bali.jewt/jewt4.jar" />
+			<pathelement location="${ide.modules}/oracle.bali.jewt/olaf2.jar" />
+			<pathelement location="${ide.home}/jlib/ohj.jar" />
+			<pathelement location="${ide.modules}/oracle.bali.share/share.jar" />
+			<pathelement location="${ide.home}/jlib/jle3.jar" />
+			<pathelement location="${ide.home}/jlib/jgoodies-looks.jar" />
+		</path>
+
+	<property name="osgi.bundle.jdbc" value="oracle.external.jdbc" />
+	<path id="oracle.jdbc">
+		<pathelement location="${ide.home}/external/oracle.external.jdbc.jar"/>
+	</path>
+
+	<property name="osgi.bundle.default.dependencies" value="${osgi.bundle.oracle.core},${osgi.bundle.javatools},${osgi.bundle.ide},${osgi.bundle.jdev.core},${osgi.bundle.dbapi},${osgi.bundle.dbui},${osgi.bundle.bali},${osgi.bundle.jdbc}" />
+
+<!-- osgi.bundle.sqldev -->
+	<property name="osgi.bundle.sqldev" value="oracle.sqldeveloper" />
+	<path id="oracle.sqldeveloper">
+		<pathelement location="${sqldev.extensions}/oracle.sqldeveloper.jar" />
+	</path>
+
+<!-- osgi.bundle.utils-nodeps -->
+	<property name="osgi.bundle.utils-nodeps" value="oracle.sqldeveloper.utils-nodeps" />
+	<property name="dbtools.common.jarfile" value="oracle.dbtools-common.jar"/>
+	<path id="oracle.sqldeveloper.utils-nodeps">
+		<pathelement location="${sqldev.lib}/${dbtools.common.jarfile}" />
+	</path>
+	
+<!-- osgi.bundle.utils -->
+	<property name="osgi.bundle.utils" value="oracle.sqldeveloper.utils" />
+	<path id="oracle.sqldeveloper.utils">
+		<pathelement location="${sqldev.extensions}/oracle.sqldeveloper.utils.jar" />
+	</path>
+	
+<!-- osgi.bundle.jfxrt  -->
+	<property name="osgi.bundle.jfxrt" value="oracle.external.jfxrt" />
+	<path id="javafx.runtime" description="Java FX runtime library">
+		<pathelement location="${sqldev.lib}/oracle.sqldeveloper.jfx-nodeps.jar" />
+		<pathelement location="${java.home}/lib/ext/jfxrt.jar" />
+	</path>
+	
+</project>

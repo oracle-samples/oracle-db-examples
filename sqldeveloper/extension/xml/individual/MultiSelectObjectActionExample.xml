@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.oracle.com/sqldeveloper/3_1/dialogs
+                        http://xmlns.oracle.com/sqldeveloper/3_1/dialogs.xsd"
+    xmlns="http://xmlns.oracle.com/sqldeveloper/3_1/dialogs">
+
+	<item type="TABLE" selectionMode="BOTH">
+		<title>XML Multi-Selection Manual Exec Example...</title>
+		<prompt type="confirm">
+			<label>***COPY TO WORKSHEET TO EXECUTE***</label>
+		</prompt>
+		<prompt type="codearea">
+		    <!-- No actual label to give all possible area to code -->
+		    <label></label>
+		    <!-- NOTE: "static:" must begin the default value for this to
+            			work. It will not show up as part of the data. -->
+			<default>
+				<![CDATA[static:SET SERVEROUTPUT ON
+DECLARE
+  TYPE names_type IS TABLE OF VARCHAR2(32); /* +2 for quotes */
+  names names_type := names_type(#OBJECT_NAMES#);
+  owners names_type := names_type(#OBJECT_OWNERS#);
+BEGIN
+  DBMS_OUTPUT.put_line('NAMES, OWNERS.NAMES:');
+  FOR i IN names.FIRST .. names.LAST LOOP
+    DBMS_OUTPUT.put_line (names(i) || ', ' || owners(i) || '.' || names(i));
+  END LOOP;
+END;
+/
+]]>
+			</default>
+		</prompt>
+		<sql>
+			<![CDATA[/*
+ * This action does not execute
+ * Copy the script from the first tab into a worksheet
+ * to execute it.
+ */
+]]>
+		</sql>
+	</item>
+	
+	<item type="TABLE" reloadparent="true" selectionMode="BOTH">
+		<title>XML Multi-Selection "Copy Table As Table_n" Manual Exec Example...</title>
+		<prompt type="confirm">
+			<label>Copy table(s) #OBJECT_NAMES# using automatic suffixes (_2, _3, etc.)?</label>
+		</prompt>
+		<prompt reload="true:0" type="codearea">
+		    <!-- No actual label to give all possible area to code -->
+		    <label></label>
+		    <!-- NOTE: "static:" must begin the default value for this to
+            			work. It will not show up as part of the data. -->
+			<default>
+				<![CDATA[static:SET SERVEROUTPUT ON
+DECLARE
+  TYPE names_type IS TABLE OF VARCHAR2(32); /* +2 for quotes */
+  names names_type := names_type(#OBJECT_NAMES#);
+  owners names_type := names_type(#OBJECT_OWNERS#);
+  suffix VARCHAR(4);
+  obj_name VARCHAR(32);
+  obj_owner VARCHAR(32);
+  max_len PLS_INTEGER;
+  new_name VARCHAR(32);
+  sqltxt VARCHAR(200);
+BEGIN
+  FOR i IN names.FIRST .. names.LAST LOOP
+    obj_name := names(i);
+    obj_owner := owners(i);
+    sqltxt := 'SELECT ''_''||TO_CHAR(COUNT(*)+1) FROM ALL_TABLES WHERE OWNER = ''' 
+      || substr(obj_owner, 2, length(obj_owner)-2) || ''' AND TABLE_NAME LIKE '''
+      || substr(obj_name, 2, length(obj_name)-2) || '%''';
+    DBMS_OUTPUT.put_line('sqltxt = ' || sqltxt);
+    EXECUTE IMMEDIATE sqltxt INTO suffix;
+    DBMS_OUTPUT.put_line('suffix = ' || suffix);
+    new_name := obj_name;
+    max_len := 31 - length(suffix); /* 31 to account for closing quote */
+    /* kill trailing quote / adjust length if needed */
+    if (length(new_name) > max_len) then
+      new_name := substr(new_name, 1, max_len); 
+    else
+      new_name := substr(new_name, 1, length(new_name) - 1);
+    end if;
+    new_name := new_name || suffix || '"';
+    sqltxt := 'CREATE TABLE ' || new_name 
+      ||' AS (SELECT * FROM ' || obj_name || ')';
+    DBMS_OUTPUT.put_line('sqltxt = ' || sqltxt);
+    EXECUTE IMMEDIATE sqltxt;
+  END LOOP;
+END;
+/
+]]>
+			</default>
+		</prompt>
+		<sql>
+			<![CDATA[/*
+ * This action does not execute
+ * Copy the script from the first tab into a worksheet
+ * to execute it.
+ */
+]]>
+		</sql>
+	</item>
+
+	<item type="TABLE" reloadparent="true" selectionMode="BOTH">
+		<title>XML Multi-Selection "Copy Table As Table_n" Auto Exec Example...</title>
+		<prompt type="confirm">
+			<label>Copy table(s) #OBJECT_NAMES# using automatic suffixes (_2, _3, etc.)?</label>
+		</prompt>
+		<sql type="SCRIPT">
+			<![CDATA[
+DECLARE
+  TYPE names_type IS TABLE OF VARCHAR2(32); /* +2 for quotes */
+  names names_type := names_type(#OBJECT_NAMES#);
+  owners names_type := names_type(#OBJECT_OWNERS#);
+  suffix VARCHAR(4);
+  obj_name VARCHAR(32);
+  obj_owner VARCHAR(32);
+  max_len PLS_INTEGER;
+  new_name VARCHAR(32);
+  sqltxt VARCHAR(200);
+BEGIN
+  FOR i IN names.FIRST .. names.LAST LOOP
+	obj_name := names(i);
+    obj_owner := owners(i);
+    sqltxt := 'SELECT ''_''||TO_CHAR(COUNT(*)+1) FROM ALL_TABLES WHERE OWNER = ''' 
+      || substr(obj_owner, 2, length(obj_owner)-2) || ''' AND TABLE_NAME LIKE '''
+      || substr(obj_name, 2, length(obj_name)-2) || '%''';
+    EXECUTE IMMEDIATE sqltxt INTO suffix;
+    new_name := obj_name;
+    max_len := 31 - length(suffix); /* 31 to account for closing quote */
+    /* kill trailing quote / adjust length if needed */
+    if (length(new_name) > max_len) then
+      new_name := substr(new_name, 1, max_len); 
+    else
+      new_name := substr(new_name, 1, length(new_name) - 1);
+    end if;
+    new_name := new_name || suffix || '"';
+    sqltxt := 'CREATE TABLE ' || new_name 
+      ||' AS (SELECT * FROM ' || obj_name || ')';
+    EXECUTE IMMEDIATE sqltxt;
+  END LOOP;
+END;
+/
+]]>
+		</sql>
+	</item>
+
+	<item type="TABLE" reloadparent="true" selectionMode="BOTH">
+		<title>XML Multi-Selection "Drop Table" Auto Exec Example...</title>
+        <prompt type="check">
+            <label>Cascade Constraints</label>
+            <value>cascade constraints</value>
+        </prompt>
+        <prompt type="check">
+            <label>Purge</label>
+            <value>PURGE</value>
+        </prompt>
+		<prompt type="confirm">
+			<label>Drop table(s) #OBJECT_NAMES#?</label>
+		</prompt>
+		<sql type="SCRIPT">
+			<![CDATA[
+DECLARE
+  TYPE names_type IS TABLE OF VARCHAR2(32); /* +2 for quotes */
+  names names_type := names_type(#OBJECT_NAMES#);
+  owners names_type := names_type(#OBJECT_OWNERS#);
+  sqltxt VARCHAR(200);
+BEGIN
+  FOR i IN names.FIRST .. names.LAST LOOP
+    sqltxt := 'DROP TABLE ' || owners(i) || '.' || names(i) || ' #0# #1#';
+    EXECUTE IMMEDIATE sqltxt;
+  END LOOP;
+END;
+/
+]]>
+		</sql>
+        <help>Drops the selected table(s).</help>
+        <confirmation>
+            <title>Confirmation</title>
+            <prompt>Table(s) "#OBJECT_NAMES#" dropped</prompt>
+        </confirmation>
+	</item>
+</items>
