@@ -9,7 +9,7 @@ View in order:
 * evolve.lst
 * sts.lst
 
-introduction.lst
+<h3>introduction.lst<h3>
 
 The basics of SQL plan management.
 
@@ -33,7 +33,7 @@ The basics of SQL plan management.
 * Run the query with different bind variable values and confirm that both FULL and INDEX plans are used and the SQL plan baselines are used.
 * Display the plan in a SQL plan baseline.
 
-evolve.lst
+<h3>evolve.lst<h3>
 
 Demonstrating evolution.
 
@@ -51,7 +51,7 @@ Demonstrating evolution.
 * Run the SALES query (with id=1) and it will now use the INDEX plan
 * Run the SALES query (with id=-1) and it will now use the FULL plan
 
-sts.sql
+<h3>sts.sql<h3>
 
 This example shows how you might use SQL plan management to capture ALL plans for a given workload. It means that you will capture and immediate enable all plans - so if there's data skew you won't need to be concerned that some important plans are not enabled. The idea here is that you capture the worload in a SQL tuning set, then you use this as the source of accepted SQL plan baselines.
 
