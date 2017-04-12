@@ -10,7 +10,9 @@ View in order:
 * sts.lst
 
 introduction.lst
+
 The basics of SQL plan management.
+
 * Create SALES table
 * Fill with data - the data is skewed
 * Create index
@@ -32,7 +34,9 @@ The basics of SQL plan management.
 * Display the plan in a SQL plan baseline.
 
 evolve.lst
+
 Demonstrating evolution.
+
 * Flush the shared pool to ensure that queries will be hard parsed
 * Drop all baselines
 * Run query with a bind variable value yielding a FULL scan (id=-1).
