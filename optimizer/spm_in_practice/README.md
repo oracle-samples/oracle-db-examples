@@ -6,6 +6,8 @@ sure to use a test environment when you experiment with this for the first time.
 
 Example output is shown in example.lst. 
 
+See also the README in the util directory.
+
 For background, check out https://blogs.oracle.com/optimizer/entry/how_to_use_sql_plan
 
 DISCLAIMER:
