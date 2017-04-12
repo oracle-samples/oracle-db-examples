@@ -13,5 +13,5 @@ column signature format 999999999999999999999
 
 select signature,plan_name,sql_handle,sql_text, accepted, enabled
 from dba_sql_plan_baselines 
-where parsing_schema_name = '&1'
+where parsing_schema_name = UPPER('&1')
 /

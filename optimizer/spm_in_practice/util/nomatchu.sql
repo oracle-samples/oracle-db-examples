@@ -31,5 +31,5 @@ AND    EXISTS (SELECT 1
                WHERE  signature = v.exact_matching_signature
                AND    accepted = 'YES'
                AND    enabled  = 'YES'
-               AND    parsing_schema_name = '&1')
+               AND    parsing_schema_name = UPPER('&1'))
 ORDER BY cpu_time;

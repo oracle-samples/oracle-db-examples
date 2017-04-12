@@ -8,4 +8,5 @@ SELECT sql_text,
        plan_name
 FROM   dba_sql_plan_baselines
 WHERE  enabled  = 'YES'
-AND    accepted = 'NO';
+AND    accepted = 'NO'
+AND    last_verified is NULL;
