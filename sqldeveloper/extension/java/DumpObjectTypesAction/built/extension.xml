@@ -16,12 +16,12 @@ limitations under the License.
 -->
 
 <extension xmlns="http://jcp.org/jsr/198/extension-manifest"
-           id="@@extension.id@@" version="@@extension.version@@.@@extension.build@@"
+           id="oracle.db.example.sqldeveloper.extension.dumpObjectTypes" version="1.0.0.17.094.1524"
            esdk-version="1.0"
-           rsbundle-class="@@extension.resources@@">
+           rsbundle-class="oracle.db.example.sqldeveloper.extension.dumpObjectTypes.DumpObjectTypesResources">
 
-    <name>@@extension.name@@</name>
-    <owner>@@extension.owner@@ @@extension.owner.url@@</owner>
+    <name>Dump Object Types Action</name>
+    <owner>Oracle Examples https://github.com/oracle/oracle-db-examples/sqldeveloper</owner>
 
 <!--
      <feature-category xmlns="http://xmlns.oracle.com/ide/extension" id="example-category">
@@ -34,68 +34,81 @@ limitations under the License.
     The pre-defined ones are:
 {db-category=Database, ide-category=IDE, db-migrations-category=Database Migrations, 
  database-category=Database Development, java-se-category=Java SE, 
- vcs-category=Version Control, xml-category=}
-and example-category=Examples, if you've installed the XMLPackedExample   
+ vcs-category=Version Control, xml-category=XML}
+and example-category=Examples, if you've installed the XMLPackedExample
+Not supplying a category or giving a non-existent one will just show the extension
+at the root of the features tree.    
  -->
-    <feature id="@@extension.id@@" xmlns="http://xmlns.oracle.com/ide/extension">
-        <category-id>database2-category</category-id>
-        <name>@@extension.name@@</name>
-        <description>@@extension.descr@@</description>
+    <feature id="oracle.db.example.sqldeveloper.extension.dumpObjectTypes" xmlns="http://xmlns.oracle.com/ide/extension">
+        <name>Dump Object Types Action</name>
+        <description>Object action to dump an object type list as INFO to log window.</description>
         <type>
             <service can-user-disable="true" reload-if-used="true"/>
         </type>
     </feature>
 	<trigger-hooks xmlns="http://xmlns.oracle.com/ide/extension">
-		<rules>
-			<!--  Object, not folder TODO: Make our own RuleFunction to check all elements? -->
-			<rule id="context-has-object-node" type="context-has-element">
-				<parameters>
-					<param name="element-class" value="oracle.dbtools.raptor.navigator.impl.ObjectNode"/>
-				</parameters>
-			</rule>
-			<composite-rule id="context-has-object-node(s)">
-				<and>
-					<!-- Don't really need this, just showing composite and how to specify
-					     multiple/single selection constraints -->
-					<or>
-						<rule-reference id="on-multiple-selection"/>
-						<rule-reference id="on-single-selection"/>
-					</or>
-					<rule-reference id="context-has-object-node"/>
-				</and>
-			</composite-rule>
-		</rules>
+        <rules>
+            <!--  Need to have rule for the declarations below, but it is a "severe"
+                  exception to duplicate them. Need to collate a list of the existing
+                  ones - seems there would be little chance new ones are really needed. -->
+            <rule id="dumpable-object-node" type="context-has-element">
+            <!--  this is really so we know a context menu is open on a node so all
+                  things are loaded -->
+                <parameters>
+                    <param name="element-class" value="oracle.dbtools.raptor.navigator.impl.ObjectNode"/>
+                </parameters>
+            </rule>
+        </rules>
    		<triggers xmlns:c="http://xmlns.oracle.com/ide/customization">
 			<actions xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension">
-				<action id="DependencyExample.SHOW_VIEWER">
+				<action id="DumpObjectTypes.DUMP">
 					<properties>
-						<property name="Name">${DEPENDENCY_VIEWER_ACTION_LABEL}</property>
-						<property name="MnemonicKey">${DEPENDENCY_VIEWER_MNEMONIC}</property>
+						<property name="Name">${DUMP_OBJECT_TYPES_ACTION_LABEL}</property>
 						<!-- You could also use your own by putting path in rsbundle 
 						     e.g., MY_ICON = /oracle/db/example/sqldeveloper/extension/dependency/icons/my_icon.png
 						     and referencing its key as res:${MY_ICON} -->
-						<property name="SmallIcon">${OracleIcons.ACTIVITY}</property>
+						<property name="SmallIcon">${OracleIcons.DUKE}</property>
 					</properties>
 				</action>
+                <action id="DumpObjectTypes.SHOW">
+                    <properties>
+                        <property name="Name">${SHOW_OBJECT_TYPES_ACTION_LABEL}</property>
+                        <!-- You could also use your own by putting path in rsbundle 
+                             e.g., MY_ICON = /oracle/db/example/sqldeveloper/extension/dependency/icons/my_icon.png
+                             and referencing its key as res:${MY_ICON} -->
+                        <property name="SmallIcon">${OracleIcons.DUKE}</property>
+                    </properties>
+                </action>
 			</actions>
 			<controllers xmlns="http://xmlns.oracle.com/ide/extension">
-				<controller class="oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleController">
+				<controller class="oracle.db.example.sqldeveloper.extension.dumpObjectTypes.DumpObjectTypesController">
 				<!-- Not needed if the context-menu-hook is using a rule to determine if it shows up at all? -->
 					<update-rules>
-						<update-rule rule="context-has-object-node(s)">
-							<action id="DependencyExample.SHOW_VIEWER"/>
+						<update-rule rule="dumpable-object-node">
+							<action id="DumpObjectTypes.DUMP"/>
 						</update-rule>
+                        <update-rule rule="on-single-selection">
+                            <action id="DumpObjectTypes.SHOW"/>
+                        </update-rule>
 					</update-rules>
 				</controller>
 			</controllers>
-			<context-menu-hook rule="context-has-object-node(s)">
+			<context-menu-hook rule="dumpable-object-node">
 				<site idref="db_nav"/>
 				<menu>
 					<section xmlns="http://jcp.org/jsr/198/extension-manifest" id="SECTION_WINDOW_CTXT_MENU" weight="1.0">
-						<item action-ref="DependencyExample.SHOW_VIEWER" weight="1.0"/>
+						<item action-ref="DumpObjectTypes.DUMP" weight="1.0"/>
 					</section>
 				</menu>
 			</context-menu-hook>
+            <context-menu-hook rule="on-single-selection">
+                <site idref="db_nav"/>
+                <menu>
+                    <section xmlns="http://jcp.org/jsr/198/extension-manifest" id="SECTION_WINDOW_CTXT_MENU" weight="1.0">
+                        <item action-ref="DumpObjectTypes.SHOW" weight="1.1"/>
+                    </section>
+                </menu>
+            </context-menu-hook>
 
 			<!--  When placed here in the trigger-hooks section, these will be loaded right away -->
 			<sqldev-action-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-actions">
@@ -128,7 +141,9 @@ and example-category=Examples, if you've installed the XMLPackedExample
     <hooks>
         <jdeveloper-hook xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension"> 
             <addins>
-            	<addin>oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleAddin</addin>
+            <!-- 
+            	<addin>oracle.db.example.sqldeveloper.extension.dumpObjectTypes.DumpObjectTypesAddin</addin>
+            -->
     		</addins>
 		</jdeveloper-hook> 
 		<!-- When placed here in the hooks section, these won't be loaded until the extension is by one of the above triggers --> 
@@ -144,19 +159,11 @@ and example-category=Examples, if you've installed the XMLPackedExample
         </sqldev-navigator-hook>
         <!-- viewer-hook cannot be a trigger -->
 		<sqldev-viewer-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-viewers">
-		    <!-- This is the directory to read all viewer *.xml from -->
+		    <!-- This is the directory to read all viewer *.xml from
 			<viewerDescriptor package="oracle.db.example.sqldeveloper.extension.dependency.viewer"/>
-			<!--  -->
+			-->
 		</sqldev-viewer-hook>
     	
-    	<editors xmlns="http://xmlns.oracle.com/ide/extension">
-            <editor id="DependencyExampleGraphViewer"
-                editor-class="oracle.db.example.sqldeveloper.extension.dependency.viewer.DependencyExampleGraphViewer"
-                label="${DEPENDENCY_VIEWER_LABEL}"
-                default="false">
-                <node-type class="oracle.dbtools.raptor.navigator.impl.ObjectNode" />
-            </editor>            
-        </editors>
     </hooks>  
    	
 </extension>

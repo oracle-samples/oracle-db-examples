@@ -19,28 +19,32 @@ package oracle.db.example.sqldeveloper.extension.dependency.control;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-
+import javafx.scene.transform.Transform;
 import oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleResources;
+import oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleUtils;
 import oracle.db.example.sqldeveloper.extension.dependency.model.DependencyExampleModel;
 import oracle.dbtools.javafx.scene.CustomControl;
 import oracle.dbtools.raptor.ui.URLFileChooser;
 import oracle.dbtools.util.Logger;
 import oracle.ide.Ide;
-import oracle.ide.net.URLFileSystem;
-import oracle.ide.net.URLFilter;
-import oracle.ide.net.WildcardURLFilter;
 
 /**
  * DependencyExampleFxControl an javaFX custom control to contain the vworkflow UI
@@ -50,6 +54,10 @@ import oracle.ide.net.WildcardURLFilter;
  */
 
 public class DependencyExampleFxControl extends CustomControl {
+    
+    public DependencyExampleFxControl() {
+        super(); // just for debug break
+    }
     /*
      * N.B. Because of the way FXMLLoader determines the caller and then the
      *      class loader for reflection, either we have to be calling FXMLLoader
@@ -81,9 +89,9 @@ public class DependencyExampleFxControl extends CustomControl {
         if (null == contextMenu) {
             contextMenu = new ContextMenu();
         
-            MenuItem item = new MenuItem(DependencyExampleResources.get(DependencyExampleResources.DependencyExampleFxControl_SomeAction));
+            MenuItem item = new MenuItem(DependencyExampleResources.get(DependencyExampleResources.DependencyExampleFxControl_saveSnapshot));
             item.addEventHandler(ActionEvent.ACTION, (e) -> {
-                someAction();
+                saveSnapshot();
             });
             contextMenu.getItems().add(item);
             item = new MenuItem(DependencyExampleResources.get(DependencyExampleResources.DependencyExampleFxControl_SomeOtherAction));
@@ -97,54 +105,26 @@ public class DependencyExampleFxControl extends CustomControl {
     }
     
     /**
-     * 
-     */
-    private void someAction() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * 
-     */
-    private void someOtherAction() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    static final URLFilter PNGFILE_FILE = 
-            new WildcardURLFilter("*.png", URLFileSystem.isLocalFileSystemCaseSensitive(), DependencyExampleResources.getString(DependencyExampleResources.LABEL_PNG_FILES)); //$NON-NLS-1$
-    static final URLFilter XMLFILE_FILE = 
-            new WildcardURLFilter("*.xml", URLFileSystem.isLocalFileSystemCaseSensitive(), DependencyExampleResources.getString(DependencyExampleResources.LABEL_XML_FILES)); //$NON-NLS-1$
-
-    private URLFileChooser getURLFileChooser(String pathContext, URLFilter urlFilter) {
-        URLFileChooser chooser = new URLFileChooser();
-        chooser.setPathContext(pathContext);
-        chooser.clearChooseableURLFilters();
-        chooser.addChooseableURLFilter(urlFilter);
-        chooser.setSelectionScope(URLFileChooser.FILES_ONLY);
-        chooser.setSelectionMode(URLFileChooser.SINGLE_SELECTION);
-        chooser.setShowJarsAsDirs(false);
-        return chooser;
-    }
-    
-    /**
-     * Save image of vFlow to png file - note this is the entire flow, not just the viewport view 
+     * Save image of diagram to png file - note this is the entire diagram, not just the viewport view 
      * (which we could do as an additional option?)
      */
     private void saveSnapshot() {
-        String operation = "save Snapshot(png)"; //DependencyExampleResources.get(DependencyExampleResources.DependencyExampleFxControl_saveSnapshot);
+        String operation = DependencyExampleResources.get(DependencyExampleResources.DependencyExampleFxControl_saveSnapshot);
         SwingUtilities.invokeLater(() -> {
             try {
-                URLFileChooser chooser = getURLFileChooser("oracle.dbtools.raptor.dependency-image", PNGFILE_FILE); //$NON-NLS-1$
+                URLFileChooser chooser = DependencyExampleUtils.getURLFileChooser("oracle.dbtools.raptor.dependency-image", DependencyExampleUtils.PNGFILE_FILE); //$NON-NLS-1$
                 if (URLFileChooser.APPROVE_OPTION == chooser.showSaveDialog(Ide.getMainWindow(), operation)) {
                     Platform.runLater(() -> {
                         try {
                             // TODO background process? pretty sure it needs the fx platform
-//                            WritableImage wim = new WritableImage((int) Math.round(vFlowPane.getWidth()), (int) Math.round(vFlowPane.getHeight()));
-//                            SnapshotParameters params = new SnapshotParameters();
-//// TODO                            vFlowPane.snapshot(params, wim);
-//                            ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", chooser.getSelectedFile());
+// This way would be "what you see [in the viewport] is what you get"
+//                            WritableImage wim = new WritableImage((int) Math.round(diagram.getWidth()), (int) Math.round(diagram.getHeight()));
+                            Bounds bounds = diagram.boundsInParentProperty().get();
+                            WritableImage wim = new WritableImage((int) Math.round(bounds.getWidth())+10, (int) Math.round(bounds.getHeight())+10);
+                            SnapshotParameters params = new SnapshotParameters();
+                            params.setTransform(Transform.translate(5, 5)); // added 10px to width & height so move origin to 5,5 to give 5px border
+                            diagram.snapshot(params, wim);
+                            ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", chooser.getSelectedFile());
                         } catch (Exception e) {
                             Logger.severe(getClass(), operation, e);
                         }
@@ -156,12 +136,38 @@ public class DependencyExampleFxControl extends CustomControl {
         });
     }
 
+    /**
+     * 
+     */
+    private void someOtherAction() {
+        // TODO Auto-generated method stub
+        
+    }
+
     public Pane getContentPane() {
         return contentPane;
     }
     
     public Parent getRoot() {
-        return (Parent) dependencyExampleFxControl;
+// TESTING - Is nesting XRoot not directly on Scene causing UI issues? YES - 
+//           looks like XRoot.headsUpDisplay is using scene info, not Parent
+//           Hmm create scenegraph as XRoot [ diagram= XDiagram [child = dependencyExampleFxControl [contentPane = FxDiagram]]]??
+// FxDiagram has internal assumptions it is the root node of a scene so bypass "this" control completely
+// and the diagram root. The normal way would be to add your content in createUI and 
+// return (Parent) dependencyExampleFxControl; here        
+        createUI();
+        Parent p = (Parent) diagram.getRootNode();
+        diagram.setUpExportPngAction(DependencyExampleResources.get(DependencyExampleResources.DependencyExampleFxControl_saveSnapshot), 
+                                     () -> {
+                                         saveSnapshot();
+                                     });
+        diagram.getStyleClass().add("DependencyExampleFxControl"); // for CSS styling
+        // CSS is messed up TODO Run with ScenicView someday & find out how the scene graph is being composed
+        // See similar notes in FxDiagram.java
+        URL stylesheet = this.getClass().getResource("DependencyExampleFxControl.css");
+        String stylesheetX = stylesheet.toExternalForm();
+        diagram.getStylesheets().add(stylesheetX);
+        return p;
     }
     
     
@@ -183,8 +189,8 @@ public class DependencyExampleFxControl extends CustomControl {
         Platform.runLater(() -> {
             getViewModel().load();
             updateUI();
-            //contentPane.applyCss();
-            //contentPane.layout();
+            diagram.applyCss();
+            diagram.layout();
         });
     }
 
@@ -192,7 +198,8 @@ public class DependencyExampleFxControl extends CustomControl {
         if (null == diagram) {
             Logger.info(getClass(), "*****createUI*****"); //$NON-NLS-1$
             diagram = new FxDiagram();
-            contentPane.getChildren().add(diagram.getRootNode());
+// TESTING            
+//            contentPane.getChildren().add(diagram.getRootNode());
         }
     }
     

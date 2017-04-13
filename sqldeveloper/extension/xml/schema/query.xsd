@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2006, 2011, Oracle and/or its affiliates. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:element name="queries">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element  minOccurs="0" maxOccurs="unbounded" ref="query"/>
+        <xs:element minOccurs="0" ref="binds"/>
+        <xs:element minOccurs="0" ref="columns"/>
+        <xs:element minOccurs="0" ref="optionalBinds"/>
+      </xs:sequence>
+	    <xs:attribute name="id" type="xs:string"/>
+		<xs:attribute name="sharedId" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="query">
+    <xs:complexType>
+    	<xs:sequence>
+    		<xs:element minOccurs="0" ref="sql" />
+    		<xs:element minOccurs="0" ref="binds" />
+    		<xs:element minOccurs="0" ref="columns" />
+    		<xs:element minOccurs="0" ref="optionalBinds" />
+    	</xs:sequence>
+    	<xs:attribute name="minversion" type="xs:float" use="optional"/>
+    	<xs:attribute name="maxversion" type="xs:float" use="optional"/>
+    	<xs:attribute name="id" type="xs:string" />
+    	<xs:attribute name="sharedId" type="xs:string" />
+    	<xs:attribute name="requiredFeatures" type="xs:string" use="optional"></xs:attribute>
+    	<xs:attribute name="requiredAccessObjects" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="sql">
+    <xs:complexType mixed="true">
+      <xs:attribute name="constrained" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="binds">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="columns">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="column"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="column">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="type"/>
+        <xs:element ref="colName"/>
+      </xs:sequence>
+      <xs:attribute name="filterable" type="xs:boolean"/>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+      <xs:attribute name="sortable" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="colName" type="xs:string"/>
+  <xs:element name="optionalBinds">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="bind"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="bind">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="type"/>
+        <xs:element ref="prompt"/>
+        <xs:element ref="tooltip"/>
+      </xs:sequence>
+      <xs:attribute name="filterable" use="required" type="xs:boolean"/>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+      <xs:attribute name="sortable" use="required" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="type" type="xs:string"/>
+  <xs:element name="prompt" type="xs:string"/>
+  <xs:element name="tooltip" type="xs:string"/>
+</xs:schema>
