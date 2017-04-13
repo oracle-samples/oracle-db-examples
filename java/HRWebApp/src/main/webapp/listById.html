@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>List Employee by Id</title>
+  <link rel="stylesheet" type="text/css" href="css/app.css" >
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body>
+<div><label>Employee Id: </label>
+  <input id="empId" type="textfield"
+         onkeypress="return waitForEnter(event)"\></div>
+<br/>
+<br/>
+<div id="id-emp"></div>
+
+
+<script>
+
+function waitForEnter(e) {
+  if (e.keyCode == 13) {
+    var tb = document.getElementById("empId");
+    fetchElementById(tb.value)
+    return false;
+  }
+}
+
+function fetchElementById(empId) {
+  var xmlhttp = new XMLHttpRequest();
+  var url = "WebController?id=" +empId;
+
+  xmlhttp.onreadystatechange=function() {
+    if (xmlhttp.readyState == 4) {
+      console.log("status: " +xmlhttp.status);
+      if (xmlhttp.status == 200) {
+        processResponse(xmlhttp.responseText);
+      }
+      else if(xmlhttp.status == 404) {
+      }
+    }
+
+  }
+
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+}
+
+function processResponse2(response) {
+  var arr = JSON.parse(response);
+  var out = "";
+
+  if (arr == null) {
+    out = '<div class="alert alert-warning"><strong>Alert!</strong>'
+     +' No records found for the given id</div>'
+  }
+  else {
+    var i;
+    out = "<table>";
+
+    keys = Object.keys(arr);
+    out += "<tr><th>Trash</th><th>Edit</th>"
+
+    for(i = 0; i < keys.length; ++i) {
+      out += "<th>"+keys[i]+"</th>"
+    }
+    out += "</tr>"
+
+
+    out += '<tr><td><a href="javascript:confirmDelete()">'
+          +'<span  class="glyphicon glyphicon-trash"></span>'
+          +'</a></td>'
+          +'<td><a href="javascript:allowEditSalary()">'
+          +'<span class="glyphicon glyphicon-edit"></span>'
+          +'</a></td>'
+    for(i = 0; i < keys.length; ++i) {
+      out += "<td id='" +keys[i]+"'>"+arr[keys[i]]+"</td>"
+    }
+    out += "</tr>"
+  }
+
+  document.getElementById("id-emp").innerHTML = out;
+}
+
+function processResponse(response) {
+  var arr = JSON.parse(response);
+  if (arr == null || arr.length == 0) {
+    out = '<div class="alert alert-warning"><strong>Alert!</strong>'
+     +' No records found for the given id</div>'
+  }
+  else {
+    var i;
+    var out = "<table>";
+    keys = Object.keys(arr[0]);
+  
+    // Print headers
+    out += "<tr>"
+    for(i = 0; i < keys.length; ++i) {
+      out += "<th>"+keys[i]+"</th>"
+    }
+    out += "</tr>";
+  
+    // Print values
+    for(j = 0; j < arr.length; j++) {
+      out += "<tr>"
+      for(i = 0; i < keys.length; ++i) {
+        out += "<td>"+arr[j][keys[i]]+"</td>"
+      }
+      out += "</tr>"
+    }
+    out += "</table>";
+  }
+  document.getElementById("id-emp").innerHTML = out;
+
+}
+
+function allowEditSalary() {
+  var sal = document.getElementById("Salary").value;
+  console.log('sal=' +sal);
+  document.getElementById("Salary").innerHTML = "<input type='number' min='1000' max='100000' value='" +sal +"' \>"
+}
+
+function confirmDelete() {
+  var res = confirm("Do you really want to delete");
+  if(res == true) {
+    console.log("Deleting record");
+  }
+  else {
+    console.log("Record not deleted");
+  }
+}
+</script>
+</body>
+</html>
