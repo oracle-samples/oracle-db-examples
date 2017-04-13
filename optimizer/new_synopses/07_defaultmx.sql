@@ -47,7 +47,7 @@ exec dbms_stats.set_table_prefs(null,'exch', 'approximate_ndv_algorithm', 'adapt
 exec dbms_stats.gather_table_stats(null,'exch');
 
 --
--- The partitioned table has old-style synopses
+-- The partitioned table has new-style synopses
 --
 exec dbms_stats.set_table_prefs(null,'t1', 'approximate_ndv_algorithm', 'hyperloglog')
 exec dbms_stats.gather_table_stats(null,'t1')

@@ -10,4 +10,5 @@ SELECT sql_text,
 FROM   dba_sql_plan_baselines
 WHERE  enabled  = 'YES'
 AND    accepted = 'NO'
-AND    parsing_schema_name = '&1';
+AND    parsing_schema_name = UPPER('&1')
+AND    last_verified IS NULL;

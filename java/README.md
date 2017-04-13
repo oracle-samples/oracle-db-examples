@@ -1,7 +1,7 @@
 # Java based examples
-This repository stores examples that demonstrate various concepts to assist Java and JavaScript developers in designing Java database applications (i.e., accessing and processing data from the Oracle Database), leveraging the Java Database Connectivity (JDBC) API, the Univeral Java Connection Pool (UCP), the embedded Java VM (OJVM), Java 8 Nashorn, and JAX-WS. 
+This repository stores examples that demonstrate various concepts to assist Java and JavaScript developers in designing database applications (i.e., accessing the Oracle Database and peocessing data), leveraging the Java Database Connectivity (JDBC) API, the Univeral Java Connection Pool (UCP), the embedded Java VM (OJVM), Java 8 Nashorn, and JAX-WS (the Web Services Callout utility). 
 
-The examples let you run client-side database bound Java or JavaScript code either on HotSpot JDK/JRE (or other JVMs) or server-side Java or JavaScript directly in the database leveraging the embedded JVM (a.k.a. OJVM and Java 8 Nashorn engine). In addition, OJVM allows invoking remote SOAP or REST Web Services from within your database session (using SQL, PL/SQL or Java). 
+The examples let you run client-side Java or JavaScript code either on HotSpot JDK/JRE (or other JVMs) or server-side Java or JavaScript directly in the database leveraging the embedded JVM (a.k.a. OJVM and Java 8 Nashorn engine). In addition, OJVM allows invoking remote SOAP or REST Web Services from within your database session (using SQL, PL/SQL or Java). 
 
 ## What's in Oracle database 12c Release 2 for Java Developers? 
 * **Java 8**: Java 8 in JDBC/UCP and OJVM; JDBC 4.2

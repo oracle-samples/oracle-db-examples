@@ -1,10 +1,11 @@
 # JDBC based examples  
-The Oracle JDBC driver is used for connecting and processing data in the Oracle Database. It is fully compliant with the latest JDBC specifications.  The JDBC standard defines the `java.sql` interfaces. 
+The Oracle JDBC drivers allow Java applications to connect and process data in the Oracle Database. These are fully compliant with the latest JDBC specifications which defines the standard `java.sql` interfaces. 
 
-**The JDBC Thin driver or Type 4 driver** is a pure Java driver which communicates with the database server using Oracle Net Services.  Oracle furnishes also the type 2 JDBc-OCI driver however, JDBC-Thin  is the most used and recommended driver type.  Java applications simply need to have **ojdbc8.jar** (for JDK8) in their classpath. 
+**Type 4 and type 2 drivers** The Oracle database furnishes a type 4 driver a.k.a. JDBC-Thin and a type 2 driver a.k.a. JDBC-OCI however, JDBC-Thin  is the most used and recommended driver type. Java applications simply need to have **ojdbc8.jar** (for JDK/JRE 8) in their classpath. 
 
-The JDBC THin driver allows connecting to the Oracle Database Cloud Services including: the Oracle Database Service **(DBCS)**, the Oracle Exadata Express Cloud Service **(EECS)**, and the Oracle Database Service on Bare Metal **(BMCS)**.  
-Please refer to [JDBC and Oracle Database Service on Cloud](http://www.oracle.com/technetwork/database/application-development/jdbc/documentation/index.html) for detailed instructions. 
+**Cloud Database Services** The JDBC Thin driver allows connecting to the various Oracle Database Cloud Services including: the Oracle Database Service **(DBCS)**, the Oracle Exadata Express Cloud Service **(EECS)**, and the Oracle Database Service on Bare Metal **(BMCS)**.  Please refer to [JDBC and Oracle Database Service on Cloud](http://www.oracle.com/technetwork/database/application-development/jdbc/documentation/index.html) for detailed instructions. 
+
+**Prerequisite - JDBC Tutorial** The examples in this folder assume a basic knowledge of JDBC [See the JDBC Java Tutorial]( https://docs.oracle.com/javase/tutorial/jdbc/index.html)
 
 # What's New in JDBC in 12.2 ?
 
