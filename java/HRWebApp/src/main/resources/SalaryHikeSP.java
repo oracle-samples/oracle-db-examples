@@ -1,12 +1,7 @@
 /* Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.*/
 /*
    DESCRIPTION
-     The server-side Type 2 (T2S) driver (aka KPRB driver) is for Java in the 
-     database. Java running in the database session uses the KPRB driver or 
-     T2S driver to access data, locally.     
-     We furnish the server-side thin JDBC (aka Type 4 server driver) for 
-     accessing data in other session in the same database or a remote Oracle 
-     database.
+     This is a Java class that invokes the SalaryHikeSP stored procedure. 
      
      Step 1: Connect to SQLPLUS using the database USER/PASSWORD. 
              Make sure to have SalaryHikeSP.sql accessible on the 
