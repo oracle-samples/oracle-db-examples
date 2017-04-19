@@ -8,6 +8,10 @@ This Java application leverages HR schema and Employees table of the Oracle Data
 
 The application has the following functionalities. 
 
+
+* **About** : 
+This page provides an overview of the HR Application and explains the various functionalities it offers.
+
 * **List All Employees** : 
 Use this functionality to retrieve employees information. It lists the employee information such as Employee_ID, First_Name, Last_Name, Email, Phone_Number, Job_Id, and Salary. 
 
