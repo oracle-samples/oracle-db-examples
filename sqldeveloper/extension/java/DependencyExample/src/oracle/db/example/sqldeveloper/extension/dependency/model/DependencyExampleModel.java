@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleResources;
 import oracle.dbtools.db.DBUtil;
 import oracle.dbtools.db.LockManager;
 import oracle.dbtools.raptor.controls.celleditor.drilllinks.DrillLinkRegistry;
@@ -186,17 +187,18 @@ public class DependencyExampleModel {
                 element = ((ViewerNode)element).getDBObject().getNode();
             }
             if (element instanceof DBObjectTypeNode) {
-                DBObjectTypeNode node = (DBObjectTypeNode)element;
+                DBObjectTypeNode dbNode = (DBObjectTypeNode)element;
                 if (!first) {
                     builder.append(',');
                 }
                 first = false;
-                builder.append("('").append(node.getSchemaName()) //$NON-NLS-1$
-                .append("','").append(node.getShortLabel())       //$NON-NLS-1$
-                .append("','").append(node.getObjectType())       //$NON-NLS-1$
+                builder.append("('").append(dbNode.getSchemaName()) //$NON-NLS-1$
+                .append("','").append(dbNode.getShortLabel())       //$NON-NLS-1$
+                .append("','").append(dbNode.getObjectType())       //$NON-NLS-1$
                 .append("')");                                    //$NON-NLS-1$
-                if (updateSelectedNodes) {
-                    selectedNodes.add(findOrCreateNode(node.getSchemaName(),node.getShortLabel(),node.getObjectType()));
+                Node node = findOrCreateNode(dbNode.getSchemaName(),dbNode.getShortLabel(),dbNode.getObjectType());
+                if (updateSelectedNodes && !selectedNodes.contains(node)) {
+                    selectedNodes.add(node);
                 }
             }
             // just ignore anything else
@@ -273,6 +275,8 @@ public class DependencyExampleModel {
         IDrillLink link = DrillLinkRegistry.getInstance().getDrillLink(tokens, getConnectionName());
         if (link != null) {
             link.performDrill();
+        } else {
+            Logger.warn(getClass(), DependencyExampleResources.format(DependencyExampleResources.DependencyExampleFxControl_drillLink_fail,  key));
         }
         Logger.info(getClass(), "*****Drill<<<<<"+key); 
     }

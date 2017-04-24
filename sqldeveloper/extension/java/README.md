@@ -6,4 +6,7 @@ Standard extensions are jar files with an [OSGi](https://en.wikipedia.org/wiki/O
 XML Examples packaged as an extension.jar  
 
 * [DependencyExample](DependencyExample) 
-An example editor and viewer for object dependency graphs. 
+An example editor and viewer for object dependency graphs.
+
+* [DumpObjectTypesAction](DumpObjectTypesAction)
+A quick object action to dump the list of connection / objects types as INFO message in the log window. Plus one to show the selected object's connection / object type.

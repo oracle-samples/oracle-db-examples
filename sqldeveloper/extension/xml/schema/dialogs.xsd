@@ -1,0 +1,943 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dialogs.xsd -->
+<!-- Copyright © 2006, 2011, Oracle and/or its affiliates. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://xmlns.oracle.com/sqldeveloper/3_1/dialogs"
+           xmlns:tns="http://xmlns.oracle.com/sqldeveloper/3_1/dialogs"
+           elementFormDefault="qualified">
+    <xs:annotation>
+      <xs:documentation><html><p>The dialogs schema defines the 
+      syntax for declaring actions for Nodes based on connection and object 
+      type (If on the Overview page, see the individual namespace description 
+      section for more information)<br />
+      <i>The schema itself is available at <a href="http://xmlns.oracle.com/sqldeveloper/3_1/dialogs.xsd">http://xmlns.oracle.com/sqldeveloper/3_1/dialogs.xsd</a></i>. .</p> <!-- . . to make short desc stop there -->
+      <hr />
+      <h3>Loading:</h3>
+      <p>There are a number of methods for getting your menu actions registered
+      with SQL Developer.</p>
+      <p><i>Debug Note: Setting public static boolean 
+      <code>oracle.dbtools.util.Resource.DEV_MODE=true</code> will cause a 
+      reload every time a menu is requested.</i></p><br />
+      <dl>
+      <dt>raptor.user.contextmenu</dt>
+      <dd>System property raptor.user.contextmenu can be set to a comma or 
+      semicolon separated list of fully qualified XML files to load.</dd>
+      <dt>XMLBasedObjectAction.registerPackage(String package)</dt>
+      <dd>This is the most commonly used option internally. Typically called
+      from your Addin.Initialize() method. The directory implied by the package
+      must be accessible to the system class loader. All XML files in the 
+      directory will be processed.</dd>
+      <dt>XML files in [sqldeveloper directory]/userextensions</dt>
+      <dd>All XML files with "items" as the <b>first</b> element will be 
+      processed. <i>Those with "navigator" or "displays" will be sent to the 
+      appropriate handler, others will cause an INFO level log message.</i></dd>
+      <dt>Preferences->Database->User Defined Extensions type=ACTION</dt>
+      <dd>This preference page allows specification of fully qualified XML
+      files to load.</dd>
+      </dl>
+      <hr />
+      <h3><a name="value_substitution"></a>Value substitution/bind syntax:</h3> 
+      <p>A number of the attribute/elements allow substitution (and binding for
+      SQL statements) of prompt and object values.</p>
+      <br />
+      <dl>
+      <dt>Prompts:</dt>
+      <dd>The ordinal number (n) of the prompt within the item is used to
+      access its value. For direct substitution, use #n#, for binding, :n.</dd>
+      <dt>Dictionary:</dt>
+      <dd>Where this documentation refers to dictionary, it means the 
+      map returned by DBObject.getDictionary with keys defined in DBObject
+      plus any values from the DBObject's Node.
+      Bottom line is you have to know what keys/values your target Node has in 
+      order to use the #name# substitution or :name bind syntax allowed for 
+      several of the values.</dd>
+      <dt>Special Substitution Replacements:</dt>
+      <dd><ul>
+      <li>#name# with value</li>
+      <li>#"name"# with "value"</li>
+      <li>#,name# with ,value when not null and nothing when null</li>
+      <li>#,"name"# with ,"value" when not null and nothing when null</li>
+      <li>#esc(name)# with value with sql escaped chars</li>
+      </ul></dd>
+      <dt><a name="dictionary_keys"></a>DBObject Dictionary Keys:</dt>
+      <dd><ul>
+      <li>COLUMN_NAME (or CHILD_NAME)</li>
+      <li>CONN_TYPE (connection type)</li>
+      <li>CONNECTION_NAME</li>
+      <li>OBJECT_FOLDER_TYPE</li>
+      <li>OBJECT_ID</li>
+      <li>OBJECT_NAME</li>
+      <li>OBJECT_OWNER (schema)</li>
+      <li>OBJECT_TYPE</li>
+      </ul></dd>
+      <dt><a name="object_types"></a>Common Object Types:</dt>
+      <dd><ul>
+      <li>APEX[_FOLDER]</li>
+      <li>CATALOG (schema)</li>
+      <li>COLUMN</li>
+      <li>CONNECTION</li>
+      <li>DATABASE LINK</li>
+      <li>DIRECTORY[_FOLDER]</li>
+      <li>FUNCTION[_FOLDER]</li>
+      <li>INDEX</li>
+      <li>JAVA[_FOLDER]</li>
+      <li>JOBS[_FOLDER]</li>
+      <li>MATERIALIZED VIEW[_FOLDER]</li>
+      <li>MATERIALIZED VIEW LOG</li>
+      <li>PACKAGE[_FOLDER]</li>
+      <li>PACKAGE BODY</li>
+      <li>PACKAGE_PARENT</li>
+      <li>PROCEDURE[_FOLDER]</li>
+      <li>PUBLIC DATABASE LINK</li>
+      <li>PUBLIC SYNONYM</li>
+      <li>PUBLIC_SYNONYM_FOLDER</li>
+      <li>RECYCLEBIN</li>
+      <li>SEQUENCE</li>
+      <li>SYNONYM[_FOLDER]</li>
+      <li>TABLE[_FOLDER]</li>
+      <li>TRIGGER[_FOLDER]</li>
+      <li>TYPE[_FOLDER]</li>
+      <li>USER[_FOLDER]</li>
+      <li>VIEW[_FOLDER]</li>
+      <li>XDB_SUBFOLDER</li>
+      <li>XML SCHEMA</li>
+      </ul></dd>
+      <dt><a name="connection_types"></a>Common Connection Types:</dt>
+      <dd><ul>
+      <li>ACCESS</li>
+      <li>DB2[I]</li>
+      <li>MySQL</li>
+      <li>Microsoft SQL Server</li>
+      <li>ODBCBridge</li>
+      <li>Oracle</li>
+      <li>Sybase</li>
+      <li>Teradata</li>
+      </ul></dd>
+      </dl>
+      <hr />
+      <h3>Schema Structure Diagram</h3>
+      <img src="images/dialogs_items.png" />
+      </html></xs:documentation>
+    </xs:annotation>
+  <!--
+  NOTE: Attribute specifications tns:*= are 'hints' for automated/human 
+        schema based editor generation.
+       <xs:attribute . . .
+         tns:maximum-value="1.00"  
+           - maximum value limit (inclusive) for numeric type
+         tns:maximum-integer-digits="1" 
+           - hint for spin box creation for numeric type
+         tns:maximum-fractional-digits="2" 
+           - hint for spin box creation for numeric type
+         tns:label="Sorting weight" 
+           - alternate label (as opposed to raw name) to use in editor for 
+             this value
+         tns:usages="XMLBasedObjectAction.openFolder, ..." 
+           - where this element/attribute gets processed - that is, the code 
+           that references it.
+         tns:large="true" 
+           - use TextArea in editor
+       />
+  -->
+  
+  <!-- Root Element Declaration =========================================== -->
+  <xs:element name="items" tns:label="Actions"
+              tns:usages="AbstractFolderedXML.processNode"
+              id="sqldeveloper.ObjectActions.items">
+    <xs:annotation>
+      <xs:documentation><html><p>Root Element - container for folder and 
+      item elements representing sub menus and menu items respectively.
+      Multiple <code>items</code> elements are allowed and will be processed, 
+      other root elements will be ignored.</p>
+      <p><b>Best Practice:</b> Ideally, <code>items</code> should be the only
+      root element in your XML file. If that is not practical, make sure 
+      <code>items</code> is the first root element. (Technically only a 
+      <i>requirement</i> for files placed in the userextensions directory.)</p>
+      </html></xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element name="folder" type="tns:folderType"
+                    tns:usages="AbstractFolderedXML.processFolder, XMLBasedObjectAction.XMLParser.openFolder, XMLBasedObjectAction.XMLParser.closeFolder">
+          <xs:annotation>
+            <xs:documentation><html><p>A sub menu.</p></html>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="item" type="tns:itemType"
+                    tns:usages="XMLBasedObjectAction.XMLParser.newItem, XMLBasedObjectAction.processNode, ObjectAction.processNode">
+          <xs:annotation>
+            <xs:documentation><html><p>An action/menuItem.</p></html>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <!-- Code is set up to ignore #comment elements, but I think normal 
+             comment syntax (like this) should be used so deliberately not 
+             documenting it.
+        -->
+      </xs:choice>
+<!--      
+      <xs:attribute name="RESOURCE_FILE" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation><html><p><b>Not Implemented!. </b></p>
+          <p>The base name for resources for this schema. For example, 
+          oracle.dbtools.raptor.xml.actions.ObjectActions would indicate that
+          a resource bundle named ObjectActions would have the NLS strings and
+          one called ObjectActionsResources would have the Icons (and any other
+          non-NLSy stuff).</p>
+          <br />
+          <p><b> TODO:</b> Should we have RESOURCE_FILE attribute? [think so ...]
+          definitely - needed for prompt values/defaults - what about class 
+          loader for resource - the registry mechanism for these is going to 
+          have to get it from the registrant.</p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+-->
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Type Declarations ================================================== -->
+
+  <!-- Folder (JMenu) Declaration -->
+  <xs:complexType name="folderType" id="sqldeveloper.ObjectActions.folderType">
+    <xs:annotation>
+      <xs:documentation><html><p>A folder represents a JMenu -- a popup window 
+      containing JMenuItems that is displayed when the user selects it.</p>
+      <p><a href="../index.html#object_types">Common Object Types</a></p>
+      <p><a href="../index.html#connection_types">Common Connection Types</a></p>
+      </html></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" 
+                  tns:usages="XMLBasedObjectAction.XMLParser.openFolder">
+        <xs:annotation>
+          <xs:documentation><html><p>Display name for the menu which will
+          be xliff translated. </p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+<!--  
+      <xs:element name="description" type="xs:string" minOccurs="0"
+                  tns:usages="XMLBasedObjectAction.XMLParser.openFolder">
+        <xs:annotation>
+          <xs:documentation><html><p><b>!NOT USED - REMOVE?. </b> Description
+          for the menu which will be xliff translated.</p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tip" type="xs:string" minOccurs="0"
+                  tns:usages="XMLBasedObjectAction.XMLParser.openFolder">
+        <xs:annotation>
+          <xs:documentation><html><p><b>!NOT USED - REMOVE?. </b> Tool tip for
+          the menu which will be xliff translated.</p></html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+-->
+      <xs:element name="item" type="tns:itemType" minOccurs="0" 
+                  maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation><html><p>An action/menuItem.</p></html>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="type" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation><html><p>The Node type to which this menu 
+        applies.</p>
+        <p>That is, the CustomNode.getObjectType() or 
+        navigator.xsd <a href="../index.html#object_types">objectType</a> 
+        element's id attribute value to match on.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="connType" use="optional" type="xs:string"
+                  default="Oracle">
+      <xs:annotation>
+        <xs:documentation><html><p>The Connection type to which this menu
+        applies.</p> 
+        <p>That is, the CustomNode.getConnType() or navigator.xsd objectType 
+        element's <a href="../index.html#connection_types">connType</a>
+        attribute value to match on.</p> 
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="section" use="optional" type="xs:string" 
+                  default="oracle.ide.controller.MenuConstants.SECTION_TOOLS_CTXT_MENU"
+                  tns:usages="ObjectActionController.postProcessAction">
+      <xs:annotation>
+        <xs:documentation><html><p>The menu section for this item expressed 
+        either as a float value (<code>2.0f</code>) or the name of a java 
+        constant (<code>oracle.ide.controller.MenuConstants.SECTION_TOOLS_CTXT_MENU (= 8.999f)</code>)</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="weight" use="optional" type="xs:string" default="oracle.ide.controller.MenuConstants.MENU_FIRST_ELEMENT"
+                  tns:maximum-value="1.00" tns:maximum-integer-digits="1"
+                  tns:maximum-fractional-digits="2"
+                  tns:label="Sorting weight">
+      <xs:annotation>
+        <xs:documentation><html><p>The weight of the menu item expressed as a
+        float value (<code>2.0f</code>) or the name of a java 
+        constant (<code>oracle.ide.controller.MenuConstants.MENU_FIRST_ELEMENT (= 1.0f)</code>) 
+        for sorting purposes.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Item (JMenuItem) Declaration -->
+  <xs:complexType name="itemType">
+    <xs:annotation>
+      <xs:documentation><html><p>An item represents a JMenuItem based on an
+      XMLBasedObjectAction.</p>
+      <p><a href="../index.html#object_types">Common Object Types</a></p>
+      <p><a href="../index.html#connection_types">Common Connection Types</a></p>
+      <h3>Execution Options:</h3>
+      <p>These are listed in the order they are checked by the 
+      ObjectAction[Controller]. The first found to have data will be the
+      executor for this action.</p>
+      <br />
+      <dl>
+      <dt>controllerClassName="<i>f.q.Controller</i>"</dt>
+      <dd>You are in charge of literally everything. This controller will be 
+      added to the action after the ObjectActionController. So far, only use
+      cases I have seen are to override update(IdeAction,Context) IF your
+      handleEvent method returns false, then processing drops through to:</dd>
+      <br />
+      <dt>className="<i>f.q.AbstractMenuAction</i>"</dt>
+      <dd>You are in charge of just about everything. The DBObject, Context, and
+      classArgs will be passed in prior to launch(). IF yourAction.getDBObject()
+      returns something AND connectionRequired=true AND 
+      originalDBObject.getConnectionName!=null THEN the reload[Parent]/
+      removeFromParent postProcessActions will be done. Aside from title/icon, 
+      all other elements/attributes will be ignored. Example:<pre>
+        &lt;item <b>className="oracle.dbtools.raptor.SomeCoolAction"</b> reload="true">
+          &lt;title>SomeCoolAction&lt;/title>
+          &lt;iconName>/oracle/dbtools/raptor/images/SomeCoolAction.png&lt;/iconName>
+        &lt;/item>
+      </pre></dd>
+      <i><b>Note: For all the following cases, A Dialog showing a SQLPromptsPanel
+      and an ActionSQLPanel will be shown.</b></i> 
+            <dt>&lt;sql type="SCRIPT"></dt>
+      <dd>Run supplied SQL as a script with ScriptUtils.runAsScript after 
+      <a href="../index.html#value_substitution">value substitution.</a> 
+      Example:<pre>
+        &lt;/item>
+          &lt;item type="CATALOG" connType="Microsoft SQL Server" >
+          &lt;title>Select Default Database&lt;/title>
+          &lt;prompt type="confirm">&lt;label>Set #OBJECT_NAME# as the default database for this session&lt;/label>
+          &lt;/prompt>
+          <b>&lt;sql type="script">&lt;![CDATA[/*sqldev:stmt*/USE #OBJECT_NAME#]]&gt;&lt;/sql></b>
+          &lt;confirmation>
+            &lt;title>Confirmation&lt;/title>
+            &lt;prompt>Database "#OBJECT_NAME#" has been made the default&lt;/prompt>
+          &lt;/confirmation>
+          &lt;help>Sets the selected database as current for the connection session.&lt;/help>
+        &lt;/item>
+      </pre></dd>
+      <dt>&lt;script></dt>
+      <dd>The (java)script to execute. Note the script environment is seeded 
+      with dictionary values (uses the raw value name) and prompt values (
+      accessed via prompt<i>n</i>.)<pre>
+        &lt;item type="TABLE" reload="true">
+          &lt;title>Add...&lt;/title>
+          &lt;prompt>
+            &lt;label>Column Name&lt;/label>
+          &lt;/prompt>
+          &lt;prompt>
+            &lt;label>Data Type&lt;/label>
+            &lt;value>&lt;![CDATA[STATIC:VARCHAR2:NUMBER:INTEGER:DATE:TIMESTAMP:CLOB:BLOB:CHAR:NCHAR:NVARCHAR2:NCLOB:INTERVAL DAY:INTERVAL YEAR:LONG:LONG RAW:NUMERIC:RAW:REAL:ROWID:BFILE:FLOAT:DECIMAL:CHAR]]&gt;
+            &lt;/value>
+          &lt;/prompt>
+          &lt;prompt datatype="NUMBER" type_attrib="precision" validator="datatype.validator"> 
+            &lt;label>Precision&lt;/label>
+          &lt;/prompt>
+          &lt;prompt datatype="NUMBER" type_attrib="scale"  validator="datatype.validator">
+            &lt;label>Scale&lt;/label>
+          &lt;/prompt>
+          <b>&lt;script>
+                            &lt;![CDATA[
+    var sql;
+    if (prompt1 == 'NUMBER' &amp;&amp; prompt1.length>0 &amp;&amp; prompt3.length>0 ) {
+      sql = 'alter table "' + OBJECT_OWNER + '"."' + OBJECT_NAME +'" add('+prompt0 + ' ' + prompt1 + '(' + prompt2 + ','+ prompt3 + '))';
+    } else if ( ( prompt1 == 'NUMBER' &amp;&amp; prompt1.length>0 &amp;&amp; prompt3.length==0) ||  prompt1 == 'VARCHAR2' ) {
+      sql = 'alter table "'+OBJECT_OWNER+'"."'+OBJECT_NAME+'" add('+prompt0+' '+prompt1+'('+prompt2+'))';
+    } else {
+      sql = 'alter table "'+OBJECT_OWNER+'"."'+OBJECT_NAME+'" add('+prompt0+' '+prompt1+')';
+    }
+    dbutil.execute(sql);
+                            ]]&gt;
+          &lt;/script></b>
+          &lt;help>Add a column to the selected table.&lt;/help>
+          &lt;confirmation>
+            &lt;title>Confirmation&lt;/title>
+            &lt;prompt>Column #0# has been added to table "#OBJECT_NAME#"&lt;/prompt>
+          &lt;/confirmation>
+        &lt;/item>
+      </pre></dd>
+      <dt>&lt;sql></dt>
+      <dd>Run supplied SQL as a script with PreparedStatement.execute after 
+      <a href="../index.html#value_substitution">value substitution.</a> 
+      Example:<pre>
+        &lt;item type="TABLE" reloadparent="true">
+          &lt;title>Rename...&lt;/title>
+          &lt;prompt>
+            &lt;label>New Table Name&lt;/label>
+          &lt;/prompt>
+          <b>&lt;sql>
+            &lt;![CDATA[alter table "#OBJECT_OWNER#"."#OBJECT_NAME#" rename to #0#]]&gt;
+          &lt;/sql></b>
+          &lt;help>Renames the selected table.&lt;/help>
+          &lt;confirmation>
+            &lt;title>Confirmation&lt;/title>
+            &lt;prompt>Table "#OBJECT_NAME#" has been renamed to #0#&lt;/prompt>
+          &lt;/confirmation>
+        &lt;/item>
+      </pre></dd>
+      </dl>
+      <h3>Obtaining User Input</h3>
+      <p>See <a href="promptType.html">promptType</a>.</p>
+      </html></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="title" type="xs:string" tns:usages="IdeAction.name">
+        <xs:annotation>
+          <xs:documentation><html><p>Name for the action (e.g., 
+          "Drop...") which will be xliff translated</p></html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:choice minOccurs="0" maxOccurs="1">
+          <xs:element name="sql" type="tns:sqlType"
+                      tns:usages="ActionSqlPanel.update">
+            <xs:annotation>
+              <xs:documentation><html><p>The SQL to execute for the action. </p>
+              </html></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="script" type="tns:scriptType">
+            <xs:annotation>
+              <xs:documentation><html><p>The script to execute via 
+              ScriptEngineManager <i>(only javascript (language="js") is
+              supported by default.)</i></p>
+              </html></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:choice>
+        <xs:element name="iconName" type="xs:string"  minOccurs="0"
+                    tns:usages="ObjectAction.getIcon">
+          <xs:annotation>
+            <xs:documentation><html><p>Name to send to RaptorImage.getIcon to 
+            retrieve the icon.</p></html></xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="help" type="xs:string"  minOccurs="0"
+                    tns:usages="ObjectActionControll.processAction">
+          <xs:annotation>
+            <xs:documentation><html><p>Text to display for the help button 
+            on the action dialog which will be xliff translated.</p></html>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="prompt" type="tns:promptType"  minOccurs="0"
+                    maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation><html><p>A prompt defines a label 
+            <i>(type="confirm")</i> or label/value pair that will be shown to 
+            the user in an action dialog <b>before</b> executing the action.</p>
+            </html></xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="confirmation" type="tns:confirmationType"  
+                    minOccurs="0"
+                    tns:usages="ObjectActionController.processConfirm">
+          <xs:annotation>
+            <xs:documentation><html><p>Confirmation dialog to be shown 
+            <b>after</b> executing the action.</p></html></xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="type" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation><html><p>The Node type to which this menu 
+        applies.</p>
+        <p>That is, the CustomNode.getObjectType() or 
+        navigator.xsd <a href="../index.html#object_types">objectType</a> 
+        element's id attribute value to match on.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="connType" use="optional" type="xs:string"
+                  default="Oracle">
+      <xs:annotation>
+        <xs:documentation><html><p>The Connection type to which this menu
+        applies.</p> 
+        <p>That is, the CustomNode.getConnType() or navigator.xsd objectType 
+        element's <a href="../index.html#connection_types">connType</a>
+        attribute value to match on.</p> 
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="controllerClassName" type="xs:string">
+      <xs:annotation>
+        <xs:documentation><html><p>Fully qualified name of a Contoller 
+        <b><i>accessible to the ObjectAction class loader. </i></b></p>
+        <p>This Controller will be added to the action ahead of the standard
+        ObjectActionController.</p></html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="classArgs" type="xs:string"
+                  tns:usages="ReportNavigatorContextMenu.reportDialog,
+                              AdvancedPanel.setModel">
+      <xs:annotation>
+        <xs:documentation><html><p>A value that will be passed to the 
+        AbstractMenuAction handling this item prior to launch().</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="connectionRequired" type="xs:boolean" default="true"
+                  tns:usages="ObjectActionController.handleEvent">
+      <xs:annotation>
+        <xs:documentation><html><p>Flag indicating if a database connection is
+        required to process this item's action.</p></html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="className" type="xs:string">
+      <xs:annotation>
+        <xs:documentation><html><p>The fully qualified name of an 
+        AbstractMenuAction <b><i>accessible to the ObjectAction class 
+        loader. </i></b></p>
+        <p>The AbstractMenuAction will be .launch[ed] to handle the action.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="minversion" type="xs:string"
+                  tns:usages="Version(),ObjectAction.isValidForVersion,DBUtil.checkVersion">
+      <xs:annotation>
+        <xs:documentation><html><p>The minimum database version (inclusive) for
+        this item. </p>
+        <p>A version number is an immutable ordered sequence of integer values. 
+        For example, "11.2" not "11gR2".</p></html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="maxversion" type="xs:string"
+                  tns:usages="Version(),ObjectAction.isValidForVersion,DBUtil.checkVersion">
+      <xs:annotation>
+        <xs:documentation><html><p>The maximum database version (inclusive) for 
+        this item.</p>
+        <p>A version number is an immutable ordered sequence of integer 
+        values. For example, "11.2" not "11gR2".</p></html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  	<xs:attribute name="requiredFeatures" type="xs:string" use="optional"
+  		tns:usages="DatabaseFeatureRegistry">
+            <xs:annotation>
+            	<xs:documentation>
+	            	<html>
+						<p>
+							Any database features that are required for or prohbited by this item.
+						</p>
+						<p>
+							Required features are a comma-delimited list of alphanumeric feature ids. A feature id prefixed with a '!' indicates
+							a feature that cannot be present for the item to be enabled.
+						</p>
+					</html>
+				</xs:documentation>
+            </xs:annotation>
+  	</xs:attribute>
+    <xs:attribute name="reload" type="xs:boolean"
+                  tns:usages="ObjectActionController.postProcessAction">
+      <xs:annotation>
+        <xs:documentation><html><p>Call IObjectActionListener.reload for all 
+        registered listeners.</p>
+        <p>The NavListeners will refresh the tree node corresponding to the 
+        DBObject and any open object viewer(s) will update.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="reloadparent" type="xs:boolean"
+                  tns:usages="ObjectActionController.postProcessAction">
+      <xs:annotation>
+        <xs:documentation><html><p>Call IObjectActionListener.reloadParent for 
+        all registered listeners.</p>
+        <p>The NavListeners will refresh the tree node corresponding to the 
+        DBObject's parent and any open object viewer(s) will close.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="removeFromParent" type="xs:boolean"
+                  tns:usages="ObjectActionController.postProcessAction">
+      <xs:annotation>
+        <xs:documentation><html><p>Call IObjectActionListener.removeFromParent 
+        for all registered listeners.</p>
+        <p>Call again for associated object type in 
+        <code>ObjectActionController._associatedDrops</code> <i>(if any.)</i></p>
+        <p>Uncache node(s) from NodeFactory.</p>
+        <br />
+        <p>The NavListeners will refresh the tree node corresponding 
+        to the DBObject's parent and close any open viewer(s). Additionally, if
+        <code>"cascade constraints"</code> is one of the prompt values, the 
+        NavListener will look for "Indexes" and "Triggers" as siblings of the 
+        parent and refresh those if found. <i>Note that it does not close any 
+        viewers that may be open for the deleted contraints. See bug
+        <a href="http://atgebs.us.oracle.com/perl/ddt.pl?bugno=11779706">
+        11779706</a>.</i></p></html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="section" use="optional" type="xs:string" 
+                  default="oracle.ide.controller.MenuConstants.SECTION_TOOLS_CTXT_MENU"
+                  tns:usages="ObjectActionController.postProcessAction">
+      <xs:annotation>
+        <xs:documentation><html><p>The menu section for this item expressed 
+        either as a float value (<code>2.0f</code>) or the name of a java 
+        constant (<code>oracle.ide.controller.MenuConstants.SECTION_TOOLS_CTXT_MENU (= 8.999f)</code>)</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="weight" use="optional" type="xs:string" default="oracle.ide.controller.MenuConstants.MENU_FIRST_ELEMENT"
+                  tns:maximum-value="1.00" tns:maximum-integer-digits="1"
+                  tns:maximum-fractional-digits="2"
+                  tns:label="Sorting weight">
+      <xs:annotation>
+        <xs:documentation><html><p>The weight of the menu item expressed as a
+        float value (<code>2.0f</code>) or the name of a java 
+        constant (<code>oracle.ide.controller.MenuConstants.MENU_FIRST_ELEMENT (= 1.0f)</code>) 
+        for sorting purposes.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="selectionMode" use="optional" default="SINGLE"
+                  tns:usages="XMLBasedObjectAction.getActions, XMLBasedObjectAction.getMenus">
+      <xs:annotation>
+        <xs:documentation><html><p>The type of object selection for which this 
+        action is enabled. (<code>SINGLE|MULTI|BOTH</code>)</p>
+        </html></xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SINGLE">
+            <xs:annotation>
+              <xs:documentation><html><p>This item is enabled for a single 
+              selected object only.</p></html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="MULTI">
+            <xs:annotation>
+              <xs:documentation><html><p>This item is enabled for multiple 
+              selected objects only.</p></html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="BOTH">
+            <xs:annotation>
+              <xs:documentation><html><p>This item is enabled for either a single
+              or multiple selected object(s).</p></html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- SQL Declaration -->
+  <xs:complexType name="sqlType" tns:large="true" 
+                  id="sqldeveloper.ObjectActions.sqlType">
+    <xs:annotation>
+      <xs:documentation><html><p>The SQL to execute for this action.</p>
+      <p>If type is not specified, process via 
+      <code>PreparedStatement.execute</code> after 
+      <a href="../index.html#value_substitution">value substitution.</a></p>
+      <p>If type="script", process via <code>ScriptUtile.runAsScript</code> 
+      after <a href="../index.html#value_substitution">value substitution.</a>
+      </p></html></xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="type"
+                      tns:usages="ObjectActionController.processDialog, ActionSql.manualSubs">
+          <xs:annotation>
+            <xs:documentation><html><p>Indicator for what type of SQL this is.</p>
+            </html></xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="">
+                <xs:annotation>
+                  <xs:documentation><html><p>Process SQL via 
+                  <code>PreparedStatement.execute</code> 
+                  after <a href="../index.html#value_substitution">value 
+                  substitution.</a></p></html></xs:documentation>
+                </xs:annotation>
+              </xs:enumeration>
+              <xs:enumeration value="SCRIPT">
+                <xs:annotation>
+                  <xs:documentation><html><p>Process SQL via 
+                  <code>ScriptUtile.runAsScript</code> 
+                  after <a href="../index.html#value_substitution">value 
+                  substitution.</a></p></html></xs:documentation>
+                </xs:annotation>
+              </xs:enumeration>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Script Declaration -->
+  <xs:complexType name="scriptType" tns:large="true"
+              tns:usages="ObjectActionController.processDialog, ObjectActionController.processScript">
+    <xs:annotation>
+      <xs:documentation><html><p>The script to execute via ScriptEngineManager 
+      <i>(only javascript (language="js") supported by default.)</i></p>
+      </html></xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="language" use="optional" default="js"
+                      tns:usages="ScriptEngineManager.getEngineByExtension">
+          <xs:annotation>
+            <xs:documentation><html><p>Indicator for what type of script this is.</p>
+            <p><i>Note: Only javascript is loaded in the VM by default so that is 
+            all the schema allows. If others are known to be provided, change this
+            schema to include the new extensions.</i></p></html></xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="js">
+                <xs:annotation>
+                  <xs:documentation><html><p>Process script as javascript</p>
+                  </html></xs:documentation>
+                </xs:annotation>
+              </xs:enumeration>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Prompt (User I/O) Declaration -->
+  <xs:complexType name="promptType"
+              tns:usages="ObjectActionPrompt.getPrompts, ObjectActionPrompt, SQLPromptPanel.init, ObjectActionController.processScript, ObjectActionController.validateValues">
+    <xs:annotation>
+      <xs:documentation><html><p>Generic prompt to the user of this action. Could
+      be a confirmation message (this is what is about to happen) or a request 
+      for required data.</p>
+      <br />
+      <p>With the ability to use select statements and have prompt changes 
+      trigger the reload of other prompts, fairly complex requirements can be 
+      met using only XML.</p>
+      <br />
+      <p>For example, in the following item declaration, the 
+      list of "Referencing Column" choices is controlled by the "References 
+      Table Name". Note also how the prompt values are used to contruct the SQL 
+      that will be executed for this item.</p>
+      <pre>
+        &lt;item type="TABLE" connType="TimesTen">
+          &lt;title>Add Foreign Key&lt;/title>
+          &lt;prompt type="check"> &lt;!-- idx = 0 -->
+            &lt;label>Cascade delete foreign key&lt;/label>
+            &lt;value>on delete cascade&lt;/value>
+          &lt;/prompt>
+          &lt;prompt> &lt;!-- idx = 1 -->
+            &lt;label>Constraint Name&lt;/label>
+          &lt;/prompt>
+          &lt;prompt> &lt;!-- idx = 2 -->
+            &lt;label>Column Name&lt;/label>
+            &lt;value>
+              &lt;![CDATA[select rtrim(COLNAME) from sys.tables t, sys.columns c 
+              where t.tblid = c.id and rtrim(t.tblowner) = :OBJECT_OWNER 
+              and rtrim(t.tblname) = :OBJECT_NAME order by c.colnum]]&gt;
+            &lt;/value>
+          &lt;/prompt>
+          &lt;prompt> &lt;!-- idx = 3 -->
+            &lt;label>References Table Name&lt;/label>
+            &lt;value>
+              &lt;![CDATA[select distinct rtrim(TBLNAME) from sys.tables t
+              where rtrim(TBLOWNER) = :OBJECT_OWNER 
+              and rtrim(TBLNAME) &lt;> :OBJECT_NAME 
+              and not exists (select 1 from sys.views v where t.tblid = v.tblid)
+              and exists (select 1 from sys.indexes i where t.tblid=i.tblid and 
+              (i.isprimary = 0x01 or i.isunique = 0x01) ) order by 1]]&gt;
+            &lt;/value>
+          &lt;/prompt>
+          &lt;prompt reload="true:3"> &lt;!-- idx = 4 -->
+            &lt;label>Referencing Column&lt;/label>
+            &lt;value>
+              &lt;![CDATA[select rtrim(COLNAME) from sys.tables t, sys.columns c
+              where t.tblid = c.id and rtrim(t.tblowner) = :OBJECT_OWNER and
+              rtrim(t.tblname) = :3 order by id]]&gt;
+            &lt;/value>
+          &lt;/prompt>
+          &lt;sql>
+            &lt;![CDATA[alter table "#OBJECT_NAME#"
+            add constraint "#1#"
+            foreign key
+            ("#2#") references "#3#"
+            ("#4#")
+            #0#]]&gt;
+          &lt;/sql>
+          &lt;help>Add a single column foreign key constraint to the currently selected table&lt;/help>
+          &lt;confirmation>
+            &lt;title>Confirmation&lt;/title>
+            &lt;prompt>Table "#OBJECT_NAME#" foreign key constraint #0# has been added for column #1#&lt;/prompt>
+          &lt;/confirmation>
+        &lt;/item>
+      </pre>
+      </html></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="label" type="xs:string">
+        <xs:annotation>
+          <xs:documentation><html><p>Text to be shown to the user.</p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="default" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation><html><p>[STATIC:]value or SELECT statement 
+          returning a single value</p>
+          <p>The select statement may use 
+          <a href="../index.html#value_substitution">value substitution.</a></p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="value" type="xs:string" minOccurs="0"
+                  tns:usages="RadioGroupPanel">
+        <xs:annotation>
+          <xs:documentation><html><p><code>[STATIC:]value[:value]|SELECT clause
+          </code></p> 
+          <br />
+          <p>Required for prompt type radio (can have multiple) and check 
+          (single value.)</p></html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="reload" type="xs:string" 
+                  tns:usages="ObjectActionController.postProcessAction">
+      <xs:annotation>
+        <xs:documentation><html><p>If prompt value is a <code>SELECT</code> 
+        clause, a list of indexes for prompts whose value changes should cause 
+        a reload of this prompt's value.</p>
+        <p><i>[The check is a simple <code>if indexOf(idx) > 0</code>, all 
+        instances I checked use a form like <code>true:3</code>]</i></p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="required" type="xs:boolean" default="false"
+                  tns:usages="ObjectActionController.validateValues">
+      <xs:annotation>
+        <xs:documentation><html><p>Flag specifying a value must exist (not null)
+        and must not be empty.</p></html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="validator" type="xs:string"
+                  tns:usages="ObjectActionController.validateValues,SQLPromptPanel.init">
+      <xs:annotation>
+        <xs:documentation><html><p>Name of a <code>Validator</code> registered 
+        with the <code>ValidatorRegistry</code>.</p>
+        <p>Statically registered ones are <code>'numeric', 'charset', 
+        'apex.status'</code> and <code>'datatype.validator'</code>.</p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="datatype" type="xs:string"
+                  tns:usages="ObjectActionController.validateValues,SQLPromptPanel.ValidatedDocument.insertString">
+      <xs:annotation>
+        <xs:documentation><html><p>Passed to <code>Validator</code> <i>(For 
+        example <code>"NUMBER"</code>)</i></p></html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type_attrib" type="xs:string"
+                  tns:usages="ObjectActionController.validateValues,SQLPromptPanel.ValidatedDocument.insertString">
+      <xs:annotation>
+        <xs:documentation><html><p>Passed to <code>Validator</code> <i>(For 
+        example <code>"precision"</code> or <code>"scale"</code>)</i></p>
+        </html></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type" default="text/combo">
+      <xs:annotation>
+        <xs:documentation><html><p>Presentation type - <code>'confirm', 'radio', 
+        'codearea', 'check',</code> else <code>'text/combo'</code> 
+        <i>(text/combo depending on # of values).</i></p>
+        </html></xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="text/combo">
+            <xs:annotation>
+              <xs:documentation><html><p>text/combo depending on # of values</p>
+              </html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="confirm">
+            <xs:annotation>
+              <xs:documentation><html><p>Confirmation prompt.</p>
+              </html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="codearea">
+            <xs:annotation>
+              <xs:documentation><html><p>Show value in code editor.</p>
+              </html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="radio">
+            <xs:annotation>
+              <xs:documentation><html><p>Show values as radio group choices.</p>
+              </html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="check">
+            <xs:annotation>
+              <xs:documentation><html><p>Show (boolean) value using check box.</p>
+              </html></xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Confirmation (After Action) Declaration -->
+  <xs:complexType name="confirmationType" 
+                  id="sqldeveloper.ObjectActions.confirmationType"
+                  tns:usages="ObjectAction.processNode,ObjectActionController.processConfirm">
+    <xs:annotation>
+      <xs:documentation><html><p>Confirmation dialog to be shown after executing
+      an action.</p></html></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="title" type="xs:string" default="Success" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation><html><p>Confirmation dialog title; May use 
+          <a href="../index.html#value_substitution">value substitution.</a></p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="prompt" type="xs:string"
+                  default='&lt;item title>+"Succeeded"' minOccurs="0">
+        <xs:annotation>
+          <xs:documentation><html><p>Confirmation message; May use 
+          <a href="../index.html#value_substitution">value substitution.</a></p>
+          <p>If sql is defined, it will be executed and the returned columns 
+          substituted in the message. (<code>#colName#</code>)</p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="sql" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation><html><p>The SQL to execute to provide substitution 
+          values for the confirmation message; May use 
+          <a href="../index.html#value_substitution">value substitution.</a></p>
+          </html></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

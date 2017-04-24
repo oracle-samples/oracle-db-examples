@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2006, 2013, Oracle and/or its affiliates. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	    <xs:include schemaLocation="query.xsd"/>
+  <xs:element name="navigator">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="connection" minOccurs="0" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="objectType"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="categoryType"/>
+      </xs:sequence>
+      <xs:attribute name="RESOURCE_FILE" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="connection">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="icon"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+	  <xs:attribute name="connectionPanelClass" use="optional" type="xs:string"/>
+	  <xs:attribute name="connectionTabName" use="optional" type="xs:string"/>
+      <xs:attribute name="supportsOtherSchemas" use="optional" type="xs:boolean"/>
+      <xs:attribute name="supportsRowId" use="optional" type="xs:boolean"/>
+      <xs:attribute name="showAllSchemas" type="xs:boolean"/>
+      <xs:attribute name="supportsCatalog" type="xs:boolean" default="false"/>
+      <xs:attribute name="implClass" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectType">
+    <xs:complexType>
+    	<xs:sequence>
+    		<xs:element maxOccurs="unbounded" ref="folder"
+    			minOccurs="0" />
+    		<xs:element ref="node" minOccurs="0" maxOccurs="1" />
+    	</xs:sequence>
+    	<xs:attribute name="connType" use="required" type="xs:string" />
+    	<xs:attribute name="id" use="required" type="xs:string" />
+    	<xs:attribute name="weight" use="required" type="xs:decimal" />
+    	<xs:attribute name="implementationClass" type="xs:string" />
+    	<xs:attribute name="includesSyns" type="xs:boolean" />
+    	<xs:attribute name="category" type="xs:string" use="optional" />
+    	<xs:attribute name="treeonly" type="xs:boolean" use="optional" />
+    	<xs:attribute name="requireParent" type="xs:boolean" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="folder">
+    <xs:complexType>
+    	<xs:sequence minOccurs="0">
+    		<xs:element ref="icon" minOccurs="0" maxOccurs="1"/>
+    		<xs:element ref="label" minOccurs="1" maxOccurs="1"/>
+    		<xs:element ref="queries" minOccurs="0" maxOccurs="unbounded"/>
+    	</xs:sequence>
+    	<xs:attribute name="currentSchemaOnly" type="xs:boolean" />
+    	<xs:attribute name="singleClickOpen" type="xs:boolean" />
+    	<xs:attribute name="relativeWeight" type="xs:decimal" />
+    	<xs:attribute name="schemaOverride" type="xs:string" />
+    	<xs:attribute name="ignoreComparator" type="xs:boolean"
+    		use="optional">
+    	</xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="label">
+    <xs:complexType>
+      <xs:attribute name="RSKEY" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="node">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="icon"/>
+        <xs:element minOccurs="0" ref="childType" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="nodeClass" type="xs:string"/>
+      <xs:attributeGroup ref="filterableObject"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="childType">
+    <xs:complexType>
+    	<xs:sequence>
+    		<xs:element ref="icon" minOccurs="0" maxOccurs="1"/>
+    		<xs:element name="folder" type="folderType" minOccurs="0" maxOccurs="1"/>
+    		<xs:element ref="queries" minOccurs="0" maxOccurs="unbounded"/>
+    	</xs:sequence>
+    	<xs:attribute name="id" use="required" type="xs:string" />
+    	<xs:attribute name="nodeType" type="xs:string" />
+    	<xs:attribute name="provImplClass" type="xs:string" />
+    	<xs:attribute name="showFolder" type="xs:boolean" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="icon">
+    <xs:complexType>
+            <xs:attributeGroup ref="iconAttributes"></xs:attributeGroup>
+        </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="filterableObject">
+    <xs:attribute name="instanceClass" type="xs:string" use="optional"/>
+    <xs:attribute name="itemClass" type="xs:string"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="iconAttributes">
+    	<xs:attribute name="RSKEY" use="optional" type="xs:string" />
+    	<xs:attribute name="PATH" use="optional" type="xs:string" />
+  </xs:attributeGroup>
+
+    <xs:element name="categoryType" >
+     <xs:complexType>
+     	<xs:sequence>
+     		<xs:element maxOccurs="unbounded" ref="folder"
+     			minOccurs="0" />
+     	</xs:sequence>
+     	<xs:attribute name="connType" use="required" type="xs:string" />
+     	<xs:attribute name="id" use="required" type="xs:string" />
+     	<xs:attribute name="weight" use="required" type="xs:decimal" />
+     	<xs:attribute name="minversion" type="xs:string"
+     		use="optional">
+     	</xs:attribute>
+     	<xs:attribute name="maxversion" type="xs:string"
+     		use="optional">
+     	</xs:attribute>
+     	<xs:attribute name="requiredAccessObjects" type="xs:string"
+     		use="optional">
+     	</xs:attribute>
+     	<xs:attribute name="requiredFeatures" type="xs:string" use="optional"></xs:attribute>
+     </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="folderType">
+    	<xs:sequence>
+    		<xs:element ref="icon" minOccurs="0" maxOccurs="1"/>
+    		<xs:element ref="label" minOccurs="1" maxOccurs="1"/>
+    	</xs:sequence>
+    </xs:complexType>
+</xs:schema>

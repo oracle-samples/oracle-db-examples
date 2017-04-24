@@ -79,19 +79,6 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.scene.Cursor;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.util.Duration;
-
-import oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleResources;
-import oracle.db.example.sqldeveloper.extension.dependency.model.DependencyExampleModel;
-import oracle.db.example.sqldeveloper.extension.dependency.model.DependencyExampleModel.Node;
-import oracle.dbtools.util.Logger;
-
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.fxdiagram.core.XConnection;
@@ -99,11 +86,15 @@ import de.fxdiagram.core.XConnection;
 import de.fxdiagram.core.XDiagram;
 import de.fxdiagram.core.XNode;
 import de.fxdiagram.core.XRoot;
+import de.fxdiagram.core.anchors.Anchors;
 import de.fxdiagram.core.command.LazyCommand;
+import de.fxdiagram.core.export.SvgExportable;
+import de.fxdiagram.core.export.SvgExporter;
 import de.fxdiagram.core.layout.LayoutParameters;
 import de.fxdiagram.core.layout.Layouter;
 import de.fxdiagram.core.tools.actions.CenterAction;
 import de.fxdiagram.core.tools.actions.DeleteAction;
+import de.fxdiagram.core.tools.actions.DiagramAction;
 import de.fxdiagram.core.tools.actions.DiagramActionRegistry;
 import de.fxdiagram.core.tools.actions.ExportSvgAction;
 import de.fxdiagram.core.tools.actions.FullScreenAction;
@@ -114,7 +105,26 @@ import de.fxdiagram.core.tools.actions.RevealAction;
 import de.fxdiagram.core.tools.actions.SelectAllAction;
 import de.fxdiagram.core.tools.actions.UndoAction;
 import de.fxdiagram.core.tools.actions.ZoomToFitAction;
-import de.fxdiagram.lib.simple.SimpleNode;
+import de.fxdiagram.lib.anchors.RoundedRectangleAnchors;
+import de.fxdiagram.lib.nodes.RectangleBorderPane;
+import eu.hansolo.enzo.radialmenu.SymbolType;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+import oracle.db.example.sqldeveloper.extension.dependency.DependencyExampleResources;
+import oracle.db.example.sqldeveloper.extension.dependency.model.DependencyExampleModel;
+import oracle.db.example.sqldeveloper.extension.dependency.model.DependencyExampleModel.Node;
+import oracle.dbtools.util.Logger;
 
 /**
  * FxDiagram
@@ -150,6 +160,14 @@ public class FxDiagram extends XDiagram {
         return rootNode;
     }
     
+    public final double getHeight() {
+        return null == rootNode ? null : rootNode.getDiagramCanvas().getHeight();
+    }
+    
+    public final double getWidth() {
+        return null == rootNode ? null : rootNode.getDiagramCanvas().getWidth();
+    }
+    
     /**
      * @param aModel
      */
@@ -157,6 +175,10 @@ public class FxDiagram extends XDiagram {
         // Can't activate until it is in the fx scene so do it here
         if (!rootNode.getIsActive()) {
             rootNode.activate();
+        }
+// testing - in case not direct child XRoot [this], make sure we are activated too 
+        if (!this.getIsActive()) {
+            this.activate();
         }
         
         model = aModel;
@@ -170,10 +192,11 @@ public class FxDiagram extends XDiagram {
            model.getNodeList().forEach((node) -> {
                final String key = node.getKey();
                // TODO SimpleNode subclass to separate key from displayed name
-               final SimpleNode xnode = new SimpleNode(key);
+               final MySimpleNode xnode = new MySimpleNode(key);
                if (selectedNodes.contains(node)) {
                    xnode.selectedProperty().set(true);
                }
+               xnode.getContentPane().getStyleClass().add("Node");
                // Drill to object on double click
                setUpDrillLink(xnode, key);
                nodeMap.put(key, xnode);
@@ -184,6 +207,7 @@ public class FxDiagram extends XDiagram {
                                                         nodeMap.get(edge.to.getKey()));
               //XConnectionLabel label = new XConnectionLabel(xconnection);
               //label.getText().setText(edge.getKey());
+              xconnection.getStyleClass().add("Edge");
               xconnections.add(xconnection);
            });
         }
@@ -203,7 +227,7 @@ public class FxDiagram extends XDiagram {
      * @param xnode
      * @param key
      */
-    private void setUpDrillLink(SimpleNode xnode, String key) {
+    private void setUpDrillLink(XNode xnode, String key) {
         final EventHandler<? super MouseEvent> onMouseClicked = xnode.getOnMouseClicked();
         xnode.setOnMouseClicked(new EventHandler<MouseEvent>() {
             private long lastClickTime;
@@ -220,7 +244,7 @@ public class FxDiagram extends XDiagram {
                         try {
                             model.performDrill(key);
                         } catch (Exception e) {
-                            String msg = DependencyExampleResources.format(DependencyExampleResources.FxDiagram_drillLink_fail, key);
+                            String msg = DependencyExampleResources.format(DependencyExampleResources.DependencyExampleFxControl_drillLink_fail, key);
                             Logger.warn(FxDiagram.class, msg, e);
                         } finally {
                             Platform.runLater(() -> {
@@ -237,6 +261,35 @@ public class FxDiagram extends XDiagram {
             
         });
     }
+    
+    /**
+     * Example of how to add our action to the FxDiagram menu
+     * @param text - tooltip for action
+     * @param action - runnable to do the action
+     */
+    public void setUpExportPngAction(final String text, final Runnable action) {
+        getRootNode(); // set that up if not called yet
+        DiagramActionRegistry actions = rootNode.getDiagramActionRegistry();
+        actions.operator_add(new DiagramAction() {
+            @Override
+            public SymbolType getSymbol() {
+                return SymbolType.PHOTO;
+            }
+            @Override
+            public String getTooltip() {
+                return text;
+            }
+            @Override
+            public boolean matches(KeyEvent arg0) {
+                return false;
+            }
+            @Override
+            public void perform(XRoot arg0) {
+                action.run();
+            }
+        });
+        
+    }
 
     /**
      * LayeredLayouter Simple subclass to use a (much) better (IMHO) layout engine
@@ -251,4 +304,105 @@ public class FxDiagram extends XDiagram {
         }
       }
 
+    /**
+     * Replacement for SimpleNode which uses RectangleBorderPane that uses setStyle 
+     * which completely blows away (ignores) any css styling.
+     * 
+     * TODO Initialize from Node, add Icon before text, then only show [OWNER?.]NAME
+     *      since icon represents type.
+     */
+    public static class MySimpleNode extends XNode {
+        protected Text label;
+        public MySimpleNode(final String name) {
+            super(name);
+        }
+        @Override
+        protected Anchors createAnchors() {
+            return new RoundedRectangleAnchors(this, 12, 12);
+        }
+        @Override
+        protected javafx.scene.Node createNode() {
+            if (null == pane) {
+                pane = new MyRectangleBorderPane();
+                pane.getStyleClass().add("MySimpleNode"); //$NON-NLS-1$
+                label = new Text(getName());
+                pane.getChildren().add(label);
+                StackPane.setMargin(this.label, new Insets(10, 20, 10, 20));
+            }
+            return pane;
+        }
+        @Override
+        public void doActivate() {
+            super.doActivate();
+            this.label.setText(this.getName());
+        }
+        // THIS is the thing that the css class names need to be attached to
+        // TODO Run with ScenicView someday & find out how the scene graph is being composed
+        protected javafx.scene.layout.Pane pane;
+        public javafx.scene.layout.Pane getContentPane() {
+            createNode();
+            return pane;
+        }
+    }
+
+    /**
+     * Replacement for RectangleBorderPane since that uses setStyle which completely
+     * blows away (ignores) any css styling.
+     */
+    public static class MyRectangleBorderPane extends StackPane implements SvgExportable {
+        
+        @Override
+        public CharSequence toSvgElement(SvgExporter exporter) {
+            StringBuilder ownSvgCode = new StringBuilder();
+            ownSvgCode.append("<rect").append("\n");
+            ownSvgCode.append("\t").append(exporter.toSvgString(this.getLocalToSceneTransform())).append("\n");
+            ownSvgCode.append("\t").append("width=\"").append(this.getWidth()).append("\"\n");
+            ownSvgCode.append("\t").append("height=\"").append(this.getHeight()).append("\"\n");
+            ownSvgCode.append("\t").append("rx=\"").append(this.getBorderRadius()).append("\"\n");
+            ownSvgCode.append("\t").append("ry=\"").append(this.getBorderRadius()).append("\"\n");
+            ownSvgCode.append("\t").append("fill=\"").append(exporter.toSvgString(this.getBackgroundPaint())).append("\"\n");
+            ownSvgCode.append("\t").append("stroke=\"").append(exporter.toSvgString(this.getBorderPaint())).append("\"\n");
+            ownSvgCode.append("\t").append("stroke-width=\"").append(this.getBorderWidth()).append("\"\n");
+            ownSvgCode.append("\t").append(exporter.toSvgAttribute(Double.valueOf(this.getOpacity()), "opacity", Double.valueOf(1.0))).append("\n");
+            ownSvgCode.append("/>").append("\n");
+            StringBuilder builder = new StringBuilder();
+            builder.append("<!-- ").append(getClass().getName()).append(" -->\n");
+            builder.append(exporter.parentToSvgElement(this, ownSvgCode)).append("\n");
+            return builder;
+//            <!-- «class.name» -->
+//            «this.parentToSvgElement('''
+//                <rect
+//                    «toSvgString(localToSceneTransform)»
+//                    width="«width»" height="«height»"
+//                    rx="«borderRadius»" ry="«borderRadius»"
+//                    fill="«backgroundPaint.toSvgString»"
+//                    stroke="«borderPaint.toSvgString»"
+//                    stroke-width="«borderWidth»"
+//                    «opacity.toSvgAttribute("opacity", 1.0)»
+//                />
+//            ''')»
+        }
+
+        private double getBorderWidth() {
+            // return default from prior 
+            return 1.2;
+        }
+
+        private Paint getBorderPaint() {
+            // return default from prior 
+            // TODO Figure out real value - this is complicated because border can now be a list of things
+            return Color.GRAY;
+        }
+
+        private Paint getBackgroundPaint() {
+            // return default from prior 
+            // TODO Figure out real value - this is complicated because background can now be a list of things
+            return RectangleBorderPane.DEFAULT_BACKGROUND;
+        }
+
+        private double getBorderRadius() {
+            // return default from prior 
+            return 6;
+        }
+    }
 }
