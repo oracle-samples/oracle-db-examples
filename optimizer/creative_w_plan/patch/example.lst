@@ -1,0 +1,1033 @@
+SQL> @example
+SQL> -- tab.sql
+SQL> -- Create the test tables
+SQL> 
+SQL> @tab
+SQL> drop table tab1 purge;
+
+Table dropped.
+
+SQL> drop table tab2 purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table tab1 (
+  2    id	 number(10)
+  3   ,cust	 number(10)
+  4   ,num	 number(10)
+  5   ,txt	 varchar2(100))
+  6  /
+
+Table created.
+
+SQL> 
+SQL> create table tab2 (
+  2    id	 number(10)
+  3   ,ty	 varchar2(10)
+  4   ,num	 number(10)
+  5   ,txt	 varchar2(100))
+  6  /
+
+Table created.
+
+SQL> 
+SQL> insert into tab1
+  2  select rownum,mod(rownum,10),rownum,'Desc'
+  3  from   dual connect by rownum < 10000;
+
+9999 rows created.
+
+SQL> 
+SQL> insert into tab2
+  2  select mod(rownum,100),'T'||rownum,rownum,'Desc'
+  3  from   dual connect by rownum < 100;
+
+99 rows created.
+
+SQL> 
+SQL> create unique index tab1pk on tab1 (id);
+
+Index created.
+
+SQL> create unique index tab2pk on tab2 (id);
+
+Index created.
+
+SQL> create index tab2tyi on tab2(ty);
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'tab1');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'tab2');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- drop.sql
+SQL> -- Drop all the SQL patches used in this example.
+SQL> 
+SQL> -- look.sql
+SQL> -- List all existing SQL patches and then all SQL statements in SQL area using them.
+SQL> 
+SQL> -- sql.sql
+SQL> -- List SQL IDs for our test queries
+SQL> 
+SQL> -- Test 1
+SQL> -- ======
+SQL> @drop
+SQL> 
+SQL> begin
+  2  	dbms_sqldiag.drop_sql_patch('q0_patch');
+  3  exception
+  4  	when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2  	dbms_sqldiag.drop_sql_patch('q1_patch');
+  3  exception
+  4  	when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2  	dbms_sqldiag.drop_sql_patch('q2_patch');
+  3  exception
+  4  	when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Execute our test query
+SQL> -- It uses an index
+SQL> --
+SQL> @q0
+SQL> select /* PATCHTEST*/ num
+  2  from   tab1
+  3  where  id = 10;
+
+       NUM                                                                      
+----------                                                                      
+        10                                                                      
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                       
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+SQL_ID  37090abayamah, child number 0                                                                                                                                                                   
+-------------------------------------                                                                                                                                                                   
+select /* PATCHTEST*/ num from   tab1 where  id = 10                                                                                                                                                    
+                                                                                                                                                                                                        
+Plan hash value: 1754924612                                                                                                                                                                             
+                                                                                                                                                                                                        
+--------------------------------------------------------------------------------------                                                                                                                  
+| Id  | Operation                   | Name   | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                  
+--------------------------------------------------------------------------------------                                                                                                                  
+|   0 | SELECT STATEMENT            |        |       |       |     2 (100)|          |                                                                                                                  
+|   1 |  TABLE ACCESS BY INDEX ROWID| TAB1   |     1 |     8 |     2   (0)| 00:00:01 |                                                                                                                  
+|*  2 |   INDEX UNIQUE SCAN         | TAB1PK |     1 |       |     1   (0)| 00:00:01 |                                                                                                                  
+--------------------------------------------------------------------------------------                                                                                                                  
+                                                                                                                                                                                                        
+Outline Data                                                                                                                                                                                            
+-------------                                                                                                                                                                                           
+                                                                                                                                                                                                        
+  /*+                                                                                                                                                                                                   
+      BEGIN_OUTLINE_DATA                                                                                                                                                                                
+      IGNORE_OPTIM_EMBEDDED_HINTS                                                                                                                                                                       
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')                                                                                                                                                             
+      DB_VERSION('11.2.0.4')                                                                                                                                                                            
+      ALL_ROWS                                                                                                                                                                                          
+      OUTLINE_LEAF(@"SEL$1")                                                                                                                                                                            
+      INDEX_RS_ASC(@"SEL$1" "TAB1"@"SEL$1" ("TAB1"."ID"))                                                                                                                                               
+      END_OUTLINE_DATA                                                                                                                                                                                  
+  */                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   2 - access("ID"=10)                                                                                                                                                                                  
+                                                                                                                                                                                                        
+
+33 rows selected.
+
+SQL> -- Exeute the same query, but this time
+SQL> -- with a hint to make is FULL scan.
+SQL> -- We'll take a look at the outline to
+SQL> -- see what hint we can use to force the
+SQL> -- first test query to use a FULL scan
+SQL> -- rather than the index.
+SQL> @q0full
+SQL> select /* PATCHTEST*/ /*+ FULL(tab1) */ num
+  2  from   tab1
+  3  where  id = 10;
+
+       NUM                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+        10                                                                                                                                                                                              
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                       
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+SQL_ID  6vfvg7a77dx0p, child number 0                                                                                                                                                                   
+-------------------------------------                                                                                                                                                                   
+select /* PATCHTEST*/ /*+ FULL(tab1) */ num from   tab1 where  id = 10                                                                                                                                  
+                                                                                                                                                                                                        
+Plan hash value: 2211052296                                                                                                                                                                             
+                                                                                                                                                                                                        
+--------------------------------------------------------------------------                                                                                                                              
+| Id  | Operation         | Name | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                              
+--------------------------------------------------------------------------                                                                                                                              
+|   0 | SELECT STATEMENT  |      |       |       |    11 (100)|          |                                                                                                                              
+|*  1 |  TABLE ACCESS FULL| TAB1 |     1 |     8 |    11   (0)| 00:00:01 |                                                                                                                              
+--------------------------------------------------------------------------                                                                                                                              
+                                                                                                                                                                                                        
+Outline Data                                                                                                                                                                                            
+-------------                                                                                                                                                                                           
+                                                                                                                                                                                                        
+  /*+                                                                                                                                                                                                   
+      BEGIN_OUTLINE_DATA                                                                                                                                                                                
+      IGNORE_OPTIM_EMBEDDED_HINTS                                                                                                                                                                       
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')                                                                                                                                                             
+      DB_VERSION('11.2.0.4')                                                                                                                                                                            
+      ALL_ROWS                                                                                                                                                                                          
+      OUTLINE_LEAF(@"SEL$1")                                                                                                                                                                            
+      FULL(@"SEL$1" "TAB1"@"SEL$1")                                                                                                                                                                     
+      END_OUTLINE_DATA                                                                                                                                                                                  
+  */                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   1 - filter("ID"=10)                                                                                                                                                                                  
+                                                                                                                                                                                                        
+
+32 rows selected.
+
+SQL> --
+SQL> -- Let's patch the "q0.sql" query with
+SQL> -- FULL(@"SEL$1" "TAB1"@"SEL$1") to make it
+SQL> -- scan the table
+SQL> --
+SQL> @patchq0
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> @drop
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q0_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q1_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q2_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> declare
+  2     v_sql CLOB;
+  3  begin
+  4     select sql_fulltext
+  5     into   v_sql
+  6     from   v$sqlarea
+  7     where  sql_id='37090abayamah';
+  8  
+  9     sys.dbms_sqldiag_internal.i_create_patch(
+ 10        sql_text  =>v_sql,
+ 11        hint_text =>'FULL(@"SEL$1" "TAB1"@"SEL$1")',
+ 12        name      =>'q0_patch');
+ 13  end;
+ 14  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> connect adhoc/adhoc
+Connected.
+SQL> --
+SQL> -- Check to see if this query now uses the patch
+SQL> -- and no longer uses the index...
+SQL> --
+SQL> @q0
+SQL> select /* PATCHTEST*/ num
+  2  from   tab1
+  3  where  id = 10;
+
+       NUM                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+        10                                                                                                                                                                                              
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                       
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+SQL_ID  37090abayamah, child number 0                                                                                                                                                                   
+-------------------------------------                                                                                                                                                                   
+select /* PATCHTEST*/ num from   tab1 where  id = 10                                                                                                                                                    
+                                                                                                                                                                                                        
+Plan hash value: 2211052296                                                                                                                                                                             
+                                                                                                                                                                                                        
+--------------------------------------------------------------------------                                                                                                                              
+| Id  | Operation         | Name | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                              
+--------------------------------------------------------------------------                                                                                                                              
+|   0 | SELECT STATEMENT  |      |       |       |    11 (100)|          |                                                                                                                              
+|*  1 |  TABLE ACCESS FULL| TAB1 |     1 |     8 |    11   (0)| 00:00:01 |                                                                                                                              
+--------------------------------------------------------------------------                                                                                                                              
+                                                                                                                                                                                                        
+Outline Data                                                                                                                                                                                            
+-------------                                                                                                                                                                                           
+                                                                                                                                                                                                        
+  /*+                                                                                                                                                                                                   
+      BEGIN_OUTLINE_DATA                                                                                                                                                                                
+      IGNORE_OPTIM_EMBEDDED_HINTS                                                                                                                                                                       
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')                                                                                                                                                             
+      DB_VERSION('11.2.0.4')                                                                                                                                                                            
+      ALL_ROWS                                                                                                                                                                                          
+      OUTLINE_LEAF(@"SEL$1")                                                                                                                                                                            
+      FULL(@"SEL$1" "TAB1"@"SEL$1")                                                                                                                                                                     
+      END_OUTLINE_DATA                                                                                                                                                                                  
+  */                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   1 - filter("ID"=10)                                                                                                                                                                                  
+                                                                                                                                                                                                        
+Note                                                                                                                                                                                                    
+-----                                                                                                                                                                                                   
+   - SQL patch "q0_patch" used for this statement                                                                                                                                                       
+                                                                                                                                                                                                        
+
+36 rows selected.
+
+SQL> @look
+SQL> column signature format 9999999999999999999999
+SQL> column exact_matching_signature format 9999999999999999999999
+SQL> column sql_text format a60
+SQL> column sql_patch format a15
+SQL> column status format a15
+SQL> set linesize 300
+SQL> set trims on
+SQL> select signature, sql_text,status from dba_sql_patches;
+
+              SIGNATURE SQL_TEXT                                                     STATUS
+----------------------- ------------------------------------------------------------ ---------------
+   16269657256150246778 select /* PATCHTEST*/ num                                    ENABLED
+                        from   tab1
+                        where  id = 10
+
+
+SQL> 
+SQL> select sql_text,sql_patch,exact_matching_signature
+  2  from   v$sqlarea
+  3  where  sql_patch is not null
+  4  order  by 1;
+
+SQL_TEXT                                                     SQL_PATCH       EXACT_MATCHING_SIGNATURE
+------------------------------------------------------------ --------------- ------------------------
+select /* PATCHTEST*/  /*+ USE_HASH(tab1 tab2) */ sum(num) f q1_patch            11111776683295613833
+rom   tab1 where  id in (select id               from   tab2
+               where  ty = 'T10')
+
+select /* PATCHTEST*/ num from   tab1 where  id = 10         q0_patch            16269657256150246778
+select /* PATCHTEST*/ sum(num) from   tab1 where  id in (sel q2_patch             7721364944309994772
+ect id               from   tab2               where  ty = '
+T10')
+
+
+SQL> 
+SQL> -- Test 2
+SQL> -- ======
+SQL> @drop
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q0_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q1_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q2_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Execute our test query "q1"
+SQL> -- It has a "stupid" USE_HASH hint
+SQL> --
+SQL> @q1
+SQL> select /* PATCHTEST*/  /*+ USE_HASH(tab1 tab2) */
+  2  sum(num)
+  3  from   tab1
+  4  where  id in (select id
+  5                from   tab2
+  6                where  ty = 'T10');
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  bdrzvmxvcju4y, child number 0
+-------------------------------------
+select /* PATCHTEST*/  /*+ USE_HASH(tab1 tab2) */ sum(num) from   tab1
+where  id in (select id               from   tab2               where
+ty = 'T10')
+
+Plan hash value: 1031366786
+
+-----------------------------------------------------------------------------------------
+| Id  | Operation                     | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |         |       |       |    13 (100)|          |
+|   1 |  SORT AGGREGATE               |         |     1 |    15 |            |          |
+|*  2 |   HASH JOIN                   |         |     1 |    15 |    13   (0)| 00:00:01 |
+|   3 |    TABLE ACCESS BY INDEX ROWID| TAB2    |     1 |     7 |     2   (0)| 00:00:01 |
+|*  4 |     INDEX RANGE SCAN          | TAB2TYI |     1 |       |     1   (0)| 00:00:01 |
+|   5 |    TABLE ACCESS FULL          | TAB1    |  9999 | 79992 |    11   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')
+      DB_VERSION('11.2.0.4')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$5DA710D3")
+      UNNEST(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      OUTLINE(@"SEL$2")
+      INDEX_RS_ASC(@"SEL$5DA710D3" "TAB2"@"SEL$2" ("TAB2"."TY"))
+      FULL(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      LEADING(@"SEL$5DA710D3" "TAB2"@"SEL$2" "TAB1"@"SEL$1")
+      USE_HASH(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("ID"="ID")
+   4 - access("TY"='T10')
+
+
+45 rows selected.
+
+SQL> --
+SQL> -- Let's stop it using the hint!
+SQL> --
+SQL> @patchq1_nohint
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> @drop
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q0_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q1_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q2_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> declare
+  2     v_sql CLOB;
+  3  begin
+  4     select sql_fulltext
+  5     into v_sql
+  6     from   v$sqlarea
+  7     where  sql_id='bdrzvmxvcju4y';
+  8  
+  9     sys.dbms_sqldiag_internal.i_create_patch(
+ 10        sql_text  =>v_sql,
+ 11        hint_text =>'IGNORE_OPTIM_EMBEDDED_HINTS',
+ 12        name      =>'q1_patch');
+ 13  end;
+ 14  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> connect adhoc/adhoc
+Connected.
+SQL> --
+SQL> -- It now uses nested loop join...
+SQL> --
+SQL> @q1
+SQL> select /* PATCHTEST*/  /*+ USE_HASH(tab1 tab2) */
+  2  sum(num)
+  3  from   tab1
+  4  where  id in (select id
+  5                from   tab2
+  6                where  ty = 'T10');
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  bdrzvmxvcju4y, child number 0
+-------------------------------------
+select /* PATCHTEST*/  /*+ USE_HASH(tab1 tab2) */ sum(num) from   tab1
+where  id in (select id               from   tab2               where
+ty = 'T10')
+
+Plan hash value: 4089045816
+
+------------------------------------------------------------------------------------------
+| Id  | Operation                      | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT               |         |       |       |     3 (100)|          |
+|   1 |  SORT AGGREGATE                |         |     1 |    15 |            |          |
+|   2 |   NESTED LOOPS                 |         |     1 |    15 |     3   (0)| 00:00:01 |
+|   3 |    NESTED LOOPS                |         |     1 |    15 |     3   (0)| 00:00:01 |
+|   4 |     TABLE ACCESS BY INDEX ROWID| TAB2    |     1 |     7 |     2   (0)| 00:00:01 |
+|*  5 |      INDEX RANGE SCAN          | TAB2TYI |     1 |       |     1   (0)| 00:00:01 |
+|*  6 |     INDEX UNIQUE SCAN          | TAB1PK  |     1 |       |     0   (0)|          |
+|   7 |    TABLE ACCESS BY INDEX ROWID | TAB1    |     1 |     8 |     1   (0)| 00:00:01 |
+------------------------------------------------------------------------------------------
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')
+      DB_VERSION('11.2.0.4')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$5DA710D3")
+      UNNEST(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      OUTLINE(@"SEL$2")
+      INDEX_RS_ASC(@"SEL$5DA710D3" "TAB2"@"SEL$2" ("TAB2"."TY"))
+      INDEX(@"SEL$5DA710D3" "TAB1"@"SEL$1" ("TAB1"."ID"))
+      LEADING(@"SEL$5DA710D3" "TAB2"@"SEL$2" "TAB1"@"SEL$1")
+      USE_NL(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      NLJ_BATCHING(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   5 - access("TY"='T10')
+   6 - access("ID"="ID")
+
+Note
+-----
+   - SQL patch "q1_patch" used for this statement
+
+
+52 rows selected.
+
+SQL> 
+SQL> -- Test 3
+SQL> -- ======
+SQL> @drop
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q0_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q1_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q2_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Run q2 - and notice it uses index on TAB2 (TAB2TYI)
+SQL> --
+SQL> @q2
+SQL> select /* PATCHTEST*/
+  2  sum(num)
+  3  from   tab1
+  4  where  id in (select id
+  5                from   tab2
+  6                where  ty = 'T10');
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  afbaqn1zcxs7c, child number 0
+-------------------------------------
+select /* PATCHTEST*/ sum(num) from   tab1 where  id in (select id
+         from   tab2               where  ty = 'T10')
+
+Plan hash value: 4089045816
+
+------------------------------------------------------------------------------------------
+| Id  | Operation                      | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT               |         |       |       |     3 (100)|          |
+|   1 |  SORT AGGREGATE                |         |     1 |    15 |            |          |
+|   2 |   NESTED LOOPS                 |         |     1 |    15 |     3   (0)| 00:00:01 |
+|   3 |    NESTED LOOPS                |         |     1 |    15 |     3   (0)| 00:00:01 |
+|   4 |     TABLE ACCESS BY INDEX ROWID| TAB2    |     1 |     7 |     2   (0)| 00:00:01 |
+|*  5 |      INDEX RANGE SCAN          | TAB2TYI |     1 |       |     1   (0)| 00:00:01 |
+|*  6 |     INDEX UNIQUE SCAN          | TAB1PK  |     1 |       |     0   (0)|          |
+|   7 |    TABLE ACCESS BY INDEX ROWID | TAB1    |     1 |     8 |     1   (0)| 00:00:01 |
+------------------------------------------------------------------------------------------
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')
+      DB_VERSION('11.2.0.4')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$5DA710D3")
+      UNNEST(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      OUTLINE(@"SEL$2")
+      INDEX_RS_ASC(@"SEL$5DA710D3" "TAB2"@"SEL$2" ("TAB2"."TY"))
+      INDEX(@"SEL$5DA710D3" "TAB1"@"SEL$1" ("TAB1"."ID"))
+      LEADING(@"SEL$5DA710D3" "TAB2"@"SEL$2" "TAB1"@"SEL$1")
+      USE_NL(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      NLJ_BATCHING(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   5 - access("TY"='T10')
+   6 - access("ID"="ID")
+
+
+47 rows selected.
+
+SQL> --
+SQL> -- Take a look at "q3". It is the same as q2 but
+SQL> -- it has a hint to give us a FULL scan on TAB2
+SQL> --
+SQL> @q3
+SQL> select /* PATCHTEST*/
+  2  sum(num)
+  3  from   tab1
+  4  where  id in (select /*+ FULL(tab2) */ id
+  5                from   tab2
+  6                where  ty = 'T10');
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  bshak75293cfs, child number 0
+-------------------------------------
+select /* PATCHTEST*/ sum(num) from   tab1 where  id in (select /*+
+FULL(tab2) */ id               from   tab2               where  ty =
+'T10')
+
+Plan hash value: 693421827
+
+----------------------------------------------------------------------------------------
+| Id  | Operation                     | Name   | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |        |       |       |     4 (100)|          |
+|   1 |  SORT AGGREGATE               |        |     1 |    15 |            |          |
+|   2 |   NESTED LOOPS                |        |     1 |    15 |     4   (0)| 00:00:01 |
+|   3 |    NESTED LOOPS               |        |     1 |    15 |     4   (0)| 00:00:01 |
+|*  4 |     TABLE ACCESS FULL         | TAB2   |     1 |     7 |     3   (0)| 00:00:01 |
+|*  5 |     INDEX UNIQUE SCAN         | TAB1PK |     1 |       |     0   (0)|          |
+|   6 |    TABLE ACCESS BY INDEX ROWID| TAB1   |     1 |     8 |     1   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')
+      DB_VERSION('11.2.0.4')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$5DA710D3")
+      UNNEST(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      OUTLINE(@"SEL$2")
+      FULL(@"SEL$5DA710D3" "TAB2"@"SEL$2")
+      INDEX(@"SEL$5DA710D3" "TAB1"@"SEL$1" ("TAB1"."ID"))
+      LEADING(@"SEL$5DA710D3" "TAB2"@"SEL$2" "TAB1"@"SEL$1")
+      USE_NL(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      NLJ_BATCHING(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter("TY"='T10')
+   5 - access("ID"="ID")
+
+
+47 rows selected.
+
+SQL> --
+SQL> -- It looks like we can use FULL(@"SEL$5DA710D3" "TAB2"@"SEL$2")
+SQL> -- if we want to make q2 use the same plan.
+SQL> -- Instead, let's just copy the whole outline from q3 and
+SQL> -- apply to q2.
+SQL> -- We can see the SQL_ID's we must use...
+SQL> --
+SQL> @sql
+SQL> set pagesize 100
+SQL> 
+SQL> select sql_id,sql_text
+  2  from v$sqlarea
+  3  where sql_text like '%PATCHTEST%'
+  4  /
+
+SQL_ID        SQL_TEXT
+------------- ------------------------------------------------------------
+afbaqn1zcxs7c select /* PATCHTEST*/ sum(num) from   tab1 where  id in (sel
+              ect id               from   tab2               where  ty = '
+              T10')
+
+bdrzvmxvcju4y select /* PATCHTEST*/  /*+ USE_HASH(tab1 tab2) */ sum(num) f
+              rom   tab1 where  id in (select id               from   tab2
+                             where  ty = 'T10')
+
+6vfvg7a77dx0p select /* PATCHTEST*/ /*+ FULL(tab1) */ num from   tab1 wher
+              e  id = 10
+
+37090abayamah select /* PATCHTEST*/ num from   tab1 where  id = 10
+bshak75293cfs select /* PATCHTEST*/ sum(num) from   tab1 where  id in (sel
+              ect /*+ FULL(tab2) */ id               from   tab2
+                   where  ty = 'T10')
+
+ghrd2596d3wwb select sql_id,sql_text from v$sqlarea where sql_text like '%
+              PATCHTEST%'
+
+
+6 rows selected.
+
+SQL> --
+SQL> -- Now copy...
+SQL> --
+SQL> @copy
+SQL> @drop
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q0_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q1_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2     dbms_sqldiag.drop_sql_patch('q2_patch');
+  3  exception
+  4     when others then null;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> declare
+  2    hints varchar2(1024) := '';
+  3    v_sql CLOB;
+  4    cursor c1 is
+  5     SELECT  extractValue(value(h),'.') AS hint
+  6     FROM    v$sql_plan sp,
+  7          TABLE(xmlsequence(
+  8              extract(xmltype(sp.other_xml),'/*/outline_data/hint'))) h
+  9     WHERE   sp.other_xml is not null
+ 10     AND     sql_id = 'bshak75293cfs'   /* Take outline from this SQL */
+ 11     AND     child_number = 0;
+ 12   begin
+ 13    for c in c1
+ 14    loop
+ 15       hints := hints || ' ' ||c.hint;
+ 16    end loop;
+ 17    select  sql_fulltext
+ 18     into   v_sql
+ 19     from   v$sqlarea
+ 20     where  sql_id='afbaqn1zcxs7c';    /* Apply to this SQL */
+ 21  
+ 22    sys.dbms_sqldiag_internal.i_create_patch(
+ 23        sql_text  =>v_sql,
+ 24        hint_text =>hints,
+ 25        name      =>'q2_patch');
+ 26  end;
+ 27  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> connect adhoc/adhoc
+Connected.
+SQL> --
+SQL> -- q2 now uses a FULL scan on TAB2
+SQL> --
+SQL> @q2
+SQL> select /* PATCHTEST*/
+  2  sum(num)
+  3  from   tab1
+  4  where  id in (select id
+  5                from   tab2
+  6                where  ty = 'T10');
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST OUTLINE'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  afbaqn1zcxs7c, child number 0
+-------------------------------------
+select /* PATCHTEST*/ sum(num) from   tab1 where  id in (select id
+         from   tab2               where  ty = 'T10')
+
+Plan hash value: 693421827
+
+----------------------------------------------------------------------------------------
+| Id  | Operation                     | Name   | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |        |       |       |     4 (100)|          |
+|   1 |  SORT AGGREGATE               |        |     1 |    15 |            |          |
+|   2 |   NESTED LOOPS                |        |     1 |    15 |     4   (0)| 00:00:01 |
+|   3 |    NESTED LOOPS               |        |     1 |    15 |     4   (0)| 00:00:01 |
+|*  4 |     TABLE ACCESS FULL         | TAB2   |     1 |     7 |     3   (0)| 00:00:01 |
+|*  5 |     INDEX UNIQUE SCAN         | TAB1PK |     1 |       |     0   (0)|          |
+|   6 |    TABLE ACCESS BY INDEX ROWID| TAB1   |     1 |     8 |     1   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('11.2.0.4')
+      DB_VERSION('11.2.0.4')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$5DA710D3")
+      UNNEST(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      OUTLINE(@"SEL$2")
+      FULL(@"SEL$5DA710D3" "TAB2"@"SEL$2")
+      INDEX(@"SEL$5DA710D3" "TAB1"@"SEL$1" ("TAB1"."ID"))
+      LEADING(@"SEL$5DA710D3" "TAB2"@"SEL$2" "TAB1"@"SEL$1")
+      USE_NL(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      NLJ_BATCHING(@"SEL$5DA710D3" "TAB1"@"SEL$1")
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter("TY"='T10')
+   5 - access("ID"="ID")
+
+Note
+-----
+   - SQL patch "q2_patch" used for this statement
+
+
+50 rows selected.
+
+SQL> exit
