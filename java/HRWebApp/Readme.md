@@ -2,16 +2,13 @@
  
 **HR Web Application** is the Java application that uses Oracle Java Database Connectivity (JDBC), Universal Connection Pool (UCP), and Oracle Java in the Database (OJVM) with Oracle Database 12c Release 2. 
 
-It is a light weight web application that uses the MVC (Model, View, Controller) architecture and all the latest tools and technologies.  The presentation layer uses HTML that internally uses JavaScript, JQuery, and CSS to display the results.  The controller will be a servlet that talks to the Oracle Database through the Java Beans.  Maven is used for building the application. The Architecture of the HR Web Application is depicted in the figure. 
+It is a light weight web application that uses the MVC (Model, View, Controller) architecture and all the latest tools and technologies.  The presentation layer uses HTML that internally uses JavaScript, JQuery, and CSS to display the results.  The controller will be a servlet that talks to the Oracle Database through the Java Beans.  Maven is used for building the application. The Architecture of the HR Web Application is depicted in the following figure. 
 
 ![Architecture of HR Web Application](https://github.com/oracle/oracle-db-examples/blob/master/java/HRWebApp/HRWebApp_Architecture.jpg)
 
 This Java application leverages HR schema and Employees table of the Oracle Database 12c Release 2.  It is intended to help the HR team of AnyCo Corporation to store the details of all the employees, add any new employee, update the employee details, delete any employee, or provide a salary hike to all employees.  There are two users **HRStaff** and **HRAdmin** who have different privileges and access to the application. 
 
 **HRStaff** has read access to the application and do not have any privileges to update/delete an employee record.  HRStaff has privileges to perform the following functions. 
-
-* **About** : 
-This page provides an overview of the HR Application and explains the various functionalities it offers.
 
 * **List All Employees** : 
 This functionality retrieves information about the employees. It lists the employee information such as Employee_ID, First_Name, Last_Name, Email, Phone_Number, Job_Id, and Salary. 
