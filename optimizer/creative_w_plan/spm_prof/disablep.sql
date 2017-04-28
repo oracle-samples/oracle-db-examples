@@ -1,3 +1,7 @@
+--
+-- Disable all SQL Profiles where the SQL statement
+-- is able to use a SQL plan baseline instead.
+--
 begin
    for rec in (select sql_profile
                from   v$sqlarea

@@ -1,3 +1,7 @@
+--
+-- Make a SQL plan baseline for any SQL statement
+-- in the cursor cache that has an active SQL profile.
+--
 declare
   ret varchar2(100);
 begin
