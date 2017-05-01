@@ -1,0 +1,110 @@
+<html>
+<head>
+
+  <meta charset="utf-8">
+
+  <title>Employee table listing</title>
+
+  <link rel="stylesheet" type="text/css" href="css/app.css" >
+  <style>
+    iframe:focus {
+      outline: none;
+    }
+    iframe[seamless] {
+      display: block;
+    }
+  </style>
+
+</head>
+<body>
+
+<div id="sideNav" class="sidenav">
+
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" class="staff">×</a>
+  <a href="javascript:switchSrc('listAll.html')" class="staff">List All</a>
+  <a href="javascript:switchSrc('listById.html')" class="staff">Search By Id</a>
+  <a href="javascript:switchSrc('listByName.html')" class="manager">Update Employee Record</a>
+  <a href="javascript:switchSrc('incrementSalary.html')" class="manager">Increment Salary</a>
+  <a href="javascript:switchSrc('about.html')">About</a>
+</div>
+
+<div id="main">
+  <div  align="right">
+    <div
+        id="myrole"
+        style="display:inline; color:#393318; display: block; background-color:#eff0f1;position: absolute; top: 20px; right: 8%;"
+    >myrole</div>
+    <a href="javascript:void(0)"
+       onclick="logout()"
+       class="staff"
+       style="display: block; position: absolute; top: 20px; right: 1%">Logout</a>
+  </div>
+  <div>
+    <span style="font-size:30px;cursor:pointer" onclick="openNav()">☰ Java 2 Days HR Web Application    </span>
+
+  </div>
+  <div>
+    <iframe id="content"
+            src="about.html"
+            frameborder="0"
+            style="overflow:hidden;height:100%;width:100%"
+            height="100%"
+            width="100%"></iframe>
+  </div>
+</div>
+
+<script>
+
+function openNav() {
+  document.getElementById("sideNav").style.width = "256px";
+  document.getElementById("main").style.marginLeft = "256px";
+}
+
+function closeNav() {
+  document.getElementById("sideNav").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+}
+
+function switchSrc(src) {
+  document.getElementById('content').src = src;
+}
+
+function logout() {
+
+  var xmllogout = new XMLHttpRequest();
+  xmllogout.open("GET", "WebController?logout=true", true, "_", "_");
+  xmllogout.withCredentials = true;
+  // Invlalid credentials to fake logout
+  xmllogout.setRequestHeader("Authorization", "Basic 00001");
+  xmllogout.send();
+
+  xmllogout.onreadystatechange = function() {
+    window.location.replace("index.html");
+  }
+
+ return true;
+}
+
+var xmlhttp = new XMLHttpRequest();
+var url = "getrole";
+
+xmlhttp.onreadystatechange = function() {
+  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    role = xmlhttp.responseText;
+    console.log("role: " +role);
+    if (role == "staff") {
+      console.log ("disabling manager");
+      var x = document.getElementsByClassName('manager');
+      for(i = 0; i < x.length; ++i) {
+        x[i].style.display = 'none';
+      }
+    }
+    document.getElementById('myrole').innerHTML = ' '+role+' ';
+  }
+}
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+</script>
+
+</body>
+</html>

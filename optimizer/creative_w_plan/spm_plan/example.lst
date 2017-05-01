@@ -1,0 +1,5223 @@
+SQL> @example
+SQL> set pagesize 1000
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set tab off
+SQL> set echo on
+SQL> --
+SQL> -- Create the test table and fill it
+SQL> -- with data that has a large range skew
+SQL> -- so that cardinality estimate is wrong.
+SQL> --
+SQL> @tab
+SQL> drop table sales purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table sales (
+  2    id number(10)
+  3  , sale_date date);
+
+Table created.
+
+SQL> 
+SQL> insert into sales
+  2  select level, sysdate-rownum/1000
+  3  from   dual
+  4  connect by level <= 500000
+  5  /
+
+500000 rows created.
+
+SQL> 
+SQL> create index salesi ON sales (sale_date);
+
+Index created.
+
+SQL> 
+SQL> insert into sales values (100000, to_date(sysdate+1000));
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> --
+SQL> -- Make sure that we don't let histograms help us out here
+SQL> --
+SQL> exec dbms_stats.gather_table_stats(user, 'sales', method_opt=>'for all columns size 1')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- Drop any SQL plan baselines from a previous run
+SQL> --
+SQL> @drop
+SQL> DECLARE
+  2    l_plans_dropped  PLS_INTEGER;
+  3  BEGIN
+  4    FOR REC IN (SELECT DISTINCT SQL_HANDLE FROM DBA_SQL_PLAN_BASELINES WHERE sql_text LIKE '%SPMTEST%')
+  5    LOOP
+  6        L_PLANS_DROPPED := DBMS_SPM.DROP_SQL_PLAN_BASELINE (
+  7          sql_handle => rec.sql_handle,
+  8          PLAN_NAME  => NULL);
+  9    END LOOP;
+ 10  END;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SQL> --
+SQL> -- Run our test query
+SQL> --
+SQL> @q1
+SQL> select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate);
+
+        ID SALE_DATE
+---------- ---------
+         1 24-APR-17
+         2 24-APR-17
+         3 24-APR-17
+         4 24-APR-17
+         5 24-APR-17
+         6 24-APR-17
+         7 24-APR-17
+         8 24-APR-17
+         9 24-APR-17
+        10 24-APR-17
+        11 24-APR-17
+        12 24-APR-17
+        13 24-APR-17
+        14 24-APR-17
+        15 24-APR-17
+        16 24-APR-17
+        17 24-APR-17
+        18 24-APR-17
+        19 24-APR-17
+        20 24-APR-17
+        21 24-APR-17
+        22 24-APR-17
+        23 24-APR-17
+        24 24-APR-17
+        25 24-APR-17
+        26 24-APR-17
+        27 24-APR-17
+        28 24-APR-17
+        29 24-APR-17
+        30 24-APR-17
+        31 24-APR-17
+        32 24-APR-17
+        33 24-APR-17
+        34 24-APR-17
+        35 24-APR-17
+        36 24-APR-17
+        37 24-APR-17
+        38 24-APR-17
+        39 24-APR-17
+        40 24-APR-17
+        41 24-APR-17
+        42 24-APR-17
+        43 24-APR-17
+        44 24-APR-17
+        45 24-APR-17
+        46 24-APR-17
+        47 24-APR-17
+        48 24-APR-17
+        49 24-APR-17
+        50 24-APR-17
+        51 24-APR-17
+        52 24-APR-17
+        53 24-APR-17
+        54 24-APR-17
+        55 24-APR-17
+        56 24-APR-17
+        57 24-APR-17
+        58 24-APR-17
+        59 24-APR-17
+        60 24-APR-17
+        61 24-APR-17
+        62 24-APR-17
+        63 24-APR-17
+        64 24-APR-17
+        65 24-APR-17
+        66 24-APR-17
+        67 24-APR-17
+        68 24-APR-17
+        69 24-APR-17
+        70 24-APR-17
+        71 24-APR-17
+        72 24-APR-17
+        73 24-APR-17
+        74 24-APR-17
+        75 24-APR-17
+        76 24-APR-17
+        77 24-APR-17
+        78 24-APR-17
+        79 24-APR-17
+        80 24-APR-17
+        81 24-APR-17
+        82 24-APR-17
+        83 24-APR-17
+        84 24-APR-17
+        85 24-APR-17
+        86 24-APR-17
+        87 24-APR-17
+        88 24-APR-17
+        89 24-APR-17
+        90 24-APR-17
+        91 24-APR-17
+        92 24-APR-17
+        93 24-APR-17
+        94 24-APR-17
+        95 24-APR-17
+        96 24-APR-17
+        97 24-APR-17
+        98 24-APR-17
+        99 24-APR-17
+       100 24-APR-17
+       101 24-APR-17
+       102 24-APR-17
+       103 24-APR-17
+       104 24-APR-17
+       105 24-APR-17
+       106 24-APR-17
+       107 24-APR-17
+       108 24-APR-17
+       109 24-APR-17
+       110 24-APR-17
+       111 24-APR-17
+       112 24-APR-17
+       113 24-APR-17
+       114 24-APR-17
+       115 24-APR-17
+       116 24-APR-17
+       117 24-APR-17
+       118 24-APR-17
+       119 24-APR-17
+       120 24-APR-17
+       121 24-APR-17
+       122 24-APR-17
+       123 24-APR-17
+       124 24-APR-17
+       125 24-APR-17
+       126 24-APR-17
+       127 24-APR-17
+       128 24-APR-17
+       129 24-APR-17
+       130 24-APR-17
+       131 24-APR-17
+       132 24-APR-17
+       133 24-APR-17
+       134 24-APR-17
+       135 24-APR-17
+       136 24-APR-17
+       137 24-APR-17
+       138 24-APR-17
+       139 24-APR-17
+       140 24-APR-17
+       141 24-APR-17
+       142 24-APR-17
+       143 24-APR-17
+       144 24-APR-17
+       145 24-APR-17
+       146 24-APR-17
+       147 24-APR-17
+       148 24-APR-17
+       149 24-APR-17
+       150 24-APR-17
+       151 24-APR-17
+       152 24-APR-17
+       153 24-APR-17
+       154 24-APR-17
+       155 24-APR-17
+       156 24-APR-17
+       157 24-APR-17
+       158 24-APR-17
+       159 24-APR-17
+       160 24-APR-17
+       161 24-APR-17
+       162 24-APR-17
+       163 24-APR-17
+       164 24-APR-17
+       165 24-APR-17
+       166 24-APR-17
+       167 24-APR-17
+       168 24-APR-17
+       169 24-APR-17
+       170 24-APR-17
+       171 24-APR-17
+       172 24-APR-17
+       173 24-APR-17
+       174 24-APR-17
+       175 24-APR-17
+       176 24-APR-17
+       177 24-APR-17
+       178 24-APR-17
+       179 24-APR-17
+       180 24-APR-17
+       181 24-APR-17
+       182 24-APR-17
+       183 24-APR-17
+       184 24-APR-17
+       185 24-APR-17
+       186 24-APR-17
+       187 24-APR-17
+       188 24-APR-17
+       189 24-APR-17
+       190 24-APR-17
+       191 24-APR-17
+       192 24-APR-17
+       193 24-APR-17
+       194 24-APR-17
+       195 24-APR-17
+       196 24-APR-17
+       197 24-APR-17
+       198 24-APR-17
+       199 24-APR-17
+       200 24-APR-17
+       201 24-APR-17
+       202 24-APR-17
+       203 24-APR-17
+       204 24-APR-17
+       205 24-APR-17
+       206 24-APR-17
+       207 24-APR-17
+       208 24-APR-17
+       209 24-APR-17
+       210 24-APR-17
+       211 24-APR-17
+       212 24-APR-17
+       213 24-APR-17
+       214 24-APR-17
+       215 24-APR-17
+       216 24-APR-17
+       217 24-APR-17
+       218 24-APR-17
+       219 24-APR-17
+       220 24-APR-17
+       221 24-APR-17
+       222 24-APR-17
+       223 24-APR-17
+       224 24-APR-17
+       225 24-APR-17
+       226 24-APR-17
+       227 24-APR-17
+       228 24-APR-17
+       229 24-APR-17
+       230 24-APR-17
+       231 24-APR-17
+       232 24-APR-17
+       233 24-APR-17
+       234 24-APR-17
+       235 24-APR-17
+       236 24-APR-17
+       237 24-APR-17
+       238 24-APR-17
+       239 24-APR-17
+       240 24-APR-17
+       241 24-APR-17
+       242 24-APR-17
+       243 24-APR-17
+       244 24-APR-17
+       245 24-APR-17
+       246 24-APR-17
+       247 24-APR-17
+       248 24-APR-17
+       249 24-APR-17
+       250 24-APR-17
+       251 24-APR-17
+       252 24-APR-17
+       253 24-APR-17
+       254 24-APR-17
+       255 24-APR-17
+       256 24-APR-17
+       257 24-APR-17
+       258 24-APR-17
+       259 24-APR-17
+       260 24-APR-17
+       261 24-APR-17
+       262 24-APR-17
+       263 24-APR-17
+       264 24-APR-17
+       265 24-APR-17
+       266 24-APR-17
+       267 24-APR-17
+       268 24-APR-17
+       269 24-APR-17
+       270 24-APR-17
+       271 24-APR-17
+       272 24-APR-17
+       273 24-APR-17
+       274 24-APR-17
+       275 24-APR-17
+       276 24-APR-17
+       277 24-APR-17
+       278 24-APR-17
+       279 24-APR-17
+       280 24-APR-17
+       281 24-APR-17
+       282 24-APR-17
+       283 24-APR-17
+       284 24-APR-17
+       285 24-APR-17
+       286 24-APR-17
+       287 24-APR-17
+       288 24-APR-17
+       289 24-APR-17
+       290 24-APR-17
+       291 24-APR-17
+       292 24-APR-17
+       293 24-APR-17
+       294 24-APR-17
+       295 24-APR-17
+       296 24-APR-17
+       297 24-APR-17
+       298 24-APR-17
+       299 24-APR-17
+       300 24-APR-17
+       301 24-APR-17
+       302 24-APR-17
+       303 24-APR-17
+       304 24-APR-17
+       305 24-APR-17
+       306 24-APR-17
+       307 24-APR-17
+       308 24-APR-17
+       309 24-APR-17
+       310 24-APR-17
+       311 24-APR-17
+       312 24-APR-17
+       313 24-APR-17
+       314 24-APR-17
+       315 24-APR-17
+       316 24-APR-17
+       317 24-APR-17
+       318 24-APR-17
+       319 24-APR-17
+       320 24-APR-17
+       321 24-APR-17
+       322 24-APR-17
+       323 24-APR-17
+       324 24-APR-17
+       325 24-APR-17
+       326 24-APR-17
+       327 24-APR-17
+       328 24-APR-17
+       329 24-APR-17
+       330 24-APR-17
+       331 24-APR-17
+       332 24-APR-17
+       333 24-APR-17
+       334 24-APR-17
+       335 24-APR-17
+       336 24-APR-17
+       337 24-APR-17
+       338 24-APR-17
+       339 24-APR-17
+       340 24-APR-17
+       341 24-APR-17
+       342 24-APR-17
+       343 24-APR-17
+       344 24-APR-17
+       345 24-APR-17
+       346 24-APR-17
+       347 24-APR-17
+       348 24-APR-17
+       349 24-APR-17
+       350 24-APR-17
+       351 24-APR-17
+       352 24-APR-17
+       353 24-APR-17
+       354 24-APR-17
+       355 24-APR-17
+       356 24-APR-17
+       357 24-APR-17
+       358 24-APR-17
+       359 24-APR-17
+       360 24-APR-17
+       361 24-APR-17
+       362 24-APR-17
+       363 24-APR-17
+       364 24-APR-17
+       365 24-APR-17
+       366 24-APR-17
+       367 24-APR-17
+       368 24-APR-17
+       369 24-APR-17
+       370 24-APR-17
+       371 24-APR-17
+       372 24-APR-17
+       373 24-APR-17
+       374 24-APR-17
+       375 24-APR-17
+       376 24-APR-17
+       377 24-APR-17
+       378 24-APR-17
+       379 24-APR-17
+       380 24-APR-17
+       381 24-APR-17
+       382 24-APR-17
+       383 24-APR-17
+       384 24-APR-17
+       385 24-APR-17
+       386 24-APR-17
+       387 24-APR-17
+       388 24-APR-17
+       389 24-APR-17
+       390 24-APR-17
+       391 24-APR-17
+       392 24-APR-17
+       393 24-APR-17
+       394 24-APR-17
+       395 24-APR-17
+       396 24-APR-17
+       397 24-APR-17
+       398 24-APR-17
+       399 24-APR-17
+       400 24-APR-17
+       401 24-APR-17
+       402 24-APR-17
+       403 24-APR-17
+       404 24-APR-17
+       405 24-APR-17
+       406 24-APR-17
+       407 24-APR-17
+       408 24-APR-17
+       409 24-APR-17
+       410 24-APR-17
+       411 24-APR-17
+       412 24-APR-17
+       413 24-APR-17
+       414 24-APR-17
+       415 24-APR-17
+       416 24-APR-17
+       417 24-APR-17
+       418 24-APR-17
+       419 24-APR-17
+       420 24-APR-17
+       421 24-APR-17
+       422 24-APR-17
+       423 24-APR-17
+       424 24-APR-17
+       425 24-APR-17
+       426 24-APR-17
+       427 24-APR-17
+       428 24-APR-17
+       429 24-APR-17
+       430 24-APR-17
+       431 24-APR-17
+       432 24-APR-17
+       433 24-APR-17
+       434 24-APR-17
+       435 24-APR-17
+       436 24-APR-17
+       437 24-APR-17
+       438 24-APR-17
+       439 24-APR-17
+       440 24-APR-17
+       441 24-APR-17
+       442 24-APR-17
+       443 24-APR-17
+       444 24-APR-17
+       445 24-APR-17
+       446 24-APR-17
+       447 24-APR-17
+       448 24-APR-17
+       449 24-APR-17
+       450 24-APR-17
+       451 24-APR-17
+       452 24-APR-17
+       453 24-APR-17
+       454 24-APR-17
+       455 24-APR-17
+       456 24-APR-17
+       457 24-APR-17
+       458 24-APR-17
+       459 24-APR-17
+       460 24-APR-17
+       461 24-APR-17
+       462 24-APR-17
+       463 24-APR-17
+       464 24-APR-17
+       465 24-APR-17
+       466 24-APR-17
+       467 24-APR-17
+       468 24-APR-17
+       469 24-APR-17
+       470 24-APR-17
+       471 24-APR-17
+       472 24-APR-17
+       473 24-APR-17
+       474 24-APR-17
+       475 24-APR-17
+       476 24-APR-17
+       477 24-APR-17
+       478 24-APR-17
+       479 24-APR-17
+       480 24-APR-17
+       481 24-APR-17
+       482 24-APR-17
+       483 24-APR-17
+       484 24-APR-17
+       485 24-APR-17
+       486 24-APR-17
+       487 24-APR-17
+       488 24-APR-17
+       489 24-APR-17
+       490 24-APR-17
+       491 24-APR-17
+       492 24-APR-17
+       493 24-APR-17
+       494 24-APR-17
+       495 24-APR-17
+       496 24-APR-17
+       497 24-APR-17
+       498 24-APR-17
+       499 24-APR-17
+       500 24-APR-17
+       501 24-APR-17
+       502 24-APR-17
+       503 24-APR-17
+       504 24-APR-17
+       505 24-APR-17
+       506 24-APR-17
+       507 24-APR-17
+       508 24-APR-17
+       509 24-APR-17
+       510 24-APR-17
+       511 24-APR-17
+       512 24-APR-17
+       513 24-APR-17
+       514 24-APR-17
+       515 24-APR-17
+       516 24-APR-17
+       517 24-APR-17
+       518 24-APR-17
+       519 24-APR-17
+       520 24-APR-17
+       521 24-APR-17
+       522 24-APR-17
+       523 24-APR-17
+       524 24-APR-17
+       525 24-APR-17
+       526 24-APR-17
+       527 24-APR-17
+       528 24-APR-17
+       529 24-APR-17
+       530 24-APR-17
+       531 24-APR-17
+       532 24-APR-17
+       533 24-APR-17
+       534 24-APR-17
+       535 24-APR-17
+       536 24-APR-17
+       537 24-APR-17
+       538 24-APR-17
+       539 24-APR-17
+       540 24-APR-17
+       541 24-APR-17
+       542 24-APR-17
+       543 24-APR-17
+       544 24-APR-17
+       545 24-APR-17
+       546 24-APR-17
+       547 24-APR-17
+       548 24-APR-17
+       549 24-APR-17
+       550 24-APR-17
+       551 24-APR-17
+       552 24-APR-17
+       553 24-APR-17
+       554 24-APR-17
+       555 24-APR-17
+       556 24-APR-17
+       557 24-APR-17
+       558 24-APR-17
+       559 24-APR-17
+       560 24-APR-17
+       561 24-APR-17
+       562 24-APR-17
+       563 24-APR-17
+       564 24-APR-17
+       565 24-APR-17
+       566 24-APR-17
+       567 24-APR-17
+       568 24-APR-17
+       569 24-APR-17
+       570 24-APR-17
+       571 24-APR-17
+       572 24-APR-17
+       573 24-APR-17
+       574 24-APR-17
+       575 24-APR-17
+       576 24-APR-17
+       577 24-APR-17
+       578 24-APR-17
+       579 24-APR-17
+       580 24-APR-17
+       581 24-APR-17
+       582 24-APR-17
+       583 24-APR-17
+       584 24-APR-17
+       585 24-APR-17
+       586 24-APR-17
+       587 24-APR-17
+       588 24-APR-17
+       589 24-APR-17
+       590 24-APR-17
+       591 24-APR-17
+       592 24-APR-17
+       593 24-APR-17
+       594 24-APR-17
+       595 24-APR-17
+       596 24-APR-17
+       597 24-APR-17
+       598 24-APR-17
+       599 24-APR-17
+       600 24-APR-17
+       601 24-APR-17
+       602 24-APR-17
+       603 24-APR-17
+       604 24-APR-17
+       605 24-APR-17
+       606 24-APR-17
+       607 24-APR-17
+       608 24-APR-17
+       609 24-APR-17
+       610 24-APR-17
+       611 24-APR-17
+       612 24-APR-17
+       613 24-APR-17
+       614 24-APR-17
+       615 24-APR-17
+       616 24-APR-17
+       617 24-APR-17
+       618 24-APR-17
+       619 24-APR-17
+       620 24-APR-17
+       621 24-APR-17
+       622 24-APR-17
+       623 24-APR-17
+       624 24-APR-17
+       625 24-APR-17
+       626 24-APR-17
+       627 24-APR-17
+       628 24-APR-17
+       629 24-APR-17
+       630 24-APR-17
+       631 24-APR-17
+       632 24-APR-17
+       633 24-APR-17
+       634 24-APR-17
+       635 24-APR-17
+       636 24-APR-17
+       637 24-APR-17
+       638 24-APR-17
+       639 24-APR-17
+       640 24-APR-17
+       641 24-APR-17
+       642 24-APR-17
+       643 24-APR-17
+       644 24-APR-17
+       645 24-APR-17
+       646 24-APR-17
+       647 24-APR-17
+       648 24-APR-17
+       649 24-APR-17
+       650 24-APR-17
+       651 24-APR-17
+       652 24-APR-17
+       653 24-APR-17
+    100000 19-JAN-20
+
+654 rows selected.
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(format=>'last'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2dd6sf2pg9v57, child number 1
+-------------------------------------
+select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate)
+
+Plan hash value: 781590677
+
+---------------------------------------------------------------------------
+| Id  | Operation         | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |       |       |       |   351 (100)|          |
+|*  1 |  TABLE ACCESS FULL| SALES |   333K|  4233K|   351   (3)| 00:00:01 |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("SALE_DATE">=TRUNC(SYSDATE@!))
+
+
+18 rows selected.
+
+SQL> 
+SQL> --
+SQL> -- See plan above - We get a FULL scan: the cardinality estimate is wrong
+SQL> --
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> --
+SQL> -- Let'srun a version of Q1 with a hint to give us the plan we
+SQL> -- we want. Call this query "Q2".
+SQL> --
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> @q2
+SQL> select /* SPMTEST */ /*+ INDEX(sales salesi) */ * from sales WHERE sale_date >= trunc(sysdate);
+
+        ID SALE_DATE
+---------- ---------
+       653 24-APR-17
+       652 24-APR-17
+       651 24-APR-17
+       650 24-APR-17
+       649 24-APR-17
+       648 24-APR-17
+       647 24-APR-17
+       646 24-APR-17
+       645 24-APR-17
+       644 24-APR-17
+       643 24-APR-17
+       642 24-APR-17
+       641 24-APR-17
+       640 24-APR-17
+       639 24-APR-17
+       638 24-APR-17
+       637 24-APR-17
+       636 24-APR-17
+       635 24-APR-17
+       634 24-APR-17
+       633 24-APR-17
+       632 24-APR-17
+       631 24-APR-17
+       630 24-APR-17
+       629 24-APR-17
+       628 24-APR-17
+       627 24-APR-17
+       626 24-APR-17
+       625 24-APR-17
+       624 24-APR-17
+       623 24-APR-17
+       622 24-APR-17
+       621 24-APR-17
+       620 24-APR-17
+       619 24-APR-17
+       618 24-APR-17
+       617 24-APR-17
+       616 24-APR-17
+       615 24-APR-17
+       614 24-APR-17
+       613 24-APR-17
+       612 24-APR-17
+       611 24-APR-17
+       610 24-APR-17
+       609 24-APR-17
+       608 24-APR-17
+       607 24-APR-17
+       606 24-APR-17
+       605 24-APR-17
+       604 24-APR-17
+       603 24-APR-17
+       602 24-APR-17
+       601 24-APR-17
+       600 24-APR-17
+       599 24-APR-17
+       598 24-APR-17
+       597 24-APR-17
+       596 24-APR-17
+       595 24-APR-17
+       594 24-APR-17
+       593 24-APR-17
+       592 24-APR-17
+       591 24-APR-17
+       590 24-APR-17
+       589 24-APR-17
+       588 24-APR-17
+       587 24-APR-17
+       586 24-APR-17
+       585 24-APR-17
+       584 24-APR-17
+       583 24-APR-17
+       582 24-APR-17
+       581 24-APR-17
+       580 24-APR-17
+       579 24-APR-17
+       578 24-APR-17
+       577 24-APR-17
+       576 24-APR-17
+       575 24-APR-17
+       574 24-APR-17
+       573 24-APR-17
+       572 24-APR-17
+       571 24-APR-17
+       570 24-APR-17
+       569 24-APR-17
+       568 24-APR-17
+       567 24-APR-17
+       566 24-APR-17
+       565 24-APR-17
+       564 24-APR-17
+       563 24-APR-17
+       562 24-APR-17
+       561 24-APR-17
+       560 24-APR-17
+       559 24-APR-17
+       558 24-APR-17
+       557 24-APR-17
+       556 24-APR-17
+       555 24-APR-17
+       554 24-APR-17
+       553 24-APR-17
+       552 24-APR-17
+       551 24-APR-17
+       550 24-APR-17
+       549 24-APR-17
+       548 24-APR-17
+       547 24-APR-17
+       546 24-APR-17
+       545 24-APR-17
+       544 24-APR-17
+       543 24-APR-17
+       542 24-APR-17
+       541 24-APR-17
+       540 24-APR-17
+       539 24-APR-17
+       538 24-APR-17
+       537 24-APR-17
+       536 24-APR-17
+       535 24-APR-17
+       534 24-APR-17
+       533 24-APR-17
+       532 24-APR-17
+       531 24-APR-17
+       530 24-APR-17
+       529 24-APR-17
+       528 24-APR-17
+       527 24-APR-17
+       526 24-APR-17
+       525 24-APR-17
+       524 24-APR-17
+       523 24-APR-17
+       522 24-APR-17
+       521 24-APR-17
+       520 24-APR-17
+       519 24-APR-17
+       518 24-APR-17
+       517 24-APR-17
+       516 24-APR-17
+       515 24-APR-17
+       514 24-APR-17
+       513 24-APR-17
+       512 24-APR-17
+       511 24-APR-17
+       510 24-APR-17
+       509 24-APR-17
+       508 24-APR-17
+       507 24-APR-17
+       506 24-APR-17
+       505 24-APR-17
+       504 24-APR-17
+       503 24-APR-17
+       502 24-APR-17
+       501 24-APR-17
+       500 24-APR-17
+       499 24-APR-17
+       498 24-APR-17
+       497 24-APR-17
+       496 24-APR-17
+       495 24-APR-17
+       494 24-APR-17
+       493 24-APR-17
+       492 24-APR-17
+       491 24-APR-17
+       490 24-APR-17
+       489 24-APR-17
+       488 24-APR-17
+       487 24-APR-17
+       486 24-APR-17
+       485 24-APR-17
+       484 24-APR-17
+       483 24-APR-17
+       482 24-APR-17
+       481 24-APR-17
+       480 24-APR-17
+       479 24-APR-17
+       478 24-APR-17
+       477 24-APR-17
+       476 24-APR-17
+       475 24-APR-17
+       474 24-APR-17
+       473 24-APR-17
+       472 24-APR-17
+       471 24-APR-17
+       470 24-APR-17
+       469 24-APR-17
+       468 24-APR-17
+       467 24-APR-17
+       466 24-APR-17
+       465 24-APR-17
+       464 24-APR-17
+       463 24-APR-17
+       462 24-APR-17
+       461 24-APR-17
+       460 24-APR-17
+       459 24-APR-17
+       458 24-APR-17
+       457 24-APR-17
+       456 24-APR-17
+       455 24-APR-17
+       454 24-APR-17
+       453 24-APR-17
+       452 24-APR-17
+       451 24-APR-17
+       450 24-APR-17
+       449 24-APR-17
+       448 24-APR-17
+       447 24-APR-17
+       446 24-APR-17
+       445 24-APR-17
+       444 24-APR-17
+       443 24-APR-17
+       442 24-APR-17
+       441 24-APR-17
+       440 24-APR-17
+       439 24-APR-17
+       438 24-APR-17
+       437 24-APR-17
+       436 24-APR-17
+       435 24-APR-17
+       434 24-APR-17
+       433 24-APR-17
+       432 24-APR-17
+       431 24-APR-17
+       430 24-APR-17
+       429 24-APR-17
+       428 24-APR-17
+       427 24-APR-17
+       426 24-APR-17
+       425 24-APR-17
+       424 24-APR-17
+       423 24-APR-17
+       422 24-APR-17
+       421 24-APR-17
+       420 24-APR-17
+       419 24-APR-17
+       418 24-APR-17
+       417 24-APR-17
+       416 24-APR-17
+       415 24-APR-17
+       414 24-APR-17
+       413 24-APR-17
+       412 24-APR-17
+       411 24-APR-17
+       410 24-APR-17
+       409 24-APR-17
+       408 24-APR-17
+       407 24-APR-17
+       406 24-APR-17
+       405 24-APR-17
+       404 24-APR-17
+       403 24-APR-17
+       402 24-APR-17
+       401 24-APR-17
+       400 24-APR-17
+       399 24-APR-17
+       398 24-APR-17
+       397 24-APR-17
+       396 24-APR-17
+       395 24-APR-17
+       394 24-APR-17
+       393 24-APR-17
+       392 24-APR-17
+       391 24-APR-17
+       390 24-APR-17
+       389 24-APR-17
+       388 24-APR-17
+       387 24-APR-17
+       386 24-APR-17
+       385 24-APR-17
+       384 24-APR-17
+       383 24-APR-17
+       382 24-APR-17
+       381 24-APR-17
+       380 24-APR-17
+       379 24-APR-17
+       378 24-APR-17
+       377 24-APR-17
+       376 24-APR-17
+       375 24-APR-17
+       374 24-APR-17
+       373 24-APR-17
+       372 24-APR-17
+       371 24-APR-17
+       370 24-APR-17
+       369 24-APR-17
+       368 24-APR-17
+       367 24-APR-17
+       366 24-APR-17
+       365 24-APR-17
+       364 24-APR-17
+       363 24-APR-17
+       362 24-APR-17
+       361 24-APR-17
+       360 24-APR-17
+       359 24-APR-17
+       358 24-APR-17
+       357 24-APR-17
+       356 24-APR-17
+       355 24-APR-17
+       354 24-APR-17
+       353 24-APR-17
+       352 24-APR-17
+       351 24-APR-17
+       350 24-APR-17
+       349 24-APR-17
+       348 24-APR-17
+       347 24-APR-17
+       346 24-APR-17
+       345 24-APR-17
+       344 24-APR-17
+       343 24-APR-17
+       342 24-APR-17
+       341 24-APR-17
+       340 24-APR-17
+       339 24-APR-17
+       338 24-APR-17
+       337 24-APR-17
+       336 24-APR-17
+       335 24-APR-17
+       334 24-APR-17
+       333 24-APR-17
+       332 24-APR-17
+       331 24-APR-17
+       330 24-APR-17
+       329 24-APR-17
+       328 24-APR-17
+       327 24-APR-17
+       326 24-APR-17
+       325 24-APR-17
+       324 24-APR-17
+       323 24-APR-17
+       322 24-APR-17
+       321 24-APR-17
+       320 24-APR-17
+       319 24-APR-17
+       318 24-APR-17
+       317 24-APR-17
+       316 24-APR-17
+       315 24-APR-17
+       314 24-APR-17
+       313 24-APR-17
+       312 24-APR-17
+       311 24-APR-17
+       310 24-APR-17
+       309 24-APR-17
+       308 24-APR-17
+       307 24-APR-17
+       306 24-APR-17
+       305 24-APR-17
+       304 24-APR-17
+       303 24-APR-17
+       302 24-APR-17
+       301 24-APR-17
+       300 24-APR-17
+       299 24-APR-17
+       298 24-APR-17
+       297 24-APR-17
+       296 24-APR-17
+       295 24-APR-17
+       294 24-APR-17
+       293 24-APR-17
+       292 24-APR-17
+       291 24-APR-17
+       290 24-APR-17
+       289 24-APR-17
+       288 24-APR-17
+       287 24-APR-17
+       286 24-APR-17
+       285 24-APR-17
+       284 24-APR-17
+       283 24-APR-17
+       282 24-APR-17
+       281 24-APR-17
+       280 24-APR-17
+       279 24-APR-17
+       278 24-APR-17
+       277 24-APR-17
+       276 24-APR-17
+       275 24-APR-17
+       274 24-APR-17
+       273 24-APR-17
+       272 24-APR-17
+       271 24-APR-17
+       270 24-APR-17
+       269 24-APR-17
+       268 24-APR-17
+       267 24-APR-17
+       266 24-APR-17
+       265 24-APR-17
+       264 24-APR-17
+       263 24-APR-17
+       262 24-APR-17
+       261 24-APR-17
+       260 24-APR-17
+       259 24-APR-17
+       258 24-APR-17
+       257 24-APR-17
+       256 24-APR-17
+       255 24-APR-17
+       254 24-APR-17
+       253 24-APR-17
+       252 24-APR-17
+       251 24-APR-17
+       250 24-APR-17
+       249 24-APR-17
+       248 24-APR-17
+       247 24-APR-17
+       246 24-APR-17
+       245 24-APR-17
+       244 24-APR-17
+       243 24-APR-17
+       242 24-APR-17
+       241 24-APR-17
+       240 24-APR-17
+       239 24-APR-17
+       238 24-APR-17
+       237 24-APR-17
+       236 24-APR-17
+       235 24-APR-17
+       234 24-APR-17
+       233 24-APR-17
+       232 24-APR-17
+       231 24-APR-17
+       230 24-APR-17
+       229 24-APR-17
+       228 24-APR-17
+       227 24-APR-17
+       226 24-APR-17
+       225 24-APR-17
+       224 24-APR-17
+       223 24-APR-17
+       222 24-APR-17
+       221 24-APR-17
+       220 24-APR-17
+       219 24-APR-17
+       218 24-APR-17
+       217 24-APR-17
+       216 24-APR-17
+       215 24-APR-17
+       214 24-APR-17
+       213 24-APR-17
+       212 24-APR-17
+       211 24-APR-17
+       210 24-APR-17
+       209 24-APR-17
+       208 24-APR-17
+       207 24-APR-17
+       206 24-APR-17
+       205 24-APR-17
+       204 24-APR-17
+       203 24-APR-17
+       202 24-APR-17
+       201 24-APR-17
+       200 24-APR-17
+       199 24-APR-17
+       198 24-APR-17
+       197 24-APR-17
+       196 24-APR-17
+       195 24-APR-17
+       194 24-APR-17
+       193 24-APR-17
+       192 24-APR-17
+       191 24-APR-17
+       190 24-APR-17
+       189 24-APR-17
+       188 24-APR-17
+       187 24-APR-17
+       186 24-APR-17
+       185 24-APR-17
+       184 24-APR-17
+       183 24-APR-17
+       182 24-APR-17
+       181 24-APR-17
+       180 24-APR-17
+       179 24-APR-17
+       178 24-APR-17
+       177 24-APR-17
+       176 24-APR-17
+       175 24-APR-17
+       174 24-APR-17
+       173 24-APR-17
+       172 24-APR-17
+       171 24-APR-17
+       170 24-APR-17
+       169 24-APR-17
+       168 24-APR-17
+       167 24-APR-17
+       166 24-APR-17
+       165 24-APR-17
+       164 24-APR-17
+       163 24-APR-17
+       162 24-APR-17
+       161 24-APR-17
+       160 24-APR-17
+       159 24-APR-17
+       158 24-APR-17
+       157 24-APR-17
+       156 24-APR-17
+       155 24-APR-17
+       154 24-APR-17
+       153 24-APR-17
+       152 24-APR-17
+       151 24-APR-17
+       150 24-APR-17
+       149 24-APR-17
+       148 24-APR-17
+       147 24-APR-17
+       146 24-APR-17
+       145 24-APR-17
+       144 24-APR-17
+       143 24-APR-17
+       142 24-APR-17
+       141 24-APR-17
+       140 24-APR-17
+       139 24-APR-17
+       138 24-APR-17
+       137 24-APR-17
+       136 24-APR-17
+       135 24-APR-17
+       134 24-APR-17
+       133 24-APR-17
+       132 24-APR-17
+       131 24-APR-17
+       130 24-APR-17
+       129 24-APR-17
+       128 24-APR-17
+       127 24-APR-17
+       126 24-APR-17
+       125 24-APR-17
+       124 24-APR-17
+       123 24-APR-17
+       122 24-APR-17
+       121 24-APR-17
+       120 24-APR-17
+       119 24-APR-17
+       118 24-APR-17
+       117 24-APR-17
+       116 24-APR-17
+       115 24-APR-17
+       114 24-APR-17
+       113 24-APR-17
+       112 24-APR-17
+       111 24-APR-17
+       110 24-APR-17
+       109 24-APR-17
+       108 24-APR-17
+       107 24-APR-17
+       106 24-APR-17
+       105 24-APR-17
+       104 24-APR-17
+       103 24-APR-17
+       102 24-APR-17
+       101 24-APR-17
+       100 24-APR-17
+        99 24-APR-17
+        98 24-APR-17
+        97 24-APR-17
+        96 24-APR-17
+        95 24-APR-17
+        94 24-APR-17
+        93 24-APR-17
+        92 24-APR-17
+        91 24-APR-17
+        90 24-APR-17
+        89 24-APR-17
+        88 24-APR-17
+        87 24-APR-17
+        86 24-APR-17
+        85 24-APR-17
+        84 24-APR-17
+        83 24-APR-17
+        82 24-APR-17
+        81 24-APR-17
+        80 24-APR-17
+        79 24-APR-17
+        78 24-APR-17
+        77 24-APR-17
+        76 24-APR-17
+        75 24-APR-17
+        74 24-APR-17
+        73 24-APR-17
+        72 24-APR-17
+        71 24-APR-17
+        70 24-APR-17
+        69 24-APR-17
+        68 24-APR-17
+        67 24-APR-17
+        66 24-APR-17
+        65 24-APR-17
+        64 24-APR-17
+        63 24-APR-17
+        62 24-APR-17
+        61 24-APR-17
+        60 24-APR-17
+        59 24-APR-17
+        58 24-APR-17
+        57 24-APR-17
+        56 24-APR-17
+        55 24-APR-17
+        54 24-APR-17
+        53 24-APR-17
+        52 24-APR-17
+        51 24-APR-17
+        50 24-APR-17
+        49 24-APR-17
+        48 24-APR-17
+        47 24-APR-17
+        46 24-APR-17
+        45 24-APR-17
+        44 24-APR-17
+        43 24-APR-17
+        42 24-APR-17
+        41 24-APR-17
+        40 24-APR-17
+        39 24-APR-17
+        38 24-APR-17
+        37 24-APR-17
+        36 24-APR-17
+        35 24-APR-17
+        34 24-APR-17
+        33 24-APR-17
+        32 24-APR-17
+        31 24-APR-17
+        30 24-APR-17
+        29 24-APR-17
+        28 24-APR-17
+        27 24-APR-17
+        26 24-APR-17
+        25 24-APR-17
+        24 24-APR-17
+        23 24-APR-17
+        22 24-APR-17
+        21 24-APR-17
+        20 24-APR-17
+        19 24-APR-17
+        18 24-APR-17
+        17 24-APR-17
+        16 24-APR-17
+        15 24-APR-17
+        14 24-APR-17
+        13 24-APR-17
+        12 24-APR-17
+        11 24-APR-17
+        10 24-APR-17
+         9 24-APR-17
+         8 24-APR-17
+         7 24-APR-17
+         6 24-APR-17
+         5 24-APR-17
+         4 24-APR-17
+         3 24-APR-17
+         2 24-APR-17
+         1 24-APR-17
+    100000 19-JAN-20
+
+654 rows selected.
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(format=>'last'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  4s5bm2bgy0g0v, child number 0
+-------------------------------------
+select /* SPMTEST */ /*+ INDEX(sales salesi) */ * from sales WHERE
+sale_date >= trunc(sysdate)
+
+Plan hash value: 578151937
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                   | Name   | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |        |       |       |  1720 (100)|          |
+|   1 |  TABLE ACCESS BY INDEX ROWID| SALES  |   333K|  4233K|  1720   (1)| 00:00:01 |
+|*  2 |   INDEX RANGE SCAN          | SALESI |   333K|       |   890   (1)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("SALE_DATE">=TRUNC(SYSDATE@!))
+
+
+20 rows selected.
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- Q2 is similar to Q1 but there is a hint
+SQL> -- We get the INDEX access method we want
+SQL> --
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- We are now going to "map" the query plan of Q2
+SQL> -- against Q1 so that Q1 will aquire the plan we want.
+SQL> --
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- Start by creating a SQL plan baseline for Q1
+SQL> --
+SQL> @makeb
+SQL> declare
+  2    ret varchar2(100);
+  3  begin
+  4     ret := dbms_spm.load_plans_from_cursor_cache(
+  5                   sql_id=>'2dd6sf2pg9v57',    -- Create baseline for Q1
+  6                   enabled=>'YES');
+  7  end;
+  8  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> --
+SQL> -- Check the baseline
+SQL> --
+SQL> @base
+SQL> set linesize 200
+SQL> column sql_handle format a30
+SQL> column plan_name format a30
+SQL> column sql_text format a80
+SQL> column signature format 999999999999999999999999999
+SQL> 
+SQL> SELECT signature,sql_handle,plan_name,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPMTEST%';
+
+                   SIGNATURE SQL_HANDLE                     PLAN_NAME                      SQL_TEXT                                                                         ENA ACC
+---------------------------- ------------------------------ ------------------------------ -------------------------------------------------------------------------------- --- ---
+        13077052937707607208 SQL_b57b065c950a54a8           SQL_PLAN_bays6bkahnp5897367831 select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate)              YES YES
+
+SQL> 
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> @q1
+SQL> select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate);
+
+        ID SALE_DATE
+---------- ---------
+         1 24-APR-17
+         2 24-APR-17
+         3 24-APR-17
+         4 24-APR-17
+         5 24-APR-17
+         6 24-APR-17
+         7 24-APR-17
+         8 24-APR-17
+         9 24-APR-17
+        10 24-APR-17
+        11 24-APR-17
+        12 24-APR-17
+        13 24-APR-17
+        14 24-APR-17
+        15 24-APR-17
+        16 24-APR-17
+        17 24-APR-17
+        18 24-APR-17
+        19 24-APR-17
+        20 24-APR-17
+        21 24-APR-17
+        22 24-APR-17
+        23 24-APR-17
+        24 24-APR-17
+        25 24-APR-17
+        26 24-APR-17
+        27 24-APR-17
+        28 24-APR-17
+        29 24-APR-17
+        30 24-APR-17
+        31 24-APR-17
+        32 24-APR-17
+        33 24-APR-17
+        34 24-APR-17
+        35 24-APR-17
+        36 24-APR-17
+        37 24-APR-17
+        38 24-APR-17
+        39 24-APR-17
+        40 24-APR-17
+        41 24-APR-17
+        42 24-APR-17
+        43 24-APR-17
+        44 24-APR-17
+        45 24-APR-17
+        46 24-APR-17
+        47 24-APR-17
+        48 24-APR-17
+        49 24-APR-17
+        50 24-APR-17
+        51 24-APR-17
+        52 24-APR-17
+        53 24-APR-17
+        54 24-APR-17
+        55 24-APR-17
+        56 24-APR-17
+        57 24-APR-17
+        58 24-APR-17
+        59 24-APR-17
+        60 24-APR-17
+        61 24-APR-17
+        62 24-APR-17
+        63 24-APR-17
+        64 24-APR-17
+        65 24-APR-17
+        66 24-APR-17
+        67 24-APR-17
+        68 24-APR-17
+        69 24-APR-17
+        70 24-APR-17
+        71 24-APR-17
+        72 24-APR-17
+        73 24-APR-17
+        74 24-APR-17
+        75 24-APR-17
+        76 24-APR-17
+        77 24-APR-17
+        78 24-APR-17
+        79 24-APR-17
+        80 24-APR-17
+        81 24-APR-17
+        82 24-APR-17
+        83 24-APR-17
+        84 24-APR-17
+        85 24-APR-17
+        86 24-APR-17
+        87 24-APR-17
+        88 24-APR-17
+        89 24-APR-17
+        90 24-APR-17
+        91 24-APR-17
+        92 24-APR-17
+        93 24-APR-17
+        94 24-APR-17
+        95 24-APR-17
+        96 24-APR-17
+        97 24-APR-17
+        98 24-APR-17
+        99 24-APR-17
+       100 24-APR-17
+       101 24-APR-17
+       102 24-APR-17
+       103 24-APR-17
+       104 24-APR-17
+       105 24-APR-17
+       106 24-APR-17
+       107 24-APR-17
+       108 24-APR-17
+       109 24-APR-17
+       110 24-APR-17
+       111 24-APR-17
+       112 24-APR-17
+       113 24-APR-17
+       114 24-APR-17
+       115 24-APR-17
+       116 24-APR-17
+       117 24-APR-17
+       118 24-APR-17
+       119 24-APR-17
+       120 24-APR-17
+       121 24-APR-17
+       122 24-APR-17
+       123 24-APR-17
+       124 24-APR-17
+       125 24-APR-17
+       126 24-APR-17
+       127 24-APR-17
+       128 24-APR-17
+       129 24-APR-17
+       130 24-APR-17
+       131 24-APR-17
+       132 24-APR-17
+       133 24-APR-17
+       134 24-APR-17
+       135 24-APR-17
+       136 24-APR-17
+       137 24-APR-17
+       138 24-APR-17
+       139 24-APR-17
+       140 24-APR-17
+       141 24-APR-17
+       142 24-APR-17
+       143 24-APR-17
+       144 24-APR-17
+       145 24-APR-17
+       146 24-APR-17
+       147 24-APR-17
+       148 24-APR-17
+       149 24-APR-17
+       150 24-APR-17
+       151 24-APR-17
+       152 24-APR-17
+       153 24-APR-17
+       154 24-APR-17
+       155 24-APR-17
+       156 24-APR-17
+       157 24-APR-17
+       158 24-APR-17
+       159 24-APR-17
+       160 24-APR-17
+       161 24-APR-17
+       162 24-APR-17
+       163 24-APR-17
+       164 24-APR-17
+       165 24-APR-17
+       166 24-APR-17
+       167 24-APR-17
+       168 24-APR-17
+       169 24-APR-17
+       170 24-APR-17
+       171 24-APR-17
+       172 24-APR-17
+       173 24-APR-17
+       174 24-APR-17
+       175 24-APR-17
+       176 24-APR-17
+       177 24-APR-17
+       178 24-APR-17
+       179 24-APR-17
+       180 24-APR-17
+       181 24-APR-17
+       182 24-APR-17
+       183 24-APR-17
+       184 24-APR-17
+       185 24-APR-17
+       186 24-APR-17
+       187 24-APR-17
+       188 24-APR-17
+       189 24-APR-17
+       190 24-APR-17
+       191 24-APR-17
+       192 24-APR-17
+       193 24-APR-17
+       194 24-APR-17
+       195 24-APR-17
+       196 24-APR-17
+       197 24-APR-17
+       198 24-APR-17
+       199 24-APR-17
+       200 24-APR-17
+       201 24-APR-17
+       202 24-APR-17
+       203 24-APR-17
+       204 24-APR-17
+       205 24-APR-17
+       206 24-APR-17
+       207 24-APR-17
+       208 24-APR-17
+       209 24-APR-17
+       210 24-APR-17
+       211 24-APR-17
+       212 24-APR-17
+       213 24-APR-17
+       214 24-APR-17
+       215 24-APR-17
+       216 24-APR-17
+       217 24-APR-17
+       218 24-APR-17
+       219 24-APR-17
+       220 24-APR-17
+       221 24-APR-17
+       222 24-APR-17
+       223 24-APR-17
+       224 24-APR-17
+       225 24-APR-17
+       226 24-APR-17
+       227 24-APR-17
+       228 24-APR-17
+       229 24-APR-17
+       230 24-APR-17
+       231 24-APR-17
+       232 24-APR-17
+       233 24-APR-17
+       234 24-APR-17
+       235 24-APR-17
+       236 24-APR-17
+       237 24-APR-17
+       238 24-APR-17
+       239 24-APR-17
+       240 24-APR-17
+       241 24-APR-17
+       242 24-APR-17
+       243 24-APR-17
+       244 24-APR-17
+       245 24-APR-17
+       246 24-APR-17
+       247 24-APR-17
+       248 24-APR-17
+       249 24-APR-17
+       250 24-APR-17
+       251 24-APR-17
+       252 24-APR-17
+       253 24-APR-17
+       254 24-APR-17
+       255 24-APR-17
+       256 24-APR-17
+       257 24-APR-17
+       258 24-APR-17
+       259 24-APR-17
+       260 24-APR-17
+       261 24-APR-17
+       262 24-APR-17
+       263 24-APR-17
+       264 24-APR-17
+       265 24-APR-17
+       266 24-APR-17
+       267 24-APR-17
+       268 24-APR-17
+       269 24-APR-17
+       270 24-APR-17
+       271 24-APR-17
+       272 24-APR-17
+       273 24-APR-17
+       274 24-APR-17
+       275 24-APR-17
+       276 24-APR-17
+       277 24-APR-17
+       278 24-APR-17
+       279 24-APR-17
+       280 24-APR-17
+       281 24-APR-17
+       282 24-APR-17
+       283 24-APR-17
+       284 24-APR-17
+       285 24-APR-17
+       286 24-APR-17
+       287 24-APR-17
+       288 24-APR-17
+       289 24-APR-17
+       290 24-APR-17
+       291 24-APR-17
+       292 24-APR-17
+       293 24-APR-17
+       294 24-APR-17
+       295 24-APR-17
+       296 24-APR-17
+       297 24-APR-17
+       298 24-APR-17
+       299 24-APR-17
+       300 24-APR-17
+       301 24-APR-17
+       302 24-APR-17
+       303 24-APR-17
+       304 24-APR-17
+       305 24-APR-17
+       306 24-APR-17
+       307 24-APR-17
+       308 24-APR-17
+       309 24-APR-17
+       310 24-APR-17
+       311 24-APR-17
+       312 24-APR-17
+       313 24-APR-17
+       314 24-APR-17
+       315 24-APR-17
+       316 24-APR-17
+       317 24-APR-17
+       318 24-APR-17
+       319 24-APR-17
+       320 24-APR-17
+       321 24-APR-17
+       322 24-APR-17
+       323 24-APR-17
+       324 24-APR-17
+       325 24-APR-17
+       326 24-APR-17
+       327 24-APR-17
+       328 24-APR-17
+       329 24-APR-17
+       330 24-APR-17
+       331 24-APR-17
+       332 24-APR-17
+       333 24-APR-17
+       334 24-APR-17
+       335 24-APR-17
+       336 24-APR-17
+       337 24-APR-17
+       338 24-APR-17
+       339 24-APR-17
+       340 24-APR-17
+       341 24-APR-17
+       342 24-APR-17
+       343 24-APR-17
+       344 24-APR-17
+       345 24-APR-17
+       346 24-APR-17
+       347 24-APR-17
+       348 24-APR-17
+       349 24-APR-17
+       350 24-APR-17
+       351 24-APR-17
+       352 24-APR-17
+       353 24-APR-17
+       354 24-APR-17
+       355 24-APR-17
+       356 24-APR-17
+       357 24-APR-17
+       358 24-APR-17
+       359 24-APR-17
+       360 24-APR-17
+       361 24-APR-17
+       362 24-APR-17
+       363 24-APR-17
+       364 24-APR-17
+       365 24-APR-17
+       366 24-APR-17
+       367 24-APR-17
+       368 24-APR-17
+       369 24-APR-17
+       370 24-APR-17
+       371 24-APR-17
+       372 24-APR-17
+       373 24-APR-17
+       374 24-APR-17
+       375 24-APR-17
+       376 24-APR-17
+       377 24-APR-17
+       378 24-APR-17
+       379 24-APR-17
+       380 24-APR-17
+       381 24-APR-17
+       382 24-APR-17
+       383 24-APR-17
+       384 24-APR-17
+       385 24-APR-17
+       386 24-APR-17
+       387 24-APR-17
+       388 24-APR-17
+       389 24-APR-17
+       390 24-APR-17
+       391 24-APR-17
+       392 24-APR-17
+       393 24-APR-17
+       394 24-APR-17
+       395 24-APR-17
+       396 24-APR-17
+       397 24-APR-17
+       398 24-APR-17
+       399 24-APR-17
+       400 24-APR-17
+       401 24-APR-17
+       402 24-APR-17
+       403 24-APR-17
+       404 24-APR-17
+       405 24-APR-17
+       406 24-APR-17
+       407 24-APR-17
+       408 24-APR-17
+       409 24-APR-17
+       410 24-APR-17
+       411 24-APR-17
+       412 24-APR-17
+       413 24-APR-17
+       414 24-APR-17
+       415 24-APR-17
+       416 24-APR-17
+       417 24-APR-17
+       418 24-APR-17
+       419 24-APR-17
+       420 24-APR-17
+       421 24-APR-17
+       422 24-APR-17
+       423 24-APR-17
+       424 24-APR-17
+       425 24-APR-17
+       426 24-APR-17
+       427 24-APR-17
+       428 24-APR-17
+       429 24-APR-17
+       430 24-APR-17
+       431 24-APR-17
+       432 24-APR-17
+       433 24-APR-17
+       434 24-APR-17
+       435 24-APR-17
+       436 24-APR-17
+       437 24-APR-17
+       438 24-APR-17
+       439 24-APR-17
+       440 24-APR-17
+       441 24-APR-17
+       442 24-APR-17
+       443 24-APR-17
+       444 24-APR-17
+       445 24-APR-17
+       446 24-APR-17
+       447 24-APR-17
+       448 24-APR-17
+       449 24-APR-17
+       450 24-APR-17
+       451 24-APR-17
+       452 24-APR-17
+       453 24-APR-17
+       454 24-APR-17
+       455 24-APR-17
+       456 24-APR-17
+       457 24-APR-17
+       458 24-APR-17
+       459 24-APR-17
+       460 24-APR-17
+       461 24-APR-17
+       462 24-APR-17
+       463 24-APR-17
+       464 24-APR-17
+       465 24-APR-17
+       466 24-APR-17
+       467 24-APR-17
+       468 24-APR-17
+       469 24-APR-17
+       470 24-APR-17
+       471 24-APR-17
+       472 24-APR-17
+       473 24-APR-17
+       474 24-APR-17
+       475 24-APR-17
+       476 24-APR-17
+       477 24-APR-17
+       478 24-APR-17
+       479 24-APR-17
+       480 24-APR-17
+       481 24-APR-17
+       482 24-APR-17
+       483 24-APR-17
+       484 24-APR-17
+       485 24-APR-17
+       486 24-APR-17
+       487 24-APR-17
+       488 24-APR-17
+       489 24-APR-17
+       490 24-APR-17
+       491 24-APR-17
+       492 24-APR-17
+       493 24-APR-17
+       494 24-APR-17
+       495 24-APR-17
+       496 24-APR-17
+       497 24-APR-17
+       498 24-APR-17
+       499 24-APR-17
+       500 24-APR-17
+       501 24-APR-17
+       502 24-APR-17
+       503 24-APR-17
+       504 24-APR-17
+       505 24-APR-17
+       506 24-APR-17
+       507 24-APR-17
+       508 24-APR-17
+       509 24-APR-17
+       510 24-APR-17
+       511 24-APR-17
+       512 24-APR-17
+       513 24-APR-17
+       514 24-APR-17
+       515 24-APR-17
+       516 24-APR-17
+       517 24-APR-17
+       518 24-APR-17
+       519 24-APR-17
+       520 24-APR-17
+       521 24-APR-17
+       522 24-APR-17
+       523 24-APR-17
+       524 24-APR-17
+       525 24-APR-17
+       526 24-APR-17
+       527 24-APR-17
+       528 24-APR-17
+       529 24-APR-17
+       530 24-APR-17
+       531 24-APR-17
+       532 24-APR-17
+       533 24-APR-17
+       534 24-APR-17
+       535 24-APR-17
+       536 24-APR-17
+       537 24-APR-17
+       538 24-APR-17
+       539 24-APR-17
+       540 24-APR-17
+       541 24-APR-17
+       542 24-APR-17
+       543 24-APR-17
+       544 24-APR-17
+       545 24-APR-17
+       546 24-APR-17
+       547 24-APR-17
+       548 24-APR-17
+       549 24-APR-17
+       550 24-APR-17
+       551 24-APR-17
+       552 24-APR-17
+       553 24-APR-17
+       554 24-APR-17
+       555 24-APR-17
+       556 24-APR-17
+       557 24-APR-17
+       558 24-APR-17
+       559 24-APR-17
+       560 24-APR-17
+       561 24-APR-17
+       562 24-APR-17
+       563 24-APR-17
+       564 24-APR-17
+       565 24-APR-17
+       566 24-APR-17
+       567 24-APR-17
+       568 24-APR-17
+       569 24-APR-17
+       570 24-APR-17
+       571 24-APR-17
+       572 24-APR-17
+       573 24-APR-17
+       574 24-APR-17
+       575 24-APR-17
+       576 24-APR-17
+       577 24-APR-17
+       578 24-APR-17
+       579 24-APR-17
+       580 24-APR-17
+       581 24-APR-17
+       582 24-APR-17
+       583 24-APR-17
+       584 24-APR-17
+       585 24-APR-17
+       586 24-APR-17
+       587 24-APR-17
+       588 24-APR-17
+       589 24-APR-17
+       590 24-APR-17
+       591 24-APR-17
+       592 24-APR-17
+       593 24-APR-17
+       594 24-APR-17
+       595 24-APR-17
+       596 24-APR-17
+       597 24-APR-17
+       598 24-APR-17
+       599 24-APR-17
+       600 24-APR-17
+       601 24-APR-17
+       602 24-APR-17
+       603 24-APR-17
+       604 24-APR-17
+       605 24-APR-17
+       606 24-APR-17
+       607 24-APR-17
+       608 24-APR-17
+       609 24-APR-17
+       610 24-APR-17
+       611 24-APR-17
+       612 24-APR-17
+       613 24-APR-17
+       614 24-APR-17
+       615 24-APR-17
+       616 24-APR-17
+       617 24-APR-17
+       618 24-APR-17
+       619 24-APR-17
+       620 24-APR-17
+       621 24-APR-17
+       622 24-APR-17
+       623 24-APR-17
+       624 24-APR-17
+       625 24-APR-17
+       626 24-APR-17
+       627 24-APR-17
+       628 24-APR-17
+       629 24-APR-17
+       630 24-APR-17
+       631 24-APR-17
+       632 24-APR-17
+       633 24-APR-17
+       634 24-APR-17
+       635 24-APR-17
+       636 24-APR-17
+       637 24-APR-17
+       638 24-APR-17
+       639 24-APR-17
+       640 24-APR-17
+       641 24-APR-17
+       642 24-APR-17
+       643 24-APR-17
+       644 24-APR-17
+       645 24-APR-17
+       646 24-APR-17
+       647 24-APR-17
+       648 24-APR-17
+       649 24-APR-17
+       650 24-APR-17
+       651 24-APR-17
+       652 24-APR-17
+       653 24-APR-17
+    100000 19-JAN-20
+
+654 rows selected.
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(format=>'last'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2dd6sf2pg9v57, child number 1
+
+An uncaught error happened in prepare_sql_statement : ORA-01403: no data found
+
+NOTE: cannot fetch plan for SQL_ID: 2dd6sf2pg9v57, CHILD_NUMBER: 1
+      Please verify value of SQL_ID and CHILD_NUMBER;
+      It could also be that the plan is no longer in cursor cache (check v$sql_plan)
+
+
+8 rows selected.
+
+SQL> @plan1
+SQL> --
+SQL> -- Using this as a trick to get DISPLAY_CURSOR to work on the new child
+SQL> --
+SQL> select *  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(sql_id=>'g6y6gpnzww95b',cursor_child_no=>1))
+  2  /
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID: g6y6gpnzww95b, child number: 1 cannot be found
+
+
+SQL> 
+SQL> @q1
+SQL> select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate);
+
+        ID SALE_DATE
+---------- ---------
+         1 24-APR-17
+         2 24-APR-17
+         3 24-APR-17
+         4 24-APR-17
+         5 24-APR-17
+         6 24-APR-17
+         7 24-APR-17
+         8 24-APR-17
+         9 24-APR-17
+        10 24-APR-17
+        11 24-APR-17
+        12 24-APR-17
+        13 24-APR-17
+        14 24-APR-17
+        15 24-APR-17
+        16 24-APR-17
+        17 24-APR-17
+        18 24-APR-17
+        19 24-APR-17
+        20 24-APR-17
+        21 24-APR-17
+        22 24-APR-17
+        23 24-APR-17
+        24 24-APR-17
+        25 24-APR-17
+        26 24-APR-17
+        27 24-APR-17
+        28 24-APR-17
+        29 24-APR-17
+        30 24-APR-17
+        31 24-APR-17
+        32 24-APR-17
+        33 24-APR-17
+        34 24-APR-17
+        35 24-APR-17
+        36 24-APR-17
+        37 24-APR-17
+        38 24-APR-17
+        39 24-APR-17
+        40 24-APR-17
+        41 24-APR-17
+        42 24-APR-17
+        43 24-APR-17
+        44 24-APR-17
+        45 24-APR-17
+        46 24-APR-17
+        47 24-APR-17
+        48 24-APR-17
+        49 24-APR-17
+        50 24-APR-17
+        51 24-APR-17
+        52 24-APR-17
+        53 24-APR-17
+        54 24-APR-17
+        55 24-APR-17
+        56 24-APR-17
+        57 24-APR-17
+        58 24-APR-17
+        59 24-APR-17
+        60 24-APR-17
+        61 24-APR-17
+        62 24-APR-17
+        63 24-APR-17
+        64 24-APR-17
+        65 24-APR-17
+        66 24-APR-17
+        67 24-APR-17
+        68 24-APR-17
+        69 24-APR-17
+        70 24-APR-17
+        71 24-APR-17
+        72 24-APR-17
+        73 24-APR-17
+        74 24-APR-17
+        75 24-APR-17
+        76 24-APR-17
+        77 24-APR-17
+        78 24-APR-17
+        79 24-APR-17
+        80 24-APR-17
+        81 24-APR-17
+        82 24-APR-17
+        83 24-APR-17
+        84 24-APR-17
+        85 24-APR-17
+        86 24-APR-17
+        87 24-APR-17
+        88 24-APR-17
+        89 24-APR-17
+        90 24-APR-17
+        91 24-APR-17
+        92 24-APR-17
+        93 24-APR-17
+        94 24-APR-17
+        95 24-APR-17
+        96 24-APR-17
+        97 24-APR-17
+        98 24-APR-17
+        99 24-APR-17
+       100 24-APR-17
+       101 24-APR-17
+       102 24-APR-17
+       103 24-APR-17
+       104 24-APR-17
+       105 24-APR-17
+       106 24-APR-17
+       107 24-APR-17
+       108 24-APR-17
+       109 24-APR-17
+       110 24-APR-17
+       111 24-APR-17
+       112 24-APR-17
+       113 24-APR-17
+       114 24-APR-17
+       115 24-APR-17
+       116 24-APR-17
+       117 24-APR-17
+       118 24-APR-17
+       119 24-APR-17
+       120 24-APR-17
+       121 24-APR-17
+       122 24-APR-17
+       123 24-APR-17
+       124 24-APR-17
+       125 24-APR-17
+       126 24-APR-17
+       127 24-APR-17
+       128 24-APR-17
+       129 24-APR-17
+       130 24-APR-17
+       131 24-APR-17
+       132 24-APR-17
+       133 24-APR-17
+       134 24-APR-17
+       135 24-APR-17
+       136 24-APR-17
+       137 24-APR-17
+       138 24-APR-17
+       139 24-APR-17
+       140 24-APR-17
+       141 24-APR-17
+       142 24-APR-17
+       143 24-APR-17
+       144 24-APR-17
+       145 24-APR-17
+       146 24-APR-17
+       147 24-APR-17
+       148 24-APR-17
+       149 24-APR-17
+       150 24-APR-17
+       151 24-APR-17
+       152 24-APR-17
+       153 24-APR-17
+       154 24-APR-17
+       155 24-APR-17
+       156 24-APR-17
+       157 24-APR-17
+       158 24-APR-17
+       159 24-APR-17
+       160 24-APR-17
+       161 24-APR-17
+       162 24-APR-17
+       163 24-APR-17
+       164 24-APR-17
+       165 24-APR-17
+       166 24-APR-17
+       167 24-APR-17
+       168 24-APR-17
+       169 24-APR-17
+       170 24-APR-17
+       171 24-APR-17
+       172 24-APR-17
+       173 24-APR-17
+       174 24-APR-17
+       175 24-APR-17
+       176 24-APR-17
+       177 24-APR-17
+       178 24-APR-17
+       179 24-APR-17
+       180 24-APR-17
+       181 24-APR-17
+       182 24-APR-17
+       183 24-APR-17
+       184 24-APR-17
+       185 24-APR-17
+       186 24-APR-17
+       187 24-APR-17
+       188 24-APR-17
+       189 24-APR-17
+       190 24-APR-17
+       191 24-APR-17
+       192 24-APR-17
+       193 24-APR-17
+       194 24-APR-17
+       195 24-APR-17
+       196 24-APR-17
+       197 24-APR-17
+       198 24-APR-17
+       199 24-APR-17
+       200 24-APR-17
+       201 24-APR-17
+       202 24-APR-17
+       203 24-APR-17
+       204 24-APR-17
+       205 24-APR-17
+       206 24-APR-17
+       207 24-APR-17
+       208 24-APR-17
+       209 24-APR-17
+       210 24-APR-17
+       211 24-APR-17
+       212 24-APR-17
+       213 24-APR-17
+       214 24-APR-17
+       215 24-APR-17
+       216 24-APR-17
+       217 24-APR-17
+       218 24-APR-17
+       219 24-APR-17
+       220 24-APR-17
+       221 24-APR-17
+       222 24-APR-17
+       223 24-APR-17
+       224 24-APR-17
+       225 24-APR-17
+       226 24-APR-17
+       227 24-APR-17
+       228 24-APR-17
+       229 24-APR-17
+       230 24-APR-17
+       231 24-APR-17
+       232 24-APR-17
+       233 24-APR-17
+       234 24-APR-17
+       235 24-APR-17
+       236 24-APR-17
+       237 24-APR-17
+       238 24-APR-17
+       239 24-APR-17
+       240 24-APR-17
+       241 24-APR-17
+       242 24-APR-17
+       243 24-APR-17
+       244 24-APR-17
+       245 24-APR-17
+       246 24-APR-17
+       247 24-APR-17
+       248 24-APR-17
+       249 24-APR-17
+       250 24-APR-17
+       251 24-APR-17
+       252 24-APR-17
+       253 24-APR-17
+       254 24-APR-17
+       255 24-APR-17
+       256 24-APR-17
+       257 24-APR-17
+       258 24-APR-17
+       259 24-APR-17
+       260 24-APR-17
+       261 24-APR-17
+       262 24-APR-17
+       263 24-APR-17
+       264 24-APR-17
+       265 24-APR-17
+       266 24-APR-17
+       267 24-APR-17
+       268 24-APR-17
+       269 24-APR-17
+       270 24-APR-17
+       271 24-APR-17
+       272 24-APR-17
+       273 24-APR-17
+       274 24-APR-17
+       275 24-APR-17
+       276 24-APR-17
+       277 24-APR-17
+       278 24-APR-17
+       279 24-APR-17
+       280 24-APR-17
+       281 24-APR-17
+       282 24-APR-17
+       283 24-APR-17
+       284 24-APR-17
+       285 24-APR-17
+       286 24-APR-17
+       287 24-APR-17
+       288 24-APR-17
+       289 24-APR-17
+       290 24-APR-17
+       291 24-APR-17
+       292 24-APR-17
+       293 24-APR-17
+       294 24-APR-17
+       295 24-APR-17
+       296 24-APR-17
+       297 24-APR-17
+       298 24-APR-17
+       299 24-APR-17
+       300 24-APR-17
+       301 24-APR-17
+       302 24-APR-17
+       303 24-APR-17
+       304 24-APR-17
+       305 24-APR-17
+       306 24-APR-17
+       307 24-APR-17
+       308 24-APR-17
+       309 24-APR-17
+       310 24-APR-17
+       311 24-APR-17
+       312 24-APR-17
+       313 24-APR-17
+       314 24-APR-17
+       315 24-APR-17
+       316 24-APR-17
+       317 24-APR-17
+       318 24-APR-17
+       319 24-APR-17
+       320 24-APR-17
+       321 24-APR-17
+       322 24-APR-17
+       323 24-APR-17
+       324 24-APR-17
+       325 24-APR-17
+       326 24-APR-17
+       327 24-APR-17
+       328 24-APR-17
+       329 24-APR-17
+       330 24-APR-17
+       331 24-APR-17
+       332 24-APR-17
+       333 24-APR-17
+       334 24-APR-17
+       335 24-APR-17
+       336 24-APR-17
+       337 24-APR-17
+       338 24-APR-17
+       339 24-APR-17
+       340 24-APR-17
+       341 24-APR-17
+       342 24-APR-17
+       343 24-APR-17
+       344 24-APR-17
+       345 24-APR-17
+       346 24-APR-17
+       347 24-APR-17
+       348 24-APR-17
+       349 24-APR-17
+       350 24-APR-17
+       351 24-APR-17
+       352 24-APR-17
+       353 24-APR-17
+       354 24-APR-17
+       355 24-APR-17
+       356 24-APR-17
+       357 24-APR-17
+       358 24-APR-17
+       359 24-APR-17
+       360 24-APR-17
+       361 24-APR-17
+       362 24-APR-17
+       363 24-APR-17
+       364 24-APR-17
+       365 24-APR-17
+       366 24-APR-17
+       367 24-APR-17
+       368 24-APR-17
+       369 24-APR-17
+       370 24-APR-17
+       371 24-APR-17
+       372 24-APR-17
+       373 24-APR-17
+       374 24-APR-17
+       375 24-APR-17
+       376 24-APR-17
+       377 24-APR-17
+       378 24-APR-17
+       379 24-APR-17
+       380 24-APR-17
+       381 24-APR-17
+       382 24-APR-17
+       383 24-APR-17
+       384 24-APR-17
+       385 24-APR-17
+       386 24-APR-17
+       387 24-APR-17
+       388 24-APR-17
+       389 24-APR-17
+       390 24-APR-17
+       391 24-APR-17
+       392 24-APR-17
+       393 24-APR-17
+       394 24-APR-17
+       395 24-APR-17
+       396 24-APR-17
+       397 24-APR-17
+       398 24-APR-17
+       399 24-APR-17
+       400 24-APR-17
+       401 24-APR-17
+       402 24-APR-17
+       403 24-APR-17
+       404 24-APR-17
+       405 24-APR-17
+       406 24-APR-17
+       407 24-APR-17
+       408 24-APR-17
+       409 24-APR-17
+       410 24-APR-17
+       411 24-APR-17
+       412 24-APR-17
+       413 24-APR-17
+       414 24-APR-17
+       415 24-APR-17
+       416 24-APR-17
+       417 24-APR-17
+       418 24-APR-17
+       419 24-APR-17
+       420 24-APR-17
+       421 24-APR-17
+       422 24-APR-17
+       423 24-APR-17
+       424 24-APR-17
+       425 24-APR-17
+       426 24-APR-17
+       427 24-APR-17
+       428 24-APR-17
+       429 24-APR-17
+       430 24-APR-17
+       431 24-APR-17
+       432 24-APR-17
+       433 24-APR-17
+       434 24-APR-17
+       435 24-APR-17
+       436 24-APR-17
+       437 24-APR-17
+       438 24-APR-17
+       439 24-APR-17
+       440 24-APR-17
+       441 24-APR-17
+       442 24-APR-17
+       443 24-APR-17
+       444 24-APR-17
+       445 24-APR-17
+       446 24-APR-17
+       447 24-APR-17
+       448 24-APR-17
+       449 24-APR-17
+       450 24-APR-17
+       451 24-APR-17
+       452 24-APR-17
+       453 24-APR-17
+       454 24-APR-17
+       455 24-APR-17
+       456 24-APR-17
+       457 24-APR-17
+       458 24-APR-17
+       459 24-APR-17
+       460 24-APR-17
+       461 24-APR-17
+       462 24-APR-17
+       463 24-APR-17
+       464 24-APR-17
+       465 24-APR-17
+       466 24-APR-17
+       467 24-APR-17
+       468 24-APR-17
+       469 24-APR-17
+       470 24-APR-17
+       471 24-APR-17
+       472 24-APR-17
+       473 24-APR-17
+       474 24-APR-17
+       475 24-APR-17
+       476 24-APR-17
+       477 24-APR-17
+       478 24-APR-17
+       479 24-APR-17
+       480 24-APR-17
+       481 24-APR-17
+       482 24-APR-17
+       483 24-APR-17
+       484 24-APR-17
+       485 24-APR-17
+       486 24-APR-17
+       487 24-APR-17
+       488 24-APR-17
+       489 24-APR-17
+       490 24-APR-17
+       491 24-APR-17
+       492 24-APR-17
+       493 24-APR-17
+       494 24-APR-17
+       495 24-APR-17
+       496 24-APR-17
+       497 24-APR-17
+       498 24-APR-17
+       499 24-APR-17
+       500 24-APR-17
+       501 24-APR-17
+       502 24-APR-17
+       503 24-APR-17
+       504 24-APR-17
+       505 24-APR-17
+       506 24-APR-17
+       507 24-APR-17
+       508 24-APR-17
+       509 24-APR-17
+       510 24-APR-17
+       511 24-APR-17
+       512 24-APR-17
+       513 24-APR-17
+       514 24-APR-17
+       515 24-APR-17
+       516 24-APR-17
+       517 24-APR-17
+       518 24-APR-17
+       519 24-APR-17
+       520 24-APR-17
+       521 24-APR-17
+       522 24-APR-17
+       523 24-APR-17
+       524 24-APR-17
+       525 24-APR-17
+       526 24-APR-17
+       527 24-APR-17
+       528 24-APR-17
+       529 24-APR-17
+       530 24-APR-17
+       531 24-APR-17
+       532 24-APR-17
+       533 24-APR-17
+       534 24-APR-17
+       535 24-APR-17
+       536 24-APR-17
+       537 24-APR-17
+       538 24-APR-17
+       539 24-APR-17
+       540 24-APR-17
+       541 24-APR-17
+       542 24-APR-17
+       543 24-APR-17
+       544 24-APR-17
+       545 24-APR-17
+       546 24-APR-17
+       547 24-APR-17
+       548 24-APR-17
+       549 24-APR-17
+       550 24-APR-17
+       551 24-APR-17
+       552 24-APR-17
+       553 24-APR-17
+       554 24-APR-17
+       555 24-APR-17
+       556 24-APR-17
+       557 24-APR-17
+       558 24-APR-17
+       559 24-APR-17
+       560 24-APR-17
+       561 24-APR-17
+       562 24-APR-17
+       563 24-APR-17
+       564 24-APR-17
+       565 24-APR-17
+       566 24-APR-17
+       567 24-APR-17
+       568 24-APR-17
+       569 24-APR-17
+       570 24-APR-17
+       571 24-APR-17
+       572 24-APR-17
+       573 24-APR-17
+       574 24-APR-17
+       575 24-APR-17
+       576 24-APR-17
+       577 24-APR-17
+       578 24-APR-17
+       579 24-APR-17
+       580 24-APR-17
+       581 24-APR-17
+       582 24-APR-17
+       583 24-APR-17
+       584 24-APR-17
+       585 24-APR-17
+       586 24-APR-17
+       587 24-APR-17
+       588 24-APR-17
+       589 24-APR-17
+       590 24-APR-17
+       591 24-APR-17
+       592 24-APR-17
+       593 24-APR-17
+       594 24-APR-17
+       595 24-APR-17
+       596 24-APR-17
+       597 24-APR-17
+       598 24-APR-17
+       599 24-APR-17
+       600 24-APR-17
+       601 24-APR-17
+       602 24-APR-17
+       603 24-APR-17
+       604 24-APR-17
+       605 24-APR-17
+       606 24-APR-17
+       607 24-APR-17
+       608 24-APR-17
+       609 24-APR-17
+       610 24-APR-17
+       611 24-APR-17
+       612 24-APR-17
+       613 24-APR-17
+       614 24-APR-17
+       615 24-APR-17
+       616 24-APR-17
+       617 24-APR-17
+       618 24-APR-17
+       619 24-APR-17
+       620 24-APR-17
+       621 24-APR-17
+       622 24-APR-17
+       623 24-APR-17
+       624 24-APR-17
+       625 24-APR-17
+       626 24-APR-17
+       627 24-APR-17
+       628 24-APR-17
+       629 24-APR-17
+       630 24-APR-17
+       631 24-APR-17
+       632 24-APR-17
+       633 24-APR-17
+       634 24-APR-17
+       635 24-APR-17
+       636 24-APR-17
+       637 24-APR-17
+       638 24-APR-17
+       639 24-APR-17
+       640 24-APR-17
+       641 24-APR-17
+       642 24-APR-17
+       643 24-APR-17
+       644 24-APR-17
+       645 24-APR-17
+       646 24-APR-17
+       647 24-APR-17
+       648 24-APR-17
+       649 24-APR-17
+       650 24-APR-17
+       651 24-APR-17
+       652 24-APR-17
+       653 24-APR-17
+    100000 19-JAN-20
+
+654 rows selected.
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(format=>'last'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2dd6sf2pg9v57, child number 1
+-------------------------------------
+select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate)
+
+Plan hash value: 781590677
+
+---------------------------------------------------------------------------
+| Id  | Operation         | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |       |       |       |   351 (100)|          |
+|*  1 |  TABLE ACCESS FULL| SALES |   333K|  4233K|   351   (3)| 00:00:01 |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("SALE_DATE">=TRUNC(SYSDATE@!))
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_bays6bkahnp5897367831 used for this statement
+
+
+22 rows selected.
+
+SQL> 
+SQL> --
+SQL> -- See above Q1 now uses the SQL plan baseline, still a FULL scan
+SQL> --
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> --
+SQL> -- Now disable the plan baseline
+SQL> --
+SQL> @dis
+SQL> DECLARE
+  2    l_plans_disabled  PLS_INTEGER;
+  3  BEGIN
+  4    FOR REC IN (SELECT DISTINCT SQL_HANDLE,PLAN_NAME FROM DBA_SQL_PLAN_BASELINES WHERE sql_text LIKE '%SPMTEST%')
+  5    LOOP
+  6        L_PLANS_DISABLED := DBMS_SPM.ALTER_SQL_PLAN_BASELINE (
+  7          sql_handle => rec.sql_handle,
+  8          plan_name => rec.plan_name,
+  9          attribute_name => 'enabled',
+ 10          attribute_value => 'no');
+ 11    END LOOP;
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- The SQL plan baseline is now disabled
+SQL> --
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> @base
+SQL> set linesize 200
+SQL> column sql_handle format a30
+SQL> column plan_name format a30
+SQL> column sql_text format a80
+SQL> column signature format 999999999999999999999999999
+SQL> 
+SQL> SELECT signature,sql_handle,plan_name,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPMTEST%';
+
+                   SIGNATURE SQL_HANDLE                     PLAN_NAME                      SQL_TEXT                                                                         ENA ACC
+---------------------------- ------------------------------ ------------------------------ -------------------------------------------------------------------------------- --- ---
+        13077052937707607208 SQL_b57b065c950a54a8           SQL_PLAN_bays6bkahnp5897367831 select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate)              NO  YES
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- Check disabled, above...
+SQL> --
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> @q1
+SQL> select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate);
+
+        ID SALE_DATE
+---------- ---------
+         1 24-APR-17
+         2 24-APR-17
+         3 24-APR-17
+         4 24-APR-17
+         5 24-APR-17
+         6 24-APR-17
+         7 24-APR-17
+         8 24-APR-17
+         9 24-APR-17
+        10 24-APR-17
+        11 24-APR-17
+        12 24-APR-17
+        13 24-APR-17
+        14 24-APR-17
+        15 24-APR-17
+        16 24-APR-17
+        17 24-APR-17
+        18 24-APR-17
+        19 24-APR-17
+        20 24-APR-17
+        21 24-APR-17
+        22 24-APR-17
+        23 24-APR-17
+        24 24-APR-17
+        25 24-APR-17
+        26 24-APR-17
+        27 24-APR-17
+        28 24-APR-17
+        29 24-APR-17
+        30 24-APR-17
+        31 24-APR-17
+        32 24-APR-17
+        33 24-APR-17
+        34 24-APR-17
+        35 24-APR-17
+        36 24-APR-17
+        37 24-APR-17
+        38 24-APR-17
+        39 24-APR-17
+        40 24-APR-17
+        41 24-APR-17
+        42 24-APR-17
+        43 24-APR-17
+        44 24-APR-17
+        45 24-APR-17
+        46 24-APR-17
+        47 24-APR-17
+        48 24-APR-17
+        49 24-APR-17
+        50 24-APR-17
+        51 24-APR-17
+        52 24-APR-17
+        53 24-APR-17
+        54 24-APR-17
+        55 24-APR-17
+        56 24-APR-17
+        57 24-APR-17
+        58 24-APR-17
+        59 24-APR-17
+        60 24-APR-17
+        61 24-APR-17
+        62 24-APR-17
+        63 24-APR-17
+        64 24-APR-17
+        65 24-APR-17
+        66 24-APR-17
+        67 24-APR-17
+        68 24-APR-17
+        69 24-APR-17
+        70 24-APR-17
+        71 24-APR-17
+        72 24-APR-17
+        73 24-APR-17
+        74 24-APR-17
+        75 24-APR-17
+        76 24-APR-17
+        77 24-APR-17
+        78 24-APR-17
+        79 24-APR-17
+        80 24-APR-17
+        81 24-APR-17
+        82 24-APR-17
+        83 24-APR-17
+        84 24-APR-17
+        85 24-APR-17
+        86 24-APR-17
+        87 24-APR-17
+        88 24-APR-17
+        89 24-APR-17
+        90 24-APR-17
+        91 24-APR-17
+        92 24-APR-17
+        93 24-APR-17
+        94 24-APR-17
+        95 24-APR-17
+        96 24-APR-17
+        97 24-APR-17
+        98 24-APR-17
+        99 24-APR-17
+       100 24-APR-17
+       101 24-APR-17
+       102 24-APR-17
+       103 24-APR-17
+       104 24-APR-17
+       105 24-APR-17
+       106 24-APR-17
+       107 24-APR-17
+       108 24-APR-17
+       109 24-APR-17
+       110 24-APR-17
+       111 24-APR-17
+       112 24-APR-17
+       113 24-APR-17
+       114 24-APR-17
+       115 24-APR-17
+       116 24-APR-17
+       117 24-APR-17
+       118 24-APR-17
+       119 24-APR-17
+       120 24-APR-17
+       121 24-APR-17
+       122 24-APR-17
+       123 24-APR-17
+       124 24-APR-17
+       125 24-APR-17
+       126 24-APR-17
+       127 24-APR-17
+       128 24-APR-17
+       129 24-APR-17
+       130 24-APR-17
+       131 24-APR-17
+       132 24-APR-17
+       133 24-APR-17
+       134 24-APR-17
+       135 24-APR-17
+       136 24-APR-17
+       137 24-APR-17
+       138 24-APR-17
+       139 24-APR-17
+       140 24-APR-17
+       141 24-APR-17
+       142 24-APR-17
+       143 24-APR-17
+       144 24-APR-17
+       145 24-APR-17
+       146 24-APR-17
+       147 24-APR-17
+       148 24-APR-17
+       149 24-APR-17
+       150 24-APR-17
+       151 24-APR-17
+       152 24-APR-17
+       153 24-APR-17
+       154 24-APR-17
+       155 24-APR-17
+       156 24-APR-17
+       157 24-APR-17
+       158 24-APR-17
+       159 24-APR-17
+       160 24-APR-17
+       161 24-APR-17
+       162 24-APR-17
+       163 24-APR-17
+       164 24-APR-17
+       165 24-APR-17
+       166 24-APR-17
+       167 24-APR-17
+       168 24-APR-17
+       169 24-APR-17
+       170 24-APR-17
+       171 24-APR-17
+       172 24-APR-17
+       173 24-APR-17
+       174 24-APR-17
+       175 24-APR-17
+       176 24-APR-17
+       177 24-APR-17
+       178 24-APR-17
+       179 24-APR-17
+       180 24-APR-17
+       181 24-APR-17
+       182 24-APR-17
+       183 24-APR-17
+       184 24-APR-17
+       185 24-APR-17
+       186 24-APR-17
+       187 24-APR-17
+       188 24-APR-17
+       189 24-APR-17
+       190 24-APR-17
+       191 24-APR-17
+       192 24-APR-17
+       193 24-APR-17
+       194 24-APR-17
+       195 24-APR-17
+       196 24-APR-17
+       197 24-APR-17
+       198 24-APR-17
+       199 24-APR-17
+       200 24-APR-17
+       201 24-APR-17
+       202 24-APR-17
+       203 24-APR-17
+       204 24-APR-17
+       205 24-APR-17
+       206 24-APR-17
+       207 24-APR-17
+       208 24-APR-17
+       209 24-APR-17
+       210 24-APR-17
+       211 24-APR-17
+       212 24-APR-17
+       213 24-APR-17
+       214 24-APR-17
+       215 24-APR-17
+       216 24-APR-17
+       217 24-APR-17
+       218 24-APR-17
+       219 24-APR-17
+       220 24-APR-17
+       221 24-APR-17
+       222 24-APR-17
+       223 24-APR-17
+       224 24-APR-17
+       225 24-APR-17
+       226 24-APR-17
+       227 24-APR-17
+       228 24-APR-17
+       229 24-APR-17
+       230 24-APR-17
+       231 24-APR-17
+       232 24-APR-17
+       233 24-APR-17
+       234 24-APR-17
+       235 24-APR-17
+       236 24-APR-17
+       237 24-APR-17
+       238 24-APR-17
+       239 24-APR-17
+       240 24-APR-17
+       241 24-APR-17
+       242 24-APR-17
+       243 24-APR-17
+       244 24-APR-17
+       245 24-APR-17
+       246 24-APR-17
+       247 24-APR-17
+       248 24-APR-17
+       249 24-APR-17
+       250 24-APR-17
+       251 24-APR-17
+       252 24-APR-17
+       253 24-APR-17
+       254 24-APR-17
+       255 24-APR-17
+       256 24-APR-17
+       257 24-APR-17
+       258 24-APR-17
+       259 24-APR-17
+       260 24-APR-17
+       261 24-APR-17
+       262 24-APR-17
+       263 24-APR-17
+       264 24-APR-17
+       265 24-APR-17
+       266 24-APR-17
+       267 24-APR-17
+       268 24-APR-17
+       269 24-APR-17
+       270 24-APR-17
+       271 24-APR-17
+       272 24-APR-17
+       273 24-APR-17
+       274 24-APR-17
+       275 24-APR-17
+       276 24-APR-17
+       277 24-APR-17
+       278 24-APR-17
+       279 24-APR-17
+       280 24-APR-17
+       281 24-APR-17
+       282 24-APR-17
+       283 24-APR-17
+       284 24-APR-17
+       285 24-APR-17
+       286 24-APR-17
+       287 24-APR-17
+       288 24-APR-17
+       289 24-APR-17
+       290 24-APR-17
+       291 24-APR-17
+       292 24-APR-17
+       293 24-APR-17
+       294 24-APR-17
+       295 24-APR-17
+       296 24-APR-17
+       297 24-APR-17
+       298 24-APR-17
+       299 24-APR-17
+       300 24-APR-17
+       301 24-APR-17
+       302 24-APR-17
+       303 24-APR-17
+       304 24-APR-17
+       305 24-APR-17
+       306 24-APR-17
+       307 24-APR-17
+       308 24-APR-17
+       309 24-APR-17
+       310 24-APR-17
+       311 24-APR-17
+       312 24-APR-17
+       313 24-APR-17
+       314 24-APR-17
+       315 24-APR-17
+       316 24-APR-17
+       317 24-APR-17
+       318 24-APR-17
+       319 24-APR-17
+       320 24-APR-17
+       321 24-APR-17
+       322 24-APR-17
+       323 24-APR-17
+       324 24-APR-17
+       325 24-APR-17
+       326 24-APR-17
+       327 24-APR-17
+       328 24-APR-17
+       329 24-APR-17
+       330 24-APR-17
+       331 24-APR-17
+       332 24-APR-17
+       333 24-APR-17
+       334 24-APR-17
+       335 24-APR-17
+       336 24-APR-17
+       337 24-APR-17
+       338 24-APR-17
+       339 24-APR-17
+       340 24-APR-17
+       341 24-APR-17
+       342 24-APR-17
+       343 24-APR-17
+       344 24-APR-17
+       345 24-APR-17
+       346 24-APR-17
+       347 24-APR-17
+       348 24-APR-17
+       349 24-APR-17
+       350 24-APR-17
+       351 24-APR-17
+       352 24-APR-17
+       353 24-APR-17
+       354 24-APR-17
+       355 24-APR-17
+       356 24-APR-17
+       357 24-APR-17
+       358 24-APR-17
+       359 24-APR-17
+       360 24-APR-17
+       361 24-APR-17
+       362 24-APR-17
+       363 24-APR-17
+       364 24-APR-17
+       365 24-APR-17
+       366 24-APR-17
+       367 24-APR-17
+       368 24-APR-17
+       369 24-APR-17
+       370 24-APR-17
+       371 24-APR-17
+       372 24-APR-17
+       373 24-APR-17
+       374 24-APR-17
+       375 24-APR-17
+       376 24-APR-17
+       377 24-APR-17
+       378 24-APR-17
+       379 24-APR-17
+       380 24-APR-17
+       381 24-APR-17
+       382 24-APR-17
+       383 24-APR-17
+       384 24-APR-17
+       385 24-APR-17
+       386 24-APR-17
+       387 24-APR-17
+       388 24-APR-17
+       389 24-APR-17
+       390 24-APR-17
+       391 24-APR-17
+       392 24-APR-17
+       393 24-APR-17
+       394 24-APR-17
+       395 24-APR-17
+       396 24-APR-17
+       397 24-APR-17
+       398 24-APR-17
+       399 24-APR-17
+       400 24-APR-17
+       401 24-APR-17
+       402 24-APR-17
+       403 24-APR-17
+       404 24-APR-17
+       405 24-APR-17
+       406 24-APR-17
+       407 24-APR-17
+       408 24-APR-17
+       409 24-APR-17
+       410 24-APR-17
+       411 24-APR-17
+       412 24-APR-17
+       413 24-APR-17
+       414 24-APR-17
+       415 24-APR-17
+       416 24-APR-17
+       417 24-APR-17
+       418 24-APR-17
+       419 24-APR-17
+       420 24-APR-17
+       421 24-APR-17
+       422 24-APR-17
+       423 24-APR-17
+       424 24-APR-17
+       425 24-APR-17
+       426 24-APR-17
+       427 24-APR-17
+       428 24-APR-17
+       429 24-APR-17
+       430 24-APR-17
+       431 24-APR-17
+       432 24-APR-17
+       433 24-APR-17
+       434 24-APR-17
+       435 24-APR-17
+       436 24-APR-17
+       437 24-APR-17
+       438 24-APR-17
+       439 24-APR-17
+       440 24-APR-17
+       441 24-APR-17
+       442 24-APR-17
+       443 24-APR-17
+       444 24-APR-17
+       445 24-APR-17
+       446 24-APR-17
+       447 24-APR-17
+       448 24-APR-17
+       449 24-APR-17
+       450 24-APR-17
+       451 24-APR-17
+       452 24-APR-17
+       453 24-APR-17
+       454 24-APR-17
+       455 24-APR-17
+       456 24-APR-17
+       457 24-APR-17
+       458 24-APR-17
+       459 24-APR-17
+       460 24-APR-17
+       461 24-APR-17
+       462 24-APR-17
+       463 24-APR-17
+       464 24-APR-17
+       465 24-APR-17
+       466 24-APR-17
+       467 24-APR-17
+       468 24-APR-17
+       469 24-APR-17
+       470 24-APR-17
+       471 24-APR-17
+       472 24-APR-17
+       473 24-APR-17
+       474 24-APR-17
+       475 24-APR-17
+       476 24-APR-17
+       477 24-APR-17
+       478 24-APR-17
+       479 24-APR-17
+       480 24-APR-17
+       481 24-APR-17
+       482 24-APR-17
+       483 24-APR-17
+       484 24-APR-17
+       485 24-APR-17
+       486 24-APR-17
+       487 24-APR-17
+       488 24-APR-17
+       489 24-APR-17
+       490 24-APR-17
+       491 24-APR-17
+       492 24-APR-17
+       493 24-APR-17
+       494 24-APR-17
+       495 24-APR-17
+       496 24-APR-17
+       497 24-APR-17
+       498 24-APR-17
+       499 24-APR-17
+       500 24-APR-17
+       501 24-APR-17
+       502 24-APR-17
+       503 24-APR-17
+       504 24-APR-17
+       505 24-APR-17
+       506 24-APR-17
+       507 24-APR-17
+       508 24-APR-17
+       509 24-APR-17
+       510 24-APR-17
+       511 24-APR-17
+       512 24-APR-17
+       513 24-APR-17
+       514 24-APR-17
+       515 24-APR-17
+       516 24-APR-17
+       517 24-APR-17
+       518 24-APR-17
+       519 24-APR-17
+       520 24-APR-17
+       521 24-APR-17
+       522 24-APR-17
+       523 24-APR-17
+       524 24-APR-17
+       525 24-APR-17
+       526 24-APR-17
+       527 24-APR-17
+       528 24-APR-17
+       529 24-APR-17
+       530 24-APR-17
+       531 24-APR-17
+       532 24-APR-17
+       533 24-APR-17
+       534 24-APR-17
+       535 24-APR-17
+       536 24-APR-17
+       537 24-APR-17
+       538 24-APR-17
+       539 24-APR-17
+       540 24-APR-17
+       541 24-APR-17
+       542 24-APR-17
+       543 24-APR-17
+       544 24-APR-17
+       545 24-APR-17
+       546 24-APR-17
+       547 24-APR-17
+       548 24-APR-17
+       549 24-APR-17
+       550 24-APR-17
+       551 24-APR-17
+       552 24-APR-17
+       553 24-APR-17
+       554 24-APR-17
+       555 24-APR-17
+       556 24-APR-17
+       557 24-APR-17
+       558 24-APR-17
+       559 24-APR-17
+       560 24-APR-17
+       561 24-APR-17
+       562 24-APR-17
+       563 24-APR-17
+       564 24-APR-17
+       565 24-APR-17
+       566 24-APR-17
+       567 24-APR-17
+       568 24-APR-17
+       569 24-APR-17
+       570 24-APR-17
+       571 24-APR-17
+       572 24-APR-17
+       573 24-APR-17
+       574 24-APR-17
+       575 24-APR-17
+       576 24-APR-17
+       577 24-APR-17
+       578 24-APR-17
+       579 24-APR-17
+       580 24-APR-17
+       581 24-APR-17
+       582 24-APR-17
+       583 24-APR-17
+       584 24-APR-17
+       585 24-APR-17
+       586 24-APR-17
+       587 24-APR-17
+       588 24-APR-17
+       589 24-APR-17
+       590 24-APR-17
+       591 24-APR-17
+       592 24-APR-17
+       593 24-APR-17
+       594 24-APR-17
+       595 24-APR-17
+       596 24-APR-17
+       597 24-APR-17
+       598 24-APR-17
+       599 24-APR-17
+       600 24-APR-17
+       601 24-APR-17
+       602 24-APR-17
+       603 24-APR-17
+       604 24-APR-17
+       605 24-APR-17
+       606 24-APR-17
+       607 24-APR-17
+       608 24-APR-17
+       609 24-APR-17
+       610 24-APR-17
+       611 24-APR-17
+       612 24-APR-17
+       613 24-APR-17
+       614 24-APR-17
+       615 24-APR-17
+       616 24-APR-17
+       617 24-APR-17
+       618 24-APR-17
+       619 24-APR-17
+       620 24-APR-17
+       621 24-APR-17
+       622 24-APR-17
+       623 24-APR-17
+       624 24-APR-17
+       625 24-APR-17
+       626 24-APR-17
+       627 24-APR-17
+       628 24-APR-17
+       629 24-APR-17
+       630 24-APR-17
+       631 24-APR-17
+       632 24-APR-17
+       633 24-APR-17
+       634 24-APR-17
+       635 24-APR-17
+       636 24-APR-17
+       637 24-APR-17
+       638 24-APR-17
+       639 24-APR-17
+       640 24-APR-17
+       641 24-APR-17
+       642 24-APR-17
+       643 24-APR-17
+       644 24-APR-17
+       645 24-APR-17
+       646 24-APR-17
+       647 24-APR-17
+       648 24-APR-17
+       649 24-APR-17
+       650 24-APR-17
+       651 24-APR-17
+       652 24-APR-17
+       653 24-APR-17
+    100000 19-JAN-20
+
+654 rows selected.
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(format=>'last'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2dd6sf2pg9v57, child number 1
+-------------------------------------
+select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate)
+
+Plan hash value: 781590677
+
+---------------------------------------------------------------------------
+| Id  | Operation         | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |       |       |       |   351 (100)|          |
+|*  1 |  TABLE ACCESS FULL| SALES |   333K|  4233K|   351   (3)| 00:00:01 |
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("SALE_DATE">=TRUNC(SYSDATE@!))
+
+
+18 rows selected.
+
+SQL> 
+SQL> --
+SQL> -- Above, Q1 is no longer using the SQL plan baseline
+SQL> --
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> --
+SQL> -- Locate Q2's plan hash value
+SQL> --
+SQL> @sql
+SQL> set pagesize 100
+SQL> column sql_text format a80
+SQL> set linesize 200
+SQL> set trims on
+SQL> set pagesize 100
+SQL> column sql_profile format a30
+SQL> column exact_matching_signature format 99999999999999999999999
+SQL> 
+SQL> select sql_id,exact_matching_signature,plan_hash_value,sql_text
+  2  from v$sql
+  3  where sql_text = 'select /* SPMTEST */ /*+ INDEX(sales salesi) */ * from sales WHERE sale_date >= trunc(sysdate)'
+  4  /
+
+SQL_ID        EXACT_MATCHING_SIGNATURE PLAN_HASH_VALUE SQL_TEXT
+------------- ------------------------ --------------- --------------------------------------------------------------------------------
+4s5bm2bgy0g0v     11004560805481161205       578151937 select /* SPMTEST */ /*+ INDEX(sales salesi) */ * from sales WHERE sale_date >=
+                                                       trunc(sysdate)
+
+
+SQL> 
+SQL> var phv number
+SQL> 
+SQL> begin
+  2    select plan_hash_value
+  3    into   :phv
+  4    from   v$sql
+  5    where  sql_text = 'select /* SPMTEST */ /*+ INDEX(sales salesi) */ * from sales WHERE sale_date >= trunc(sysdate)';
+  6  end;
+  7  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> --
+SQL> -- Check the baseline details
+SQL> --
+SQL> @base
+SQL> set linesize 200
+SQL> column sql_handle format a30
+SQL> column plan_name format a30
+SQL> column sql_text format a80
+SQL> column signature format 999999999999999999999999999
+SQL> 
+SQL> SELECT signature,sql_handle,plan_name,sql_text,enabled, accepted
+  2  FROM   dba_sql_plan_baselines
+  3  WHERE  sql_text LIKE '%SPMTEST%';
+
+                   SIGNATURE SQL_HANDLE                     PLAN_NAME                      SQL_TEXT                                                                         ENA ACC
+---------------------------- ------------------------------ ------------------------------ -------------------------------------------------------------------------------- --- ---
+        13077052937707607208 SQL_b57b065c950a54a8           SQL_PLAN_bays6bkahnp5897367831 select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate)              NO  YES
+
+SQL> 
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> --
+SQL> -- Now map the Q2 plan against Q1 SQL plan baseline
+SQL> --
+SQL> @map
+SQL> declare
+  2    cnt pls_integer;
+  3  begin
+  4    cnt:=dbms_spm.load_plans_from_cursor_cache(
+  5         sql_id =>          '4s5bm2bgy0g0v',          -- Q2
+  6         plan_hash_value => :phv,
+  7         sql_handle =>      'SQL_b57b065c950a54a8');  -- Plan baseline for Q1
+  8  end;
+  9  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> pause Press <CR> to continue...
+Press <CR> to continue...
+
+SQL> 
+SQL> --
+SQL> -- Now let's see if Q1 uses the SQL plan baseline and the INDEX now...
+SQL> --
+SQL> 
+SQL> @q1
+SQL> select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate);
+
+        ID SALE_DATE
+---------- ---------
+       653 24-APR-17
+       652 24-APR-17
+       651 24-APR-17
+       650 24-APR-17
+       649 24-APR-17
+       648 24-APR-17
+       647 24-APR-17
+       646 24-APR-17
+       645 24-APR-17
+       644 24-APR-17
+       643 24-APR-17
+       642 24-APR-17
+       641 24-APR-17
+       640 24-APR-17
+       639 24-APR-17
+       638 24-APR-17
+       637 24-APR-17
+       636 24-APR-17
+       635 24-APR-17
+       634 24-APR-17
+       633 24-APR-17
+       632 24-APR-17
+       631 24-APR-17
+       630 24-APR-17
+       629 24-APR-17
+       628 24-APR-17
+       627 24-APR-17
+       626 24-APR-17
+       625 24-APR-17
+       624 24-APR-17
+       623 24-APR-17
+       622 24-APR-17
+       621 24-APR-17
+       620 24-APR-17
+       619 24-APR-17
+       618 24-APR-17
+       617 24-APR-17
+       616 24-APR-17
+       615 24-APR-17
+       614 24-APR-17
+       613 24-APR-17
+       612 24-APR-17
+       611 24-APR-17
+       610 24-APR-17
+       609 24-APR-17
+       608 24-APR-17
+       607 24-APR-17
+       606 24-APR-17
+       605 24-APR-17
+       604 24-APR-17
+       603 24-APR-17
+       602 24-APR-17
+       601 24-APR-17
+       600 24-APR-17
+       599 24-APR-17
+       598 24-APR-17
+       597 24-APR-17
+       596 24-APR-17
+       595 24-APR-17
+       594 24-APR-17
+       593 24-APR-17
+       592 24-APR-17
+       591 24-APR-17
+       590 24-APR-17
+       589 24-APR-17
+       588 24-APR-17
+       587 24-APR-17
+       586 24-APR-17
+       585 24-APR-17
+       584 24-APR-17
+       583 24-APR-17
+       582 24-APR-17
+       581 24-APR-17
+       580 24-APR-17
+       579 24-APR-17
+       578 24-APR-17
+       577 24-APR-17
+       576 24-APR-17
+       575 24-APR-17
+       574 24-APR-17
+       573 24-APR-17
+       572 24-APR-17
+       571 24-APR-17
+       570 24-APR-17
+       569 24-APR-17
+       568 24-APR-17
+       567 24-APR-17
+       566 24-APR-17
+       565 24-APR-17
+       564 24-APR-17
+       563 24-APR-17
+       562 24-APR-17
+       561 24-APR-17
+       560 24-APR-17
+       559 24-APR-17
+       558 24-APR-17
+       557 24-APR-17
+
+        ID SALE_DATE
+---------- ---------
+       556 24-APR-17
+       555 24-APR-17
+       554 24-APR-17
+       553 24-APR-17
+       552 24-APR-17
+       551 24-APR-17
+       550 24-APR-17
+       549 24-APR-17
+       548 24-APR-17
+       547 24-APR-17
+       546 24-APR-17
+       545 24-APR-17
+       544 24-APR-17
+       543 24-APR-17
+       542 24-APR-17
+       541 24-APR-17
+       540 24-APR-17
+       539 24-APR-17
+       538 24-APR-17
+       537 24-APR-17
+       536 24-APR-17
+       535 24-APR-17
+       534 24-APR-17
+       533 24-APR-17
+       532 24-APR-17
+       531 24-APR-17
+       530 24-APR-17
+       529 24-APR-17
+       528 24-APR-17
+       527 24-APR-17
+       526 24-APR-17
+       525 24-APR-17
+       524 24-APR-17
+       523 24-APR-17
+       522 24-APR-17
+       521 24-APR-17
+       520 24-APR-17
+       519 24-APR-17
+       518 24-APR-17
+       517 24-APR-17
+       516 24-APR-17
+       515 24-APR-17
+       514 24-APR-17
+       513 24-APR-17
+       512 24-APR-17
+       511 24-APR-17
+       510 24-APR-17
+       509 24-APR-17
+       508 24-APR-17
+       507 24-APR-17
+       506 24-APR-17
+       505 24-APR-17
+       504 24-APR-17
+       503 24-APR-17
+       502 24-APR-17
+       501 24-APR-17
+       500 24-APR-17
+       499 24-APR-17
+       498 24-APR-17
+       497 24-APR-17
+       496 24-APR-17
+       495 24-APR-17
+       494 24-APR-17
+       493 24-APR-17
+       492 24-APR-17
+       491 24-APR-17
+       490 24-APR-17
+       489 24-APR-17
+       488 24-APR-17
+       487 24-APR-17
+       486 24-APR-17
+       485 24-APR-17
+       484 24-APR-17
+       483 24-APR-17
+       482 24-APR-17
+       481 24-APR-17
+       480 24-APR-17
+       479 24-APR-17
+       478 24-APR-17
+       477 24-APR-17
+       476 24-APR-17
+       475 24-APR-17
+       474 24-APR-17
+       473 24-APR-17
+       472 24-APR-17
+       471 24-APR-17
+       470 24-APR-17
+       469 24-APR-17
+       468 24-APR-17
+       467 24-APR-17
+       466 24-APR-17
+       465 24-APR-17
+       464 24-APR-17
+       463 24-APR-17
+       462 24-APR-17
+       461 24-APR-17
+       460 24-APR-17
+
+        ID SALE_DATE
+---------- ---------
+       459 24-APR-17
+       458 24-APR-17
+       457 24-APR-17
+       456 24-APR-17
+       455 24-APR-17
+       454 24-APR-17
+       453 24-APR-17
+       452 24-APR-17
+       451 24-APR-17
+       450 24-APR-17
+       449 24-APR-17
+       448 24-APR-17
+       447 24-APR-17
+       446 24-APR-17
+       445 24-APR-17
+       444 24-APR-17
+       443 24-APR-17
+       442 24-APR-17
+       441 24-APR-17
+       440 24-APR-17
+       439 24-APR-17
+       438 24-APR-17
+       437 24-APR-17
+       436 24-APR-17
+       435 24-APR-17
+       434 24-APR-17
+       433 24-APR-17
+       432 24-APR-17
+       431 24-APR-17
+       430 24-APR-17
+       429 24-APR-17
+       428 24-APR-17
+       427 24-APR-17
+       426 24-APR-17
+       425 24-APR-17
+       424 24-APR-17
+       423 24-APR-17
+       422 24-APR-17
+       421 24-APR-17
+       420 24-APR-17
+       419 24-APR-17
+       418 24-APR-17
+       417 24-APR-17
+       416 24-APR-17
+       415 24-APR-17
+       414 24-APR-17
+       413 24-APR-17
+       412 24-APR-17
+       411 24-APR-17
+       410 24-APR-17
+       409 24-APR-17
+       408 24-APR-17
+       407 24-APR-17
+       406 24-APR-17
+       405 24-APR-17
+       404 24-APR-17
+       403 24-APR-17
+       402 24-APR-17
+       401 24-APR-17
+       400 24-APR-17
+       399 24-APR-17
+       398 24-APR-17
+       397 24-APR-17
+       396 24-APR-17
+       395 24-APR-17
+       394 24-APR-17
+       393 24-APR-17
+       392 24-APR-17
+       391 24-APR-17
+       390 24-APR-17
+       389 24-APR-17
+       388 24-APR-17
+       387 24-APR-17
+       386 24-APR-17
+       385 24-APR-17
+       384 24-APR-17
+       383 24-APR-17
+       382 24-APR-17
+       381 24-APR-17
+       380 24-APR-17
+       379 24-APR-17
+       378 24-APR-17
+       377 24-APR-17
+       376 24-APR-17
+       375 24-APR-17
+       374 24-APR-17
+       373 24-APR-17
+       372 24-APR-17
+       371 24-APR-17
+       370 24-APR-17
+       369 24-APR-17
+       368 24-APR-17
+       367 24-APR-17
+       366 24-APR-17
+       365 24-APR-17
+       364 24-APR-17
+       363 24-APR-17
+
+        ID SALE_DATE
+---------- ---------
+       362 24-APR-17
+       361 24-APR-17
+       360 24-APR-17
+       359 24-APR-17
+       358 24-APR-17
+       357 24-APR-17
+       356 24-APR-17
+       355 24-APR-17
+       354 24-APR-17
+       353 24-APR-17
+       352 24-APR-17
+       351 24-APR-17
+       350 24-APR-17
+       349 24-APR-17
+       348 24-APR-17
+       347 24-APR-17
+       346 24-APR-17
+       345 24-APR-17
+       344 24-APR-17
+       343 24-APR-17
+       342 24-APR-17
+       341 24-APR-17
+       340 24-APR-17
+       339 24-APR-17
+       338 24-APR-17
+       337 24-APR-17
+       336 24-APR-17
+       335 24-APR-17
+       334 24-APR-17
+       333 24-APR-17
+       332 24-APR-17
+       331 24-APR-17
+       330 24-APR-17
+       329 24-APR-17
+       328 24-APR-17
+       327 24-APR-17
+       326 24-APR-17
+       325 24-APR-17
+       324 24-APR-17
+       323 24-APR-17
+       322 24-APR-17
+       321 24-APR-17
+       320 24-APR-17
+       319 24-APR-17
+       318 24-APR-17
+       317 24-APR-17
+       316 24-APR-17
+       315 24-APR-17
+       314 24-APR-17
+       313 24-APR-17
+       312 24-APR-17
+       311 24-APR-17
+       310 24-APR-17
+       309 24-APR-17
+       308 24-APR-17
+       307 24-APR-17
+       306 24-APR-17
+       305 24-APR-17
+       304 24-APR-17
+       303 24-APR-17
+       302 24-APR-17
+       301 24-APR-17
+       300 24-APR-17
+       299 24-APR-17
+       298 24-APR-17
+       297 24-APR-17
+       296 24-APR-17
+       295 24-APR-17
+       294 24-APR-17
+       293 24-APR-17
+       292 24-APR-17
+       291 24-APR-17
+       290 24-APR-17
+       289 24-APR-17
+       288 24-APR-17
+       287 24-APR-17
+       286 24-APR-17
+       285 24-APR-17
+       284 24-APR-17
+       283 24-APR-17
+       282 24-APR-17
+       281 24-APR-17
+       280 24-APR-17
+       279 24-APR-17
+       278 24-APR-17
+       277 24-APR-17
+       276 24-APR-17
+       275 24-APR-17
+       274 24-APR-17
+       273 24-APR-17
+       272 24-APR-17
+       271 24-APR-17
+       270 24-APR-17
+       269 24-APR-17
+       268 24-APR-17
+       267 24-APR-17
+       266 24-APR-17
+
+        ID SALE_DATE
+---------- ---------
+       265 24-APR-17
+       264 24-APR-17
+       263 24-APR-17
+       262 24-APR-17
+       261 24-APR-17
+       260 24-APR-17
+       259 24-APR-17
+       258 24-APR-17
+       257 24-APR-17
+       256 24-APR-17
+       255 24-APR-17
+       254 24-APR-17
+       253 24-APR-17
+       252 24-APR-17
+       251 24-APR-17
+       250 24-APR-17
+       249 24-APR-17
+       248 24-APR-17
+       247 24-APR-17
+       246 24-APR-17
+       245 24-APR-17
+       244 24-APR-17
+       243 24-APR-17
+       242 24-APR-17
+       241 24-APR-17
+       240 24-APR-17
+       239 24-APR-17
+       238 24-APR-17
+       237 24-APR-17
+       236 24-APR-17
+       235 24-APR-17
+       234 24-APR-17
+       233 24-APR-17
+       232 24-APR-17
+       231 24-APR-17
+       230 24-APR-17
+       229 24-APR-17
+       228 24-APR-17
+       227 24-APR-17
+       226 24-APR-17
+       225 24-APR-17
+       224 24-APR-17
+       223 24-APR-17
+       222 24-APR-17
+       221 24-APR-17
+       220 24-APR-17
+       219 24-APR-17
+       218 24-APR-17
+       217 24-APR-17
+       216 24-APR-17
+       215 24-APR-17
+       214 24-APR-17
+       213 24-APR-17
+       212 24-APR-17
+       211 24-APR-17
+       210 24-APR-17
+       209 24-APR-17
+       208 24-APR-17
+       207 24-APR-17
+       206 24-APR-17
+       205 24-APR-17
+       204 24-APR-17
+       203 24-APR-17
+       202 24-APR-17
+       201 24-APR-17
+       200 24-APR-17
+       199 24-APR-17
+       198 24-APR-17
+       197 24-APR-17
+       196 24-APR-17
+       195 24-APR-17
+       194 24-APR-17
+       193 24-APR-17
+       192 24-APR-17
+       191 24-APR-17
+       190 24-APR-17
+       189 24-APR-17
+       188 24-APR-17
+       187 24-APR-17
+       186 24-APR-17
+       185 24-APR-17
+       184 24-APR-17
+       183 24-APR-17
+       182 24-APR-17
+       181 24-APR-17
+       180 24-APR-17
+       179 24-APR-17
+       178 24-APR-17
+       177 24-APR-17
+       176 24-APR-17
+       175 24-APR-17
+       174 24-APR-17
+       173 24-APR-17
+       172 24-APR-17
+       171 24-APR-17
+       170 24-APR-17
+       169 24-APR-17
+
+        ID SALE_DATE
+---------- ---------
+       168 24-APR-17
+       167 24-APR-17
+       166 24-APR-17
+       165 24-APR-17
+       164 24-APR-17
+       163 24-APR-17
+       162 24-APR-17
+       161 24-APR-17
+       160 24-APR-17
+       159 24-APR-17
+       158 24-APR-17
+       157 24-APR-17
+       156 24-APR-17
+       155 24-APR-17
+       154 24-APR-17
+       153 24-APR-17
+       152 24-APR-17
+       151 24-APR-17
+       150 24-APR-17
+       149 24-APR-17
+       148 24-APR-17
+       147 24-APR-17
+       146 24-APR-17
+       145 24-APR-17
+       144 24-APR-17
+       143 24-APR-17
+       142 24-APR-17
+       141 24-APR-17
+       140 24-APR-17
+       139 24-APR-17
+       138 24-APR-17
+       137 24-APR-17
+       136 24-APR-17
+       135 24-APR-17
+       134 24-APR-17
+       133 24-APR-17
+       132 24-APR-17
+       131 24-APR-17
+       130 24-APR-17
+       129 24-APR-17
+       128 24-APR-17
+       127 24-APR-17
+       126 24-APR-17
+       125 24-APR-17
+       124 24-APR-17
+       123 24-APR-17
+       122 24-APR-17
+       121 24-APR-17
+       120 24-APR-17
+       119 24-APR-17
+       118 24-APR-17
+       117 24-APR-17
+       116 24-APR-17
+       115 24-APR-17
+       114 24-APR-17
+       113 24-APR-17
+       112 24-APR-17
+       111 24-APR-17
+       110 24-APR-17
+       109 24-APR-17
+       108 24-APR-17
+       107 24-APR-17
+       106 24-APR-17
+       105 24-APR-17
+       104 24-APR-17
+       103 24-APR-17
+       102 24-APR-17
+       101 24-APR-17
+       100 24-APR-17
+        99 24-APR-17
+        98 24-APR-17
+        97 24-APR-17
+        96 24-APR-17
+        95 24-APR-17
+        94 24-APR-17
+        93 24-APR-17
+        92 24-APR-17
+        91 24-APR-17
+        90 24-APR-17
+        89 24-APR-17
+        88 24-APR-17
+        87 24-APR-17
+        86 24-APR-17
+        85 24-APR-17
+        84 24-APR-17
+        83 24-APR-17
+        82 24-APR-17
+        81 24-APR-17
+        80 24-APR-17
+        79 24-APR-17
+        78 24-APR-17
+        77 24-APR-17
+        76 24-APR-17
+        75 24-APR-17
+        74 24-APR-17
+        73 24-APR-17
+        72 24-APR-17
+
+        ID SALE_DATE
+---------- ---------
+        71 24-APR-17
+        70 24-APR-17
+        69 24-APR-17
+        68 24-APR-17
+        67 24-APR-17
+        66 24-APR-17
+        65 24-APR-17
+        64 24-APR-17
+        63 24-APR-17
+        62 24-APR-17
+        61 24-APR-17
+        60 24-APR-17
+        59 24-APR-17
+        58 24-APR-17
+        57 24-APR-17
+        56 24-APR-17
+        55 24-APR-17
+        54 24-APR-17
+        53 24-APR-17
+        52 24-APR-17
+        51 24-APR-17
+        50 24-APR-17
+        49 24-APR-17
+        48 24-APR-17
+        47 24-APR-17
+        46 24-APR-17
+        45 24-APR-17
+        44 24-APR-17
+        43 24-APR-17
+        42 24-APR-17
+        41 24-APR-17
+        40 24-APR-17
+        39 24-APR-17
+        38 24-APR-17
+        37 24-APR-17
+        36 24-APR-17
+        35 24-APR-17
+        34 24-APR-17
+        33 24-APR-17
+        32 24-APR-17
+        31 24-APR-17
+        30 24-APR-17
+        29 24-APR-17
+        28 24-APR-17
+        27 24-APR-17
+        26 24-APR-17
+        25 24-APR-17
+        24 24-APR-17
+        23 24-APR-17
+        22 24-APR-17
+        21 24-APR-17
+        20 24-APR-17
+        19 24-APR-17
+        18 24-APR-17
+        17 24-APR-17
+        16 24-APR-17
+        15 24-APR-17
+        14 24-APR-17
+        13 24-APR-17
+        12 24-APR-17
+        11 24-APR-17
+        10 24-APR-17
+         9 24-APR-17
+         8 24-APR-17
+         7 24-APR-17
+         6 24-APR-17
+         5 24-APR-17
+         4 24-APR-17
+         3 24-APR-17
+         2 24-APR-17
+         1 24-APR-17
+    100000 19-JAN-20
+
+654 rows selected.
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(format=>'last'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2dd6sf2pg9v57, child number 2
+
+An uncaught error happened in prepare_sql_statement : ORA-01403: no data found
+
+NOTE: cannot fetch plan for SQL_ID: 2dd6sf2pg9v57, CHILD_NUMBER: 2
+      Please verify value of SQL_ID and CHILD_NUMBER;
+      It could also be that the plan is no longer in cursor cache (check v$sql_plan)
+
+
+8 rows selected.
+
+SQL> @plan1
+SQL> --
+SQL> -- Using this as a trick to get DISPLAY_CURSOR to work on the new child
+SQL> --
+SQL> select *  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(sql_id=>'g6y6gpnzww95b',cursor_child_no=>1))
+  2  /
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID: g6y6gpnzww95b, child number: 1 cannot be found
+
+
+SQL> 
+SQL> @q1
+SQL> select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate);
+
+        ID SALE_DATE
+---------- ---------
+       653 24-APR-17
+       652 24-APR-17
+       651 24-APR-17
+       650 24-APR-17
+       649 24-APR-17
+       648 24-APR-17
+       647 24-APR-17
+       646 24-APR-17
+       645 24-APR-17
+       644 24-APR-17
+       643 24-APR-17
+       642 24-APR-17
+       641 24-APR-17
+       640 24-APR-17
+       639 24-APR-17
+       638 24-APR-17
+       637 24-APR-17
+       636 24-APR-17
+       635 24-APR-17
+       634 24-APR-17
+       633 24-APR-17
+       632 24-APR-17
+       631 24-APR-17
+       630 24-APR-17
+       629 24-APR-17
+       628 24-APR-17
+       627 24-APR-17
+       626 24-APR-17
+       625 24-APR-17
+       624 24-APR-17
+       623 24-APR-17
+       622 24-APR-17
+       621 24-APR-17
+       620 24-APR-17
+       619 24-APR-17
+       618 24-APR-17
+       617 24-APR-17
+       616 24-APR-17
+       615 24-APR-17
+       614 24-APR-17
+       613 24-APR-17
+       612 24-APR-17
+       611 24-APR-17
+       610 24-APR-17
+       609 24-APR-17
+       608 24-APR-17
+       607 24-APR-17
+       606 24-APR-17
+       605 24-APR-17
+       604 24-APR-17
+       603 24-APR-17
+       602 24-APR-17
+       601 24-APR-17
+       600 24-APR-17
+       599 24-APR-17
+       598 24-APR-17
+       597 24-APR-17
+       596 24-APR-17
+       595 24-APR-17
+       594 24-APR-17
+       593 24-APR-17
+       592 24-APR-17
+       591 24-APR-17
+       590 24-APR-17
+       589 24-APR-17
+       588 24-APR-17
+       587 24-APR-17
+       586 24-APR-17
+       585 24-APR-17
+       584 24-APR-17
+       583 24-APR-17
+       582 24-APR-17
+       581 24-APR-17
+       580 24-APR-17
+       579 24-APR-17
+       578 24-APR-17
+       577 24-APR-17
+       576 24-APR-17
+       575 24-APR-17
+       574 24-APR-17
+       573 24-APR-17
+       572 24-APR-17
+       571 24-APR-17
+       570 24-APR-17
+       569 24-APR-17
+       568 24-APR-17
+       567 24-APR-17
+       566 24-APR-17
+       565 24-APR-17
+       564 24-APR-17
+       563 24-APR-17
+       562 24-APR-17
+       561 24-APR-17
+       560 24-APR-17
+       559 24-APR-17
+       558 24-APR-17
+       557 24-APR-17
+       556 24-APR-17
+       555 24-APR-17
+       554 24-APR-17
+       553 24-APR-17
+       552 24-APR-17
+       551 24-APR-17
+       550 24-APR-17
+       549 24-APR-17
+       548 24-APR-17
+       547 24-APR-17
+       546 24-APR-17
+       545 24-APR-17
+       544 24-APR-17
+       543 24-APR-17
+       542 24-APR-17
+       541 24-APR-17
+       540 24-APR-17
+       539 24-APR-17
+       538 24-APR-17
+       537 24-APR-17
+       536 24-APR-17
+       535 24-APR-17
+       534 24-APR-17
+       533 24-APR-17
+       532 24-APR-17
+       531 24-APR-17
+       530 24-APR-17
+       529 24-APR-17
+       528 24-APR-17
+       527 24-APR-17
+       526 24-APR-17
+       525 24-APR-17
+       524 24-APR-17
+       523 24-APR-17
+       522 24-APR-17
+       521 24-APR-17
+       520 24-APR-17
+       519 24-APR-17
+       518 24-APR-17
+       517 24-APR-17
+       516 24-APR-17
+       515 24-APR-17
+       514 24-APR-17
+       513 24-APR-17
+       512 24-APR-17
+       511 24-APR-17
+       510 24-APR-17
+       509 24-APR-17
+       508 24-APR-17
+       507 24-APR-17
+       506 24-APR-17
+       505 24-APR-17
+       504 24-APR-17
+       503 24-APR-17
+       502 24-APR-17
+       501 24-APR-17
+       500 24-APR-17
+       499 24-APR-17
+       498 24-APR-17
+       497 24-APR-17
+       496 24-APR-17
+       495 24-APR-17
+       494 24-APR-17
+       493 24-APR-17
+       492 24-APR-17
+       491 24-APR-17
+       490 24-APR-17
+       489 24-APR-17
+       488 24-APR-17
+       487 24-APR-17
+       486 24-APR-17
+       485 24-APR-17
+       484 24-APR-17
+       483 24-APR-17
+       482 24-APR-17
+       481 24-APR-17
+       480 24-APR-17
+       479 24-APR-17
+       478 24-APR-17
+       477 24-APR-17
+       476 24-APR-17
+       475 24-APR-17
+       474 24-APR-17
+       473 24-APR-17
+       472 24-APR-17
+       471 24-APR-17
+       470 24-APR-17
+       469 24-APR-17
+       468 24-APR-17
+       467 24-APR-17
+       466 24-APR-17
+       465 24-APR-17
+       464 24-APR-17
+       463 24-APR-17
+       462 24-APR-17
+       461 24-APR-17
+       460 24-APR-17
+       459 24-APR-17
+       458 24-APR-17
+       457 24-APR-17
+       456 24-APR-17
+       455 24-APR-17
+       454 24-APR-17
+       453 24-APR-17
+       452 24-APR-17
+       451 24-APR-17
+       450 24-APR-17
+       449 24-APR-17
+       448 24-APR-17
+       447 24-APR-17
+       446 24-APR-17
+       445 24-APR-17
+       444 24-APR-17
+       443 24-APR-17
+       442 24-APR-17
+       441 24-APR-17
+       440 24-APR-17
+       439 24-APR-17
+       438 24-APR-17
+       437 24-APR-17
+       436 24-APR-17
+       435 24-APR-17
+       434 24-APR-17
+       433 24-APR-17
+       432 24-APR-17
+       431 24-APR-17
+       430 24-APR-17
+       429 24-APR-17
+       428 24-APR-17
+       427 24-APR-17
+       426 24-APR-17
+       425 24-APR-17
+       424 24-APR-17
+       423 24-APR-17
+       422 24-APR-17
+       421 24-APR-17
+       420 24-APR-17
+       419 24-APR-17
+       418 24-APR-17
+       417 24-APR-17
+       416 24-APR-17
+       415 24-APR-17
+       414 24-APR-17
+       413 24-APR-17
+       412 24-APR-17
+       411 24-APR-17
+       410 24-APR-17
+       409 24-APR-17
+       408 24-APR-17
+       407 24-APR-17
+       406 24-APR-17
+       405 24-APR-17
+       404 24-APR-17
+       403 24-APR-17
+       402 24-APR-17
+       401 24-APR-17
+       400 24-APR-17
+       399 24-APR-17
+       398 24-APR-17
+       397 24-APR-17
+       396 24-APR-17
+       395 24-APR-17
+       394 24-APR-17
+       393 24-APR-17
+       392 24-APR-17
+       391 24-APR-17
+       390 24-APR-17
+       389 24-APR-17
+       388 24-APR-17
+       387 24-APR-17
+       386 24-APR-17
+       385 24-APR-17
+       384 24-APR-17
+       383 24-APR-17
+       382 24-APR-17
+       381 24-APR-17
+       380 24-APR-17
+       379 24-APR-17
+       378 24-APR-17
+       377 24-APR-17
+       376 24-APR-17
+       375 24-APR-17
+       374 24-APR-17
+       373 24-APR-17
+       372 24-APR-17
+       371 24-APR-17
+       370 24-APR-17
+       369 24-APR-17
+       368 24-APR-17
+       367 24-APR-17
+       366 24-APR-17
+       365 24-APR-17
+       364 24-APR-17
+       363 24-APR-17
+       362 24-APR-17
+       361 24-APR-17
+       360 24-APR-17
+       359 24-APR-17
+       358 24-APR-17
+       357 24-APR-17
+       356 24-APR-17
+       355 24-APR-17
+       354 24-APR-17
+       353 24-APR-17
+       352 24-APR-17
+       351 24-APR-17
+       350 24-APR-17
+       349 24-APR-17
+       348 24-APR-17
+       347 24-APR-17
+       346 24-APR-17
+       345 24-APR-17
+       344 24-APR-17
+       343 24-APR-17
+       342 24-APR-17
+       341 24-APR-17
+       340 24-APR-17
+       339 24-APR-17
+       338 24-APR-17
+       337 24-APR-17
+       336 24-APR-17
+       335 24-APR-17
+       334 24-APR-17
+       333 24-APR-17
+       332 24-APR-17
+       331 24-APR-17
+       330 24-APR-17
+       329 24-APR-17
+       328 24-APR-17
+       327 24-APR-17
+       326 24-APR-17
+       325 24-APR-17
+       324 24-APR-17
+       323 24-APR-17
+       322 24-APR-17
+       321 24-APR-17
+       320 24-APR-17
+       319 24-APR-17
+       318 24-APR-17
+       317 24-APR-17
+       316 24-APR-17
+       315 24-APR-17
+       314 24-APR-17
+       313 24-APR-17
+       312 24-APR-17
+       311 24-APR-17
+       310 24-APR-17
+       309 24-APR-17
+       308 24-APR-17
+       307 24-APR-17
+       306 24-APR-17
+       305 24-APR-17
+       304 24-APR-17
+       303 24-APR-17
+       302 24-APR-17
+       301 24-APR-17
+       300 24-APR-17
+       299 24-APR-17
+       298 24-APR-17
+       297 24-APR-17
+       296 24-APR-17
+       295 24-APR-17
+       294 24-APR-17
+       293 24-APR-17
+       292 24-APR-17
+       291 24-APR-17
+       290 24-APR-17
+       289 24-APR-17
+       288 24-APR-17
+       287 24-APR-17
+       286 24-APR-17
+       285 24-APR-17
+       284 24-APR-17
+       283 24-APR-17
+       282 24-APR-17
+       281 24-APR-17
+       280 24-APR-17
+       279 24-APR-17
+       278 24-APR-17
+       277 24-APR-17
+       276 24-APR-17
+       275 24-APR-17
+       274 24-APR-17
+       273 24-APR-17
+       272 24-APR-17
+       271 24-APR-17
+       270 24-APR-17
+       269 24-APR-17
+       268 24-APR-17
+       267 24-APR-17
+       266 24-APR-17
+       265 24-APR-17
+       264 24-APR-17
+       263 24-APR-17
+       262 24-APR-17
+       261 24-APR-17
+       260 24-APR-17
+       259 24-APR-17
+       258 24-APR-17
+       257 24-APR-17
+       256 24-APR-17
+       255 24-APR-17
+       254 24-APR-17
+       253 24-APR-17
+       252 24-APR-17
+       251 24-APR-17
+       250 24-APR-17
+       249 24-APR-17
+       248 24-APR-17
+       247 24-APR-17
+       246 24-APR-17
+       245 24-APR-17
+       244 24-APR-17
+       243 24-APR-17
+       242 24-APR-17
+       241 24-APR-17
+       240 24-APR-17
+       239 24-APR-17
+       238 24-APR-17
+       237 24-APR-17
+       236 24-APR-17
+       235 24-APR-17
+       234 24-APR-17
+       233 24-APR-17
+       232 24-APR-17
+       231 24-APR-17
+       230 24-APR-17
+       229 24-APR-17
+       228 24-APR-17
+       227 24-APR-17
+       226 24-APR-17
+       225 24-APR-17
+       224 24-APR-17
+       223 24-APR-17
+       222 24-APR-17
+       221 24-APR-17
+       220 24-APR-17
+       219 24-APR-17
+       218 24-APR-17
+       217 24-APR-17
+       216 24-APR-17
+       215 24-APR-17
+       214 24-APR-17
+       213 24-APR-17
+       212 24-APR-17
+       211 24-APR-17
+       210 24-APR-17
+       209 24-APR-17
+       208 24-APR-17
+       207 24-APR-17
+       206 24-APR-17
+       205 24-APR-17
+       204 24-APR-17
+       203 24-APR-17
+       202 24-APR-17
+       201 24-APR-17
+       200 24-APR-17
+       199 24-APR-17
+       198 24-APR-17
+       197 24-APR-17
+       196 24-APR-17
+       195 24-APR-17
+       194 24-APR-17
+       193 24-APR-17
+       192 24-APR-17
+       191 24-APR-17
+       190 24-APR-17
+       189 24-APR-17
+       188 24-APR-17
+       187 24-APR-17
+       186 24-APR-17
+       185 24-APR-17
+       184 24-APR-17
+       183 24-APR-17
+       182 24-APR-17
+       181 24-APR-17
+       180 24-APR-17
+       179 24-APR-17
+       178 24-APR-17
+       177 24-APR-17
+       176 24-APR-17
+       175 24-APR-17
+       174 24-APR-17
+       173 24-APR-17
+       172 24-APR-17
+       171 24-APR-17
+       170 24-APR-17
+       169 24-APR-17
+       168 24-APR-17
+       167 24-APR-17
+       166 24-APR-17
+       165 24-APR-17
+       164 24-APR-17
+       163 24-APR-17
+       162 24-APR-17
+       161 24-APR-17
+       160 24-APR-17
+       159 24-APR-17
+       158 24-APR-17
+       157 24-APR-17
+       156 24-APR-17
+       155 24-APR-17
+       154 24-APR-17
+       153 24-APR-17
+       152 24-APR-17
+       151 24-APR-17
+       150 24-APR-17
+       149 24-APR-17
+       148 24-APR-17
+       147 24-APR-17
+       146 24-APR-17
+       145 24-APR-17
+       144 24-APR-17
+       143 24-APR-17
+       142 24-APR-17
+       141 24-APR-17
+       140 24-APR-17
+       139 24-APR-17
+       138 24-APR-17
+       137 24-APR-17
+       136 24-APR-17
+       135 24-APR-17
+       134 24-APR-17
+       133 24-APR-17
+       132 24-APR-17
+       131 24-APR-17
+       130 24-APR-17
+       129 24-APR-17
+       128 24-APR-17
+       127 24-APR-17
+       126 24-APR-17
+       125 24-APR-17
+       124 24-APR-17
+       123 24-APR-17
+       122 24-APR-17
+       121 24-APR-17
+       120 24-APR-17
+       119 24-APR-17
+       118 24-APR-17
+       117 24-APR-17
+       116 24-APR-17
+       115 24-APR-17
+       114 24-APR-17
+       113 24-APR-17
+       112 24-APR-17
+       111 24-APR-17
+       110 24-APR-17
+       109 24-APR-17
+       108 24-APR-17
+       107 24-APR-17
+       106 24-APR-17
+       105 24-APR-17
+       104 24-APR-17
+       103 24-APR-17
+       102 24-APR-17
+       101 24-APR-17
+       100 24-APR-17
+        99 24-APR-17
+        98 24-APR-17
+        97 24-APR-17
+        96 24-APR-17
+        95 24-APR-17
+        94 24-APR-17
+        93 24-APR-17
+        92 24-APR-17
+        91 24-APR-17
+        90 24-APR-17
+        89 24-APR-17
+        88 24-APR-17
+        87 24-APR-17
+        86 24-APR-17
+        85 24-APR-17
+        84 24-APR-17
+        83 24-APR-17
+        82 24-APR-17
+        81 24-APR-17
+        80 24-APR-17
+        79 24-APR-17
+        78 24-APR-17
+        77 24-APR-17
+        76 24-APR-17
+        75 24-APR-17
+        74 24-APR-17
+        73 24-APR-17
+        72 24-APR-17
+        71 24-APR-17
+        70 24-APR-17
+        69 24-APR-17
+        68 24-APR-17
+        67 24-APR-17
+        66 24-APR-17
+        65 24-APR-17
+        64 24-APR-17
+        63 24-APR-17
+        62 24-APR-17
+        61 24-APR-17
+        60 24-APR-17
+        59 24-APR-17
+        58 24-APR-17
+        57 24-APR-17
+        56 24-APR-17
+        55 24-APR-17
+        54 24-APR-17
+        53 24-APR-17
+        52 24-APR-17
+        51 24-APR-17
+        50 24-APR-17
+        49 24-APR-17
+        48 24-APR-17
+        47 24-APR-17
+        46 24-APR-17
+        45 24-APR-17
+        44 24-APR-17
+        43 24-APR-17
+        42 24-APR-17
+        41 24-APR-17
+        40 24-APR-17
+        39 24-APR-17
+        38 24-APR-17
+        37 24-APR-17
+        36 24-APR-17
+        35 24-APR-17
+        34 24-APR-17
+        33 24-APR-17
+        32 24-APR-17
+        31 24-APR-17
+        30 24-APR-17
+        29 24-APR-17
+        28 24-APR-17
+        27 24-APR-17
+        26 24-APR-17
+        25 24-APR-17
+        24 24-APR-17
+        23 24-APR-17
+        22 24-APR-17
+        21 24-APR-17
+        20 24-APR-17
+        19 24-APR-17
+        18 24-APR-17
+        17 24-APR-17
+        16 24-APR-17
+        15 24-APR-17
+        14 24-APR-17
+        13 24-APR-17
+        12 24-APR-17
+        11 24-APR-17
+        10 24-APR-17
+         9 24-APR-17
+         8 24-APR-17
+         7 24-APR-17
+         6 24-APR-17
+         5 24-APR-17
+         4 24-APR-17
+         3 24-APR-17
+         2 24-APR-17
+         1 24-APR-17
+    100000 19-JAN-20
+
+654 rows selected.
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(format=>'last'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2dd6sf2pg9v57, child number 2
+-------------------------------------
+select /* SPMTEST */ * from sales WHERE sale_date >= trunc(sysdate)
+
+Plan hash value: 578151937
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                   | Name   | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |        |       |       |  1720 (100)|          |
+|   1 |  TABLE ACCESS BY INDEX ROWID| SALES  |   333K|  4233K|  1720   (1)| 00:00:01 |
+|*  2 |   INDEX RANGE SCAN          | SALESI |   333K|       |   890   (1)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("SALE_DATE">=TRUNC(SYSDATE@!))
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_bays6bkahnp58f244f78f used for this statement
+
+
+23 rows selected.
+
+SQL> --
+SQL> -- Check above - see if Q1 uses the SQL plan baseline and the INDEX now...
+SQL> --
+SQL> 
+SQL> exit
