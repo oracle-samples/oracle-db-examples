@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>List all Employees</title>
+  <link rel="stylesheet" type="text/css" href="css/app.css" >
+</head>
+<body>
+
+<div id="id-emp"></div>
+
+
+<script>
+var xmlhttp = new XMLHttpRequest();
+var url = "WebController";
+
+xmlhttp.onreadystatechange=function() {
+  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    processResponse(xmlhttp.responseText);
+  }
+}
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+
+function processResponse(response) {
+ var arr = JSON.parse(response);
+ var i;
+ var out = "<table>";
+ keys = Object.keys(arr[0]);
+
+ // Print headers
+ out += "<tr>"
+ for(i = 0; i < keys.length; ++i) {
+   out += "<th>"+keys[i]+"</th>"
+ }
+ out += "</tr>";
+
+ // Print values
+ for(j = 0; j < arr.length; j++) {
+   out += "<tr>"
+   for(i = 0; i < keys.length; ++i) {
+     out += "<td>"+arr[j][keys[i]]+"</td>"
+   }
+   out += "</tr>"
+ }
+ out += "</table>";
+ document.getElementById("id-emp").innerHTML = out;
+}
+</script>
+</body>
+</html>

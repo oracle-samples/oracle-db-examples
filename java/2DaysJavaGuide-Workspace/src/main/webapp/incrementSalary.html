@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Increment Salary</title>
+  <link rel="stylesheet" type="text/css" href="css/app.css" >
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+</head>
+<body>
+<div>
+  Enter the percentage increase in salary<input id='incrementField' type="number" max="100" min="3">%
+</div>
+<div id="UpdateButton">  <button type="button" class="btn btn-info btn-lg" onclick='javascipt:confirmUpdate()'>Increment Salaries</button> <button type="button" class="btn btn-default btn-lg" onclick='javascipt:cancelUpdate()'>Cancel</button></div>
+
+<div id="id-emp"></div>
+
+<script>
+
+function processResponse(response) {
+  var arr = JSON.parse(response);
+  var i;
+  var out = "<table>";
+  keys = Object.keys(arr[0]);
+
+  // Print headers
+  out += "<tr>"
+  for(i = 0; i < keys.length; ++i) {
+    out += "<th>"+keys[i]+"</th>"
+  }
+  out += "</tr>";
+
+  // Print values
+  for(j = 0; j < arr.length; j++) {
+    out += "<tr>"
+    for(i = 0; i < keys.length; ++i) {
+      out += "<td>"+arr[j][keys[i]]+"</td>"
+    }
+    out += "</tr>"
+  }
+  out += "</table>";
+  document.getElementById("id-emp").innerHTML = out;
+}
+
+function confirmUpdate() {
+  var increment = $('#incrementField').val();
+  var res = confirm("Do you really want to Increment Salary by " +increment +"%?");
+  if(res == true) {
+    console.log("Salary record");
+    $('#UpdateButton').hide();
+    var xmlhttp = new XMLHttpRequest();
+    var url = "WebController?incrementPct=" +increment;
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        processResponse(xmlhttp.responseText);
+      }
+    }
+
+    xmlhttp.open("POST", url, true);
+    xmlhttp.send();
+
+  }
+  else {
+    console.log("Salary not updated");
+  }
+}
+</script>
+</body>
+</body>
+</html>
