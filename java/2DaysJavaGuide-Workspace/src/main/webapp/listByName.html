@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>List Employee by Name</title>
+  <link rel="stylesheet" type="text/css" href="css/app.css" >
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <style>
+    input[readonly]{background-color:blue;}
+  </style>
+</head>
+<body>
+<div><label>Employee First Name: </label>
+  <input id="firstName" type="textfield"
+         onkeypress="return waitForEnter(event)"\> wildcard % is included at the end automatically.</div>
+<br/>
+<br/>
+<div id="id-emp"></div>
+<div id="UpdateButton">  <button type="button" class="btn btn-info btn-lg" onclick='javascipt:confirmUpdate()'>Update Record</button> <button type="button" class="btn btn-default btn-lg" onclick='javascipt:cancelUpdate()'>Cancel</button></div>
+
+
+<script>
+$('#UpdateButton').hide();
+// keys;
+
+function waitForEnter(e) {
+  if (e.keyCode == 13) {
+    fetchElement($("#firstName").val());
+    return false;
+  }
+}
+
+function fetchElement(firstName) {
+  var xmlhttp = new XMLHttpRequest();
+  var url = "WebController?firstName=" +firstName;
+
+  xmlhttp.onreadystatechange=function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      processResponse(xmlhttp.responseText);
+    }
+  }
+
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+}
+
+function processResponse2(response) {
+  var arr = JSON.parse(response);
+  var out = "";
+
+  if (arr == null) {
+    out = '<div class="alert alert-warning"><strong>Alert!</strong>'
+     +' No records found for the given id</div>'
+  }
+  else {
+    var i;
+    out = "<table>";
+
+    keys = Object.keys(arr);
+    out += "<tr><th>Trash</th><th>Edit</th>"
+
+    for(i = 0; i < keys.length; ++i) {
+      out += "<th>"+keys[i]+"</th>"
+    }
+    out += "</tr>"
+
+
+    out += '<tr><td><a href="javascript:confirmDelete()">'
+          +'<span  class="glyphicon glyphicon-trash"></span>'
+          +'</a></td>'
+          +'<td><a href="javascript:allowEditSalary()">'
+          +'<span class="glyphicon glyphicon-edit"></span>'
+          +'</a></td>'
+    for(i = 0; i < keys.length; ++i) {
+      out += "<td id='" +keys[i]+"'>"+arr[keys[i]]+"</td>"
+    }
+    out += "</tr>"
+  }
+
+  document.getElementById("id-emp").innerHTML = out;
+}
+
+
+function processResponse(response) {
+  var arr = JSON.parse(response);
+  if (arr == null || arr.length == 0) {
+    out = '<div class="alert alert-warning"><strong>Alert!</strong>'
+     +' No records found for the given Fist_Name</div>'
+  }
+  else {
+    var i;
+    var out = "<table>";
+    // keys is global so that it can be used later as well
+    keys = Object.keys(arr[0]);
+
+    // Print headers
+    out += "<tr><th>Trash</th><th>Edit</th>"
+
+    for(i = 0; i < keys.length; ++i) {
+      out += "<th>"+keys[i]+"</th>"
+    }
+    out += "</tr>";
+
+    // Print values
+    for(j = 0; j < arr.length; j++) {
+      pk = arr[j][keys[0]];
+          out += '<tr><td><a href="javascript:confirmDelete(\'' +pk +'\')">'
+          +'<span  class="glyphicon glyphicon-trash"></span>'
+          +'</a></td>'
+          +'<td><a href="javascript:allowEditSalary(\'' +pk +'\')">'
+          +'<span class="glyphicon glyphicon-edit"></span>'
+          +'</a></td>';
+      // 0 is the primary key
+      for(i = 0; i < keys.length; ++i) {
+        // creating an id to each column
+        out += "<td id='" +pk +'_' +keys[i] +"'> "+arr[j][keys[i]]+"</td>";
+      }
+      out += "</tr>"
+    }
+    out += "</table>";
+  }
+  $('#id-emp').html(out);
+
+}
+
+
+
+function allowEditSalary(pk) {
+  // If the edit button is pressed already
+  if(typeof currentPK != 'undefined' && currentPK == pk) {
+    console.log('Make column readonly');
+    for(i = 1; i < keys.length; ++i) {
+      var x = '#' +pk +"_" +keys[i];
+      var value = $(x).text().trim();
+      console.log(value);
+      $(x).val(value);
+    }
+    $('#UpdateButton').hide();
+    currentPK = '';
+  }
+  else{
+    currentPK = pk;
+    for(i = 1; i < keys.length; ++i) {
+      var x = '#' +pk +"_" +keys[i];
+      var value = $(x).text().trim();
+      $(x).html("<input type='text' value='" +value +"' \>");
+    }
+    $('#UpdateButton').show();
+  }
+}
+
+function cancelUpdate() {
+   if(typeof currentPK != 'undefined') {
+    console.log('Make column readonly');
+    for(i = 1; i < keys.length; ++i) {
+      var x = '#' +pk +"_" +keys[i];
+      var value = $(x).text().trim();
+      console.log("cancelUpdate: " +value);
+      $(x).text(value);
+    }
+    $('#UpdateButton').hide();
+    currentPK = '';
+  }
+}
+
+
+function confirmDelete() {
+  var res = confirm("Do you really want to delete");
+  if(res == true) {
+    console.log("Deleting record");
+  }
+  else {
+    console.log("Record not deleted");
+  }
+}
+
+function confirmUpdate() {
+  var res = confirm("Do you really want to Update");
+  if(res == true) {
+    console.log("Udating record");
+      $('#UpdateButton').hide();
+  }
+  else {
+    console.log("Record not updated");
+  }
+
+}
+</script>
+</body>
+</html>
