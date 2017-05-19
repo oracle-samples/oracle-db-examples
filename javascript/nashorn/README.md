@@ -1,13 +1,16 @@
 
 # Nashorn based examples
 Java 8 furnishes Nashorn, a JavaScript engine which runs on the JVM including JDK, JRE, and the embeded JVM in the Oracle database a..k.a. OJVM.
-This folder stores database related Nashorn based examples (i.e., plain JavaScript + SQL statements) including JavaScript with OJVM, and JavaScript with JDK/JRE. 
+This folder stores database related Nashorn based examples (i.e., plain JavaScript + SQL statements) including JavaScript Stored procedures with OJVM, and standalone/client JavaScript functions with JDK/JRE. 
 
-Nashorn allows interoperability between Java and JavaScript, therefore, the SQL statements are invoked using JDBC which is a portable standard Java API. 
+For data access, Nashorn allows interoperability between Java and JavaScript, therefore, the SQL statements are invoked using JDBC which is a portable standard Java API. 
 
-[A reprint of my blog post](https://blogs.oracle.com/nashorn/entry/javascript_stored_procedures_and_node) 
+For JavaScript Stored Procedures, the steps are very simple
+1) create/design your JavaScript function in a file 
+2) load the JavaScript file into your database schema using the loadjava utility (DBMSJAVASCRIPT role required)
+3) invoke it using (i) either DBMS_JAVASCRIPT.run(<JS file>) or (ii) DbmsJavaScript.run Java call, or (iii) using javax.script API 
 
-[Nashorn jsr223 engine notes](https://wiki.openjdk.java.net/display/Nashorn/Nashorn+jsr223+engine+notes)
+[See my blog post for more details](http://db360.blogspot.com/search?updated-max=2016-11-09T08:41:00-08:00&max-results=3) 
 
 [Documentation](http://bit.ly/2nstiYQ)
 
