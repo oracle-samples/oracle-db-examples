@@ -1,0 +1,1 @@
+The scripts in this directory follow the [BASIC CRUD OPERATIONS USING CX_ORACLE](https://learncodeshare.net/2015/06/02/basic-crud-operations-using-cx_oracle/) tutorial found on [LearnCodeShare.net](LearnCodeShare.net).
