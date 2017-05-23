@@ -175,6 +175,17 @@ EXCEPTION
 END; 
 /
 
+/*
+
+The Best Approach: Declare Exception in Package Specification
+
+Now, any schema with EXECUTE authority on this package can reference the exception.
+
+No Need for Local Declaration of Exception: I just reference the exception as 
+package.exception_name in my WHEN clause. Nice.
+
+*/
+
 CREATE OR REPLACE PACKAGE app_errs_pkg 
 IS 
    failure_in_forall   EXCEPTION; 
