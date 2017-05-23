@@ -109,8 +109,18 @@ BEGIN
 END; 
 /
 
-CREATE TABLE employees AS SELECT * FROM hr.employees 
-/
+/*
+The Bad Way: Hard-Coding the Error Code in Exception Section
+
+The problem with writing code like WHEN OTHERS THEN IF SQLCODE = -24381 ..." is that 
+Oracle might change the error code at some point. No, you can trust that -24381 will 
+ALWAYS be the error code when a FORALL with SAVE EXCEPTIONS fails. The problem is that 
+when you write code like this, you are saying to anyone coming along later: 
+"Ha, ha! I know all about obscure Oracle error codes, and you don't." In other words, 
+the code makes people who are responsible for maintaining feel stupid. It raises questions 
+in their minds and makes them uncomfortable.
+
+*/
 
 DECLARE 
    TYPE namelist_t IS TABLE OF VARCHAR2 (1000); 
@@ -134,6 +144,15 @@ EXCEPTION
       END IF; 
 END; 
 /
+
+/*
+A Better Way to Go: Declare Exception
+
+This is much better: I declare a local exception, associate it with -24381, 
+then use that exception in the WHEN clause. The problem with this code is that 
+the exception is declared locally, but I will/might use FORALL in many places in my code.
+
+*/
 
 DECLARE 
    failure_in_forall    EXCEPTION; 
