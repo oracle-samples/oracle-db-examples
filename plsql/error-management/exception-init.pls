@@ -1,3 +1,9 @@
+/*
+Oracle will never create pre-defined exceptions for all the ORA errors. 
+So if you need to trap one of these in your code, create your OWN named exception and associate 
+it to the desired error code with the EXCEPTION_INIT pragma. Then you can angle it by name.
+*/
+
 DECLARE  
    e_bad_date_format   EXCEPTION;  
    PRAGMA EXCEPTION_INIT (e_bad_date_format, -1830);  
@@ -10,6 +16,11 @@ EXCEPTION
 END; 
 /
 
+/*
+Both SAVE EXCEPTIONS and LOG ERRORS record error codes as unsigned integers. 
+But SQLERRM and this pragma definitely believe that an Oracle error code is negative.
+*/
+
 DECLARE  
    my_exception   EXCEPTION;  
    PRAGMA EXCEPTION_INIT (my_exception, 1830);  
@@ -17,6 +28,11 @@ BEGIN
    RAISE my_exception;  
 END; 
 /
+
+/*
+The NO_DATA_FOUND error actually has two numbers associated with it: 100 (ANSI standard) and -1403 (Oracle error). 
+You can't associate an exception with -1403. Only 100. Not sure why you'd want to anyway.
+*/
 
 DECLARE  
    my_exception   EXCEPTION;  
