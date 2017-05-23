@@ -50,6 +50,16 @@ BEGIN
 END; 
 /
 
+/*
+Distinguish Between Different Application-Specific Errors
+
+When you define your own exception, the error code is always by default set to 1 and the error message is 
+"User-defined exception". If you want to distinguish between those exceptions with SQLCODE, use the 
+EXCEPTION_INIT pragma, and select your error code between -20999 and -20000. Once you do that, 
+you will need to use RAISE_APPLICATION_ERROR to raise the exception, if you want to associate an 
+error message with the error code.
+*/
+
 DECLARE   
    e_bad_data         EXCEPTION;  
    
