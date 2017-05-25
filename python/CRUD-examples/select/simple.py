@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/06/02/select-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/06/02/select-crud-using-cx_oracle/
 #  section titled "Simple query"
-#Using the base template, the example code executes a simple query, uses fetchall to retrieve the data
+# Using the base template, the example code executes a simple query, uses fetchall to retrieve the data
 #  and displays the results.
 
 import cx_Oracle

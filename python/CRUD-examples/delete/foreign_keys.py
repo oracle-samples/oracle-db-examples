@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/07/09/delete-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/07/09/delete-crud-using-cx_oracle/
 #  section titled "Deleting records referenced by Foreign Keys" 1st example
-#Using the base template, the example code executes a simple delete using named bind variables.
+# Using the base template, the example code executes a simple delete using named bind variables.
 #  When following the tutorial with default data this section intentionally throws an error
 #  to demonstrate foreign key functionality.
 

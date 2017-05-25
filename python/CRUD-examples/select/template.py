@@ -1,5 +1,5 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/06/02/select-crud-using-cx_oracle/
-#The following code is used as the base template for the other examples.
+# Code Sample from the tutorial at https://learncodeshare.net/2015/06/02/select-crud-using-cx_oracle/
+# The following code is used as the base template for the other examples.
 
 import cx_Oracle
 import os

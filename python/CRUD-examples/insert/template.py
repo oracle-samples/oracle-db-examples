@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/06/26/insert-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/06/26/insert-crud-using-cx_oracle/
 #  section titled "Boilerplate template"
-#The following code is used as the base template for the other examples.
+# The following code is used as the base template for the other examples.
 
 import cx_Oracle
 import os

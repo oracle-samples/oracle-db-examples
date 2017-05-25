@@ -1,7 +1,7 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/07/09/delete-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/07/09/delete-crud-using-cx_oracle/
 #  section titled "Resetting the data"
-#The following resets the data for use with the update section
-#For both tables:
+# The following resets the data for use with the update section
+# For both tables:
 #  Table data is removed.
 #  The identity column is set to start with the id after the starting data.
 #  Using the executemany function an array of starting data is inserted into the table.

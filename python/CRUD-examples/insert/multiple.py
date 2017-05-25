@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/06/26/insert-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/06/26/insert-crud-using-cx_oracle/
 #  section titled "Insert more than 1 row"
-#Using the base template, the example code executes a simple insert using positional bind variables.
+# Using the base template, the example code executes a simple insert using positional bind variables.
 #  Using the executemany function an array of data is inserted into the table.
 
 import cx_Oracle

@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/06/02/select-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/06/02/select-crud-using-cx_oracle/
 #  section titled "Extra Fun 2"
-#Using the base template, the example code executes a simple query using named bind variables,
+# Using the base template, the example code executes a simple query using named bind variables,
 #  uses fetchall to retrieve the data and displays the results.
 
 import cx_Oracle

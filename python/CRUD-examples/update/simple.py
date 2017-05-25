@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/07/02/update-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/07/02/update-crud-using-cx_oracle/
 #  section titled "Simple update"
-#Using the base template, the example code executes a simple update using positional bind variables.
+# Using the base template, the example code executes a simple update using positional bind variables.
 
 import cx_Oracle
 import os

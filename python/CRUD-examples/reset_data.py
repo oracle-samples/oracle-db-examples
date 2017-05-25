@@ -1,5 +1,5 @@
-#code Sample from the tutorial at https://learncodeshare.net/2015/06/02/basic-crud-operations-using-cx_oracle/
-#The following resets the data to the initial state for the tutorial.
+# code Sample from the tutorial at https://learncodeshare.net/2015/06/02/basic-crud-operations-using-cx_oracle/
+# The following resets the data to the initial state for the tutorial.
 
 import cx_Oracle
 import os

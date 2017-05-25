@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/07/02/update-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/07/02/update-crud-using-cx_oracle/
 #  section titled "Verify the number of affected rows"
-#Using the base template, the example code executes a simple update using positional bind variables
+# Using the base template, the example code executes a simple update using positional bind variables
 #  and displays the number of affected rows.
 
 import cx_Oracle

@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/07/09/delete-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/07/09/delete-crud-using-cx_oracle/
 #  section titled "Extra Fun 2"
-#Using the base template, the example code executes two simple deletes using named bind variables.
+# Using the base template, the example code executes two simple deletes using named bind variables.
 #  The child records are removed, followed by the parent record.
 
 import cx_Oracle

@@ -1,6 +1,6 @@
-#Code Sample from the tutorial at https://learncodeshare.net/2015/06/26/insert-crud-using-cx_oracle/
+# Code Sample from the tutorial at https://learncodeshare.net/2015/06/26/insert-crud-using-cx_oracle/
 #  section titled "Extra Fun 1 & 2"
-#Using the base template, the example code executes a simple insert using positional bind variables.
+# Using the base template, the example code executes a simple insert using positional bind variables.
 #  The same statement is executed twice each using different bind variable values.
 
 import cx_Oracle
