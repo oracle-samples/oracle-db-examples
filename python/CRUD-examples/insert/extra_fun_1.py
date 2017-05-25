@@ -22,9 +22,9 @@ def get_all_rows(label):
 get_all_rows('Original Data')
 
 cur = con.cursor()
-statement = 'insert into lcs_people(name, age, notes) values (:2, :3, :4)'
-cur.execute(statement, ('Cheryl', 41, 'I like monkeys'))
-cur.execute(statement, ('Rob', 37, 'I like snakes'))
+statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes)'
+cur.execute(statement, {'name':'Cheryl', 'age':41, 'notes':'I like monkeys'})
+cur.execute(statement, {'name':'Rob', 'age':37, 'notes':'I like snakes'})
 con.commit()
 
 get_all_rows('New Data')

@@ -26,8 +26,8 @@ get_all_rows('Original Data', con)
 con2 = cx_Oracle.connect(connectString)
 
 cur = con.cursor()
-statement = 'insert into lcs_people(name, age, notes) values (:2, :3, :4)'
-cur.execute(statement, ('Suzy', 31, 'I like rabbits'))
+statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes)'
+cur.execute(statement, {'name':'Suzy', 'age':31, 'notes':'I like rabbits'})
 
 get_all_rows('New connection after insert', con2)
 get_all_rows('Same connection', con)

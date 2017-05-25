@@ -21,11 +21,10 @@ def get_all_rows(label):
 
 get_all_rows('Original Data')
 
-rows = [('Sandy', 31, 'I like horses'), ('Suzy', 29, 'I like rabbits')]
+rows = [{'name':'Sandy', 'age':31, 'notes':'I like horses'}, {'name':'Suzy', 'age':29, 'notes':'I like rabbits'}]
 cur = con.cursor()
 cur.bindarraysize = 2
-cur.setinputsizes(20, int, 100)
-statement = 'insert into lcs_people(name, age, notes) values (:1, :2, :3)'
+statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes)'
 cur.executemany(statement, rows)
 con.commit()
 

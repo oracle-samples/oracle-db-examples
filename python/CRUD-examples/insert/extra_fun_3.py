@@ -26,8 +26,8 @@ cur = con.cursor()
 new_id = cur.var(cx_Oracle.NUMBER)
 new_name = cur.var(cx_Oracle.STRING)
 
-statement = 'insert into lcs_people(name, age, notes) values (:1, :2, :3) returning id, name into :4, :5'
-cur.execute(statement, ('Sandy', 31, 'I like horses', new_id, new_name))
+statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes) returning id, name into :new_id, :new_name'
+cur.execute(statement, {'name':'Sandy', 'age':31, 'notes':'I like horses', 'new_id':new_id, 'new_name':new_name})
 
 sandy_id = new_id.getvalue()
 sandy_name = new_name.getvalue()

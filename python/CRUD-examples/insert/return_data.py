@@ -26,13 +26,13 @@ cur = con.cursor()
 
 new_id = cur.var(cx_Oracle.NUMBER)
 
-statement = 'insert into lcs_people(name, age, notes) values (:1, :2, :3) returning id into :4'
-cur.execute(statement, ('Sandy', 31, 'I like horses', new_id))
+statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes) returning id into :new_id'
+cur.execute(statement, {'name':'Sandy', 'age':31, 'notes':'I like horses', 'new_id':new_id})
 
 sandy_id = new_id.getvalue()
 
-pet_statement = 'insert into lcs_pets (name, owner, type) values (:1, :2, :3)'
-cur.execute(pet_statement, ('Big Red', sandy_id, 'horse'))
+pet_statement = 'insert into lcs_pets (name, owner, type) values (:name, :owner, :type)'
+cur.execute(pet_statement, {'name':'Big Red', 'owner':sandy_id, 'type':'horse'})
 
 con.commit()
 

@@ -27,8 +27,8 @@ get_all_rows('Original Pet Data', 'pets')
 
 cur = con.cursor()
 
-statement = 'update lcs_pets set owner = :1 where owner = :2'
-cur.execute(statement, (2, 1))
+statement = 'update lcs_pets set owner = :new_owner where owner = :old_owner'
+cur.execute(statement, {'new_owner':2, 'old_owner':1})
 
 statement = 'delete from lcs_people where id = :id'
 cur.execute(statement, {'id':1})
