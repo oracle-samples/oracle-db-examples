@@ -5,7 +5,7 @@
 
 import cx_Oracle
 import os
-connectString = os.getenv('db_connect')
+connectString = os.getenv('DB_CONNECT') # The environment variable for the connect string: DB_CONNECT=user/password@database # The environment variable for the connect string: DB_CONNECT=user/password@database
 con = cx_Oracle.connect(connectString)
 
 def get_all_rows(label):

@@ -5,7 +5,7 @@
 
 import cx_Oracle
 import os
-connectString = os.getenv('dd_connect')
+connectString = os.getenv('DB_CONNECT') # The environment variable for the connect string: DB_CONNECT=user/password@database
 con = cx_Oracle.connect(connectString)
 
 cur = con.cursor()
