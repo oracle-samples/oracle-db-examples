@@ -9,7 +9,7 @@ import os
 connectString = os.getenv('DB_CONNECT') # The environment variable for the connect string: DB_CONNECT=user/password@database
 con = cx_Oracle.connect(connectString)
 
-def get_all_rows(label, connection): # << Modified to use passed in connection
+def get_all_rows(label, connection): # << Modified original get_all_rows(label) to accept and use a connection parameter
  # Query all rows
  cur = connection.cursor() # << cursor from passed in connection
  statement = 'select id, name, age, notes from lcs_people order by id'
