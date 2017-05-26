@@ -2,7 +2,7 @@
 
 The embedded JVM in Oracle database 12 Release 2 (DB 12.2.0.1) supports Java SE 8 therefore the Nashorn engine.
 
-## Here are the steps for running JavaSript in the Orace database, using Nashorn on OJVM.
+## Steps for running JavaSript in the Oracle database, using Nashorn on OJVM.
 
 * **load the JavaScript file in the database as a Java Resource**
 loadjava -v -u username/password hello.js  <-- replace hello.js by your JS file 
@@ -22,11 +22,10 @@ import oracle.aurora.rdbms.DbmsJavaScript;
 DbmsJavaScript.run("hello.js");
 
 c) Running JavaScript in the Database using the javax.script API
-This approach (4 steps) gives you more flexibility specifically for functions returning a value and
- taking a variable number of parameters. 
+This approach consists in 4 simple steps (described hereafter) and gives you more flexibility, specifically for functions or procedures accepting a variable number of parameters and/or returning value(s). 
 Notes: The direct invocation of Nashorn classes is restricted in Oracle JVM. All scripting mode extensions are disabled in Oracle JVM.
 
-## Invoking JavaScript in the database using the javax.script API requires the following steps:
+## Steps for invoking JavaScript in the database using the javax.script API
 * **Instantiate a script manager**
 import javax.script.*;
 import java.net.*;
@@ -34,46 +33,32 @@ import java.io.*;
   ...
 ScriptEngineManager factory = new ScriptEngineManager();
 
-* **Create an engine**
+* ** 1.Create an engine**
 ScriptEngine engine = factory.getEngineByName("myJSengine");
 
-* **Pass your resource stream reader as the argument to the eval method of the engine**
+* ** 2.Pass your resource stream reader as the argument to the eval method of the engine**
 URL url = 
   Thread.currentThread().getContextClassLoader().getResource("hello.js");
 engine.eval(new InputStreamReader(url.openStream()));
 ...
 
-* **Turn steps (i, ii and iii) into a Java wrapper class  in OJVM** 
+* ** 3.Invoke a function of the JavaScript code
+ Invocable invocable = (Invocable) engine;
+        Object selectResult = 
+             invocable.invokeFunction("selectQuery", inputId);      
+             
+## Turn the javax.script steps into a javax script wrapper class
+The furnished InvokeScript.java has all these steps.
 The signature may differ depending on your input parameters and return values.
-The following script generates the Java wrapper class; you may paste this direcly in a SQL session or  put it in a script file and invoke it. 
+The following SQL script creates the Java class in your schema
 
 create or replace and compile java resource named "InvokeScript" as
-import javax.script.*;
-import java.net.*;
-import java.io.*;
-public class InvokeScript {    
-     public static String eval(String inputId) throws Exception {
-     String output = new String();
-     try {
-        // create a script engine manager
-         ScriptEngineManager factory = new ScriptEngineManager();
-        // create a JavaScript engine
-        ScriptEngine engine = factory.getEngineByName("javascript");
-        //read the script as a java resource
-        engine.eval(new InputStreamReader
-        (InvokeScript.class.getResourceAsStream("select.js")));
-       /*
-        * Alternative approach
-        * engine.eval(Thread.currentThread().getContextClassLoader().getResource("select.js"));         
-        */
-        Invocable invocable = (Invocable) engine;
-        Object selectResult = 
-             invocable.invokeFunction("selectQuery", inputId);
-        output = selectResult.toString();
-      } catch(Exception e) {
-          output =e.getMessage();
-     }
-   return output;
-  }
- }
+@InvokeScript.java
  /
+ Alrnatively you can simply load the Java class in your schema using
+    loadjava -r -v -user hr/hr InvokeScript.java
+ 
+ ## Create a SQL wrapper for the javax.script wrapper class 
+ CREATE OR REPLACE FUNCTION invokeScriptEval(inputId varchar2) return varchar2 as language java 
+name 'InvokeScript.eval(java.lang.String) return java.lang.String'; 
+/

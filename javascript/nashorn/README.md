@@ -4,6 +4,7 @@ Java 8 furnishes Nashorn, a JavaScript engine which runs on the JVM including JD
 This folder stores database related Nashorn based examples (i.e., plain JavaScript + SQL statements) including JavaScript Stored procedures with OJVM, and standalone/client JavaScript functions with JDK/JRE. 
 
 For data access, Nashorn allows interoperability between Java and JavaScript, therefore, the SQL statements are invoked using JDBC which is a portable standard Java API. 
+In addition to SQL statements, for JSON collections and documents, you can also use the fluent API (i.e., no SQL, dot notation) using SODA for Java with JavaScript, the beauty of Nashorn (see SODAjs.md for more details).
 
 For JavaScript Stored Procedures, the steps are very simple
 1) create/design your JavaScript function in a file 
