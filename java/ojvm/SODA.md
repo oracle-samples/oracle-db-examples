@@ -4,7 +4,7 @@
 See [Getting started with SODA for Java](https://github.com/oracle/soda-for-java/blob/master/doc/Getting-started-example.md) for more details on running testSODA.java with a client JVM (JDK or JRE).
 The goal of this write up is to furnish the steps for running testSODA.java in OJVM and manipulate the JSON collection directly in the database session without moving data around.
 
-* ** Requirements to run SODA with Java in the database**:
+* **Requirements to run SODA with Java in the database**
 
 (i) Download the [latest orajsoda.jar](https://github.com/oracle/soda-for-java/releases) currently orajsoda-1.0.4.jar 
 
@@ -14,7 +14,7 @@ The goal of this write up is to furnish the steps for running testSODA.java in O
 (iii) Load the [latest javax.json-1.0.4.jar](https://mvnrepository.com/artifact/org.glassfish/javax.json/1.0.4) 
             loadjava -r -v -u hr/hr javax.json-1.0.4.jar
 
-* ** Prep testSODA.java for OJVM
+* **Prep testSODA.java for OJVM**
 
 (i) Get (copy/paste) testSODA.java from [Getting started with SODA for Java](https://github.com/oracle/soda-for-java/blob/master/doc/Getting-started-example.md)
 
