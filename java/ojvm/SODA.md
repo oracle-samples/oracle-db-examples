@@ -19,8 +19,8 @@ The goal of this write up is to furnish the steps for running testSODA.java in O
 (i) Get (copy/paste) testSODA.java from [Getting started with SODA for Java](https://github.com/oracle/soda-for-java/blob/master/doc/Getting-started-example.md)
 
 (ii) Replace the URL in the connect string with the OJVM server-side connect URL
-Replace "jdbc:oracle:thin:@//hostName:port/serviceName";
-With "jdbc:default:connection"
+    Replace "jdbc:oracle:thin:@//hostName:port/serviceName"
+    With "jdbc:default:connection"
 The furnished testSODA.java on this page already has the change     
 
 (iii) load the updated testSODA.java in your schema
