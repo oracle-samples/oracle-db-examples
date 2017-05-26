@@ -13,7 +13,7 @@ JavaScript in Oracle database is enabled using Nashorn in the embedded JVM (a.k.
 (i) Follow steps (i), (ii) and (iii) in the section titled [Requirements to run SODA with Java in the database](https://github.com/oracle/oracle-db-examples/blob/master/java/ojvm/SODA.md)
 
 
-**testSODAjs.js**
+**testSODA.js**
 
 (i) We've rewritten testSODA.java in JavaScript (i.e., testSODA.js), using SODA for Java API. 
 Grap testSODA.js from [Oracle DB Examples - JavaScript - Nashorn](https://github.com/oracle/oracle-db-examples/upload/master/javascript/nashorn)
