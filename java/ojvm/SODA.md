@@ -44,4 +44,20 @@ The furnished testSODA.java on this page already has the change
             call dbms_java.set_output(2000);
             call testSODA();
 
-The furnished testSODA.sql performs the steps (v) and (vi).       
+The furnished testSODA.sql performs the steps (v) and (vi).   
+
+From a database SQLPLUS session, issue the following call
+
+ sqlplus hr/hr @testSODA.sql
+ 
+ You should see the following output
+ 
+     * Retrieving the first document by its key *
+
+    { "name" : "Alex", "friends" : "50" }
+
+    * Retrieving documents representing users with at least 300 friends *
+
+    { "name" : "Mia", "friends" : "300" }
+    { "name" : "Gloria", "friends" : "399" }
+
