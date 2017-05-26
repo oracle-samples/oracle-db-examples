@@ -53,9 +53,12 @@ The signature may differ depending on your input parameters and return values.
 The following SQL script creates the Java class in your schema
 
 create or replace and compile java resource named "InvokeScript" as
+
 @InvokeScript.java
+
  /
- Alrnatively you can simply load the Java class in your schema using
+ 
+ Alternatively, you can simply load the Java class in your schema using
     loadjava -r -v -user hr/hr InvokeScript.java
  
  ## Create a SQL wrapper for the javax.script wrapper class 
