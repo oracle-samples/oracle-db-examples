@@ -31,14 +31,12 @@ The furnished testSODA.java on this page already has the change
 
             loadjava -r -v -user hr/hr testSODA.java
 
-(iv) Create the table for persisting the JSON collection and documents using the furnished JSON-tables.sql
-
-(v) Create a SQL wrapper for invoking the main method
+(iv) Create a SQL wrapper for invoking the main method
 
             create or replace procedure testSODA as
             language java name 'testSODA.main(java.lang.String[])';        
 
-(vi) Invoke the wrapper of the main method and display the output
+(v) Invoke the wrapper of the main method and display the output
 
             set serveroutput on
             call dbms_java.set_output(2000);
