@@ -16,18 +16,14 @@ JavaScript in Oracle database is enabled using Nashorn in the embedded JVM (a.k.
 **testSODA.js**
 
 (i) We've rewritten testSODA.java in JavaScript (i.e., testSODA.js), using SODA for Java API. 
-Grap testSODA.js from [Oracle DB Examples - JavaScript - Nashorn](https://github.com/oracle/oracle-db-examples/upload/master/javascript/nashorn)
-   
-(ii) Create the table for persisting the JSON collection and documents using [JSON-table.sql](https://github.com/oracle/oracle-db-examples/blob/master/java/ojvm/JSON-Tables.sql) 
+Grap testSODA.js from [Oracle DB Examples - JavaScript - Nashorn](https://github.com/oracle/oracle-db-examples/blob/master/javascript/nashorn/testSODA.js)
 
-Note: if you've already tried SODA for Java in the database using the HR schema, then the table already exists and you may skip this step
-
-(iii) load testSODA.js in your  schema using
+(ii) load testSODA.js in your  schema using
 
             loadjava -r -v -user hr/hr testSODA.js
 
 
-(iv) enable printing SQL output then invoke testSODA.js
+(iii) enable printing SQL output then invoke testSODA.js
             set serveroutput on
             call dbms_java.set_output(2000);
             call dbms_javascript.run('testSODA.js');
