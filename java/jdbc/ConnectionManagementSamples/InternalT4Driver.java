@@ -67,7 +67,7 @@ public class InternalT4Driver {
     Statement statement = null;
     try {
       statement = connection.createStatement();
-      resultSet = statement.executeQuery("SELECT employee_id, first_name FROM"+ 
+      resultSet = statement.executeQuery("SELECT employee_id, first_name FROM "+ 
                 "employees order by employee_id");
       while (resultSet.next()) {
         System.out.println("Emp no: " + resultSet.getInt(1) + "   Emp name: "
