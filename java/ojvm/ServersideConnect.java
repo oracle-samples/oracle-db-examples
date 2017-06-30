@@ -9,9 +9,9 @@
      database.
      
      Step 1: Connect to SQLPLUS using the database USER/PASSWORD. 
-             Make sure to have InternalT2Driver.sql accessible on the 
+             Make sure to have ServersideConnect.sql accessible on the 
              client side to execute. 
-     Step 2: Run the SQL file after connecting to DB "@InternalT2Driver.sql" 
+     Step 2: Run the SQL file after connecting to DB "@ServersideConnect.sql" 
 
    NOTES
     Use JDK 1.6 and above
@@ -28,17 +28,18 @@ import oracle.jdbc.driver.OracleDriver;
 import oracle.jdbc.pool.OracleDataSource;
 
 
-public class InternalT2Driver {
+public class ServersideConnect {
 
   static public void jrun() throws SQLException {
-    // For testing InternalT2Driver
+    // For testing ServersideConnect
     // test("jdbc:oracle:kprb:@");
-    test("jdbc:default:connection");
-  }  
- /*
+    method1("jdbc:default:connection");
+    method2(); 
+  } 
+  /*
   * Shows using the server side Type 2 driver a.k.a KPRB driver 
   */ 
- static public void test(String url) throws SQLException {
+ static public void method1(String url) throws SQLException {
     Connection connection = null; 
     try {
       System.out.println("Connecting to URL " + url);
@@ -51,6 +52,19 @@ public class InternalT2Driver {
       // Perform database operation
       printEmployees(connection);
 
+    } catch (SQLException e) {
+      e.printStackTrace();
+     }
+  }
+
+
+ /*
+ * Method to show that a connection is obtained without specifying the URL.  
+ * This method uses the default connection to establish the connection.  
+ */ 
+
+ static public void method2() throws SQLException {
+    Connection connection = null; 
       // Method 2: Using defaultConnection() method
       OracleDriver ora = new OracleDriver();
       connection = ora.defaultConnection();
@@ -58,11 +72,8 @@ public class InternalT2Driver {
           + "using OracleDriver");
       // Perform database operation
       printEmployees(connection);
-    }
-    finally {
-      if (connection != null) connection.close();
-    }
-  }
+}  
+ /*
 
  /*
   * Displays employee_id and first_name from the employees table.

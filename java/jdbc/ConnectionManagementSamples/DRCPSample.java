@@ -14,7 +14,7 @@
     client releases it. 
     
     DRCP can be used with any third party client-side connection pool such as 
-    DBCP, C3PO etc.,  Third party client side connection pools must attach and
+    DBCP, C3PO, etc. Third party client side connection pools must attach and
     detach connections explicitly to the connection broker through 
     attachServerConnection() and detachServerConnection(). They should also 
     set Connection Class as shown in the sample.   

@@ -18,7 +18,7 @@ REM The following script generates the Java wrapper class;
 REM you may paste this direcly in a SQL session 
 REM or  put it in a script file and invoke it. 
 REM
-create or replace and compile java resource named "InvokeScript" as
+create or replace and compile java source named "InvokeScript" as
 import javax.script.*;
 import java.net.*;
 import java.io.*;
@@ -42,7 +42,9 @@ public class InvokeScript {
              invocable.invokeFunction("selectQuery", inputId);
         output = selectResult.toString();
       } catch(Exception e) {
-          output =e.getMessage();
+          ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+          e.printStackTrace(new PrintStream(baos));
+          output = e + baos.toString() + e.getMessage();
      }
    return output;
   }
