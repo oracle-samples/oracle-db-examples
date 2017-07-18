@@ -21,10 +21,8 @@ ojdbc8.jar from OTN and use that.
 
 # Other Resources 
 
-* [How to use the latest ojdbc8.jar in WebLogic Server?](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html)
-
 * [Create and Deploy a Java Servlet using WebLogic Server](https://blogs.oracle.com/dev2dev/create-and-deploy-a-java-servlet-using-weblogic-server-wls)
-
+* [How to use the latest ojdbc8.jar in WebLogic Server?](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html)
 
 
 
