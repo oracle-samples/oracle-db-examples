@@ -1,6 +1,6 @@
-# Code Sample from the tutorial at https://learncodeshare.net/2016/08/26/basic-crud-operations-using-ruby-oci8/
-#  section titled "Boilerplate template"
-# The following code is used as the base template for the other examples.
+# Code Sample from the tutorial at http://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
+#  section titled "Simple insert"
+# Using the base template, the example code executes a simple insert using positional bind variables.
 
 require 'oci8'
 connectString = ENV['DB_CONNECT']
@@ -24,6 +24,12 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data')
 
-# Your code here
+statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes)'
+cursor = con.parse(statement)
+cursor.bind_param(:name, 'Sandy')
+cursor.bind_param(:age, 31)
+cursor.bind_param(:notes, 'I like horses')
+cursor.exec
+con.commit
 
 get_all_rows('New Data')
