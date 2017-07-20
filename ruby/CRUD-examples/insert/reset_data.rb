@@ -1,4 +1,4 @@
-# Code Sample from the tutorial at http://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
+# Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
 #  section titled "Resetting the data"
 # The following resets the data for use with the update section
 # For both tables:

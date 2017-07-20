@@ -1,4 +1,4 @@
-# Code Sample from the tutorial at http://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
+# Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
 #  section titled "Extra Fun 1 & 2"
 # Using the base template, the example code executes a simple insert using positional bind variables.
 #  The get_all_rows function is modified to use a second connection to show how the data is seen

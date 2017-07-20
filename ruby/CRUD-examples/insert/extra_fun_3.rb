@@ -1,4 +1,4 @@
-# Code Sample from the tutorial at http://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
+# Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
 #  section titled "Extra Fun 3"
 # Using the base template, the example code executes a simple insert using positional bind variables.
 #  Cursor variables are used to accept the insert statements returning values.
