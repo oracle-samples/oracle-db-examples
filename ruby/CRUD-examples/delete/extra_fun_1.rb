@@ -3,10 +3,10 @@
 # Using the base template, the example code executes a simple delete using named bind variables.
 
 require 'oci8'
-connectString = ENV['DB_CONNECT']
+connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
 
 def get_all_rows(label, data_type = 'people')
-  connectString = ENV['DB_CONNECT']
+  connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
   con = OCI8.new(connectString)
 
   # Query all rows
