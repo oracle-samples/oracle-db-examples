@@ -4,10 +4,10 @@
 #  Using the executemany function an array of data is inserted into the table.
 
 require 'oci8'
-connectString = ENV['DB_CONNECT']
+connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
 
 def get_all_rows(label)
-  connectString = ENV['DB_CONNECT']
+  connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
   con = OCI8.new(connectString)
 
   # Query all rows
