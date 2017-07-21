@@ -6,6 +6,7 @@ The Oracle JDBC drivers allow Java applications to connect and process data in t
 * **Web Logic Server v12.2.1.2**: Download and install the [WebLogic Server v12.2.1.2](http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html)
 * **Apache Ant**: Make sure you have [Apache ANT](http://ant.apache.org/) to compile the source code 
 * **JDBC driver**: You can choose to use the JDBC driver (ojdbc7.jar) that is shipped with WebLogicServer v 12.2.1.2 or you can download and use the latest [ojdbc8.jar from OTN](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html)  
+* **Oracle Database**:  You need to have a working Oracle Database with the credentials to verify the successful connection.  Make sure either you have subscribed to Oracle Database Service on Cloud (DBCS, EECS, BMCS, ExaCS) or installed an Oracle Database on premise. 
 
 # Steps to compile the Java Servlet 
 
