@@ -1,11 +1,12 @@
 # WebLogicServer Java Servlet   
-The Oracle JDBC drivers allow Java applications to connect and process data in the Oracle Database. Oracle WebLogic Server is the application server for building and deploying enterprise Java EE applications.  In this code sample, we  
+The Oracle JDBC drivers allow Java applications to connect and process data in the Oracle Database. Oracle WebLogic Server is the application server for building and deploying enterprise Java EE applications.  This repository has code samples for a Java Servlet that connects to the Oracle Database using the Oracle JDBC driver.  We have furnished `build.xml` to compile the servlet and the `Readme.md` that has instructions to compile and deploy this servlet on WebLogic Server. If you have subscribed to any Oracle Database Service on Cloud such as DBCS, EECS, BMCS etc., follow these instructions to verify the connectivity with WebLogic Server.  
 
 # What you need to install? 
 
 * **Web Logic Server v12.2.1.2**: Download and install the [WebLogic Server v12.2.1.2](http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html)
 * **Apache Ant**: Make sure you have [Apache ANT](http://ant.apache.org/) to compile the source code 
 * **JDBC driver**: You can choose to use the JDBC driver (ojdbc7.jar) that is shipped with WebLogicServer v 12.2.1.2 or you can download and use the latest [ojdbc8.jar from OTN](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html)  
+* **Oracle Database**:  You need to have a working Oracle Database with the credentials to verify the successful connection.  Make sure either you have subscribed to Oracle Database Service on Cloud (DBCS, EECS, BMCS, ExaCS) or installed an Oracle Database on premise. 
 
 # Steps to compile the Java Servlet 
 
@@ -23,7 +24,9 @@ The Oracle JDBC drivers allow Java applications to connect and process data in t
 # Other Resources 
 
 * [Create and Deploy a Java Servlet using WebLogic Server](https://blogs.oracle.com/dev2dev/create-and-deploy-a-java-servlet-using-weblogic-server-wls)
-* [How to use the latest ojdbc8.jar in WebLogic Server?](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html)
+* [How to use the latest ojdbc8.jar in WebLogic Server?](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html#wls)
+* [Using Java Containers with Exadata Express Cloud Service (EECS)](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html#wls)
+
 
 
 
