@@ -1,5 +1,5 @@
 # WebLogicServer Java Servlet   
-The Oracle JDBC drivers allow Java applications to connect and process data in the Oracle Database. Oracle WebLogic Server is the application server for building and deploying enterprise Java EE applications.  In this code sample, we  
+The Oracle JDBC drivers allow Java applications to connect and process data in the Oracle Database. Oracle WebLogic Server is the application server for building and deploying enterprise Java EE applications.  This repository has code samples for a Java Servlet that connects to the Oracle Database using the Oracle JDBC driver.  We have furnished `build.xml` to compile the servlet and the `Readme.md` has instructions to compile and deploy this servlet on WebLogic Server. If you have subscribed to any Oracle Database Service on Cloud such as DBCS, EECS, BMCS etc., follow these instructions to verify the connectivity with WebLogic Server.  
 
 # What you need to install? 
 
