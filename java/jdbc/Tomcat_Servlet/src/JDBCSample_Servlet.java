@@ -44,7 +44,7 @@ public class JDBCSample_Servlet extends HttpServlet {
       try (Connection connection = ds.getConnection()) {
         for (int i=0; i<10; i++) {
           out.println("The database user is" 
-             + executeBusinessLogicOnDatabase(connection));
+             + executeBusinessLogicOnDatabase(connection, out));
         }
         out.print("\n Sample JDBC Servlet Request was successful");
         response.setStatus(200);
@@ -75,8 +75,8 @@ public class JDBCSample_Servlet extends HttpServlet {
  /*
   * Method to showcase database operations using the database connection 
   */
-  private String executeBusinessLogicOnDatabase(Connection conn) 
-    throws SQLException {
+  private String executeBusinessLogicOnDatabase(Connection conn, 
+    PrintWriter out) throws SQLException {
     // Get the JDBC driver name and version 
     DatabaseMetaData dbmd = conn.getMetaData();       
     out.println("Driver Name: " + dbmd.getDriverName());
