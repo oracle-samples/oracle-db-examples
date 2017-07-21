@@ -3,7 +3,7 @@ The Oracle JDBC drivers allow Java applications to connect and process data in t
  
 # What you need to install? 
 
-* **Apache Tomcat**: Download and install the [Apache Tomcat](https://tomcat.apache.org/)
+* **Apache Tomcat**: Download and install [Apache Tomcat](https://tomcat.apache.org/)
 * **Apache Ant**: Make sure you have [Apache ANT](http://ant.apache.org/) to compile the source code 
 * **JDBC driver**: Download the latest JDBC driver [ojdbc8.jar from OTN](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html)  
 * **Oracle Database**:  You need to have a working Oracle Database with the credentials to verify the successful connection.  Make sure either you have subscribed to Oracle Database Service on Cloud (DBCS, EECS, BMCS, ExaCS) or installed an Oracle Database on premise. 
