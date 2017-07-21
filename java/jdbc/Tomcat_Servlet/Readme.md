@@ -1,6 +1,6 @@
 # Tomcat Java Servlet   
-The Oracle JDBC drivers allow Java applications to connect and process data in the Oracle Database. Apache Tomcat is the application server for building and deploying Java EE applications.  In this code sample, we  
-
+The Oracle JDBC drivers allow Java applications to connect and process data in the Oracle Database. Apache Tomcat is the application server for building and deploying Java EE applications.  This repository contains a simple Java servlet along with the build scripts and instructions.  The Java servlet that connects to the Oracle Database and performs some database operations.  The 
+ 
 # What you need to install? 
 
 * **Apache Tomcat**: Download and install the [Apache Tomcat v](http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html)
