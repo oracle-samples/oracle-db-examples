@@ -5,7 +5,6 @@
 #  to demonstrate foreign key functionality.
 
 require 'oci8'
-connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
 
 def get_all_rows(label, data_type = 'people')
   connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
@@ -31,6 +30,7 @@ def get_all_rows(label, data_type = 'people')
   printf "\n"
 end
 
+connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
 con = OCI8.new(connectString)
 
 get_all_rows('Original People Data', 'people')

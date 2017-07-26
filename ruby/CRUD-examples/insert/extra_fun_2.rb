@@ -5,7 +5,6 @@
 #  by different connections before and after a commit.
 
 require 'oci8'
-connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
 
 def get_all_rows(label, con)
   # Query all rows
@@ -19,6 +18,7 @@ def get_all_rows(label, con)
   printf "\n"
 end
 
+connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database
 con = OCI8.new(connectString)
 con2 = OCI8.new(connectString)
 
