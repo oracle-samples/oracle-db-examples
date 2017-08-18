@@ -1,7 +1,7 @@
+# The example code below executes a simple update using named bind variables
+#  and displays the number of affected rows.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/11/04/update-crud-using-ruby-oci8/
 #  section titled "Extra Fun 2"
-# Using the base template, the example code executes a simple update using positional bind variables
-#  and displays the number of affected rows.
 
 require 'oci8'
 
@@ -34,6 +34,8 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data', 'pets')
 
+# Example code showing a simple update using named bind variables
+#  and displays the number of affected rows.
 statement = 'update lcs_pets set owner = :newOwner where type = :type and owner != :oldOwner'
 cursor = con.parse(statement)
 cursor.bind_param(:newOwner, 2)
@@ -41,6 +43,7 @@ cursor.bind_param(:type, 'bird')
 cursor.bind_param(:oldOwner, 2)
 changed = cursor.exec
 con.commit
+# End Example
 
 printf "Number of rows updated: %d\n\n", changed
 

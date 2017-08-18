@@ -1,7 +1,7 @@
+# The example code below executes two simple deletes using named bind variables.
+#  The child records are removed, followed by the parent record.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/11/09/delete-crud-using-ruby-oci8/
 #  section titled "Extra Fun 2"
-# Using the base template, the example code executes two simple deletes using named bind variables.
-#  The child records are removed, followed by the parent record.
 
 require 'oci8'
 
@@ -35,6 +35,7 @@ con = OCI8.new(connectString)
 get_all_rows('Original People Data', 'people')
 get_all_rows('Original Pet Data', 'pets')
 
+# Example code showing two simple deletes using named bind variables.
 statement = 'delete from lcs_pets where owner = :owner'
 cursor = con.parse(statement)
 cursor.bind_param(:owner, 5)
@@ -45,6 +46,7 @@ cursor = con.parse(statement)
 cursor.bind_param(:id, 5)
 cursor.exec
 con.commit
+# End Example
 
 get_all_rows('New People Data', 'people')
 get_all_rows('New Pet Data', 'pets')

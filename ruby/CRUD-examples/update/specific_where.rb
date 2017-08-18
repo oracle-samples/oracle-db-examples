@@ -1,6 +1,6 @@
+# The example code below executes a simple update using named bind variables.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/11/04/update-crud-using-ruby-oci8/
 #  section titled "Make sure your where clause is specific"
-# Using the base template, the example code executes a simple update using positional bind variables.
 
 require 'oci8'
 
@@ -33,6 +33,7 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data', 'pets')
 
+# Example code showing a simple update using named bind variables.
 statement = 'update lcs_pets set owner = :newOwner where owner = :oldOwner and type = :type'
 cursor = con.parse(statement)
 cursor.bind_param(:newOwner, 2)
@@ -40,5 +41,6 @@ cursor.bind_param(:oldOwner, 1)
 cursor.bind_param(:type, 'dog')
 cursor.exec
 con.commit
+# End Example
 
 get_all_rows('New Data', 'pets')

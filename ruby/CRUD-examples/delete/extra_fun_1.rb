@@ -1,6 +1,6 @@
+# The example code below executes a simple delete using named bind variables.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/11/09/delete-crud-using-ruby-oci8/
 #  section titled "Extra Fun 1"
-# Using the base template, the example code executes a simple delete using named bind variables.
 
 require 'oci8'
 
@@ -33,10 +33,12 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data', 'pets')
 
+# Example code showing a simple delete using named bind variables.
 statement = 'delete from lcs_pets where type = :type'
 cursor = con.parse(statement)
 cursor.bind_param(:type, 'bird')
 cursor.exec
 con.commit
+# End Example
 
 get_all_rows('New Data', 'pets')

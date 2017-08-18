@@ -1,5 +1,5 @@
-# code Sample from the tutorial at https://learncodeshare.net/2016/08/26/basic-crud-operations-using-ruby-oci8/
 # The following resets the data to the initial state for the tutorial.
+# code Sample from the tutorial at https://learncodeshare.net/2016/08/26/basic-crud-operations-using-ruby-oci8/
 
 # Query all rows
 require 'oci8'

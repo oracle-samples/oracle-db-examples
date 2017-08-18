@@ -1,10 +1,10 @@
-# Code Sample from the tutorial at https://learncodeshare.net/2016/11/09/delete-crud-using-ruby-oci8/
-#  section titled "Resetting the data"
 # The following resets the data for use with the update section
 # For both tables:
 #  Table data is removed.
 #  The identity column is set to start with the id after the starting data.
 #  Using the executemany function an array of starting data is inserted into the table.
+# Code Sample from the tutorial at https://learncodeshare.net/2016/11/09/delete-crud-using-ruby-oci8/
+#  section titled "Resetting the data"
 
 require 'oci8'
 connectString = ENV['DB_CONNECT'] # The environment variable for the connect string: DB_CONNECT=user/password@database

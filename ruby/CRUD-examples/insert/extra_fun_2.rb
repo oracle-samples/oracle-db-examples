@@ -1,8 +1,8 @@
-# Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
-#  section titled "Extra Fun 1 & 2"
-# Using the base template, the example code executes a simple insert using positional bind variables.
+# The example code below executes a simple insert using named bind variables.
 #  The get_all_rows function is modified to use a second connection to show how the data is seen
 #  by different connections before and after a commit.
+# Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
+#  section titled "Extra Fun 1 & 2"
 
 require 'oci8'
 
@@ -24,6 +24,8 @@ con2 = OCI8.new(connectString)
 
 get_all_rows('Original Data', con)
 
+# Example code showing how to insert multiple rows with a single database call.
+#  Extra calls to get_all_rows will demonstrate the state of the data before a commit.
 statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes)'
 cursor = con.parse(statement)
 cursor.bind_param(:name, 'Suzy')
@@ -35,6 +37,7 @@ get_all_rows('New connection after insert', con2)
 get_all_rows('Same connection', con)
 
 con.commit
+# End Example
 
 get_all_rows('New connection after commit', con2)
 get_all_rows('New Data', con)

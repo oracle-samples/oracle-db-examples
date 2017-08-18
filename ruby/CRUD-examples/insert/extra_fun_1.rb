@@ -1,7 +1,7 @@
+# The example code below executes a simple insert using named bind variables.
+#  The same statement is executed twice each using different bind variable values.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
 #  section titled "Extra Fun 1 & 2"
-# Using the base template, the example code executes a simple insert using positional bind variables.
-#  The same statement is executed twice each using different bind variable values.
 
 require 'oci8'
 
@@ -25,6 +25,7 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data')
 
+# Example code showing how to insert multiple rows with multiple database calls.
 statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes)'
 cursor = con.parse(statement)
 cursor.bind_param(:name, 'Rob')
@@ -37,5 +38,6 @@ cursor.bind_param(:age, 41)
 cursor.bind_param(:notes, 'I like monkeys')
 cursor.exec
 con.commit
+# End Example
 
 get_all_rows('New Data')

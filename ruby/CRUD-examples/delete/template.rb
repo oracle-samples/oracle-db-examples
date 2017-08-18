@@ -1,6 +1,7 @@
+# The following code is used as the base template for the other examples.
+#  It is intended to be helper code not part of the examples.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/11/09/delete-crud-using-ruby-oci8/
 #  section titled "Boilerplate template"
-# The following code is used as the base template for the other examples.
 
 require 'oci8'
 

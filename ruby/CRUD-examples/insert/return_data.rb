@@ -1,8 +1,8 @@
-# Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
-#  section titled "Returning data after an insert"
-# Using the base template, the example code executes a simple insert using positional bind variables.
+# The example code below executes a simple insert using named bind variables.
 #  A cursor variable is used to accept the insert statements returning value.  This value is then
 #  used as the parent key value to insert a child record.
+# Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
+#  section titled "Returning data after an insert"
 
 require 'oci8'
 
@@ -26,6 +26,7 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data')
 
+# Example code showing how to work with returning vales from the insert.
 statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes) returning id into :id'
 cursor = con.parse(statement)
 cursor.bind_param(:name, 'Sandy')
@@ -56,5 +57,6 @@ cursor.fetch do |row|
   printf " Name: %s, Owner: %d, Type: %s\n", row[0], row[1], row[2]
 end
 printf "\n"
+# End Example
 
 get_all_rows('New Data')

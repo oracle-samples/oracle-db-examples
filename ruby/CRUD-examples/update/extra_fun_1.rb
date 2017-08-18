@@ -1,6 +1,6 @@
+# The example code below executes a simple update using named bind variables.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/11/04/update-crud-using-ruby-oci8/
 #  section titled "Extra Fun 1"
-# Using the base template, the example code executes a simple update using positional bind variables.
 
 require 'oci8'
 
@@ -33,11 +33,13 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data')
 
+# Example code showing a simple update using named bind variables.
 statement = 'update lcs_people set notes = :notes where id = :id'
 cursor = con.parse(statement)
 cursor.bind_param(:notes, 'I like cats')
 cursor.bind_param(:id, 1)
 cursor.exec
 con.commit
+# End Example
 
 get_all_rows('New Data')

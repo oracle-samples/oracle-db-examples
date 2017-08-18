@@ -1,6 +1,6 @@
+# The example code below executes a simple insert using named bind variables.
 # Code Sample from the tutorial at https://learncodeshare.net/2016/10/04/insert-crud-using-ruby-oci8/
 #  section titled "Simple insert"
-# Using the base template, the example code executes a simple insert using positional bind variables.
 
 require 'oci8'
 
@@ -24,6 +24,7 @@ con = OCI8.new(connectString)
 
 get_all_rows('Original Data')
 
+# Example code showing a simple insert using named bind variables.
 statement = 'insert into lcs_people(name, age, notes) values (:name, :age, :notes)'
 cursor = con.parse(statement)
 cursor.bind_param(:name, 'Sandy')
@@ -31,5 +32,6 @@ cursor.bind_param(:age, 31)
 cursor.bind_param(:notes, 'I like horses')
 cursor.exec
 con.commit
+# End Example
 
 get_all_rows('New Data')
