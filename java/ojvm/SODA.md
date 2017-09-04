@@ -42,7 +42,7 @@ The furnished testSODA.java on this page already has the change
             call dbms_java.set_output(2000);
             call testSODA();
 
-The furnished testSODA.sql performs the steps (v) and (vi).   
+The furnished testSODA.sql performs the steps (iv) and (v).   
 
 From a database SQLPLUS session, issue the following call
 
