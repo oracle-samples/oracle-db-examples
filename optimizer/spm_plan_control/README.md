@@ -8,6 +8,8 @@ Example output is shown in example.lst.
 
 Note that the example.sql script will create a new user called SPM_TESTU.
 
+Scripts tested in Oracle Database 11g Release 2 and Oracle Database 12c Release 2. The only caveat is that in Oracle Database 11g DBMS_XPLAN sometimes returns ORA-01403, but the example still works.
+
 DISCLAIMER:
    <br/>-- These scripts are provided for educational purposes only.
    <br/>-- They are NOT supported by Oracle World Wide Technical Support.
