@@ -6,7 +6,7 @@ function testSODAjs()
  var conn = oracleDriver.defaultConnection();
 
  var OracleRDBMSClient = Java.type("oracle.soda.rdbms.OracleRDBMSClient");
- var OracleDataSource = Java.type('oracle.jdbc.pool.OracleDataSource');
+ var OracleDataSource = Java.type("oracle.jdbc.pool.OracleDataSource");
 
  var cl = new OracleRDBMSClient();
  var db = cl.getDatabase(conn);

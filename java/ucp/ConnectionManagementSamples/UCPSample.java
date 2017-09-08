@@ -30,7 +30,9 @@ import oracle.ucp.jdbc.PoolDataSourceFactory;
 import oracle.ucp.jdbc.PoolDataSource;
 
 public class UCPSample {
-   final static String DB_URL=   "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(HOST=myhost)(PORT=1521)(PROTOCOL=tcp))(CONNECT_DATA=(SERVICE_NAME=myorcldbservicename)))";
+  final static String DB_URL=   "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(HOST=myhost)(PORT=1521)(PROTOCOL=tcp))(CONNECT_DATA=(SERVICE_NAME=myorcldbservicename)))";
+  // Use TNS alias when using tnsnames.ora.  Use it while connecting to the database service on cloud. 
+  // final static String DB_URL=   "jdbc:oracle:thin:@orcldbaccess";
   final static String DB_USER                 = "hr";
   final static String DB_PASSWORD             = "hr";
   final static String CONN_FACTORY_CLASS_NAME = "oracle.jdbc.pool.OracleDataSource";
