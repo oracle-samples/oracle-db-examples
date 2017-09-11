@@ -1,0 +1,1 @@
+The scripts in this directory follow the [BASIC CRUD OPERATIONS USING RUBY-OCI8](https://learncodeshare.net/2016/08/26/basic-crud-operations-using-ruby-oci8/) tutorial found on [LearnCodeShare.net](https://learncodeshare.net).
