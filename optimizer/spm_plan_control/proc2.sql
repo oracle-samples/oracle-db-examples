@@ -1,5 +1,5 @@
 --
--- This procedure loads all exaisting plans as disabled SQL plan baselines
+-- This procedure loads all existing plans as disabled SQL plan baselines
 -- and then adds a new enabled SQL plan baseline for the plan we want.
 --
 create or replace procedure add_my_plan (for_sqlid varchar2, new_plan_sqlid varchar2, new_phv number) as
