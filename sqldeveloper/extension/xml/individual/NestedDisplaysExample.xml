@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<displays>
+    <!--
+        The basic idea for master-detail or independent displays is:
+        1) display entities can be nested to create parent-child or top-bottom multiple display
+        2) initial load and subsequent parent/top row selections cause the child/bottom display to refresh
+        3) parent/top query columns are available as bind variables to the child/bottom query 
+        4) displays at the same nesting level appear in tabs       
+    -->
+    <!-- Note: OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME are standard binds for any db node --> 
+    <!-- Note: class="[connType]#[objectType]" can be used as shorthand when targeting a specific instance type. E.g., class="Oracle#TABLE" -->
+	<!-- CONSTRAINTS -->
+	<display type="editor" style="null" enable="true" connType="Oracle" objectType="TABLE">
+		<name><![CDATA[Master-Detail]]></name>
+		<description><![CDATA[]]>
+		</description>
+		<tooltip><![CDATA[]]>
+		</tooltip>
+		<drillclass><![CDATA[null]]></drillclass>
+		<query>
+			<sql>
+				<![CDATA[select c.constraint_name,decode(c.constraint_type,'P','Primary_Key','U','Unique','R','Foreign_Key','C','Check',c.constraint_type) constraint_type,c.search_condition,c.r_owner,(select r.table_name from all_constraints r where c.r_owner = r.owner and c.r_constraint_name = r.constraint_name) r_table_name,c.r_constraint_name,c.delete_rule,c.status,c.deferrable,c.validated,c.generated,c.bad,c.rely,c.last_change,c.index_owner,c.index_name,c.invalid,c.view_related from all_constraints c where c.owner = :OBJECT_OWNER and c.table_name = :OBJECT_NAME order by c.constraint_name]]>
+			</sql>
+		</query>
+		<display type="" style="" enable="true">
+			<name><![CDATA[Columns]]></name>
+			<description><![CDATA[]]>
+			</description>
+			<tooltip><![CDATA[]]>
+			</tooltip>
+			<drillclass><![CDATA[null]]></drillclass>
+			<query>
+                <!-- Note: OBJECT_OWNER, OBJECT_NAME are standard binds for any db node
+                           CONSTRAINT_NAME is bound from the parent query selected row 
+                           This means the initial load will have null CONSTRAINT_NAME
+                           and thus no rows shown. When a parent row is selected, the
+                           CONSTRAINT_NAME bind will be populated & the child query
+                           rerun -->                
+				<sql>
+					<![CDATA[SELECT cols.column_name column_name, cols.position column_position
+							FROM all_constraints cons, all_cons_columns cols
+							WHERE cons.constraint_name = cols.constraint_name
+							AND cons.owner = cols.owner
+							and cols.table_name = :OBJECT_NAME
+							and cons.owner = :OBJECT_OWNER
+							and cols.constraint_name = :CONSTRAINT_NAME
+							ORDER BY cols.position]]>
+				</sql>
+			</query>
+		</display>
+	</display>
+	<!-- DEPENDENCIES -->
+    <!-- Note: objectType can be a comma separated list of types -->
+	<display type="editor" style="null" enable="true" connType="Oracle" objectType="TABLE,VIEW">
+		<name><![CDATA[Independent]]></name>
+		<description><![CDATA[]]>
+		</description>
+		<tooltip><![CDATA[]]>
+		</tooltip>
+		<drillclass><![CDATA[null]]></drillclass>
+		<query>
+			<sql>
+				<![CDATA[select owner, name, type, referenced_owner, referenced_name, referenced_type ,owner sdev_link_owner, name sdev_link_name, type sdev_link_type from ALL_DEPENDENCIES where referenced_owner = :OBJECT_OWNER and referenced_name = :OBJECT_NAME]]>
+		</sql>
+		</query>
+		<display type="" style="" enable="true">
+			<name><![CDATA[Independent2]]></name>
+			<description><![CDATA[]]>
+			</description>
+			<tooltip><![CDATA[]]>
+			</tooltip>
+			<drillclass><![CDATA[null]]></drillclass>
+			<query>
+                <!-- Note: OBJECT_OWNER, OBJECT_NAME are standard binds for any db node
+                           There are no bound columns from the parent query selected row 
+                           This means the initial load and any parent selection will show
+                           the same result. -->                
+				<sql>
+					<![CDATA[select owner, name, type, referenced_owner, referenced_name, referenced_type ,referenced_owner sdev_link_owner, referenced_name sdev_link_name, referenced_type sdev_link_type from ALL_DEPENDENCIES where owner = :OBJECT_OWNER and name = :OBJECT_NAME]]>
+				</sql>
+			</query>
+		</display>
+	</display>
+	<!-- DEPENDENCIES - modified -->
+    <!-- Note: objectType can be a comma separated list of types -->
+	<display type="editor" style="null" enable="true" connType="Oracle" objectType="TABLE,VIEW">
+		<name><![CDATA[Sibling-Tabbed]]></name>
+		<description><![CDATA[]]>
+		</description>
+		<tooltip><![CDATA[]]>
+		</tooltip>
+		<drillclass><![CDATA[null]]></drillclass>
+		<query>
+			<sql>
+				<![CDATA[select owner, name, type, referenced_owner, referenced_name, referenced_type ,owner sdev_link_owner, name sdev_link_name, type sdev_link_type from ALL_DEPENDENCIES where referenced_owner = :OBJECT_OWNER and referenced_name = :OBJECT_NAME]]>
+		</sql>
+		</query>
+		<display type="" style="" enable="true">
+			<name><![CDATA[Independent2]]></name>
+			<description><![CDATA[]]>
+			</description>
+			<tooltip><![CDATA[]]>
+			</tooltip>
+			<drillclass><![CDATA[null]]></drillclass>
+			<query>
+                <!-- Note: OBJECT_OWNER, OBJECT_NAME are standard binds for any db node
+                           There are no bound columns from the parent query selected row 
+                           This means the initial load and any parent selection will show
+                           the same result. -->                
+				<sql>
+					<![CDATA[select owner, name, type, referenced_owner, referenced_name, referenced_type ,referenced_owner sdev_link_owner, referenced_name sdev_link_name, referenced_type sdev_link_type from ALL_DEPENDENCIES where owner = :OBJECT_OWNER and name = :OBJECT_NAME]]>
+				</sql>
+			</query>
+		</display>
+		<display type="" style="" enable="true">
+		    <name><![CDATA[Independent3]]></name>
+		    <description><![CDATA[]]>
+		    </description>
+		    <tooltip><![CDATA[]]>
+		    </tooltip>
+		    <drillclass><![CDATA[null]]></drillclass>
+		    <query>
+		        <!-- Note: OBJECT_OWNER, OBJECT_NAME are standard binds for any db node
+		                   There are no bound columns from the parent query selected row 
+		                   This means the initial load and any parent selection will show
+		                   the same result. -->                
+		        <sql>
+		            <![CDATA[select 'Independent3' dummy from dual]]>
+		        </sql>
+		    </query>
+		    <display type="" style="" enable="true">
+			<name><![CDATA[Independent3.1]]></name>
+			<description><![CDATA[]]>
+			</description>
+			<tooltip><![CDATA[]]>
+			</tooltip>
+			<drillclass><![CDATA[null]]></drillclass>
+			<query>
+			    <sql>
+				<![CDATA[select 'Independent3.1' dummy from dual]]>
+			    </sql>
+			</query>
+		    </display>
+		</display>
+	</display>
+</displays>
