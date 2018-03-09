@@ -1,0 +1,99 @@
+SQL> @eg3
+SQL> column ename format a20
+SQL> column rname format a20
+SQL> 
+SQL> --
+SQL> -- Use this to capture a SQL_ID
+SQL> --
+SQL> var sqlid varchar2(100)
+SQL> 
+SQL> --
+SQL> -- Long running queries will be monitored automatically
+SQL> -- so the hint won't always be required. In this case,
+SQL> -- it's over very quickly so I've added the hint.
+SQL> --
+SQL> select /*+ monitor */
+  2         e.ename,r.rname
+  3  from   employees  e
+  4  join   roles       r on (r.id = e.role_id)
+  5  join   departments d on (d.id = e.dept_id)
+  6  where  e.staffno <= 10
+  7  and    d.dname in ('Department Name 1','Department Name 2');
+
+ENAME                RNAME
+-------------------- --------------------
+Employee Name 1      Role Name 1
+
+SQL> 
+SQL> --
+SQL> -- Get the SQL_ID of the last SQL statement we ran
+SQL> --
+SQL> begin
+  2     select prev_sql_id
+  3     into   :sqlid
+  4     from   v$session
+  5     where  sid=userenv('sid')
+  6     and    username is not null
+  7     and    prev_hash_value <> 0
+  8     and    rownum<2;
+  9  end;
+ 10  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Text first, then HTML
+SQL> --
+SQL> set long 100000 pagesize 0 linesize 250 tab off trims on
+SQL> column report format a230
+SQL> 
+SQL> select DBMS_SQL_MONITOR.REPORT_SQL_MONITOR (sql_id=>:sqlid, report_level=>'all', type=>'text') report
+  2  from dual;
+SQL Monitoring Report
+
+SQL Text
+------------------------------
+select /*+ monitor */ e.ename,r.rname from employees e join roles r on (r.id = e.role_id) join departments d on (d.id = e.dept_id) where e.staffno <= 10 and d.dname in ('Department Name 1','Department Name 2')
+
+Global Information
+------------------------------
+ Status              :  DONE (ALL ROWS)
+ Instance ID         :  1
+ Session             :  ADHOC (42:2052)
+ SQL ID              :  fy25z2r5xpfq4
+ SQL Execution ID    :  16777235
+ Execution Started   :  03/09/2018 10:42:01
+ First Refresh Time  :  03/09/2018 10:42:01
+ Last Refresh Time   :  03/09/2018 10:42:01
+ Duration            :  .002s
+ Module/Action       :  SQL*Plus/-
+ Service             :  SYS$USERS
+ Program             :  sqlplus@prod12c (TNS V1-V3)
+ Fetch Calls         :  2
+
+Global Stats
+======================================
+| Elapsed |   Cpu   | Fetch | Buffer |
+| Time(s) | Time(s) | Calls |  Gets  |
+======================================
+|    0.00 |    0.00 |     2 |     28 |
+======================================
+
+SQL Plan Monitoring Details (Plan Hash Value=2341252972)
+==========================================================================================================================================
+| Id |       Operation       |    Name     |  Rows   | Cost |   Time    | Start  | Execs |   Rows   |  Mem  | Activity | Activity Detail |
+|    |                       |             | (Estim) |      | Active(s) | Active |       | (Actual) | (Max) |   (%)    |   (# samples)   |
+==========================================================================================================================================
+|  0 | SELECT STATEMENT      |             |         |      |         1 |     +0 |     1 |        1 |     . |          |                 |
+|  1 |   HASH JOIN           |             |       3 |    6 |         1 |     +0 |     1 |        1 | 809KB |          |                 |
+|  2 |    HASH JOIN          |             |       3 |    4 |         1 |     +0 |     1 |        2 | 898KB |          |                 |
+|  3 |     TABLE ACCESS FULL | DEPARTMENTS |       2 |    2 |         1 |     +0 |     1 |        2 |     . |          |                 |
+|  4 |     TABLE ACCESS FULL | EMPLOYEES   |      10 |    2 |         1 |     +0 |     1 |       10 |     . |          |                 |
+|  5 |    TABLE ACCESS FULL  | ROLES       |      20 |    2 |         1 |     +0 |     1 |       20 |     . |          |                 |
+==========================================================================================================================================
+
+
+SQL> 
+SQL> set termout off feedback off
+SQL> spool monitor_output.html
