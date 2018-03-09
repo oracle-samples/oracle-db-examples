@@ -12,7 +12,7 @@ SQL> -- Long running queries will be monitored automatically
 SQL> -- so the hint won't always be required. In this case,
 SQL> -- it's over very quickly so I've added the hint.
 SQL> --
-SQL> select /*+ monitor */
+SQL> select /*+ MONITOR */
   2         e.ename,r.rname
   3  from   employees  e
   4  join   roles       r on (r.id = e.role_id)
@@ -54,31 +54,31 @@ SQL Monitoring Report
 
 SQL Text
 ------------------------------
-select /*+ monitor */ e.ename,r.rname from employees e join roles r on (r.id = e.role_id) join departments d on (d.id = e.dept_id) where e.staffno <= 10 and d.dname in ('Department Name 1','Department Name 2')
+select /*+ MONITOR */ e.ename,r.rname from employees e join roles r on (r.id = e.role_id) join departments d on (d.id = e.dept_id) where e.staffno <= 10 and d.dname in ('Department Name 1','Department Name 2')
 
 Global Information
 ------------------------------
  Status              :  DONE (ALL ROWS)
  Instance ID         :  1
- Session             :  ADHOC (42:2052)
- SQL ID              :  fy25z2r5xpfq4
- SQL Execution ID    :  16777235
- Execution Started   :  03/09/2018 10:42:01
- First Refresh Time  :  03/09/2018 10:42:01
- Last Refresh Time   :  03/09/2018 10:42:01
- Duration            :  .002s
+ Session             :  ADHOC (63:23029)
+ SQL ID              :  an05rsj1up1k5
+ SQL Execution ID    :  16777226
+ Execution Started   :  03/09/2018 14:23:14
+ First Refresh Time  :  03/09/2018 14:23:14
+ Last Refresh Time   :  03/09/2018 14:23:14
+ Duration            :  .002638s
  Module/Action       :  SQL*Plus/-
  Service             :  SYS$USERS
  Program             :  sqlplus@prod12c (TNS V1-V3)
  Fetch Calls         :  2
 
 Global Stats
-======================================
-| Elapsed |   Cpu   | Fetch | Buffer |
-| Time(s) | Time(s) | Calls |  Gets  |
-======================================
-|    0.00 |    0.00 |     2 |     28 |
-======================================
+=================================================
+| Elapsed |   Cpu   |  Other   | Fetch | Buffer |
+| Time(s) | Time(s) | Waits(s) | Calls |  Gets  |
+=================================================
+|    0.00 |    0.00 |     0.00 |     2 |     28 |
+=================================================
 
 SQL Plan Monitoring Details (Plan Hash Value=2341252972)
 ==========================================================================================================================================
@@ -86,7 +86,7 @@ SQL Plan Monitoring Details (Plan Hash Value=2341252972)
 |    |                       |             | (Estim) |      | Active(s) | Active |       | (Actual) | (Max) |   (%)    |   (# samples)   |
 ==========================================================================================================================================
 |  0 | SELECT STATEMENT      |             |         |      |         1 |     +0 |     1 |        1 |     . |          |                 |
-|  1 |   HASH JOIN           |             |       3 |    6 |         1 |     +0 |     1 |        1 | 809KB |          |                 |
+|  1 |   HASH JOIN           |             |       3 |    6 |         1 |     +0 |     1 |        1 | 811KB |          |                 |
 |  2 |    HASH JOIN          |             |       3 |    4 |         1 |     +0 |     1 |        2 | 898KB |          |                 |
 |  3 |     TABLE ACCESS FULL | DEPARTMENTS |       2 |    2 |         1 |     +0 |     1 |        2 |     . |          |                 |
 |  4 |     TABLE ACCESS FULL | EMPLOYEES   |      10 |    2 |         1 |     +0 |     1 |       10 |     . |          |                 |

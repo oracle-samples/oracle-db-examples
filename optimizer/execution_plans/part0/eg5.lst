@@ -1,9 +1,45 @@
 SQL> @eg5
+SQL> column ename format a20
+SQL> column rname format a20
+SQL> 
+SQL> var sqlid varchar2(100)
+SQL> 
+SQL> select /* MY_TEST_QUERY */ /*+ MONITOR */
+  2         e.ename,r.rname
+  3  from   employees  e
+  4  join   roles       r on (r.id = e.role_id)
+  5  join   departments d on (d.id = e.dept_id)
+  6  where  e.staffno <= 10
+  7  and    d.dname in ('Department Name 1','Department Name 2');
 Employee Name 1      Role Name 1
-
-
-PL/SQL procedure successfully completed.
-
+SQL> 
+SQL> --
+SQL> -- In this example, let's search for the query
+SQL> -- in V$SQL. We could do this in another session
+SQL> -- while the query is executing.
+SQL> --
+SQL> begin
+  2     select sql_id
+  3     into   :sqlid
+  4     from   v$sql
+  5     where  sql_text like '%MY_TEST_QUERY%'
+  6     and    sql_text not like '%v$sql%'
+  7     and    rownum<2;
+  8  end;
+  9  /
+SQL> 
+SQL> --
+SQL> -- Generate the SQL Monitor Report
+SQL> --
+SQL> -- If the test query was long-running, we could run this
+SQL> -- in a seperate SQL Plus session and watch the query's
+SQL> -- progress.
+SQL> --
+SQL> set long 100000 pagesize 0 linesize 250 tab off trims on
+SQL> column report format a230
+SQL> 
+SQL> select DBMS_SQL_MONITOR.REPORT_SQL_MONITOR (sql_id=>:sqlid, report_level=>'all', type=>'text') report
+  2  from dual;
 SQL Monitoring Report
 
 SQL Text
@@ -14,13 +50,13 @@ Global Information
 ------------------------------
  Status              :  DONE (ALL ROWS)
  Instance ID         :  1
- Session             :  ADHOC (42:60121)
+ Session             :  ADHOC (63:23029)
  SQL ID              :  1j5mhvb79631d
- SQL Execution ID    :  16777217
- Execution Started   :  03/09/2018 10:44:41
- First Refresh Time  :  03/09/2018 10:44:41
- Last Refresh Time   :  03/09/2018 10:44:41
- Duration            :  .002345s
+ SQL Execution ID    :  16777219
+ Execution Started   :  03/09/2018 14:23:27
+ First Refresh Time  :  03/09/2018 14:23:27
+ Last Refresh Time   :  03/09/2018 14:23:27
+ Duration            :  .002311s
  Module/Action       :  SQL*Plus/-
  Service             :  SYS$USERS
  Program             :  sqlplus@prod12c (TNS V1-V3)
@@ -40,12 +76,12 @@ SQL Plan Monitoring Details (Plan Hash Value=2341252972)
 |    |                       |             | (Estim) |      | Active(s) | Active |       | (Actual) | (Max) |   (%)    |   (# samples)   |
 ==========================================================================================================================================
 |  0 | SELECT STATEMENT      |             |         |      |         1 |     +0 |     1 |        1 |     . |          |                 |
-|  1 |   HASH JOIN           |             |       3 |    6 |         1 |     +0 |     1 |        1 | 862KB |          |                 |
-|  2 |    HASH JOIN          |             |       3 |    4 |         1 |     +0 |     1 |        2 | 934KB |          |                 |
+|  1 |   HASH JOIN           |             |       3 |    6 |         1 |     +0 |     1 |        1 | 840KB |          |                 |
+|  2 |    HASH JOIN          |             |       3 |    4 |         1 |     +0 |     1 |        2 | 930KB |          |                 |
 |  3 |     TABLE ACCESS FULL | DEPARTMENTS |       2 |    2 |         1 |     +0 |     1 |        2 |     . |          |                 |
 |  4 |     TABLE ACCESS FULL | EMPLOYEES   |      10 |    2 |         1 |     +0 |     1 |       10 |     . |          |                 |
 |  5 |    TABLE ACCESS FULL  | ROLES       |      20 |    2 |         1 |     +0 |     1 |       20 |     . |          |                 |
 ==========================================================================================================================================
 
-
-SQL> exit
+SQL> 
+SQL> spool off

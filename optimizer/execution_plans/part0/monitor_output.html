@@ -1,806 +1,94 @@
 <html>
-  <head>
-    <title> SQL Monitor Report </title>
-    <style type="text/css">
-         body, table, input, select, textarea
-         {font:normal normal 8pt Verdana,Arial;text-decoration:none;
-          color:#000000; empty-cells:show;}
-         .s8 {font-size:8pt;color:#006699}
-         .s9 {font-size:10pt;color:#006699}
-         .s10 {font-size:14pt;color:#006699;}
-         .s16 {border-width : 1px; border-color : #CCCC99;
-              border-style: solid; color:#006699;font-size:8pt;
-              background-color:#CCCC99; empty-cells:show;}
-        .s17 {border-width : 1px; border-color : #CCCC99;
-              border-style: solid; font-size:8pt;
-              background-color:#E8E8E6; empty-cells: show }
-        .s17a {border-width : 1px; border-color : #BDCCC3;
-              border-style: solid; font-size:8pt;
-              background-color:#F5F5F5; empty-cells: show}
-        .s17b {border-width : 1px; border-color : #BDCCC3;
-               border-style: solid; font-size:8pt;
-               background-color:#F1F5DD; empty-cells: show}
-        .s27 {border-width : 1px; border-color : #CCCC99;
-              border-style: solid;}
-        .graph {
-          border: solid 0px ; empty-cells: show
-        }
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <script language="javascript" type="text/javascript">
+   <!--
+      var version = "12.2.0.1.0";
+     var swf_base_path = "http://download.oracle.com/otn_software/";
 
-        .bar {
-          border-left: solid 0px;
-          padding-right: 0.5em;
-          font-size:1pt;
-        }
-
-        .sql {border-width : 1px; border-color : #CCCC99;
-              border-style: solid; font-size:8pt;
-              background-color:#E8E8E6;
-              empty-cells: show; text-align: left }
-
-        .nodisp { font-size: 1% ; height: 10px; color:#F2F2F2 }
-
-        .bar div {
-          text-align: center;
-          float: left;
-        }
-
-        .executing {
-          background-color: #7CFF44;
-        }
-
-        .activity {
-          border-right: solid 1px #FFFFFF
-        }
-
-        .noright {
-          border-right: none;
-          cursor: default;
-        }
-
-        .noleft {
-          border-left: none;
-          cursor: default;
-        }
-
-        .div_Cpu {
-          border-top: solid 3px #1EC162;
-          background-color: #19A352;
-          color: #19A352;
-          border-bottom: solid 3px #0E5D2F;
-        }
-
-        .div_cpu_time {
-          border-top: solid 3px #1EC162;
-          background-color: #19A352;
-          color: #19A352;
-          border-bottom: solid 3px #0E5D2F;
-        }
-
-        .div_buffer_gets {
-          border-top: solid 3px #FFAB9A;
-          background-color: #D89182;
-          color: #D89182;
-          border-bottom: solid 3px #BC7E72;
-          cursor: default;
-        }
-
-        .div_queuing_time {
-          border-top: solid 3px #C5FFB7;
-          background-color: #86FF86;
-          color: #86FF86;
-          border-bottom: solid 3px #74DD74;
-          cursor: default;
-        }
-
-        .div_Scheduler {
-          border-top: solid 3px #C5FFB7;
-          background-color: #86FF86;
-          color: #86FF86;
-          border-bottom: solid 3px #74DD74;
-          cursor: default;
-        }
-
-        .div_application_wait_time {
-          border-top: solid 3px #C8C6FF;
-          background-color: #B5B3E7;
-          color: #B5B3E7;
-          border-bottom: solid 3px #7C7B9E;
-          cursor: default;
-        }
-
-        .div_Application {
-          border-top: solid 3px #C8C6FF;
-          background-color: #B5B3E7;
-          color: #B5B3E7;
-          border-bottom: solid 3px #7C7B9E;
-          cursor: default;
-        }
-
-        .div_sql_cpu_time {
-          border-top: solid 3px #1EC162;
-          background-color: #19A352;
-          color: #19A352;
-          border-bottom: solid 3px #0E5D2F;
-          cursor: default;
-        }
-
-       .div_UserIO {
-          border-top: solid 3px #49A1FF;
-          background-color: #3C85D2;
-          color: #3C85D2;
-          border-bottom: solid 3px #28588B;
-          cursor: default;
-        }
-
-       .div_user_io_wait_time {
-          border-top: solid 3px #FF8C6C;
-          background-color: #E27C60;
-          color: #E27C60;
-          border-bottom: solid 3px #B1614B;
-          cursor: default;
-        }
-
-       .div_SystemIO {
-          border-top: solid 3px #49A1FF;
-          background-color: #3C85D2;
-          color: #3C85D2;
-          border-bottom: solid 3px #28588B;
-          cursor: default;
-        }
-
-        .div_Concurrency {
-          border-top: solid 3px #E81B1F;
-          background-color: #BE1619;
-          color: #BE1619;
-          border-bottom: solid 3px #760E10;
-          cursor: default;
-        }
-
-        .div_concurrency_wait_time {
-          border-top: solid 3px #E81B1F;
-          background-color: #BE1619;
-          color: #BE1619;
-          border-bottom: solid 3px #760E10;
-          cursor: default;
-        }
-
-        .div_cluster_wait_time {
-          border-top: solid 3px #D43B61;
-          background-color: #8B2740;
-          color: #8B2740;
-          border-bottom: solid 3px #5A1929;
-          cursor: default;
-        }
-
-        .div_Cluster {
-          border-top: solid 3px #D43B61;
-          background-color: #8B2740;
-          color: #8B2740;
-          border-bottom: solid 3px #5A1929;
-          cursor: default;
-        }
-
-        .div_plsql_exec_time {
-          border-top: solid 3px #EDD957;
-          background-color: #B1A241;
-          color: #B1A241;
-          border-bottom: solid 3px #8B7F33;
-          cursor: default;
-        }
-
-        .div_java_exec_time {
-          border-top: solid 3px #B40FEB;
-          background-color: #8E0CB9;
-          color: #8E0CB9;
-          border-bottom: solid 3px #6A098B;
-          cursor: default;
-        }
-
-        .div_other_wait_time {
-          border-top: solid 3px #4AFDEB;
-          background-color: #41DECD;
-          color: #41DECD;
-          border-bottom: solid 3px #2B9389;
-          cursor: default;
-        }
-
-        .div_read_reqs {
-          border-top: solid 3px #FFC846;
-          background-color: #DDAD3D;
-          color: #DDAD3D;
-          border-bottom: solid 3px #B99133;
-          cursor: default;
-        }
-
-        .div_write_reqs {
-          border-top: solid 3px #F76838;
-          background-color: #BC4F2B;
-          color: #BC4F2B;
-          border-bottom: solid 3px #9C4223;
-          cursor: default;
-        }
-
-        .div_read_bytes {
-          border-top: solid 3px #FFC846;
-          background-color: #DDAD3D;
-          color: #DDAD3D;
-          border-bottom: solid 3px #B99133;
-          cursor: default;
-        }
-
-        .div_write_bytes {
-          border-top: solid 3px #F76838;
-          background-color: #BC4F2B;
-          color: #BC4F2B;
-          border-bottom: solid 3px #9C4223;
-          cursor: default;
-        }
-
-        .div_user_fetch_count {
-          border-top: solid 3px #DFFF6C;
-          background-color: #CAE762;
-          color: #CAE762;
-          border-bottom: solid 3px #9EB44C;
-          cursor: default;
-        }
-
-        .div_Other {
-          border-top: solid 3px #4AFDEB;
-          background-color: #41DECD;
-          color: #41DECD;
-          border-bottom: solid 3px #2B9389;
-          cursor: default;
-        }
-
-        .progress_Disp {
-          border-top: solid 3px #FFE4B5;
-          background-color: #EAD1A6;
-          text-align: center;
-          border-bottom: solid 3px #D8C199;
-          cursor: default;
-          height: 13px;
-          float:left;
-        }
-
-        .progress_Nodisp {
-          border-top: solid 3px #FFE4B5;
-          background-color: #EAD1A6;
-          color: #E08877;
-          border-bottom: solid 3px #D8C199;
-          cursor: default;
-          font-size: 1% ; color:#F2F2F2
-          height: 13px;
-          float:left;
-        }
-
-        .pxtype_QC {
-          border-top: solid 2px #FAA589;
-          background-color: #E2967C;
-          border-bottom: solid 2px #BC7C67;
-          cursor: default;
-        }
-
-        .pxtype_S1 {
-          border-top: solid 2px #88F3B8;
-          background-color: #79D8A4;
-          border-bottom: solid 2px #60AC82;
-          cursor: default;
-        }
-
-        .pxtype_S2 {
-          border-top: solid 2px #9DF5FB;
-          background-color: #87D2D7;
-          border-bottom: solid 2px #70AEB2;
-          cursor: default;
-        }
-
-        .pxtype_Instance {
-          border: solid 1px #FFFFFF;
-          cursor: default;
-        }
-
-        .active_period {
-          border-top: solid 3px #A2C8E4;
-          background-color: #8CADC5;
-          color: #8CADC5;
-          border-bottom: solid 3px #617888;
-          cursor: default;
-        }
-
-        .active_period_now {
-          border-top: solid 3px #EF5411;
-          background-color: #DC4D10;
-          color: #DC4D10;
-          border-bottom: solid 3px #C5450E;
-          cursor: default;
-        }
-
-        .active_period_10s {
-          border-top: solid 3px #F09855;
-          background-color: #DA8A4D;
-          color: #DA8A4D;
-          border-bottom: solid 3px #BF7943;
-          cursor: default;
-        }
-
-        .active_period_60s {
-          border-top: solid 3px #FFDC9A;
-          background-color: #F0CF91;
-          color: #F0CF91;
-          border-bottom: solid 3px #CAAE7A;
-          cursor: default;
-        }
-
-       </style>
-  </head>
-  <body bgcolor="#FFFFFF">
-    <h1 align="center">SQL Monitoring Report</h1>
-    <br/>
-    <font class="s9">
-      <b> SQL Text</b>
-      <hr size="3" align="left"/>
-    </font>
-    <p>select /*+ monitor */
-       e.ename,r.rname
-from   employees  e
-join   roles       r on (r.id = e.role_id)
-join   departments d on (d.id = e.dept_id)
-where  e.staffno &lt;= 10
-and    d.dname in (&apos;Department Name 1&apos;,&apos;Department Name 2&apos;)</p>
-    <font class="s9">
-      <b> Global Information: </b>
-    </font>
-    <font>
-      <b>DONE (ALL ROWS)</b>
-    </font>
-    <hr size="3" align="left"/>
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
-      <tr>
-        <th width="10%" align="left">Instance ID</th>
-        <th align="center" width="20">:</th>
-        <td>1</td>
-        <td rowspan="5" align="left" width="75%">
-          <table border="1" ora_borderstyle="headeronly" cellspacing="0" cellpadding="0" align="left" width="100%">
-            <tr class="s16">
-              <th width="19%">Buffer Gets</th>
-              <th width="19%">Database Time</th>
-              <th width="19%">Wait Activity</th>
-            </tr>
-            <tr class="s17">
-              <td>
-                <table cellspacing="0" cellpadding="0" width="100%">
-                  <tbody>
-                    <td style="          width:80%        ">
-                      <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-                        <tbody>
-                          <tr>
-                            <td class="bar">
-                              <div class="div_buffer_gets" style="                     width:100%                   " title="Buffer Gets: 28">
-                                <P class="nodisp">.</P>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                    <td align="left">28</td>
-                  </tbody>
-                </table>
-              </td>
-              <td>
-                <table cellspacing="0" cellpadding="0" width="100%">
-                  <tbody>
-                    <td style="          width:80%        ">
-                      <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-                        <tbody>
-                          <tr>
-                            <td class="bar">
-                              <div class="div_cpu_time" style="                     width:68%                   " title="Cpu - .00s (68%)">
-                                <P class="nodisp">.</P>
-                              </div>
-                              <div class="div_other_wait_time" style="                     width:31%                   " title="Other Wait Time - .00s (31%)">
-                                <P class="nodisp">.</P>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                    <td align="left">0s</td>
-                  </tbody>
-                </table>
-              </td>
-              <td/>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <th align="left">Session</th>
-        <th>:</th>
-        <td>ADHOC (42:42553)</td>
-      </tr>
-      <tr>
-        <th align="left">SQL ID </th>
-        <th>:</th>
-        <td>fy25z2r5xpfq4</td>
-      </tr>
-      <tr>
-        <th align="left">SQL Execution ID</th>
-        <th>:</th>
-        <td>16777236</td>
-      </tr>
-      <tr>
-        <th align="left">Execution Started</th>
-        <th>:</th>
-        <td>03/09/2018 10:43:31</td>
-      </tr>
-      <tr>
-        <th align="left">First Refresh Time</th>
-        <th>:</th>
-        <td>03/09/2018 10:43:31</td>
-      </tr>
-      <tr>
-        <th align="left">Last Refresh Time</th>
-        <th>:</th>
-        <td>03/09/2018 10:43:31</td>
-      </tr>
-      <tr>
-        <th align="left">Duration</th>
-        <th>:</th>
-        <td>.004383s</td>
-      </tr>
-      <tr>
-        <th align="left">Module/Action</th>
-        <th>:</th>
-        <td>SQL*Plus/-</td>
-      </tr>
-      <tr>
-        <th align="left">Service</th>
-        <th>:</th>
-        <td>SYS$USERS</td>
-      </tr>
-      <tr>
-        <th align="left">Program</th>
-        <th>:</th>
-        <td>sqlplus@prod12c (TNS V1-V3)</td>
-      </tr>
-      <tr>
-        <th align="left">Fetch Calls</th>
-        <th>:</th>
-        <td>2</td>
-      </tr>
-    </table>
-    <br/>
-    <br/>
-    <font class="s9">
-      <a name="xplan"/>
-      <b> SQL Plan Monitoring Details (Plan Hash Value=2341252972)</b>
-      <hr size="1" align="left"/>
-    </font>
-    <table width="100%" border="1" cellspacing="0" cellpadding="0" ora_borderstyle="headeronly">
-      <tr class="s16">
-        <th colspan="2">Id</th>
-        <th>Operation</th>
-        <th>Name</th>
-        <th>
-                    Estimated
-                    <br/>
-                    Rows
-                </th>
-        <th>Cost</th>
-        <th width="120">
-                    Active Period
-
-                    <br/>
-                    (.004383s)
-                </th>
-        <th>Execs</th>
-        <th>Rows</th>
-        <th>
-
-             Memory
-                    <br/>
-                    (Max)
-
-                </th>
-        <th>
-
-             Temp
-                    <br/>
-                    (Max)
-
-                </th>
-        <th width="120">IO Requests</th>
-        <th width="120">CPU Activity</th>
-        <th width="120">Wait Activity</th>
-      </tr>
-      <tr align="right" class="s17a">
-        <td align="center" class="             noright pxtype_QC           ">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="right" class="             noleft pxtype_QC           " title="Serial Execution">0</td>
-        <td align="left">SELECT STATEMENT </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <tr title=" 10:43:31 -&gt;  10:43:31">
-                <td class="bar">
-                  <div class="                       active_period                     100%                 " style="                   width:100%                 ">
-                    <P class="nodisp">.</P>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td>1</td>
-        <td>1</td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <table cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <td align="left"/>
-            </tbody>
-          </table>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-      </tr>
-      <tr align="right" class="s17b">
-        <td align="center" class="             noright pxtype_QC           ">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="right" class="             noleft pxtype_QC           " title="Serial Execution">1</td>
-        <td align="left">
-          <font color="#F1F5DD">.</font>
-                    HASH JOIN
-                </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td>3</td>
-        <td>6</td>
-        <td align="left">
-          <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <tr title=" 10:43:31 -&gt;  10:43:31">
-                <td class="bar">
-                  <div class="                       active_period                     100%                 " style="                   width:100%                 ">
-                    <P class="nodisp">.</P>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td>1</td>
-        <td>1</td>
-        <td>834.0KB</td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <table cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <td align="left"/>
-            </tbody>
-          </table>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-      </tr>
-      <tr align="right" class="s17a">
-        <td align="center" class="             noright pxtype_QC           ">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="right" class="             noleft pxtype_QC           " title="Serial Execution">2</td>
-        <td align="left">
-          <font color="#F5F5F5">..</font>
-                    HASH JOIN
-                </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td>3</td>
-        <td>4</td>
-        <td align="left">
-          <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <tr title=" 10:43:31 -&gt;  10:43:31">
-                <td class="bar">
-                  <div class="                       active_period                     100%                 " style="                   width:100%                 ">
-                    <P class="nodisp">.</P>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td>1</td>
-        <td>2</td>
-        <td>930.0KB</td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <table cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <td align="left"/>
-            </tbody>
-          </table>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-      </tr>
-      <tr align="right" class="s17b">
-        <td align="center" class="             noright pxtype_QC           ">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="right" class="             noleft pxtype_QC           " title="Serial Execution">3</td>
-        <td align="left">
-          <font color="#F1F5DD">...</font>
-                    TABLE ACCESS FULL
-                </td>
-        <td align="left">DEPARTMENTS</td>
-        <td>2</td>
-        <td>2</td>
-        <td align="left">
-          <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <tr title=" 10:43:31 -&gt;  10:43:31">
-                <td class="bar">
-                  <div class="                       active_period                     100%                 " style="                   width:100%                 ">
-                    <P class="nodisp">.</P>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td>1</td>
-        <td>2</td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <table cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <td align="left"/>
-            </tbody>
-          </table>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-      </tr>
-      <tr align="right" class="s17a">
-        <td align="center" class="             noright pxtype_QC           ">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="right" class="             noleft pxtype_QC           " title="Serial Execution">4</td>
-        <td align="left">
-          <font color="#F5F5F5">...</font>
-                    TABLE ACCESS FULL
-                </td>
-        <td align="left">EMPLOYEES</td>
-        <td>10</td>
-        <td>2</td>
-        <td align="left">
-          <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <tr title=" 10:43:31 -&gt;  10:43:31">
-                <td class="bar">
-                  <div class="                       active_period                     100%                 " style="                   width:100%                 ">
-                    <P class="nodisp">.</P>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td>1</td>
-        <td>10</td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <table cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <td align="left"/>
-            </tbody>
-          </table>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-      </tr>
-      <tr align="right" class="s17b">
-        <td align="center" class="             noright pxtype_QC           ">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="right" class="             noleft pxtype_QC           " title="Serial Execution">5</td>
-        <td align="left">
-          <font color="#F1F5DD">..</font>
-                    TABLE ACCESS FULL
-                </td>
-        <td align="left">ROLES</td>
-        <td>20</td>
-        <td>2</td>
-        <td align="left">
-          <table class="graph" cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <tr title=" 10:43:31 -&gt;  10:43:31">
-                <td class="bar">
-                  <div class="                       active_period                     100%                 " style="                   width:100%                 ">
-                    <P class="nodisp">.</P>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td>1</td>
-        <td>20</td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td>
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <table cellspacing="0" cellpadding="0" width="100%">
-            <tbody>
-              <td align="left"/>
-            </tbody>
-          </table>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-        <td align="left">
-          <P class="nodisp">.</P>
-        </td>
-      </tr>
-    </table>
-  </body>
+         document.write('<script language="javascript" type="text/javascript" ' +
+                        'src="' + swf_base_path + 'emviewers/scripts/activeReportInit.js?' +
+                        Math.floor((new Date()).getTime()/(7*24*60*60*1000)) +
+                       '"></' + 'script>');
+      -->
+  </script>
+ </head>
+ <body onload="sendXML();">
+  <script type="text/javascript">
+       writeIframe();
+     </script>
+  <script id="fxtmodel" type="text/xml">
+   <!--FXTMODEL-->
+   <report db_version="12.2.0.1.0" elapsed_time="0.04" cpu_time="0.03" cpu_cores="1" hyperthread="N" timezone_offset="0" packs="2" encode="base64" compress="zlib">
+    <report_id><![CDATA[/orarep/sqlmonitor/main%3fsql_id%3dan05rsj1up1k5]]></report_id>
+                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
+            </report>
+   <!--FXTMODEL-->
+  </script>
+ </body>
 </html>
 

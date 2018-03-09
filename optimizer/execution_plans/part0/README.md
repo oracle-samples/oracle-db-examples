@@ -6,7 +6,7 @@ Spool files (.lst) are included so you can see the expected results.
 
 To run the examples yourself, use a DBA account and start by running "ctables.sql". Note that this will drop some tables - so use a test database only!
 
-Next, run the examples: eg1.sql ... eg5.sql
+Next, run the examples: eg1.sql ... eg6.sql
 
 An interactive report from Enterprise Manager us also included: EM_sqlmonitor_output.html
 

@@ -1,7 +1,7 @@
 column ename format a20
 column rname format a20
 
-select /*+ gather_plan_statistics */
+select /*+ PARALLEL (e 2) */ 
        e.ename,r.rname
 from   employees  e
 join   roles       r on (r.id = e.role_id)
@@ -9,4 +9,4 @@ join   departments d on (d.id = e.dept_id)
 where  e.staffno <= 10
 and    d.dname in ('Department Name 1','Department Name 2');
 
-@stats
+@advancedp

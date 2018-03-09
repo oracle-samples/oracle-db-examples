@@ -11,7 +11,7 @@ var sqlid varchar2(100)
 -- so the hint won't always be required. In this case,
 -- it's over very quickly so I've added the hint.
 --
-select /*+ monitor */
+select /*+ MONITOR */
        e.ename,r.rname
 from   employees  e
 join   roles       r on (r.id = e.role_id)
@@ -44,7 +44,7 @@ from dual;
 
 set termout off feedback off
 spool monitor_output.html
-select DBMS_SQL_MONITOR.REPORT_SQL_MONITOR (sql_id=>:sqlid, report_level=>'all', type=>'html') report
+select DBMS_SQL_MONITOR.REPORT_SQL_MONITOR (sql_id=>:sqlid, report_level=>'all', type=>'active') report
 from dual;
 spool off
 

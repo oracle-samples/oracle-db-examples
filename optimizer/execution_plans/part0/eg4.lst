@@ -32,13 +32,13 @@ SQL> set long 100000 pagesize 0 linesize 250 tab off trims on
 SQL> column plan_table_output format a230
 SQL> 
 SQL> SELECT *
-  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(SQL_ID=>:sqlid,FORMAT=>'LAST ADVANCED'));
-SQL_ID  fzfk7qqax6chk, child number 0
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(SQL_ID=>:sqlid,FORMAT=>'ADVANCED'));
+SQL_ID  1j5mhvb79631d, child number 0
 -------------------------------------
-select /* MY_TEST_QUERY */        e.ename,r.rname from   employees  e
-join   roles       r on (r.id = e.role_id) join   departments d on
-(d.id = e.dept_id) where  e.staffno <= 10 and    d.dname in
-('Department Name 1','Department Name 2')
+select /* MY_TEST_QUERY */ /*+ MONITOR */        e.ename,r.rname from
+employees  e join   roles       r on (r.id = e.role_id) join
+departments d on (d.id = e.dept_id) where  e.staffno <= 10 and
+d.dname in ('Department Name 1','Department Name 2')
 
 Plan hash value: 2341252972
 
