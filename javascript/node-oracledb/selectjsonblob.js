@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -16,10 +16,10 @@
  * limitations under the License.
  *
  * NAME
- *   selectjsonclob.js
+ *   selectjsonblob.js
  *
  * DESCRIPTION
- *   Executes sample queries from a JSON table that uses CLOB storage.
+ *   Executes sample insert and query using a JSON column with BLOB storage.
  *   Requires Oracle Database 12.1.0.2, which has extensive JSON datatype support.
  *   See https://docs.oracle.com/database/122/ADJSN/toc.htm
  *
@@ -50,13 +50,15 @@ var checkver = function (conn, cb) {
   }
 };
 
-// Insert some data directly.
+// Insert some JSON data
+
 var doinsert = function (conn, cb) {
   var data = { "userId": 2, "userName": "Bob", "location": "USA" };
   var s = JSON.stringify(data);
+  var b = Buffer.from(s, 'utf8');
   conn.execute(
-    "INSERT INTO j_purchaseorder_c (po_document) VALUES (:lobbv)",
-    { lobbv: s },
+    "INSERT INTO j_purchaseorder_b (po_document) VALUES (:lobbv)",
+    { lobbv: b },
     // { autoCommit: true }, // uncomment if you want data to persist
     function(err)
     {
@@ -69,13 +71,14 @@ var doinsert = function (conn, cb) {
     });
 };
 
-// Selecting JSON stored in a CLOB column
+// Select JSON stored in a BLOB column
+
 var dojsonquery = function (conn, cb) {
-  console.log('Selecting JSON stored in a CLOB column');
+  console.log('Selecting JSON stored in a BLOB column');
   conn.execute(
-    "SELECT po_document FROM j_purchaseorder_c WHERE JSON_EXISTS (po_document, '$.location')",
+    "SELECT po_document FROM j_purchaseorder_b WHERE JSON_EXISTS (po_document, '$.location')",
     [],
-    { fetchInfo: { "PO_DOCUMENT": { type: oracledb.STRING} } },  // Fetch as a String instead of a Stream
+    { fetchInfo: { "PO_DOCUMENT": { type: oracledb.BUFFER } } },  // Fetch as a Buffer instead of a Stream
     function(err, result)
     {
       if (err)
@@ -84,7 +87,7 @@ var dojsonquery = function (conn, cb) {
         return cb(new Error('No results'), conn);
 
       console.log('Query results:');
-      console.log(result.rows);
+      console.log(result.rows[0][0].toString('utf8'));
       return cb(null, conn);
     });
 };
