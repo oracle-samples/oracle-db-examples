@@ -9,4 +9,4 @@ join   departments d on (d.id = e.dept_id)
 where  e.staffno <= 10
 and    d.dname in ('Department Name 1','Department Name 2');
 
-@advancedp
+@planp

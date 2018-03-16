@@ -30,5 +30,5 @@ set long 100000 pagesize 0 linesize 250 tab off trims on
 column plan_table_output format a230
 
 SELECT *
-FROM table(DBMS_XPLAN.DISPLAY_CURSOR(SQL_ID=>:sqlid,FORMAT=>'ADVANCED'));
+FROM table(DBMS_XPLAN.DISPLAY_CURSOR(SQL_ID=>:sqlid,FORMAT=>'ALL +OUTLINE'));
 
