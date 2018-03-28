@@ -6,7 +6,7 @@ async function startup() {
   try {
     console.log('Starting web server');
 
-    await webServer.start(); 
+    await webServer.start();
   } catch (err) {
     console.error(err);
 
@@ -18,7 +18,7 @@ startup();
 
 async function shutdown(e) {
   let err = e;
-    
+
   console.log('Shutting down');
 
   try {

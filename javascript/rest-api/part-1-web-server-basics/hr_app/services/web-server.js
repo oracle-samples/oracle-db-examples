@@ -12,7 +12,7 @@ function start() {
 
     // Combines logging info from request and response
     app.use(morgan('combined'));
-    
+
     app.get('/', (req, res) => {
       res.end('Hello World!');
     });

@@ -12,7 +12,7 @@ async function startup() {
   try {
     console.log('Initializing database module');
 
-    await database.initialize(); 
+    await database.initialize();
   } catch (err) {
     console.error(err);
 
@@ -22,7 +22,7 @@ async function startup() {
   try {
     console.log('Starting web server');
 
-    await webServer.start(); 
+    await webServer.start();
   } catch (err) {
     console.error(err);
 
@@ -34,7 +34,7 @@ startup();
 
 async function shutdown(e) {
   let err = e;
-    
+
   console.log('Shutting down application');
 
   try {
@@ -50,7 +50,7 @@ async function shutdown(e) {
   try {
     console.log('Closing database module');
 
-    await database.close(); 
+    await database.close();
   } catch (e) {
     console.error(e);
 
