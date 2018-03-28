@@ -5,7 +5,7 @@ const webServerConfig = require('../config/web-server.js');
 
 let httpServer;
 
-function start() {
+function initialize() {
   return new Promise((resolve, reject) => {
     const app = express();
     httpServer = http.createServer(app);
@@ -30,11 +30,11 @@ function start() {
   });
 }
 
-module.exports.start = start;
+module.exports.initialize = initialize;
 
 // previous code above this line
 
-function stop() {
+function close() {
   return new Promise((resolve, reject) => {
     httpServer.close((err) => {
       if (err) {
@@ -47,4 +47,4 @@ function stop() {
   });
 }
 
-module.exports.stop = stop;
+module.exports.close = close;

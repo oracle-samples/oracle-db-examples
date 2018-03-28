@@ -4,9 +4,9 @@ async function startup() {
   console.log('Starting application');
 
   try {
-    console.log('Starting web server');
+    console.log('Initializing web server module');
 
-    await webServer.start();
+    await webServer.initialize();
   } catch (err) {
     console.error(err);
 
@@ -22,9 +22,9 @@ async function shutdown(e) {
   console.log('Shutting down');
 
   try {
-    console.log('Closing web server');
+    console.log('Closing web server module');
 
-    await webServer.stop();
+    await webServer.close();
   } catch (e) {
     console.log('Encountered error', e);
 
