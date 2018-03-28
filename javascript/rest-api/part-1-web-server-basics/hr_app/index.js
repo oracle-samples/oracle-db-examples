@@ -34,7 +34,7 @@ async function shutdown(e) {
   console.log('Exiting process');
 
   if (err) {
-    process.exit(1);
+    process.exit(1); // Non-zero failure code
   } else {
     process.exit(0);
   }
@@ -53,7 +53,8 @@ process.on('SIGINT', () => {
 });
 
 process.on('uncaughtException', err => {
-  console.log('Uncaught exception', err);
+  console.log('Uncaught exception');
+  console.error(err);
 
   shutdown(err);
 });
