@@ -16,8 +16,6 @@ module.exports.close = close;
 function simpleExecute(statement, binds = [], opts = {}) {
   return new Promise(async (resolve, reject) => {
     let conn;
-    let result;
-    let err;
 
     opts.outFormat = oracledb.OBJECT;
     opts.autoCommit = true;
@@ -25,7 +23,7 @@ function simpleExecute(statement, binds = [], opts = {}) {
     try {
       conn = await oracledb.getConnection();
 
-      result = await conn.execute(statement, binds, opts);
+      const result = await conn.execute(statement, binds, opts);
 
       resolve(result);
     } catch (err) {
