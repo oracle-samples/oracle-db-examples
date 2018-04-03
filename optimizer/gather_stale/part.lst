@@ -1,0 +1,302 @@
+SQL> @part
+SQL> set trims on pagesize 100 linesize 250
+SQL> column table_name format a25
+SQL> column partition_or_global format a25
+SQL> column index_name format a25
+SQL> 
+SQL> alter session set NLS_DATE_FORMAT = 'HH24:MI:SS YYYY-MM-DD';
+
+Session altered.
+
+SQL> 
+SQL> drop table stale_test1 purge;
+
+Table dropped.
+
+SQL> drop table stale_test2 purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table stale_test1 (col1 number(10));
+
+Table created.
+
+SQL> 
+SQL> create table stale_test2 (col1 number(10)) partition by range (col1)
+  2  (
+  3   partition p1 values less than (100)
+  4  ,partition p2 values less than (200));
+
+Table created.
+
+SQL> 
+SQL> create index stale_test1_i on stale_test1(col1);
+
+Index created.
+
+SQL> create index stale_test2_i on stale_test2(col1) local;
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.set_table_prefs(user,'stale_test1','stale_percent','5')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.set_table_prefs(user,'stale_test2','stale_percent','5')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> insert into stale_test1 values (1);
+
+1 row created.
+
+SQL> insert into stale_test2 values (1);
+
+1 row created.
+
+SQL> insert into stale_test2 values (100);
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test1')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test2')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT All tables and partitions have non-stale stats
+All tables and partitions have non-stale stats
+SQL> PROMPT
+
+SQL> select table_name,nvl(partition_name,'GLOBAL') partition_or_global, last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                PARTITION_OR_GLOBAL       LAST_ANALYZED       STA
+------------------------- ------------------------- ------------------- ---
+STALE_TEST1               GLOBAL                    07:22:55 2018-03-16 NO
+STALE_TEST2               GLOBAL                    07:22:55 2018-03-16 NO
+STALE_TEST2               P1                        07:22:55 2018-03-16 NO
+STALE_TEST2               P2                        07:22:55 2018-03-16 NO
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> insert into stale_test2 values (1);
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.flush_database_monitoring_info
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_lock.sleep(5)
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT We only need to gather stats for P1 and the global stats for STALE_TEST2
+We only need to gather stats for P1 and the global stats for STALE_TEST2
+SQL> PROMPT
+
+SQL> select table_name,nvl(partition_name,'GLOBAL') partition_or_global, last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                PARTITION_OR_GLOBAL       LAST_ANALYZED       STA
+------------------------- ------------------------- ------------------- ---
+STALE_TEST1               GLOBAL                    07:22:55 2018-03-16 NO
+STALE_TEST2               GLOBAL                    07:22:55 2018-03-16 YES
+STALE_TEST2               P1                        07:22:55 2018-03-16 YES
+STALE_TEST2               P2                        07:22:55 2018-03-16 NO
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test1')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test2')
+
+PL/SQL procedure successfully completed.
+
+SQL> -- If you want to test on 'gather auto' on 12c, uncomment the two lines below
+SQL> -- and comment the two lines above. The results will be similar.
+SQL> --exec dbms_stats.gather_table_stats(user,'stale_test1',options=>'gather auto')
+SQL> --exec dbms_stats.gather_table_stats(user,'stale_test2',options=>'gather auto')
+SQL> 
+SQL> PROMPT But gather_table_stats gathers table stats irrespective of staleness
+But gather_table_stats gathers table stats irrespective of staleness
+SQL> PROMPT so all table and partitions have a new LAST_ANALYZED time
+so all table and partitions have a new LAST_ANALYZED time
+SQL> PROMPT
+
+SQL> select table_name,nvl(partition_name,'GLOBAL') partition_or_global, last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                PARTITION_OR_GLOBAL       LAST_ANALYZED       STA
+------------------------- ------------------------- ------------------- ---
+STALE_TEST1               GLOBAL                    07:23:02 2018-03-16 NO
+STALE_TEST2               GLOBAL                    07:23:02 2018-03-16 NO
+STALE_TEST2               P1                        07:23:02 2018-03-16 NO
+STALE_TEST2               P2                        07:23:02 2018-03-16 NO
+
+SQL> 
+SQL> PROMPT
+
+SQL> PROMPT We used dbms_stats.gather_table_stats
+We used dbms_stats.gather_table_stats
+SQL> PROMPT
+
+SQL> PROMPT Notice above how all statistics have been re-gathered
+Notice above how all statistics have been re-gathered
+SQL> PROMPT (compare the LAST_ANALYZED time now and in the previous listing)
+(compare the LAST_ANALYZED time now and in the previous listing)
+SQL> PROMPT GATHER_TABLE_STATS does not skip tables if the statistics are not stale.
+GATHER_TABLE_STATS does not skip tables if the statistics are not stale.
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> insert into stale_test2 values (1);
+
+1 row created.
+
+SQL> insert into stale_test2 values (1);
+
+1 row created.
+
+SQL> insert into stale_test2 values (1);
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.flush_database_monitoring_info
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_lock.sleep(5)
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT
+
+SQL> PROMPT We are ready to try again, this time with GATHER_SCHEMA_STATS...
+We are ready to try again, this time with GATHER_SCHEMA_STATS...
+SQL> select table_name,nvl(partition_name,'GLOBAL') partition_or_global, last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                PARTITION_OR_GLOBAL       LAST_ANALYZED       STA
+------------------------- ------------------------- ------------------- ---
+STALE_TEST1               GLOBAL                    07:23:02 2018-03-16 NO
+STALE_TEST2               GLOBAL                    07:23:02 2018-03-16 YES
+STALE_TEST2               P1                        07:23:02 2018-03-16 YES
+STALE_TEST2               P2                        07:23:02 2018-03-16 NO
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> DECLARE
+  2  	filter_lst  DBMS_STATS.OBJECTTAB := DBMS_STATS.OBJECTTAB();
+  3  BEGIN
+  4  	filter_lst.extend(2);
+  5  	filter_lst(1).ownname := user;
+  6  	filter_lst(1).objname := 'stale_test1';
+  7  	filter_lst(2).ownname := user;
+  8  	filter_lst(2).objname := 'stale_test2';
+  9  	DBMS_STATS.GATHER_SCHEMA_STATS(ownname=>user,obj_filter_list=>filter_lst,options=>'gather auto');
+ 10  END;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT
+
+SQL> PROMPT We used dbms_stats.gather_schema_stats(obj_filter_list=> ... , options=>'gather auto')
+We used dbms_stats.gather_schema_stats(obj_filter_list=> ... , options=>'gather auto')
+SQL> PROMPT
+
+SQL> PROMPT This time non-stale tables and partitions have been skipped
+This time non-stale tables and partitions have been skipped
+SQL> PROMPT and statistics have only been gathered where there are stale stats.
+and statistics have only been gathered where there are stale stats.
+SQL> PROMPT Bear in mind that STALE_TEST2 has new statistics at the GLOBAL level
+Bear in mind that STALE_TEST2 has new statistics at the GLOBAL level
+SQL> PROMPT because the stale P1 partition means that the table's global-level
+because the stale P1 partition means that the table's global-level
+SQL> PROMPT statistics must be updated too.
+statistics must be updated too.
+SQL> select table_name,nvl(partition_name,'GLOBAL') partition_or_global, last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                PARTITION_OR_GLOBAL       LAST_ANALYZED       STA
+------------------------- ------------------------- ------------------- ---
+STALE_TEST1               GLOBAL                    07:23:02 2018-03-16 NO
+STALE_TEST2               GLOBAL                    07:23:09 2018-03-16 NO
+STALE_TEST2               P1                        07:23:09 2018-03-16 NO
+STALE_TEST2               P2                        07:23:02 2018-03-16 NO
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> PROMPT
+
+SQL> PROMPT The indexes are treated correctly too
+The indexes are treated correctly too
+SQL> PROMPT
+
+SQL> select table_name,index_name,nvl(partition_name,'GLOBAL') partition_or_global, last_analyzed,stale_stats
+  2  from   user_ind_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,3;
+
+TABLE_NAME                INDEX_NAME                PARTITION_OR_GLOBAL       LAST_ANALYZED       STA
+------------------------- ------------------------- ------------------------- ------------------- ---
+STALE_TEST1               STALE_TEST1_I             GLOBAL                    07:23:02 2018-03-16 NO
+STALE_TEST2               STALE_TEST2_I             GLOBAL                    07:23:09 2018-03-16 NO
+STALE_TEST2               STALE_TEST2_I             P1                        07:23:09 2018-03-16 NO
+STALE_TEST2               STALE_TEST2_I             P2                        07:23:02 2018-03-16 NO
+
+SQL> 
+SQL> 
+SQL> exit

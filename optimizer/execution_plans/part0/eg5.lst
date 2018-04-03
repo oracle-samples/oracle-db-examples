@@ -1,0 +1,46 @@
+SQL> @eg5
+Employee Name 1      Role Name 1
+SQL Monitoring Report
+
+SQL Text
+------------------------------
+select /* MY_TEST_QUERY */ /*+ MONITOR */ e.ename,r.rname from employees e join roles r on (r.id = e.role_id) join departments d on (d.id = e.dept_id) where e.staffno <= 10 and d.dname in ('Department Name 1','Department Name 2')
+
+Global Information
+------------------------------
+ Status              :  DONE (ALL ROWS)
+ Instance ID         :  1
+ Session             :  ADHOC (44:61676)
+ SQL ID              :  1j5mhvb79631d
+ SQL Execution ID    :  16777220
+ Execution Started   :  03/16/2018 13:45:23
+ First Refresh Time  :  03/16/2018 13:45:23
+ Last Refresh Time   :  03/16/2018 13:45:23
+ Duration            :  .000591s
+ Module/Action       :  SQL*Plus/-
+ Service             :  SYS$USERS
+ Program             :  sqlplus@prod12c (TNS V1-V3)
+ Fetch Calls         :  2
+
+Global Stats
+=======================================
+| Elapsed |  Other   | Fetch | Buffer |
+| Time(s) | Waits(s) | Calls |  Gets  |
+=======================================
+|    0.00 |     0.00 |     2 |     28 |
+=======================================
+
+SQL Plan Monitoring Details (Plan Hash Value=2341252972)
+==========================================================================================================================================
+| Id |       Operation       |    Name     |  Rows   | Cost |   Time    | Start  | Execs |   Rows   |  Mem  | Activity | Activity Detail |
+|    |                       |             | (Estim) |      | Active(s) | Active |       | (Actual) | (Max) |   (%)    |   (# samples)   |
+==========================================================================================================================================
+|  0 | SELECT STATEMENT      |             |         |      |         1 |     +0 |     1 |        1 |     . |          |                 |
+|  1 |   HASH JOIN           |             |       3 |    6 |         1 |     +0 |     1 |        1 | 545KB |          |                 |
+|  2 |    HASH JOIN          |             |       3 |    4 |         1 |     +0 |     1 |        2 | 837KB |          |                 |
+|  3 |     TABLE ACCESS FULL | DEPARTMENTS |       2 |    2 |         1 |     +0 |     1 |        2 |     . |          |                 |
+|  4 |     TABLE ACCESS FULL | EMPLOYEES   |      10 |    2 |         1 |     +0 |     1 |       10 |     . |          |                 |
+|  5 |    TABLE ACCESS FULL  | ROLES       |      20 |    2 |         1 |     +0 |     1 |       20 |     . |          |                 |
+==========================================================================================================================================
+
+SQL> spool off
