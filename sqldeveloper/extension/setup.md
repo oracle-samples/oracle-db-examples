@@ -19,7 +19,7 @@ Currently the SQL Developer examples are part of a larger set that must be downl
 ![get examples image](images/get-examples.png)
 
 ### Third party libraries
-**If** you plan to build the [Dependency Example](https://github.com/oracle/oracle-db-examples/tree/master/sqldeveloper/extension/java/DependencyExample), you will also need:
+**If** you plan to build the [Dependency Example](java/DependencyExample), you will also need:
 * [FXDiagram 0.35.0](http://dl.bintray.com/jankoehnlein/FXDiagram/standalone/fxdiagram-jars-0.35.0.zip "fxdiagram-jars-0.35.0.zip")  
 * [KIELER KLay Layouters 0.14.0](http://rtsys.informatik.uni-kiel.de/~kieler/files/release_pragmatics_2015-02/klay/klay_2015-02.jar "klay_2015-02.jar")
 
@@ -32,7 +32,7 @@ sqldeveloper/extension is an eclipse project directory but the examples are buil
 * extension/build.properties - Update to point to your SQL Developer installation & optionally change the owner info.
 
 ### Third party libraries
-**If/when** you plan to build the [Dependency Example](https://github.com/oracle/oracle-db-examples/tree/master/sqldeveloper/extension/java/DependencyExample), see that page for additional set up requirements.
+**If/when** you plan to build the [Dependency Example](java/DependencyExample), see that page for additional set up requirements.
 
 ## Making it go
 If you are using eclipse, I'm going to assume you know how to import an existing project and run ant tasks but continue reading to learn about the various ant tasks and how they are used.
