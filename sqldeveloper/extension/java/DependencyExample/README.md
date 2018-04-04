@@ -1,6 +1,6 @@
 # SQL Developer Examples
 ## DependencyExample
-This example is built with ant but is also set up for editing & (remote) debugging in the eclipse extension project.  
+This example is built with ant but is also set up for editing & (remote) debugging in the eclipse extension project.
 * Building this example requires two external libraries. Copy the required jar files to DependencyExample/lib.  
 The exact jars needed from them can be found in *DependencyExample/DependencyExample.userlibraries* which you will also need to import to use eclipse.  
     * [FXDiagram 0.35.0](http://dl.bintray.com/jankoehnlein/FXDiagram/standalone/fxdiagram-jars-0.35.0.zip "fxdiagram-jars-0.35.0.zip")  
