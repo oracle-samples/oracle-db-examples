@@ -3,7 +3,7 @@
 This example is built with ant but is also set up for editing & (remote) debugging in the eclipse extension project.  
 * Building this example requires two external libraries. Copy the required jar files to DependencyExample/lib.  
 The exact jars needed from them can be found in *DependencyExample/DependencyExample.userlibraries* which you will also need to import to use eclipse.  
-    * [FXDiagram 0.35.0](http://dl.bintray.com/jankoehnlein/FXDiagram/standalone/:fxdiagram-jars-0.35.0.zip "fxdiagram-jars-0.35.0.zip")  
+    * [FXDiagram 0.35.0](http://dl.bintray.com/jankoehnlein/FXDiagram/standalone/fxdiagram-jars-0.35.0.zip "fxdiagram-jars-0.35.0.zip")  
     * [KIELER KLay Layouters 0.14.0](http://rtsys.informatik.uni-kiel.de/~kieler/files/release_pragmatics_2015-02/klay/klay_2015-02.jar "klay_2015-02.jar")
 
 [Set up your environment](../../setup.md), get the required libraries (see above), build the (default) deploy target, and start SQLDeveloper from the command line WITH THE (sqldeveloper/bin/)sqldeveloper -clean OPTION.  

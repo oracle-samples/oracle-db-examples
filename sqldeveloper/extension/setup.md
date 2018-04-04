@@ -20,7 +20,7 @@ Currently the SQL Developer examples are part of a larger set that must be downl
 
 ### Third party libraries
 **If** you plan to build the [Dependency Example](https://github.com/oracle/oracle-db-examples/tree/master/sqldeveloper/extension/java/DependencyExample), you will also need:
-* [FXDiagram 0.35.0](http://dl.bintray.com/jankoehnlein/FXDiagram/standalone/:fxdiagram-jars-0.35.0.zip "fxdiagram-jars-0.35.0.zip")  
+* [FXDiagram 0.35.0](http://dl.bintray.com/jankoehnlein/FXDiagram/standalone/fxdiagram-jars-0.35.0.zip "fxdiagram-jars-0.35.0.zip")  
 * [KIELER KLay Layouters 0.14.0](http://rtsys.informatik.uni-kiel.de/~kieler/files/release_pragmatics_2015-02/klay/klay_2015-02.jar "klay_2015-02.jar")
 
 ### The build environment
