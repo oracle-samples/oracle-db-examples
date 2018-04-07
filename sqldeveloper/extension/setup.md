@@ -30,6 +30,7 @@ sqldeveloper/extension is an eclipse project directory but the examples are buil
 ## Wiring it together
 ### build.properties
 * extension/build.properties - Update to point to your SQL Developer installation & optionally change the owner info.
+* extension/java/SQLDeveloper18.1.userlibraries - **IF** you are using eclipse, update the paths to point to your SQL Developer installation and import the library.
 
 ### Third party libraries
 **If/when** you plan to build the [Dependency Example](java/DependencyExample), see that page for additional set up requirements.
@@ -37,7 +38,7 @@ sqldeveloper/extension is an eclipse project directory but the examples are buil
 ## Making it go
 If you are using eclipse, I'm going to assume you know how to import an existing project and run ant tasks but continue reading to learn about the various ant tasks and how they are used.
 
-If you are using ant from the command line, make sure `ANT_HOME` and `JAVA_HOME` are defined for your environment and that ant is on your `PATH` and accessible from the command line.
+If you are using ant from the command line, make sure `ANT_HOME` and `JAVA_HOME` are defined for your environment and that ant is on your `PATH` and accessible from the command line. An example setenv.bat file to do this is in the extension folder. I included sqldeveloper on the path so I wouldn't have to navigate around.
 
 ### Ant tasks
 The [XML Packaged](xml/packaged) example and all of the [Java](java) examples use ant to build and deploy the example. The 'heavy lifting' is all defined in buildtools so the individual build.xml files for each example are pretty simple. There only a few targets of interest:
