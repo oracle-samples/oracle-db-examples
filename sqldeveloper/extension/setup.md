@@ -11,7 +11,7 @@ You'll need a copy of [SQL Developer](http://www.oracle.com/technetwork/develope
 ### The Examples
 Currently the SQL Developer examples are part of a larger set that must be downloaded together. 
 
-1. Go to the main [oracle-db-examples](https://github.com/oracle/oracle-db-examples) page, 
+1. Go to the main [oracle-db-examples](../..) page, 
 2. Select the green Clone or download button, 
 3. and then the Download ZIP button.
 4. unzip the file somewhere (we only really need the sqldeveloper folder)
