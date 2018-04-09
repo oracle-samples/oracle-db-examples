@@ -49,6 +49,6 @@ The following test case should give you some idea of what AoJ can do. It uses th
      conn.commitMaybeRollback(trans);
    }    
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
- }``````
+ }
 
 
