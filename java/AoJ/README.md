@@ -4,7 +4,7 @@ ADBA is Asynchronous Database Access, a non-blocking database access api that Or
 
 Reading a bunch of JavaDoc and interfaces can be interesting, but it is not nearly as engaging as having actual running code to play with. To that end, we have uploaded the beginnings of an implementation of ADBA running over standard JDBC, AoJ. AoJ is available for download from [GitHub](https://github.com/oracle/oracle-db-examples/upload/master/java/AoJ) under the Apache license. It should run with any reasonably standard compliant JDBC driver.
 
-AoJ implements only a small part of ADBA, but it is enough to write interesting code. It provides partial implementations of DataSourceFactory, DataSource, Connection, OperationGroup, RowOperation, CountOperation, Transaction and others. These implementations are not complete but there is enough there to write interesting database programs. The code that is there is unrest tested, but it does work to some extent. The saving grace is that you can download the source and improve it: add new features, fix bugs, try out alternate implementations.
+AoJ implements only a small part of ADBA, but it is enough to write interesting code. It provides partial implementations of DataSourceFactory, DataSource, Connection, OperationGroup, RowOperation, CountOperation, Transaction and others. These implementations are not complete but there is enough there to write interesting database programs. The code that is there is untested, but it does work to some extent. The saving grace is that you can download the source and improve it: add new features, fix bugs, try out alternate implementations.
 
 Oracle is not proposing AoJ as an open source project. However, because AoJ is released under the Apache license, the Java community can fork the code and create a true open source project with this upload as a base. Oracle developers may contribute when we have time, but this would have to be a Java community effort.
 
@@ -14,7 +14,7 @@ We could have held this code back and worked on it longer. Instead we thought it
 
 The following test case should give you some idea of what AoJ can do. It uses the scott/tiger [schema](https://github.com/oracle/dotnet-db-samples/blob/master/schemas/scott.sql). It should run with any JDBC driver connecting to a database with the scott schema.
 
-‘'' public void transactionSample() {
+`````` public void transactionSample() {
    DataSourceFactory factory = DataSourceFactory.forName("com.oracle.adbaoverjdbc.DataSourceFactory");
    try (DataSource ds = factory.builder()
            .url(URL)
@@ -49,6 +49,6 @@ The following test case should give you some idea of what AoJ can do. It uses th
      conn.commitMaybeRollback(trans);
    }    
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
- }’''
+ }``````
 
 
