@@ -1,6 +1,8 @@
 # Java based examples
 This is a repository of sample code that will demonstrate various concepts to assist Java developers in designing applications for accessing and processing data from the Oracle Database, leveraging Java Database Connectivity (JDBC), Universal Connection Pool (UCP); or running Java code directly in the database leveraging the embedded JVM (a.k.a. OJVM).
 
+We have just added the AoJ sub-repository for the Asynchronous Java Database Access (ADBA) over JDBC.
+
 # What's in Oracle database 12c Release 2 for Java Developers? 
 * **Java 8**: Java 8 in JDBC/UCP and OJVM; JDBC 4.2
 * **Performance**: JIT (OJVM), Network Compression over WAN (JDBC), Configurable connection health check frequency (UCP), PL/SQL Callbace interface (JDBC)
