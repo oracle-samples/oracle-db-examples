@@ -49,7 +49,7 @@ public class FirstLight {
   // Define these three constants with the appropriate values for the database
   // and JDBC driver you want to use. Should work with ANY reasonably standard
   // JDBC driver. These values are passed to DriverManager.getConnection.
-  public static final String URL = "jdbc:oracle:thin:@//den03cll.us.oracle.com:5521/main2.regress.rdbms.dev.us.oracle.com"; //"<JDBC driver connect string>";
+  public static final String URL = "<JDBC driver connect string>”;
   public static final String USER = "scott"; //<database user name>";
   public static final String PASSWORD = "tiger"; //<database user password>";
   // Define this to be the most trivial SELECT possible
