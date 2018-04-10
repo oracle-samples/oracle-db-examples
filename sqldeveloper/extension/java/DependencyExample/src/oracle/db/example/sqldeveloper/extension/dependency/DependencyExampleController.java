@@ -113,6 +113,7 @@ public class DependencyExampleController implements Controller {
      */
     @Override
     public boolean update(IdeAction action, Context context) {
+    	action.setEnabled(true);
         return true;
     }
 

@@ -112,7 +112,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -239,17 +238,12 @@ public class FxDiagram extends XDiagram {
                     lastClickTime = now;
                 }
                 if (MouseButton.PRIMARY == event.getButton() && timeBetween < doubleClickThreshold) {
-                    setCursor(Cursor.WAIT);
                     SwingUtilities.invokeLater(() -> {
                         try {
                             model.performDrill(key);
                         } catch (Exception e) {
                             String msg = DependencyExampleResources.format(DependencyExampleResources.DependencyExampleFxControl_drillLink_fail, key);
                             Logger.warn(FxDiagram.class, msg, e);
-                        } finally {
-                            Platform.runLater(() -> {
-                                FxDiagram.this.setCursor(Cursor.DEFAULT);
-                            });
                         }
                     });
                 } else {
