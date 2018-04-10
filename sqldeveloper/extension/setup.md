@@ -30,6 +30,8 @@ sqldeveloper/extension is an eclipse project directory but the examples are buil
 ## Wiring it together
 ### build.properties
 * extension/build.properties - Update to point to your SQL Developer installation & optionally change the owner info.
+
+
 * extension/java/SQLDeveloper18.1.userlibraries - **IF** you are using eclipse, update the paths to point to your SQL Developer installation and import the library.
 
 ### Third party libraries
@@ -43,8 +45,14 @@ If you are using ant from the command line, make sure `ANT_HOME` and `JAVA_HOME`
 ### Ant tasks
 The [XML Packaged](xml/packaged) example and all of the [Java](java) examples use ant to build and deploy the example. The 'heavy lifting' is all defined in buildtools so the individual build.xml files for each example are pretty simple. There only a few targets of interest:
 * `_rebuild` cleans and deploys the example
+
+
 * `_deploy` builds and deploys the example to the target SQL Developer installation (defined in build.properties). Please remember to exit out of SQL developer before running this so you don't confuse yourself. (Which I have great experience with :/ )
+
+
 * `_cfu` creates a check for updates bundle and associated metadata xml file in the built/cfu directory for the example. 
+
+
 * `resgen` generates the ResourceBundle java files from the .properties files listed in resfiles.properties. Running this manually - and then refreshing the project - is only "needed" if you are using eclipse and want code completion and the error checker to know about new entries when editing java.
 
 ### _deploy Example
