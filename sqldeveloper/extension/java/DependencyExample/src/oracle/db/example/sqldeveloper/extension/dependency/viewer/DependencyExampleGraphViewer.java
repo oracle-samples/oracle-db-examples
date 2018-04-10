@@ -18,6 +18,7 @@ package oracle.db.example.sqldeveloper.extension.dependency.viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.util.Collections;
 
 import javafx.application.Platform;
@@ -48,6 +49,7 @@ import oracle.dbtools.raptor.utils.DBObject;
 import oracle.dbtools.util.Logger;
 import oracle.ide.Context;
 import oracle.ide.Ide;
+import oracle.ide.controls.WaitCursor;
 import oracle.ide.editor.AsynchronousEditor;
 import oracle.ide.editor.EditorManager;
 import oracle.ide.model.UpdateMessage;
@@ -210,7 +212,7 @@ public class DependencyExampleGraphViewer extends AsynchronousEditor implements 
         try {
             dependencyExampleFxControl = new DependencyExampleFxControl();
             Scene scene = SceneFactory.createScene(dependencyExampleFxControl.getRoot());
-            scene.setCamera(new PerspectiveCamera());
+            // GPU turned off in sqldev 18.1 scene.setCamera(new PerspectiveCamera());
             fxPanel.setScene(scene);
         }
         catch(Exception e) {
@@ -230,6 +232,8 @@ public class DependencyExampleGraphViewer extends AsynchronousEditor implements 
                 return;
             }
         }
+        final WaitCursor waitCursor = new WaitCursor(Ide.getMainWindow());
+        waitCursor.show();
         dbObject = new DBObject(context.getNode());
         multipleSelections = context.getSelection().length > 1;
         dependencyModel = new DependencyExampleModel(context);
@@ -245,7 +249,9 @@ public class DependencyExampleGraphViewer extends AsynchronousEditor implements 
                     @Override
                     protected void invokeLater() {
                         // This is only called if the task finishes and is on the UI thread
-                        dependencyExampleFxControl.setViewModel(dependencyModel);
+                        dependencyExampleFxControl.setViewModel(dependencyModel, waitCursor);
+                        // Force update UI
+                        EditorManager.getEditorManager().refreshEditorUI(DependencyExampleGraphViewer.this);
                     }
 
                     @Override

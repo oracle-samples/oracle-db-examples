@@ -6,7 +6,14 @@ Depending on requirements, this can be done in either XML or java and deployed b
 
 ### Contents
 
+* [Set Up / Tutorial](./setup.md) - A step by step guide to building your first extension and check for updates bundle.
+
+
 * ["Simple" User Extensions (XML)](xml)
+
+
 * [Standard Extensions (java)](java)
+
+
 * [Check For Updates (cfu)](cfu)
  

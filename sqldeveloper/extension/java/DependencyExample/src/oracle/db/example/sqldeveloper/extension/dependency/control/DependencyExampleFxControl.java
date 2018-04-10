@@ -45,6 +45,7 @@ import oracle.dbtools.javafx.scene.CustomControl;
 import oracle.dbtools.raptor.ui.URLFileChooser;
 import oracle.dbtools.util.Logger;
 import oracle.ide.Ide;
+import oracle.ide.controls.WaitCursor;
 
 /**
  * DependencyExampleFxControl an javaFX custom control to contain the vworkflow UI
@@ -183,14 +184,18 @@ public class DependencyExampleFxControl extends CustomControl {
 
     /**
      * @param aViewModel the viewModel to set
+     * @param waitCursor 
      */
-    public void setViewModel(DependencyExampleModel aViewModel) {
+    public void setViewModel(DependencyExampleModel aViewModel, final WaitCursor waitCursor) {
         viewModel = aViewModel;
         Platform.runLater(() -> {
             getViewModel().load();
             updateUI();
             diagram.applyCss();
             diagram.layout();
+            SwingUtilities.invokeLater(() -> {
+            	waitCursor.hide();
+            });
         });
     }
 
