@@ -4,7 +4,7 @@ async function get(req, res, next) {
   try {
     const context = {};
 
-    context.id = Number(req.params.id);
+    context.id = parseInt(req.params.id, 10);
 
     const rows = await employees.find(context);
 
