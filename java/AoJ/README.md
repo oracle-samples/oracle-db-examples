@@ -106,7 +106,7 @@ introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/t
    }  
    // wait for the async tasks to complete before exiting  
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
- }```
+ }
 
 
 ## AoJ Design Spec in 100 words or less
