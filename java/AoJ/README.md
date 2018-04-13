@@ -30,7 +30,7 @@ released under the Apache license, the Java community can fork the code and crea
 a true open source project with this upload as a base. Oracle developers may 
 contribute when we have time, but this would have to be a Java community effort.
 
-We could have held this code back and worked on it longer. Instead we thought it 
+We could have held this code back and worked on it longer. Instead we thought it is
 better to get it to the community as soon as we could. We hope that you agree.
 
 ## Building AoJ
