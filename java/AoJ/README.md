@@ -64,7 +64,7 @@ the last test in ```com.oracle.adbaoverjdbc.test.FirstLight.java```. For an
 introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/technetwork/database/application-development/jdbc/con1491-3961036.pdf). 
 
 
-``` public void transactionSample() {
+```public void transactionSample() {
    // get the AoJ DataSourceFactory
    DataSourceFactory factory = DataSourceFactory.forName("com.oracle.adbaoverjdbc.DataSourceFactory");
    // get a DataSource and a Connection
