@@ -108,7 +108,6 @@ introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/t
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
  }
 
-
 ## AoJ Design Spec in 100 words or less
 
 The methods called by the user thread create a network 
