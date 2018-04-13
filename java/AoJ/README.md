@@ -108,10 +108,11 @@ introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/t
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
  }```
 
+
 ## AoJ Design Spec in 100 words or less
 
 The methods called by the user thread create a network 
-([DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) of 
+(i.e., [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) of 
 ```CompletableFuture```s. These ```CompleteableFuture```s asynchronously execute 
 the synchronous JDBC calls and the result processing code provided by the user 
 code. By default AoJ uses ```ForkJoinPool.commonPool()``` to execute 
