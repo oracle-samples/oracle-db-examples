@@ -1,5 +1,25 @@
 SQL> @eg6
+SQL> column ename format a20
+SQL> column rname format a20
+SQL> 
+SQL> select /*+ PARALLEL (e 2) */
+  2         e.ename,r.rname
+  3  from   employees  e
+  4  join   roles       r on (r.id = e.role_id)
+  5  join   departments d on (d.id = e.dept_id)
+  6  where  e.staffno <= 10
+  7  and    d.dname in ('Department Name 1','Department Name 2');
 Employee Name 1      Role Name 1
+SQL> 
+SQL> @planp
+SQL> --
+SQL> -- Displaying a parallel SQL execution plan
+SQL> --
+SQL> set linesize 220 tab off pagesize 1000 trims on
+SQL> column plan_table_output format a120
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALL +OUTLINE PARALLEL'));
 
 PLAN_TABLE_OUTPUT
 ------------------------------------------------------------------------------------------------------------------------
