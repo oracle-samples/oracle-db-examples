@@ -1,5 +1,38 @@
 SQL> @eg4
+SQL> column ename format a20
+SQL> column rname format a20
+SQL> 
+SQL> var sqlid varchar2(100)
+SQL> 
+SQL> select /* MY_TEST_QUERY */
+  2         e.ename,r.rname
+  3  from   employees  e
+  4  join   roles       r on (r.id = e.role_id)
+  5  join   departments d on (d.id = e.dept_id)
+  6  where  e.staffno <= 10
+  7  and    d.dname in ('Department Name 1','Department Name 2');
 Employee Name 1      Role Name 1
+SQL> 
+SQL> --
+SQL> -- In this example, let's search for the query
+SQL> -- in V$SQL. We could do this in another session
+SQL> -- while the query is executing.
+SQL> --
+SQL> begin
+  2     select sql_id
+  3     into   :sqlid
+  4     from   v$sql
+  5     where  sql_text like '%MY_TEST_QUERY%'
+  6     and    sql_text not like '%v$sql%'
+  7     and    rownum<2;
+  8  end;
+  9  /
+SQL> 
+SQL> set long 100000 pagesize 0 linesize 250 tab off trims on
+SQL> column plan_table_output format a230
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(SQL_ID=>:sqlid,FORMAT=>'ALL +OUTLINE'));
 SQL_ID  fzfk7qqax6chk, child number 0
 -------------------------------------
 select /* MY_TEST_QUERY */        e.ename,r.rname from   employees  e
@@ -73,6 +106,5 @@ Column Projection Information (identified by operation id):
        "E"."ROLE_ID"[NUMBER,22]
    5 - (rowset=256) "R"."ID"[NUMBER,22], "R"."RNAME"[VARCHAR2,100]
 
-SQL> spoll off
-SP2-0042: unknown command "spoll off" - rest of line ignored.
+SQL> 
 SQL> spool off
