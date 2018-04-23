@@ -1,9 +1,10 @@
 /* Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.*/
 /*
    DESCRIPTION    
-   The code sample shows how to use the DataSource API to establish a connection
-   to the Database. You can specify properties with "setConnectionProperties".
-   This is the recommended way to create connections to the Database.
+   The code sample shows how to use the DataSource API to establish a
+   SSL connection to the Database using Java Key Store (JKS) files. 
+   You can specify JKS related properties as connection properties. 
+   Fully managed Oracle database services mandates SSL connection using JKS.   
    Note that an instance of oracle.jdbc.pool.OracleDataSource doesn't provide
    any connection pooling. It's just a connection factory. A connection pool,
    such as Universal Connection Pool (UCP), can be configured to use an
@@ -42,11 +43,8 @@ public class DataSourceForJKS {
 
  /*
   * The method gets a database connection using 
-  * oracle.jdbc.pool.OracleDataSource. It also sets some connection 
-  * level properties, such as,
-  * OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH,
-  * OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_TYPES, etc.,
-  * There are many other connection related properties. Refer to 
+  * oracle.jdbc.pool.OracleDataSource. It sets JKS related connection 
+  * level properties as shown here. Refer to 
   * the OracleConnection interface to find more. 
   */
   public static void main(String args[]) throws SQLException {
@@ -60,7 +58,8 @@ public class DataSourceForJKS {
     // Set the JKS related connection properties
     info.put(OracleConnection.CONNECTION_PROPERTY_THIN_JAVAX_NET_SSL_KEYSTORE,
       "/home/user/cloud/keystore.jks");
-    info.put(OracleConnection.CONNECTION_PROPERTY_THIN_JAVAX_NET_SSL_KEYSTOREPASSWORD,"Welcome1");         info.put(OracleConnection.CONNECTION_PROPERTY_THIN_JAVAX_NET_SSL_TRUSTSTORE,
+    info.put(OracleConnection.CONNECTION_PROPERTY_THIN_JAVAX_NET_SSL_KEYSTOREPASSWORD,"Welcome1");
+    info.put(OracleConnection.CONNECTION_PROPERTY_THIN_JAVAX_NET_SSL_TRUSTSTORE,
       "/home/user/cloud/truststore.jks");    
     info.put(OracleConnection.CONNECTION_PROPERTY_THIN_JAVAX_NET_SSL_TRUSTSTOREPASSWORD,"Welcome1");      
     OracleDataSource ods = new OracleDataSource();
