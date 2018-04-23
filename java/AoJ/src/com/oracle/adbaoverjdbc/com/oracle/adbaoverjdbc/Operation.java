@@ -48,24 +48,20 @@ abstract class Operation<T> implements jdk.incubator.sql2.Operation<T> {
   private static final Map<Class, SQLType> CLASS_TO_JDBCTYPE = new HashMap<>(20);
   static {
     try {
-      CLASS_TO_JDBCTYPE.put(Boolean.class, JDBCType.BOOLEAN);
       CLASS_TO_JDBCTYPE.put(BigInteger.class, JDBCType.BIGINT);
-      CLASS_TO_JDBCTYPE.put(Class.forName("[B"), JDBCType.BINARY);
-      CLASS_TO_JDBCTYPE.put(Boolean.class, JDBCType.BIT);
       CLASS_TO_JDBCTYPE.put(Boolean.class, JDBCType.BOOLEAN);
+      CLASS_TO_JDBCTYPE.put(Byte.class, JDBCType.TINYINT);
+      CLASS_TO_JDBCTYPE.put(Class.forName("[B"), JDBCType.VARBINARY);
       CLASS_TO_JDBCTYPE.put(Character.class, JDBCType.CHAR);
-      CLASS_TO_JDBCTYPE.put(LocalDate.class, JDBCType.DATE);
       CLASS_TO_JDBCTYPE.put(Double.class, JDBCType.DOUBLE);
       CLASS_TO_JDBCTYPE.put(Float.class, JDBCType.FLOAT);
       CLASS_TO_JDBCTYPE.put(Integer.class, JDBCType.INTEGER);
-      CLASS_TO_JDBCTYPE.put(Float.class, JDBCType.REAL);
-      CLASS_TO_JDBCTYPE.put(Short.class, JDBCType.SMALLINT);
-      CLASS_TO_JDBCTYPE.put(LocalTime.class, JDBCType.TIME);
+      CLASS_TO_JDBCTYPE.put(LocalDate.class, JDBCType.DATE);
       CLASS_TO_JDBCTYPE.put(LocalDateTime.class, JDBCType.TIMESTAMP);
-      CLASS_TO_JDBCTYPE.put(OffsetTime.class, JDBCType.TIME_WITH_TIMEZONE);
+      CLASS_TO_JDBCTYPE.put(LocalTime.class, JDBCType.TIME);
       CLASS_TO_JDBCTYPE.put(OffsetDateTime.class, JDBCType.TIMESTAMP_WITH_TIMEZONE);
-      CLASS_TO_JDBCTYPE.put(Byte.class, JDBCType.TINYINT);
-      CLASS_TO_JDBCTYPE.put(Class.forName("[byte"), JDBCType.VARBINARY);
+      CLASS_TO_JDBCTYPE.put(OffsetTime.class, JDBCType.TIME_WITH_TIMEZONE);
+      CLASS_TO_JDBCTYPE.put(Short.class, JDBCType.SMALLINT);
       CLASS_TO_JDBCTYPE.put(String.class, JDBCType.VARCHAR);
     }
     catch (ClassNotFoundException ex) { /* should never happen */ }
@@ -88,9 +84,9 @@ abstract class Operation<T> implements jdk.incubator.sql2.Operation<T> {
     ADBATYPE_TO_JDBCTYPE.put(AdbaType.FLOAT, JDBCType.FLOAT);
     ADBATYPE_TO_JDBCTYPE.put(AdbaType.INTEGER, JDBCType.INTEGER);
     ADBATYPE_TO_JDBCTYPE.put(AdbaType.JAVA_OBJECT, JDBCType.JAVA_OBJECT);
-    ADBATYPE_TO_JDBCTYPE.put(AdbaType.LONGNVARCHAR, JDBCType.LONGNVARCHAR);
-    ADBATYPE_TO_JDBCTYPE.put(AdbaType.LONGVARBINARY, JDBCType.LONGVARBINARY);
-    ADBATYPE_TO_JDBCTYPE.put(AdbaType.LONGVARCHAR, JDBCType.LONGVARBINARY);
+    ADBATYPE_TO_JDBCTYPE.put(AdbaType.LONG_NVARCHAR, JDBCType.LONGNVARCHAR);
+    ADBATYPE_TO_JDBCTYPE.put(AdbaType.LONG_VARBINARY, JDBCType.LONGVARBINARY);
+    ADBATYPE_TO_JDBCTYPE.put(AdbaType.LONG_VARCHAR, JDBCType.LONGVARBINARY);
     ADBATYPE_TO_JDBCTYPE.put(AdbaType.NCHAR, JDBCType.NCHAR);
     ADBATYPE_TO_JDBCTYPE.put(AdbaType.NCLOB, JDBCType.NCLOB);
     ADBATYPE_TO_JDBCTYPE.put(AdbaType.NULL, JDBCType.NULL);
