@@ -192,7 +192,7 @@ class RowOperation<T>  extends ParameterizedOperation<T>
         int count = md.getColumnCount();
         identifiers = new String[count];
         for (int i = 0; i < count; i++) {
-          identifiers[i] = md.getColumnName(i);
+          identifiers[i] = md.getColumnName(i + 1);
         }
       }
       catch (SQLException ex) {
