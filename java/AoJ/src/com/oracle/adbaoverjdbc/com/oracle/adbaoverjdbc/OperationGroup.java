@@ -32,7 +32,6 @@ import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
-import jdk.incubator.sql2.MultiOperation;
 
 /**
  * Only sequential, dependent, unconditional supported.
