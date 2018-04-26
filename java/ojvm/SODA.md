@@ -6,11 +6,11 @@ The goal of this write up is to furnish the steps for running testSODA.java in O
 
 **Requirements to run SODA with Java in the database**
 
-(i) Download the [latest orajsoda.jar](https://github.com/oracle/soda-for-java/releases) currently orajsoda-1.0.4.jar 
+(i) Download the [latest orajsoda.jar](https://github.com/oracle/soda-for-java/releases) currently orajsoda-1.0.5.jar 
 
-(ii) Load the [latest javax.json-1.0.4.jar](https://mvnrepository.com/artifact/org.glassfish/javax.json/1.0.4) 
+(ii) Load the [latest javax.json-1.1.2.jar](https://mvnrepository.com/artifact/org.glassfish/javax.json/1.1.2) 
 
-            loadjava -r -v -u hr/hr javax.json-1.0.4.jar
+            loadjava -r -v -u hr/hr javax.json-1.1.2.jar
             
 (iii) Upload orasoda.jar in your database schema
 
