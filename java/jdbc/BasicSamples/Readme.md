@@ -35,7 +35,7 @@ but, will hit error when connecting as these are dummy values.
 *  **DateTimeStampSample.java**:Shows the usage of Oracle column data types such as DATE, TIMESTAMP, TIMESTAMP WITH TIME ZONE and TIMESTAMP WITH LOCAL TIME ZONE. 
 * **JDBCUrlSample.java**: Shows how to use the easy connection URL, connection URL with connection descriptors, and using TNS alias to connect to the Oracle database. 
 * **JSONBasicSample.java**: Shows how to use some of the enhancements in JavaScript Object Notation (JSON) support for Oracle Database 12c Release 2 (12.2).
-* **LobBasicSample.java**: Shows how to use different types of LOBs (Large Objects). It shows using BLOB, CLOB, and NLOB as datatypes. 
+* **LobBasicSample.java**: Shows how to use different types of LOBs (Large Objects), such as BLOB, CLOB, and NLOB as datatypes. 
 * **PLSQLSample.java**: Demonstrates the usage of PL/SQL Stored Procedures and Functions in JDBC.
 * **PreparedStatementBindingsSample.java**: Shows CRUD operations using the ```PreparedStatement``` with named bindings.
 * **PreparedStatementSample.java**:Shows CRUD operations using the ```PreparedStatement``` object.
