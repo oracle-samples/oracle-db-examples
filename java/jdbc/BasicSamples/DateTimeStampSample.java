@@ -19,7 +19,7 @@
  * You can also modify these values in this file and recompile the code.
  * </p>
  *
- * java DateTimeStampDemo -l <url> -u <user>
+ * java DateTimeStampSample -l <url> -u <user>
  *
  */
 import java.io.BufferedReader;
