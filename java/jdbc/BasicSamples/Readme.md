@@ -9,6 +9,10 @@ how to configure MBean to monitor UCP statistics etc., Read below for the
 description of the code samples. 
 
 # Running Code Samples 
+Before you run the code samples, we want you to create the necessary tables. 
+
+(a) Create a new user(JDBCUSER) and new tables 
+Connect to [SQLDeveloper] (http://www.oracle.com/technetwork/developer-tools/sql-developer/downloads/sqldev-downloads-42-3802334.html) 
 There are three ways to run the sample.
 
 (a) Run each sample by passing the database URL and database user as the command-line 
