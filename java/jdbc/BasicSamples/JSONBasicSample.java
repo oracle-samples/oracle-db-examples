@@ -30,7 +30,7 @@
  * console, and optionally specify the DB user and/or connect URL on
  * the command-line. You can also modify these values in this file
  * and recompile the code.
- *   java JSONBasicDemo -l <url> -u <user>
+ *   java JSONBasicSample -l <url> -u <user>
  */
 
 import java.io.BufferedReader;
