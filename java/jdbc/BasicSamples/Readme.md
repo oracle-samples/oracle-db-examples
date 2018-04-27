@@ -1,10 +1,7 @@
 
 # Basic Samples in JDBC 
 
-"Connection Management" code samples explain various ways of connecting to an
-Oracle Database and explain use-cases to be considered while choosing the 
-connection management strategy. The section below provides more details on 
-specific connection management strategy. 
+"Basic Samples" explain some of the basic operations such as connecting. 
 
 ----
 ## DateTimeStampSample.java:
