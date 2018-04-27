@@ -66,11 +66,14 @@ This sample shows how to create, insert, and query SQLXML values.
  ## UCPBasic.java 
  This sample shows simple steps of how JDBC applications use the Oracle Universal Connection Pool (UCP).
  
+  ## UCPHarvesting.java 
+ This code sample shows how applications use the connection harvesting feature of UCP.
+ 
  ## UCPLabeling.java 
- This sample shows how applications use the connection labeling feature of Oracle Universal Connection Pool (UCP).
- 
- ## UCPHarvesting.java 
- 
+ This sample shows how applications use the connection labeling feature of UCP.
+
+ ##
+
      
 
 
