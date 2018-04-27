@@ -30,7 +30,7 @@ but, will hit error when connecting as these are dummy values.
 
 ```java UCPMultiUsers```
 
-Read below for the description of the code samples. 
+# Description of Code Samples 
 
 *  **DateTimeStampSample.java**:This sample shows illustrates the usage of below Oracle column data types 
 DATE, TIMESTAMP, TIMESTAMP WITH TIME ZONE and TIMESTAMP WITH LOCAL TIME ZONE. 
