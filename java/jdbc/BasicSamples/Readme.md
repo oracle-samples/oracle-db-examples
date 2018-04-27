@@ -1,12 +1,11 @@
 
 # Basic Samples in JDBC 
 
-"Basic Samples" is the first set of code samples aimed to show case some 
+"Basic Samples" is the first set of code samples aimed to showcase some 
 of the basic operations and using some datatypes (LOB, SQLXML, DATE etc.,)
 The samples also contain Universal Connection Pool (UCP) functionalities to show
 how to harvest connections, label connections, how to use different timeouts, and
-how to configure MBean to monitor UCP statistics etc., Read below for the 
-description of the code samples. 
+how to configure MBean to monitor UCP statistics etc., 
 
 # Creating DB User and Sample Data 
 Before you run the code samples, we want you to create a new DB user and the necessary tables. 
@@ -16,19 +15,22 @@ Execute the script [JDBCSampleData.sql](https://github.com/oracle/oracle-db-exam
 tables necessary for the code samples. 
 
 # Running Code Samples 
-There are three ways to run the sample.
 
-(a) Run each sample by passing the database URL and database user as the command-line 
+(a) Download the latest 12.2.0.1 ojdbc8.jar and ucp.jar and add these 
+
+(b) Run each sample by passing the database URL and database user as the command-line 
 options. The password is read from console or standard input.  
 
 ```java UCPMultiUsers -l <url> -u <user>```
   
 (b) Optionally, each sample has DEFAULT_URL, DEFAULT_USER, and DEFAULT_PASSWORD 
 in the file. You can choose to update these values with your database credentials
-and run the program. 
-
-(c) If you don't update the defaults, then the program proceeds with the defaults
+and run the program. If you don't update the defaults, then the program proceeds with the defaults
 but, will hit error when connecting as these are dummy values.
+
+```java UCPMultiUsers```
+
+Read below for the description of the code samples. 
 
 ## DateTimeStampSample.java:
 This sample shows illustrates the usage of below Oracle column data types 
