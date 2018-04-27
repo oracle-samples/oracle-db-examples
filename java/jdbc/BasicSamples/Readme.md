@@ -72,7 +72,14 @@ This sample shows how to create, insert, and query ``SQLXML`` values.
  ## UCPLabeling.java 
  This sample shows how applications use the connection labeling feature of UCP.
 
- ##
+ ## UCPManager.java 
+ This sample shows how applications use UCP manager's administration functions. 
+ 
+ ## UCPManagerMBean.java 
+ This sample shows how applications use UCP manager MBean's administration functions. 
+ 
+ ## UCPMaxConnReuse.java
+ This sample shows how applications use the MaxConnectionReuseTime and MaxConnectionReuseCount features of UCP. 
 
      
 
