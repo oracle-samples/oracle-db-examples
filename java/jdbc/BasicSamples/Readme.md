@@ -30,7 +30,6 @@ and run the program.
 (c) If you don't update the defaults, then the program proceeds with the defaults
 but, will hit error when connecting as these are dummy values.
 
-----
 ## DateTimeStampSample.java:
 This sample shows illustrates the usage of below Oracle column data types 
 DATE, TIMESTAMP, TIMESTAMP WITH TIME ZONE and TIMESTAMP WITH LOCAL TIME ZONE. 
@@ -49,7 +48,29 @@ for Oracle Database 12c Release 2 (12.2).
 This sample shows how to use different types of LOBs (Large Objects). 
 It shows using BLOB, CLOB, and NLOB as datatypes. 
 
-##
+## PLSQLSample.java 
+This sample demonstrates the usage of PL/SQL Stored Procedures and Functions in JDBC.
+
+## PreparedStatementBindingsSample.java
+This sample shows CRUD operations using the PreparedStatement with named bindings.
+
+## PreparedStatementSample.java
+This simple shows CRUD operations using the PreparedStatement object.
+
+## SQLXMLSample.java 
+This sample shows how to create, insert, and query SQLXML values. 
+
+ ## StatementSample.java
+ This sample shows CRUD operations using the Statement object.
+ 
+ ## UCPBasic.java 
+ This sample shows simple steps of how JDBC applications use the Oracle Universal Connection Pool (UCP).
+ 
+ ## UCPLabeling.java 
+ This sample shows how applications use the connection labeling feature of Oracle Universal Connection Pool (UCP).
+ 
+ ## UCPHarvesting.java 
+ 
      
 
 
