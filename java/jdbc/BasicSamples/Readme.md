@@ -37,3 +37,19 @@ DATE, TIMESTAMP, TIMESTAMP WITH TIME ZONE and TIMESTAMP WITH LOCAL TIME ZONE.
 It uses the table 'EMP_DATE_JDBC_SAMPLE' which has dates as columns for 
 all the insert, delete, and update operations. 
 
+## JDBCUrlSample.java 
+This sample shows how to use the easy connection URL, connection URL with connection descriptors, 
+and using TNS alias to connect to the Oracle database. 
+
+## JSONBasicSample.java 
+This sample shows how to use some of the enhancements in JavaScript Object Notation (JSON) support 
+for Oracle Database 12c Release 2 (12.2).
+
+## LobBasicSample.java 
+This sample shows how to use different types of LOBs (Large Objects). 
+It shows using BLOB, CLOB, and NLOB as datatypes. 
+
+##
+     
+
+
