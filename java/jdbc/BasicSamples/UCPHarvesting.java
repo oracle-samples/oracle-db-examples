@@ -31,7 +31,7 @@
  * for ALL 3 of user, password, and URL. This can be done by either updating
  * this file directly or supplying the 3 values as command-line options
  * and user input. The password is read from console or standard input.
- *   java UCPHarvesting -url <url> -user <user>
+ *   java UCPHarvesting -l <url> -u <user>
  * If you do not update all the defaults, the program proceeds but
  * will hit error when connecting.
  */
@@ -286,10 +286,10 @@ public class UCPHarvesting {
 
   static void getRealUserPasswordUrl(String args[]) throws Exception {
     // URL can be modified in file, or taken from command-line
-    url  = getOptionValue(args, "-url", DEFAULT_URL);
+    url  = getOptionValue(args, "-l", DEFAULT_URL);
 
     // DB user can be modified in file, or taken from command-line
-    user = getOptionValue(args, "-user", DEFAULT_USER);
+    user = getOptionValue(args, "-u", DEFAULT_USER);
 
     // DB user's password can be modified in file, or explicitly entered
     readPassword(" Password for " + user + ": ");
