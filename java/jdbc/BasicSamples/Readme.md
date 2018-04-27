@@ -8,13 +8,14 @@ how to harvest connections, label connections, how to use different timeouts, an
 how to configure MBean to monitor UCP statistics etc., Read below for the 
 description of the code samples. 
 
+# Creating DB User and Sample Data 
+Before you run the code samples, we want you to create a new DB user and the necessary tables. 
+
+Download [SQLDeveloper](http://www.oracle.com/technetwork/developer-tools/sql-developer/downloads/sqldev-downloads-42-3802334.html) or you can use SQLPLUS. Connect to your database and login as SYSADMIN. 
+Execute the script [JDBCSampleData.sql]() that will create the new database user and the 
+tables necessary for the code samples. 
+
 # Running Code Samples 
-Before you run the code samples, we want you to create the necessary tables. 
-
-(a) Create a new user(JDBCUSER) and new tables 
-
-Connect to [SQLDeveloper](http://www.oracle.com/technetwork/developer-tools/sql-developer/downloads/sqldev-downloads-42-3802334.html) 
-
 There are three ways to run the sample.
 
 (a) Run each sample by passing the database URL and database user as the command-line 
