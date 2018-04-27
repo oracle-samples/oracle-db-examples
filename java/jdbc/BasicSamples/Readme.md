@@ -16,7 +16,7 @@ tables necessary for the code samples.
 
 # Running Code Samples 
 
-(a) Download the latest 12.2.0.1 ojdbc8.jar and ucp.jar and add these 
+(a) Download the [latest 12.2.0.1 ojdbc8.jar and ucp.jar](http://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html) and add these jars to the classpath. 
 
 (b) Run each sample by passing the database URL and database user as the command-line 
 options. The password is read from console or standard input.  
