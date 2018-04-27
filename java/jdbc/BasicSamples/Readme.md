@@ -52,13 +52,13 @@ It shows using BLOB, CLOB, and NLOB as datatypes.
 This sample demonstrates the usage of PL/SQL Stored Procedures and Functions in JDBC.
 
 ## PreparedStatementBindingsSample.java
-This sample shows CRUD operations using the PreparedStatement with named bindings.
+This sample shows CRUD operations using the ```PreparedStatement``` with named bindings.
 
 ## PreparedStatementSample.java
-This simple shows CRUD operations using the PreparedStatement object.
+This simple shows CRUD operations using the ```PreparedStatement``` object.
 
 ## SQLXMLSample.java 
-This sample shows how to create, insert, and query SQLXML values. 
+This sample shows how to create, insert, and query ``SQLXML`` values. 
 
  ## StatementSample.java
  This sample shows CRUD operations using the Statement object.
