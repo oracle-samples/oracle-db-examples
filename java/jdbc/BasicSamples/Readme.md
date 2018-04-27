@@ -2,7 +2,7 @@
 # Basic Samples in JDBC 
 
 "Basic Samples" is the first set of code samples aimed to show case some 
-some of the basic operations and using some datatypes (LOB, SQLXML, DATE etc.,)
+of the basic operations and using some datatypes (LOB, SQLXML, DATE etc.,)
 The samples also contain Universal Connection Pool (UCP) functionalities to show
 how to harvest connections, label connections, how to use different timeouts, and
 how to configure MBean to monitor UCP statistics etc., Read below for the 
@@ -12,7 +12,7 @@ description of the code samples.
 Before you run the code samples, we want you to create a new DB user and the necessary tables. 
 
 Download [SQLDeveloper](http://www.oracle.com/technetwork/developer-tools/sql-developer/downloads/sqldev-downloads-42-3802334.html) or you can use SQLPLUS. Connect to your database and login as SYSADMIN. 
-Execute the script [JDBCSampleData.sql](https://github.com/oracle/oracle-db-examples/blob/basicsamples/java/jdbc/BasicSamples/JDBCSampleData.sql) that will create the new database user and the 
+Execute the script [JDBCSampleData.sql](https://github.com/oracle/oracle-db-examples/blob/basicsamples/java/jdbc/BasicSamples/JDBCSampleData.sql) that will create the new database user (JDBCUSER) and the 
 tables necessary for the code samples. 
 
 # Running Code Samples 
