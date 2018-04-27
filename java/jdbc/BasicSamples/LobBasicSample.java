@@ -8,7 +8,7 @@
     console, and optionally specify the DB user and/or connect URL on 
     the command-line. You can also modify these values in this file 
     and recompile the code. 
-      java LobBasic -l <url> -u <user> 
+      java LobBasicSample -l <url> -u <user> 
 
    NOTES
    Sample uses books.txt and books.png from current directory.
