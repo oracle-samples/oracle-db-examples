@@ -80,7 +80,12 @@ This sample shows how to create, insert, and query ``SQLXML`` values.
  
  ## UCPMaxConnReuse.java
  This sample shows how applications use the MaxConnectionReuseTime and MaxConnectionReuseCount features of UCP. 
-
+ 
+ ## UCPMultiUsers.java
+ This sample shows how JDBC applications use UCPP to pool connections for different users.
+ 
+ ## UCPTimeouts.java
+This sample shows key connection timeout features of UCP such as ConnectionWaitTimeout, InactiveConnectionTimeout, TimeToLiveConnectionTimeout, and AbandonedConnectionTimeout.
      
 
 
