@@ -9,7 +9,8 @@ how to configure MBean to monitor UCP statistics etc., Read below for the
 description of the code samples. 
 
 # Running Code Samples 
-There are three ways to run the sample. 
+There are three ways to run the sample.
+
 (a) Run each sample by passing the database URL and database user as the command-line 
 options. The password is read from console or standard input.  
 
