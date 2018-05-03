@@ -3,14 +3,14 @@ This is a repository of sample code that will demonstrate various concepts to as
 We have just added the AoJ sub-repository for the Asynchronous Java Database Access (ADBA) over JDBC.
 
 ## JDBC 
-Has the Basic Examaples for JDBC and The Universal Connection code samples.
+Has the Basic Examples for JDBC and the Universal Connection code samples.
 ## OJVM
-Has code samples for Runnin Java in the database foreground process for in-place processing using the embedded JVM. 
+Has code samples for Running Java in the database foreground process for in-place processing using the embedded JVM. 
 
 ## HRWebApp
 A complete end to end MVC application.
 
 ## AoJ
-Has code samples for learning the Asynchronous Database Access over vanilla/synchrone JDBC. This is for functional testing only.
+Has code samples for learning the Asynchronous Database Access over vanilla/synchronous JDBC. This is for functional testing only.
 
-# [See our OTN landing page for more information and resources](http://www.oracle.com/technetwork/database/application-development/java/overview/index.html) 
+# [See our OTN landing page for more information and resources](http://www.oracle.com/technetwork/database/application-development/jdbc/overview/index.html) 
