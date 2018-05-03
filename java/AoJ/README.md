@@ -39,10 +39,11 @@ AoJ and ADBA require JDK 9 or later. Download ADBA from the
 [OpenJDK sandbox](http://hg.openjdk.java.net/jdk/sandbox/file/JDK-8188051-branch/src/jdk.incubator.adba/share/classes). It does not have any dependencies outside of Java SE. 
 
 For building the API modules:
+```
 $ mkdir -p mods/jdk.incubator.adba
 $ javac -d mods/jdk.incubator.adba/ $(find jdk.incubator.adba  -name "*.java")
 $ jar --create --file=mlib/jdk.incubator.adba.jar --module-version=1.0 -C mods/jdk.incubator.adba/ .
-
+````
 Download AoJ from 
 [GitHub](https://github.com/oracle/oracle-db-examples/tree/master/java/AoJ).  Both 
 are modularized so be sure to include the module-info.java files. AoJ depends on 
@@ -112,7 +113,7 @@ introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/t
    }  
    // wait for the async tasks to complete before exiting  
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
- }````
+ }
  
 
 ## AoJ Design Spec in 100 words or less
