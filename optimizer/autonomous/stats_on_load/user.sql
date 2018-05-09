@@ -7,8 +7,6 @@ grant ALTER SESSION to adwu1;
 grant CREATE TABLE to adwu1;
 grant CREATE VIEW to adwu1;
 grant CREATE SESSION to adwu1;
-grant SELECT on dba_sql_plan_baselines to adwu1;
-grant EXECUTE on dbms_result_cache to adwu1;
 --
 grant select on v$session to adwu1;
 grant select on v$sql_plan to adwu1;
