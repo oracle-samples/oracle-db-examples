@@ -1,3 +1,8 @@
+--
+-- Show statistics for FACT1
+--
+-- The histogram query is by Tim Hall: https://oracle-base.com/articles/12c/histograms-enhancements-12cr1
+--
 select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
 select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
