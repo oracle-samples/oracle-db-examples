@@ -7,7 +7,7 @@ drop table fact1 purge
 Error report -
 ORA-00942: table or view does not exist
 
-Elapsed: 00:00:00.393
+Elapsed: 00:00:00.217
 SQL> drop table fact1_source purge;
 
 Error starting at line : 19 File @ /u01/npb/Features/GIT2/oracle-db-examples/optimizer/autonomous/stats_on_load/test_load.sql
@@ -16,20 +16,20 @@ drop table fact1_source purge
 Error report -
 ORA-00942: table or view does not exist
 
-Elapsed: 00:00:00.200
+Elapsed: 00:00:00.180
 SQL>
 SQL> create table fact1 (num0 number(10), num1 number(10), txt1 varchar2(100));
 
 Table FACT1 created.
 
-Elapsed: 00:00:00.103
+Elapsed: 00:00:00.093
 SQL>
 SQL> create table fact1_source as
   2  select * from fact1 where 1=-1;
 
 Table FACT1_SOURCE created.
 
-Elapsed: 00:00:00.116
+Elapsed: 00:00:00.112
 SQL>
 SQL> insert /*+ APPEND */ into fact1_source
   2  select rownum,mod(rownum,10),'XXX'||rownum
@@ -37,16 +37,17 @@ SQL> insert /*+ APPEND */ into fact1_source
 
 10,000 rows inserted.
 
-Elapsed: 00:00:00.457
+Elapsed: 00:00:00.471
 SQL>
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.094
+Elapsed: 00:00:00.093
 SQL>
 SQL> --
-SQL> -- Notice that NUM_ROWS is maintained - we have stats on initial load
+SQL> -- Notice that NUM_ROWS is maintained on initial load - and this
+SQL> -- has been available since 12c.
 SQL> --
 SQL> select table_name,num_rows from user_tables where  table_name = 'FACT1_SOURCE';
 
@@ -54,25 +55,25 @@ TABLE_NAME                       NUM_ROWS
 ------------------------------ ----------
 FACT1_SOURCE                        10000
 
-Elapsed: 00:00:00.480
+Elapsed: 00:00:00.318
 SQL>
 SQL> pause p...
 p...
 
 SQL>
 SQL> --
-SQL> -- Insert more rows into FACT1
+SQL> -- Insert rows into FACT1
 SQL> --
 SQL> insert /*+ APPEND */ into fact1 select num0,1,txt1 from fact1_source;
 
 10,000 rows inserted.
 
-Elapsed: 00:00:00.319
+Elapsed: 00:00:00.519
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.094
+Elapsed: 00:00:00.101
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -80,7 +81,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                               10000       10000 NO
 
-Elapsed: 00:00:00.119
+Elapsed: 00:00:00.110
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -90,7 +91,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C102                                 10000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                       10000 HYBRID
 
-Elapsed: 00:00:00.135
+Elapsed: 00:00:00.133
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -104,12 +105,11 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 ---------- ------------- ----------
 <=1                    2       5500
 
+Elapsed: 00:00:00.095
 Elapsed: 00:00:00.096
-Elapsed: 00:00:00.097
 SQL>
-SQL> -- Notice above that statistics are still maintained
-SQL> -- even though FACT1 was not empty before
-SQL> -- the INSERT. The histograms are maintained too.
+SQL> -- Notice above that statistics are created.
+SQL> -- Histograms have been created too.
 SQL> pause p...
 p...
 
@@ -118,12 +118,12 @@ SQL> insert /*+ APPEND */ into fact1 select num0,2,txt1 from fact1_source;
 
 10,000 rows inserted.
 
-Elapsed: 00:00:00.423
+Elapsed: 00:00:00.414
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.094
+Elapsed: 00:00:00.095
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -131,7 +131,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                               20000       20000 NO
 
-Elapsed: 00:00:00.148
+Elapsed: 00:00:00.112
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -141,7 +141,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C103                                 20000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                       20000 HYBRID
 
-Elapsed: 00:00:00.105
+Elapsed: 00:00:00.134
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -156,12 +156,13 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 <=1                    2      10000
 <=2                    1      10000
 
-Elapsed: 00:00:00.096
-Elapsed: 00:00:00.096
+Elapsed: 00:00:00.111
+Elapsed: 00:00:00.112
 SQL>
-SQL> -- Notice again - statistics are still maintained
-SQL> -- even though FACT1 was not empty before
-SQL> -- the INSERT. The histograms continue to be maintained.
+SQL> -- Notice above that the stats have been updated.
+SQL> -- Histograms have been maintained too.
+SQL> -- ADWC will maintain statistics even if the target
+SQL> -- table in not empty before the load!
 SQL> pause p...
 p...
 
@@ -170,12 +171,12 @@ SQL> insert /*+ APPEND */ into fact1 select num0,3,txt1 from fact1_source;
 
 10,000 rows inserted.
 
-Elapsed: 00:00:00.421
+Elapsed: 00:00:00.394
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.099
+Elapsed: 00:00:00.107
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -183,7 +184,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                               30000       30000 NO
 
-Elapsed: 00:00:00.101
+Elapsed: 00:00:00.112
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -193,7 +194,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C104                                 30000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                       30000 HYBRID
 
-Elapsed: 00:00:00.110
+Elapsed: 00:00:00.119
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -209,19 +210,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 <=2                    1      10000
 <=3                    1      10000
 
-Elapsed: 00:00:00.104
 Elapsed: 00:00:00.105
+Elapsed: 00:00:00.106
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,4,txt1 from fact1_source;
 
 10,000 rows inserted.
 
-Elapsed: 00:00:00.389
+Elapsed: 00:00:00.259
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.100
+Elapsed: 00:00:00.099
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -229,7 +230,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                               40000       40000 NO
 
-Elapsed: 00:00:00.095
+Elapsed: 00:00:00.099
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -239,7 +240,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C105                                 40000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                       40000 HYBRID
 
-Elapsed: 00:00:00.120
+Elapsed: 00:00:00.105
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -256,19 +257,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 <=3                    1      10000
 <=4                    1      10000
 
-Elapsed: 00:00:00.107
-Elapsed: 00:00:00.107
+Elapsed: 00:00:00.103
+Elapsed: 00:00:00.104
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,5,txt1 from fact1;
 
 40,000 rows inserted.
 
-Elapsed: 00:00:00.434
+Elapsed: 00:00:00.519
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.095
+Elapsed: 00:00:00.093
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -286,7 +287,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C106                                 80000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                       80000 HYBRID
 
-Elapsed: 00:00:00.107
+Elapsed: 00:00:00.094
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -304,19 +305,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 <=4                    1      10000
 <=5                    1      40000
 
-Elapsed: 00:00:00.107
 Elapsed: 00:00:00.109
+Elapsed: 00:00:00.110
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,6,txt1 from fact1;
 
 80,000 rows inserted.
 
-Elapsed: 00:00:00.549
+Elapsed: 00:00:00.559
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.091
+Elapsed: 00:00:00.093
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -324,7 +325,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                              160000      160000 NO
 
-Elapsed: 00:00:00.109
+Elapsed: 00:00:00.102
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -334,7 +335,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C107                                160000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                      160000 HYBRID
 
-Elapsed: 00:00:00.124
+Elapsed: 00:00:00.118
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -355,19 +356,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 6 rows selected.
 
-Elapsed: 00:00:00.114
-Elapsed: 00:00:00.114
+Elapsed: 00:00:00.109
+Elapsed: 00:00:00.120
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,7,txt1 from fact1;
 
 160,000 rows inserted.
 
-Elapsed: 00:00:00.650
+Elapsed: 00:00:00.643
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.094
+Elapsed: 00:00:00.093
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -375,7 +376,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                              320000      320000 NO
 
-Elapsed: 00:00:00.105
+Elapsed: 00:00:00.098
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -385,7 +386,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C108                                320000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                      320000 HYBRID
 
-Elapsed: 00:00:00.129
+Elapsed: 00:00:00.118
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -407,19 +408,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 7 rows selected.
 
-Elapsed: 00:00:00.113
-Elapsed: 00:00:00.114
+Elapsed: 00:00:00.109
+Elapsed: 00:00:00.109
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,8,txt1 from fact1;
 
 320,000 rows inserted.
 
-Elapsed: 00:00:00.843
+Elapsed: 00:00:00.732
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.093
+Elapsed: 00:00:00.097
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -427,7 +428,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                              640000      640000 NO
 
-Elapsed: 00:00:00.116
+Elapsed: 00:00:00.108
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -437,7 +438,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C109                                640000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                      640000 HYBRID
 
-Elapsed: 00:00:00.116
+Elapsed: 00:00:00.109
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -460,19 +461,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 8 rows selected.
 
-Elapsed: 00:00:00.111
-Elapsed: 00:00:00.112
+Elapsed: 00:00:00.096
+Elapsed: 00:00:00.097
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,9,txt1 from fact1;
 
 640,000 rows inserted.
 
-Elapsed: 00:00:01.310
+Elapsed: 00:00:01.294
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.093
+Elapsed: 00:00:00.092
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -480,7 +481,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                             1280000     1280000 NO
 
-Elapsed: 00:00:00.112
+Elapsed: 00:00:00.109
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -490,7 +491,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C10A                               1280000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                     1280000 HYBRID
 
-Elapsed: 00:00:00.095
+Elapsed: 00:00:00.102
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -514,19 +515,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 9 rows selected.
 
-Elapsed: 00:00:00.101
-Elapsed: 00:00:00.101
+Elapsed: 00:00:00.109
+Elapsed: 00:00:00.111
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,10,txt1 from fact1;
 
 1,280,000 rows inserted.
 
-Elapsed: 00:00:02.221
+Elapsed: 00:00:02.166
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.093
+Elapsed: 00:00:00.095
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -534,7 +535,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                             2560000     2560000 NO
 
-Elapsed: 00:00:00.125
+Elapsed: 00:00:00.100
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -544,7 +545,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C10B                               2560000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                     2560000 HYBRID
 
-Elapsed: 00:00:00.104
+Elapsed: 00:00:00.101
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -570,18 +571,18 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 10 rows selected.
 
 Elapsed: 00:00:00.096
-Elapsed: 00:00:00.097
+Elapsed: 00:00:00.096
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,11,txt1 from fact1;
 
 2,560,000 rows inserted.
 
-Elapsed: 00:00:03.983
+Elapsed: 00:00:03.961
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.093
+Elapsed: 00:00:00.092
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -589,7 +590,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                             5120000     5120000 NO
 
-Elapsed: 00:00:00.105
+Elapsed: 00:00:00.103
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -599,7 +600,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C10C                               5120000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                     5120000 HYBRID
 
-Elapsed: 00:00:00.096
+Elapsed: 00:00:00.093
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -625,14 +626,14 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 11 rows selected.
 
-Elapsed: 00:00:00.096
-Elapsed: 00:00:00.096
+Elapsed: 00:00:00.103
+Elapsed: 00:00:00.104
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,12,txt1 from fact1;
 
 5,120,000 rows inserted.
 
-Elapsed: 00:00:07.347
+Elapsed: 00:00:07.366
 SQL> commit;
 
 Commit complete.
@@ -645,7 +646,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                            10240000    10240000 NO
 
-Elapsed: 00:00:00.105
+Elapsed: 00:00:00.097
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -655,7 +656,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C10D                              10240000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                    10240000 HYBRID
 
-Elapsed: 00:00:00.096
+Elapsed: 00:00:00.094
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -682,19 +683,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 12 rows selected.
 
-Elapsed: 00:00:00.109
-Elapsed: 00:00:00.110
+Elapsed: 00:00:00.105
+Elapsed: 00:00:00.106
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,13,txt1 from fact1;
 
 10,240,000 rows inserted.
 
-Elapsed: 00:00:14.179
+Elapsed: 00:00:14.345
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.100
+Elapsed: 00:00:00.095
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -702,7 +703,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                            20480000    20480000 NO
 
-Elapsed: 00:00:00.106
+Elapsed: 00:00:00.099
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -712,7 +713,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C10E                              20480000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                    20480000 HYBRID
 
-Elapsed: 00:00:00.096
+Elapsed: 00:00:00.126
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -740,19 +741,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 13 rows selected.
 
-Elapsed: 00:00:00.110
-Elapsed: 00:00:00.112
+Elapsed: 00:00:00.104
+Elapsed: 00:00:00.105
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,14,txt1 from fact1;
 
 20,480,000 rows inserted.
 
-Elapsed: 00:00:28.312
+Elapsed: 00:00:28.133
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.099
+Elapsed: 00:00:00.094
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -760,7 +761,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                            40960000    40960000 NO
 
-Elapsed: 00:00:00.107
+Elapsed: 00:00:00.095
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -770,7 +771,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C10F                              40960000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                    40960000 HYBRID
 
-Elapsed: 00:00:00.094
+Elapsed: 00:00:00.092
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -806,12 +807,12 @@ SQL> insert /*+ APPEND */ into fact1 select num0,15,txt1 from fact1;
 
 40,960,000 rows inserted.
 
-Elapsed: 00:00:55.661
+Elapsed: 00:00:55.637
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.141
+Elapsed: 00:00:00.097
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -819,7 +820,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                            81920000    81920000 NO
 
-Elapsed: 00:00:00.104
+Elapsed: 00:00:00.100
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -829,7 +830,7 @@ FACT1                          NUM0                           C102              
 FACT1                          NUM1                           C102                           C110                              81920000 FREQUENCY
 FACT1                          TXT1                           58585831                       58585839393939                    81920000 HYBRID
 
-Elapsed: 00:00:00.111
+Elapsed: 00:00:00.118
 SQL>
 SQL> SELECT '<=' || endpoint_value AS range,
   2         endpoint_value - (LAG(endpoint_value, 1, -1) OVER (ORDER BY endpoint_value)+1) + 1 AS vals_in_range,
@@ -859,19 +860,19 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 15 rows selected.
 
-Elapsed: 00:00:00.104
-Elapsed: 00:00:00.110
+Elapsed: 00:00:00.108
+Elapsed: 00:00:00.109
 SQL>
 SQL> insert /*+ APPEND */ into fact1 select num0,16,txt1 from fact1;
 
 81,920,000 rows inserted.
 
-Elapsed: 00:00:49.425
+Elapsed: 00:00:49.970
 SQL> commit;
 
 Commit complete.
 
-Elapsed: 00:00:00.121
+Elapsed: 00:00:00.134
 SQL> @stat
 SQL> select table_name,num_rows,sample_size,stale_stats from user_tab_statistics where  table_name = 'FACT1';
 
@@ -879,7 +880,7 @@ TABLE_NAME                       NUM_ROWS SAMPLE_SIZE STA
 ------------------------------ ---------- ----------- ---
 FACT1                           163840000   163840000 NO
 
-Elapsed: 00:00:00.098
+Elapsed: 00:00:00.097
 SQL>
 SQL> select table_name,column_name,low_value,high_value,sample_size,histogram from user_tab_col_statistics where table_name = 'FACT1';
 
@@ -920,6 +921,6 @@ RANGE      VALS_IN_RANGE  FREQUENCY
 
 16 rows selected.
 
-Elapsed: 00:00:00.094
-Elapsed: 00:00:00.095
+Elapsed: 00:00:00.109
+Elapsed: 00:00:00.110
 SQL> spool off

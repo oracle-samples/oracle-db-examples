@@ -30,31 +30,32 @@ from   dual connect by rownum <= 10000;
 commit;
 
 --
--- Notice that NUM_ROWS is maintained - we have stats on initial load
+-- Notice that NUM_ROWS is maintained on initial load - and this 
+-- has been available since 12c.
 --
 select table_name,num_rows from user_tables where  table_name = 'FACT1_SOURCE';
 
 pause p...
 
 --
--- Insert more rows into FACT1
+-- Insert rows into FACT1
 --
 insert /*+ APPEND */ into fact1 select num0,1,txt1 from fact1_source;
 commit;
 @stat
 
--- Notice above that statistics are still maintained
--- even though FACT1 was not empty before
--- the INSERT. The histograms are maintained too.
+-- Notice above that statistics are created.
+-- Histograms have been created too.
 pause p...
 
 insert /*+ APPEND */ into fact1 select num0,2,txt1 from fact1_source;
 commit;
 @stat
 
--- Notice again - statistics are still maintained
--- even though FACT1 was not empty before
--- the INSERT. The histograms continue to be maintained.
+-- Notice above that the stats have been updated.
+-- Histograms have been maintained too.
+-- ADWC will maintain statistics even if the target
+-- table in not empty before the load!
 pause p...
 
 insert /*+ APPEND */ into fact1 select num0,3,txt1 from fact1_source;
