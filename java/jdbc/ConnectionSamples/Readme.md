@@ -76,6 +76,7 @@ connections to Connection Broker. Client-side connection pools must attach and
 detach connections to the connection broker through `attachServerConnection()`
 and `detachServerConnection()`. DRCP should be used in a scenario when there are
 a number of middle tiers but the number of active connections is fairly less
-than the number of open connections. 
+than th number of open connections. 
+
 ----
 
