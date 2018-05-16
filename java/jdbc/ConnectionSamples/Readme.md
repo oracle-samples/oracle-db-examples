@@ -68,8 +68,7 @@ such as `minPoolSize`, `maxPoolSize`, etc.
 Database Resident Connection Pool (DRCP) is the server side connection pool. 
 DRCP should be used in a scenario when there are a number of middle tiers but 
 the number of active connections is fairly less than the number of open 
-connections.
-DRCP when used along with and Universal Connection Pool(UCP) as the client 
+connections. DRCP when used along with and Universal Connection Pool(UCP) as the client 
 side connection pool improves the performance.  The sample shows UCP with DRCP
 in action. The purpose of the client-side pooling mechanism is to maintain the
 connections to Connection Broker. Client-side connection pools must attach and
