@@ -1,4 +1,4 @@
-This example demonstrates that statistics can be used to answer certain queries.
+This example demonstrates the Statistics-Base Query Transformation - how optimizer statistics can be used to answer certain queries.
 
 Create a test user using the *user.sql* script.
 
