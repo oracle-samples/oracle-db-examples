@@ -4,6 +4,8 @@ Create a test user using the *user.sql* script.
 
 Run the enture example using the *example.sql* script.
 
+See an example of expected output in *example.lst*.
+
 Note that the performance characteristics of the queries will change if the *test_stats.sql* is executed more than once (depending on the server result cache, cursor cache and DML used on the fact table). Re-running the *make_fact.sql* will reset the test and yield the expected results.
 
 ### DISCLAIMER
