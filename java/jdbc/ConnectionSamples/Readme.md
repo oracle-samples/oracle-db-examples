@@ -55,5 +55,28 @@ client side pool. Note that, when UCP is used, it takes care of attaching and
 releasing server connections. There is no need to explicitly call 
 `attachServerConnection()`/`detachServerConnection()` with UCP. 
 
+## UCPSample.java: 
+Universal Connection Pool (UCP) is a client side connection pool. UCP 
+furnishes a rich set of features to support scalability in single database
+instance as well as built-in features to support high-availability and 
+scalability in RAC and Active Data Guard environments.  UCP along with RAC,
+RAC One and ADG is a tested and certified combination for handling database
+failovers.  Refer to this sample for using UCP and setting UCP properties
+such as `minPoolSize`, `maxPoolSize`, etc.
+ 
+## UCPWithDRCPSample.java:
+
+Database Resident Connection Pool (DRCP) is the server side connection pool. 
+DRCP should be used in a scenario when there are a number of middle tiers but 
+the number of active connections is fairly less than the number of open 
+connections. DRCP when used along with and Universal Connection Pool(UCP) as the client 
+side connection pool improves the performance.  The sample shows UCP with DRCP
+in action. The purpose of the client-side pooling mechanism is to maintain the
+connections to Connection Broker. Client-side connection pools must attach and
+detach connections to the connection broker through `attachServerConnection()`
+and `detachServerConnection()`. DRCP should be used in a scenario when there are
+a number of middle tiers but the number of active connections is fairly less
+than th number of open connections. 
+
 ----
 
