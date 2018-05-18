@@ -2,10 +2,10 @@ set echo on
 set timing on
 set linesize 250
 set trims on
-column "MAX(TXT1)" format a30
-column "MIN(TXT1)" format a30
-column "MAX(TXT2)" format a30
-column "MIN(TXT2)" format a30
+column MAX(TXT1) format a30
+column MIN(TXT1) format a30
+column MAX(TXT2) format a30
+column MIN(TXT2) format a30
 
 --
 -- The following queries use stats answering
@@ -19,6 +19,16 @@ select max(num0),min(num1),min(txt1),max(txt1),count(*) from fact1;
 pause p...
 
 select max(txt1),min(txt1),count(txt1) from fact1;
+@plan
+pause p...
+
+--
+-- Selecting SYSDATE first because SQLCL executes
+-- a query to retrieve NLS information and we are not
+-- interested in seeing that query plan.
+--
+select sysdate from dual;
+select max(dt1) from fact1;
 @plan
 pause p...
 
@@ -36,6 +46,13 @@ pause p...
 --
 -- The following queries do not use stats query answering.
 -- 
+
+--
+-- Operating on the aggregate column
+--
+select max(num1)+1 from fact1 where num1 > 0;
+@plan
+pause p...
 
 --
 -- WHERE clause
@@ -88,7 +105,7 @@ pause p...
 -- get a new query in the cursor cache. It's the same query though
 -- of course.
 --
-insert into fact1 values (1,1,'XXX1','XXX1');
+insert into fact1 values (1,1,'XXX1','XXX1',sysdate);
 commit;
 select /* RUN2 */ max(num0),min(num0),min(num1),max(num1) from fact1;
 -- The DML has prevented us from using stats and this is
