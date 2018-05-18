@@ -27,6 +27,13 @@ select approx_count_distinct(num1) from fact1;
 pause p...
 
 --
+-- The transformation can be used in more complex queries
+--
+select * from dim1 where dnum = (select max(num1) from fact1);
+@plan
+pause p...
+
+--
 -- The following queries do not use stats query answering.
 -- 
 
