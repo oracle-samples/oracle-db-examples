@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -26,27 +26,15 @@
 var oracledb = require('oracledb');
 var dbConfig = require('./dbconfig.js');
 
-var addonVer, clientVer, serverVer;
-var major, minor, update, port, portUpdate;
-
 console.log("Run at: " + new Date());
 console.log("Node.js version: " + process.version + " (" + process.platform, process.arch + ")");
 
-addonVer = oracledb.version;
-major  = Math.floor(addonVer / 10000);
-minor  = Math.floor(addonVer / 100) % 100;
-update = addonVer % 100;
-//console.log("Node-oracledb version: " + addonVer);
-console.log("Node-oracledb text format: " + major + "." + minor + "." + update);
+// console.log("Node-oracledb version:", oracledb.version); // numeric version format is useful for comparisons
+// console.log("Node-oracledb version suffix:", oracledb.versionSuffix); // e.g. "-beta.1", or empty for production releases
+console.log("Node-oracledb version:", oracledb.versionString); // version (including the suffix)
 
-clientVer = oracledb.oracleClientVersion;
-major      = Math.floor (clientVer / 100000000);
-minor      = Math.floor (clientVer / 1000000) % 100 ;
-update     = Math.floor (clientVer / 10000) % 100 ;
-port       = Math.floor (clientVer / 100) % 100 ;
-portUpdate = clientVer % 100 ;
-//console.log("Oracle Client library version: " + clientVer);
-console.log("Oracle Client library text format: " + major + "." + minor + "." + update + "." + port + "." + portUpdate);
+//console.log("Oracle Client library version:", oracledb.oracleClientVersion); // numeric version format
+console.log("Oracle Client library version:", oracledb.oracleClientVersionString);
 
 oracledb.getConnection(
   {
@@ -54,19 +42,12 @@ oracledb.getConnection(
     password      : dbConfig.password,
     connectString : dbConfig.connectString
   },
-  function(err, connection)
-  {
+  function(err, connection) {
     if (err) {
       console.error(err.message);
       return;
     }
 
-    serverVer = connection.oracleServerVersion;
-    major      = Math.floor (serverVer / 100000000);
-    minor      = Math.floor (serverVer / 1000000) % 100 ;
-    update     = Math.floor (serverVer / 10000) % 100 ;
-    port       = Math.floor (serverVer / 100) % 100 ;
-    portUpdate = serverVer % 100 ;
-    // console.log("Oracle Database version: " + serverVer);
-    console.log("Oracle Database text format: " + major + "." + minor + "." + update + "." + port + "." + portUpdate);
+    // console.log("Oracle Database version:", connection.oracleServerVersion); // numeric version format
+    console.log("Oracle Database version:", connection.oracleServerVersionString);
   });
