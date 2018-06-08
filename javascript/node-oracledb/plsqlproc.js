@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -41,8 +41,7 @@ oracledb.getConnection(
     password      : dbConfig.password,
     connectString : dbConfig.connectString
   },
-  function (err, connection)
-  {
+  function (err, connection) {
     if (err) { console.error(err.message); return; }
 
     var bindvars = {
@@ -52,9 +51,10 @@ oracledb.getConnection(
     };
     connection.execute(
       "BEGIN testproc(:i, :io, :o); END;",
+      // The equivalent call with PL/SQL named parameter syntax is:
+      // "BEGIN testproc(p_in => :i, p_inout => :io, p_out => :o); END;",
       bindvars,
-      function (err, result)
-      {
+      function (err, result) {
         if (err) {
           console.error(err.message);
           doRelease(connection);
@@ -65,8 +65,7 @@ oracledb.getConnection(
       });
   });
 
-function doRelease(connection)
-{
+function doRelease(connection) {
   connection.close(
     function(err) {
       if (err) {
