@@ -1,0 +1,105 @@
+SQL> @eg1
+SQL> column ename format a20
+SQL> column rname format a20
+SQL> 
+SQL> select e.ename,r.rname
+  2  from   employees  e
+  3  join   roles	r on (r.id = e.role_id)
+  4  join   departments d on (d.id = e.dept_id)
+  5  where  e.staffno <= 10
+  6  and    d.dname in ('Department Name 1','Department Name 2');
+
+ENAME                RNAME                                                      
+-------------------- --------------------                                       
+Employee Name 1      Role Name 1                                                
+
+SQL> 
+SQL> @plan
+SQL> --
+SQL> -- An example of retrieving a useful SQL Execution Plan
+SQL> --
+SQL> set linesize 220 tab off pagesize 1000 trims on
+SQL> column plan_table_output format a120
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALL +OUTLINE'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------
+SQL_ID  3aun1ts4t8b80, child number 0
+-------------------------------------
+select e.ename,r.rname from   employees  e join   roles       r on
+(r.id = e.role_id) join   departments d on (d.id = e.dept_id) where
+e.staffno <= 10 and    d.dname in ('Department Name 1','Department Name
+2')
+
+Plan hash value: 2341252972
+
+-----------------------------------------------------------------------------------
+| Id  | Operation           | Name        | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |             |       |       |     6 (100)|          |
+|*  1 |  HASH JOIN          |             |     3 |   192 |     6   (0)| 00:00:01 |
+|*  2 |   HASH JOIN         |             |     3 |   147 |     4   (0)| 00:00:01 |
+|*  3 |    TABLE ACCESS FULL| DEPARTMENTS |     2 |    42 |     2   (0)| 00:00:01 |
+|*  4 |    TABLE ACCESS FULL| EMPLOYEES   |    10 |   280 |     2   (0)| 00:00:01 |
+|   5 |   TABLE ACCESS FULL | ROLES       |    20 |   300 |     2   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------
+
+Query Block Name / Object Alias (identified by operation id):
+-------------------------------------------------------------
+
+   1 - SEL$9E43CB6E
+   3 - SEL$9E43CB6E / D@SEL$2
+   4 - SEL$9E43CB6E / E@SEL$1
+   5 - SEL$9E43CB6E / R@SEL$1
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('12.2.0.1')
+      DB_VERSION('12.2.0.1')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$9E43CB6E")
+      MERGE(@"SEL$58A6D7F6" >"SEL$3")
+      OUTLINE(@"SEL$3")
+      OUTLINE(@"SEL$58A6D7F6")
+      MERGE(@"SEL$1" >"SEL$2")
+      OUTLINE(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      FULL(@"SEL$9E43CB6E" "D"@"SEL$2")
+      FULL(@"SEL$9E43CB6E" "E"@"SEL$1")
+      FULL(@"SEL$9E43CB6E" "R"@"SEL$1")
+      LEADING(@"SEL$9E43CB6E" "D"@"SEL$2" "E"@"SEL$1" "R"@"SEL$1")
+      USE_HASH(@"SEL$9E43CB6E" "E"@"SEL$1")
+      USE_HASH(@"SEL$9E43CB6E" "R"@"SEL$1")
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - access("R"."ID"="E"."ROLE_ID")
+   2 - access("D"."ID"="E"."DEPT_ID")
+   3 - filter(("D"."DNAME"='Department Name 1' OR "D"."DNAME"='Department
+              Name 2'))
+   4 - filter("E"."STAFFNO"<=10)
+
+Column Projection Information (identified by operation id):
+-----------------------------------------------------------
+
+   1 - (#keys=1) "E"."ENAME"[VARCHAR2,100], "R"."RNAME"[VARCHAR2,100]
+   2 - (#keys=1; rowset=256) "E"."ENAME"[VARCHAR2,100],
+       "E"."ROLE_ID"[NUMBER,22]
+   3 - (rowset=256) "D"."ID"[NUMBER,22]
+   4 - (rowset=256) "E"."ENAME"[VARCHAR2,100], "E"."DEPT_ID"[NUMBER,22],
+       "E"."ROLE_ID"[NUMBER,22]
+   5 - (rowset=256) "R"."ID"[NUMBER,22], "R"."RNAME"[VARCHAR2,100]
+
+
+73 rows selected.
+
+SQL> spool off

@@ -1,0 +1,204 @@
+SQL> set echo on
+SQL> @nopart
+SQL> set trims on pagesize 100 linesize 250
+SQL> column table_name format a25
+SQL> column partition_or_global format a25
+SQL> column index_name format a25
+SQL> 
+SQL> alter session set NLS_DATE_FORMAT = 'HH24:MI:SS YYYY-MM-DD';
+
+Session altered.
+
+SQL> 
+SQL> drop table stale_test1 purge;
+
+Table dropped.
+
+SQL> drop table stale_test2 purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table stale_test1 (col1 number(10));
+
+Table created.
+
+SQL> create table stale_test2 (col1 number(10));
+
+Table created.
+
+SQL> 
+SQL> create index stale_test1_i on stale_test1(col1);
+
+Index created.
+
+SQL> create index stale_test2_i on stale_test2(col1);
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.set_table_prefs(user,'stale_test1','stale_percent','5')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.set_table_prefs(user,'stale_test2','stale_percent','5')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> insert into stale_test1 values (1);
+
+1 row created.
+
+SQL> insert into stale_test2 values (1);
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test1')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test2')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT Table stats are not STALE
+Table stats are not STALE
+SQL> PROMPT
+
+SQL> select table_name, last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                LAST_ANALYZED       STA
+------------------------- ------------------- ---
+STALE_TEST1               09:49:24 2018-03-20 NO
+STALE_TEST2               09:49:25 2018-03-20 NO
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> exec dbms_lock.sleep(2);
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test1')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'stale_test2')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> PROMPT But even though the stats were not stale, statistics have been re-gathered
+But even though the stats were not stale, statistics have been re-gathered
+SQL> PROMPT You can see this because the LAST_ANALYZED time has changed since we last looked (above)
+You can see this because the LAST_ANALYZED time has changed since we last looked (above)
+SQL> PROMPT
+
+SQL> select table_name,last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                LAST_ANALYZED       STA
+------------------------- ------------------- ---
+STALE_TEST1               09:49:29 2018-03-20 NO
+STALE_TEST2               09:49:29 2018-03-20 NO
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> PROMPT Make STALE_TEST2 stale
+Make STALE_TEST2 stale
+SQL> PROMPT
+
+SQL> insert into stale_test2 values (10);
+
+1 row created.
+
+SQL> insert into stale_test2 values (10);
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.flush_database_monitoring_info
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> select table_name,last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                LAST_ANALYZED       STA
+------------------------- ------------------- ---
+STALE_TEST1               09:49:29 2018-03-20 NO
+STALE_TEST2               09:49:29 2018-03-20 YES
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> DECLARE
+  2  	filter_lst  DBMS_STATS.OBJECTTAB := DBMS_STATS.OBJECTTAB();
+  3  BEGIN
+  4  	filter_lst.extend(2);
+  5  	filter_lst(1).ownname := user;
+  6  	filter_lst(1).objname := 'stale_test1';
+  7  	filter_lst(1).ownname := user;
+  8  	filter_lst(1).objname := 'stale_test2';
+  9  	DBMS_STATS.GATHER_SCHEMA_STATS(ownname=>user,obj_filter_list=>filter_lst,options=>'gather auto');
+ 10  END;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec dbms_lock.sleep(2);
+
+PL/SQL procedure successfully completed.
+
+SQL> PROMPT
+
+SQL> PROMPT We used dbms_stats.gather_schema_stats(obj_filter_list=> ... , options=>'gather auto')
+We used dbms_stats.gather_schema_stats(obj_filter_list=> ... , options=>'gather auto')
+SQL> PROMPT
+
+SQL> PROMPT This time the non-stale table has been skipped
+This time the non-stale table has been skipped
+SQL> PROMPT and statistics have only been gathered where there are stale stats.
+and statistics have only been gathered where there are stale stats.
+SQL> PROMPT You can see if you consider the LAST_ANALYZED time.
+You can see if you consider the LAST_ANALYZED time.
+SQL> select table_name,last_analyzed,stale_stats
+  2  from   user_tab_statistics
+  3  where  table_name in ('STALE_TEST1','STALE_TEST2')
+  4  order  by 1,2;
+
+TABLE_NAME                LAST_ANALYZED       STA
+------------------------- ------------------- ---
+STALE_TEST1               09:49:29 2018-03-20 NO
+STALE_TEST2               09:49:36 2018-03-20 NO
+
+SQL> 
+SQL> spool off

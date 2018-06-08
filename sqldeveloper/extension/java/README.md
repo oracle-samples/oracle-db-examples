@@ -2,7 +2,7 @@
 ## Standard Extensions (java)
 Standard extensions are jar files with an [OSGi](https://en.wikipedia.org/wiki/OSGi) manifest and an extension.xml defining the extension and how it integrates with SQL Developer.
 
-[Set up your environment](../../setup.md). If using the eclipse project, also modify paths in *SQLDeveloper4.2.userlibraries* and import into eclipse.
+[Set up your environment](../setup.md). If using the eclipse project, also modify paths in *SQLDeveloper18.1.userlibraries* and import into eclipse.
 
 * [packaged XML](../xml/packaged)  
 XML Examples packaged as an extension.jar  

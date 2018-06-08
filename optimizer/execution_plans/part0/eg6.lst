@@ -1,0 +1,126 @@
+SQL> @eg6
+SQL> column ename format a20
+SQL> column rname format a20
+SQL> 
+SQL> select /*+ PARALLEL (e 2) */
+  2         e.ename,r.rname
+  3  from   employees  e
+  4  join   roles       r on (r.id = e.role_id)
+  5  join   departments d on (d.id = e.dept_id)
+  6  where  e.staffno <= 10
+  7  and    d.dname in ('Department Name 1','Department Name 2');
+Employee Name 1      Role Name 1
+SQL> 
+SQL> @planp
+SQL> --
+SQL> -- Displaying a parallel SQL execution plan
+SQL> --
+SQL> set linesize 220 tab off pagesize 1000 trims on
+SQL> column plan_table_output format a120
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALL +OUTLINE PARALLEL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------
+SQL_ID  gkbr22qhpjaam, child number 0
+-------------------------------------
+select /*+ PARALLEL (e 2) */        e.ename,r.rname from   employees  e
+join   roles       r on (r.id = e.role_id) join   departments d on
+(d.id = e.dept_id) where  e.staffno <= 10 and    d.dname in
+('Department Name 1','Department Name 2')
+
+Plan hash value: 264966885
+
+----------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                 | Name        | Rows  | Bytes | Cost (%CPU)| Time     |    TQ  |IN-OUT| PQ Distrib |
+----------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT          |             |       |       |     6 (100)|          |        |      |            |
+|   1 |  PX COORDINATOR           |             |       |       |            |          |        |      |            |
+|   2 |   PX SEND QC (RANDOM)     | :TQ10002    |     3 |   192 |     6   (0)| 00:00:01 |  Q1,02 | P->S | QC (RAND)  |
+|*  3 |    HASH JOIN BUFFERED     |             |     3 |   192 |     6   (0)| 00:00:01 |  Q1,02 | PCWP |            |
+|*  4 |     HASH JOIN             |             |     3 |   147 |     4   (0)| 00:00:01 |  Q1,02 | PCWP |            |
+|   5 |      JOIN FILTER CREATE   | :BF0000     |     2 |    42 |     2   (0)| 00:00:01 |  Q1,02 | PCWP |            |
+|   6 |       PX RECEIVE          |             |     2 |    42 |     2   (0)| 00:00:01 |  Q1,02 | PCWP |            |
+|   7 |        PX SEND BROADCAST  | :TQ10000    |     2 |    42 |     2   (0)| 00:00:01 |  Q1,00 | S->P | BROADCAST  |
+|   8 |         PX SELECTOR       |             |       |       |            |          |  Q1,00 | SCWC |            |
+|*  9 |          TABLE ACCESS FULL| DEPARTMENTS |     2 |    42 |     2   (0)| 00:00:01 |  Q1,00 | SCWP |            |
+|  10 |      JOIN FILTER USE      | :BF0000     |    10 |   280 |     2   (0)| 00:00:01 |  Q1,02 | PCWP |            |
+|  11 |       PX BLOCK ITERATOR   |             |    10 |   280 |     2   (0)| 00:00:01 |  Q1,02 | PCWC |            |
+|* 12 |        TABLE ACCESS FULL  | EMPLOYEES   |    10 |   280 |     2   (0)| 00:00:01 |  Q1,02 | PCWP |            |
+|  13 |     PX RECEIVE            |             |    20 |   300 |     2   (0)| 00:00:01 |  Q1,02 | PCWP |            |
+|  14 |      PX SEND BROADCAST    | :TQ10001    |    20 |   300 |     2   (0)| 00:00:01 |  Q1,01 | S->P | BROADCAST  |
+|  15 |       PX SELECTOR         |             |       |       |            |          |  Q1,01 | SCWC |            |
+|  16 |        TABLE ACCESS FULL  | ROLES       |    20 |   300 |     2   (0)| 00:00:01 |  Q1,01 | SCWP |            |
+----------------------------------------------------------------------------------------------------------------------
+
+Query Block Name / Object Alias (identified by operation id):
+-------------------------------------------------------------
+
+   1 - SEL$9E43CB6E
+   9 - SEL$9E43CB6E / D@SEL$2
+  12 - SEL$9E43CB6E / E@SEL$1
+  16 - SEL$9E43CB6E / R@SEL$1
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('12.2.0.1')
+      DB_VERSION('12.2.0.1')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$9E43CB6E")
+      MERGE(@"SEL$58A6D7F6" >"SEL$3")
+      OUTLINE(@"SEL$3")
+      OUTLINE(@"SEL$58A6D7F6")
+      MERGE(@"SEL$1" >"SEL$2")
+      OUTLINE(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      FULL(@"SEL$9E43CB6E" "D"@"SEL$2")
+      FULL(@"SEL$9E43CB6E" "E"@"SEL$1")
+      FULL(@"SEL$9E43CB6E" "R"@"SEL$1")
+      LEADING(@"SEL$9E43CB6E" "D"@"SEL$2" "E"@"SEL$1" "R"@"SEL$1")
+      USE_HASH(@"SEL$9E43CB6E" "E"@"SEL$1")
+      USE_HASH(@"SEL$9E43CB6E" "R"@"SEL$1")
+      PQ_DISTRIBUTE(@"SEL$9E43CB6E" "E"@"SEL$1" BROADCAST NONE)
+      PX_JOIN_FILTER(@"SEL$9E43CB6E" "E"@"SEL$1")
+      PQ_DISTRIBUTE(@"SEL$9E43CB6E" "R"@"SEL$1" NONE BROADCAST)
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("R"."ID"="E"."ROLE_ID")
+   4 - access("D"."ID"="E"."DEPT_ID")
+   9 - filter(("D"."DNAME"='Department Name 1' OR "D"."DNAME"='Department Name 2'))
+  12 - access(:Z>=:Z AND :Z<=:Z)
+       filter(("E"."STAFFNO"<=10 AND SYS_OP_BLOOM_FILTER(:BF0000,"E"."DEPT_ID")))
+
+Column Projection Information (identified by operation id):
+-----------------------------------------------------------
+
+   1 - "E"."ENAME"[VARCHAR2,100], "R"."RNAME"[VARCHAR2,100]
+   2 - (#keys=0) "E"."ENAME"[VARCHAR2,100], "R"."RNAME"[VARCHAR2,100]
+   3 - (#keys=1; rowset=256) "E"."ENAME"[VARCHAR2,100], "R"."RNAME"[VARCHAR2,100]
+   4 - (#keys=1; rowset=256) "E"."ENAME"[VARCHAR2,100], "E"."ROLE_ID"[NUMBER,22]
+   5 - (rowset=256) "D"."ID"[NUMBER,22]
+   6 - (rowset=256) "D"."ID"[NUMBER,22]
+   7 - (#keys=0) "D"."ID"[NUMBER,22]
+   8 - "D"."ID"[NUMBER,22], "D"."DNAME"[VARCHAR2,100]
+   9 - "D"."ID"[NUMBER,22], "D"."DNAME"[VARCHAR2,100]
+  10 - (rowset=256) "E"."ENAME"[VARCHAR2,100], "E"."DEPT_ID"[NUMBER,22], "E"."ROLE_ID"[NUMBER,22]
+  11 - (rowset=256) "E"."ENAME"[VARCHAR2,100], "E"."DEPT_ID"[NUMBER,22], "E"."ROLE_ID"[NUMBER,22]
+  12 - (rowset=256) "E"."ENAME"[VARCHAR2,100], "E"."DEPT_ID"[NUMBER,22], "E"."ROLE_ID"[NUMBER,22]
+  13 - (rowset=256) "R"."ID"[NUMBER,22], "R"."RNAME"[VARCHAR2,100]
+  14 - (#keys=0) "R"."ID"[NUMBER,22], "R"."RNAME"[VARCHAR2,100]
+  15 - "R"."ID"[NUMBER,22], "R"."RNAME"[VARCHAR2,100]
+  16 - "R"."ID"[NUMBER,22], "R"."RNAME"[VARCHAR2,100]
+
+Note
+-----
+   - Degree of Parallelism is 2 because of table property
+
+SQL> spool off
