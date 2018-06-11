@@ -23,6 +23,8 @@
  *   to the database.  Production applications should consider using
  *   External Authentication to avoid hard coded credentials.
  *
+ *   To create a database user see https://www.youtube.com/watch?v=WDJacg0NuLo
+ *
  *   Applications can set the connectString value to an Easy Connect
  *   string, or a Net Service Name from a tnsnames.ora file or
  *   external naming service, or it can be the name of a local Oracle
@@ -75,10 +77,10 @@ module.exports = {
   password      : process.env.NODE_ORACLEDB_PASSWORD || "welcome",
 
   // For information on connection strings see:
-  // https://github.com/oracle/node-oracledb/blob/master/doc/api.md#connectionstrings
+  // https://oracle.github.io/node-oracledb/doc/api.html#connectionstrings
   connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "localhost/orclpdb",
 
   // Setting externalAuth is optional.  It defaults to false.  See:
-  // https://github.com/oracle/node-oracledb/blob/master/doc/api.md#extauth
+  // https://oracle.github.io/node-oracledb/doc/api.html#extauth
   externalAuth  : process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false
 };
