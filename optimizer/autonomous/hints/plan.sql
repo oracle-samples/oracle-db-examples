@@ -1,3 +1,4 @@
+set trims on
 set linesize 200
 set tab off
 set pagesize 1000

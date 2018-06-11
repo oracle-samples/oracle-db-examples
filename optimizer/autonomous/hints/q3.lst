@@ -3,8 +3,8 @@ SQL> alter session set optimizer_ignore_hints = false;
 
 Session altered.
 
-SQL> 
-SQL> select /*+ LEADING(t1 t2) USE_NL(t2) */ 
+SQL>
+SQL> select /*+ LEADING(t1 t2) USE_NL(t2) */
   2         sum(t1.num), sum(t2.num)
   3  from   table1 t1
   4  join table2 t2 on (t1.id = t2.id);
@@ -13,56 +13,57 @@ SUM(T1.NUM) SUM(T2.NUM)
 ----------- -----------
           1          10
 
-SQL> 
+SQL>
 SQL> @plan
+SQL> set trims on
 SQL> set linesize 200
 SQL> set tab off
 SQL> set pagesize 1000
 SQL> column plan_table_output format a180
-SQL> 
+SQL>
 SQL> SELECT *
   2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
 
-PLAN_TABLE_OUTPUT                                                                                                                                                                   
+PLAN_TABLE_OUTPUT
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-SQL_ID  1jvgvrv93ma6h, child number 2                                                                                                                                               
--------------------------------------                                                                                                                                               
-select /*+ LEADING(t1 t2) USE_NL(t2) */         sum(t1.num),                                                                                                                        
-sum(t2.num) from   table1 t1 join table2 t2 on (t1.id = t2.id)                                                                                                                      
-                                                                                                                                                                                    
-Plan hash value: 3862413962                                                                                                                                                         
-                                                                                                                                                                                    
----------------------------------------------------------------------------------------------------                                                                                 
-| Id  | Operation            | Name                       | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                 
----------------------------------------------------------------------------------------------------                                                                                 
-|   0 | SELECT STATEMENT     |                            |       |       |    73 (100)|          |                                                                                 
-|   1 |  RESULT CACHE        | 86m6ud7jmfq443pumuj63z1bmd |       |       |            |          |                                                                                 
-|   2 |   SORT AGGREGATE     |                            |     1 |    52 |            |          |                                                                                 
-|   3 |    NESTED LOOPS      |                            |     1 |    52 |    73   (3)| 00:00:01 |                                                                                 
-|   4 |     TABLE ACCESS FULL| TABLE1                     |  1000 | 26000 |     2   (0)| 00:00:01 |                                                                                 
-|*  5 |     TABLE ACCESS FULL| TABLE2                     |     1 |    26 |     0   (0)|          |                                                                                 
----------------------------------------------------------------------------------------------------                                                                                 
-                                                                                                                                                                                    
-Predicate Information (identified by operation id):                                                                                                                                 
----------------------------------------------------                                                                                                                                 
-                                                                                                                                                                                    
-   5 - filter("T1"."ID"="T2"."ID")                                                                                                                                                  
-                                                                                                                                                                                    
-Result Cache Information (identified by operation id):                                                                                                                              
-------------------------------------------------------                                                                                                                              
-                                                                                                                                                                                    
-   1 -                                                                                                                                                                              
-                                                                                                                                                                                    
-Note                                                                                                                                                                                
------                                                                                                                                                                               
-   - dynamic statistics used: dynamic sampling (level=2)                                                                                                                            
-   - automatic DOP: Computed Degree of Parallelism is 1 because of no expensive parallel operation                                                                                  
-                                                                                                                                                                                    
+SQL_ID  1jvgvrv93ma6h, child number 2
+-------------------------------------
+select /*+ LEADING(t1 t2) USE_NL(t2) */         sum(t1.num),
+sum(t2.num) from   table1 t1 join table2 t2 on (t1.id = t2.id)
 
-33 rows selected. 
+Plan hash value: 3862413962
 
-SQL> 
-SQL> 
+---------------------------------------------------------------------------------------------------
+| Id  | Operation            | Name                       | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT     |                            |       |       |    73 (100)|          |
+|   1 |  RESULT CACHE        | db11srrdf8ar4d06x4b1j674pp |       |       |            |          |
+|   2 |   SORT AGGREGATE     |                            |     1 |    52 |            |          |
+|   3 |    NESTED LOOPS      |                            |     1 |    52 |    73   (3)| 00:00:01 |
+|   4 |     TABLE ACCESS FULL| TABLE1                     |  1000 | 26000 |     2   (0)| 00:00:01 |
+|*  5 |     TABLE ACCESS FULL| TABLE2                     |     1 |    26 |     0   (0)|          |
+---------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   5 - filter("T1"."ID"="T2"."ID")
+
+Result Cache Information (identified by operation id):
+------------------------------------------------------
+
+   1 -
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=2)
+   - automatic DOP: Computed Degree of Parallelism is 1 because of no expensive parallel operation
+
+
+33 rows selected.
+
+SQL>
+SQL>
 SQL> alter session set optimizer_ignore_hints = true;
 
 Session altered.
