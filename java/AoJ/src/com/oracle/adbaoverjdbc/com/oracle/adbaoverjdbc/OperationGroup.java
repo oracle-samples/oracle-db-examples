@@ -16,13 +16,11 @@
 package com.oracle.adbaoverjdbc;
 
 import jdk.incubator.sql2.ArrayCountOperation;
-import jdk.incubator.sql2.DynamicMultiOperation;
 import jdk.incubator.sql2.LocalOperation;
 import jdk.incubator.sql2.OutOperation;
 import jdk.incubator.sql2.ParameterizedCountOperation;
 import jdk.incubator.sql2.ParameterizedRowOperation;
 import jdk.incubator.sql2.RowProcessorOperation;
-import jdk.incubator.sql2.StaticMultiOperation;
 import jdk.incubator.sql2.Submission;
 import jdk.incubator.sql2.Transaction;
 import jdk.incubator.sql2.TransactionOutcome;
@@ -34,6 +32,7 @@ import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
+import jdk.incubator.sql2.MultiOperation;
 
 /**
  * Only sequential, dependent, unconditional supported.
@@ -205,13 +204,7 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   }
 
   @Override
-  public <R extends S> StaticMultiOperation<R> staticMultiOperation(String sql) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public <R extends S> DynamicMultiOperation<R> dynamicMultiOperation(String sql) {
+  public <R extends S> MultiOperation<R> multiOperation(String sql) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }

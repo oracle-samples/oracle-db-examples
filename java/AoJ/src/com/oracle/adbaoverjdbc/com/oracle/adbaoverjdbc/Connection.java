@@ -225,6 +225,12 @@ class Connection extends OperationGroup<Object, Object> implements jdk.incubator
     }
   }
   
+  protected <V> V connectionPropertyValue(ConnectionProperty prop) {
+    V value = (V)properties.get(prop);
+    if (value == null) return (V)prop.defaultValue();
+    else return value;
+  }
+  
   
 
   
@@ -232,7 +238,9 @@ class Connection extends OperationGroup<Object, Object> implements jdk.incubator
   
   private Void jdbcConnect(com.oracle.adbaoverjdbc.Operation<Void> op) {
     try {
-    Properties info = (Properties) ((Properties) properties.get(JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES)).clone();
+    Properties info = (Properties)properties.get(JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES);
+    info = (Properties)(info == null ? JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES.defaultValue() 
+                                     : info.clone());
     info.setProperty("user", (String) properties.get(AdbaConnectionProperty.USER));
     info.setProperty("password", (String) properties.get(AdbaConnectionProperty.PASSWORD));
     String url = (String) properties.get(AdbaConnectionProperty.URL);

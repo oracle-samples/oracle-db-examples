@@ -8,7 +8,7 @@ To run the examples yourself, use a DBA account and start by running "ctables.sq
 
 Next, run the examples: eg1.sql ... eg6.sql
 
-An interactive report from Enterprise Manager us also included: EM_sqlmonitor_output.html
+I have included an interactive report saved from Enterprise Manager: EM_sqlmonitor_output.html
 
 ### DISCLAIMER
 
