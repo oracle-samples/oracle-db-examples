@@ -2,7 +2,7 @@ This example demonstrates hint usage in ADWC.
 
 Create a test user using the *user.sql* script.
 
-To run the enture example:
+To run the entire example, log in ADWC using the LOW consumer group and then:
 
 *  @tabs - Create test tables (note that it drops tables TABLE1 and TABLE2)
 *  @q1   - The default query plan
