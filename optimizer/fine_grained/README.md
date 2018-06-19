@@ -8,6 +8,8 @@ They are in quite a raw state because I originally wrote the examples for my own
 
 The example here was run on Oracle Database 12c Release 2.
 
+The tests are not intended to be 'full coverage' - there may be other cases that work.
+
 The test case drops tables T1 and T2.
 
 ### DISCLAIMER
