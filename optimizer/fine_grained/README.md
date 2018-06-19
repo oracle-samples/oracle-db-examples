@@ -2,7 +2,7 @@ This directory contains examples of fine-grained cursor invalidation.
 
 The test.sql is provided to give you ideas on how you can try this feature out for yourself. 
 
-They are in quite a raw state because I originally wrote the examples for my own benefit to explore the boundaries of this feature. In particular, there is a mixture of some DDL that *will* allow SQL statements to use rolling invalidation and some DDL will not. Some of the PROMPT comments may be incorrect now because the test was created before Oracle Database 12c R2 was released.
+The tests are in a raw state because I originally wrote the examples for my own benefit to explore the boundaries of this feature. In particular, there is a mixture of some DDL that *will* allow SQL statements to use rolling invalidation and some DDL will not. Some of the PROMPT comments may be incorrect now because the test was created before Oracle Database 12c R2 was released.
 
 ### Note
 
