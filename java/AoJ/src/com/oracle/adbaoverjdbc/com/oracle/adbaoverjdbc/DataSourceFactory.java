@@ -1,30 +1,5 @@
-/*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.oracle.adbaoverjdbc;
-
-import jdk.incubator.sql2.DataSource;
-
-/**
- *
- */
-public class DataSourceFactory implements jdk.incubator.sql2.DataSourceFactory {
-
-  @Override
-  public DataSource.Builder builder() {
-    return DataSourceBuilder.newDataSourceBuilder();
-  }
-
-}
+<html>
+<head><title> Oracle SSO Failure</title></head>
+ <body bgcolor="white"> <font color="red">
+ <h1>Oracle SSO Failure - Unable to process request</h1> </font> Either the requested URL was not specified in terms of a fully-qualified host name or OHS single sign-on is incorrectly configured.<br> Please notify your administrator.<hr> </body>
+</html>
