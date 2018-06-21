@@ -5,6 +5,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | ------------- | ------------- |
 | [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
 | [dotnet](./dotnet) | .NET based examples |
+| [exadata-express](./exadata-express) | Exadata Express examples |
 | [java](./java)  | Java based examples |
 | [javascript](./javascript) | JavaScript based examples |
 | [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
