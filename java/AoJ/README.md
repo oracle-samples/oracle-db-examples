@@ -116,7 +116,7 @@ introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/t
  }
 ``` 
 
-The following new sample code have been added: HellowWorld.java and NewEmptyUnitTest.java.
+The following new sample code have been added: HellowWorld.java and NewEmptyJUnitTest.java.
 
 ## AoJ Design Spec in 100 words or less
 
