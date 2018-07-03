@@ -15,10 +15,11 @@
  */
 package com.oracle.adbaoverjdbc;
 
-import jdk.incubator.sql2.ConnectionProperty;
+import jdk.incubator.sql2.SessionProperty;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.LongConsumer;
+import jdk.incubator.sql2.DataSourceProperty;
 
 /**
  *
@@ -31,54 +32,71 @@ class DataSourceBuilder implements jdk.incubator.sql2.DataSource.Builder {
 
   protected boolean isBuilt = false;
   
-  /**
-   * defaultConnectionProperties can be overridden by a ConnectionBuilder
-   */
-  Map<ConnectionProperty, Object> defaultConnectionProperties = new HashMap<>();
+  Map<DataSourceProperty, Object> dataSourceProperties = new HashMap<>();
   
   /**
-   * it is an error if a ConnectionBuilder tries to override requiredConnectionProperties
+   * defaultSessionProperties can be overridden by a SessionBuilder
    */
-  Map<ConnectionProperty, Object> requiredConnectionProperties = new HashMap<>();
+  Map<SessionProperty, Object> defaultSessionProperties = new HashMap<>();
+  
+  /**
+   * it is an error if a SessionBuilder tries to override requiredSessionProperties
+   */
+  Map<SessionProperty, Object> requiredSessionProperties = new HashMap<>();
 
   @Override
-  public jdk.incubator.sql2.DataSource.Builder defaultConnectionProperty(ConnectionProperty property, Object value) {
+  public jdk.incubator.sql2.DataSource.Builder property(DataSourceProperty property, Object value) {
     if (isBuilt) {
       throw new IllegalStateException("TODO");
     }
-    if (defaultConnectionProperties.containsKey(property)) {
+    if (dataSourceProperties.containsKey(property)) {
+      throw new IllegalArgumentException("cannot set a property multiple times");
+    }
+    if (!property.validate(value)) {
+      throw new IllegalArgumentException("TODO");
+    }
+    dataSourceProperties.put(property, value);
+    return this;
+  }
+
+  @Override
+  public jdk.incubator.sql2.DataSource.Builder defaultSessionProperty(SessionProperty property, Object value) {
+    if (isBuilt) {
+      throw new IllegalStateException("TODO");
+    }
+    if (defaultSessionProperties.containsKey(property)) {
       throw new IllegalArgumentException("cannot set a default multiple times");
     }
-    if (requiredConnectionProperties.containsKey(property)) {
+    if (requiredSessionProperties.containsKey(property)) {
       throw new IllegalArgumentException("cannot set a default that is already required");
     }
     if (!property.validate(value)) {
       throw new IllegalArgumentException("TODO");
     }
-    defaultConnectionProperties.put(property, value);
+    defaultSessionProperties.put(property, value);
     return this;
   }
 
   @Override
-  public jdk.incubator.sql2.DataSource.Builder connectionProperty(ConnectionProperty property, Object value) {
+  public jdk.incubator.sql2.DataSource.Builder sessionProperty(SessionProperty property, Object value) {
     if (isBuilt) {
       throw new IllegalStateException("TODO");
     }
-    if (defaultConnectionProperties.containsKey(property)) {
+    if (defaultSessionProperties.containsKey(property)) {
       throw new IllegalArgumentException("cannot set a required prop that has a default");
     }
-    if (requiredConnectionProperties.containsKey(property)) {
+    if (requiredSessionProperties.containsKey(property)) {
       throw new IllegalArgumentException("cannot set a required prop multiple times");
     }
     if (!property.validate(value)) {
       throw new IllegalArgumentException("TODO");
     }
-    requiredConnectionProperties.put(property, value);
+    requiredSessionProperties.put(property, value);
     return this;
   }
 
   @Override
-  public jdk.incubator.sql2.DataSource.Builder requestHook(Consumer<Long> request) {
+  public jdk.incubator.sql2.DataSource.Builder requestHook(LongConsumer request) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
@@ -88,7 +106,7 @@ class DataSourceBuilder implements jdk.incubator.sql2.DataSource.Builder {
       throw new IllegalStateException("cannot build more than once. All objects are use-once");
     }
     isBuilt = true;
-    return DataSource.newDataSource(defaultConnectionProperties, requiredConnectionProperties);
+    return DataSource.newDataSource(defaultSessionProperties, requiredSessionProperties);
   }
 
 }

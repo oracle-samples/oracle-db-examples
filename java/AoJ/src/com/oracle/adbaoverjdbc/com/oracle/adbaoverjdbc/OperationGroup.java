@@ -20,7 +20,6 @@ import jdk.incubator.sql2.MultiOperation;
 import jdk.incubator.sql2.OutOperation;
 import jdk.incubator.sql2.ParameterizedRowOperation;
 import jdk.incubator.sql2.Submission;
-import jdk.incubator.sql2.Transaction;
 import jdk.incubator.sql2.TransactionOutcome;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +32,7 @@ import java.util.stream.Collector;
 import jdk.incubator.sql2.ParameterizedRowCountOperation;
 import jdk.incubator.sql2.ParameterizedRowPublisherOperation;
 import jdk.incubator.sql2.ArrayRowCountOperation;
+import jdk.incubator.sql2.TransactionEnd;
 
 /**
  * Only sequential, dependent, unconditional supported.
@@ -77,8 +77,8 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
           (a, b) -> null,
           a -> null);
 
-  static <U, V> OperationGroup<U, V> newOperationGroup(Connection conn) {
-    return new OperationGroup(conn, conn);
+  static <U, V> OperationGroup<U, V> newOperationGroup(Session session) {
+    return new OperationGroup(session, session);
   }
   
   static final Logger NULL_LOGGER = Logger.getAnonymousLogger();
@@ -118,8 +118,17 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
    */
   private CompletionStage<S> memberTail;
   
-  protected OperationGroup(Connection conn, OperationGroup<? super T, ?> group) {
-    super(conn, group);
+  // used only by Session. Will break if used by any other class.
+  protected OperationGroup() {
+    super();
+    held = new CompletableFuture();
+    head = new CompletableFuture();
+    memberTail = head;
+    collector = DEFAULT_COLLECTOR;
+  }
+  
+  protected OperationGroup(Session session, OperationGroup<? super T, ?> group) {
+    super(session, group);
     held = new CompletableFuture();
     head = new CompletableFuture();
     memberTail = head;
@@ -174,7 +183,7 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   @Override
   public Operation<S> catchOperation() {
     if (! isHeld() ) throw new IllegalStateException("TODO");
-    return UnskippableOperation.newOperation(connection, this, op -> null);
+    return UnskippableOperation.newOperation(session, this, op -> null);
   }
 
   @Override
@@ -187,13 +196,13 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   public <R extends S> ParameterizedRowCountOperation<R> rowCountOperation(String sql) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
      if (sql == null) throw new IllegalArgumentException("TODO");
-    return CountOperation.newCountOperation(connection, this, sql);
+    return CountOperation.newCountOperation(session, this, sql);
  }
 
   @Override
   public SqlOperation<S> operation(String sql) {
     if ( !isHeld() ) throw new IllegalStateException("TODO");
-    return SqlOperation.newOperation(connection, this, sql);
+    return SqlOperation.newOperation(session, this, sql);
   }
 
   @Override
@@ -206,7 +215,7 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   public <R extends S> ParameterizedRowOperation<R> rowOperation(String sql) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
     if (sql == null) throw new IllegalArgumentException("TODO");
-    return RowOperation.newRowOperation(connection, this, sql);
+    return RowOperation.newRowOperation(session, this, sql);
   }
 
   @Override
@@ -222,12 +231,12 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   }
 
   @Override
-  public SimpleOperation<TransactionOutcome> endTransactionOperation(Transaction trans) {
+  public SimpleOperation<TransactionOutcome> endTransactionOperation(TransactionEnd trans) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
     return com.oracle.adbaoverjdbc.SimpleOperation.<TransactionOutcome>newOperation(
-              connection, 
+              session, 
               (OperationGroup<Object,T>)this, 
-              op -> connection.jdbcEndTransaction(op, (com.oracle.adbaoverjdbc.Transaction)trans));
+              op -> session.jdbcEndTransaction(op, (com.oracle.adbaoverjdbc.TransactionEnd)trans));
   }
 
   @Override

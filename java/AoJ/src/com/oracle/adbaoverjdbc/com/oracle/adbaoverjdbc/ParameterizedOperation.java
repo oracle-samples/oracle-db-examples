@@ -35,8 +35,8 @@ public abstract class ParameterizedOperation<T> extends Operation<T>
   protected final Map<String, ParameterValue> setParameters;
   protected CompletionStage futureParameters;
 
-  ParameterizedOperation(Connection conn, OperationGroup operationGroup) {
-    super(conn, operationGroup);
+  ParameterizedOperation(Session session, OperationGroup operationGroup) {
+    super(session, operationGroup);
     setParameters = new HashMap<>();
   }
   

@@ -18,12 +18,12 @@ package com.oracle.adbaoverjdbc;
 import java.util.Properties;
 
 /**
- * An ADBA ConnectionProperty that specifies a set of JDBC connection properties.
+ * An ADBA SessionProperty that specifies a set of JDBC Connection properties.
  * Its value is a java.util.Properties. This value is passed as the info argument
  * when creating a java.sql.Connection.
  *
  */
-public class JdbcConnectionProperties implements jdk.incubator.sql2.ConnectionProperty {
+public class JdbcConnectionProperties implements jdk.incubator.sql2.SessionProperty {
   
   public static final JdbcConnectionProperties JDBC_CONNECTION_PROPERTIES
           = new JdbcConnectionProperties();
@@ -33,7 +33,7 @@ public class JdbcConnectionProperties implements jdk.incubator.sql2.ConnectionPr
 
   @Override
   public String name() {
-    return "JDBC_CONNECTION_PROPERTIES";
+    return "JDBC_SESSION_PROPERTIES";
   }
 
   @Override

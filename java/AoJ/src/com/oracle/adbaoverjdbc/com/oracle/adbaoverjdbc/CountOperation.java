@@ -42,13 +42,13 @@ class CountOperation<T> extends ParameterizedOperation<T>
    * Factory method to create CountOperations.
    * 
    * @param <S> the type of the value of the CountOperation
-   * @param conn the Connection the CountOperation belongs to
+   * @param session the Session the CountOperation belongs to
    * @param grp the GroupOperation the CountOperation is a member of
    * @param sql the SQL string to execute. Must return a count.
    * @return a new CountOperation that will execute sql.
    */
-  static <S> CountOperation<S> newCountOperation(Connection conn, OperationGroup grp, String sql) {
-    return new CountOperation<>(conn, grp, sql);
+  static <S> CountOperation<S> newCountOperation(Session session, OperationGroup grp, String sql) {
+    return new CountOperation<>(session, grp, sql);
   }
   
   // attributes
@@ -57,8 +57,8 @@ class CountOperation<T> extends ParameterizedOperation<T>
   
   PreparedStatement jdbcStatement;
 
-  CountOperation(Connection conn, OperationGroup operationGroup, String sql) {
-    super(conn, operationGroup);
+  CountOperation(Session session, OperationGroup operationGroup, String sql) {
+    super(session, operationGroup);
     countProcessor = DEFAULT_PROCESSOR;
     sqlString = sql;
   }
@@ -93,7 +93,7 @@ class CountOperation<T> extends ParameterizedOperation<T>
   private T executeQuery(Object ignore) {
     checkCanceled();
     try {
-      jdbcStatement = connection.prepareStatement(sqlString);
+      jdbcStatement = session.prepareStatement(sqlString);
       setParameters.forEach((String k, ParameterValue v) -> {
         v.set(jdbcStatement, k);
       });

@@ -49,8 +49,8 @@ class RowOperation<T>  extends ParameterizedOperation<T>
           (a, v) -> {},
           (a, b) -> null,
           a -> null);
-  static <S> RowOperation<S> newRowOperation(Connection conn, OperationGroup grp, String sql) {
-    return new RowOperation<>(conn, grp, sql);
+  static <S> RowOperation<S> newRowOperation(Session session, OperationGroup grp, String sql) {
+    return new RowOperation<>(session, grp, sql);
   }
   
   // attributes
@@ -67,8 +67,8 @@ class RowOperation<T>  extends ParameterizedOperation<T>
   private long rowCount;
   private String[] identifiers;
   
-  protected RowOperation(Connection conn, OperationGroup grp, String sql) {
-    super(conn, grp);
+  protected RowOperation(Session session, OperationGroup grp, String sql) {
+    super(session, grp);
     fetchSize = NOT_SET;
     collector = DEFAULT_COLLECTOR;
     sqlString = sql;
@@ -126,7 +126,7 @@ class RowOperation<T>  extends ParameterizedOperation<T>
   private void executeQuery() {
     checkCanceled();
     try {
-      jdbcStatement = connection.prepareStatement(sqlString);
+      jdbcStatement = session.prepareStatement(sqlString);
       initFetchSize();
       setParameters.forEach((String k, ParameterValue v) -> {
         v.set(jdbcStatement, k);
