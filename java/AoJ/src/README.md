@@ -36,8 +36,15 @@ better to get it to the community as soon as we could. We hope that you agree.
 ## Building AoJ
 
 AoJ and ADBA require JDK 9 or later. Download ADBA from the 
-[OpenJDK sandbox](http://hg.openjdk.java.net/jdk/sandbox/file/9d3b0eb749a9/src/jdk.incubator.adba).
-It does not have any dependencies outside of Java SE. Download AoJ from 
+[OpenJDK sandbox](http://hg.openjdk.java.net/jdk/sandbox/file/JDK-8188051-branch/src/jdk.incubator.adba/share/classes). It does not have any dependencies outside of Java SE. 
+
+For building the API modules:
+```
+$ mkdir -p mods/jdk.incubator.adba
+$ javac -d mods/jdk.incubator.adba/ $(find jdk.incubator.adba  -name "*.java")
+$ jar --create --file=mlib/jdk.incubator.adba.jar --module-version=1.0 -C mods/jdk.incubator.adba/ .
+````
+Download AoJ from 
 [GitHub](https://github.com/oracle/oracle-db-examples/tree/master/java/AoJ).  Both 
 are modularized so be sure to include the module-info.java files. AoJ depends on 
 ADBA. The AoJ sample file depends on JUnit which is included with most IDEs but is 
@@ -63,8 +70,8 @@ run with any JDBC driver connecting to a database with the scott schema. This is
 the last test in ```com.oracle.adbaoverjdbc.test.FirstLight.java```. For an 
 introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/technetwork/database/application-development/jdbc/con1491-3961036.pdf). 
 
-```
- public void transactionSample() {
+
+```public void transactionSample() {
    // get the AoJ DataSourceFactory
    DataSourceFactory factory = DataSourceFactory.forName("com.oracle.adbaoverjdbc.DataSourceFactory");
    // get a DataSource and a Connection
@@ -106,12 +113,15 @@ introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/t
    }  
    // wait for the async tasks to complete before exiting  
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
- }```
+ }
+``` 
+
+The following new sample code have been added: HellowWorld.java and NewEmptyJUnitTest.java.
 
 ## AoJ Design Spec in 100 words or less
 
 The methods called by the user thread create a network 
-([DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) of 
+(i.e., [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) of 
 ```CompletableFuture```s. These ```CompleteableFuture```s asynchronously execute 
 the synchronous JDBC calls and the result processing code provided by the user 
 code. By default AoJ uses ```ForkJoinPool.commonPool()``` to execute 

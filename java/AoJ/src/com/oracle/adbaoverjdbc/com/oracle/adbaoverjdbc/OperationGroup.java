@@ -32,7 +32,7 @@ import java.util.stream.Collector;
 import jdk.incubator.sql2.ParameterizedRowCountOperation;
 import jdk.incubator.sql2.ParameterizedRowPublisherOperation;
 import jdk.incubator.sql2.ArrayRowCountOperation;
-import jdk.incubator.sql2.TransactionEnd;
+import jdk.incubator.sql2.TransactionCompletion;
 
 /**
  * Only sequential, dependent, unconditional supported.
@@ -231,12 +231,12 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   }
 
   @Override
-  public SimpleOperation<TransactionOutcome> endTransactionOperation(TransactionEnd trans) {
+  public SimpleOperation<TransactionOutcome> endTransactionOperation(TransactionCompletion trans) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
     return com.oracle.adbaoverjdbc.SimpleOperation.<TransactionOutcome>newOperation(
               session, 
               (OperationGroup<Object,T>)this, 
-              op -> session.jdbcEndTransaction(op, (com.oracle.adbaoverjdbc.TransactionEnd)trans));
+              op -> session.jdbcEndTransaction(op, (com.oracle.adbaoverjdbc.TransactionCompletion)trans));
   }
 
   @Override

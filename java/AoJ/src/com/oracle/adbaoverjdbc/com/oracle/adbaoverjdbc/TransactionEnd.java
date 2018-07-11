@@ -18,17 +18,17 @@ package com.oracle.adbaoverjdbc;
 /**
  *
  */
-class TransactionEnd implements jdk.incubator.sql2.TransactionEnd {
+class TransactionCompletion implements jdk.incubator.sql2.TransactionCompletion {
 
   private boolean isRollbackOnly = false;
   private boolean isInFlight = true;
   private final Session session;
   
-  static TransactionEnd createTransaction(Session session) {
-    return new TransactionEnd(session);
+  static TransactionCompletion createTransaction(Session session) {
+    return new TransactionCompletion(session);
   }
   
-  private TransactionEnd(Session session) {
+  private TransactionCompletion(Session session) {
     this.session = session;
   }
   

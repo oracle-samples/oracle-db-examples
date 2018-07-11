@@ -116,11 +116,11 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
   }
 
   @Override
-  public TransactionEnd transactionEnd() {
+  public TransactionCompletion transactionCompletion() {
     if (! isHeld()) {
       throw new IllegalStateException("TODO");
     }
-    return TransactionEnd.createTransaction(this);
+    return TransactionCompletion.createTransaction(this);
   }
 
   @Override
@@ -329,7 +329,7 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
     return jdbcConnection.prepareStatement(sqlString);
   }
 
-  TransactionOutcome jdbcEndTransaction(SimpleOperation<TransactionOutcome> op, TransactionEnd trans) {
+  TransactionOutcome jdbcEndTransaction(SimpleOperation<TransactionOutcome> op, TransactionCompletion trans) {
     try {
       if (trans.endWithCommit(this)) {
         group.logger.log(Level.FINE, () -> "commit"); //DEBUG
