@@ -3,9 +3,12 @@
 ADBA is Asynchronous Database Access, a non-blocking database access api that 
 Oracle is proposing as a Java standard. ADBA was announced at 
 [JavaOne 2016](https://static.rainfocus.com/oracle/oow16/sess/1461693351182001EmRq/ppt/CONF1578%2020160916.pdf) 
-and presented again at [JavaOne 2017](http://www.oracle.com/technetwork/database/application-development/jdbc/con1491-3961036.pdf). 
-The ADBA source is available for download from the [OpenJDK sandbox](http://hg.openjdk.java.net/jdk/sandbox/file/9d3b0eb749a9/src/jdk.incubator.adba) 
-as part of the OpenJDK project and the JavaDoc is available [here](http://cr.openjdk.java.net/~lancea/8188051/apidoc/jdk.incubator.adba-summary.html). 
+and presented again at 
+[JavaOne 2017](http://www.oracle.com/technetwork/database/application-development/jdbc/con1491-3961036.pdf). 
+The ADBA source is available for download from the 
+[OpenJDK sandbox](http://hg.openjdk.java.net/jdk/sandbox/file/JDK-8188051-branch/src/jdk.incubator.adba/share/classes) 
+as part of the OpenJDK project and the JavaDoc is available 
+[here](http://cr.openjdk.java.net/~lancea/8188051/apidoc/jdk.incubator.adba-summary.html). 
 You can get involved in the ADBA specification effort by following the 
 [JDBC Expert Group mailing list](http://mail.openjdk.java.net/pipermail/jdbc-spec-discuss/). 
 
@@ -18,7 +21,7 @@ JDBC driver.
 
 AoJ implements only a small part of ADBA, but it is enough to write interesting 
 code. It provides partial implementations of ```DataSourceFactory```, ```DataSource```, 
-```Connection```, ```OperationGroup```, ```RowOperation```, ```CountOperation```, 
+```Session```, ```OperationGroup```, ```RowOperation```, ```CountOperation```, 
 ```Transaction``` and others. These implementations are not complete but there is 
 enough there to write interesting database programs. The code that is there is 
 untested, but it does work to some extent. The saving grace is that you can 
@@ -36,15 +39,8 @@ better to get it to the community as soon as we could. We hope that you agree.
 ## Building AoJ
 
 AoJ and ADBA require JDK 9 or later. Download ADBA from the 
-[OpenJDK sandbox](http://hg.openjdk.java.net/jdk/sandbox/file/JDK-8188051-branch/src/jdk.incubator.adba/share/classes). It does not have any dependencies outside of Java SE. 
-
-For building the API modules:
-```
-$ mkdir -p mods/jdk.incubator.adba
-$ javac -d mods/jdk.incubator.adba/ $(find jdk.incubator.adba  -name "*.java")
-$ jar --create --file=mlib/jdk.incubator.adba.jar --module-version=1.0 -C mods/jdk.incubator.adba/ .
-````
-Download AoJ from 
+[OpenJDK sandbox](http://hg.openjdk.java.net/jdk/sandbox/file/JDK-8188051-branch/src/jdk.incubator.adba/share/classes).
+It does not have any dependencies outside of Java SE 9. Download AoJ from 
 [GitHub](https://github.com/oracle/oracle-db-examples/tree/master/java/AoJ).  Both 
 are modularized so be sure to include the module-info.java files. AoJ depends on 
 ADBA. The AoJ sample file depends on JUnit which is included with most IDEs but is 
@@ -59,7 +55,7 @@ driver. The sample file uses the scott/tiger schema available
 
 Start the database and load ```scott.sql```. Edit ```com.oracle.adbaoverjdbc.test.FirstLight.java```
 and set the constant ```URL``` to an appropriate value. AoJ will pass this value
-to ```java.sql.DriverManager.getConnection```. If you are using a database other
+to ```java.sql.DriverManager.getSession```. If you are using a database other
 than Oracle you should change the value of the constant ```TRIVIAL``` to some
 very trivial ```SELECT``` query.
 
@@ -68,34 +64,36 @@ very trivial ```SELECT``` query.
 The following test case should give you some idea of what AoJ can do. It  should
 run with any JDBC driver connecting to a database with the scott schema. This is
 the last test in ```com.oracle.adbaoverjdbc.test.FirstLight.java```. For an 
-introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/technetwork/database/application-development/jdbc/con1491-3961036.pdf). 
+introduction to ADBA see the 
+[JavaOne 2017 presentation](http://www.oracle.com/technetwork/database/application-development/jdbc/con1491-3961036.pdf). 
 
 
-```public void transactionSample() {
+```
+   public void readme(String url, String user, String password) {
    // get the AoJ DataSourceFactory
-   DataSourceFactory factory = DataSourceFactory.forName("com.oracle.adbaoverjdbc.DataSourceFactory");
-   // get a DataSource and a Connection
+   DataSourceFactory factory = DataSourceFactory.newFactory("com.oracle.adbaoverjdbc.DataSourceFactory");
+   // get a DataSource and a Session
    try (DataSource ds = factory.builder()
-           .url(URL)
-           .username(“scott")
-           .password(“tiger")
+           .url(url)
+           .username(user)
+           .password(password)
            .build();
-           Connection conn = ds.getConnection(t -> System.out.println("ERROR: " + t.getMessage()))) {
-     // get a Transaction
-     Transaction trans = conn.transaction();
+           Session conn = ds.getSession(t -> System.out.println("ERROR: " + t.getMessage()))) {
+     // get a TransactionCompletion
+     TransactionCompletion trans = conn.transactionCompletion();
      // select the EMPNO of CLARK
      CompletionStage<Integer> idF = conn.<Integer>rowOperation("select empno, ename from emp where ename = ? for update")
              .set("1", "CLARK", AdbaType.VARCHAR)
              .collect(Collector.of(
                      () -> new int[1], 
-                     (a, r) -> {a[0] = r.get("empno", Integer.class); },
+                     (a, r) -> {a[0] = r.at("empno").get(Integer.class); },
                      (l, r) -> null,
                      a -> a[0])
              )
              .submit()
              .getCompletionStage();
      // update CLARK to work in department 50
-     conn.<Long>countOperation("update emp set deptno = ? where empno = ?")
+     conn.<Long>rowCountOperation("update emp set deptno = ? where empno = ?")
              .set("1", 50, AdbaType.INTEGER)
              .set("2", idF, AdbaType.INTEGER)
              .apply(c -> { 
@@ -114,17 +112,15 @@ introduction to ADBA see the [JavaOne 2017 presentation](http://www.oracle.com/t
    // wait for the async tasks to complete before exiting  
    ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
  }
-``` 
-
-The following new sample code have been added: HellowWorld.java and NewEmptyJUnitTest.java.
+```
 
 ## AoJ Design Spec in 100 words or less
 
 The methods called by the user thread create a network 
-(i.e., [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) of 
+([DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) of 
 ```CompletableFuture```s. These ```CompleteableFuture```s asynchronously execute 
 the synchronous JDBC calls and the result processing code provided by the user 
 code. By default AoJ uses ```ForkJoinPool.commonPool()``` to execute 
 ```CompletableFuture```s but the user code can provide another ```Executor```.
-When the ```Connection``` is submitted the root of the ```CompleteableFuture```
+When the ```Session``` is submitted the root of the ```CompleteableFuture```
 network is completed triggering execution of the rest of the network.

@@ -18,10 +18,10 @@ package com.oracle.adbaoverjdbc.test;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
-import jdk.incubator.sql2.Connection;
 import jdk.incubator.sql2.DataSourceFactory;
 import jdk.incubator.sql2.DataSource;
 import org.junit.Test;
+import jdk.incubator.sql2.Session;
 
 public class HelloWorld {
 
@@ -42,9 +42,9 @@ public class HelloWorld {
               .username(USER)
               .password(PASSWORD)
               .build();
-              Connection conn = ds.getConnection()) {
-        System.out.println("Connected! DataSource: " + ds + " Connection: " + conn);
-        conn.rowOperation("SELECT 1")
+              Session session = ds.getSession()) {
+        System.out.println("Connected! DataSource: " + ds + " Session: " + session);
+        session.rowOperation("SELECT 1")
                 .collect(Collector.of(() -> null, 
                                       (a, r) -> { System.out.println(r.at(1).get(String.class)); }, 
                                       (l, r) -> null,

@@ -33,7 +33,7 @@ public class JdbcConnectionProperties implements jdk.incubator.sql2.SessionPrope
 
   @Override
   public String name() {
-    return "JDBC_SESSION_PROPERTIES";
+    return "JDBC_CONNECTION_PROPERTIES";
   }
 
   @Override

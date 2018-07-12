@@ -16,11 +16,9 @@
 package com.oracle.adbaoverjdbc.test;
 
 import jdk.incubator.sql2.AdbaType;
-import jdk.incubator.sql2.Connection;
 import jdk.incubator.sql2.DataSourceFactory;
 import jdk.incubator.sql2.DataSource;
 import jdk.incubator.sql2.SqlException;
-import jdk.incubator.sql2.Transaction;
 import java.util.Properties;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ForkJoinPool;
@@ -34,6 +32,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static com.oracle.adbaoverjdbc.JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES;
 import jdk.incubator.sql2.Result;
+import jdk.incubator.sql2.Session;
+import jdk.incubator.sql2.TransactionCompletion;
 
 /**
  * This is a quick and dirty test to check if anything at all is working.
@@ -48,7 +48,7 @@ public class FirstLight {
   //
   // Define these three constants with the appropriate values for the database
   // and JDBC driver you want to use. Should work with ANY reasonably standard
-  // JDBC driver. These values are passed to DriverManager.getConnection.
+  // JDBC driver. These values are passed to DriverManager.getSession.
   public static final String URL = "jdbc:oracle:thin:@//den03cll.us.oracle.com:5521/main2.regress.rdbms.dev.us.oracle.com"; //"<JDBC driver connect string>";
   public static final String USER = "scott"; //<database user name>";
   public static final String PASSWORD = "tiger"; //<database user password>";
@@ -87,7 +87,7 @@ public class FirstLight {
   }
   
   /**
-   * Verify that can create a DataSource, though not a Connection. Should work
+   * Verify that can create a DataSource, though not a Session. Should work
    * even if there is no database.
    */
   @Test
@@ -102,7 +102,7 @@ public class FirstLight {
   }
   
   /**
-   * create a Connection and send a SQL to the database
+   * create a Session and send a SQL to the database
    */
   @Test
   public void sqlOperation() {
@@ -113,12 +113,12 @@ public class FirstLight {
             .url(URL)
             .username(USER)
             .password(PASSWORD)
-            .connectionProperty(JDBC_CONNECTION_PROPERTIES, props)
+            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
-    Connection conn = ds.getConnection(t -> System.out.println("ERROR: " + t.getMessage()));
-    try (conn) {
-      assertNotNull(conn);
-      conn.operation(TRIVIAL).submit();
+    Session session = ds.getSession(t -> System.out.println("ERROR: " + t.getMessage()));
+    try (session) {
+      assertNotNull(session);
+      session.operation(TRIVIAL).submit();
     }
     ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
   }
@@ -135,18 +135,18 @@ public class FirstLight {
             .url(URL)
             .username(USER)
             .password(PASSWORD)
-            .connectionProperty(JDBC_CONNECTION_PROPERTIES, props)
+            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
-            Connection conn = ds.getConnection(t -> System.out.println("ERROR: " + t.getMessage()))) {
-      assertNotNull(conn);
-      conn.<Void>rowOperation(TRIVIAL)
+            Session session = ds.getSession(t -> System.out.println("ERROR: " + t.getMessage()))) {
+      assertNotNull(session);
+      session.<Void>rowOperation(TRIVIAL)
               .collect(Collector.of(() -> null,
                                     (a, r) -> {
                                       System.out.println("Trivial: " + r.at(1).get(String.class));
                                     },
                                     (x, y) -> null))
               .submit();
-      conn.<Integer>rowOperation("select * from emp")
+      session.<Integer>rowOperation("select * from emp")
               .collect(Collector.<Result.RowColumn, int[], Integer>of(() -> new int[1],
                       (int[] a, Result.RowColumn r) -> {
                         a[0] = a[0]+r.at("sal").get(Integer.class);
@@ -157,7 +157,7 @@ public class FirstLight {
               .getCompletionStage()
               .thenAccept( n -> {System.out.println("labor cost: " + n);})
               .toCompletableFuture();
-      conn.<Integer>rowOperation("select * from emp where empno = ?")
+      session.<Integer>rowOperation("select * from emp where empno = ?")
               .set("1", 7782)
               .collect(Collector.of(
                       () -> null,
@@ -173,7 +173,7 @@ public class FirstLight {
   /**
    * check does error handling do anything
    */
-  @Test
+  //@Test
   public void errorHandling() {
     Properties props = new Properties();
     props.setProperty("oracle.jdbc.implicitStatementCacheSize", "10");
@@ -182,10 +182,10 @@ public class FirstLight {
             .url(URL)
             .username(USER)
             .password("invalid password")
-            .connectionProperty(JDBC_CONNECTION_PROPERTIES, props)
+            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
-            Connection conn = ds.getConnection(t -> System.out.println("ERROR: " + t.toString()))) {
-      conn.<Void>rowOperation(TRIVIAL)
+            Session session = ds.getSession(t -> System.out.println("ERROR: " + t.toString()))) {
+      session.<Void>rowOperation(TRIVIAL)
               .collect(Collector.of(() -> null,
                                     (a, r) -> {
                                       System.out.println("Trivial: " + r.at(1).get(String.class));
@@ -199,10 +199,10 @@ public class FirstLight {
             .url(URL)
             .username(USER)
             .password(PASSWORD)
-            .connectionProperty(JDBC_CONNECTION_PROPERTIES, props)
+            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
-            Connection conn = ds.getConnection(t -> System.out.println("ERROR: " + t.toString()))) {
-      conn.<Integer>rowOperation("select * from emp where empno = ?")
+            Session session = ds.getSession(t -> System.out.println("ERROR: " + t.toString()))) {
+      session.<Integer>rowOperation("select * from emp where empno = ?")
               .set("1", 7782)
               .collect(Collector.of(
                       () -> null,
@@ -218,7 +218,7 @@ public class FirstLight {
   
   /**
    * Do something that approximates real work. Do a transaction. Uses
-   * Transaction, CompletionStage args, and catch Operation.
+   * TransactionCompletion, CompletionStage args, and catch Operation.
    */
   @Test
   public void transaction() {
@@ -229,11 +229,11 @@ public class FirstLight {
             .url(URL)
             .username(USER)
             .password(PASSWORD)
-            .connectionProperty(JDBC_CONNECTION_PROPERTIES, props)
+            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
-            Connection conn = ds.getConnection(t -> System.out.println("ERROR: " + t.toString()))) {
-      Transaction trans = conn.transaction();
-      CompletionStage<Integer> idF = conn.<Integer>rowOperation("select empno, ename from emp where ename = ? for update")
+            Session session = ds.getSession(t -> System.out.println("ERROR: " + t.toString()))) {
+      TransactionCompletion trans = session.transactionCompletion();
+      CompletionStage<Integer> idF = session.<Integer>rowOperation("select empno, ename from emp where ename = ? for update")
               .set("1", "CLARK", AdbaType.VARCHAR)
               .collect(Collector.of(
                       () -> new int[1], 
@@ -244,7 +244,7 @@ public class FirstLight {
               .submit()
               .getCompletionStage();
       idF.thenAccept( id -> { System.out.println("id: " + id); } );
-      conn.<Long>rowCountOperation("update emp set deptno = ? where empno = ?")
+      session.<Long>rowCountOperation("update emp set deptno = ? where empno = ?")
               .set("1", 50, AdbaType.INTEGER)
               .set("2", idF, AdbaType.INTEGER)
               .apply(c -> { 
@@ -258,8 +258,8 @@ public class FirstLight {
               .submit()
               .getCompletionStage()
               .thenAccept( c -> { System.out.println("updated rows: " + c); } );
-      conn.catchErrors();
-      conn.commitMaybeRollback(trans);
+      session.catchErrors();
+      session.commitMaybeRollback(trans);
     }    
     ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
   }
