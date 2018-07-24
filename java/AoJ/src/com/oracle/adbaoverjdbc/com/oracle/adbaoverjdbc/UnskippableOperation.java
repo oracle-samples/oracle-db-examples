@@ -24,16 +24,16 @@ import java.util.function.Function;
  */
 class UnskippableOperation<T> extends SimpleOperation<T> {
   
-  static <S> UnskippableOperation<S> newOperation(Connection conn,
+  static <S> UnskippableOperation<S> newOperation(Session session,
                                              OperationGroup<? super S, ?> group,
                                              Function<SimpleOperation<S>, S> action) {
-    return new UnskippableOperation<>(conn, group, action);
+    return new UnskippableOperation<>(session, group, action);
   }
 
-  protected UnskippableOperation(Connection conn,
+  protected UnskippableOperation(Session session,
                             OperationGroup<? super T, ?> operationGroup,
                             Function<SimpleOperation<T>, T> action) {
-    super(conn, operationGroup, (Function<SimpleOperation<T>, T>)action);
+    super(session, operationGroup, (Function<SimpleOperation<T>, T>)action);
   }
 
   @Override

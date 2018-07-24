@@ -15,24 +15,24 @@
  */
 package com.oracle.adbaoverjdbc;
 
-import jdk.incubator.sql2.ArrayCountOperation;
 import jdk.incubator.sql2.LocalOperation;
+import jdk.incubator.sql2.MultiOperation;
 import jdk.incubator.sql2.OutOperation;
-import jdk.incubator.sql2.ParameterizedCountOperation;
 import jdk.incubator.sql2.ParameterizedRowOperation;
-import jdk.incubator.sql2.RowProcessorOperation;
 import jdk.incubator.sql2.Submission;
-import jdk.incubator.sql2.Transaction;
 import jdk.incubator.sql2.TransactionOutcome;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Flow;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
-import jdk.incubator.sql2.MultiOperation;
+import jdk.incubator.sql2.ParameterizedRowCountOperation;
+import jdk.incubator.sql2.ParameterizedRowPublisherOperation;
+import jdk.incubator.sql2.ArrayRowCountOperation;
+import jdk.incubator.sql2.TransactionCompletion;
 
 /**
  * Only sequential, dependent, unconditional supported.
@@ -77,16 +77,27 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
           (a, b) -> null,
           a -> null);
 
-  static <U, V> OperationGroup<U, V> newOperationGroup(Connection conn) {
-    return new OperationGroup(conn, conn);
+  static <U, V> OperationGroup<U, V> newOperationGroup(Session session) {
+    return new OperationGroup(session, session);
   }
+  
+  static final Logger NULL_LOGGER = Logger.getAnonymousLogger();
+  static {
+    NULL_LOGGER.setFilter(r -> false);
+    NULL_LOGGER.setLevel(Level.SEVERE);
+  }
+  
+  static final CompletionStage<Boolean> DEFAULT_CONDITION = CompletableFuture.completedFuture(true);
   
   private boolean isParallel = false;
   private boolean isIndependent = false;
-  private CompletionStage<Boolean> condition = null;
+  private CompletionStage<Boolean> condition = DEFAULT_CONDITION;
+  private Submission<T> submission = null;
   
   private Object accumulator;
   private Collector collector;
+  
+  Logger logger = NULL_LOGGER;
   
 /** 
    * completed when this OperationGroup is no longer held. Completion of this
@@ -107,8 +118,17 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
    */
   private CompletionStage<S> memberTail;
   
-  protected OperationGroup(Connection conn, OperationGroup<? super T, ?> group) {
-    super(conn, group);
+  // used only by Session. Will break if used by any other class.
+  protected OperationGroup() {
+    super();
+    held = new CompletableFuture();
+    head = new CompletableFuture();
+    memberTail = head;
+    collector = DEFAULT_COLLECTOR;
+  }
+  
+  protected OperationGroup(Session session, OperationGroup<? super T, ?> group) {
+    super(session, group);
     held = new CompletableFuture();
     head = new CompletableFuture();
     memberTail = head;
@@ -137,18 +157,19 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   }
 
   @Override
-  public jdk.incubator.sql2.Submission<T> submitHoldingForMoreMembers() {
+  public Submission<T> submitHoldingForMoreMembers() {
     if ( isImmutable() || ! isHeld() ) throw new IllegalStateException("TODO");  //TODO prevent multiple calls
     accumulator = collector.supplier().get();
-    return super.submit();
+    submission = super.submit();
+    return submission;
   }
 
   @Override
-  public jdk.incubator.sql2.OperationGroup<S, T> releaseProhibitingMoreMembers() {
+  public jdk.incubator.sql2.Submission<T> releaseProhibitingMoreMembers() {
     if ( ! isImmutable() || ! isHeld() ) throw new IllegalStateException("TODO");
     held.complete(null);
     immutable();  // having set isHeld to false this call will make this OpGrp immutable
-    return this;
+    return submission;
   }
 
   @Override
@@ -162,26 +183,26 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   @Override
   public Operation<S> catchOperation() {
     if (! isHeld() ) throw new IllegalStateException("TODO");
-    return UnskippableOperation.newOperation(connection, this, op -> null);
+    return UnskippableOperation.newOperation(session, this, op -> null);
   }
 
   @Override
-  public <R extends S> ArrayCountOperation<R> arrayCountOperation(String sql) {
+  public <R extends S> ArrayRowCountOperation<R> arrayRowCountOperation(String sql) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public <R extends S> ParameterizedCountOperation<R> countOperation(String sql) {
+  public <R extends S> ParameterizedRowCountOperation<R> rowCountOperation(String sql) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
      if (sql == null) throw new IllegalArgumentException("TODO");
-    return CountOperation.newCountOperation(connection, this, sql);
+    return CountOperation.newCountOperation(session, this, sql);
  }
 
   @Override
   public SqlOperation<S> operation(String sql) {
     if ( !isHeld() ) throw new IllegalStateException("TODO");
-    return SqlOperation.newOperation(connection, this, sql);
+    return SqlOperation.newOperation(session, this, sql);
   }
 
   @Override
@@ -194,11 +215,11 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   public <R extends S> ParameterizedRowOperation<R> rowOperation(String sql) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
     if (sql == null) throw new IllegalArgumentException("TODO");
-    return RowOperation.newRowOperation(connection, this, sql);
+    return RowOperation.newRowOperation(session, this, sql);
   }
 
   @Override
-  public <R extends S> RowProcessorOperation<R> rowProcessorOperation(String sql) {
+  public <R extends S> ParameterizedRowPublisherOperation<R> rowPublisherOperation(String sql) {
     if ( !isHeld() ) throw new IllegalStateException("TODO");
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
@@ -210,12 +231,12 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   }
 
   @Override
-  public SimpleOperation<TransactionOutcome> endTransactionOperation(Transaction trans) {
+  public SimpleOperation<TransactionOutcome> endTransactionOperation(TransactionCompletion trans) {
     if ( ! isHeld() ) throw new IllegalStateException("TODO");
     return com.oracle.adbaoverjdbc.SimpleOperation.<TransactionOutcome>newOperation(
-              connection, 
+              session, 
               (OperationGroup<Object,T>)this, 
-              op -> connection.jdbcEndTransaction(op, (com.oracle.adbaoverjdbc.Transaction)trans));
+              op -> session.jdbcEndTransaction(op, (com.oracle.adbaoverjdbc.TransactionCompletion)trans));
   }
 
   @Override
@@ -225,15 +246,10 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   }
 
   @Override
-  public <R extends S> Flow.Processor<jdk.incubator.sql2.Operation<R>, Submission<R>> operationProcessor() {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
   public jdk.incubator.sql2.OperationGroup<S, T> logger(Logger logger) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if ( logger == null ) throw new NullPointerException("OperationGroup.logger");
+    else this.logger = logger;
+    return this;
   }
 
   @Override
@@ -265,9 +281,20 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
 
   @Override
   CompletionStage<T> follows(CompletionStage<?> predecessor, Executor executor) {
-    head.complete(predecessor); // completing head allows members to execute
-    return held.thenCompose( h -> // when held completes memberTail holds the last member
-            memberTail.thenApplyAsync( t -> (T)collector.finisher().apply(accumulator), executor));
+    return condition.thenCompose(cond -> {
+      if (cond) {
+        head.complete(predecessor);
+        return held.thenCompose(h
+                -> memberTail.thenApplyAsync(t -> (T)collector.finisher()
+                                                              .apply(accumulator),
+                                             executor)
+        );
+      }
+      else {
+        return CompletableFuture.completedStage(null);
+      }
+    }
+    );
   }
   
   protected boolean isHeld() {

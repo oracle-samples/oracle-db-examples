@@ -15,53 +15,53 @@
  */
 package com.oracle.adbaoverjdbc;
 
-import jdk.incubator.sql2.ConnectionProperty;
+import jdk.incubator.sql2.SessionProperty;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Bare bones DataSource. No support for Connection caching.
+ * Bare bones DataSource. No support for Session caching.
  *
  */
 class DataSource implements jdk.incubator.sql2.DataSource {
 
-  static DataSource newDataSource(Map<ConnectionProperty, Object> defaultConnectionProperties,
-          Map<ConnectionProperty, Object> requiredConnectionProperties) {
-    return new DataSource(defaultConnectionProperties, requiredConnectionProperties);
+  static DataSource newDataSource(Map<SessionProperty, Object> defaultSessionProperties,
+          Map<SessionProperty, Object> requiredSessionProperties) {
+    return new DataSource(defaultSessionProperties, requiredSessionProperties);
   }
 
-  protected final Map<ConnectionProperty, Object> defaultConnectionProperties;
-  protected final Map<ConnectionProperty, Object> requiredConnectionProperties;
+  protected final Map<SessionProperty, Object> defaultSessionProperties;
+  protected final Map<SessionProperty, Object> requiredSessionProperties;
   
-  protected final Set<Connection> openConnections = new HashSet<>();
+  protected final Set<Session> openSessions = new HashSet<>();
 
-  protected DataSource(Map<ConnectionProperty, Object> defaultProps,
-          Map<ConnectionProperty, Object> requiredProps) {
+  protected DataSource(Map<SessionProperty, Object> defaultProps,
+          Map<SessionProperty, Object> requiredProps) {
     super();
-    defaultConnectionProperties = defaultProps;
-    requiredConnectionProperties = requiredProps;
+    defaultSessionProperties = defaultProps;
+    requiredSessionProperties = requiredProps;
   }
 
   @Override
-  public Connection.Builder builder() {
-    return ConnectionBuilder.newConnectionBuilder(this, defaultConnectionProperties, requiredConnectionProperties);
+  public Session.Builder builder() {
+    return SessionBuilder.newSessionBuilder(this, defaultSessionProperties, requiredSessionProperties);
   }
 
   @Override
   public void close() {
-    openConnections.stream().forEach( c -> c.close() );
+    openSessions.stream().forEach( c -> c.close() );
   }
   
   
   
-  DataSource registerConnection(Connection c) {
-    openConnections.add(c);
+  DataSource registerSession(Session c) {
+    openSessions.add(c);
     return this;
   }
   
-  DataSource deregisterConnection(Connection c) {
-    openConnections.remove(c);
+  DataSource deregisterSession(Session c) {
+    openSessions.remove(c);
     return this;
   }
 

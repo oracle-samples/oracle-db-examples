@@ -18,27 +18,27 @@ package com.oracle.adbaoverjdbc;
 /**
  *
  */
-class Transaction implements jdk.incubator.sql2.Transaction {
+class TransactionCompletion implements jdk.incubator.sql2.TransactionCompletion {
 
   private boolean isRollbackOnly = false;
   private boolean isInFlight = true;
-  private final Connection connection;
+  private final Session session;
   
-  static Transaction createTransaction(Connection conn) {
-    return new Transaction(conn);
+  static TransactionCompletion createTransaction(Session session) {
+    return new TransactionCompletion(session);
   }
   
-  private Transaction(Connection conn) {
-    connection = conn;
+  private TransactionCompletion(Session session) {
+    this.session = session;
   }
   
   /**
    * 
-   * @param conn
+   * @param session
    * @return true iff transaction should be committed. false otherwise
    */
-  synchronized boolean endWithCommit(Connection conn) {
-    if (conn != connection) throw new IllegalArgumentException("TODO");
+  synchronized boolean endWithCommit(Session session) {
+    if (session != session) throw new IllegalArgumentException("TODO");
     if (!isInFlight) throw new IllegalStateException("TODO");
     isInFlight = false;
     return !isRollbackOnly;
@@ -46,7 +46,7 @@ class Transaction implements jdk.incubator.sql2.Transaction {
   
   @Override
   public synchronized boolean setRollbackOnly() {
-    if (!connection.getConnectionLifecycle().isActive()) throw new IllegalStateException("TODO");
+    if (!session.getSessionLifecycle().isActive()) throw new IllegalStateException("TODO");
     if (isInFlight) {
       isRollbackOnly = true;
       return true;

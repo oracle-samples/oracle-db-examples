@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.oracle.adbaoverjdbc;
 
-import jdk.incubator.sql2.DataSource;
+package com.oracle.adbaoverjdbc.test;
+
+import jdk.incubator.sql2.DataSourceFactory;
+
+import static com.oracle.adbaoverjdbc.test.TestConfig.*;
 
 /**
- *
+ * Verifies the public API of DataSource functions as described in the ADBA 
+ * javadoc.
  */
-public class DataSourceFactory implements jdk.incubator.sql2.DataSourceFactory {
+public class DataSourceTest {
+  
+  final DataSourceFactory dsFactory = 
+    DataSourceFactory.newFactory(TEST_DS_FACTORY_NAME);
+  
 
-  @Override
-  public DataSource.Builder builder() {
-    return DataSourceBuilder.newDataSourceBuilder();
-  }
-
+  // Instances of this type are used to build DataSources. 
+  // This type is immutable once configured. No property can be set more than once. 
+  // No property can be set after build() is called.
 }

@@ -93,7 +93,7 @@ async function update(emp) {
   const employee = Object.assign({}, emp);
   const result = await database.simpleExecute(updateSql, employee);
 
-  if (result.rowsAffected === 1) {
+  if (result.rowsAffected && result.rowsAffected === 1) {
     return employee;
   } else {
     return null;

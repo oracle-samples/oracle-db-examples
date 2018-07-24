@@ -15,18 +15,18 @@
  */
 package com.oracle.adbaoverjdbc;
 
-import jdk.incubator.sql2.ConnectionProperty;
+import jdk.incubator.sql2.SessionProperty;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A builder to create an AoJ connection. The AoJ connection creates a JDBC
- * connection by calling java.sql.DriverManager.getConnection with the following
- * user provided ConnectionProperty values:
+ * A builder to create an AoJ session. The AoJ session creates a JDBC
+ * Connection by calling {@link java.sql.DriverManager#getConnection} with the following
+ * user provided SessionProperty values:
  * 
  * <dl>
  * <dt>URL</dt>
- * <dd>passed as the url argument to getConnection</dd>
+ * <dd>passed as the url argument to getSession</dd>
  * <dt>USER</dt>
  * <dd>added to the JDBC_CONNECTION_PROPERTIES as the "user" property.</dd>
  * <dt>PASSWORD</dt>
@@ -35,7 +35,7 @@ import java.util.Map;
  * <dd>a java.util.Properties passed as the info argument to getConnection</dd>
  * </dl>
  */
-class ConnectionBuilder implements jdk.incubator.sql2.Connection.Builder {
+class SessionBuilder implements jdk.incubator.sql2.Session.Builder {
 
   /**
    *
@@ -44,34 +44,34 @@ class ConnectionBuilder implements jdk.incubator.sql2.Connection.Builder {
    * @param requiredProperties. Captured
    * @return
    */
-  static ConnectionBuilder newConnectionBuilder(DataSource ds, 
-          Map<ConnectionProperty, Object> defaultProperties,
-          Map<ConnectionProperty, Object> requiredProperties) {
-    return new ConnectionBuilder(ds, defaultProperties, requiredProperties);
+  static SessionBuilder newSessionBuilder(DataSource ds, 
+          Map<SessionProperty, Object> defaultProperties,
+          Map<SessionProperty, Object> requiredProperties) {
+    return new SessionBuilder(ds, defaultProperties, requiredProperties);
   }
 
   private boolean isBuilt = false;
   private final DataSource dataSource;
-  private final Map<ConnectionProperty, Object> defaultProperties;
-  private final Map<ConnectionProperty, Object> requiredProperties;
+  private final Map<SessionProperty, Object> defaultProperties;
+  private final Map<SessionProperty, Object> requiredProperties;
 
   /**
    * 
    * @param ds
-   * @param defaultConnectionProperties
-   * @param specifiedConnectionProperties 
+   * @param defaultSessionProperties
+   * @param specifiedSessionProperties 
    */
-  private ConnectionBuilder(DataSource ds,
-          Map<ConnectionProperty, Object> defaultConnectionProperties,
-          Map<ConnectionProperty, Object> specifiedConnectionProperties) {
+  private SessionBuilder(DataSource ds,
+          Map<SessionProperty, Object> defaultSessionProperties,
+          Map<SessionProperty, Object> specifiedSessionProperties) {
     super();
     dataSource = ds;
-    defaultProperties = new HashMap(defaultConnectionProperties);
-    requiredProperties = new HashMap(specifiedConnectionProperties);
+    defaultProperties = new HashMap(defaultSessionProperties);
+    requiredProperties = new HashMap(specifiedSessionProperties);
   }
 
   @Override
-  public jdk.incubator.sql2.Connection.Builder property(ConnectionProperty property, Object value) {
+  public jdk.incubator.sql2.Session.Builder property(SessionProperty property, Object value) {
     if (isBuilt) {
       throw new IllegalStateException("TODO");
     }
@@ -86,7 +86,7 @@ class ConnectionBuilder implements jdk.incubator.sql2.Connection.Builder {
   }
 
   @Override
-  public jdk.incubator.sql2.Connection build() {
+  public jdk.incubator.sql2.Session build() {
     if (isBuilt) {
       throw new IllegalStateException("TODO");
     }
@@ -94,7 +94,7 @@ class ConnectionBuilder implements jdk.incubator.sql2.Connection.Builder {
     // replace default values with specified values where provided
     // otherwise use defaults
     defaultProperties.putAll(requiredProperties);
-    return Connection.newConnection(dataSource, defaultProperties);
+    return Session.newSession(dataSource, defaultProperties);
   }
 
 }
