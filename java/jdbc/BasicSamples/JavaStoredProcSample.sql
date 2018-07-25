@@ -8,7 +8,6 @@ Rem
 Rem    DESCRIPTION
 Rem      This SQL script is for creating a wrapper for a java stored procedure; 
 REm      then calls it and displays the output.
-
 REM 
 REM Wrapper (a.k.a. Call Spec) for invoking JavaStoredProcSample.getEmpCountByDept(int) 
 REM 
