@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<navigator RESOURCE_FILE="oracle.db.examples.sqldeveloper.extension.favorites.FavoritesResources"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="navigator.xsd">
+	
+	<!-- weight for table is 100 so lots of room for user folders to come first -->
+	<objectType connType="Oracle" id="FAVORITES" weight="1.0">
+		<folder>
+			<icon RSKEY="OracleIcons.FAVORITES" />
+			<label RSKEY="favorites_folder_label" />
+			<!-- Binds: {CATALOG=, ConnectionType=Oracle, SCHEMA=<schema>, TYPE=FAVORITES, 
+				INCLUDE_SYNS=null} -->
+			<queries>
+				<query requiredAccessObjects="SDX$FAVORITES">
+					<sql constrained="false">
+                        <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER, 'FAV_FOLDER IS NULL' FAV_FOLDER_PREDICATE FROM "SDX$FAVORITES" WHERE FAV_FOLDER IS NULL)]]>
+					</sql>
+				</query>
+			</queries>
+		</folder>
+
+		<node>
+			<!-- the node icon and all other info are based on the "TYPE" from the 
+				folder query -->
+			<icon RSKEY="OracleIcons.FAVORITES" />
+		</node>
+	</objectType>
+
+	<!-- This is the definition of our new FAV_FOLDER TYPE 
+	
+	     Unfortunately childType needs an explicit nodeType to work so each potential type must
+	     be declared individually. This also means all of the queries will be run whenever the 
+	     parent folder is opened / refreshed. 
+	     
+	     Note that there need to be corresponding add favorite actions declared in 
+	     favorites_actions.xml for each
+	-->
+	<objectType connType="Oracle" id="FAV_FOLDER" weight="99.0">
+		<node>
+			<icon RSKEY="OracleIcons.FOLDER" />
+			<childType id="FAV_FOLDER" nodeType="FAV_FOLDER">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER, 'FAV_FOLDER='''||FAV_FOLDER||'''' FAV_FOLDER_PREDICATE FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                            AND OBJECT_TYPE='FAV_FOLDER')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="TABLE" nodeType="TABLE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                            AND OBJECT_TYPE='TABLE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="VIEW" nodeType="VIEW">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='VIEW')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="EDITION_VIEW" nodeType="EDITION_VIEW">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='EDITION_VIEW')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="INDEX" nodeType="INDEX">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='INDEX')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="PACKAGE" nodeType="PACKAGE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='PACKAGE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="PROCEDURE" nodeType="PROCEDURE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='PROCEDURE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="FUNCTION" nodeType="FUNCTION">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='FUNCTION')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="OPERATOR" nodeType="OPERATOR">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='OPERATOR')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="QUEUE" nodeType="QUEUE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='QUEUE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="QUEUE_TABLE" nodeType="QUEUE_TABLE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='QUEUE_TABLE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="TRIGGER" nodeType="TRIGGER">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='TRIGGER')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="EDITION_TRIGGER" nodeType="EDITION_TRIGGER">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='EDITION_TRIGGER')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="TYPE" nodeType="TYPE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='TYPE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SEQUENCE" nodeType="SEQUENCE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SEQUENCE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			
+		<!-- REST Data Services -->
+			<childType id="REST_MODULE" nodeType="REST_MODULE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='REST_MODULE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="REST_PRIVILEGE" nodeType="REST_PRIVILEGE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='REST_PRIVILEGE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="REST_ROLE" nodeType="REST_ROLE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='REST_ROLE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			
+			<childType id="MATERIALIZED_VIEW" nodeType="MATERIALIZED_VIEW">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='MATERIALIZED_VIEW')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="MATERIALIZED_VIEW_LOG" nodeType="MATERIALIZED_VIEW_LOG">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='MATERIALIZED_VIEW_LOG')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SYNONYM" nodeType="SYNONYM">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SYNONYM')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="PUBLIC_SYNONYM" nodeType="PUBLIC_SYNONYM">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='PUBLIC_SYNONYM')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="DATABASE_LINK" nodeType="DATABASE_LINK">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='DATABASE_LINK')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="PUBLIC_DATABASE_LINK" nodeType="PUBLIC_DATABASE_LINK">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='PUBLIC_DATABASE_LINK')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="DIRECTORY" nodeType="DIRECTORY">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='DIRECTORY')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="EDITION_SUBFOLDER" nodeType="EDITION_SUBFOLDER">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='EDITION_SUBFOLDER')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="JAVA" nodeType="JAVA">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='JAVA')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="XML_SCHEMA" nodeType="XML_SCHEMA">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='XML_SCHEMA')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="XDB_SUBFOLDER" nodeType="XDB_SUBFOLDER">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='XDB_SUBFOLDER')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+		
+		<!--  OLAP Option -->
+			<childType id="OLAPAW" nodeType="OLAPAW">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='OLAPAW')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="OLAPJOBSCHEDULED" nodeType="OLAPJOBSCHEDULED">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='OLAPJOBSCHEDULED')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="OLAPJOBRUNNING" nodeType="OLAPJOBRUNNING">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='OLAPJOBRUNNING')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="OLAPJOBHISTORY" nodeType="OLAPJOBHISTORY">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='OLAPJOBHISTORY')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+		
+		<!-- Analytic Views -->
+			<childType id="ATTRIBUTE_DIMENSION" nodeType="ATTRIBUTE_DIMENSION">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='ATTRIBUTE_DIMENSION')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="HIERARCHY" nodeType="HIERARCHY">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='HIERARCHY')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="ANALYTIC_VIEW" nodeType="ANALYTIC_VIEW">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='ANALYTIC_VIEW')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+		
+		<!-- Scheduler -->
+			<childType id="SCHNEWJOB" nodeType="SCHNEWJOB">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHNEWJOB')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHPROGRAM" nodeType="SCHPROGRAM">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHPROGRAM')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHSCHEDULE" nodeType="SCHSCHEDULE">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHSCHEDULE')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHCREDENTIAL" nodeType="SCHCREDENTIAL">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHCREDENTIAL')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHFILEWATCHER" nodeType="SCHFILEWATCHER">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHFILEWATCHER')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHCHAIN" nodeType="SCHCHAIN">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHCHAIN')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHDBDESTINATION" nodeType="SCHDBDESTINATION">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHDBDESTINATION')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHDBDESTGROUP" nodeType="SCHDBDESTGROUP">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHDBDESTGROUP')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="SCHEXTDESTGROUP" nodeType="SCHEXTDESTGROUP">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='SCHEXTDESTGROUP')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+			<childType id="JOBS" nodeType="JOBS">
+				<queries>
+					<query requiredAccessObjects="SDX$FAVORITES">
+						<sql>
+        	                <![CDATA[SELECT * FROM (SELECT OBJECT_NAME NAME, OBJECT_OWNER SCHEMA, OBJECT_TYPE TYPE, FAV_FOLDER FROM "SDX$FAVORITES" WHERE FAV_FOLDER = :PARENT_NAME 
+        	                                   AND OBJECT_TYPE='JOBS')]]>
+						</sql>
+					</query>
+				</queries>
+			</childType>
+		</node>   
+	</objectType>
+
+</navigator>
