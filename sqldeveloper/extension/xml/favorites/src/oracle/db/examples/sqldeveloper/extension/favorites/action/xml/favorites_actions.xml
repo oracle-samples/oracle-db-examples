@@ -1,0 +1,1322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.oracle.com/sqldeveloper/3_1/dialogs
+                        http://xmlns.oracle.com/sqldeveloper/3_1/dialogs.xsd"
+    xmlns="http://xmlns.oracle.com/sqldeveloper/3_1/dialogs">
+    
+    <!-- See http://xmlns.oracle.com/sqldeveloper/3_1/dialogs for action schema documentation -->
+
+	<item connType="Oracle" type="CONNECTION"
+		connectionRequired="true" reload="true" reloadparent="true">
+		<title>Create Favorites Table...</title>
+		<help>Create a favorites (SDX$FAVTORITES) table in the current schema to hold favorites folders and object references.</help>
+		<iconName>oracle.ide.resource.IdeArb:RENAME_ICON</iconName>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+  CREATE TABLE "SDX$FAVORITES"
+   ("FAV_FOLDER" VARCHAR2(128),
+    "OBJECT_OWNER" VARCHAR2(128),
+    "OBJECT_TYPE" VARCHAR2(23),
+    "OBJECT_NAME" VARCHAR2(128),
+    CONSTRAINT OBJ_NEEDS_FAV_FOLDER CHECK ((FAV_FOLDER IS NULL AND OBJECT_TYPE='FAV_FOLDER') OR (FAV_FOLDER IS NOT NULL AND FAV_FOLDER!=''))  
+   ) ;
+--  INSERT INTO SDX$FAVORITES (FAV_FOLDER, OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME)
+--                 VALUES ('', '#OBJECT_OWNER#', 'FAV_FOLDER', 'Default')
+--  ;
+  COMMIT
+  ;
+        ]]>
+        </sql>
+		<confirmation>
+			<title>Favorites Table Created</title>
+			<prompt><![CDATA[<html><p/><p/><b>WARNING!</b> The objects in the favorites folders are just that. Any action on one affects the 'real' thing.<p/><p/>
+			A default favorites folder has been created. Deleting a favorites folder will remove the references from favorites but not affect the 'real' object.<p/><p/>
+			You <b>will</b> need to disconnect and reconnect for the favorites folder in the navigator to appear.<p/><p/></html>]]></prompt>
+		</confirmation>
+	</item>
+
+	<item connType="Oracle" type="FAVORITES_FOLDER"
+		reloadparent="true">
+		<title>Drop Favorites Table...</title>
+		<help>Drop the favorites (SDX$FAVTORITES) table in the current schema that holds favorites folders and object references.</help>
+		<iconName>IdeArb:RENAME_ICON</iconName>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+DROP TABLE "SDX$FAVORITES" CASCADE CONSTRAINTS
+;
+COMMIT
+;
+        ]]>
+        </sql>
+	</item>
+
+	<!-- Making this more an 'ensure favorites folder is there' to 
+		 avoid issues with duplicate folder names. See discussion
+		 below.  
+	-->
+	<item connType="Oracle" type="FAVORITES_FOLDER" reload="true">
+		<title>Add Folder...</title>
+		<help>Add a new favorites folder.</help>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt>
+			<label>New Folder Name</label>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+  INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME)
+                 VALUES (sys_context('USERENV','AUTHENTICATED_IDENTITY'), 'FAV_FOLDER', '#0#')
+                 WHERE NOT EXISTS (SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_NAME='#0#'
+                                      AND OBJECT_TYPE='FAV_FOLDER')
+  ;
+  COMMIT
+  ;
+        ]]>
+        </sql>
+	</item>
+	
+	<!-- There are "issues" with having nested folders as the current table 
+	     design only stores parent folder name. This means that folders of 
+	     the same name in any hierarchy will display the same children. This
+	     also means that we can only delete the favorites folder, not any 
+	     references 'under' it. Let's just use a simple flat list & save
+	     the fancy stuff for a java implementation. 
+	<item connType="Oracle" type="FAV_FOLDER" reload="true">
+		<title>Add Folder...</title>
+		<help>Add a new favorites folder.</help>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt>
+			<label>New Folder Name</label>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+  INSERT INTO SDX$FAVORITES (FAV_FOLDER, OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME)
+                 VALUES ('#OBJECT_NAME#', sys_context('USERENV','AUTHENTICATED_IDENTITY'), 'FAV_FOLDER', '#0#')
+  ;
+  COMMIT
+  ;
+        ]]>
+        </sql>
+	</item>
+	-->
+	<!--  (See above) Since we are only allowing a flat list of favorite 
+	      folders, we can clean up the references. If folder hierarchies are
+	      allowed, we have to check and make sure there are no other folders 
+	      of the same name before deleting references.
+	-->
+	<item connType="Oracle" type="FAV_FOLDER" reloadparent="true">
+		<title>Delete Folder...</title>
+		<iconName>OracleIcons.DELETE</iconName>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/>
+			Delete #OBJECT_NAME#?<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<!-- TODO: Hierarchical query to find/delete folder 'contents' -->
+		<sql type="SCRIPT"><![CDATA[
+  DELETE FROM SDX$FAVORITES WHERE FAV_FOLDER='#OBJECT_NAME#'
+  ;
+  DELETE FROM SDX$FAVORITES WHERE OBJECT_NAME='#OBJECT_NAME#' AND #FAV_FOLDER_PREDICATE# AND OBJECT_TYPE='FAV_FOLDER' AND OBJECT_OWNER='#OBJECT_OWNER#'
+  ;
+  COMMIT
+  ;
+        ]]>
+        </sql>
+		<confirmation>
+			<title>Favorites Folder #OBJECT_OWNER#.#FAV_FOLDER#/#OBJECT_NAME# Deleted</title>
+			<!-- We are not allowing duplicate or nested folders so this warning does not apply 
+			<prompt><![CDATA[<html><p/><p/>Note that (currently) only the folder record is deleted. The folder content records orphaned, they are not deleted.<p/><p/>
+			Recreating a folder of the same name will 'adopt' the prior content.<p/><p/></html>]]></prompt>
+			 -->
+		</confirmation>
+	</item>	
+
+
+	<!--  All of these "Add to favorites" are exactly the same aside from
+		  the item attributes that assign the action to an object type.
+		   
+		  These/This should be java so extension.xml can assign to all db 
+		  nodes and controller update can check if the SDX$FAVORITES table
+		  is there on the current connection.
+	      
+	      Note that there need to be corresponding childType entries for 
+	      each in favorites_nav.xml 
+	-->
+    <item connType="Oracle" type="TABLE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="VIEW" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="EDITION_VIEW" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="INDEX" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="PACKAGE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="PROCEDURE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="FUNCTION" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="OPERATOR" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="QUEUE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="QUEUE_TABLE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="TRIGGER" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="EDITION_TRIGGER" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="TYPE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SEQUENCE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    
+<!-- REST Data Services -->
+    <item connType="Oracle" type="REST_MODULE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="REST_PRIVILEGE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="REST_ROLE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    
+    <item connType="Oracle" type="MATERIALIZED_VIEW" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="MATERIALIZED_VIEW_LOG" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SYNONYM" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="PUBLIC_SYNONYM" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="DATABASE_LINK" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="PUBLIC_DATABASE_LINK" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="DIRECTORY" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="EDITION_SUBFOLDER" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+				<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="JAVA" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="XML_SCHEMA" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="XDB_SUBFOLDER" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+
+<!--  OLAP Option -->
+    <item connType="Oracle" type="OLAPAW" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="OLAPJOBSCHEDULED" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="OLAPJOBRUNNING" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="OLAPJOBHISTORY" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+
+<!-- Analytic Views -->
+    <item connType="Oracle" type="ATTRIBUTE_DIMENSION" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="HIERARCHY" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="ANALYTIC_VIEW" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+
+<!-- Scheduler -->
+    <item connType="Oracle" type="SCHNEWJOB" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHPROGRAM" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHSCHEDULE" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHCREDENTIAL" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHFILEWATCHER" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHCHAIN" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHDBDESTINATION" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHDBDESTGROUP" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="SCHEXTDESTGROUP" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+    <item connType="Oracle" type="JOBS" reload="false">
+        <title>Add to favorites...</title>
+		<iconName>OracleIcons.ADDFAVORITES</iconName>
+		<prompt required="true"> <!-- idx = 0 -->
+			<label>Folder Name</label>
+			<value>
+				<![CDATA[SELECT OBJECT_NAME FROM SDX$FAVORITES WHERE OBJECT_TYPE = 'FAV_FOLDER']]>
+			</value>
+		</prompt>
+		<prompt type="confirm">
+			<label><![CDATA[<html><p/><p/><b>WARNING!</b> This action will issue a <b>commit</b> on the current connection.<p/><p/><html>]]></label>
+		</prompt>
+		<prompt>
+			<label>Commit State</label>
+			<default><![CDATA[select NVL2(dbms_transaction.local_transaction_id, '*** Transactions Pending ***', 'It appears no transactions are pending') from dual]]></default>
+		</prompt>
+		<sql type="SCRIPT"><![CDATA[
+INSERT INTO SDX$FAVORITES (OBJECT_OWNER, OBJECT_TYPE, OBJECT_NAME, FAV_FOLDER)
+	VALUES ('#OBJECT_OWNER#', '#OBJECT_TYPE#', '#OBJECT_NAME#', '#0#')
+;
+COMMIT
+;	
+		]]>
+        </sql>
+    </item>
+
+</items>
