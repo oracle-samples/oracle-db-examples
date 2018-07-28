@@ -17,10 +17,15 @@ This allows combining a number of xml definitions together as well as the abilit
  
 * [individual](individual)  
 Examples for ACTION, EDITOR, NAVIGATOR
-  
+
+
 * [packaged](packaged)  
 XML Examples packaged as an extension.jar  
 
-  
+
+* [Simple Favorites](favorites)  
+XML-Based favorites folders (packaged as an extension.jar)
+
+
 * [schema](schema)  
 XML schema for the three extension types. Note that the dialogs(ACTION) schema is heavily annotated and has been run through [xsddoc](http://xframe.sourceforge.net/xsddoc/index.html) to produce javadoc-like documentation [here](http://xmlns.oracle.com/sqldeveloper/3_1/dialogs).     
