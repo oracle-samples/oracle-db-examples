@@ -27,18 +27,18 @@ import jdk.incubator.sql2.SqlSkippedException;
  */
 class SimpleOperation<T> extends Operation<T> implements Supplier<T> {
 
-  static <S> SimpleOperation<S> newOperation(Connection conn,
+  static <S> SimpleOperation<S> newOperation(Session session,
                                              OperationGroup<? super S, ?> group,
                                              Function<SimpleOperation<S>, S> act) {
-    return new SimpleOperation<>(conn, group, act);
+    return new SimpleOperation<>(session, group, act);
   }
 
   private final Function<SimpleOperation<T>, T> action;
 
-  protected SimpleOperation(Connection conn,
+  protected SimpleOperation(Session session,
                             OperationGroup<? super T, ?> operationGroup,
                             Function<SimpleOperation<T>, T> act) {
-    super(conn, operationGroup);
+    super(session, operationGroup);
     action = act;
   }
 

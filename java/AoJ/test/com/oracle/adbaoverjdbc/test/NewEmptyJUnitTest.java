@@ -13,18 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.oracle.adbaoverjdbc;
+package com.oracle.adbaoverjdbc.test;
 
-import jdk.incubator.sql2.DataSource;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
+ * @author douglas.surber
  */
-public class DataSourceFactory implements jdk.incubator.sql2.DataSourceFactory {
-
-  @Override
-  public DataSource.Builder builder() {
-    return DataSourceBuilder.newDataSourceBuilder();
+public class NewEmptyJUnitTest {
+  
+  public NewEmptyJUnitTest() {
+  }
+  
+  @BeforeClass
+  public static void setUpClass() {
+  }
+  
+  @AfterClass
+  public static void tearDownClass() {
+  }
+  
+  @Before
+  public void setUp() {
+  }
+  
+  @After
+  public void tearDown() {
   }
 
+  // TODO add test methods here.
+  // The methods must be annotated with annotation @Test. For example:
+  //
+  // @Test
+  // public void hello() {}
 }

@@ -16,7 +16,6 @@
 package com.oracle.adbaoverjdbc;
 
 import jdk.incubator.sql2.ParameterizedRowOperation;
-import jdk.incubator.sql2.Result;
 import jdk.incubator.sql2.SqlException;
 import jdk.incubator.sql2.SqlType;
 import java.sql.PreparedStatement;
@@ -27,8 +26,11 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.stream.Collector;
+import jdk.incubator.sql2.Result;
 
 /**
  * Creates separate CompletionStages to execute the query, to fetch and process
@@ -47,8 +49,8 @@ class RowOperation<T>  extends ParameterizedOperation<T>
           (a, v) -> {},
           (a, b) -> null,
           a -> null);
-  static <S> RowOperation<S> newRowOperation(Connection conn, OperationGroup grp, String sql) {
-    return new RowOperation<>(conn, grp, sql);
+  static <S> RowOperation<S> newRowOperation(Session session, OperationGroup grp, String sql) {
+    return new RowOperation<>(session, grp, sql);
   }
   
   // attributes
@@ -59,13 +61,14 @@ class RowOperation<T>  extends ParameterizedOperation<T>
   // internal state
   private PreparedStatement jdbcStatement;
   private ResultSet resultSet;
+  private ResultSetMetaData resultSetMetaData;
   private Object accumulator;
   private boolean rowsRemain;
   private long rowCount;
   private String[] identifiers;
   
-  protected RowOperation(Connection conn, OperationGroup grp, String sql) {
-    super(conn, grp);
+  protected RowOperation(Session session, OperationGroup grp, String sql) {
+    super(session, grp);
     fetchSize = NOT_SET;
     collector = DEFAULT_COLLECTOR;
     sqlString = sql;
@@ -123,13 +126,14 @@ class RowOperation<T>  extends ParameterizedOperation<T>
   private void executeQuery() {
     checkCanceled();
     try {
-      jdbcStatement = connection.prepareStatement(sqlString);
+      jdbcStatement = session.prepareStatement(sqlString);
       initFetchSize();
       setParameters.forEach((String k, ParameterValue v) -> {
         v.set(jdbcStatement, k);
       });
-      System.out.println("executeQuery(\"" + sqlString + "\")");
+      group.logger.log(Level.FINE, () -> "executeQuery(\"" + sqlString + "\")");
       resultSet = jdbcStatement.executeQuery();
+      resultSetMetaData = resultSet.getMetaData();
       accumulator = collector.supplier().get();
       rowsRemain = true;
       rowCount = 0;
@@ -164,7 +168,7 @@ class RowOperation<T>  extends ParameterizedOperation<T>
   
   private void handleRow() throws SQLException {
     checkCanceled();
-    try (Row row = new Row(this)) {
+    try (RowColumn row = new RowOperation.RowColumn(this)) {
       collector.accumulator().accept(accumulator, row);
     }
   }
@@ -187,12 +191,12 @@ class RowOperation<T>  extends ParameterizedOperation<T>
         if (resultSet == null) {
           throw new IllegalStateException("TODO");
         }
-        System.out.println("ResultSet.getMetaData()"); //DEBUG
+        group.logger.log(Level.FINE, () -> "ResultSet.getMetaData()"); //DEBUG
         ResultSetMetaData md = resultSet.getMetaData();
         int count = md.getColumnCount();
         identifiers = new String[count];
         for (int i = 0; i < count; i++) {
-          identifiers[i] = md.getColumnName(i);
+          identifiers[i] = md.getColumnLabel(i + 1);
         }
       }
       catch (SQLException ex) {
@@ -200,6 +204,15 @@ class RowOperation<T>  extends ParameterizedOperation<T>
       }
     }
     return identifiers;
+  }
+  
+  String enquoteIdentifier(String id) {
+    try {
+      return jdbcStatement.enquoteIdentifier(id, false);
+    }
+    catch (SQLException ex) {
+      throw new SqlException(ex.getMessage(), ex, ex.getSQLState(), ex.getErrorCode(), sqlString, -1);
+    }
   }
 
   @Override
@@ -211,7 +224,7 @@ class RowOperation<T>  extends ParameterizedOperation<T>
   }
 
   @Override
-  public <A, S extends T> ParameterizedRowOperation<T> collect(Collector<? super Result.Row, A, S> c) {
+  public <A, S extends T> ParameterizedRowOperation<T> collect(Collector<? super Result.RowColumn, A, S> c) {
     if (isImmutable() || collector != DEFAULT_COLLECTOR) throw new IllegalStateException("TODO");
     if (c == null) throw new IllegalArgumentException("TODO");
     collector = c;
@@ -249,45 +262,62 @@ class RowOperation<T>  extends ParameterizedOperation<T>
     return (RowOperation<T>)super.set(id, value);
   }
 
-  static final class Row implements jdk.incubator.sql2.Result.Row, AutoCloseable {
+  static final class RowColumn implements jdk.incubator.sql2.Result.RowColumn, AutoCloseable {
     
-    private RowOperation op;
+    static RowOperation.RowColumn newRowColumn(RowOperation op) {
+      return new RowOperation.RowColumn(op);
+    }
     
-    Row(RowOperation op) {
+    private final AtomicBoolean isClosed; // all slices and clones share this
+    private final RowOperation op;
+    private int columnIndex = -1;
+    private int columnOffset = 0; // used by slices
+    private int lastColumn = Integer.MAX_VALUE;
+    
+    // use this only to construct de novo RowColumns. Do not use for slice or clone
+    // use clone() for that.
+    private RowColumn(RowOperation op) {
+      isClosed = new AtomicBoolean(false);
       this.op = op;
+      columnIndex = 1;
+      columnOffset = 0;
+      lastColumn = op.getIdentifiers().length + 1;
+    }
+    
+    /** make a clone into a slice
+     *
+     * @param numValues number of columns in the slice
+     * @return this RowColumn as a slice
+     */
+    private RowColumn asSlice(int numValues) {
+      columnOffset = columnOffset + columnIndex;
+      columnIndex = 1;
+      lastColumn = numValues;
+      return this;
     }
     
     @Override
     public void close() {
-      op = null;
+      isClosed.set(true);
     }
 
     @Override
     public long rowNumber() {
-      if (op == null) throw new IllegalStateException("TODO");
+      if (isClosed.get()) throw new IllegalStateException("TODO");
       return op.rowCount; // keep an independent count because ResultSet.row is limited to int
     }
     
     @Override
     public void cancel() {
-      if (op == null) throw new IllegalStateException("TODO");
+      if (isClosed.get()) throw new IllegalStateException("TODO");
       throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public <T> T get(String id, Class<T> type) {
-      if (op == null) {
-        throw new IllegalStateException("TODO");
-      }
+    public <T> T get(Class<T> type) {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
       try {
-        int index;
-        try {
-          index = Integer.parseInt(id);
-        }
-        catch (NumberFormatException ex) {
-          return op.resultSet.getObject(id, type);
-        }
-        return op.resultSet.getObject(index, type);
+        return op.resultSet.getObject(columnIndex + columnOffset, type);
       }
       catch (SQLException ex) {
         throw new SqlException(ex.getMessage(), ex, ex.getSQLState(), ex.getErrorCode(), op.sqlString, -1);
@@ -295,10 +325,84 @@ class RowOperation<T>  extends ParameterizedOperation<T>
     }
 
     @Override
-    public String[] getIdentifiers() {
-      if (op == null) throw new IllegalStateException("TODO");
-      return op.getIdentifiers();
+    public String identifier() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      return op.getIdentifiers()[columnIndex + columnOffset - 1];
+    }
+
+    @Override
+    public int index() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      return columnIndex;
+    }
+
+    @Override
+    public int absoluteIndex() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      return columnIndex + columnOffset;
+    }
+
+    @Override
+    public SqlType sqlType() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public <T> Class<T> javaType() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      return sqlType().getJavaType();
+    }
+
+    @Override
+    public long length() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int numberOfValuesRemaining() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      return lastColumn - columnIndex;
+    }
+
+    @Override
+    public Column at(String id) {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      String canonical = op.enquoteIdentifier(id);
+      String[] ids = op.getIdentifiers();
+      int index = 1;
+      for(; index <= lastColumn && !ids[index + columnOffset - 1].equals(canonical); index++) { }
+      if (index > lastColumn) throw new IllegalArgumentException("TODO");
+      else columnIndex = index;
+      return this;
+    }
+
+    @Override
+    public Column at(int index) {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      if (index < 1 || lastColumn < index) throw new IllegalArgumentException("TODO");
+      columnIndex = index;
+      return this;
+    }
+
+    @Override
+    public RowColumn slice(int numValues) {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      return this.clone().asSlice(numValues);
+    }
+
+    @Override
+    public RowOperation.RowColumn clone() {
+      if (isClosed.get()) throw new IllegalStateException("TODO");
+      try {
+        return (RowOperation.RowColumn)super.clone();
+      }
+      catch (CloneNotSupportedException ex) {
+        throw new RuntimeException("TODO", ex);
+      }
     }
     
-  }
+  } // RowColumn
+  
 }

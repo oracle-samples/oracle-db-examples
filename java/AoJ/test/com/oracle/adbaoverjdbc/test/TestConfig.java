@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.oracle.adbaoverjdbc;
 
-import jdk.incubator.sql2.DataSource;
+package com.oracle.adbaoverjdbc.test;
 
-/**
- *
- */
-public class DataSourceFactory implements jdk.incubator.sql2.DataSourceFactory {
+public class TestConfig {
+  
+  static final String TEST_DS_FACTORY_NAME = 
+    System.getProperty("test.DATA_SOURCE_FACTORY",
+      com.oracle.adbaoverjdbc.DataSourceFactory.class.getName());
 
-  @Override
-  public DataSource.Builder builder() {
-    return DataSourceBuilder.newDataSourceBuilder();
-  }
+  static final String TEST_USER = System.getProperty("test.USER");
 
+  static final String TEST_PASSWORD = System.getProperty("test.PASSWORD");
+
+  static final String TEST_URL = System.getProperty("test.URL");
 }

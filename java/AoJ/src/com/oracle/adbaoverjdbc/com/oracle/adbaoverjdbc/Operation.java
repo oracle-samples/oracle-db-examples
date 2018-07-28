@@ -146,16 +146,19 @@ abstract class Operation<T> implements jdk.incubator.sql2.Operation<T> {
   protected Consumer<Throwable> errorHandler = null;
   
   // internal state
-  protected final Connection connection;
+  protected final Session session;
   protected final OperationGroup<T, ?> group;
   protected OperationLifecycle operationLifecycle = OperationLifecycle.MUTABLE;
+  
+  // used only by Session
+  protected Operation() {
+    session = (Session)this;
+    group = (OperationGroup)this;
+  }
 
-  Operation(Connection conn, OperationGroup operationGroup) {
-    // passing null for connection and operationGroup is a hack. It is not
-    // possible to pass _this_ to a super constructor so we define null to mean
-    // _this_. Yuck. Only used by Connection.
-    connection = conn == null ? (Connection) this : conn;
-    group = operationGroup == null ? (OperationGroup) this : operationGroup;
+  Operation(Session session, OperationGroup operationGroup) {
+    this.session = session;
+    group = operationGroup;
   }
 
   @Override
@@ -216,7 +219,7 @@ abstract class Operation<T> implements jdk.incubator.sql2.Operation<T> {
   }
   
   protected Executor getExecutor() {
-    return connection.getExecutor();
+    return session.getExecutor();
   }
 
   /**
