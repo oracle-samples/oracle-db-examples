@@ -13,7 +13,10 @@ const baseQuery =
     commission_pct "commission_pct",
     manager_id "manager_id",
     department_id "department_id"
-  from employees`;
+  from employees
+  where 1 = 1`;
+
+const sortableColumns = ['id', 'last_name', 'email', 'hire_date', 'salary'];
 
 async function find(context) {
   let query = baseQuery;
@@ -21,9 +24,53 @@ async function find(context) {
 
   if (context.id) {
     binds.employee_id = context.id;
-
-    query += `\nwhere employee_id = :employee_id`;
+ 
+    query += '\nand employee_id = :employee_id';
   }
+ 
+  if (context.department_id) {
+    binds.department_id = context.department_id;
+ 
+    query += '\nand department_id = :department_id';
+  }
+ 
+  if (context.manager_id) {
+    binds.manager_id = context.manager_id;
+ 
+    query += '\nand manager_id = :manager_id';
+  }
+
+  if (context.sort === undefined) {
+    query += '\norder by last_name asc';
+  } else {
+    let [column, order] = context.sort.split(':');
+ 
+    if (!sortableColumns.includes(column)) {
+      throw new Error('Invalid "sort" column');
+    }
+ 
+    if (order === undefined) {
+      order = 'asc';
+    }
+ 
+    if (order !== 'asc' && order !== 'desc') {
+      throw new Error('Invalid "sort" order');
+    }
+ 
+    query += `\norder by "${column}" ${order}`;
+  }
+
+  if (context.skip) {
+    binds.row_offset = context.skip;
+
+    query += '\noffset :row_offset rows';
+  }
+
+  const limit = (context.limit > 0) ? context.limit : 30;
+
+  binds.row_limit = limit;
+
+  query += '\nfetch next :row_limit rows only';
 
   const result = await database.simpleExecute(query, binds);
 

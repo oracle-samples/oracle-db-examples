@@ -49,6 +49,8 @@ but, will hit error when connecting as these are dummy values.
 * **UCPMaxConnReuse.java**: Shows how applications use the MaxConnectionReuseTime and MaxConnectionReuseCount features of UCP. 
 * **UCPMultiUsers.java**: Shows how JDBC applications use UCPP to pool connections for different users.
 * **UCPTimeouts.java**: Shows key connection timeout features of UCP such as ConnectionWaitTimeout, InactiveConnectionTimeout, TimeToLiveConnectionTimeout, and AbandonedConnectionTimeout.
+* **JavaStoredProcSample.java**: Shows a basic Java stored procedure.
+* **JavaStoredProcSample.sql**: Shows how to create a wrapper for a Java stored procedure and execute it.
      
 
 

@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.oracle.adbaoverjdbc;
+package com.oracle.adbaoverjdbc.test;
 
-import jdk.incubator.sql2.DataSource;
+import jdk.incubator.sql2.DataSourceFactory;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-/**
- *
- */
-public class DataSourceFactory implements jdk.incubator.sql2.DataSourceFactory {
+public class DataSourceFactoryTest2 {
 
-  @Override
-  public DataSource.Builder builder() {
-    return DataSourceBuilder.newDataSourceBuilder();
+  /**
+   * Verify that when DataSourceFactory name is null then it throws an
+   * exception.
+   */
+  @Test
+  public void nullDataSourceFactory() {
+    try {
+      DataSourceFactory.newFactory(null);
+    } catch (IllegalArgumentException ex) {
+      // Exception expected
+      System.out.println(ex.getMessage());
+      return;
+    }
+
+    fail();
   }
-
 }
