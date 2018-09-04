@@ -1,0 +1,488 @@
+SQL> @example_outln
+SQL> @connect_admin
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> set echo on
+SQL> 
+SQL> --
+SQL> -- WARNING - about to create SPM_TESTU user
+SQL> --
+SQL> pause p...
+p...
+
+SQL> drop user spm_testu cascade;
+
+User dropped.
+
+SQL> 
+SQL> create user spm_testu identified by spm_testu;
+
+User created.
+
+SQL> grant connect,resource to spm_testu;
+
+Grant succeeded.
+
+SQL> grant unlimited tablespace to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sqlarea to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$session to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sql_plan_statistics_all to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sql_plan to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sql to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on dba_sql_plan_baselines to spm_testu;
+
+Grant succeeded.
+
+SQL> grant ADMINISTER SQL MANAGEMENT OBJECT to spm_testu;
+
+Grant succeeded.
+
+SQL> grant create any outline to spm_testu;
+
+Grant succeeded.
+
+SQL> grant alter any outline to spm_testu;
+
+Grant succeeded.
+
+SQL> grant execute on dbms_outln to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on dba_outlines to spm_testu;
+
+Grant succeeded.
+
+SQL> --
+SQL> -- Connect to the test user
+SQL> --
+SQL> @connect_user
+SQL> connect spm_testu/spm_testu
+Connected.
+SQL> 
+SQL> 
+SQL> @drop
+SQL> DECLARE
+  2    l_plans_dropped  PLS_INTEGER;
+  3  BEGIN
+  4  
+  5    FOR REC IN (SELECT DISTINCT sql_handle FROM dba_sql_plan_baselines WHERE creator = USER)
+  6    LOOP
+  7        l_plans_dropped := DBMS_SPM.DROP_SQL_PLAN_BASELINE (
+  8          sql_handle => rec.sql_handle,
+  9          plan_name  => NULL);
+ 10    END LOOP;
+ 11  
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec dbms_outln.drop_by_cat('MY_TEST_CAT')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @tab
+SQL> drop table sales purge
+  2  /
+drop table sales purge
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> 
+SQL> create table sales (id number(10), num number(10));
+
+Table created.
+
+SQL> 
+SQL> insert into sales
+  2  select rownum,rownum
+  3  from   dual connect by rownum < 100000;
+
+99999 rows created.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create index salesi on sales (id);
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'SALES')
+
+PL/SQL procedure successfully completed.
+
+SQL> --
+SQL> -- This will give is a FULL scan for our application query
+SQL> --
+SQL> drop index salesi;
+
+Index dropped.
+
+SQL> 
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Create the outline
+SQL> --
+SQL> column name format a40
+SQL> column category format a40
+SQL> CREATE OUTLINE sales_outline FOR CATEGORY my_test_cat
+  2  ON select sum(num) from sales where id < :idv;
+
+Outline created.
+
+SQL> select name,category from dba_outlines;
+
+NAME                                     CATEGORY
+---------------------------------------- ----------------------------------------
+SALES_OUTLINE                            MY_TEST_CAT
+
+SQL> pause p...
+p...
+
+SQL> 
+SQL> @app_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  f23qunrkxdgdt, child number 0
+-------------------------------------
+select sum(num) from sales where id < :idv
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |    69 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    10 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |     4 |    40 |    69   (2)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"<:IDV)
+
+
+19 rows selected.
+
+SQL> @app_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  f23qunrkxdgdt, child number 0
+-------------------------------------
+select sum(num) from sales where id < :idv
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |    69 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    10 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |     4 |    40 |    69   (2)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"<:IDV)
+
+
+19 rows selected.
+
+SQL> --
+SQL> -- The application query (above)
+SQL> -- uses the FULL access method
+SQL> --
+SQL> pause p...
+p...
+
+SQL> 
+SQL> --
+SQL> -- The new index will enable the INDEX access path
+SQL> -- but the outline will prevent it.
+SQL> --
+SQL> create index salesi on sales (id);
+
+Index created.
+
+SQL> pause p...
+p...
+
+SQL> 
+SQL> ALTER SESSION SET use_stored_outlines=MY_TEST_CAT;
+
+Session altered.
+
+SQL> @app_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  f23qunrkxdgdt, child number 0
+-------------------------------------
+select sum(num) from sales where id < :idv
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |    69 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    10 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |     4 |    40 |    69   (2)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"<:IDV)
+
+Note
+-----
+   - outline "SALES_OUTLINE" used for this statement
+
+
+23 rows selected.
+
+SQL> --
+SQL> -- The outline is preventing the query from using the INDEX plan
+SQL> --
+SQL> pause p...
+p...
+
+SQL> 
+SQL> ALTER SESSION SET use_stored_outlines=DEFAULT;
+
+Session altered.
+
+SQL> declare
+  2    report clob;
+  3  begin
+  4    report := dbms_spm.migrate_stored_outline('category','MY_TEST_CAT');
+  5  
+  6  end;
+  7  /
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_outln.drop_by_cat('MY_TEST_CAT')
+
+PL/SQL procedure successfully completed.
+
+SQL> select sql_text from dba_sql_plan_baselines where creator = user;
+
+SQL_TEXT
+--------------------------------------------------
+select sum(num) from sales where id < :idv
+
+SQL> --
+SQL> -- The stored outline has been migrated to SPM and then dropped (above)
+SQL> --
+SQL> pause p...
+p...
+
+SQL> @app_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  f23qunrkxdgdt, child number 0
+
+An uncaught error happened in prepare_sql_statement : ORA-01403: no data found
+
+NOTE: cannot fetch plan for SQL_ID: f23qunrkxdgdt, CHILD_NUMBER: 0
+      Please verify value of SQL_ID and CHILD_NUMBER;
+      It could also be that the plan is no longer in cursor cache (check v$sql_plan)
+
+
+8 rows selected.
+
+SQL> --
+SQL> -- The FULL scan does not match the default INDEX plan so
+SQL> -- we can't see the plan (above) because of bug 27500184
+SQL> --
+SQL> pause p...
+p...
+
+SQL> 
+SQL> explain plan for select sum(num) from sales where id < :idv;
+
+Explained.
+
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |     1 |    10 |    69   (2)| 00:00:01 |
+|   1 |  SORT AGGREGATE    |       |     1 |    10 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |  5000 | 50000 |    69   (2)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"<TO_NUMBER(:IDV))
+
+Note
+-----
+   - SQL plan baseline "SALES_OUTLINE" used for this statement
+
+18 rows selected.
+
+SQL> --
+SQL> -- The explain plan does however confirm the correct plan - maintained by the SQL plan baseline
+SQL> --
+SQL> 
+SQL> spool off

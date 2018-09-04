@@ -4,15 +4,15 @@ Based on <a href="https://blogs.oracle.com/optimizer/using-sql-plan-management-t
 
 The example_se.sql calls "proc_se.sql" (proc_se.sql is essentially the same as ../proc2.sql)
 
-Scripts create utility procedure called "add_my_plan" (see proc_se.sql) that allows you to take a SQL execution plan from a test query and apply it to an application query.
+Scripts create utility procedures called "set_my_plan" and "add_my_plan" (see proc_se.sql) that allows you to take a SQL execution plan from a test query and apply it to an application query.
 
-Example output is shown in example_se.lst. 
+Example output is shown in example.lst. 
 
 Note that example_se.sql creates a new user called SPM_TESTU.
 
-Scripts tested in Oracle Database 18c Standard Edition
+See also example_outln.sql for an example of how to migrate a stored outline
 
-There is an outstanding parsing issue with SE - see directory 27500184
+Scripts tested in Oracle Database 18c Standard Edition
 
 DISCLAIMER:
    <br/>-- These scripts are provided for educational purposes only.
