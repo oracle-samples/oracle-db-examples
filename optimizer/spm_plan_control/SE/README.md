@@ -4,9 +4,9 @@ Based on <a href="https://blogs.oracle.com/optimizer/using-sql-plan-management-t
 
 The example_se.sql calls "proc_se.sql" (proc_se.sql is essentially the same as ../proc2.sql)
 
-Scripts create utility procedures called "set_my_plan" and "add_my_plan" (see proc_se.sql) that allows you to take a SQL execution plan from a test query and apply it to an application query.
+Scripts create utility procedure called "add_my_plan" (see proc_se.sql) that allows you to take a SQL execution plan from a test query and apply it to an application query.
 
-Example output is shown in example.lst. 
+Example output is shown in example_se.lst. 
 
 Note that example_se.sql creates a new user called SPM_TESTU.
 
