@@ -38,6 +38,8 @@ public class DataSourceSample {
   // The recommended format of a connection URL is the long format with the
   // connection descriptor.
   final static String DB_URL= "jdbc:oracle:thin:@myhost:1521/myorcldbservicename";
+  // For ATP and ADW - use the TNS Alias name along with the TNS_ADMIN
+  // final static String DB_URL="jdbc:oracle:thin:@myhost:1521@wallet_dbname?TNS_ADMIN=/Users/test/wallet_dbname";
   final static String DB_USER = "hr";
   final static String DB_PASSWORD = "hr";
 
