@@ -12,6 +12,8 @@ Note that example_se.sql creates a new user called SPM_TESTU.
 
 Scripts tested in Oracle Database 18c Standard Edition
 
+There is an outstanding parsing issue with SE - see directory 27500184
+
 DISCLAIMER:
    <br/>-- These scripts are provided for educational purposes only.
    <br/>-- They are NOT supported by Oracle World Wide Technical Support.
