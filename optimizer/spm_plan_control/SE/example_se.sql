@@ -51,7 +51,7 @@ pause p...
 -- Create the test procedure
 --
 set echo off
-@proc2
+@proc_se
 set echo on
 
 column sql_text format a50
@@ -77,11 +77,3 @@ pause p...
 -- The application query (above) now uses 
 -- the SQL plan baseline and FULL
 --
-
-pause p...
-
-@app_q2
---
--- A query with the same signature (above) uses FULL too
--- 
-

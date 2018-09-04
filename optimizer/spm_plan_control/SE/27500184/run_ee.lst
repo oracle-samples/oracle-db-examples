@@ -1,0 +1,280 @@
+SQL> @run
+SQL> set linesize 280
+SQL> set trims on
+SQL> set pagesize 200
+SQL> set tab off
+SQL> set feedback on
+SQL> column plan_name format a30
+SQL> column sql_handle format a30
+SQL> column sql_text format a50
+SQL> column plan_table_output format a150
+SQL> 
+SQL> column creator format a10
+SQL> column origin format a35
+SQL> column parsing_schema_name format a10
+SQL> column description format a10
+SQL> column module format a15
+SQL> column action format a15
+SQL> column version format a15
+SQL> column signature format 9999999999999999999999
+SQL> show user
+USER is "ADHOC"
+SQL> 
+SQL> set echo on
+SQL> 
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select sql_id from v$sql where sql_text = 'select /* HELLO */ num from bob where id = 100';
+
+SQL_ID
+-------------
+8c2dqym0cbqvj
+
+1 row selected.
+
+SQL> 
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select * from dba_sql_plan_baselines;
+
+              SIGNATURE SQL_HANDLE                     SQL_TEXT                                           PLAN_NAME                      CREATOR    ORIGIN                              PARSING_SC DESCRIPTIO VERSION
+----------------------- ------------------------------ -------------------------------------------------- ------------------------------ ---------- ----------------------------------- ---------- ---------- ---------------
+CREATED                                                                     LAST_MODIFIED                                                               LAST_EXECUTED
+--------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+LAST_VERIFIED                                                               ENA ACC FIX REP AUT ADA OPTIMIZER_COST MODULE          ACTION          EXECUTIONS ELAPSED_TIME   CPU_TIME BUFFER_GETS DISK_READS DIRECT_WRITES ROWS_PROCESSED    FETCHES END_OF_FETCH_COUNT
+--------------------------------------------------------------------------- --- --- --- --- --- --- -------------- --------------- --------------- ---------- ------------ ---------- ----------- ---------- ------------- -------------- ---------- ------------------
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx03c729f0 ADHOC      MANUAL-LOAD-FROM-CURSOR-CACHE       ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.24.000000                                                   04-SEP-18 04.04.25.000000                                                   04-SEP-18 04.04.25.000000
+                                                                            YES YES NO  YES YES NO               7 SQL*Plus                                 3         4085       4093         154          0             0              3          6
+
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx6934a678 ADHOC      AUTO-CAPTURE                        ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.27.000000                                                   04-SEP-18 04.04.27.000000
+                                                                            YES NO  NO  YES YES NO               2 SQL*Plus                                 0            0          0           0          0             0              0          0
+
+
+2 rows selected.
+
+SQL> select * from  v$sql_shared_cursor where sql_id = '8c2dqym0cbqvj' order by child_number;
+
+SQL_ID        ADDRESS          CHILD_ADDRESS    CHILD_NUMBER U S O O S L F E B P I S T A B D L T B I I R L I O E M U T N F A P T D L D B P C S C P T M B M R O P M F L P L A F L R L H P B U REASON                                                                               CON_ID
+------------- ---------------- ---------------- ------------ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -------------------------------------------------------------------------------- ----------
+8c2dqym0cbqvj 0000000061645A10 0000000061380238            1 N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N                                                                                           0
+
+1 row selected.
+
+SQL> 
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select * from dba_sql_plan_baselines;
+
+              SIGNATURE SQL_HANDLE                     SQL_TEXT                                           PLAN_NAME                      CREATOR    ORIGIN                              PARSING_SC DESCRIPTIO VERSION
+----------------------- ------------------------------ -------------------------------------------------- ------------------------------ ---------- ----------------------------------- ---------- ---------- ---------------
+CREATED                                                                     LAST_MODIFIED                                                               LAST_EXECUTED
+--------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+LAST_VERIFIED                                                               ENA ACC FIX REP AUT ADA OPTIMIZER_COST MODULE          ACTION          EXECUTIONS ELAPSED_TIME   CPU_TIME BUFFER_GETS DISK_READS DIRECT_WRITES ROWS_PROCESSED    FETCHES END_OF_FETCH_COUNT
+--------------------------------------------------------------------------- --- --- --- --- --- --- -------------- --------------- --------------- ---------- ------------ ---------- ----------- ---------- ------------- -------------- ---------- ------------------
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx03c729f0 ADHOC      MANUAL-LOAD-FROM-CURSOR-CACHE       ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.24.000000                                                   04-SEP-18 04.04.25.000000                                                   04-SEP-18 04.04.25.000000
+                                                                            YES YES NO  YES YES NO               7 SQL*Plus                                 3         4085       4093         154          0             0              3          6
+
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx6934a678 ADHOC      AUTO-CAPTURE                        ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.27.000000                                                   04-SEP-18 04.04.27.000000
+                                                                            YES NO  NO  YES YES NO               2 SQL*Plus                                 0            0          0           0          0             0              0          0
+
+
+2 rows selected.
+
+SQL> select * from  v$sql_shared_cursor where sql_id = '8c2dqym0cbqvj' order by child_number;
+
+SQL_ID        ADDRESS          CHILD_ADDRESS    CHILD_NUMBER U S O O S L F E B P I S T A B D L T B I I R L I O E M U T N F A P T D L D B P C S C P T M B M R O P M F L P L A F L R L H P B U REASON                                                                               CON_ID
+------------- ---------------- ---------------- ------------ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -------------------------------------------------------------------------------- ----------
+8c2dqym0cbqvj 0000000061645A10 0000000061380238            1 N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N                                                                                           0
+
+1 row selected.
+
+SQL> 
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select * from dba_sql_plan_baselines;
+
+              SIGNATURE SQL_HANDLE                     SQL_TEXT                                           PLAN_NAME                      CREATOR    ORIGIN                              PARSING_SC DESCRIPTIO VERSION
+----------------------- ------------------------------ -------------------------------------------------- ------------------------------ ---------- ----------------------------------- ---------- ---------- ---------------
+CREATED                                                                     LAST_MODIFIED                                                               LAST_EXECUTED
+--------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+LAST_VERIFIED                                                               ENA ACC FIX REP AUT ADA OPTIMIZER_COST MODULE          ACTION          EXECUTIONS ELAPSED_TIME   CPU_TIME BUFFER_GETS DISK_READS DIRECT_WRITES ROWS_PROCESSED    FETCHES END_OF_FETCH_COUNT
+--------------------------------------------------------------------------- --- --- --- --- --- --- -------------- --------------- --------------- ---------- ------------ ---------- ----------- ---------- ------------- -------------- ---------- ------------------
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx03c729f0 ADHOC      MANUAL-LOAD-FROM-CURSOR-CACHE       ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.24.000000                                                   04-SEP-18 04.04.25.000000                                                   04-SEP-18 04.04.25.000000
+                                                                            YES YES NO  YES YES NO               7 SQL*Plus                                 3         4085       4093         154          0             0              3          6
+
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx6934a678 ADHOC      AUTO-CAPTURE                        ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.27.000000                                                   04-SEP-18 04.04.27.000000
+                                                                            YES NO  NO  YES YES NO               2 SQL*Plus                                 0            0          0           0          0             0              0          0
+
+
+2 rows selected.
+
+SQL> select * from  v$sql_shared_cursor where sql_id = '8c2dqym0cbqvj' order by child_number;
+
+SQL_ID        ADDRESS          CHILD_ADDRESS    CHILD_NUMBER U S O O S L F E B P I S T A B D L T B I I R L I O E M U T N F A P T D L D B P C S C P T M B M R O P M F L P L A F L R L H P B U REASON                                                                               CON_ID
+------------- ---------------- ---------------- ------------ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -------------------------------------------------------------------------------- ----------
+8c2dqym0cbqvj 0000000061645A10 0000000061380238            1 N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N                                                                                           0
+
+1 row selected.
+
+SQL> 
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select * from dba_sql_plan_baselines;
+
+              SIGNATURE SQL_HANDLE                     SQL_TEXT                                           PLAN_NAME                      CREATOR    ORIGIN                              PARSING_SC DESCRIPTIO VERSION
+----------------------- ------------------------------ -------------------------------------------------- ------------------------------ ---------- ----------------------------------- ---------- ---------- ---------------
+CREATED                                                                     LAST_MODIFIED                                                               LAST_EXECUTED
+--------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+LAST_VERIFIED                                                               ENA ACC FIX REP AUT ADA OPTIMIZER_COST MODULE          ACTION          EXECUTIONS ELAPSED_TIME   CPU_TIME BUFFER_GETS DISK_READS DIRECT_WRITES ROWS_PROCESSED    FETCHES END_OF_FETCH_COUNT
+--------------------------------------------------------------------------- --- --- --- --- --- --- -------------- --------------- --------------- ---------- ------------ ---------- ----------- ---------- ------------- -------------- ---------- ------------------
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx03c729f0 ADHOC      MANUAL-LOAD-FROM-CURSOR-CACHE       ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.24.000000                                                   04-SEP-18 04.04.25.000000                                                   04-SEP-18 04.04.25.000000
+                                                                            YES YES NO  YES YES NO               7 SQL*Plus                                 3         4085       4093         154          0             0              3          6
+
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx6934a678 ADHOC      AUTO-CAPTURE                        ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.27.000000                                                   04-SEP-18 04.04.27.000000
+                                                                            YES NO  NO  YES YES NO               2 SQL*Plus                                 0            0          0           0          0             0              0          0
+
+
+2 rows selected.
+
+SQL> select * from  v$sql_shared_cursor where sql_id = '8c2dqym0cbqvj' order by child_number;
+
+SQL_ID        ADDRESS          CHILD_ADDRESS    CHILD_NUMBER U S O O S L F E B P I S T A B D L T B I I R L I O E M U T N F A P T D L D B P C S C P T M B M R O P M F L P L A F L R L H P B U REASON                                                                               CON_ID
+------------- ---------------- ---------------- ------------ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -------------------------------------------------------------------------------- ----------
+8c2dqym0cbqvj 0000000061645A10 0000000061380238            1 N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N                                                                                           0
+
+1 row selected.
+
+SQL> 
+SQL> --
+SQL> -- Put in a host sleep - and try a flush
+SQL> --
+SQL> host sleep 10
+
+SQL> exec dbms_stats.flush_database_monitoring_info
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select * from dba_sql_plan_baselines;
+
+              SIGNATURE SQL_HANDLE                     SQL_TEXT                                           PLAN_NAME                      CREATOR    ORIGIN                              PARSING_SC DESCRIPTIO VERSION
+----------------------- ------------------------------ -------------------------------------------------- ------------------------------ ---------- ----------------------------------- ---------- ---------- ---------------
+CREATED                                                                     LAST_MODIFIED                                                               LAST_EXECUTED
+--------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+LAST_VERIFIED                                                               ENA ACC FIX REP AUT ADA OPTIMIZER_COST MODULE          ACTION          EXECUTIONS ELAPSED_TIME   CPU_TIME BUFFER_GETS DISK_READS DIRECT_WRITES ROWS_PROCESSED    FETCHES END_OF_FETCH_COUNT
+--------------------------------------------------------------------------- --- --- --- --- --- --- -------------- --------------- --------------- ---------- ------------ ---------- ----------- ---------- ------------- -------------- ---------- ------------------
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx03c729f0 ADHOC      MANUAL-LOAD-FROM-CURSOR-CACHE       ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.24.000000                                                   04-SEP-18 04.04.25.000000                                                   04-SEP-18 04.04.25.000000
+                                                                            YES YES NO  YES YES NO               7 SQL*Plus                                 3         4085       4093         154          0             0              3          6
+
+   15579892658626776509 SQL_d836e5d3c42a4dbd           select /* HELLO */ num from bob where id = 100     SQL_PLAN_dhdr5ug22nmdx6934a678 ADHOC      AUTO-CAPTURE                        ADHOC                 18.0.0.0.0
+04-SEP-18 04.04.27.000000                                                   04-SEP-18 04.04.27.000000
+                                                                            YES NO  NO  YES YES NO               2 SQL*Plus                                 0            0          0           0          0             0              0          0
+
+
+2 rows selected.
+
+SQL> select * from  v$sql_shared_cursor where sql_id = '8c2dqym0cbqvj' order by child_number;
+
+SQL_ID        ADDRESS          CHILD_ADDRESS    CHILD_NUMBER U S O O S L F E B P I S T A B D L T B I I R L I O E M U T N F A P T D L D B P C S C P T M B M R O P M F L P L A F L R L H P B U REASON                                                                               CON_ID
+------------- ---------------- ---------------- ------------ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -------------------------------------------------------------------------------- ----------
+8c2dqym0cbqvj 0000000061645A10 0000000061380238            1 N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N                                                                                           0
+
+1 row selected.
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> --
+SQL> -- Can we get a plan?
+SQL> -- In SE we can't because the cursor is repeatedly invalidated
+SQL> --
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select * from table(dbms_xplan.display_cursor(format=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8c2dqym0cbqvj, child number 1
+-------------------------------------
+select /* HELLO */ num from bob where id = 100
+
+Plan hash value: 1006760864
+
+--------------------------------------------------------------------------
+| Id  | Operation         | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |      |       |       |     7 (100)|          |
+|*  1 |  TABLE ACCESS FULL| BOB  |     1 |     8 |     7   (0)| 00:00:01 |
+--------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("ID"=100)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_dhdr5ug22nmdx03c729f0 used for this statement
+
+
+22 rows selected.
+
+SQL> 
+SQL> show user
+USER is "ADHOC"
+SQL> spool off
