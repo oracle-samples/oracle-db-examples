@@ -1,0 +1,411 @@
+SQL> @example_se
+SQL> @connect_admin
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> set echo on
+SQL> 
+SQL> --
+SQL> -- WARNING - about to create SPM_TESTU user
+SQL> --
+SQL> pause p...
+p...
+
+SQL> drop user spm_testu cascade;
+
+User dropped.
+
+SQL> 
+SQL> create user spm_testu identified by spm_testu;
+
+User created.
+
+SQL> grant connect,resource to spm_testu;
+
+Grant succeeded.
+
+SQL> grant unlimited tablespace to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sqlarea to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$session to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sql_plan_statistics_all to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sql_plan to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on v_$sql to spm_testu;
+
+Grant succeeded.
+
+SQL> grant select on dba_sql_plan_baselines to spm_testu;
+
+Grant succeeded.
+
+SQL> grant ADMINISTER SQL MANAGEMENT OBJECT to spm_testu;
+
+Grant succeeded.
+
+SQL> --
+SQL> -- Connect to the test user
+SQL> --
+SQL> @connect_user
+SQL> connect spm_testu/spm_testu
+Connected.
+SQL> 
+SQL> 
+SQL> --
+SQL> -- These two steps are simply to reset the test if
+SQL> -- the user was created in a previous run
+SQL> --
+SQL> @tab
+SQL> drop table sales purge
+  2  /
+drop table sales purge
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> 
+SQL> create table sales (id number(10), num number(10));
+
+Table created.
+
+SQL> 
+SQL> insert into sales
+  2  select rownum,rownum
+  3  from   dual connect by rownum < 100000;
+
+99999 rows created.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create index salesi on sales (id);
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'SALES')
+
+PL/SQL procedure successfully completed.
+
+SQL> @drop
+SQL> DECLARE
+  2    l_plans_dropped  PLS_INTEGER;
+  3  BEGIN
+  4  
+  5    FOR REC IN (SELECT DISTINCT sql_handle FROM dba_sql_plan_baselines WHERE creator = USER)
+  6    LOOP
+  7        l_plans_dropped := DBMS_SPM.DROP_SQL_PLAN_BASELINE (
+  8          sql_handle => rec.sql_handle,
+  9          plan_name  => NULL);
+ 10    END LOOP;
+ 11  
+ 12  END;
+ 13  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> @app_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  f23qunrkxdgdt, child number 0
+-------------------------------------
+select sum(num) from sales where id < :idv
+
+Plan hash value: 2327341677
+
+-----------------------------------------------------------------------------------------------
+| Id  | Operation                            | Name   | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                     |        |       |       |     3 (100)|          |
+|   1 |  SORT AGGREGATE                      |        |     1 |    10 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| SALES  |     4 |    40 |     3   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN                  | SALESI |     4 |       |     2   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"<:IDV)
+
+
+20 rows selected.
+
+SQL> @app_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  f23qunrkxdgdt, child number 0
+-------------------------------------
+select sum(num) from sales where id < :idv
+
+Plan hash value: 2327341677
+
+-----------------------------------------------------------------------------------------------
+| Id  | Operation                            | Name   | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                     |        |       |       |     3 (100)|          |
+|   1 |  SORT AGGREGATE                      |        |     1 |    10 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| SALES  |     4 |    40 |     3   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN                  | SALESI |     4 |       |     2   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"<:IDV)
+
+
+20 rows selected.
+
+SQL> --
+SQL> -- The application query (above)
+SQL> -- uses the INDEX access method
+SQL> --
+SQL> pause p...
+p...
+
+SQL> 
+SQL> --
+SQL> -- Run the test query to get an example of the plan we want
+SQL> --
+SQL> @test_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select /*+ FULL(sales) */ sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select /*+ FULL(sales) */ sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  82x4tj3z2vg23, child number 0
+-------------------------------------
+select /*+ FULL(sales) */ sum(num) from sales where id < :idv
+
+Plan hash value: 1047182207
+
+----------------------------------------------------------------------------
+| Id  | Operation          | Name  | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |       |       |       |    69 (100)|          |
+|   1 |  SORT AGGREGATE    |       |     1 |    10 |            |          |
+|*  2 |   TABLE ACCESS FULL| SALES |     4 |    40 |    69   (2)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("ID"<:IDV)
+
+
+19 rows selected.
+
+SQL> --
+SQL> -- The plan above is the one we want
+SQL> --
+SQL> pause p...
+p...
+
+SQL> 
+SQL> --
+SQL> -- Create the test procedure
+SQL> --
+SQL> set echo off
+
+Procedure created.
+
+No errors.
+SQL> 
+SQL> column sql_text format a50
+SQL> column plan_hash_value format 99999999999999999
+SQL> select sql_id,sql_text,plan_hash_value from v$sql where sql_text like '%sales where id < :idv%' and sql_text not like '%plan_hash%';
+
+SQL_ID        SQL_TEXT                                              PLAN_HASH_VALUE
+------------- -------------------------------------------------- ------------------
+f23qunrkxdgdt select sum(num) from sales where id < :idv                 2327341677
+82x4tj3z2vg23 select /*+ FULL(sales) */ sum(num) from sales wher         1047182207
+              e id < :idv
+
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> set linesize 200
+SQL> set trims on
+SQL> set serveroutput on
+SQL> --
+SQL> -- exec add_my_plan(our_application_query, our_test_query, our_test_query_plan)
+SQL> --
+SQL> exec add_my_plan('f23qunrkxdgdt','82x4tj3z2vg23',1047182207)
+No existing SQL plan baselines to drop
+Created 1 disabled SPBs for SQLID f23qunrkxdgdt
+
+PL/SQL procedure successfully completed.
+
+SQL> set serveroutput off
+SQL> --
+SQL> -- Executed the procedure above
+SQL> --
+SQL> pause p...
+p...
+
+SQL> 
+SQL> @app_q
+SQL> var idv number
+SQL> exec :idv := 5
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> select sum(num) from sales where id < :idv;
+
+  SUM(NUM)
+----------
+        10
+
+SQL> 
+SQL> @plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  f23qunrkxdgdt, child number 0
+-------------------------------------
+select sum(num) from sales where id < :idv
+
+Plan hash value: 2327341677
+
+-----------------------------------------------------------------------------------------------
+| Id  | Operation                            | Name   | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                     |        |       |       |     3 (100)|          |
+|   1 |  SORT AGGREGATE                      |        |     1 |    10 |            |          |
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| SALES  |     4 |    40 |     3   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN                  | SALESI |     4 |       |     2   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("ID"<:IDV)
+
+
+20 rows selected.
+
+SQL> --
+SQL> -- The application query (above) now uses
+SQL> -- the SQL plan baseline and FULL
+SQL> --
+SQL> spool off

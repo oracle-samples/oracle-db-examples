@@ -1,11 +1,12 @@
-connect / as sysdba
+@connect_admin
 
 set echo on
 
 --
 -- WARNING - about to create SPM_TESTU user 
 --
---drop user spm_testu cascade;
+pause p...
+drop user spm_testu cascade;
 
 create user spm_testu identified by spm_testu;
 grant connect,resource to spm_testu;
@@ -20,7 +21,7 @@ grant ADMINISTER SQL MANAGEMENT OBJECT to spm_testu;
 --
 -- Connect to the test user
 --
-connect spm_testu/spm_testu
+@connect_user
 
 --
 -- These two steps are simply to reset the test if
@@ -29,6 +30,7 @@ connect spm_testu/spm_testu
 @tab
 @drop
 
+@app_q
 @app_q
 --
 -- The application query (above)
@@ -52,9 +54,17 @@ set echo off
 @proc
 set echo on
 
+column sql_text format a50
+column plan_hash_value format 99999999999999999
+select sql_id,sql_text,plan_hash_value from v$sql where sql_text like '%sales where id < :idv%' and sql_text not like '%plan_hash%';
+
+pause p...
 set linesize 200
 set trims on
 set serveroutput on
+--
+-- exec set_my_plan(our_application_query, our_test_query, our_test_query_plan)
+--
 exec set_my_plan('f23qunrkxdgdt','82x4tj3z2vg23',1047182207)
 set serveroutput off
 --
