@@ -7,6 +7,7 @@
 # others.
 #
 # Before running this script:
+#  - Install Python and the cx_Oracle interface
 #  - Install Oracle Instant Client
 #  - Download and install the cloud service wallet
 #  - Modify the connect() call below to use the credentials for your database.
