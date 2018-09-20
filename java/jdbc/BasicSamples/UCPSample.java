@@ -98,10 +98,6 @@ public class UCPSample {
       // Perform a database operation
       doSQLWork(conn);
     }
-    catch (SQLException e) {
-      System.out.println("UCPSample - " + "SQLException occurred : "
-          + e.getMessage());
-    }
     System.out.println("Available connections after checkin: "
         + pds.getAvailableConnectionsCount());
     System.out.println("Borrowed connections after checkin: "

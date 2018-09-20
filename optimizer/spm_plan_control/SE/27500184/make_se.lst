@@ -1,0 +1,288 @@
+SQL> @make_tc
+SQL> --
+SQL> -- Create a SQL Plan Baseline for a FULL plan
+SQL> -- and then add a new index to the table so that
+SQL> -- an INDEX plan is the most optimimal.
+SQL> --
+SQL> -- In EE, we will get a new SQL Plan Baseline with the index plan
+SQL> -- In SE, we will not get a new SQL Plan Baseline because only one is allowed
+SQL> --
+SQL> -- A side-effect is that the new (index plan) cursor in SE will be invalidated each time it is executed.
+SQL> -- This is Bug #27500184
+SQL> --
+SQL> set linesize 280
+SQL> set trims on
+SQL> set pagesize 200
+SQL> set tab off
+SQL> set feedback on
+SQL> column plan_name format a30
+SQL> column sql_handle format a30
+SQL> column sql_text format a50
+SQL> column plan_table_output format a150
+SQL> show user
+USER is "ADHOC"
+SQL> set echo on
+SQL> --
+SQL> -- Drop existing SQL plan baselines (with HELLO in the text)
+SQL> --
+SQL> declare
+  2    l_plans_dropped  pls_integer;
+  3  BEGIN
+  4    for rec in (select distinct sql_handle from dba_sql_plan_baselines where sql_text like '%HELLO%' and creator = user)
+  5    loop
+  6        l_plans_dropped := dbms_spm.drop_sql_plan_baseline (
+  7          sql_handle => rec.sql_handle,
+  8          plan_name  => null);
+  9    end loop;
+ 10  end;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- (Drop and) create a table BOB
+SQL> --
+SQL> drop table bob purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table bob (id number(10), num number(10));
+
+Table created.
+
+SQL> 
+SQL> begin
+  2    for i in 1..10000
+  3    loop
+  4      insert into bob values (i,i);
+  5    end loop;
+  6  end;
+  7  /
+
+PL/SQL procedure successfully completed.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats (ownname=>null,tabname=>'bob');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- This is the test query
+SQL> --
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> 
+SQL> --
+SQL> -- Load the query's plan to create a SQL plan baseline
+SQL> --
+SQL> var r number
+SQL> exec :r :=  dbms_spm.load_plans_from_cursor_cache('8c2dqym0cbqvj')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Check that the SQL plan baseline exists
+SQL> --
+SQL> select sql_text,accepted,enabled,sql_handle,plan_name from dba_sql_plan_baselines where sql_text like '%HELLO%';
+
+SQL_TEXT                                           ACC ENA SQL_HANDLE                     PLAN_NAME
+-------------------------------------------------- --- --- ------------------------------ ------------------------------
+select /* HELLO */ num from bob where id = 100     YES YES SQL_d836e5d3c42a4dbd           SQL_PLAN_dhdr5ug22nmdx03c729f0
+
+1 row selected.
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> --
+SQL> -- Check to see if the SQL statement is using the SQL plan baseline
+SQL> --
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select * from table(dbms_xplan.display_cursor(format=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8c2dqym0cbqvj, child number 0
+-------------------------------------
+select /* HELLO */ num from bob where id = 100
+
+Plan hash value: 1006760864
+
+--------------------------------------------------------------------------
+| Id  | Operation         | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |      |       |       |     7 (100)|          |
+|*  1 |  TABLE ACCESS FULL| BOB  |     1 |     8 |     7   (0)| 00:00:01 |
+--------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("ID"=100)
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_dhdr5ug22nmdx03c729f0 used for this statement
+
+
+22 rows selected.
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> --
+SQL> -- Creating the index will give us the potential to use a new INDEX plan
+SQL> -- but the SQL plan baseline will prevent this
+SQL> --
+SQL> create unique index bobi on bob(id);
+
+Index created.
+
+SQL> 
+SQL> --
+SQL> -- Execute again - the INDEX plan is available but SPM prevents its use
+SQL> --
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> select /* HELLO */ num from bob where id = 100;
+
+       NUM
+----------
+       100
+
+1 row selected.
+
+SQL> --
+SQL> -- SE: Plan is not available because cursor is being invalidated
+SQL> -- EE: Plan is available
+SQL> --
+SQL> select * from table(dbms_xplan.display_cursor(format=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  8c2dqym0cbqvj, child number 1
+
+An uncaught error happened in prepare_sql_statement : ORA-01403: no data found
+
+NOTE: cannot fetch plan for SQL_ID: 8c2dqym0cbqvj, CHILD_NUMBER: 1
+      Please verify value of SQL_ID and CHILD_NUMBER;
+      It could also be that the plan is no longer in cursor cache (check v$sql_plan)
+
+
+8 rows selected.
+
+SQL> pause p...
+p...
+
+SQL> --
+SQL> -- Check V$SQL
+SQL> -- SE: Not visible
+SQL> -- EE: Visible
+SQL> --
+SQL> select sql_id from v$sql where sql_text = 'select /* HELLO */ num from bob where id = 100';
+
+no rows selected
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> --
+SQL> -- Check V$SQL_SHARED_CURSOR
+SQL> --
+SQL> select * from  v$sql_shared_cursor where sql_id = '8c2dqym0cbqvj' order by child_number;
+
+no rows selected
+
+SQL> 
+SQL> pause p...
+p...
+
+SQL> 
+SQL> --
+SQL> -- In SE there will be a single SQL plan baseline
+SQL> -- In EE, there will be two SQL plan baselines - the new INDEX plan is ready for evolution
+SQL> --
+SQL> select sql_text,accepted,enabled,sql_handle,plan_name from dba_sql_plan_baselines;
+
+SQL_TEXT                                           ACC ENA SQL_HANDLE                     PLAN_NAME
+-------------------------------------------------- --- --- ------------------------------ ------------------------------
+select /* HELLO */ num from bob where id = 100     YES YES SQL_d836e5d3c42a4dbd           SQL_PLAN_dhdr5ug22nmdx03c729f0
+
+1 row selected.
+
+SQL> 
+SQL> show user
+USER is "ADHOC"
+SQL> spool off

@@ -20,6 +20,7 @@ create or replace procedure set_my_plan (for_sqlid varchar2, new_plan_sqlid varc
 begin
   --
   -- Drop any existing SPBs for our SQL statement
+  -- You may or may not wish to do this
   --
   open existing_spb_handle;
   fetch existing_spb_handle into sqlh;
@@ -36,7 +37,8 @@ begin
   --
   num := dbms_spm.load_plans_from_cursor_cache(sql_id=>for_sqlid, enabled=>'NO');
   --
-  -- Get the SPB SQL Handle
+  -- We need to check that we have captured at least one SQL plan baseline
+  -- because we will replace it with the plan we want
   --
   open existing_spb_handle;
   fetch existing_spb_handle into sqlh;
@@ -60,7 +62,7 @@ begin
   --
   for spb in new_spb
   loop
-     dbms_output.put_line('Enabled SPB - Name: '||spb.plan_name||' SQL handle: '||sqlh);
+     dbms_output.put_line('Enabled SPB - Name: '||spb.plan_name||' SQL handle: '||spb.sql_handle);
   end loop;
 end;
 /
