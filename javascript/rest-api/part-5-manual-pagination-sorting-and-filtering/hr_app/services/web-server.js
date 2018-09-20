@@ -22,16 +22,15 @@ function initialize() {
     // Mount the router at /api so all its routes start with /api
     app.use('/api', router);
 
-    httpServer.listen(webServerConfig.port, err => {
-      if (err) {
+    httpServer.listen(webServerConfig.port)
+      .on('listening', () => {
+        console.log(`Web server listening on localhost:${webServerConfig.port}`);
+
+        resolve();
+      })
+      .on('error', err => {
         reject(err);
-        return;
-      }
-
-      console.log(`Web server listening on localhost:${webServerConfig.port}`);
-
-      resolve();
-    });
+      });
   });
 }
 
