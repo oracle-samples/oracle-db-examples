@@ -17,16 +17,15 @@ function initialize() {
       res.end('Hello World!');
     });
 
-    httpServer.listen(webServerConfig.port, err => {
-      if (err) {
+    httpServer.listen(webServerConfig.port)
+      .on('listening', () => {
+        console.log(`Web server listening on localhost:${webServerConfig.port}`);
+
+        resolve();
+      })
+      .on('error', err => {
         reject(err);
-        return;
-      }
-
-      console.log(`Web server listening on localhost:${webServerConfig.port}`);
-
-      resolve();
-    });
+      });
   });
 }
 
