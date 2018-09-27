@@ -6,7 +6,7 @@ This is important for applications that return rows (in sorted order) to users t
 
 See scripts before.sql and after.sql - spooled 'lst' output files are provided.
 
-Compare the cost in the before and after versions, and also compare the differences in the resulting plans. The costs in the *after* example (for the FETCH FIRST) are much lower and compare favorably with the ROWNUM queries.
+Compare the cost in the before and after versions, and also compare the differences in the resulting plans. The costs in the *after* example (for FETCH FIRST) are much lower and compare favorably with the ROWNUM queries.
 
 DISCLAIMER:
    <br/>-- These scripts are provided for educational purposes only.
