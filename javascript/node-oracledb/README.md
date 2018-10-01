@@ -1,12 +1,17 @@
 # Node-oracledb Examples
 
-This directory contains [node-oracledb 2.3](https://www.npmjs.com/package/oracledb) examples.
+This directory contains [node-oracledb 3.0](https://www.npmjs.com/package/oracledb) examples.
 
 The node-oracledb add-on for Node.js powers high performance Oracle Database applications.
 
 [Node-oracledb documentation](https://oracle.github.io/node-oracledb/doc/api.html)
 
 [Issues and questions](https://github.com/oracle/node-oracledb/issues)
+
+Issues and questions about node-oracledb can be posted on
+[GitHub](https://github.com/oracle/node-oracledb/issues) or
+[Slack](https://node-oracledb.slack.com/) ([link to join
+Slack](https://join.slack.com/t/node-oracledb/shared_invite/enQtNDI4NTUyNjMzMDA5LWRiZWRkZjQ3NjBhNDUwOGJlNDFiZWJhZTIzYTJkMWQ5N2UwNTg5NzNmNmY1YmZjZGYxNmRhOTkyOTlhMmViNjY)).
 
 To run the examples:
 
