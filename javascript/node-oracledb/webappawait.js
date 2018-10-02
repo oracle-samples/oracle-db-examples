@@ -16,11 +16,11 @@
  * limitations under the License.
  *
  * NAME
- *   webapppromises.js
+ *   webappawait.js
  *
  * DESCRIPTION
  *   Shows a web based query using connections from connection pool. This is
- *   similar to webapp.js but uses promises.
+ *   similar to webapp.js but uses Node 8's async/await syntax.
  *
  *   This displays a table of employees in the specified department.
  *
@@ -37,49 +37,51 @@
  *
  *****************************************************************************/
 
-var http = require('http');
-var oracledb = require('oracledb');
-var dbConfig = require('./dbconfig.js');
-var httpPort = 7000;
+const http = require('http');
+const oracledb = require('oracledb');
+const dbConfig = require('./dbconfig.js');
+const httpPort = 7000;
 
-// Main entry point.  Creates a connection pool, on callback creates an
-// HTTP server that executes a query based on the URL parameter given.
+// Main entry point.  Creates a connection pool and an HTTP server
+// that executes a query based on the URL parameter given.
 // The pool values shown are the default values.
-function init() {
-  oracledb.createPool({
-    user: dbConfig.user,
-    password: dbConfig.password,
-    connectString: dbConfig.connectString
-    // Default values shown below
-    // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
-    // externalAuth: false, // whether connections should be established using External Authentication
-    // poolAlias: 'myalias' // set an alias to allow access to the pool via a name.
-    // poolIncrement: 1, // only grow the pool by one connection at a time
-    // poolMax: 4, // maximum size of the pool. Increase UV_THREADPOOL_SIZE if you increase poolMax
-    // poolMin: 0, // start with no connections; let the pool shrink completely
-    // poolPingInterval: 60, // check aliveness of connection if idle in the pool for 60 seconds
-    // poolTimeout: 60, // terminate connections that are idle in the pool for 60 seconds
-    // queueTimeout: 60000, // terminate getConnection() calls in the queue longer than 60000 milliseconds
-    // stmtCacheSize: 30 // number of statements that are cached in the statement cache of each connection
-  })
-    .then(function(pool) {
-      // Create HTTP server and listen on port - httpPort
-      http
-        .createServer(function(request, response) {
-          handleRequest(request, response, pool);
-        })
-        .listen(httpPort);
-
-      console.log("Server running at http://localhost:" + httpPort);
-    })
-    .catch(function(err) {
-      console.error("createPool() error: " + err.message);
+async function init() {
+  try {
+    await oracledb.createPool({
+      user: dbConfig.user,
+      password: dbConfig.password,
+      connectString: dbConfig.connectString
+      // Default values shown below
+      // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
+      // externalAuth: false, // whether connections should be established using External Authentication
+      // poolAlias: 'myalias' // set an alias to allow access to the pool via a name.
+      // poolIncrement: 1, // only grow the pool by one connection at a time
+      // poolMax: 4, // maximum size of the pool. Increase UV_THREADPOOL_SIZE if you increase poolMax
+      // poolMin: 0, // start with no connections; let the pool shrink completely
+      // poolPingInterval: 60, // check aliveness of connection if idle in the pool for 60 seconds
+      // poolTimeout: 60, // terminate connections that are idle in the pool for 60 seconds
+      // queueTimeout: 60000, // terminate getConnection() calls in the queue longer than 60000 milliseconds
+      // stmtCacheSize: 30 // number of statements that are cached in the statement cache of each connection
     });
+
+    // Create HTTP server and listen on port httpPort
+    let server = http.createServer();
+    server.on('error', (err) => {
+      console.log('HTTP server problem: ' + err);
+    });
+    server.on('request', (request, response) => {
+      handleRequest(request, response);
+    });
+    await server.listen(httpPort);
+    console.log("Server running at http://localhost:" + httpPort);
+  } catch (err) {
+    console.error("init() error: " + err.message);
+  }
 }
 
-function handleRequest(request, response, pool) {
-  var urlparts = request.url.split("/");
-  var deptid = urlparts[1];
+async function handleRequest(request, response) {
+  const urlparts = request.url.split("/");
+  const deptid = urlparts[1];
 
   htmlHeader(
     response,
@@ -102,43 +104,26 @@ function handleRequest(request, response, pool) {
     return;
   }
 
-  // Checkout a connection from the pool
-  pool.getConnection()
-    .then(function(connection) {
-      // console.log("Connections open: " + pool.connectionsOpen);
-      // console.log("Connections in use: " + pool.connectionsInUse);
+  try {
+    // Checkout a connection from the default pool
+    let connection = await oracledb.getConnection();
 
-      connection.execute(
-        `SELECT employee_id, first_name, last_name
+    let result = await connection.execute(
+      `SELECT employee_id, first_name, last_name
          FROM employees
          WHERE department_id = :id`,
-        [deptid] // bind variable value
-      )
-        .then(function(result) {
-          displayResults(response, result, deptid);
+      [deptid] // bind variable value
+    );
 
-          /* Release the connection back to the connection pool */
-          connection.close()
-            .then(function() {
-              htmlFooter(response);
-            })
-            .catch(function(err) {
-              handleError(response, "normal release() error", err);
-            });
-        })
-        .catch(function(err) {
-          connection.close()
-            .catch(function(err) {
-              // Just logging because handleError call below will have already
-              // ended the response.
-              console.error("execute() error release() error", err);
-            });
-          handleError(response, "execute() error", err);
-        });
-    })
-    .catch(function(err) {
-      handleError(response, "getConnection() error", err);
-    });
+    // Release the connection back to the connection pool
+    await connection.close();
+
+    displayResults(response, result, deptid);
+  } catch (err) {
+    handleError(response, "handleRequest() error", err);
+  }
+
+  htmlFooter(response);
 }
 
 // Report an error
@@ -148,7 +133,6 @@ function handleError(response, text, err) {
   }
   console.error(text);
   response.write("<p>Error: " + text + "</p>");
-  htmlFooter(response);
 }
 
 // Display query results
@@ -158,15 +142,15 @@ function displayResults(response, result, deptid) {
 
   // Column Title
   response.write("<tr>");
-  for (var col = 0; col < result.metaData.length; col++) {
+  for (let col = 0; col < result.metaData.length; col++) {
     response.write("<th>" + result.metaData[col].name + "</th>");
   }
   response.write("</tr>");
 
   // Rows
-  for (var row = 0; row < result.rows.length; row++) {
+  for (let row = 0; row < result.rows.length; row++) {
     response.write("<tr>");
-    for (col = 0; col < result.rows[row].length; col++) {
+    for (let col = 0; col < result.rows[row].length; col++) {
       response.write("<td>" + result.rows[row][col] + "</td>");
     }
     response.write("</tr>");
@@ -198,19 +182,15 @@ function htmlFooter(response) {
   response.end();
 }
 
-function closePoolAndExit() {
+async function closePoolAndExit() {
   console.log("\nTerminating");
   try {
     // get the pool from the pool cache and close it when no
     // connections are in use, or force it closed after 10 seconds
-    var pool = oracledb.getPool();
-    pool.close(10, function(err) {
-      if (err)
-        console.error(err);
-      else
-        console.log("Pool closed");
-      process.exit(0);
-    });
+    let pool = oracledb.getPool();
+    await pool.close(10);
+    console.log("Pool closed");
+    process.exit(0);
   } catch(err) {
     // Ignore getPool() error, which may occur if multiple signals
     // sent and the pool has already been removed from the cache.

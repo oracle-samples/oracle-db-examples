@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -27,6 +27,10 @@
  *   accepts a URL parameter for the department ID, for example:
  *   http://localhost:7000/90
  *
+ *   In some networks, pool termination may hang unless you have
+ *   'disable_oob=on' in sqlnet.ora, see
+ *   https://oracle.github.io/node-oracledb/doc/api.html#tnsadmin
+ *
  *   Uses Oracle's sample HR schema.  Scripts to create the HR schema
  *   can be found at: https://github.com/oracle/db-sample-schemas
  *
@@ -47,15 +51,14 @@ function init() {
       password: dbConfig.password,
       connectString: dbConfig.connectString
       // Default values shown below
-      // events: false, // whether to handle Oracle Database FAN and RLB events
+      // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
       // externalAuth: false, // whether connections should be established using External Authentication
       // poolAlias: 'myalias' // set an alias to allow access to the pool via a name
       // poolIncrement: 1, // only grow the pool by one connection at a time
       // poolMax: 4, // maximum size of the pool. Increase UV_THREADPOOL_SIZE if you increase poolMax
       // poolMin: 0, // start with no connections; let the pool shrink completely
-      // poolPingInterval: 60, // check aliveness of connection if in the pool for 60 seconds
+      // poolPingInterval: 60, // check aliveness of connection if idle in the pool for 60 seconds
       // poolTimeout: 60, // terminate connections that are idle in the pool for 60 seconds
-      // queueRequests: true, // let Node.js queue new getConnection() requests if all pool connections are in use
       // queueTimeout: 60000, // terminate getConnection() calls in the queue longer than 60000 milliseconds
       // stmtCacheSize: 30 // number of statements that are cached in the statement cache of each connection
     },
@@ -202,14 +205,32 @@ function htmlFooter(response) {
   response.end();
 }
 
+function closePoolAndExit() {
+  console.log("\nTerminating");
+  try {
+    // get the pool from the pool cache and close it when no
+    // connections are in use, or force it closed after 10 seconds
+    var pool = oracledb.getPool();
+    pool.close(10, function(err) {
+      if (err)
+        console.error(err);
+      else
+        console.log("Pool closed");
+      process.exit(0);
+    });
+  } catch(err) {
+    // Ignore getPool() error, which may occur if multiple signals
+    // sent and the pool has already been removed from the cache.
+    process.exit(0);
+  }
+}
+
 process
   .on('SIGTERM', function() {
-    console.log("\nTerminating");
-    process.exit(0);
+    closePoolAndExit();
   })
   .on('SIGINT', function() {
-    console.log("\nTerminating");
-    process.exit(0);
+    closePoolAndExit();
   });
 
 init();
