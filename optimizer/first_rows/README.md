@@ -4,6 +4,8 @@ It improves the costing of FIRST ROWS type queries so that the optimizer makes b
 
 This is important for applications that return rows (in sorted order) to users that paginate through the result set.
 
+Create the table with make_tab.sql
+
 See scripts before.sql and after.sql - spooled 'lst' output files are provided.
 
 Compare the cost in the before and after versions, and also compare the differences in the resulting plans. The costs in the *after* example (for FETCH FIRST) are much lower and compare favorably with the ROWNUM queries.
