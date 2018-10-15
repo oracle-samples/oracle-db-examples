@@ -20,11 +20,16 @@ public class EmpJDBCTemplate {
 	}
 
 	public void displayEmpList() {
-		final String sql = "SELECT ename FROM emp";
+		final String sql = "SELECT empno, ename, job, mgr, sal, deptno FROM emp";
 		List<EmployeeDAO> employees = jdbcTemplate.query(sql, new EmployeeMapper());
+
+		System.out.println(
+				String.format("%20s %20s %20s %20s %20s %20s \n", "EMPNO", "ENAME", "JOB", "MGR", "SALARY", "DEPT"));
+		
+
 		for (EmployeeDAO employee : employees) {
-			System.out.println(employee.getName());
+			System.out.println(String.format("%20d %20s %20s %20d %20d %20d", employee.getEmpno(), employee.getName(),
+					employee.getJob(), employee.getMgr(), employee.getSal(), employee.getDeptno()));
 		}
 	}
-
 }
