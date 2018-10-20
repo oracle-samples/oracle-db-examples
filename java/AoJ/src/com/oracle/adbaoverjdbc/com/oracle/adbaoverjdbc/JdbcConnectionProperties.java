@@ -21,19 +21,44 @@ import java.util.Properties;
  * An ADBA SessionProperty that specifies a set of JDBC Connection properties.
  * Its value is a java.util.Properties. This value is passed as the info argument
  * when creating a java.sql.Connection.
- *
+ * <br>
+ * Two types of JdbcConnectionProperties are defined in order to distinguish 
+ * {@linkplain jdk.incubator.sql2.SessionProperty#isSensitive() sensitive and non-sensitive JDBC properties.}:
+ * <ul>
+ * <li>
+ * {@link #JDBC_CONNECTION_PROPERTIES} is appropriate for non-sensitive
+ *  properties.
+ * </li>
+ * <li>
+ * {@link #SENSITIVE_JDBC_CONNECTION_PROPERTIES} is appropriate for sensitive
+ *  properties.
+ * </li>
+ * </ul>
+ * If values for both JdbcSessionProperties have been specified for a session, 
+ * and both values specify the same JDBC property, this is an illegal 
+ * specification. Attempting to create a {@link Session} with this 
+ * configuration will result in an {@link IllegalArgumentException}.   
+ *  
  */
-public class JdbcConnectionProperties implements jdk.incubator.sql2.SessionProperty {
+public enum JdbcConnectionProperties 
+  implements jdk.incubator.sql2.SessionProperty {
   
-  public static final JdbcConnectionProperties JDBC_CONNECTION_PROPERTIES
-          = new JdbcConnectionProperties();
-  
-  private JdbcConnectionProperties() {
-  }
+  /** 
+   * A SessionProperty which specifies non-sensitive JDBC Connection 
+   * properties. 
+   */
+  JDBC_CONNECTION_PROPERTIES(false),
 
-  @Override
-  public String name() {
-    return "JDBC_CONNECTION_PROPERTIES";
+  /**
+   * A SessionProperty which specifies sensitive JDBC Connection properties,
+   * such as passwords.
+   */
+  SENSITIVE_JDBC_CONNECTION_PROPERTIES(true);
+  
+  private final boolean sensitive;
+  
+  private JdbcConnectionProperties(boolean sensitive) {
+    this.sensitive = sensitive;
   }
 
   @Override
@@ -48,11 +73,6 @@ public class JdbcConnectionProperties implements jdk.incubator.sql2.SessionPrope
 
   @Override
   public boolean isSensitive() {
-    return false;
-  }
-  
-  @Override
-  public String toString() {
-    return name();
+    return sensitive;
   }
 }

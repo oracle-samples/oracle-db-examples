@@ -25,10 +25,11 @@ import jdk.incubator.sql2.Session;
 
 public class HelloWorld {
 
-  public static final String URL = "jdbc:derby:memory:db;create=true";
-  public static final String USER = "scott";
-  public static final String PASSWORD = "tiger";
-  public static final String FACTORY_NAME = "com.oracle.adbaoverjdbc.DataSourceFactory";
+  public static final String URL = TestConfig.getUrl();
+  public static final String USER = TestConfig.getUser();
+  public static final String PASSWORD = TestConfig.getPassword();
+  public static final String FACTORY_NAME = 
+    TestConfig.getDataSourceFactoryName();
 
   public static void main(String[] args) {
     DataSourceFactory factory = DataSourceFactory.newFactory(FACTORY_NAME);
@@ -44,13 +45,15 @@ public class HelloWorld {
               .build();
               Session session = ds.getSession()) {
         System.out.println("Connected! DataSource: " + ds + " Session: " + session);
-        session.rowOperation("SELECT 1")
+        TestFixtures.createDummyTable(session);
+        session.rowOperation("SELECT 1 FROM dummy")
                 .collect(Collector.of(() -> null, 
                                       (a, r) -> { System.out.println(r.at(1).get(String.class)); }, 
                                       (l, r) -> null,
                                       a -> {System.out.println("end"); return null; }))
                 .onError(ex -> { ex.printStackTrace(); })
                 .submit();
+        TestFixtures.dropDummyTable(session);
       }
     }
     ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);

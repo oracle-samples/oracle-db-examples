@@ -64,9 +64,23 @@ public class SessionPropertyTest {
     assertTrue(jdbcProps.validate(new Properties()));
     assertNotNull(jdbcProps.defaultValue());
     assertTrue(jdbcProps.validate(jdbcProps.defaultValue()));
+    assertFalse(jdbcProps.isSensitive());
+  }
+  
+
+  @Test
+  public void testSensitiveJdbcConnectionProperties() {
+    SessionProperty sensitiveJdbcProps = 
+      JdbcConnectionProperties.SENSITIVE_JDBC_CONNECTION_PROPERTIES;
     
-    // Expect true because password is a JDBC connection property
-    assertTrue(jdbcProps.isSensitive()); 
+    assertEquals("SENSITIVE_JDBC_CONNECTION_PROPERTIES", 
+                 sensitiveJdbcProps.name());
+    assertEquals(Properties.class, sensitiveJdbcProps.range());
+    assertFalse(sensitiveJdbcProps.validate(1234));
+    assertTrue(sensitiveJdbcProps.validate(new Properties()));
+    assertNotNull(sensitiveJdbcProps.defaultValue());
+    assertTrue(sensitiveJdbcProps.validate(sensitiveJdbcProps.defaultValue()));
+    assertTrue(sensitiveJdbcProps.isSensitive());
   }
   
   // TODO: Test the configureOperation API

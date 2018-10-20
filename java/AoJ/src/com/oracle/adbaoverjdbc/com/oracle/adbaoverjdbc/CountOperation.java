@@ -19,8 +19,10 @@ import jdk.incubator.sql2.RowOperation;
 import jdk.incubator.sql2.SqlException;
 import jdk.incubator.sql2.SqlType;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
@@ -29,10 +31,6 @@ import java.util.logging.Level;
 import jdk.incubator.sql2.ParameterizedRowCountOperation;
 import jdk.incubator.sql2.Result;
 
-/**
- *
- * @param <T>
- */
 class CountOperation<T> extends ParameterizedOperation<T>
         implements ParameterizedRowCountOperation<T> {
   
@@ -53,19 +51,25 @@ class CountOperation<T> extends ParameterizedOperation<T>
   
   // attributes
   private final String sqlString;
-  private Function<? super Result.RowCount, ? extends T> countProcessor;
+  protected Function<? super Result.RowCount, ? extends T> countProcessor;
   
-  PreparedStatement jdbcStatement;
+  private PreparedStatement jdbcStatement;
+  private GeneratedKeysRowOperation rowOperation;
+  private String autoKeyColNames[];
 
   CountOperation(Session session, OperationGroup operationGroup, String sql) {
     super(session, operationGroup);
     countProcessor = DEFAULT_PROCESSOR;
     sqlString = sql;
+    autoKeyColNames = null;
+    rowOperation = null;
   }
 
   @Override
   public RowOperation<T> returning(String... keys) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    rowOperation = new GeneratedKeysRowOperation(session, group);
+    autoKeyColNames = keys;
+    return group.addMember(rowOperation); 
   }
 
   @Override
@@ -93,13 +97,27 @@ class CountOperation<T> extends ParameterizedOperation<T>
   private T executeQuery(Object ignore) {
     checkCanceled();
     try {
-      jdbcStatement = session.prepareStatement(sqlString);
+      if(autoKeyColNames != null)      
+        jdbcStatement = session.prepareStatement(sqlString, autoKeyColNames);
+      else
+        jdbcStatement = session.prepareStatement(sqlString);
+        
       setParameters.forEach((String k, ParameterValue v) -> {
         v.set(jdbcStatement, k);
       });
-      group.logger.log(Level.FINE, () -> "executeUpdate(\"" + sqlString + "\")");
+      group.logger.log(Level.FINE, () -> "executeLargeUpdate(\"" + sqlString + "\")");
       long c = jdbcStatement.executeLargeUpdate();
-      return countProcessor.apply(new RowCount(c));
+      
+      if(autoKeyColNames != null) {
+        
+        // Get the DML Returning resultset
+        ResultSet rs = jdbcStatement.getGeneratedKeys();
+        
+        // Set the resultset and complete the future, so RowOperation process the result
+        rowOperation.setResultSet(rs);
+      }
+      
+      return countProcessor.apply(com.oracle.adbaoverjdbc.Result.newRowCount(c));
     }
     catch (SQLException ex) {
       throw new SqlException(ex.getMessage(), ex, ex.getSQLState(), ex.getErrorCode(), sqlString, -1);
@@ -138,28 +156,94 @@ class CountOperation<T> extends ParameterizedOperation<T>
     return (CountOperation<T>)super.onError(handler);
   }
 
+  /** 
+    * Represents the result of a SQL execution that is an update count.  
+    *  
+    * ISSUE: It's not obvious this type is more valuable than just using 
+    * java.lang.Long. Result.Count exists to clearly express that the input arg  
+    * to the processor Function is a count. Could rely on documentation but this 
+    * seems like it might be important enough to capture in the type system. There 
+    * also may be non-numeric return values that Result.Count could express, eg 
+    * success but number unknown. 
+    */ 
+  static class RowCount implements Result.RowCount { 
+    private long count = -1; 
+     
+    RowCount(long c) { 
+      count = c; 
+    }
+     
+    @Override 
+    public long getCount() { 
+      return count; 
+    } 
+  } 
+  
   /**
-   * Represents the result of a SQL execution that is an update count. 
-   * 
-   * ISSUE: It's not obvious this type is more valuable than just using
-   * java.lang.Long. Result.Count exists to clearly express that the input arg 
-   * to the processor Function is a count. Could rely on documentation but this
-   * seems like it might be important enough to capture in the type system. There
-   * also may be non-numeric return values that Result.Count could express, eg
-   * success but number unknown.
+   * This inner class represents DML generated keys as a RowOperation. The 
+   * underlying ResultSet is obtained during execution of the CountOperation.
    */
-  static class RowCount implements Result.RowCount {
-
-    private long count = -1;
-    
-    private RowCount(long c) {
-      count = c;
+  private class GeneratedKeysRowOperation 
+    extends com.oracle.adbaoverjdbc.RowOperation<T> {
+     
+    private final CompletableFuture<T> resultCF;
+ 
+    GeneratedKeysRowOperation(Session session, OperationGroup<T, ?> operationGroup) {
+      super(session, operationGroup, null);
+      resultCF = new CompletableFuture<>();
+    }
+ 
+    @Override
+    CompletionStage<T> follows(CompletionStage<?> predecessor, Executor executor) {
+      predecessor = attachFutureParameters(predecessor);
+      predecessor
+              .thenComposeAsync(this::resultExist, executor)
+              .thenCompose(this::moreRows);
+      return (CompletionStage<T>) predecessor;
+    }
+ 
+ 
+    // Wait until countOperation generate the DML returning result 
+    private CompletionStage<T> resultExist(Object x) {
+      checkCanceled();
+      return resultCF;
+    }
+ 
+ 
+    /**
+     * Register the ResultSet returned by 
+     * {@link java.sql.Statement#getGeneratedKeys()}
+     * during execution of the associated CountOperation.
+     * @param resultSet The generated keys of the associated CountOperation.
+     */
+    void setResultSet(ResultSet resultSet) {
+      checkCanceled();
+      initRowOperationResultSet(jdbcStatement, resultSet);
+      // Trigger DML returning result is ready to process
+      resultCF.complete(null);
     }
     
     @Override
-    public long getCount() {
-      return count;
+    protected void JdbcClose() {
+      try {
+        jdbcStatement.close();
+      } 
+      catch (SQLException ex) {
+        throw new SqlException(ex.getMessage(), ex, ex.getSQLState(), ex.getErrorCode(), sqlString, -1);
+      }
     }
-    
-  }
+ 
+    @Override
+    protected void JdbcCancel() {
+      try {
+        if (jdbcStatement != null) {
+          jdbcStatement.cancel();
+        }
+      }
+      catch (SQLException ex) {
+        throw new SqlException(ex.getMessage(), ex, ex.getSQLState(), ex.getErrorCode(), sqlString, -1);
+      }
+    }
+  } // GeneratedKeysRowOperation
+  
 }

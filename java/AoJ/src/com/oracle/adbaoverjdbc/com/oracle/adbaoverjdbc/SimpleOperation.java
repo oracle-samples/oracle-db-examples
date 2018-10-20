@@ -19,7 +19,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import jdk.incubator.sql2.SqlSkippedException;
 
 /**
  *

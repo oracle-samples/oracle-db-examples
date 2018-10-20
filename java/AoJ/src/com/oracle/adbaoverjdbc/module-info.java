@@ -15,7 +15,7 @@
  */
 
 module com.oracle.adbaoverjdbc {
-  requires jdk.incubator.adba;
+  requires transitive jdk.incubator.adba;
   requires java.sql;
   exports com.oracle.adbaoverjdbc;
   provides jdk.incubator.sql2.DataSourceFactory with com.oracle.adbaoverjdbc.DataSourceFactory;

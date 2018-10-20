@@ -15,24 +15,25 @@
  */
 package com.oracle.adbaoverjdbc;
 
+import java.sql.CallableStatement;
 import jdk.incubator.sql2.AdbaSessionProperty;
-import jdk.incubator.sql2.Session.Lifecycle;
 import jdk.incubator.sql2.SessionProperty;
 import jdk.incubator.sql2.Operation;
-import jdk.incubator.sql2.ParameterizedRowPublisherOperation;
 import jdk.incubator.sql2.ShardingKey;
 import jdk.incubator.sql2.SqlException;
 import jdk.incubator.sql2.TransactionOutcome;
+
+import java.sql.CallableStatement;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 import java.util.function.LongConsumer;
 import java.util.logging.Level;
@@ -75,7 +76,7 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
   private Session(DataSource ds,
                      Map<SessionProperty, Object> properties) {
     super();
-    this.lifecycleListeners = new HashSet<>();
+    this.lifecycleListeners = new CopyOnWriteArraySet<>();
     dataSource = ds;
     this.properties = properties;
     SessionProperty execProp = AdbaSessionProperty.EXECUTOR;
@@ -85,58 +86,53 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
   // PUBLIC
   @Override
   public Operation<Void> attachOperation() {
-    if (! isHeld()) {
-      throw new IllegalStateException("TODO");
+    assertOpen();
+    if (sessionLifecycle != Lifecycle.NEW) {
+      throw new IllegalStateException(
+        "Session lifecycle is: " + getSessionLifecycle());
     }
-    return com.oracle.adbaoverjdbc.SimpleOperation.<Void>newOperation(this, this, this::jdbcConnect);
+    return addMember(
+      com.oracle.adbaoverjdbc.SimpleOperation.<Void>newOperation(
+        this, this, this::jdbcConnect));
   }
 
   @Override
   public Operation<Void> validationOperation(Validation depth) {
-    if (! isHeld()) {
-      throw new IllegalStateException("TODO");
-    }
-    return com.oracle.adbaoverjdbc.SimpleOperation.<Void>newOperation(this, this, op -> jdbcValidate(op, depth));
+    assertOpen();
+    return addMember(
+      com.oracle.adbaoverjdbc.SimpleOperation.<Void>newOperation(
+        this, this, op -> jdbcValidate(op, depth)));
   }
 
   @Override
   public Operation<Void> closeOperation() {
-    if (! isHeld()) {
-      throw new IllegalStateException("TODO");
-    }
-    return com.oracle.adbaoverjdbc.UnskippableOperation.<Void>newOperation(this, this, this::jdbcClose);  //TODO cannot be skipped
+    assertOpen();
+    return addMember(
+      com.oracle.adbaoverjdbc.UnskippableOperation.<Void>newOperation(
+        this, this, this::jdbcClose));  //TODO cannot be skipped
   }
 
   @Override
   public <S, T> jdk.incubator.sql2.OperationGroup<S, T> operationGroup() {
-    if (!isHeld()) {
-      throw new IllegalStateException("TODO");
-    }
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    assertOpen();
+    return addMember(OperationGroup.newOperationGroup(this));
   }
 
   @Override
   public TransactionCompletion transactionCompletion() {
-    if (! isHeld()) {
-      throw new IllegalStateException("TODO");
-    }
+    assertOpen();
     return TransactionCompletion.createTransaction(this);
   }
 
   @Override
   public Session registerLifecycleListener(SessionLifecycleListener listener) {
-    if (!sessionLifecycle.isActive()) {
-      throw new IllegalStateException("TODO");
-    }
+    assertOpen();
     lifecycleListeners.add(listener);
     return this;
   }
 
   @Override
   public Session deregisterLifecycleListener(SessionLifecycleListener listener) {
-    if (!sessionLifecycle.isActive()) {
-      throw new IllegalStateException("TODO");
-    }
     lifecycleListeners.remove(listener);
     return this;
   }
@@ -148,16 +144,32 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
 
   @Override
   public jdk.incubator.sql2.Session abort() {
+    if (sessionLifecycle == Lifecycle.ABORTING 
+       || sessionLifecycle == Lifecycle.CLOSED) { 
+      return this;
+    }
     setLifecycle(sessionLifecycle.abort());
     this.closeImmediate();
+
+    if (operationLifecycle.isSubmitted())
+      sessionCF.whenComplete((v, e) -> setLifecycle(Lifecycle.CLOSED));
+    else
+      setLifecycle(sessionLifecycle.closed());
+    
+    if (!isImmutable()) super.close();
+    
     return this;
   }
 
   @Override
   public Map<SessionProperty, Object> getProperties() {
+    assertOpen();
     Map<SessionProperty, Object> map = new HashMap<>(properties.size());
     properties.forEach((k, v) -> {
       if (!k.isSensitive()) {
+        if (v instanceof Cloneable) {
+          v = DataSourceBuilder.tryClone((Cloneable)v);
+        }
         map.put(k, v);
       }
     });
@@ -166,28 +178,21 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
 
   @Override
   public ShardingKey.Builder shardingKeyBuilder() {
+    assertOpen();
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
   public jdk.incubator.sql2.Session requestHook(LongConsumer request) {
+    assertOpen();
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
   
   @Override
-  public jdk.incubator.sql2.Session activate() {
-    setLifecycle(sessionLifecycle.activate());
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public void close() {
+    closeOperation().submit();
+    super.close();
   }
-
-  @Override
-  public jdk.incubator.sql2.Session deactivate() {
-    setLifecycle(sessionLifecycle.deactivate());
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-  
- 
-  
   
   // INTERNAL
   protected Session setLifecycle(Lifecycle next) {
@@ -201,10 +206,8 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
 
   Session closeImmediate() {
     try {
-      if (jdbcConnection != null && !jdbcConnection.isClosed()) {
-        setLifecycle(sessionLifecycle.abort());
+      if (jdbcConnection != null) {
         jdbcConnection.abort(executor);  // Session.abort is not supposed to hang
-        //TODO should call sessionLifecycle.close() when abort completes.
       }
     }
     catch (SQLException ex) {
@@ -225,7 +228,7 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
   jdk.incubator.sql2.Submission<Object> submit(com.oracle.adbaoverjdbc.Operation<Object> op) {
     if (op == this) {
       // submitting the Session OperationGroup
-      sessionCF = (CompletableFuture<Object>)attachErrorHandler(op.follows(ROOT, getExecutor()));
+      sessionCF = (CompletableFuture<Object>)attachCompletionHandler(op.follows(ROOT, getExecutor()));
       return com.oracle.adbaoverjdbc.Submission.submit(this::cancel, sessionCF);
     }
     else {
@@ -233,6 +236,7 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
     }
   }
   
+  @SuppressWarnings("unchecked")
   protected <V> V sessionPropertyValue(SessionProperty prop) {
     V value = (V)properties.get(prop);
     if (value == null) return (V)prop.defaultValue();
@@ -246,20 +250,38 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
   
   private Void jdbcConnect(com.oracle.adbaoverjdbc.Operation<Void> op) {
     try {
-    Properties info = (Properties)properties.get(JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES);
-    info = (Properties)(info == null ? JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES.defaultValue() 
-                                     : info.clone());
-    info.setProperty("user", (String) properties.get(AdbaSessionProperty.USER));
-    info.setProperty("password", (String) properties.get(AdbaSessionProperty.PASSWORD));
-    String url = (String) properties.get(AdbaSessionProperty.URL);
-    Properties p = info;
-    group.logger.log(Level.FINE, () -> "DriverManager.getSession(\"" + url + "\", " + p +")");
-    jdbcConnection = DriverManager.getConnection(url, info);
-    jdbcConnection.setAutoCommit(false);
-    setLifecycle(Session.Lifecycle.OPEN);
-    return null;
+      Properties info = (Properties)properties.get(JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES);
+      info = (Properties)(info == null ? JdbcConnectionProperties.JDBC_CONNECTION_PROPERTIES.defaultValue() 
+                                       : info.clone());
+      
+      Properties sensitiveInfo = (Properties)properties.get(
+        JdbcConnectionProperties.SENSITIVE_JDBC_CONNECTION_PROPERTIES);
+      if (sensitiveInfo != null)
+        info.putAll(sensitiveInfo);
+      
+      String user = (String) properties.get(AdbaSessionProperty.USER);
+      if (user != null)
+        info.setProperty("user", user);
+      
+      String password = (String) properties.get(AdbaSessionProperty.PASSWORD);
+      if (password != null)
+        info.setProperty("password", password);
+      
+      String url = (String) properties.get(AdbaSessionProperty.URL);
+      Properties p = info;
+      group.logger.log(Level.FINE, () -> "DriverManager.getSession(\"" + url + "\", " + p +")");
+      jdbcConnection = DriverManager.getConnection(url, info);
+      jdbcConnection.setAutoCommit(false);
+      
+      if (sessionLifecycle == Lifecycle.ABORTING)
+        closeImmediate();
+      else
+        setLifecycle(Session.Lifecycle.ATTACHED);
+      
+      return null;
     }
     catch (SQLException ex) {
+      setLifecycle(Session.Lifecycle.CLOSED);
       throw new SqlException(ex.getMessage(), ex, ex.getSQLState(), ex.getErrorCode(), null, -1);
     }
   }
@@ -328,7 +350,17 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
     logger.log(Level.FINE, () -> "Session.prepareStatement(\"" + sqlString + "\")"); //DEBUG
     return jdbcConnection.prepareStatement(sqlString);
   }
+  
+  CallableStatement prepareCall(String sqlString) throws SQLException {
+      logger.log(Level.FINE, () -> "Session.prepareCall(\"" + sqlString + "\")"); //DEBUG
+      return jdbcConnection.prepareCall(sqlString);
+  }
 
+  PreparedStatement prepareStatement(String sqlString, String[] auotKeyColNames) throws SQLException {
+    logger.log(Level.FINE, () -> "Session.prepareStatement(\"" + sqlString + "\")"); //DEBUG
+    return jdbcConnection.prepareStatement(sqlString, auotKeyColNames);
+  }
+  
   TransactionOutcome jdbcEndTransaction(SimpleOperation<TransactionOutcome> op, TransactionCompletion trans) {
     try {
       if (trans.endWithCommit(this)) {
@@ -347,9 +379,18 @@ class Session extends OperationGroup<Object, Object> implements jdk.incubator.sq
     }
   }
 
+  /**
+   * Override for Session, where {@link Operation}'s group field is this
+   * Session; The result of this Session should not be accumulated by it's own
+   * Collector. (The result of this session is the result of the Collector's
+   * finisher function).
+   * <br>
+   * TODO: Change the argument and return value's type to a generic, rather 
+   * than Object. Currently, there's no API to define the S and T types for a
+   * Session. 
+   */
   @Override
-  public <R> ParameterizedRowPublisherOperation<R> rowPublisherOperation(String sql) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  protected Object handleResult(Object result) {
+    return result;
   }
-
 }

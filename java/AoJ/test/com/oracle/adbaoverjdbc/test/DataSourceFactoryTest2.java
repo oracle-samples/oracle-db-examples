@@ -25,16 +25,9 @@ public class DataSourceFactoryTest2 {
    * Verify that when DataSourceFactory name is null then it throws an
    * exception.
    */
-  @Test
+  @Test (expected = IllegalArgumentException.class)
   public void nullDataSourceFactory() {
-    try {
-      DataSourceFactory.newFactory(null);
-    } catch (IllegalArgumentException ex) {
-      // Exception expected
-      System.out.println(ex.getMessage());
-      return;
-    }
-
-    fail();
+     DataSourceFactory.newFactory(null);
+     fail("Exception expected");
   }
 }

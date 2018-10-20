@@ -18,6 +18,9 @@ package com.oracle.adbaoverjdbc;
 import jdk.incubator.sql2.SessionProperty;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
+import static com.oracle.adbaoverjdbc.JdbcConnectionProperties.*;
 
 /**
  * A builder to create an AoJ session. The AoJ session creates a JDBC
@@ -94,7 +97,30 @@ class SessionBuilder implements jdk.incubator.sql2.Session.Builder {
     // replace default values with specified values where provided
     // otherwise use defaults
     defaultProperties.putAll(requiredProperties);
+    validateProperties(defaultProperties);
     return Session.newSession(dataSource, defaultProperties);
   }
+  
+  /**
+   * Ensures that a collection of SessionProperties represents a valid
+   * configuration.
+   * @param properties A collection of SessionProperties.
+   * @throws IllegalArgumentException If the collection is not valid.
+   */
+  private void validateProperties(Map<SessionProperty, Object> properties) {
 
+    // Ensure sensitive and non-sensitive properties are distinct.
+    Properties nonSensitive = 
+      (Properties) properties.get(JDBC_CONNECTION_PROPERTIES);
+    Properties sensitive = 
+      (Properties) properties.get(SENSITIVE_JDBC_CONNECTION_PROPERTIES);
+    boolean distinct = nonSensitive == null || sensitive == null
+      || !(nonSensitive.keySet().stream().anyMatch(sensitive::containsKey));
+    
+    if (! distinct) {
+      throw new IllegalArgumentException(JDBC_CONNECTION_PROPERTIES.name() 
+        + " and " + SENSITIVE_JDBC_CONNECTION_PROPERTIES.name()
+        + " cannot define the same property.");
+    }
+  }
 }

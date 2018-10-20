@@ -18,15 +18,13 @@ package com.oracle.adbaoverjdbc.test;
 import jdk.incubator.sql2.AdbaType;
 import jdk.incubator.sql2.DataSourceFactory;
 import jdk.incubator.sql2.DataSource;
-import jdk.incubator.sql2.SqlException;
 import java.util.Properties;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -34,47 +32,52 @@ import static com.oracle.adbaoverjdbc.JdbcConnectionProperties.JDBC_CONNECTION_P
 import jdk.incubator.sql2.Result;
 import jdk.incubator.sql2.Session;
 import jdk.incubator.sql2.TransactionCompletion;
+import static com.oracle.adbaoverjdbc.test.TestConfig.*;
 
 /**
  * This is a quick and dirty test to check if anything at all is working.
- * 
- * Depends on the scott/tiger schema availble here:
- * https://github.com/oracle/dotnet-db-samples/blob/master/schemas/scott.sql
  */
 public class FirstLight {
   
-  //
-  // EDIT THESE
-  //
   // Define these three constants with the appropriate values for the database
   // and JDBC driver you want to use. Should work with ANY reasonably standard
   // JDBC driver. These values are passed to DriverManager.getSession.
-  public static final String URL = "jdbc:oracle:thin:@//den03cll.us.oracle.com:5521/main2.regress.rdbms.dev.us.oracle.com"; //"<JDBC driver connect string>";
-  public static final String USER = "scott"; //<database user name>";
-  public static final String PASSWORD = "tiger"; //<database user password>";
+  public static final String URL = TestConfig.getUrl();
+  public static final String USER = TestConfig.getUser();
+  public static final String PASSWORD = TestConfig.getPassword();
   // Define this to be the most trivial SELECT possible
-  public static final String TRIVIAL = "SELECT 1 FROM DUAL";
+  public static final String TRIVIAL = "SELECT 1 FROM dummy";
 
   
-  public static final String FACTORY_NAME = "com.oracle.adbaoverjdbc.DataSourceFactory";
-  
-  public FirstLight() {
-  }
+  public static final String FACTORY_NAME = 
+    TestConfig.getDataSourceFactoryName();
 
   @BeforeClass
-  public static void setUpClass() {
+  public static void setUpClass() throws Exception {
+    try (DataSource ds = DataSourceFactory.newFactory(FACTORY_NAME)
+                           .builder()
+                           .url(URL)
+                           .username(USER)
+                           .password(PASSWORD)
+                           .build();
+         Session se = ds.getSession()) {
+      TestFixtures.createDummyTable(se);
+      TestFixtures.createTestSchema(se);
+    }
   }
 
   @AfterClass
-  public static void tearDownClass() {
-  }
-
-  @Before
-  public void setUp() {
-  }
-
-  @After
-  public void tearDown() {
+  public static void tearDownClass() throws Exception {
+    try (DataSource ds = DataSourceFactory.newFactory(FACTORY_NAME)
+                           .builder()
+                           .url(URL)
+                           .username(USER)
+                           .password(PASSWORD)
+                           .build();
+         Session se = ds.getSession()) {
+      TestFixtures.dropDummyTable(se);
+      TestFixtures.dropTestSchema(se);
+    }
   }
 
   /**
@@ -107,7 +110,6 @@ public class FirstLight {
   @Test
   public void sqlOperation() {
     Properties props = new Properties();
-    props.setProperty("oracle.jdbc.implicitStatementCacheSize", "10");
     DataSourceFactory factory = DataSourceFactory.newFactory(FACTORY_NAME);
     DataSource ds = factory.builder()
             .url(URL)
@@ -128,43 +130,38 @@ public class FirstLight {
    */
   @Test
   public void rowOperation() {
-    Properties props = new Properties();
-    props.setProperty("oracle.jdbc.implicitStatementCacheSize", "10");
     DataSourceFactory factory = DataSourceFactory.newFactory(FACTORY_NAME);
     try (DataSource ds = factory.builder()
             .url(URL)
             .username(USER)
             .password(PASSWORD)
-            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
             Session session = ds.getSession(t -> System.out.println("ERROR: " + t.getMessage()))) {
       assertNotNull(session);
       session.<Void>rowOperation(TRIVIAL)
               .collect(Collector.of(() -> null,
-                                    (a, r) -> {
-                                      System.out.println("Trivial: " + r.at(1).get(String.class));
-                                    },
+                                    (a, r) -> assertEquals("1", r.at(1).get(String.class)),
                                     (x, y) -> null))
               .submit();
-      session.<Integer>rowOperation("select * from emp")
+      session.<Integer>rowOperation("select * from forum_user")
               .collect(Collector.<Result.RowColumn, int[], Integer>of(() -> new int[1],
                       (int[] a, Result.RowColumn r) -> {
-                        a[0] = a[0]+r.at("sal").get(Integer.class);
+                        a[0] = a[0]+r.at("total_score").get(Integer.class);
                       },
                       (l, r) -> l,
                       a -> (Integer)a[0]))
               .submit()
               .getCompletionStage()
-              .thenAccept( n -> {System.out.println("labor cost: " + n);})
-              .toCompletableFuture();
-      session.<Integer>rowOperation("select * from emp where empno = ?")
+              .thenAccept( n -> assertEquals(29025, n.intValue()));
+      session.<Integer>rowOperation("select * from forum_user where id = ?")
               .set("1", 7782)
               .collect(Collector.of(
                       () -> null,
-                      (a, r) -> {
-                        System.out.println("salary: $" + r.at("sal").get(Integer.class));
-                      },
+                      (a, r) -> assertEquals(2450, r.at("sal")
+                                                    .get(Integer.class)
+                                                    .intValue()),
                       (l, r) -> null))
+              .onError(t -> fail(t.getMessage()))
               .submit();
     }
     ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
@@ -173,45 +170,37 @@ public class FirstLight {
   /**
    * check does error handling do anything
    */
-  //@Test
-  public void errorHandling() {
-    Properties props = new Properties();
-    props.setProperty("oracle.jdbc.implicitStatementCacheSize", "10");
+  @Test
+  public void errorHandling() throws Exception {
+    CountDownLatch logonErrorLatch = new CountDownLatch(1);
     DataSourceFactory factory = DataSourceFactory.newFactory(FACTORY_NAME);
     try (DataSource ds = factory.builder()
-            .url(URL)
+            .url("invalid" + URL)
             .username(USER)
-            .password("invalid password")
-            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
+            .password(PASSWORD)
             .build();
-            Session session = ds.getSession(t -> System.out.println("ERROR: " + t.toString()))) {
-      session.<Void>rowOperation(TRIVIAL)
-              .collect(Collector.of(() -> null,
-                                    (a, r) -> {
-                                      System.out.println("Trivial: " + r.at(1).get(String.class));
-                                    },
-                                    (x, y) -> null))
-              .onError( t -> { System.out.println(t.toString()); })
-              .submit();
+            Session session = ds.getSession(t -> logonErrorLatch.countDown())) {
+      assertTrue(logonErrorLatch.await(getTimeout().toMillis(), 
+                                       TimeUnit.MILLISECONDS));
     }
     
+    CountDownLatch sqlErrorLatch = new CountDownLatch(1);
     try (DataSource ds = factory.builder()
             .url(URL)
             .username(USER)
             .password(PASSWORD)
-            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
             Session session = ds.getSession(t -> System.out.println("ERROR: " + t.toString()))) {
-      session.<Integer>rowOperation("select * from emp where empno = ?")
+      session.<Integer>rowOperation("select * from forum_user where iddd = ?")
               .set("1", 7782)
               .collect(Collector.of(
                       () -> null,
-                      (a, r) -> {
-                        System.out.println("salary: $" + r.at("sal").get(Integer.class));
-                      },
+                      (a, r) -> fail("Expected error"),
                       (l, r) -> null))
-              .onError( t -> { System.out.println(t.getMessage()); } )
+              .onError( t -> sqlErrorLatch.countDown())
               .submit();
+      assertTrue(sqlErrorLatch.await(getTimeout().toMillis(),
+                                     TimeUnit.MILLISECONDS));
     }
     ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
   }
@@ -222,44 +211,40 @@ public class FirstLight {
    */
   @Test
   public void transaction() {
-    Properties props = new Properties();
-    props.setProperty("oracle.jdbc.implicitStatementCacheSize", "10");
     DataSourceFactory factory = DataSourceFactory.newFactory(FACTORY_NAME);
     try (DataSource ds = factory.builder()
             .url(URL)
             .username(USER)
             .password(PASSWORD)
-            .sessionProperty(JDBC_CONNECTION_PROPERTIES, props)
             .build();
             Session session = ds.getSession(t -> System.out.println("ERROR: " + t.toString()))) {
       TransactionCompletion trans = session.transactionCompletion();
-      CompletionStage<Integer> idF = session.<Integer>rowOperation("select empno, ename from emp where ename = ? for update")
-              .set("1", "CLARK", AdbaType.VARCHAR)
+      CompletionStage<Integer> idF = session.<Integer>rowOperation(
+        "select id, name from forum_user where name = ? for update")
+              .set("1", "OGORMAN", AdbaType.VARCHAR)
               .collect(Collector.of(
                       () -> new int[1], 
-                      (a, r) -> {a[0] = r.at("empno").get(Integer.class); },
+                      (a, r) -> {a[0] = r.at("id").get(Integer.class); },
                       (l, r) -> null,
                       a -> a[0])
               )
               .submit()
               .getCompletionStage();
-      idF.thenAccept( id -> { System.out.println("id: " + id); } );
-      session.<Long>rowCountOperation("update emp set deptno = ? where empno = ?")
-              .set("1", 50, AdbaType.INTEGER)
+      idF.thenAccept( id -> assertEquals(7782, id.intValue()));
+      session.<Long>rowCountOperation("update user set city_id = ? where id = ?")
+              .set("1", 40, AdbaType.INTEGER)
               .set("2", idF, AdbaType.INTEGER)
-              .apply(c -> { 
-                if (c.getCount() != 1L) {
-                  trans.setRollbackOnly();
-                  throw new SqlException("updated wrong number of rows", null, null, -1, null, -1);
-                }
+              .apply(c -> {
+                if (1L != c.getCount()) trans.setRollbackOnly();
                 return c.getCount();
               })
-              .onError(t -> t.printStackTrace())
+              .onError(t -> fail(t.getMessage()))
               .submit()
               .getCompletionStage()
-              .thenAccept( c -> { System.out.println("updated rows: " + c); } );
+              .thenAccept( c -> assertEquals(1L, c.longValue()));
       session.catchErrors();
-      session.commitMaybeRollback(trans);
+      assertFalse(trans.isRollbackOnly());
+      session.rollback();
     }    
     ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
   }
