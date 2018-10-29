@@ -46,9 +46,10 @@ public class DataSourceFactoryTest {
    */
   @Test
   public void testNewFactory() {
-    DataSourceFactory factory = DataSourceFactory.newFactory(TEST_DS_FACTORY_NAME);
+    String name = getDataSourceFactoryName();
+    DataSourceFactory factory = DataSourceFactory.newFactory(name);
     assertNotNull(factory);
-    assertEquals(TEST_DS_FACTORY_NAME, factory.getClass().getName());
+    assertEquals(name, factory.getClass().getName());
   }
   
   /**
@@ -56,7 +57,8 @@ public class DataSourceFactoryTest {
    */
   @Test
   public void testBuilder() {
-    DataSourceFactory factory = DataSourceFactory.newFactory(TEST_DS_FACTORY_NAME);
+    DataSourceFactory factory = 
+      DataSourceFactory.newFactory(getDataSourceFactoryName());
     DataSource.Builder builder = factory.builder();
     assertNotNull(builder);
   }

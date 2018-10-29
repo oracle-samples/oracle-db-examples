@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<displays>
+	<display type="editor" style="Table" enable="true"
+		connType="Oracle" objectType="FAVORITES_FOLDER">
+		<name><![CDATA[Favorites]]></name>
+		<description><![CDATA[Description doesn't seem to show up anywhere]]></description>
+		<tooltip><![CDATA[Tooltip doesn't seem to show up anywhere]]></tooltip>
+		<drillclass><![CDATA[null]]></drillclass>
+		<query>
+			<sql>
+				<![CDATA[
+--SELECT FAV_FOLDER,OBJECT_NAME,OBJECT_TYPE,OBJECT_OWNER FROM SDX$FAVORITES
+--START WITH FAV_FOLDER IS NULL
+--CONNECT BY PRIOR OBJECT_NAME = FAV_FOLDER
+--ORDER SIBLINGS BY OBJECT_NAME
+-- Don't want to show FAV_FOLDERs so folks need to use UI to delete them
+SELECT FAV_FOLDER,OBJECT_NAME,OBJECT_TYPE,OBJECT_OWNER FROM SDX$FAVORITES
+WHERE FAV_FOLDER IS NOT NULL
+ORDER BY FAV_FOLDER,OBJECT_NAME
+				]]>
+			</sql>
+		</query>
+	<!-- 
+		<insert>
+			<script>dbutil.execute("update hr.employees set first_name='" +first_name+ 
+			                "' where employee_id = " + employee_id);</script>
+		</insert>
+		<update>
+			<script>dbutil.execute("insert hr.employees values(.....)";</script>
+		</update>
+	 -->
+	 <!-- when style="EditableTable" 
+	      NPE ScriptingUtilities:29 as ctx is null when called by ScriptBasedGridUpdater - fix for 18.3
+		<delete>
+			<script>dbutil.execute("delete SDX$FAVORITES where FAV_FOLDER = '" + fav_folder + "' and OBJECT_NAME = '" + object_name +"' and OBJECT_TYPE = '" + object_type + "' and OBJECT_OWNER = '" + object_owner + "'");</script>
+		</delete>
+	 -->
+	</display>
+
+</displays>

@@ -52,6 +52,9 @@ class DataSourceBuilder implements jdk.incubator.sql2.DataSource.Builder {
     if (dataSourceProperties.containsKey(property)) {
       throw new IllegalArgumentException("cannot set a property multiple times");
     }
+    if (value instanceof Cloneable) {
+      value = tryClone((Cloneable)value);
+    }
     if (!property.validate(value)) {
       throw new IllegalArgumentException("TODO");
     }
@@ -70,6 +73,9 @@ class DataSourceBuilder implements jdk.incubator.sql2.DataSource.Builder {
     if (requiredSessionProperties.containsKey(property)) {
       throw new IllegalArgumentException("cannot set a default that is already required");
     }
+    if (value instanceof Cloneable) {
+      value = tryClone((Cloneable)value);
+    }
     if (!property.validate(value)) {
       throw new IllegalArgumentException("TODO");
     }
@@ -87,6 +93,9 @@ class DataSourceBuilder implements jdk.incubator.sql2.DataSource.Builder {
     }
     if (requiredSessionProperties.containsKey(property)) {
       throw new IllegalArgumentException("cannot set a required prop multiple times");
+    }
+    if (value instanceof Cloneable) {
+      value = tryClone((Cloneable)value);
     }
     if (!property.validate(value)) {
       throw new IllegalArgumentException("TODO");
@@ -109,4 +118,25 @@ class DataSourceBuilder implements jdk.incubator.sql2.DataSource.Builder {
     return DataSource.newDataSource(defaultSessionProperties, requiredSessionProperties);
   }
 
+  /**
+   * Returns the result of invoking clone() on an instance of 
+   * java.lang.Cloneable which implements a public clone() method.
+   *  
+   * @param value A Cloneable
+   * @return The result of calling value.clone(), via reflection.
+   * @throws IllegalArgumentException If this code base does not have security 
+   *   privileges for reflection of the value's class, or if the value's class 
+   *   does not implement a public clone() method, or if an invocation of the 
+   *   public clone() method throws an exception.
+   */
+  static Object tryClone(Cloneable value) {
+    try {
+      return value.getClass().getMethod("clone").invoke(value);
+    }
+    catch (Exception cloneEx) { 
+      throw new IllegalArgumentException(
+        "Failed to invoke clone() on object of Cloneable class: " 
+        + value.getClass());
+    }
+  }
 }

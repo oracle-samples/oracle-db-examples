@@ -17,7 +17,6 @@ package com.oracle.adbaoverjdbc;
 
 import jdk.incubator.sql2.LocalOperation;
 import jdk.incubator.sql2.MultiOperation;
-import jdk.incubator.sql2.OutOperation;
 import jdk.incubator.sql2.ParameterizedRowOperation;
 import jdk.incubator.sql2.Submission;
 import jdk.incubator.sql2.TransactionOutcome;
@@ -78,7 +77,7 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
           a -> null);
 
   static <U, V> OperationGroup<U, V> newOperationGroup(Session session) {
-    return new OperationGroup(session, session);
+    return new OperationGroup<U, V>(session, session);
   }
   
   static final Logger NULL_LOGGER = Logger.getAnonymousLogger();
@@ -92,11 +91,10 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   private boolean isParallel = false;
   private boolean isIndependent = false;
   private CompletionStage<Boolean> condition = DEFAULT_CONDITION;
-  private Submission<T> submission = null;
   
   private Object accumulator;
   private Collector collector;
-  
+  private volatile boolean hasCreatedMember = false;
   Logger logger = NULL_LOGGER;
   
 /** 
@@ -137,112 +135,146 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
   
   @Override
   public jdk.incubator.sql2.OperationGroup<S, T> parallel() {
-    if ( isImmutable() || isParallel) throw new IllegalStateException("TODO");
+    assertOpen();
+    assertUnsubmitted();
+    assertNoMembers();
+    if (isParallel) 
+      throw new IllegalStateException("Multiple calls to parallel()");
     isParallel = true;
     return this;
   }
 
   @Override
   public jdk.incubator.sql2.OperationGroup<S, T> independent() {
-    if ( isImmutable() || isIndependent) throw new IllegalStateException("TODO");
+    assertOpen();
+    assertUnsubmitted();
+    assertNoMembers();
+    if (isIndependent)
+      throw new IllegalStateException("Multiple calls to independent()");
     isIndependent = true;
     return this;
   }
 
   @Override
-  public jdk.incubator.sql2.OperationGroup<S, T> conditional(CompletionStage<Boolean> condition) {
-    if ( isImmutable() || condition != null) throw new IllegalStateException("TODO");
+  public jdk.incubator.sql2.OperationGroup<S, T> conditional(
+    CompletionStage<Boolean> condition) {
+    assertOpen();
+    assertUnsubmitted();
+    assertNoMembers();
+    if (this.condition != DEFAULT_CONDITION) {
+      throw new IllegalStateException(
+        "Multiple calls to conditional(CompletionStage<Boolean>)");
+    }
     this.condition = condition;
     return this;
   }
 
   @Override
-  public Submission<T> submitHoldingForMoreMembers() {
-    if ( isImmutable() || ! isHeld() ) throw new IllegalStateException("TODO");  //TODO prevent multiple calls
+  public Submission<T> submit() {
+    assertOpen();
+    assertUnsubmitted();
+    operationLifecycle = OperationLifecycle.HELD;
     accumulator = collector.supplier().get();
-    submission = super.submit();
-    return submission;
+    return group.submit(this);
   }
 
   @Override
-  public jdk.incubator.sql2.Submission<T> releaseProhibitingMoreMembers() {
-    if ( ! isImmutable() || ! isHeld() ) throw new IllegalStateException("TODO");
+  public void close() {
+    assertOpen();
     held.complete(null);
-    immutable();  // having set isHeld to false this call will make this OpGrp immutable
-    return submission;
+    immutable();
   }
 
   @Override
   public OperationGroup<S, T> collect(Collector<S, ?, T> c) {
-    if ( isImmutable() || collector != DEFAULT_COLLECTOR) throw new IllegalStateException("TODO");
-    if (c == null) throw new IllegalArgumentException("TODO");
+    assertOpen();
+    assertUnsubmitted();
+    if (collector != DEFAULT_COLLECTOR) {
+      throw new IllegalStateException(
+        "Multiple calls to collect(Collector<S, ?, T>");
+    }
+    if (c == null) throw new IllegalArgumentException("Null argument.");
     collector = c;
     return this;
   }
   
   @Override
   public Operation<S> catchOperation() {
-    if (! isHeld() ) throw new IllegalStateException("TODO");
-    return UnskippableOperation.newOperation(session, this, op -> null);
+    assertOpen();
+    return addMember(UnskippableOperation.newOperation(session, this, 
+                                                       op -> null));
   }
 
   @Override
   public <R extends S> ArrayRowCountOperation<R> arrayRowCountOperation(String sql) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    assertOpen();
+    if (sql == null) throw new IllegalArgumentException("Null argument.");
+    return addMember(ArrayCountOperation.newArrayCountOperation(session, 
+                                                                this, sql));
   }
 
   @Override
   public <R extends S> ParameterizedRowCountOperation<R> rowCountOperation(String sql) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-     if (sql == null) throw new IllegalArgumentException("TODO");
-    return CountOperation.newCountOperation(session, this, sql);
+    assertOpen();
+    if (sql == null) throw new IllegalArgumentException("Null argument.");
+    return addMember(CountOperation.newCountOperation(session, this, sql));
  }
 
   @Override
   public SqlOperation<S> operation(String sql) {
-    if ( !isHeld() ) throw new IllegalStateException("TODO");
-    return SqlOperation.newOperation(session, this, sql);
+    assertOpen();
+    if (sql == null) throw new IllegalArgumentException("Null argument.");
+    return addMember(SqlOperation.newOperation(session, this, sql));
   }
 
   @Override
-  public <R extends S> OutOperation<R> outOperation(String sql) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public <R extends S> jdk.incubator.sql2.OutOperation<R> outOperation(String sql) {
+    assertOpen();
+    if (sql == null) throw new IllegalArgumentException("TODO");
+    return addMember(OutOperation.newOutOperation(session, this, sql));
   }
 
   @Override
   public <R extends S> ParameterizedRowOperation<R> rowOperation(String sql) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    if (sql == null) throw new IllegalArgumentException("TODO");
-    return RowOperation.newRowOperation(session, this, sql);
+    assertOpen();
+    if (sql == null) throw new IllegalArgumentException("Null argument.");
+    return addMember(RowOperation.newRowOperation(session, this, sql));
   }
 
   @Override
   public <R extends S> ParameterizedRowPublisherOperation<R> rowPublisherOperation(String sql) {
-    if ( !isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    assertOpen();
+    if (sql == null) throw new IllegalArgumentException("TODO");
+    return addMember(RowPublisherOperation.newRowPublisherOperation(
+                        session, this, sql));
   }
 
   @Override
   public <R extends S> MultiOperation<R> multiOperation(String sql) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    assertOpen();
+    if (sql == null) throw new IllegalArgumentException("TODO");
+    return com.oracle.adbaoverjdbc.MultiOperation.newMultiOperation(session, this, sql);
   }
 
   @Override
   public SimpleOperation<TransactionOutcome> endTransactionOperation(TransactionCompletion trans) {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    return com.oracle.adbaoverjdbc.SimpleOperation.<TransactionOutcome>newOperation(
-              session, 
-              (OperationGroup<Object,T>)this, 
-              op -> session.jdbcEndTransaction(op, (com.oracle.adbaoverjdbc.TransactionCompletion)trans));
+    assertOpen();
+    // TODO If member type S != TransactionOutcome ???
+    SimpleOperation<TransactionOutcome> newOp = 
+      SimpleOperation.<TransactionOutcome>newOperation(session, 
+        (OperationGroup<Object,T>)this, 
+        op -> session.jdbcEndTransaction(op, 
+                        (com.oracle.adbaoverjdbc.TransactionCompletion)trans)
+        );
+    addMember((Operation<S>)newOp);
+    return newOp;
   }
 
   @Override
   public <R extends S> LocalOperation<R> localOperation() {
-    if ( ! isHeld() ) throw new IllegalStateException("TODO");
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    assertOpen();
+    return addMember(
+      com.oracle.adbaoverjdbc.LocalOperation.newOperation(session, this));
   }
 
   @Override
@@ -264,41 +296,74 @@ class OperationGroup<S, T> extends com.oracle.adbaoverjdbc.Operation<T>
     return this;
   }
   
-  @Override
-  public Submission<T> submit() {
-    if ( isImmutable() ) throw new IllegalStateException("TODO");
-    accumulator = collector.supplier().get();
-    held.complete(null);
-    return super.submit();
-  }
-
+  
   // Internal methods
   
-  Submission<S> submit(Operation<S> op) {
-    memberTail = op.attachErrorHandler(op.follows(memberTail, getExecutor()));
+  Submission<S> submit(Operation<S> op) {      
+    memberTail = op.attachCompletionHandler(op.follows(memberTail, getExecutor()));
     return com.oracle.adbaoverjdbc.Submission.submit(this::cancel, memberTail);
   }
 
   @Override
   CompletionStage<T> follows(CompletionStage<?> predecessor, Executor executor) {
-    return condition.thenCompose(cond -> {
-      if (cond) {
-        head.complete(predecessor);
-        return held.thenCompose(h
-                -> memberTail.thenApplyAsync(t -> (T)collector.finisher()
-                                                              .apply(accumulator),
-                                             executor)
-        );
-      }
-      else {
-        return CompletableFuture.completedStage(null);
-      }
-    }
-    );
+    return predecessor.thenCompose(r -> 
+      condition.exceptionally(condErr -> false)
+        .thenCompose(cond -> {
+          if (cond == null || !cond) 
+            return CompletableFuture.completedFuture(null);
+        
+          head.complete(predecessor);
+          return held.thenCompose(h -> memberTail.thenApplyAsync(t -> 
+                                         (T)collector.finisher()
+                                           .apply(accumulator),
+                                         executor));
+        })
+      );
   }
   
-  protected boolean isHeld() {
-    return !held.isDone();
+  /**
+   * Accumulate the result of a member operation with this group's collector.
+   * @param memberResult The result of a member operation.
+   */
+  void accumulateResult(S memberResult) {
+    collector.accumulator()
+      .accept(accumulator, memberResult);
   }
-      
+  
+  /**
+   * @throws IllegalStateException If this OperationGroup has been closed.
+   */
+  protected void assertOpen() {
+    if (isImmutable()) 
+      throw new IllegalStateException("OperationGroup is closed.");
+  }
+  
+  /**
+   * @throws IllegalStateException If this OperationGroup has been submitted.
+   */
+  private void assertUnsubmitted() {
+    if (operationLifecycle.isSubmitted()) 
+      throw new IllegalStateException("OperationGroup is submitted.");
+  }
+  
+  /**
+   * @throws IllegalStateException If this OperationGroup has created any 
+   *   member operations.
+   */
+  private void assertNoMembers() {
+    if (hasCreatedMember) 
+      throw new IllegalStateException("OperationGroup has created members.");
+  }
+  
+  /**
+   * Register a member operation which has been created by this 
+   * OperationGroup. 
+   * @param member An operation created by this group.
+   * @return The same instance which was provided as the <code>member</code> 
+   *   argument. 
+   */
+  protected <U extends Operation<? extends S>> U addMember(U member) {
+    hasCreatedMember = true;
+    return member;
+  }
 }
