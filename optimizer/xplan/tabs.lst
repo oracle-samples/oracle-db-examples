@@ -1,0 +1,182 @@
+SQL> set echo on
+SQL> @tabs
+SQL> --
+SQL> -- Create our test tables
+SQL> --
+SQL> drop table table_10 purge;
+
+Table dropped.
+
+SQL> drop table table_100 purge;
+
+Table dropped.
+
+SQL> drop table table_1000 purge;
+
+Table dropped.
+
+SQL> drop table table_10000 purge;
+
+Table dropped.
+
+SQL> drop table table_100000 purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table table_10 (id number(10) not null, fcol number(10) not null);
+
+Table created.
+
+SQL> create table table_100 (id number(10) not null, fkcol number(10) not null, fcol number(10) not null);
+
+Table created.
+
+SQL> create table table_1000 (id number(10) not null, fkcol number(10) not null, fcol number(10) not null);
+
+Table created.
+
+SQL> create table table_10000 (id number(10) not null, fkcol number(10) not null, fcol number(10) not null);
+
+Table created.
+
+SQL> create table table_100000 (id number(10) not null, fkcol number(10) not null, fcol number(10) not null);
+
+Table created.
+
+SQL> 
+SQL> insert /*+ APPEND */ into table_10
+  2  select rownum,rownum
+  3  from   dual connect by rownum <= 10;
+
+10 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> insert /*+ APPEND */ into table_100
+  2  select rownum,mod(rownum,10),rownum
+  3  from   dual connect by rownum <= 100;
+
+100 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> insert /*+ APPEND */ into table_1000
+  2  select rownum,mod(rownum,100),rownum
+  3  from   dual connect by rownum <= 1000;
+
+1000 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> insert /*+ APPEND */ into table_10000
+  2  select rownum,mod(rownum,1000),rownum
+  3  from   dual connect by rownum <= 10000;
+
+10000 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> insert /*+ APPEND */ into table_100000
+  2  select rownum,mod(rownum,10000),rownum
+  3  from   dual connect by rownum <= 100000;
+
+100000 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'table_10');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'table_100');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'table_1000');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'table_10000');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'table_100000');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> drop table employees purge;
+
+Table dropped.
+
+SQL> drop table tasks purge;
+
+Table dropped.
+
+SQL> create table employees (id number(10) not null, ename varchar2(100) not null, etype number(10) not null, details varchar2(1000));
+
+Table created.
+
+SQL> create table tasks (id number(10) not null, tname varchar2(100) not null, emp_id number(10) not null, ttype number(10) not null, details varchar2(1000));
+
+Table created.
+
+SQL> 
+SQL> begin
+  2    for i in 1..10000
+  3    loop
+  4  	  insert into employees values (i,
+  5  					'Employee Name '||i,
+  6  					mod(i,500) + 1,
+  7  					dbms_random.string('u',1000));
+  8    end loop;
+  9    for i in 1..20000
+ 10    loop
+ 11  	  insert into tasks values (i,'Task Name '||i, mod(i,10000) + 1, mod(i,500) + 1, dbms_random.string('u',1000));
+ 12    end loop;
+ 13    commit;
+ 14  end;
+ 15  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @@ind
+SQL> create unique index emp_pk on employees(id);
+
+Index created.
+
+SQL> create unique index task_pk on tasks(id);
+
+Index created.
+
+SQL> create index task_emp_fk on tasks(emp_id);
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'employees');
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'tasks');
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off

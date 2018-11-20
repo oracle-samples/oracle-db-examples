@@ -1,0 +1,125 @@
+SQL> @p_q7
+SQL> --
+SQL> -- NL example
+SQL> -- Without and then with partitioning
+SQL> --
+SQL> select /*+ gather_plan_statistics */
+  2         count(distinct e.ename),
+  3         count(distinct t.tname)
+  4  from   employees        e
+  5         join tasks t on (t.emp_id = e.id)
+  6  where  e.etype <= 5;
+
+COUNT(DISTINCTE.ENAME) COUNT(DISTINCTT.TNAME)
+---------------------- ----------------------
+                   100                    200
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  0kw9nnz50kstd, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics */        count(distinct e.ename),
+    count(distinct t.tname) from   employees        e        join tasks
+t on (t.emp_id = e.id) where  e.etype <= 5
+
+Plan hash value: 71711559
+
+---------------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name        | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+---------------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |             |      1 |        |       |   710 (100)|          |      1 |00:00:00.02 |    1772 |
+|   1 |  SORT GROUP BY                |             |      1 |      1 |    47 |            |          |      1 |00:00:00.02 |    1772 |
+|   2 |   NESTED LOOPS                |             |      1 |    200 |  9400 |   710   (1)| 00:00:01 |    200 |00:00:00.02 |    1772 |
+|   3 |    NESTED LOOPS               |             |      1 |    200 |  9400 |   710   (1)| 00:00:01 |    200 |00:00:00.01 |    1572 |
+|*  4 |     TABLE ACCESS FULL         | EMPLOYEES   |      1 |    100 |  2700 |   410   (1)| 00:00:01 |    100 |00:00:00.01 |    1452 |
+|*  5 |     INDEX RANGE SCAN          | TASK_EMP_FK |    100 |      2 |       |     1   (0)| 00:00:01 |    200 |00:00:00.01 |     120 |
+|   6 |    TABLE ACCESS BY INDEX ROWID| TASKS       |    200 |      2 |    40 |     3   (0)| 00:00:01 |    200 |00:00:00.01 |     200 |
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter("E"."ETYPE"<=5)
+   5 - access("T"."EMP_ID"="E"."ID")
+
+Note
+-----
+   - this is an adaptive plan
+
+
+30 rows selected.
+
+Elapsed: 00:00:00.12
+SQL> 
+SQL> select /*+ gather_plan_statistics */
+  2         count(distinct e.ename),
+  3         count(distinct t.tname)
+  4  from   p_employees        e
+  5         join p_tasks t on (t.emp_id = e.id)
+  6  where  e.etype <= 5;
+
+COUNT(DISTINCTE.ENAME) COUNT(DISTINCTT.TNAME)
+---------------------- ----------------------
+                   100                    200
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  2azpdcwc0yqzb, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics */        count(distinct e.ename),
+    count(distinct t.tname) from   p_employees        e        join
+p_tasks t on (t.emp_id = e.id) where  e.etype <= 5
+
+Plan hash value: 2189731968
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                           | Name          | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | Pstart| Pstop | A-Rows |   A-Time   | Buffers |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                    |               |      1 |        |       |   849 (100)|          |       |       |      1 |00:00:00.01 |    2178 |
+|   1 |  SORT GROUP BY                      |               |      1 |      1 |    47 |            |          |       |       |      1 |00:00:00.01 |    2178 |
+|   2 |   NESTED LOOPS                      |               |      1 |    200 |  9400 |   849   (1)| 00:00:01 |       |       |    200 |00:00:00.01 |    2178 |
+|   3 |    NESTED LOOPS                     |               |      1 |    200 |  9400 |   849   (1)| 00:00:01 |       |       |    200 |00:00:00.01 |    1978 |
+|   4 |     PARTITION RANGE ALL             |               |      1 |    100 |  2700 |   548   (1)| 00:00:01 |     1 |     2 |    100 |00:00:00.01 |    1578 |
+|*  5 |      TABLE ACCESS FULL              | P_EMPLOYEES   |      2 |    100 |  2700 |   548   (1)| 00:00:01 |     1 |     2 |    100 |00:00:00.01 |    1578 |
+|   6 |     PARTITION RANGE ALL             |               |    100 |      2 |       |     2   (0)| 00:00:01 |     1 |     2 |    200 |00:00:00.01 |     400 |
+|*  7 |      INDEX RANGE SCAN               | P_TASK_EMP_FK |    200 |      2 |       |     2   (0)| 00:00:01 |     1 |     2 |    200 |00:00:00.01 |     400 |
+|   8 |    TABLE ACCESS BY LOCAL INDEX ROWID| P_TASKS       |    200 |      2 |    40 |     3   (0)| 00:00:01 |     1 |     1 |    200 |00:00:00.01 |     200 |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   5 - filter("E"."ETYPE"<=5)
+   7 - access("T"."EMP_ID"="E"."ID")
+
+Note
+-----
+   - this is an adaptive plan
+
+
+32 rows selected.
+
+Elapsed: 00:00:00.08
+SQL> spool off

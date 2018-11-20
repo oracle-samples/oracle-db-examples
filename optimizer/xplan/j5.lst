@@ -1,0 +1,173 @@
+SQL> @j5
+SQL> --
+SQL> -- Again forcing the (bad) nested loop join
+SQL> -- Notice how the cost is more that j4.sql
+SQL> -- because we are scanning a bigger table: TABLE_100000
+SQL> --
+SQL> -- Notice also that it is very clear that the "Cost" column
+SQL> -- is PER START and not a total. There are some slight rounding errors.
+SQL> --
+SQL> select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+  2  from   table_100         a
+  3         join table_100000  b on (a.id = b.fkcol)
+  4  where  a.fcol <= 10;
+
+ SUM(A.ID)  SUM(B.ID)
+---------- ----------
+       550    4500550
+
+Elapsed: 00:00:00.11
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  bpt98ggu9wst2, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+from   table_100         a        join table_100000  b on (a.id =
+b.fkcol) where  a.fcol <= 10
+
+Plan hash value: 700544302
+
+------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation           | Name         | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |              |      1 |        |       |   768 (100)|          |      1 |00:00:00.10 |    2769 |
+|   1 |  SORT AGGREGATE     |              |      1 |      1 |    15 |            |          |      1 |00:00:00.10 |    2769 |
+|   2 |   NESTED LOOPS      |              |      1 |    101 |  1515 |   768   (3)| 00:00:01 |    100 |00:00:00.15 |    2769 |
+|*  3 |    TABLE ACCESS FULL| TABLE_100    |      1 |     10 |    60 |     3   (0)| 00:00:01 |     10 |00:00:00.01 |       9 |
+|*  4 |    TABLE ACCESS FULL| TABLE_100000 |     10 |     10 |    90 |    77   (4)| 00:00:01 |    100 |00:00:00.08 |    2760 |
+------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - filter("A"."FCOL"<=10)
+   4 - filter("A"."ID"="B"."FKCOL")
+
+
+24 rows selected.
+
+Elapsed: 00:00:00.04
+SQL> 
+SQL> pause Press <cr> to continue
+Press <cr> to continue
+
+SQL> 
+SQL> select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+  2  from   table_100         a
+  3         join table_100000  b on (a.id = b.fkcol)
+  4  where  a.fcol <= 20;
+
+ SUM(A.ID)  SUM(B.ID)
+---------- ----------
+      2100    9002100
+
+Elapsed: 00:00:00.16
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  9y8k69bkqg4fu, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+from   table_100         a        join table_100000  b on (a.id =
+b.fkcol) where  a.fcol <= 20
+
+Plan hash value: 700544302
+
+------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation           | Name         | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |              |      1 |        |       |  1532 (100)|          |      1 |00:00:00.15 |    5529 |
+|   1 |  SORT AGGREGATE     |              |      1 |      1 |    15 |            |          |      1 |00:00:00.15 |    5529 |
+|   2 |   NESTED LOOPS      |              |      1 |    202 |  3030 |  1532   (3)| 00:00:01 |    200 |00:00:00.16 |    5529 |
+|*  3 |    TABLE ACCESS FULL| TABLE_100    |      1 |     20 |   120 |     3   (0)| 00:00:01 |     20 |00:00:00.01 |       9 |
+|*  4 |    TABLE ACCESS FULL| TABLE_100000 |     20 |     10 |    90 |    76   (3)| 00:00:01 |    200 |00:00:00.11 |    5520 |
+------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - filter("A"."FCOL"<=20)
+   4 - filter("A"."ID"="B"."FKCOL")
+
+
+24 rows selected.
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> pause Press <cr> to continue
+Press <cr> to continue
+
+SQL> 
+SQL> select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+  2  from   table_100         a
+  3         join table_100000  b on (a.id = b.fkcol)
+  4  where  a.fcol <= 30;
+
+ SUM(A.ID)  SUM(B.ID)
+---------- ----------
+      4650   13504650
+
+Elapsed: 00:00:00.22
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  bbnqmu8dkg2qt, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+from   table_100         a        join table_100000  b on (a.id =
+b.fkcol) where  a.fcol <= 30
+
+Plan hash value: 700544302
+
+------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation           | Name         | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |              |      1 |        |       |  2295 (100)|          |      1 |00:00:00.22 |    8289 |
+|   1 |  SORT AGGREGATE     |              |      1 |      1 |    15 |            |          |      1 |00:00:00.22 |    8289 |
+|   2 |   NESTED LOOPS      |              |      1 |    303 |  4545 |  2295   (3)| 00:00:01 |    300 |00:00:00.24 |    8289 |
+|*  3 |    TABLE ACCESS FULL| TABLE_100    |      1 |     30 |   180 |     3   (0)| 00:00:01 |     30 |00:00:00.01 |       9 |
+|*  4 |    TABLE ACCESS FULL| TABLE_100000 |     30 |     10 |    90 |    76   (3)| 00:00:01 |    300 |00:00:00.17 |    8280 |
+------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - filter("A"."FCOL"<=30)
+   4 - filter("A"."ID"="B"."FKCOL")
+
+
+24 rows selected.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off

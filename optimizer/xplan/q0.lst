@@ -1,0 +1,144 @@
+SQL> @q0
+SQL> --
+SQL> -- A simple query with a filter
+SQL> --
+SQL> select e.ename as "Employee Name"
+  2  from   employees	     e
+  3  where  e.etype = 1;
+
+Employee Name                                                                   
+--------------------------------------------------------------------------------
+Employee Name 500                                                               
+Employee Name 1500                                                              
+Employee Name 1000                                                              
+Employee Name 2500                                                              
+Employee Name 2000                                                              
+Employee Name 3000                                                              
+Employee Name 4000                                                              
+Employee Name 3500                                                              
+Employee Name 5000                                                              
+Employee Name 4500                                                              
+Employee Name 6000                                                              
+
+Employee Name                                                                   
+--------------------------------------------------------------------------------
+Employee Name 5500                                                              
+Employee Name 7000                                                              
+Employee Name 6500                                                              
+Employee Name 7500                                                              
+Employee Name 8500                                                              
+Employee Name 8000                                                              
+Employee Name 9500                                                              
+Employee Name 9000                                                              
+Employee Name 10000                                                             
+
+20 rows selected.
+
+SQL> 
+SQL> @@all
+SQL> set linesize 180
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a150
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  51mg41zrpfgqt, child number 0
+-------------------------------------
+select e.ename as "Employee Name" from   employees        e where
+e.etype = 1
+
+Plan hash value: 1445457117
+
+-------------------------------------------------------------------------------
+| Id  | Operation         | Name      | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |           |       |       |   410 (100)|          |
+|*  1 |  TABLE ACCESS FULL| EMPLOYEES |    20 |   460 |   410   (1)| 00:00:01 |
+-------------------------------------------------------------------------------
+
+Query Block Name / Object Alias (identified by operation id):
+-------------------------------------------------------------
+
+   1 - SEL$1 / E@SEL$1
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("E"."ETYPE"=1)
+
+Column Projection Information (identified by operation id):
+-----------------------------------------------------------
+
+   1 - "E"."ENAME"[VARCHAR2,100]
+
+
+29 rows selected.
+
+SQL> 
+SQL> --
+SQL> -- A simple query with a filter with index
+SQL> --
+SQL> select e.ename as "Employee Name"
+  2  from   employees        e
+  3  where  e.id <= 1;
+
+Employee Name
+----------------------------------------------------------------------------------------------------
+Employee Name 1
+
+SQL> 
+SQL> @@all
+SQL> set linesize 180
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a150
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  1aazhax5zbb5m, child number 0
+-------------------------------------
+select e.ename as "Employee Name" from   employees        e where  e.id
+<= 1
+
+Plan hash value: 1523228508
+
+-------------------------------------------------------------------------------------------------
+| Id  | Operation                           | Name      | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                    |           |       |       |     3 (100)|          |
+|   1 |  TABLE ACCESS BY INDEX ROWID BATCHED| EMPLOYEES |     1 |    23 |     3   (0)| 00:00:01 |
+|*  2 |   INDEX RANGE SCAN                  | EMP_PK    |     1 |       |     2   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------------
+
+Query Block Name / Object Alias (identified by operation id):
+-------------------------------------------------------------
+
+   1 - SEL$1 / E@SEL$1
+   2 - SEL$1 / E@SEL$1
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("E"."ID"<=1)
+
+Column Projection Information (identified by operation id):
+-----------------------------------------------------------
+
+   1 - "E"."ENAME"[VARCHAR2,100]
+   2 - "E".ROWID[ROWID,10]
+
+
+32 rows selected.
+
+SQL> 
+SQL> 
+SQL> spool off

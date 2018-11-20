@@ -1,0 +1,81 @@
+SQL> @p_tabs
+SQL> --
+SQL> -- Partitioned version of the tables
+SQL> --
+SQL> drop table p_employees purge;
+
+Table dropped.
+
+Elapsed: 00:00:00.61
+SQL> drop table p_tasks purge;
+
+Table dropped.
+
+Elapsed: 00:00:00.07
+SQL> create table p_employees (id number(10) not null, ename varchar2(100) not null, etype number(10) not null, details varchar2(1000))
+  2  partition by range (id)
+  3  (partition p1 values less than (5000)
+  4  ,partition p2 values less than (20000));
+
+Table created.
+
+Elapsed: 00:00:00.06
+SQL> create table p_tasks (id number(10) not null, tname varchar2(100) not null, emp_id number(10) not null, ttype number(10) not null, details varchar2(1000))
+  2  partition by range (id)
+  3  (partition p1 values less than (10000)
+  4  ,partition p2 values less than (50000));
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> begin
+  2    for i in 1..10000
+  3    loop
+  4       insert into p_employees values (i,
+  5                                     'Employee Name '||i,
+  6                                     mod(i,500) + 1,
+  7                                     dbms_random.string('u',1000));
+  8    end loop;
+  9    for i in 1..20000
+ 10    loop
+ 11       insert into p_tasks values (i,'Task Name '||i, mod(i,10000) + 1, mod(i,500) + 1, dbms_random.string('u',1000));
+ 12    end loop;
+ 13    commit;
+ 14  end;
+ 15  /
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:25.06
+SQL> 
+SQL> @@p_ind
+SQL> create unique index p_emp_pk on p_employees(id) local;
+
+Index created.
+
+Elapsed: 00:00:00.05
+SQL> create unique index p_task_pk on p_tasks(id) local;
+
+Index created.
+
+Elapsed: 00:00:00.10
+SQL> create index p_task_emp_fk on p_tasks(emp_id) local;
+
+Index created.
+
+Elapsed: 00:00:00.09
+SQL> 
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'p_employees');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.69
+SQL> exec dbms_stats.gather_table_stats(user,'p_tasks');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.23
+SQL> 
+SQL> spool off

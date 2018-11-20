@@ -1,0 +1,102 @@
+SQL> @q7
+SQL> --
+SQL> -- Here is the actual plan for the NLJ example
+SQL> -- I have removed the outline - and now it
+SQL> -- uses NL join batching.
+SQL> -- This is visible in the outline
+SQL> --
+SQL> select count(distinct e.ename),
+  2         count(distinct t.tname)
+  3  from   employees        e
+  4         join tasks t on (t.emp_id = e.id)
+  5  where  e.etype <= 5;
+
+COUNT(DISTINCTE.ENAME) COUNT(DISTINCTT.TNAME)
+---------------------- ----------------------
+                   100                    200
+
+SQL> 
+SQL> @@adv
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALL +OUTLINE'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  bk8mcgjhu006m, child number 0
+-------------------------------------
+select count(distinct e.ename),        count(distinct t.tname) from
+employees        e        join tasks t on (t.emp_id = e.id) where
+e.etype <= 5
+
+Plan hash value: 71711559
+
+---------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name        | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |             |       |       |   710 (100)|          |
+|   1 |  SORT GROUP BY                |             |     1 |    47 |            |          |
+|   2 |   NESTED LOOPS                |             |   200 |  9400 |   710   (1)| 00:00:01 |
+|   3 |    NESTED LOOPS               |             |   200 |  9400 |   710   (1)| 00:00:01 |
+|*  4 |     TABLE ACCESS FULL         | EMPLOYEES   |   100 |  2700 |   410   (1)| 00:00:01 |
+|*  5 |     INDEX RANGE SCAN          | TASK_EMP_FK |     2 |       |     1   (0)| 00:00:01 |
+|   6 |    TABLE ACCESS BY INDEX ROWID| TASKS       |     2 |    40 |     3   (0)| 00:00:01 |
+---------------------------------------------------------------------------------------------
+
+Query Block Name / Object Alias (identified by operation id):
+-------------------------------------------------------------
+
+   1 - SEL$58A6D7F6
+   4 - SEL$58A6D7F6 / E@SEL$1
+   5 - SEL$58A6D7F6 / T@SEL$1
+   6 - SEL$58A6D7F6 / T@SEL$1
+
+Outline Data
+-------------
+
+  /*+
+      BEGIN_OUTLINE_DATA
+      IGNORE_OPTIM_EMBEDDED_HINTS
+      OPTIMIZER_FEATURES_ENABLE('12.2.0.1')
+      DB_VERSION('12.2.0.1')
+      ALL_ROWS
+      OUTLINE_LEAF(@"SEL$58A6D7F6")
+      MERGE(@"SEL$1" >"SEL$2")
+      OUTLINE(@"SEL$2")
+      OUTLINE(@"SEL$1")
+      FULL(@"SEL$58A6D7F6" "E"@"SEL$1")
+      INDEX(@"SEL$58A6D7F6" "T"@"SEL$1" ("TASKS"."EMP_ID"))
+      LEADING(@"SEL$58A6D7F6" "E"@"SEL$1" "T"@"SEL$1")
+      USE_NL(@"SEL$58A6D7F6" "T"@"SEL$1")
+      NLJ_BATCHING(@"SEL$58A6D7F6" "T"@"SEL$1")
+      END_OUTLINE_DATA
+  */
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter("E"."ETYPE"<=5)
+   5 - access("T"."EMP_ID"="E"."ID")
+
+Column Projection Information (identified by operation id):
+-----------------------------------------------------------
+
+   1 - (#keys=0) COUNT(DISTINCT "T"."TNAME")[22], COUNT(DISTINCT "E"."ENAME")[22]
+   2 - "E"."ID"[NUMBER,22], "E"."ENAME"[VARCHAR2,100], "T"."TNAME"[VARCHAR2,100]
+   3 - "E"."ID"[NUMBER,22], "E"."ENAME"[VARCHAR2,100], "T".ROWID[ROWID,10]
+   4 - "E"."ID"[NUMBER,22], "E"."ENAME"[VARCHAR2,100]
+   5 - "T".ROWID[ROWID,10]
+   6 - "T"."TNAME"[VARCHAR2,100]
+
+Note
+-----
+   - this is an adaptive plan
+
+
+69 rows selected.
+
+SQL> spool off

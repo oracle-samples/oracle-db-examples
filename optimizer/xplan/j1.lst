@@ -1,0 +1,134 @@
+SQL> @j1
+SQL> select sum(a.id), sum(b.id),
+  2         sum(c.id), sum(d.id), sum(e.id)
+  3  from   table_10          a
+  4         join table_100    b on (a.id = b.fkcol)
+  5         join table_1000   c on (b.id = c.fkcol)
+  6         join table_10000  d on (c.id = d.fkcol)
+  7         join table_100000 e on (d.id = e.fkcol);
+
+ SUM(A.ID)  SUM(B.ID)  SUM(C.ID)  SUM(D.ID)  SUM(E.ID)
+---------- ---------- ---------- ---------- ----------
+    450000    4500000   45000000  450000000 4500000000
+
+Elapsed: 00:00:00.10
+SQL> 
+SQL> @@typ
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  c8v6bqjzn42t2, child number 0
+-------------------------------------
+select sum(a.id), sum(b.id),        sum(c.id), sum(d.id), sum(e.id)
+from   table_10          a        join table_100    b on (a.id =
+b.fkcol)        join table_1000   c on (b.id = c.fkcol)        join
+table_10000  d on (c.id = d.fkcol)        join table_100000 e on (d.id
+= e.fkcol)
+
+Plan hash value: 644569126
+
+---------------------------------------------------------------------------------------
+| Id  | Operation              | Name         | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |              |       |       |    97 (100)|          |
+|   1 |  SORT AGGREGATE        |              |     1 |    33 |            |          |
+|*  2 |   HASH JOIN            |              |   100K|  3222K|    97   (4)| 00:00:01 |
+|*  3 |    HASH JOIN           |              | 10000 |   234K|    18   (0)| 00:00:01 |
+|*  4 |     HASH JOIN          |              |  1000 | 16000 |     9   (0)| 00:00:01 |
+|*  5 |      HASH JOIN         |              |   100 |   900 |     6   (0)| 00:00:01 |
+|   6 |       TABLE ACCESS FULL| TABLE_10     |    10 |    30 |     3   (0)| 00:00:01 |
+|   7 |       TABLE ACCESS FULL| TABLE_100    |   100 |   600 |     3   (0)| 00:00:01 |
+|   8 |      TABLE ACCESS FULL | TABLE_1000   |  1000 |  7000 |     3   (0)| 00:00:01 |
+|   9 |     TABLE ACCESS FULL  | TABLE_10000  | 10000 | 80000 |     9   (0)| 00:00:01 |
+|  10 |    TABLE ACCESS FULL   | TABLE_100000 |   100K|   878K|    78   (3)| 00:00:01 |
+---------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("D"."ID"="E"."FKCOL")
+   3 - access("C"."ID"="D"."FKCOL")
+   4 - access("B"."ID"="C"."FKCOL")
+   5 - access("A"."ID"="B"."FKCOL")
+
+
+34 rows selected.
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> pause Press <cr> to continue
+Press <cr> to continue
+
+SQL> 
+SQL> select /*+ gather_plan_statistics */
+  2         sum(a.id), sum(b.id),
+  3         sum(c.id), sum(d.id), sum(e.id)
+  4  from   table_10          a
+  5         join table_100    b on (a.id = b.fkcol)
+  6         join table_1000   c on (b.id = c.fkcol)
+  7         join table_10000  d on (c.id = d.fkcol)
+  8         join table_100000 e on (d.id = e.fkcol);
+
+ SUM(A.ID)  SUM(B.ID)  SUM(C.ID)  SUM(D.ID)  SUM(E.ID)
+---------- ---------- ---------- ---------- ----------
+    450000    4500000   45000000  450000000 4500000000
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  3scm64ghham9c, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics */        sum(a.id), sum(b.id),
+ sum(c.id), sum(d.id), sum(e.id) from   table_10          a        join
+table_100    b on (a.id = b.fkcol)        join table_1000   c on (b.id
+= c.fkcol)        join table_10000  d on (c.id = d.fkcol)        join
+table_100000 e on (d.id = e.fkcol)
+
+Plan hash value: 644569126
+
+---------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation              | Name         | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+---------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |              |      1 |        |       |    97 (100)|          |      1 |00:00:00.04 |     353 |
+|   1 |  SORT AGGREGATE        |              |      1 |      1 |    33 |            |          |      1 |00:00:00.04 |     353 |
+|*  2 |   HASH JOIN            |              |      1 |    100K|  3222K|    97   (4)| 00:00:01 |  90000 |00:00:00.05 |     353 |
+|*  3 |    HASH JOIN           |              |      1 |  10000 |   234K|    18   (0)| 00:00:01 |   9000 |00:00:00.01 |      74 |
+|*  4 |     HASH JOIN          |              |      1 |   1000 | 16000 |     9   (0)| 00:00:01 |    900 |00:00:00.01 |      35 |
+|*  5 |      HASH JOIN         |              |      1 |    100 |   900 |     6   (0)| 00:00:01 |     90 |00:00:00.01 |      21 |
+|   6 |       TABLE ACCESS FULL| TABLE_10     |      1 |     10 |    30 |     3   (0)| 00:00:01 |     10 |00:00:00.01 |       9 |
+|   7 |       TABLE ACCESS FULL| TABLE_100    |      1 |    100 |   600 |     3   (0)| 00:00:01 |    100 |00:00:00.01 |       9 |
+|   8 |      TABLE ACCESS FULL | TABLE_1000   |      1 |   1000 |  7000 |     3   (0)| 00:00:01 |   1000 |00:00:00.01 |      11 |
+|   9 |     TABLE ACCESS FULL  | TABLE_10000  |      1 |  10000 | 80000 |     9   (0)| 00:00:01 |  10000 |00:00:00.01 |      36 |
+|  10 |    TABLE ACCESS FULL   | TABLE_100000 |      1 |    100K|   878K|    78   (3)| 00:00:01 |    100K|00:00:00.02 |     276 |
+---------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("D"."ID"="E"."FKCOL")
+   3 - access("C"."ID"="D"."FKCOL")
+   4 - access("B"."ID"="C"."FKCOL")
+   5 - access("A"."ID"="B"."FKCOL")
+
+
+34 rows selected.
+
+Elapsed: 00:00:00.03
+SQL> spool off

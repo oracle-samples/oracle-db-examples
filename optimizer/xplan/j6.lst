@@ -1,0 +1,91 @@
+SQL> @j6
+SQL> 
+SQL> select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+  2  from   table_100         a
+  3         join table_100000  b on (a.id = b.fkcol)
+  4  where  a.fcol <= 11;
+
+ SUM(A.ID)  SUM(B.ID)
+---------- ----------
+       660    4950660
+
+Elapsed: 00:00:00.09
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  byyqk7uccqjrf, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics use_nl(a b) */ sum(a.id), sum(b.id)
+from   table_100         a        join table_100000  b on (a.id =
+b.fkcol) where  a.fcol <= 11
+
+Plan hash value: 700544302
+
+------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation           | Name         | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |              |      1 |        |       |   845 (100)|          |      1 |00:00:00.09 |    3045 |
+|   1 |  SORT AGGREGATE     |              |      1 |      1 |    15 |            |          |      1 |00:00:00.09 |    3045 |
+|   2 |   NESTED LOOPS      |              |      1 |    111 |  1665 |   845   (3)| 00:00:01 |    110 |00:00:00.08 |    3045 |
+|*  3 |    TABLE ACCESS FULL| TABLE_100    |      1 |     11 |    66 |     3   (0)| 00:00:01 |     11 |00:00:00.01 |       9 |
+|*  4 |    TABLE ACCESS FULL| TABLE_100000 |     11 |     10 |    90 |    77   (4)| 00:00:01 |    110 |00:00:00.07 |    3036 |
+------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - filter("A"."FCOL"<=11)
+   4 - filter("A"."ID"="B"."FKCOL")
+
+
+24 rows selected.
+
+Elapsed: 00:00:00.04
+SQL> 
+SQL> alter system flush shared_pool;
+
+System altered.
+
+Elapsed: 00:00:00.27
+SQL> 
+SQL> alter session set tracefile_identifier = 'EXAMPLE_TRACE';
+
+Session altered.
+
+Elapsed: 00:00:00.00
+SQL> alter session set events = '10053 trace name context forever, level 1';
+
+Session altered.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> select /*+ use_nl(a b) */ sum(a.id), sum(b.id)
+  2  from   table_100         a
+  3         join table_100000  b on (a.id = b.fkcol)
+  4  where  a.fcol <= 11;
+
+ SUM(A.ID)  SUM(B.ID)
+---------- ----------
+       660    4950660
+
+Elapsed: 00:00:00.08
+SQL> 
+SQL> alter session set events = '10053 trace name context off';
+
+Session altered.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off

@@ -1,0 +1,183 @@
+SQL> @q3
+SQL> --
+SQL> -- An execution plan with a join and filter
+SQL> --
+SQL> select /*+ gather_plan_statistics  */
+  2         e.ename as "Employee Name",
+  3         t.tname as "Task Name"
+  4  from   employees        e
+  5         join tasks t on (t.emp_id = e.id)
+  6  where  e.etype = 1;
+
+Employee Name
+----------------------------------------------------------------------------------------------------
+Task Name
+----------------------------------------------------------------------------------------------------
+Employee Name 500
+Task Name 10499
+
+Employee Name 500
+Task Name 499
+
+Employee Name 1500
+Task Name 1499
+
+Employee Name 1500
+Task Name 11499
+
+Employee Name 1000
+Task Name 999
+
+Employee Name 1000
+Task Name 10999
+
+Employee Name 2500
+Task Name 2499
+
+Employee Name 2500
+Task Name 12499
+
+Employee Name 2000
+Task Name 1999
+
+Employee Name 2000
+Task Name 11999
+
+Employee Name 3000
+Task Name 2999
+
+Employee Name 3000
+Task Name 12999
+
+Employee Name 4000
+Task Name 3999
+
+Employee Name 4000
+Task Name 13999
+
+Employee Name 3500
+Task Name 3499
+
+Employee Name 3500
+Task Name 13499
+
+Employee Name 5000
+Task Name 4999
+
+Employee Name 5000
+Task Name 14999
+
+Employee Name 4500
+Task Name 4499
+
+Employee Name 4500
+Task Name 14499
+
+Employee Name 6000
+Task Name 5999
+
+Employee Name 6000
+Task Name 15999
+
+Employee Name 5500
+Task Name 5499
+
+Employee Name 5500
+Task Name 15499
+
+Employee Name 7000
+Task Name 6999
+
+Employee Name 7000
+Task Name 16999
+
+Employee Name 6500
+Task Name 6499
+
+Employee Name 6500
+Task Name 16499
+
+Employee Name 7500
+Task Name 7499
+
+Employee Name 7500
+Task Name 17499
+
+Employee Name 8500
+Task Name 8499
+
+Employee Name 8500
+Task Name 18499
+
+Employee Name 8000
+Task Name 7999
+
+Employee Name 8000
+Task Name 17999
+
+Employee Name 9500
+Task Name 9499
+
+Employee Name 9500
+Task Name 19499
+
+Employee Name 9000
+Task Name 8999
+
+Employee Name 9000
+Task Name 18999
+
+Employee Name 10000
+Task Name 9999
+
+Employee Name 10000
+Task Name 19999
+
+
+40 rows selected.
+
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  7d6sn9an37dr0, child number 0
+-------------------------------------
+select /*+ gather_plan_statistics  */        e.ename as "Employee
+Name",        t.tname as "Task Name" from   employees        e
+join tasks t on (t.emp_id = e.id) where  e.etype = 1
+
+Plan hash value: 3781230987
+
+--------------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                    | Name        | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+--------------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |             |      1 |        |       |   470 (100)|          |     40 |00:00:00.01 |    1519 |
+|   1 |  NESTED LOOPS                |             |      1 |     40 |  1880 |   470   (1)| 00:00:01 |     40 |00:00:00.01 |    1519 |
+|   2 |   NESTED LOOPS               |             |      1 |     40 |  1880 |   470   (1)| 00:00:01 |     40 |00:00:00.01 |    1479 |
+|*  3 |    TABLE ACCESS FULL         | EMPLOYEES   |      1 |     20 |   540 |   410   (1)| 00:00:01 |     20 |00:00:00.01 |    1452 |
+|*  4 |    INDEX RANGE SCAN          | TASK_EMP_FK |     20 |      2 |       |     1   (0)| 00:00:01 |     40 |00:00:00.01 |      27 |
+|   5 |   TABLE ACCESS BY INDEX ROWID| TASKS       |     40 |      2 |    40 |     3   (0)| 00:00:01 |     40 |00:00:00.01 |      40 |
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - filter("E"."ETYPE"=1)
+   4 - access("T"."EMP_ID"="E"."ID")
+
+Note
+-----
+   - this is an adaptive plan
+
+
+29 rows selected.
+
+SQL> spool off

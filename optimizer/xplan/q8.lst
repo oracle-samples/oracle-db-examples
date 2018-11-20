@@ -1,0 +1,234 @@
+SQL> @q8
+SQL> --
+SQL> -- Take the outline from q7.sql and apply it
+SQL> -- to a plan that should be a HASH join and not
+SQL> -- nested loop.
+SQL> -- Compare the 'Consistent Gets' in this example.
+SQL> -- In this case, there's not much difference in
+SQL> -- elapsed time, but getting the join wrong
+SQL> -- can be very bad for large queries.
+SQL> --
+SQL> set autotrace on
+SQL> set linesize 150
+SQL> set trims on
+SQL> set tab off
+SQL> set timing on
+SQL> 
+SQL> --
+SQL> -- Default 'good' plan
+SQL> --
+SQL> select count(distinct e.ename),
+  2         count(distinct t.tname)
+  3  from   employees        e
+  4         join tasks t on (t.emp_id = e.id)
+  5  where  e.etype <= 200;
+
+COUNT(DISTINCTE.ENAME) COUNT(DISTINCTT.TNAME)
+---------------------- ----------------------
+                  4000                   8000
+
+Elapsed: 00:00:00.05
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 1659288009
+
+---------------------------------------------------------------------------------
+| Id  | Operation           | Name      | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |           |     1 |    47 |  1197   (1)| 00:00:01 |
+|   1 |  SORT GROUP BY      |           |     1 |    47 |            |          |
+|*  2 |   HASH JOIN         |           |  8016 |   367K|  1197   (1)| 00:00:01 |
+|*  3 |    TABLE ACCESS FULL| EMPLOYEES |  4008 |   105K|   410   (1)| 00:00:01 |
+|   4 |    TABLE ACCESS FULL| TASKS     | 20000 |   390K|   786   (1)| 00:00:01 |
+---------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("T"."EMP_ID"="E"."ID")
+   3 - filter("E"."ETYPE"<=200)
+
+Note
+-----
+   - this is an adaptive plan
+
+
+Statistics
+----------------------------------------------------------
+          2  recursive calls
+          0  db block gets
+       4350  consistent gets
+          0  physical reads
+          0  redo size
+        643  bytes sent via SQL*Net to client
+        607  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          1  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> pause Press <cr> to continue
+Press <cr> to continue
+
+SQL> 
+SQL> --
+SQL> -- Force NL Join 'bad' plan
+SQL> --
+SQL> select
+  2    /*+
+  3        BEGIN_OUTLINE_DATA
+  4        IGNORE_OPTIM_EMBEDDED_HINTS
+  5        OPTIMIZER_FEATURES_ENABLE('12.2.0.1')
+  6        DB_VERSION('12.2.0.1')
+  7        ALL_ROWS
+  8        OUTLINE_LEAF(@"SEL$58A6D7F6")
+  9        MERGE(@"SEL$1" >"SEL$2")
+ 10        OUTLINE(@"SEL$2")
+ 11        OUTLINE(@"SEL$1")
+ 12        FULL(@"SEL$58A6D7F6" "E"@"SEL$1")
+ 13        INDEX(@"SEL$58A6D7F6" "T"@"SEL$1" ("TASKS"."EMP_ID"))
+ 14        LEADING(@"SEL$58A6D7F6" "E"@"SEL$1" "T"@"SEL$1")
+ 15        USE_NL(@"SEL$58A6D7F6" "T"@"SEL$1")
+ 16        NLJ_BATCHING(@"SEL$58A6D7F6" "T"@"SEL$1")
+ 17        END_OUTLINE_DATA
+ 18    */
+ 19         count(distinct e.ename),
+ 20         count(distinct t.tname)
+ 21  from   employees        e
+ 22         join tasks t on (t.emp_id = e.id)
+ 23  where  e.etype <= 200;
+
+COUNT(DISTINCTE.ENAME) COUNT(DISTINCTT.TNAME)
+---------------------- ----------------------
+                  4000                   8000
+
+Elapsed: 00:00:00.09
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 71711559
+
+---------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name        | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |             |     1 |    47 | 12442   (1)| 00:00:01 |
+|   1 |  SORT GROUP BY                |             |     1 |    47 |            |          |
+|   2 |   NESTED LOOPS                |             |  8016 |   367K| 12442   (1)| 00:00:01 |
+|   3 |    NESTED LOOPS               |             |  8016 |   367K| 12442   (1)| 00:00:01 |
+|*  4 |     TABLE ACCESS FULL         | EMPLOYEES   |  4008 |   105K|   410   (1)| 00:00:01 |
+|*  5 |     INDEX RANGE SCAN          | TASK_EMP_FK |     2 |       |     1   (0)| 00:00:01 |
+|   6 |    TABLE ACCESS BY INDEX ROWID| TASKS       |     2 |    40 |     3   (0)| 00:00:01 |
+---------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter("E"."ETYPE"<=200)
+   5 - access("T"."EMP_ID"="E"."ID")
+
+
+Statistics
+----------------------------------------------------------
+          2  recursive calls
+          0  db block gets
+      10987  consistent gets
+          0  physical reads
+          0  redo size
+        643  bytes sent via SQL*Net to client
+        607  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          1  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause Press <cr> to continue
+Press <cr> to continue
+
+SQL> 
+SQL> select
+  2    /*+
+  3        BEGIN_OUTLINE_DATA
+  4           gather_plan_statistics
+  5        IGNORE_OPTIM_EMBEDDED_HINTS
+  6        OPTIMIZER_FEATURES_ENABLE('12.2.0.1')
+  7        DB_VERSION('12.2.0.1')
+  8        ALL_ROWS
+  9        OUTLINE_LEAF(@"SEL$58A6D7F6")
+ 10        MERGE(@"SEL$1" >"SEL$2")
+ 11        OUTLINE(@"SEL$2")
+ 12        OUTLINE(@"SEL$1")
+ 13        FULL(@"SEL$58A6D7F6" "E"@"SEL$1")
+ 14        INDEX(@"SEL$58A6D7F6" "T"@"SEL$1" ("TASKS"."EMP_ID"))
+ 15        LEADING(@"SEL$58A6D7F6" "E"@"SEL$1" "T"@"SEL$1")
+ 16        USE_NL(@"SEL$58A6D7F6" "T"@"SEL$1")
+ 17        NLJ_BATCHING(@"SEL$58A6D7F6" "T"@"SEL$1")
+ 18        END_OUTLINE_DATA
+ 19    */
+ 20         count(distinct e.ename),
+ 21         count(distinct t.tname)
+ 22  from   employees        e
+ 23         join tasks t on (t.emp_id = e.id)
+ 24  where  e.etype <= 200;
+
+COUNT(DISTINCTE.ENAME) COUNT(DISTINCTT.TNAME)
+---------------------- ----------------------
+                  4000                   8000
+
+Elapsed: 00:00:00.14
+SQL> 
+SQL> @@sta
+SQL> set linesize 200
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'LAST ALLSTATS -MEMSTATS'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  b8wa8d7qtryrv, child number 0
+-------------------------------------
+select   /*+       BEGIN_OUTLINE_DATA          gather_plan_statistics
+    IGNORE_OPTIM_EMBEDDED_HINTS
+OPTIMIZER_FEATURES_ENABLE('12.2.0.1')       DB_VERSION('12.2.0.1')
+ ALL_ROWS       OUTLINE_LEAF(@"SEL$58A6D7F6")       MERGE(@"SEL$1"
+>"SEL$2")       OUTLINE(@"SEL$2")       OUTLINE(@"SEL$1")
+FULL(@"SEL$58A6D7F6" "E"@"SEL$1")       INDEX(@"SEL$58A6D7F6"
+"T"@"SEL$1" ("TASKS"."EMP_ID"))       LEADING(@"SEL$58A6D7F6"
+"E"@"SEL$1" "T"@"SEL$1")       USE_NL(@"SEL$58A6D7F6" "T"@"SEL$1")
+ NLJ_BATCHING(@"SEL$58A6D7F6" "T"@"SEL$1")       END_OUTLINE_DATA   */
+      count(distinct e.ename),        count(distinct t.tname) from
+employees        e        join tasks t on (t.emp_id = e.id) where
+e.etype <= 200
+
+Plan hash value: 71711559
+
+---------------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name        | Starts | E-Rows |E-Bytes| Cost (%CPU)| E-Time   | A-Rows |   A-Time   | Buffers |
+---------------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |             |      1 |        |       | 12442 (100)|          |      1 |00:00:00.13 |   10985 |
+|   1 |  SORT GROUP BY                |             |      1 |      1 |    47 |            |          |      1 |00:00:00.13 |   10985 |
+|   2 |   NESTED LOOPS                |             |      1 |   8016 |   367K| 12442   (1)| 00:00:01 |   8000 |00:00:00.12 |   10985 |
+|   3 |    NESTED LOOPS               |             |      1 |   8016 |   367K| 12442   (1)| 00:00:01 |   8000 |00:00:00.07 |    2985 |
+|*  4 |     TABLE ACCESS FULL         | EMPLOYEES   |      1 |   4008 |   105K|   410   (1)| 00:00:01 |   4000 |00:00:00.01 |    1452 |
+|*  5 |     INDEX RANGE SCAN          | TASK_EMP_FK |   4000 |      2 |       |     1   (0)| 00:00:01 |   8000 |00:00:00.02 |    1533 |
+|   6 |    TABLE ACCESS BY INDEX ROWID| TASKS       |   8000 |      2 |    40 |     3   (0)| 00:00:01 |   8000 |00:00:00.03 |    8000 |
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter("E"."ETYPE"<=200)
+   5 - access("T"."EMP_ID"="E"."ID")
+
+
+35 rows selected.
+
+Elapsed: 00:00:00.06
+SQL> spool off
