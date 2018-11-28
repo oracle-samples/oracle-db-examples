@@ -57,10 +57,7 @@ public class DataSourceSample {
     info.put(OracleConnection.CONNECTION_PROPERTY_USER_NAME, DB_USER);
     info.put(OracleConnection.CONNECTION_PROPERTY_PASSWORD, DB_PASSWORD);          
     info.put(OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH, "20");    
-    info.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_TYPES, 
-          "(MD5,SHA1,SHA256,SHA384,SHA512)");
-    info.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_LEVEL,
-          "REQUIRED");
+  
 
     OracleDataSource ods = new OracleDataSource();
     ods.setURL(DB_URL);    
