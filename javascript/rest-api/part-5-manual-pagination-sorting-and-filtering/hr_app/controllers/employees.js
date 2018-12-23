@@ -4,7 +4,7 @@ async function get(req, res, next) {
   try {
     const context = {};
 
-    context.id = parseInt(req.params.id, 10);
+    context.id = parseInt(req.query.id, 10);
     context.skip = parseInt(req.query.skip, 10);
     context.limit = parseInt(req.query.limit, 10);
     context.sort = req.query.sort;
@@ -13,7 +13,7 @@ async function get(req, res, next) {
 
     const rows = await employees.find(context);
 
-    if (req.params.id) {
+    if (req.query.id) {
       if (rows.length === 1) {
         res.status(200).json(rows[0]);
       } else {
