@@ -10,7 +10,7 @@ Before running this script:
  - Install Node.js and node-oracledb
  - Install Oracle Instant Client
  - Download and install the cloud service wallet
- - Modify the connect() call below to use the credentials for your database.
+ - Modify the getConnection() call below to use the credentials for your database.
 See your cloud service's documentation for details.
 
 ----------------------------------------------------------------------*/
