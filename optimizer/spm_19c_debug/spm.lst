@@ -1,0 +1,287 @@
+SQL> @spm
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> column report format a180
+SQL> column sql_handle format a30
+SQL> column plan_name format a40
+SQL> column sql_text format a80
+SQL> set linesize 200
+SQL> 
+SQL> begin
+  2    execute immediate 'drop table mytest1';
+  3  exception
+  4    when others then
+  5       if sqlcode != -942
+  6       then
+  7         raise;
+  8       end if;
+  9  end;
+ 10  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> create table mytest1 as
+  2  select rownum as id, rownum as num from dual connect by rownum < 10000;
+
+Table created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create index mytest1i on mytest1 (id);
+
+Index created.
+
+SQL> 
+SQL> 
+SQL> declare
+  2    n pls_integer;
+  3  begin
+  4    for rec in (select distinct sql_handle from dba_sql_plan_baselines where sql_text like '%MYTESTSQL%')
+  5    loop
+  6       n := dbms_spm.drop_sql_plan_baseline(
+  7            sql_handle => rec.sql_handle,
+  8            plan_name => null);
+  9    end loop;
+ 10  end;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> alter session set optimizer_capture_sql_plan_baselines = true;
+
+Session altered.
+
+SQL> select /* MYTESTSQL */ sum(num) from mytest1 where id = 10;
+
+  SUM(NUM)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+        10                                                                                                                                                                                              
+
+SQL> select /* MYTESTSQL */ sum(num) from mytest1 where id = 10;
+
+  SUM(NUM)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+        10                                                                                                                                                                                              
+
+SQL> alter session set optimizer_capture_sql_plan_baselines = false;
+
+Session altered.
+
+SQL> 
+SQL> --
+SQL> -- Notice that the SQL plan baseline is used
+SQL> --
+SQL> explain plan for select /* MYTESTSQL */ sum(num) from mytest1 where id = 10;
+
+Explained.
+
+SQL> select * from table(DBMS_XPLAN.DISPLAY(FORMAT=>'typical'));
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                       
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+Plan hash value: 89695824                                                                                                                                                                               
+                                                                                                                                                                                                        
+-------------------------------------------------------------------------------------------------                                                                                                       
+| Id  | Operation                            | Name     | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                       
+-------------------------------------------------------------------------------------------------                                                                                                       
+|   0 | SELECT STATEMENT                     |          |     1 |     8 |     2   (0)| 00:00:01 |                                                                                                       
+|   1 |  SORT AGGREGATE                      |          |     1 |     8 |            |          |                                                                                                       
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| MYTEST1  |     1 |     8 |     2   (0)| 00:00:01 |                                                                                                       
+|*  3 |    INDEX RANGE SCAN                  | MYTEST1I |     1 |       |     1   (0)| 00:00:01 |                                                                                                       
+-------------------------------------------------------------------------------------------------                                                                                                       
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   3 - access("ID"=10)                                                                                                                                                                                  
+                                                                                                                                                                                                        
+Note                                                                                                                                                                                                    
+-----                                                                                                                                                                                                   
+   - SQL plan baseline "SQL_PLAN_4c2m9z6wt78x70558a650" used for this statement                                                                                                                         
+
+19 rows selected.
+
+SQL> 
+SQL> 
+SQL> select sql_handle,plan_name,sql_text,accepted from dba_sql_plan_baselines where sql_text  like '%MYTESTSQL%';
+
+SQL_HANDLE                     PLAN_NAME                                SQL_TEXT                                                                         ACC                                            
+------------------------------ ---------------------------------------- -------------------------------------------------------------------------------- ---                                            
+SQL_460a69f9b993a3a7           SQL_PLAN_4c2m9z6wt78x70558a650           select /* MYTESTSQL */ sum(num) from mytest1 where id = 10                       YES                                            
+
+SQL> 
+SQL> alter index mytest1i invisible;
+
+Index altered.
+
+SQL> select /* MYTESTSQL */ sum(num) from mytest1 where id = 10;
+
+  SUM(NUM)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+        10                                                                                                                                                                                              
+
+SQL> --
+SQL> -- Notice that the SQL plan baseline plan cannot be reproduced because
+SQL> -- the index is now hidden - it can't be used.
+SQL> --
+SQL> explain plan for select /* MYTESTSQL */ sum(num) from mytest1 where id = 10;
+
+Explained.
+
+SQL> select * from table(DBMS_XPLAN.DISPLAY(FORMAT=>'typical'));
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                       
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+Plan hash value: 2231862908                                                                                                                                                                             
+                                                                                                                                                                                                        
+------------------------------------------------------------------------------                                                                                                                          
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                          
+|   0 | SELECT STATEMENT   |         |     1 |     8 |     8   (0)| 00:00:01 |                                                                                                                          
+|   1 |  SORT AGGREGATE    |         |     1 |     8 |            |          |                                                                                                                          
+|*  2 |   TABLE ACCESS FULL| MYTEST1 |     1 |     8 |     8   (0)| 00:00:01 |                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                          
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   2 - filter("ID"=10)                                                                                                                                                                                  
+                                                                                                                                                                                                        
+Note                                                                                                                                                                                                    
+-----                                                                                                                                                                                                   
+   - Failed to use SQL plan baseline for this statement                                                                                                                                                 
+
+18 rows selected.
+
+SQL> 
+SQL> --
+SQL> -- We have captured a new plan in the SQL Plan History
+SQL> --
+SQL> select sql_handle,plan_name,sql_text,accepted from dba_sql_plan_baselines where sql_text  like '%MYTESTSQL%';
+
+SQL_HANDLE                     PLAN_NAME                                SQL_TEXT                                                                         ACC                                            
+------------------------------ ---------------------------------------- -------------------------------------------------------------------------------- ---                                            
+SQL_460a69f9b993a3a7           SQL_PLAN_4c2m9z6wt78x70558a650           select /* MYTESTSQL */ sum(num) from mytest1 where id = 10                       YES                                            
+SQL_460a69f9b993a3a7           SQL_PLAN_4c2m9z6wt78x78507867c           select /* MYTESTSQL */ sum(num) from mytest1 where id = 10                       NO                                             
+
+SQL> --
+SQL> -- Let's look at the original plan (the one that isn't being used) and the new plan
+SQL> -- The non-accepted (new) plan is a FULL scan beause the index is hidden
+SQL> --
+SQL> select * from dbms_xplan.display_sql_plan_baseline('SQL_460a69f9b993a3a7');
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                       
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+                                                                                                                                                                                                        
+--------------------------------------------------------------------------------                                                                                                                        
+SQL handle: SQL_460a69f9b993a3a7                                                                                                                                                                        
+SQL text: select /* MYTESTSQL */ sum(num) from mytest1 where id = 10                                                                                                                                    
+--------------------------------------------------------------------------------                                                                                                                        
+                                                                                                                                                                                                        
+--------------------------------------------------------------------------------                                                                                                                        
+Plan name: SQL_PLAN_4c2m9z6wt78x70558a650         Plan id: 89695824                                                                                                                                     
+Enabled: YES     Fixed: NO      Accepted: YES     Origin: AUTO-CAPTURE                                                                                                                                  
+Plan rows: From dictionary                                                                                                                                                                              
+--------------------------------------------------------------------------------                                                                                                                        
+                                                                                                                                                                                                        
+Plan hash value: 89695824                                                                                                                                                                               
+                                                                                                                                                                                                        
+-------------------------------------------------------------------------------------------------                                                                                                       
+| Id  | Operation                            | Name     | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                       
+-------------------------------------------------------------------------------------------------                                                                                                       
+|   0 | SELECT STATEMENT                     |          |     1 |     8 |     2   (0)| 00:00:01 |                                                                                                       
+|   1 |  SORT AGGREGATE                      |          |     1 |     8 |            |          |                                                                                                       
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| MYTEST1  |     1 |     8 |     2   (0)| 00:00:01 |                                                                                                       
+|*  3 |    INDEX RANGE SCAN                  | MYTEST1I |     1 |       |     1   (0)| 00:00:01 |                                                                                                       
+-------------------------------------------------------------------------------------------------                                                                                                       
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   3 - access("ID"=10)                                                                                                                                                                                  
+                                                                                                                                                                                                        
+--------------------------------------------------------------------------------                                                                                                                        
+Plan name: SQL_PLAN_4c2m9z6wt78x78507867c         Plan id: 2231862908                                                                                                                                   
+Enabled: YES     Fixed: NO      Accepted: NO      Origin: AUTO-CAPTURE                                                                                                                                  
+Plan rows: From dictionary                                                                                                                                                                              
+--------------------------------------------------------------------------------                                                                                                                        
+                                                                                                                                                                                                        
+Plan hash value: 2231862908                                                                                                                                                                             
+                                                                                                                                                                                                        
+------------------------------------------------------------------------------                                                                                                                          
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                          
+|   0 | SELECT STATEMENT   |         |     1 |     8 |     8   (0)| 00:00:01 |                                                                                                                          
+|   1 |  SORT AGGREGATE    |         |     1 |     8 |            |          |                                                                                                                          
+|*  2 |   TABLE ACCESS FULL| MYTEST1 |     1 |     8 |     8   (0)| 00:00:01 |                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                          
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   2 - filter("ID"=10)                                                                                                                                                                                  
+
+48 rows selected.
+
+SQL> --
+SQL> -- Now let's see why the old plan isn't being used...
+SQL> --
+SQL> -- The 'trick' is to force the SQL statement to use the SQL plan baseline outline
+SQL> -- using the sql_plan_management_control hidden parameter
+SQL> -- i.e. - we will apply the outline to the SQL statement and
+SQL> -- then rely on the hint usage report to tell us which hints in the
+SQL> -- SQL plan baseline outline have not been honored.
+SQL> --
+SQL> alter session set "_sql_plan_management_control"=4;
+
+Session altered.
+
+SQL> explain plan for select /* MYTESTSQL */ sum(num) from mytest1 where id = 10;
+
+Explained.
+
+SQL> select * from table(DBMS_XPLAN.DISPLAY(FORMAT=>'typical'));
+
+PLAN_TABLE_OUTPUT                                                                                                                                                                                       
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                    
+Plan hash value: 2231862908                                                                                                                                                                             
+                                                                                                                                                                                                        
+------------------------------------------------------------------------------                                                                                                                          
+| Id  | Operation          | Name    | Rows  | Bytes | Cost (%CPU)| Time     |                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                          
+|   0 | SELECT STATEMENT   |         |     1 |     8 |     8   (0)| 00:00:01 |                                                                                                                          
+|   1 |  SORT AGGREGATE    |         |     1 |     8 |            |          |                                                                                                                          
+|*  2 |   TABLE ACCESS FULL| MYTEST1 |     1 |     8 |     8   (0)| 00:00:01 |                                                                                                                          
+------------------------------------------------------------------------------                                                                                                                          
+                                                                                                                                                                                                        
+Predicate Information (identified by operation id):                                                                                                                                                     
+---------------------------------------------------                                                                                                                                                     
+                                                                                                                                                                                                        
+   2 - filter("ID"=10)                                                                                                                                                                                  
+                                                                                                                                                                                                        
+Hint Report (identified by operation id / Query Block Name / Object Alias):                                                                                                                             
+Total hints for statement: 2 (U - Unused (2))                                                                                                                                                           
+---------------------------------------------------------------------------                                                                                                                             
+                                                                                                                                                                                                        
+   2 -  SEL$1 / MYTEST1@SEL$1                                                                                                                                                                           
+         U -  BATCH_TABLE_ACCESS_BY_ROWID(@"SEL$1" "MYTEST1"@"SEL$1")                                                                                                                                   
+         U -  INDEX_RS_ASC(@"SEL$1" "MYTEST1"@"SEL$1" ("MYTEST1"."ID"))                                                                                                                                 
+                                                                                                                                                                                                        
+Note                                                                                                                                                                                                    
+-----                                                                                                                                                                                                   
+   - SQL plan baseline "SQL_PLAN_4c2m9z6wt78x70558a650 (pretend match)" used for this statement                                                                                                         
+
+26 rows selected.
+
+SQL> alter session set "_sql_plan_management_control"=0;
+
+Session altered.
+
+SQL> spool off
