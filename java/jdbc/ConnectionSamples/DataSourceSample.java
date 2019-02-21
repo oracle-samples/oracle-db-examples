@@ -38,8 +38,10 @@ public class DataSourceSample {
   // The recommended format of a connection URL is the long format with the
   // connection descriptor.
   final static String DB_URL= "jdbc:oracle:thin:@myhost:1521/myorcldbservicename";
-  // For ATP and ADW - use the TNS Alias name along with the TNS_ADMIN
-  // final static String DB_URL="jdbc:oracle:thin:@myhost:1521@wallet_dbname?TNS_ADMIN=/Users/test/wallet_dbname";
+  // For ATP and ADW - use the TNS Alias name along with the TNS_ADMIN when using 18.3 JDBC driver
+  // final static String DB_URL="jdbc:oracle:thin:@wallet_dbname?TNS_ADMIN=/Users/test/wallet_dbname";
+  // In case of windows, use the following URL 
+  // final static String DB_URL="jdbc:oracle:thin:@wallet_dbname?TNS_ADMIN=C:\\Users\\test\\wallet_dbname";
   final static String DB_USER = "hr";
   final static String DB_PASSWORD = "hr";
 
@@ -57,10 +59,7 @@ public class DataSourceSample {
     info.put(OracleConnection.CONNECTION_PROPERTY_USER_NAME, DB_USER);
     info.put(OracleConnection.CONNECTION_PROPERTY_PASSWORD, DB_PASSWORD);          
     info.put(OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH, "20");    
-    info.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_TYPES, 
-          "(MD5,SHA1,SHA256,SHA384,SHA512)");
-    info.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_LEVEL,
-          "REQUIRED");
+  
 
     OracleDataSource ods = new OracleDataSource();
     ods.setURL(DB_URL);    

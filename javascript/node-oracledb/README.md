@@ -1,6 +1,6 @@
 # Node-oracledb Examples
 
-This directory contains [node-oracledb 3.0](https://www.npmjs.com/package/oracledb) examples.
+This directory contains [node-oracledb 3.1](https://www.npmjs.com/package/oracledb) examples.
 
 The node-oracledb add-on for Node.js powers high performance Oracle Database applications.
 
@@ -11,7 +11,7 @@ The node-oracledb add-on for Node.js powers high performance Oracle Database app
 Issues and questions about node-oracledb can be posted on
 [GitHub](https://github.com/oracle/node-oracledb/issues) or
 [Slack](https://node-oracledb.slack.com/) ([link to join
-Slack](https://join.slack.com/t/node-oracledb/shared_invite/enQtNDI4NTUyNjMzMDA5LWRiZWRkZjQ3NjBhNDUwOGJlNDFiZWJhZTIzYTJkMWQ5N2UwNTg5NzNmNmY1YmZjZGYxNmRhOTkyOTlhMmViNjY)).
+Slack](https://node-oracledb.slack.com/join/shared_invite/enQtNDU4Mjc2NzM5OTA2LTdkMzczODY3OGY3MGI0Yjk3NmQ4NDU4MTI2OGVjNTYzMjE5OGY5YzVkNDY4MWNkNjFiMDM2ZDMwOWRjNWVhNTg).
 
 To run the examples:
 
@@ -22,19 +22,31 @@ To run the examples:
   example, to load them in the HR schema run:
 
   ```
-  sqlplus hr/welcome@localhost/orclpdb @demo.sql
+  sqlplus hr
+  SQL> @demo.sql
   ```
 
-- Edit `dbconfig.js` and set your username, password and the database
+- Edit `dbconfig.js` and set your username and the database
 connection string:
 
   ```
   module.exports = {
       user: "hr",
-      password: "welcome",
+      password: process.env.NODE_ORACLEDB_PASSWORD,
       connectString:"localhost/orclpdb"
   };
+  ```
 
+- Set the environment variable `NODE_ORACLEDB_PASSWORD` to your database schema password.
+
+  On Windows:
+  ```
+  set NODE_ORACLEDB_PASSWORD=...
+  ```
+
+  On Linux:
+  ```
+  export NODE_ORACLEDB_PASSWORD=...
   ```
 
 - Then run the samples like:

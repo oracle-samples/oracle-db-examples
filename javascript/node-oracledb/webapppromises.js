@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -28,12 +28,14 @@
  *   accepts a URL parameter for the department ID, for example:
  *   http://localhost:7000/90
  *
- *   In some networks, pool termination may hang unless you have
+ *   In some networks forced pool termination may hang unless you have
  *   'disable_oob=on' in sqlnet.ora, see
  *   https://oracle.github.io/node-oracledb/doc/api.html#tnsadmin
  *
  *   Uses Oracle's sample HR schema.  Scripts to create the HR schema
  *   can be found at: https://github.com/oracle/db-sample-schemas
+ *
+ *   This example requires node-oracledb 3 or later.
  *
  *****************************************************************************/
 
@@ -50,16 +52,18 @@ function init() {
     user: dbConfig.user,
     password: dbConfig.password,
     connectString: dbConfig.connectString
-    // Default values shown below
+    // edition: 'ORA$BASE', // used for Edition Based Redefintion
     // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
     // externalAuth: false, // whether connections should be established using External Authentication
-    // poolAlias: 'myalias' // set an alias to allow access to the pool via a name.
+    // homogeneous: true, // all connections in the pool have the same credentials
+    // poolAlias: 'default', // set an alias to allow access to the pool via a name.
     // poolIncrement: 1, // only grow the pool by one connection at a time
     // poolMax: 4, // maximum size of the pool. Increase UV_THREADPOOL_SIZE if you increase poolMax
     // poolMin: 0, // start with no connections; let the pool shrink completely
     // poolPingInterval: 60, // check aliveness of connection if idle in the pool for 60 seconds
     // poolTimeout: 60, // terminate connections that are idle in the pool for 60 seconds
     // queueTimeout: 60000, // terminate getConnection() calls in the queue longer than 60000 milliseconds
+    // sessionCallback: myFunction, // function invoked for brand new connections or by a connection tag mismatch
     // stmtCacheSize: 30 // number of statements that are cached in the statement cache of each connection
   })
     .then(function(pool) {
@@ -201,29 +205,23 @@ function htmlFooter(response) {
 function closePoolAndExit() {
   console.log("\nTerminating");
   try {
-    // get the pool from the pool cache and close it when no
+    // Get the pool from the pool cache and close it when no
     // connections are in use, or force it closed after 10 seconds
-    var pool = oracledb.getPool();
-    pool.close(10, function(err) {
+    oracledb.getPool().close(10, function(err) {
       if (err)
-        console.error(err);
+        console.error(err.message);
       else
         console.log("Pool closed");
       process.exit(0);
     });
   } catch(err) {
-    // Ignore getPool() error, which may occur if multiple signals
-    // sent and the pool has already been removed from the cache.
-    process.exit(0);
+    console.error(err.message);
+    process.exit(1);
   }
 }
 
 process
-  .on('SIGTERM', function() {
-    closePoolAndExit();
-  })
-  .on('SIGINT', function() {
-    closePoolAndExit();
-  });
+  .once('SIGTERM', closePoolAndExit)
+  .once('SIGINT',  closePoolAndExit);
 
 init();
