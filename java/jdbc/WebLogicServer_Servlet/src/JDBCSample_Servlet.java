@@ -64,7 +64,7 @@ public class JDBCSample_Servlet extends HttpServlet {
     Context ctx = new InitialContext();
     // Look up for the JNDI datasource
     javax.sql.DataSource ds
-          = (javax.sql.DataSource) ctx.lookup ("orcljdbc_ds"); 
+          = (javax.sql.DataSource) ctx.lookup ("orcl_ds"); 
     return ds;
   }
  /*
