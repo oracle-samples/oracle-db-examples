@@ -7,6 +7,8 @@ column MIN(TXT1) format a30
 column MAX(TXT2) format a30
 column MIN(TXT2) format a30
 
+alter session set statistics_level = 'ALL';
+
 --
 -- The following queries use stats answering
 --
