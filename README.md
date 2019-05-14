@@ -8,6 +8,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [exadata-express](./exadata-express) | Exadata Express examples |
 | [java](./java)  | Java based examples |
 | [javascript](./javascript) | JavaScript based examples |
+| [machine-learning](./machine-learning) | Oracle Machine Learning examples |
 | [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
 | [plsql](./plsql) | PL/SQL based examples |
 | [python](./python) | Python based examples |
