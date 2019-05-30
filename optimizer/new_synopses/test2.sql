@@ -16,7 +16,7 @@ pause
 --
 -- Confirm we have HLL synopses
 --
-@look
+@t1check
 
 pause
 
@@ -55,7 +55,7 @@ exec dbms_stats.gather_table_stats(null,'t1')
 --
 -- Confirm we have Adaptive Sampling synopses
 --
-@look
+@t1check
 
 pause
 

@@ -60,7 +60,7 @@ pause
 --
 -- Confirm we have HyperLogLog synopses...
 --
-@look
+@t1check
 
 pause
 

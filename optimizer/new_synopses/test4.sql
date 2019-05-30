@@ -63,7 +63,7 @@ pause
 --
 -- Confirm we have Adaptive Sampling synopses...
 --
-@look
+@t1check
 
 pause
 
