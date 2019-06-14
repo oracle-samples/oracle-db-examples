@@ -1,0 +1,249 @@
+SQL> @example
+SQL> 
+SQL> drop table sales purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table sales (id number(10), num1 number(10), num2 number(10), num3 number(10), num4 number(10), txt1 varchar2(10));
+
+Table created.
+
+SQL> 
+SQL> insert into sales
+  2  select rownum,rownum,mod(rownum,1000),mod(rownum,10),null,dbms_random.string('U',10) from dual connect by rownum<10000;
+
+9999 rows created.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create unique index salesi on sales (id);
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats (ownname=>user,tabname=>'sales',method_opt=>'for all columns size 1');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> var t1 varchar2(40)
+SQL> var t2 varchar2(40)
+SQL> 
+SQL> exec dbms_lock.sleep(2);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             NONE
+NUM1                           NONE
+NUM2                           NONE
+NUM3                           NONE
+NUM4                           NONE
+TXT1                           NONE
+
+6 rows selected.
+
+SQL> 
+SQL> select count(*) from sales where txt1 > 'A';
+
+  COUNT(*)
+----------
+      9999
+
+SQL> select count(*) from sales where num3>1;
+
+  COUNT(*)
+----------
+      8000
+
+SQL> 
+SQL> insert into sales
+  2  select rownum+100000,rownum,mod(rownum,2000),mod(rownum,20),null,dbms_random.string('U',10) from dual connect by rownum<10000;
+
+9999 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for all columns size auto')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             NONE
+NUM1                           NONE
+NUM2                           NONE
+NUM3                           FREQUENCY
+NUM4                           NONE
+TXT1                           HYBRID
+
+6 rows selected.
+
+SQL> 
+SQL> select count(*) from sales where txt1 > 'A';
+
+  COUNT(*)
+----------
+     19998
+
+SQL> select count(*) from sales where num3>1;
+
+  COUNT(*)
+----------
+     17000
+
+SQL> 
+SQL> insert into sales
+  2  select rownum+200000,rownum,mod(rownum,2000),mod(rownum,40),null,dbms_random.string('U',10) from dual connect by rownum<10000;
+
+9999 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for all columns size auto')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             NONE
+NUM1                           NONE
+NUM2                           NONE
+NUM3                           FREQUENCY
+NUM4                           NONE
+TXT1                           HYBRID
+
+6 rows selected.
+
+SQL> 
+SQL> exec dbms_lock.sleep(2);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for all columns size 1')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for columns size 254 num2')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             NONE
+NUM1                           NONE
+NUM2                           HYBRID
+NUM3                           NONE
+NUM4                           NONE
+TXT1                           NONE
+
+6 rows selected.
+
+SQL> 
+SQL> set echo off
+Table : SCOMP.SALES
+Column: ID                                         Last analyzed: 2019-14-06 11:05:42 [Current: No Histogram]
+-     2019-14-06 11:05:36     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:42     0          buckets
+Column: NUM1                                       Last analyzed: 2019-14-06 11:05:42 [Current: No Histogram]
+-     2019-14-06 11:05:36     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:42     0          buckets
+Column: NUM2                                       Last analyzed: 2019-14-06 11:05:42 [Current: HYBRID]
+-     2019-14-06 11:05:36     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:42     0          buckets
+-     2019-14-06 11:05:42     0 ->   254 buckets CHANGE
+Column: NUM3                                       Last analyzed: 2019-14-06 11:05:42 [Current: No Histogram]
+-     2019-14-06 11:05:36     0          buckets
+-     2019-14-06 11:05:39     0 ->    20 buckets CHANGE
+-     2019-14-06 11:05:39    20 ->    40 buckets CHANGE
+-     2019-14-06 11:05:42    40 ->     0 buckets CHANGE
+Column: NUM4                                       Last analyzed: 2019-14-06 11:05:42 [Current: No Histogram]
+-     2019-14-06 11:05:36     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:39     0          buckets
+-     2019-14-06 11:05:42     0          buckets
+Column: TXT1                                       Last analyzed: 2019-14-06 11:05:42 [Current: No Histogram]
+-     2019-14-06 11:05:36     0          buckets
+-     2019-14-06 11:05:39     0 ->   254 buckets CHANGE
+-     2019-14-06 11:05:39   254          buckets
+-     2019-14-06 11:05:42   254 ->     0 buckets CHANGE
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off
