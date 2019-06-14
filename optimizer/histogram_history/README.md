@@ -17,6 +17,8 @@ For a worked example, see spool file example.lst and a test script example.sql
 
 WARNING: The example.sql script will drop a table called SALES. Always use test databases.
 
+NOTE: The earliest release I've tested this is Oracle Database 12c Release 2 but Release 1 should be OK too
+
 DISCLAIMER:
    <br/>-- These scripts are provided for educational purposes only.
    <br/>-- They are NOT supported by Oracle World Wide Technical Support.
