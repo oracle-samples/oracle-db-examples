@@ -15,7 +15,7 @@ SQL> @h_hist table_name user_name       [If the user_name is 'USER', the current
 
 For a worked example, see spool file example.lst and a test script example.sql
 
-The WARNING: The example.sql script will drop a table called SALES. Always use test databases.
+WARNING: The example.sql script will drop a table called SALES. Always use test databases.
 
 DISCLAIMER:
    <br/>-- These scripts are provided for educational purposes only.
