@@ -27,8 +27,6 @@ declare
      select c.column_name,
             c.column_id,
             decode(s.histogram,'NONE','[Current: No Histogram]','[Current: '||nvl(s.histogram,'No Stats')||']') histogram,
---            decode(s.histogram,'NONE','[Current: No Histogram]','[Current: '||nvl(s.histogram,'No Stats')||']') histogram,
---            decode(s.histogram,'NONE','[Current: No Histogram]','[Current: '||nvl(s.histogram,'No Stats'])') histogram,
             to_char(s.LAST_ANALYZED,v_fmt) last_analyzed, 
             s.num_buckets
      from   dba_tab_col_statistics s,
