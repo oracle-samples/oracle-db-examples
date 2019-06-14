@@ -1,3 +1,11 @@
+--
+--
+-- List histogram history for a given table/owner
+--
+-- Usage:  @h_hist table_name user_name
+--         @h_hist table_name user        (to assume current username)
+--
+--
 set linesize 250
 set serveroutput on verify off
 
