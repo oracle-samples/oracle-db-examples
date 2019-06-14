@@ -51,4 +51,4 @@ exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'f
 @hist
 
 set echo off
-@h_hist sales scomp
+@h_hist sales user
