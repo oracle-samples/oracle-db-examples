@@ -15,6 +15,8 @@ SQL> @h_hist table_name user_name       [If the user_name is 'USER', the current
 
 For a worked example, see spool file example.lst and a test script example.sql
 
+The subdirectory "partitioned" includes a script for partitioned tables. This is brand new and might need further debugging. Currently I have not implemented anything for a subpartitioned table. 
+
 WARNING: The example.sql script will drop a table called SALES. Always use test databases.
 
 NOTE: The earliest release I've tested this is Oracle Database 12c Release 2 but Release 1 should be OK too

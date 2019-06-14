@@ -1,0 +1,298 @@
+SQL> @example
+SQL> 
+SQL> drop table sales purge;
+
+Table dropped.
+
+SQL> 
+SQL> create table sales (id number(10), num1 number(10), num2 number(10), num3 number(10), num4 number(10), txt1 varchar2(10))
+  2  partition by range (id) (
+  3  partition p1 values less than (5000),
+  4  partition p2 values less than (20000),
+  5  partition p3 values less than (300000));
+
+Table created.
+
+SQL> 
+SQL> insert into sales
+  2  select rownum,rownum,mod(rownum,1000),mod(rownum,10),null,dbms_random.string('U',10) from dual connect by rownum<10000;
+
+9999 rows created.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create unique index salesi on sales (id);
+
+Index created.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats (ownname=>user,tabname=>'sales',method_opt=>'for all columns size 1');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> var t1 varchar2(40)
+SQL> var t2 varchar2(40)
+SQL> 
+SQL> exec dbms_lock.sleep(2);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             NONE
+NUM1                           NONE
+NUM2                           NONE
+NUM3                           NONE
+NUM4                           NONE
+TXT1                           NONE
+
+6 rows selected.
+
+SQL> 
+SQL> insert into sales
+  2  select rownum+100000,rownum,mod(rownum,2000),mod(rownum,20),null,dbms_random.string('U',10) from dual connect by rownum<10000;
+
+9999 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for all columns size 254')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             HYBRID
+NUM1                           HYBRID
+NUM2                           HYBRID
+NUM3                           FREQUENCY
+NUM4                           NONE
+TXT1                           HYBRID
+
+6 rows selected.
+
+SQL> 
+SQL> insert into sales
+  2  select rownum+200000,rownum,mod(rownum,2000),mod(rownum,40),null,dbms_random.string('U',10) from dual connect by rownum<10000;
+
+9999 rows created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for all columns size 254')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             HYBRID
+NUM1                           HYBRID
+NUM2                           HYBRID
+NUM3                           FREQUENCY
+NUM4                           NONE
+TXT1                           HYBRID
+
+6 rows selected.
+
+SQL> 
+SQL> exec dbms_lock.sleep(2);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for all columns size 1')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(ownname=>user,tabname=>'sales',method_opt=>'for columns size 254 num2')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> @hist
+SQL> set linesize 1000
+SQL> set trims on
+SQL> set pagesize 1000
+SQL> column table_name format a30
+SQL> column column_name format a30
+SQL> column hostogram format a30
+SQL> 
+SQL> select column_name,histogram from user_tab_col_statistics
+  2  where table_name = 'SALES'
+  3  order by 1
+  4  /
+
+COLUMN_NAME                    HISTOGRAM
+------------------------------ ---------------
+ID                             NONE
+NUM1                           NONE
+NUM2                           HYBRID
+NUM3                           NONE
+NUM4                           NONE
+TXT1                           NONE
+
+6 rows selected.
+
+SQL> 
+SQL> set echo off
+Table : SCOMP.SALES
+=========================================================
+Partition Name : P1
+=========================================================
+Column: ID                                         Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:09     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:13   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+Column: NUM1                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:09     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:13   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+Column: NUM2                                       Last analyzed: 2019-14-06 16:58:20 [Current: HYBRID]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:09     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:13   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+-     2019-14-06 16:58:20     0 ->   254 buckets CHANGE
+Column: NUM3                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:09     0 ->    10 buckets CHANGE
+-     2019-14-06 16:58:13    10          buckets
+-     2019-14-06 16:58:19    10 ->     0 buckets CHANGE
+Column: NUM4                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:09     0          buckets
+-     2019-14-06 16:58:13     0          buckets
+-     2019-14-06 16:58:19     0          buckets
+Column: TXT1                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:09     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:13   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+=========================================================
+Partition Name : P2
+=========================================================
+Column: ID                                         Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:10     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:14   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+Column: NUM1                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:10     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:14   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+Column: NUM2                                       Last analyzed: 2019-14-06 16:58:20 [Current: HYBRID]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:10     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:14   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+-     2019-14-06 16:58:20     0 ->   254 buckets CHANGE
+Column: NUM3                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:10     0 ->    10 buckets CHANGE
+-     2019-14-06 16:58:14    10          buckets
+-     2019-14-06 16:58:19    10 ->     0 buckets CHANGE
+Column: NUM4                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:10     0          buckets
+-     2019-14-06 16:58:14     0          buckets
+-     2019-14-06 16:58:19     0          buckets
+Column: TXT1                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:10     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:14   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+=========================================================
+Partition Name : P3
+=========================================================
+Column: ID                                         Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:12     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:17   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+Column: NUM1                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:12     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:17   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+Column: NUM2                                       Last analyzed: 2019-14-06 16:58:20 [Current: HYBRID]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:12     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:17   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+-     2019-14-06 16:58:20     0 ->   254 buckets CHANGE
+Column: NUM3                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:12     0 ->    20 buckets CHANGE
+-     2019-14-06 16:58:17    20 ->    40 buckets CHANGE
+-     2019-14-06 16:58:19    40 ->     0 buckets CHANGE
+Column: NUM4                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:12     0          buckets
+-     2019-14-06 16:58:17     0          buckets
+-     2019-14-06 16:58:19     0          buckets
+Column: TXT1                                       Last analyzed: 2019-14-06 16:58:19 [Current: No Histogram]
+-     2019-14-06 16:58:06     0          buckets
+-     2019-14-06 16:58:12     0 ->   254 buckets CHANGE
+-     2019-14-06 16:58:17   254          buckets
+-     2019-14-06 16:58:19   254 ->     0 buckets CHANGE
+
+PL/SQL procedure successfully completed.
+
+SQL> exit
