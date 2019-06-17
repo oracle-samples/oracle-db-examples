@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+expdp s1/s1 dumpfile=expdat.dmp content=metadata_only include=statistics
+if [ $? -eq 0 ]
+then
+  impdp s1/s1 dumpfile=expdat.dmp table_exists_action=skip include=statistics remap_table=t1:t2
+else
+  echo "Error detected. Import skipped."
+fi

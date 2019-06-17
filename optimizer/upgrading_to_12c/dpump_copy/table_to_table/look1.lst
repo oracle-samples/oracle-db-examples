@@ -1,0 +1,157 @@
+SQL> @look
+=======================================================================
+This script displays the various metadata associated with optimizer
+statistics and adaptive features.
+Specifically:
+Stats informaiton in DBA_TABLES
+Stats information in DBA_INDEXES
+Extended statistics
+Histograms
+Column usage information
+Table preferences
+=======================================================================
+Compare analyzed dates between T1 and T2
+S1.T1 and S1.T2 have slightly different row counts. The difference will
+be apparent in the statistics until the statistics are copied from T1 to T2.
+============================================================================
+
+TABLE_NAME                     ANALYZED              NUM_ROWS                                                                                                                                           
+------------------------------ ------------------- ----------                                                                                                                                           
+T1                             2019-06-17 05:34:42      10003                                                                                                                                           
+T2                             2019-06-17 05:34:37          0                                                                                                                                           
+
+
+TABLE_NAME                     COLUMN_NAME                    NUM_DISTINCT                                                                                                                              
+------------------------------ ------------------------------ ------------                                                                                                                              
+T1                             C1                                    10003                                                                                                                              
+                               C2                                    10003                                                                                                                              
+                               C3                                        4                                                                                                                              
+                               ID                                        4                                                                                                                              
+                               SYS_STUF3GLKIOP5F4B0BTTCFTMX0W        10003                                                                                                                              
+T2                             C1                                        0                                                                                                                              
+                               C2                                        0                                                                                                                              
+                               C3                                        0                                                                                                                              
+                               ID                                        0                                                                                                                              
+
+9 rows selected.
+
+Compare analyzed dates between T1 and T2 for indexes
+and notice that the index statistics are not copied
+because we don't have a remap_index in DP
+====================================================
+
+TABLE_NAME                     INDEX_NAME                       NUM_ROWS ANALYZED                                                                                                                       
+------------------------------ ------------------------------ ---------- -------------------                                                                                                            
+T1                             T1I                                 10003 2019-06-17 05:34:43                                                                                                            
+T2                             T2I                                     0 2019-06-17 05:34:37                                                                                                            
+
+Extended stats. Compare user S1 with S2...
+==========================================
+
+TABLE_NAME                     EXTENSION                                                                                                                                                                
+------------------------------ --------------------                                                                                                                                                     
+T1                             ("C1","C2")                                                                                                                                                              
+
+Histograms. Compare user S1 with S2...
+======================================
+
+TABLE_NAME                     COLUMN_NAME                    HISTOGRAM                                                                                                                                 
+------------------------------ ------------------------------ ---------------                                                                                                                           
+T1                             C1                             HYBRID                                                                                                                                    
+                               C2                             NONE                                                                                                                                      
+                               C3                             NONE                                                                                                                                      
+                               ID                             NONE                                                                                                                                      
+                               SYS_STUF3GLKIOP5F4B0BTTCFTMX0W NONE                                                                                                                                      
+T2                             C1                             NONE                                                                                                                                      
+                               C2                             NONE                                                                                                                                      
+                               C3                             NONE                                                                                                                                      
+                               ID                             NONE                                                                                                                                      
+
+9 rows selected.
+
+Number of COL_USAGE$ entries for T1
+===================================
+
+  COUNT(*)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+         1                                                                                                                                                                                              
+
+Number of COL_USAGE$ entries for T2
+===================================
+
+  COUNT(*)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+         0                                                                                                                                                                                              
+
+Column usage report for S1.T1
+=============================
+
+CUSE                                                                                                                                                                                                    
+----------------------------------------------------------------------------------------------------                                                                                                    
+LEGEND:                                                                                                                                                                                                 
+.......                                                                                                                                                                                                 
+                                                                                                                                                                                                        
+EQ         : Used in single table EQuality predicate                                                                                                                                                    
+RANGE      : Used in single table RANGE predicate                                                                                                                                                       
+LIKE       : Used in single table LIKE predicate                                                                                                                                                        
+NULL       : Used in single table is (not) NULL predicate                                                                                                                                               
+EQ_JOIN    : Used in EQuality JOIN predicate                                                                                                                                                            
+NONEQ_JOIN : Used in NON EQuality JOIN predicate                                                                                                                                                        
+FILTER     : Used in single table FILTER predicate                                                                                                                                                      
+JOIN       : Used in JOIN predicate                                                                                                                                                                     
+GROUP_BY   : Used in GROUP BY expression                                                                                                                                                                
+...............................................................................                                                                                                                         
+                                                                                                                                                                                                        
+###############################################################################                                                                                                                         
+                                                                                                                                                                                                        
+COLUMN USAGE REPORT FOR S1.T1                                                                                                                                                                           
+.............................                                                                                                                                                                           
+                                                                                                                                                                                                        
+1. C1                                  : RANGE                                                                                                                                                          
+###############################################################################                                                                                                                         
+                                                                                                                                                                                                        
+                                                                                                                                                                                                        
+
+Column usage report for S1.T2
+=============================
+
+CUSE                                                                                                                                                                                                    
+----------------------------------------------------------------------------------------------------                                                                                                    
+LEGEND:                                                                                                                                                                                                 
+.......                                                                                                                                                                                                 
+                                                                                                                                                                                                        
+EQ         : Used in single table EQuality predicate                                                                                                                                                    
+RANGE      : Used in single table RANGE predicate                                                                                                                                                       
+LIKE       : Used in single table LIKE predicate                                                                                                                                                        
+NULL       : Used in single table is (not) NULL predicate                                                                                                                                               
+EQ_JOIN    : Used in EQuality JOIN predicate                                                                                                                                                            
+NONEQ_JOIN : Used in NON EQuality JOIN predicate                                                                                                                                                        
+FILTER     : Used in single table FILTER predicate                                                                                                                                                      
+JOIN       : Used in JOIN predicate                                                                                                                                                                     
+GROUP_BY   : Used in GROUP BY expression                                                                                                                                                                
+...............................................................................                                                                                                                         
+                                                                                                                                                                                                        
+###############################################################################                                                                                                                         
+                                                                                                                                                                                                        
+COLUMN USAGE REPORT FOR S1.T2                                                                                                                                                                           
+.............................                                                                                                                                                                           
+                                                                                                                                                                                                        
+###############################################################################                                                                                                                         
+                                                                                                                                                                                                        
+                                                                                                                                                                                                        
+
+S1.T1 TABLE_CACHED_BLOCKS preference
+====================================
+
+TCB_PREF                                                                                                                                                                                                
+----------                                                                                                                                                                                              
+50                                                                                                                                                                                                      
+
+S1.T2 TABLE_CACHED_BLOCKS preference (should match S1.T1 once copied)
+=====================================================================
+
+TCB_PREF                                                                                                                                                                                                
+----------                                                                                                                                                                                              
+1                                                                                                                                                                                                       
+
+SQL> spool off
