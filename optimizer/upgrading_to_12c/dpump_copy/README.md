@@ -28,6 +28,8 @@ Example *lst* and *log* files are included so you can see the expected results.
 
 Notice how all of the statistics and metadata is copied across from S1 to S2.
 
+See directory "table_to_table" for copying statistics metadata from one table to another.
+
 ### DISCLAIMER
 
 *  These scripts are provided for educational purposes only.
