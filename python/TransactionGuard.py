@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -18,7 +18,7 @@
 #
 # Run the following as SYSDBA to set up Transaction Guard
 #
-#     grant execute on dbms_app_cont to cx_Oracle;
+#     grant execute on dbms_app_cont to pythondemo;
 #
 #     declare
 #         t_Params dbms_service.svc_parameter_array;
@@ -36,15 +36,11 @@
 from __future__ import print_function
 
 import cx_Oracle
+import SampleEnv
 import sys
 
 # constants
-SESSION_MIN = 1
-SESSION_MAX = 9
-SESSION_INCR = 2
-USER_NAME = "cx_Oracle"
-PASSWORD = "dev"
-DATABASE = "localhost/orcl-tg"
+CONNECT_STRING = "localhost/orcl-tg"
 
 # for Python 2.7 we need raw_input
 try:
@@ -53,8 +49,9 @@ except NameError:
     pass
 
 # create transaction and generate a recoverable error
-pool = cx_Oracle.SessionPool(USER_NAME, PASSWORD, DATABASE, SESSION_MIN,
-        SESSION_MAX, SESSION_INCR)
+pool = cx_Oracle.SessionPool(SampleEnv.GetMainUser(),
+        SampleEnv.GetMainPassword(), CONNECT_STRING, min=1,
+        max=9, increment=2)
 connection = pool.acquire()
 cursor = connection.cursor()
 cursor.execute("""
@@ -63,7 +60,8 @@ cursor.execute("""
 cursor.execute("""
         insert into TestTempTable
         values (1, null)""")
-input("Please kill %s session now. Press ENTER when complete." % USER_NAME)
+input("Please kill %s session now. Press ENTER when complete." % \
+        SampleEnv.GetMainUser())
 try:
     connection.commit() # this should fail
     sys.exit("Session was not killed. Terminating.")

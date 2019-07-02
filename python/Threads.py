@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, 2019, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -16,10 +16,12 @@
 from __future__ import print_function
 
 import cx_Oracle
+import SampleEnv
 import threading
 
-pool = cx_Oracle.SessionPool("cx_Oracle", "dev", "localhost/orcl", 2, 5, 1,
-        threaded = True)
+pool = cx_Oracle.SessionPool(SampleEnv.GetMainUser(),
+        SampleEnv.GetMainPassword(), SampleEnv.GetConnectString(), min=2,
+        max=5, increment=1, threaded=True)
 
 def TheLongQuery():
     conn = pool.acquire()

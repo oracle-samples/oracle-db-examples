@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -20,7 +20,7 @@
 #
 # Statistics regarding the pool can be acquired from the following query:
 #
-#   select * from v$pool_cc_stats;
+#   select * from v$cpool_cc_stats;
 #
 # There is no difference in how a connection is used once it has been
 # established.
@@ -31,9 +31,10 @@
 from __future__ import print_function
 
 import cx_Oracle
+import SampleEnv
 
-conn = cx_Oracle.Connection("cx_Oracle/dev@localhost/orcl:pooled",
-        cclass = "PYCLASS", purity = cx_Oracle.ATTR_PURITY_SELF)
+conn = cx_Oracle.connect(SampleEnv.GetDrcpConnectString(), cclass = "PYCLASS",
+        purity = cx_Oracle.ATTR_PURITY_SELF)
 cursor = conn.cursor()
 print("Performing query using DRCP...")
 for row in cursor.execute("select * from TestNumbers order by IntCol"):

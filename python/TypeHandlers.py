@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -22,8 +22,9 @@ from __future__ import print_function
 
 import cx_Oracle
 import datetime
+import SampleEnv
 
-con = cx_Oracle.connect("cx_Oracle/dev@localhost/orcl")
+con = cx_Oracle.connect(SampleEnv.GetMainConnectString())
 objType = con.gettype("UDT_BUILDING")
 
 class Building(object):
