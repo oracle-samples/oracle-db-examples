@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -19,6 +19,7 @@
 from __future__ import print_function
 
 import cx_Oracle
+import SampleEnv
 
 class Test(object):
 
@@ -27,7 +28,7 @@ class Test(object):
         self.b = b
         self.c = c
 
-connection = cx_Oracle.Connection("cx_Oracle/dev@localhost/orcl")
+connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
 cursor = connection.cursor()
 
 # change this to False if you want to create the table yourself using SQL*Plus

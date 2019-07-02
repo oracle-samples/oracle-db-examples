@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -18,12 +18,13 @@
 from __future__ import print_function
 
 import cx_Oracle
+import SampleEnv
 
 # create and populate Oracle objects
-connection = cx_Oracle.Connection("cx_Oracle/dev@localhost/orcl")
-typeObj = connection.gettype("SDO_GEOMETRY")
-elementInfoTypeObj = connection.gettype("SDO_ELEM_INFO_ARRAY")
-ordinateTypeObj = connection.gettype("SDO_ORDINATE_ARRAY")
+connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+typeObj = connection.gettype("MDSYS.SDO_GEOMETRY")
+elementInfoTypeObj = connection.gettype("MDSYS.SDO_ELEM_INFO_ARRAY")
+ordinateTypeObj = connection.gettype("MDSYS.SDO_ORDINATE_ARRAY")
 obj = typeObj.newobject()
 obj.SDO_GTYPE = 2003
 obj.SDO_ELEM_INFO = elementInfoTypeObj.newobject()
@@ -44,7 +45,7 @@ if count == 0:
     cursor.execute("""
             create table TestGeometry (
                 IntCol number(9) not null,
-                Geometry SDO_GEOMETRY not null
+                Geometry MDSYS.SDO_GEOMETRY not null
             )""")
 
 # remove all existing rows and then add a new one
