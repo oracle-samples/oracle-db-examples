@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -20,12 +20,21 @@
 from __future__ import print_function
 
 import cx_Oracle
+import SampleEnv
 import threading
 import time
 
+registered = True
+
 def callback(message):
+    global registered
     print("Message type:", message.type)
+    if not message.registered:
+        print("Deregistration has taken place...")
+        registered = False
+        return
     print("Message database name:", message.dbname)
+    print("Message tranasction id:", message.txid)
     print("Message tables:")
     for table in message.tables:
         print("--> Table Name:", table.name)
@@ -38,12 +47,12 @@ def callback(message):
                 print("-" * 60)
         print("=" * 60)
 
-connection = cx_Oracle.Connection("cx_Oracle/dev@localhost/orcl",
-        events = True)
+connection = cx_Oracle.connect(SampleEnv.GetMainConnectString(), events = True)
 sub = connection.subscribe(callback = callback, timeout = 1800,
         qos = cx_Oracle.SUBSCR_QOS_ROWIDS)
 print("Subscription:", sub)
 print("--> Connection:", sub.connection)
+print("--> ID:", sub.id)
 print("--> Callback:", sub.callback)
 print("--> Namespace:", sub.namespace)
 print("--> Protocol:", sub.protocol)
@@ -52,7 +61,7 @@ print("--> Operations:", sub.operations)
 print("--> Rowids?:", bool(sub.qos & cx_Oracle.SUBSCR_QOS_ROWIDS))
 sub.registerquery("select * from TestTempTable")
 
-while True:
+while registered:
     print("Waiting for notifications....")
     time.sleep(5)
 
