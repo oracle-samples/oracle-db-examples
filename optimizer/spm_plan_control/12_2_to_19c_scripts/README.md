@@ -6,6 +6,8 @@ The utility scripts are fix_all.sql and fix_spm.sql
 
 They are intended to be similar in usage to the MOS script "coe_xfr_sql_profile.sql" - but using SQL plan baselines rather than SQL profiles.
 
+If you find issues with these scripts or have ideas for impreovement, please post comments to the blog article linked above.
+
 You can run a simple testcase as follows:
 
 ```
