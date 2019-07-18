@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.oracle.testapp</groupId>
+  <artifactId>UCPCloud</artifactId>
+  <packaging>war</packaging>
+  <version>1.0</version>
+  <name>UCPCloud Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+
+  <dependencies>
+    <dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>3.8.1</version>
+    <scope>test</scope>
+   </dependency>
+    
+   <dependency>
+     <groupId>javax.servlet</groupId>
+     <artifactId>javax.servlet-api</artifactId>
+     <version>3.1.0</version>
+     <scope>provided</scope>
+   </dependency>
+
+    <dependency>
+      <groupId>com.oracle.jdbc</groupId>
+      <artifactId>ojdbc8</artifactId>
+      <version>18.3.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.oracle.jdbc</groupId>
+      <artifactId>ucp</artifactId>
+      <version>18.3.0.0</version>
+    </dependency>
+
+  </dependencies>
+
+
+  <build>
+
+    <plugins>
+      <!--*************************************************-->
+      <!-- Deploy to Tomcat in App Service Linux           -->
+      <!--*************************************************-->
+      <plugin>
+          <groupId>com.microsoft.azure</groupId>
+          <artifactId>azure-webapp-maven-plugin</artifactId>
+          <version>1.5.4</version>
+          <configuration>
+              <!-- Specify v2 schema -->
+              <schemaVersion>v2</schemaVersion>
+              <!-- App information -->
+              <subscriptionId>b3b11699-7b1e-4981-925f-1a4b63e5b298</subscriptionId>
+              <resourceGroup>JDBC-ATPD</resourceGroup>
+              <appName>UCPCloud</appName>
+              <region>eastus</region>
+
+              <!-- Java Runtime Stack for App on Linux-->
+              <runtime>
+                  <os>linux</os>
+                  <javaVersion>jre8</javaVersion>
+                  <webContainer>tomcat 8.5</webContainer>
+              </runtime>
+              <deployment>
+                  <resources>
+                      <resource>
+                          <directory>${project.basedir}/target</directory>
+                          <includes>
+                              <include>*.war</include>
+                          </includes>
+                      </resource>
+                  </resources>
+              </deployment>
+          </configuration>
+      </plugin>
+   </plugins>
+  </build>
+
+
+</project>
