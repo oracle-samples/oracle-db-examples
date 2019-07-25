@@ -24,7 +24,6 @@
  *   For a connection pool example see connectionpool.js
  *   For a ResultSet example see resultset2.js
  *   For a query stream example see selectstream.js
- *   For a Promise example see promises.js
  *   For a callback example see select1.js
  *
  *   This example requires node-oracledb 2.2 or later.
@@ -34,8 +33,8 @@
 // Using a fixed Oracle time zone helps avoid machine and deployment differences
 process.env.ORA_SDTZ = 'UTC';
 
-var oracledb = require('oracledb');
-var dbConfig = require('./dbconfig.js');
+const oracledb = require('oracledb');
+const dbConfig = require('./dbconfig.js');
 
 async function run() {
   let connection;
@@ -44,11 +43,7 @@ async function run() {
 
     let sql, binds, options, result;
 
-    connection = await oracledb.getConnection(  {
-      user          : dbConfig.user,
-      password      : dbConfig.password,
-      connectString : dbConfig.connectString
-    });
+    connection = await oracledb.getConnection(dbConfig);
 
     // Create a table
 
@@ -93,7 +88,7 @@ async function run() {
 
     // For a complete list of options see the documentation.
     options = {
-      outFormat: oracledb.OBJECT   // query result format
+      outFormat: oracledb.OUT_FORMAT_OBJECT   // query result format
       // extendedMetaData: true,   // get extra metadata
       // fetchArraySize: 100       // internal buffer allocation size for tuning
     };

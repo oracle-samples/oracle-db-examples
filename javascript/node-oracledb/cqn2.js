@@ -26,18 +26,23 @@
  *   The user must have been granted CHANGE NOTIFICATION.
  *   The node-oracledb host must be resolvable by the database host.
  *
- *   This example uses Node 8 syntax, but could be written to use callbacks.
+ *   Run this script and when the subscription has been created, run
+ *   these statements in a SQL*Plus session:
+ *      INSERT INTO CQNTABLE VALUES (1);
+ *      COMMIT;
  *
  *   This example requires node-oracledb 2.3 or later.
+ *
+ *   This example uses Node 8's async/await syntax.
  *
  *****************************************************************************/
 
 const oracledb = require("oracledb");
-let dbConfig = require('./dbconfig.js');
+const dbConfig = require('./dbconfig.js');
 
-dbConfig.events = true;  // CQN needs events mode
+// dbConfig.events = true;  // CQN needs events mode, which is true by default in 4.0
 
-let interval = setInterval(function() {
+const interval = setInterval(function() {
   console.log("waiting...");
 }, 5000);
 
@@ -53,14 +58,14 @@ function myCallback(message)
   console.log("Message database name:", message.dbName);
   console.log("Message transaction id:", message.txId);
   for (let i = 0; i < message.tables.length; i++) {
-    let table = message.tables[i];
+    const table = message.tables[i];
     console.log("--> Table Name:", table.name);
     // Note table.operation and row.operation are masks of
     // oracledb.CQN_OPCODE_* values
     console.log("--> Table Operation:", table.operation);
     if (table.rows) {
       for (let j = 0; j < table.rows.length; j++) {
-        let row = table.rows[j];
+        const row = table.rows[j];
         console.log("--> --> Row Rowid:", row.rowid);
         console.log("--> --> Row Operation:", row.operation);
         console.log(Array(61).join("-"));
@@ -85,12 +90,12 @@ const options = {
 };
 
 async function runTest() {
-  let conn;
+  let connection;
 
   try {
-    conn = await oracledb.getConnection(dbConfig);
+    connection = await oracledb.getConnection(dbConfig);
 
-    await conn.subscribe('mysub', options);
+    await connection.subscribe('mysub', options);
 
     console.log("Subscription created...");
 
@@ -98,9 +103,9 @@ async function runTest() {
     console.error(err);
     clearInterval(interval);
   } finally {
-    if (conn) {
+    if (connection) {
       try {
-        await conn.close();
+        await connection.close();
       } catch (err) {
         console.error(err);
       }

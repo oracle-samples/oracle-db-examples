@@ -22,16 +22,14 @@
  *   Shows connection pool usage.  Connection pools are recommended
  *   for applications that use a lot of connections for short periods.
  *
- *   This example uses Node 8's async/await syntax.
- *
- *   Other connection pool examples are in sessionfixup.js, webapp.js,
- *   webapppromises.js and webappawait.js
- *
+ *   Other connection pool examples are in sessionfixup.js and webappawait.js.
  *   For a standalone connection example, see connect.js
  *
  *   In some networks forced pool termination may hang unless you have
  *   'disable_oob=on' in sqlnet.ora, see
  *   https://oracle.github.io/node-oracledb/doc/api.html#tnsadmin
+ *
+ *   This example uses Node 8's async/await syntax.
  *
  *****************************************************************************/
 
@@ -47,7 +45,7 @@ async function init() {
       password: dbConfig.password,
       connectString: dbConfig.connectString
       // edition: 'ORA$BASE', // used for Edition Based Redefintion
-      // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
+      // events: true, // whether to handle Oracle Database FAN and RLB events or support CQN
       // externalAuth: false, // whether connections should be established using External Authentication
       // homogeneous: true, // all connections in the pool have the same credentials
       // poolAlias: 'default', // set an alias to allow access to the pool via a name.
@@ -77,10 +75,10 @@ async function dostuff() {
   try {
     // Get a connection from the default pool
     connection = await oracledb.getConnection();
-    let sql = `SELECT sysdate FROM dual WHERE :b = 1`;
-    let binds = [1];
-    let options = { outFormat: oracledb.OBJECT };
-    let result = await connection.execute(sql, binds, options);
+    const sql = `SELECT sysdate FROM dual WHERE :b = 1`;
+    const binds = [1];
+    const options = { outFormat: oracledb.OUT_FORMAT_OBJECT };
+    const result = await connection.execute(sql, binds, options);
     console.log(result);
   } catch (err) {
     console.error(err);
