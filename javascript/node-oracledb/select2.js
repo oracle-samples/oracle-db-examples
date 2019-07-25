@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -26,11 +26,14 @@
  *   Scripts to create the HR schema can be found at:
  *   https://github.com/oracle/db-sample-schemas
  *
+ *   This example uses Node 8's async/await syntax.
+ *
  ******************************************************************************/
 
-var async = require('async');
-var oracledb = require('oracledb');
-var dbConfig = require('./dbconfig.js');
+'use strict';
+
+const oracledb = require('oracledb');
+const dbConfig = require('./dbconfig.js');
 
 // Oracledb properties are applicable to all connections and SQL
 // executions.  They can also be set or overridden at the individual
@@ -46,66 +49,55 @@ var dbConfig = require('./dbconfig.js');
 
 // This script sets outFormat in the execute() call but it could be set here instead:
 //
-// oracledb.outFormat = oracledb.OBJECT;
+// oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
-var doconnect = function(cb) {
-  oracledb.getConnection(
-    {
-      user          : dbConfig.user,
-      password      : dbConfig.password,
-      connectString : dbConfig.connectString
-    },
-    cb);
-};
+async function run() {
 
-var dorelease = function(conn) {
-  conn.close(function (err) {
-    if (err)
-      console.error(err.message);
-  });
-};
+  let connection;
 
-// Default Array Output Format
-var doquery_array = function (conn, cb) {
-  conn.execute(
-    "SELECT location_id, city FROM locations WHERE city LIKE 'S%' ORDER BY city",
-    function(err, result) {
-      if (err) {
-        return cb(err, conn);
-      } else {
-        console.log("----- Cities beginning with 'S' (default ARRAY output format) --------");
-        console.log(result.rows);
-        return cb(null, conn);
-      }
+  try {
+    // Get a non-pooled connection
+
+    connection = await oracledb.getConnection(  {
+      user         : dbConfig.user,
+      password     : dbConfig.password,
+      connectString: dbConfig.connectString
     });
-};
 
-// Optional Object Output Format
-var doquery_object = function (conn, cb) {
-  conn.execute(
-    "SELECT location_id, city FROM locations WHERE city LIKE 'S%' ORDER BY city",
-    {}, // A bind variable parameter is needed to disambiguate the following options parameter
-    // otherwise you will get Error: ORA-01036: illegal variable name/number
-    { outFormat: oracledb.OBJECT }, // outFormat can be OBJECT or ARRAY.  The default is ARRAY
-    function(err, result) {
-      if (err) {
-        return cb(err, conn);
-      } else {
-        console.log("----- Cities beginning with 'S' (OBJECT output format) --------");
-        console.log(result.rows);
-        return cb(null, conn);
+    // The statement to execute
+    const sql =
+        `SELECT location_id, city
+         FROM locations
+         WHERE city LIKE 'S%'
+         ORDER BY city`;
+
+    let result;
+
+    // Default Array Output Format
+    result = await connection.execute(sql);
+    console.log("----- Cities beginning with 'S' (default ARRAY output format) --------");
+    console.log(result.rows);
+
+    // Optional Object Output Format
+    result = await connection.execute(
+      sql,
+      {}, // A bind parameter is needed to disambiguate the following options parameter and avoid ORA-01036
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }); // outFormat can be OBJECT or ARRAY.  The default is ARRAY
+    console.log("----- Cities beginning with 'S' (OBJECT output format) --------");
+    console.log(result.rows);
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        // Note: connections should always be released when not needed
+        await connection.close();
+      } catch (err) {
+        console.error(err);
       }
-    });
-};
+    }
+  }
+}
 
-async.waterfall(
-  [
-    doconnect,
-    doquery_array,
-    doquery_object
-  ],
-  function (err, conn) {
-    if (err) { console.error("In waterfall error cb: ==>", err, "<=="); }
-    if (conn)
-      dorelease(conn);
-  });
+run();

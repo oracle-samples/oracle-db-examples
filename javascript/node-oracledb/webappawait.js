@@ -19,8 +19,7 @@
  *   webappawait.js
  *
  * DESCRIPTION
- *   Shows a web based query using connections from connection pool. This is
- *   similar to webapp.js but uses Node 8's async/await syntax.
+ *   Shows a web based query using connections from connection pool.
  *
  *   This displays a table of employees in the specified department.
  *
@@ -37,11 +36,14 @@
  *
  *   This example requires node-oracledb 3 or later.
  *
+ *   This example uses Node 8's async/await syntax.
+ *
  *****************************************************************************/
 
 const http = require('http');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
 const httpPort = 7000;
 
 // Main entry point.  Creates a connection pool and an HTTP server
@@ -54,7 +56,7 @@ async function init() {
       password: dbConfig.password,
       connectString: dbConfig.connectString
       // edition: 'ORA$BASE', // used for Edition Based Redefintion
-      // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
+      // events: true, // whether to handle Oracle Database FAN and RLB events or support CQN
       // externalAuth: false, // whether connections should be established using External Authentication
       // homogeneous: true, // all connections in the pool have the same credentials
       // poolAlias: 'default', // set an alias to allow access to the pool via a name.
@@ -69,7 +71,7 @@ async function init() {
     });
 
     // Create HTTP server and listen on port httpPort
-    let server = http.createServer();
+    const server = http.createServer();
     server.on('error', (err) => {
       console.log('HTTP server problem: ' + err);
     });
@@ -108,25 +110,32 @@ async function handleRequest(request, response) {
     return;
   }
 
+  let connection;
   try {
     // Checkout a connection from the default pool
-    let connection = await oracledb.getConnection();
+    connection = await oracledb.getConnection();
 
-    let result = await connection.execute(
+    const result = await connection.execute(
       `SELECT employee_id, first_name, last_name
          FROM employees
          WHERE department_id = :id`,
       [deptid] // bind variable value
     );
 
-    // Release the connection back to the connection pool
-    await connection.close();
-
     displayResults(response, result, deptid);
+
   } catch (err) {
     handleError(response, "handleRequest() error", err);
+  } finally {
+    if (connection) {
+      try {
+        // Release the connection back to the connection pool
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
-
   htmlFooter(response);
 }
 
