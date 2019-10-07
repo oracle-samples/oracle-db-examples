@@ -2,7 +2,7 @@ This demo shows you how you can use SQL plan management (SPM) to fix a SQL state
 
 SPM will search for historic plans, choose the best one and enforce it with a SQL plan baseline.
 
-This demonstration is intended for use in Oracle Database 18c onwards.
+This demonstration is intended for use in Oracle Database 18c onwards. The primary script is "spm.sql", which demonstrates how to use SPM to find and implement a better plan.
 
 It works as follows:
 
