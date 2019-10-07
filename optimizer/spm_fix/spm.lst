@@ -1,0 +1,228 @@
+SQL> @spm
+SQL> 
+SQL> exec select '' into :rep from dual;
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> DECLARE
+  2     tname varchar2(1000);
+  3     ename varchar2(1000);
+  4     n number;
+  5     sig number;
+  6     sqlid varchar2(1000) := '0ptw8zskuh9r4';
+  7     phv   number         := 3534348942;
+  8     handle varchar2(1000);
+  9     nc     number;
+ 10  BEGIN
+ 11     select count(*) into nc
+ 12     from   v$sql
+ 13     where sql_id = sqlid
+ 14     and   plan_hash_value = phv;
+ 15  
+ 16     if (nc = 0)
+ 17     then
+ 18        raise_application_error(-20001, 'The SQL_ID/PHV combination not found in V$SQL');
+ 19     end if;
+ 20  
+ 21     select exact_matching_signature into sig
+ 22     from   v$sqlarea
+ 23     where  sql_id = sqlid;
+ 24  
+ 25  -- Enabled=NO because we will assume that this is a bad plan
+ 26  
+ 27     n := dbms_spm.load_plans_from_cursor_cache(
+ 28                    sql_id => sqlid,
+ 29                    plan_hash_value=> phv,
+ 30                    enabled => 'no');
+ 31  
+ 32     select distinct sql_handle
+ 33     into   handle
+ 34     from   dba_sql_plan_baselines
+ 35     where  signature = sig;
+ 36  
+ 37     tname := DBMS_SPM.CREATE_EVOLVE_TASK(sql_handle=>handle);
+ 38  
+ 39     DBMS_SPM.SET_EVOLVE_TASK_PARAMETER(
+ 40        task_name => tname,
+ 41        parameter => 'ALTERNATE_PLAN_BASELINE',
+ 42        value     => 'EXISTING');
+ 43  
+ 44  --
+ 45  -- You can use CURSOR_CACHE+SQL_TUNING_SET+AUTOMATIC_WORKLOAD_REPOSITORY
+ 46  -- if you have the Oracle Tuning and Oracle Diagnostic Packs.
+ 47  -- See Oracle License Guide for details.
+ 48  --
+ 49     DBMS_SPM.SET_EVOLVE_TASK_PARAMETER(
+ 50        task_name => tname,
+ 51        parameter => 'ALTERNATE_PLAN_SOURCE',
+ 52        value     => 'CURSOR_CACHE+AUTOMATIC_WORKLOAD_REPOSITORY');
+ 53  
+ 54     DBMS_SPM.SET_EVOLVE_TASK_PARAMETER(
+ 55        task_name => tname,
+ 56        parameter => 'ALTERNATE_PLAN_LIMIT',
+ 57        value     => 'UNLIMITED');
+ 58  
+ 59     ename := DBMS_SPM.EXECUTE_EVOLVE_TASK(tname);
+ 60  
+ 61     n := DBMS_SPM.IMPLEMENT_EVOLVE_TASK(tname);
+ 62  
+ 63     select DBMS_SPM.REPORT_EVOLVE_TASK(task_name=>tname) into :rep from dual;
+ 64  END;
+ 65  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> set echo off
+Note!
+Take a look at the following report to confirm that the previous plan
+passes the performance criteria to be accepted.
+Be aware that on some systems the difference may not be significant
+enough to warrant acceptance of the SQL plan baseline.
+If this happens in your case, you should increase the number of rows
+in the test tables to boost the performance difference between
+the nested loop and hash join versions of the test query.
+
+REPORT
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GENERAL INFORMATION SECTION
+---------------------------------------------------------------------------------------------
+
+ Task Information:
+ ---------------------------------------------
+ Task Name            : TASK_386
+ Task Owner           : SYS
+ Execution Name       : EXEC_496
+ Execution Type       : SPM EVOLVE
+ Scope                : COMPREHENSIVE
+ Status               : COMPLETED
+ Started              : 10/02/2019 11:04:48
+ Finished             : 10/02/2019 11:04:51
+ Last Updated         : 10/02/2019 11:04:51
+ Global Time Limit    : 2147483646
+ Per-Plan Time Limit  : UNUSED
+ Number of Errors     : 0
+---------------------------------------------------------------------------------------------
+
+SUMMARY SECTION
+---------------------------------------------------------------------------------------------
+  Number of plans processed  : 1
+  Number of findings         : 1
+  Number of recommendations  : 1
+  Number of errors           : 0
+---------------------------------------------------------------------------------------------
+
+DETAILS SECTION
+---------------------------------------------------------------------------------------------
+ Object ID          : 2
+ Test Plan Name     : SQL_PLAN_2jnv3vhwv9nsnc6a45b88
+ Base Plan Name     : Cost-based plan
+ SQL Handle         : SQL_28d363dc39b4d314
+ Parsing Schema     : SPMDEMO
+ Test Plan Creator  : SYS
+ SQL Text           : select /*+ NO_ADAPTIVE_PLAN */ sum(t1.c), sum(t2.c) from
+                    t1, t2 where t1.a = t2.a and t1.d = 10
+
+Execution Statistics:
+-----------------------------
+                    Base Plan                     Test Plan
+                    ----------------------------  ----------------------------
+ Elapsed Time (s):  .075204                       .02097
+ CPU Time (s):      .073579                       .020487
+ Buffer Gets:       15988                         1131
+ Optimizer Cost:    1105                          2197
+ Disk Reads:        0                             0
+ Direct Writes:     0                             0
+ Rows Processed:    0                             0
+ Executions:        4                             7
+
+
+FINDINGS SECTION
+---------------------------------------------------------------------------------------------
+
+Findings (1):
+-----------------------------
+ 1. The plan was verified in 2.28500 seconds. It passed the benefit criterion
+    because its verified performance was 8.06107 times better than that of the
+    baseline plan.
+
+Recommendation:
+-----------------------------
+ Consider accepting the plan. Execute
+ dbms_spm.accept_sql_plan_baseline(task_name => 'TASK_386', object_id => 2,
+ task_owner => 'SYS');
+
+
+EXPLAIN PLANS SECTION
+---------------------------------------------------------------------------------------------
+
+Baseline Plan
+-----------------------------
+ Plan Id          : 4005
+ Plan Hash Value  : 3467815966
+
+---------------------------------------------------------------------------------
+| Id  | Operation                       | Name | Rows | Bytes | Cost | Time     |
+---------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                |      |    1 |    22 | 1105 | 00:00:01 |
+|   1 |   SORT AGGREGATE                |      |    1 |    22 |      |          |
+|   2 |    NESTED LOOPS                 |      |    2 |    44 | 1105 | 00:00:01 |
+|   3 |     NESTED LOOPS                |      |    2 |    44 | 1105 | 00:00:01 |
+| * 4 |      TABLE ACCESS FULL          | T1   |    2 |    26 | 1099 | 00:00:01 |
+| * 5 |      INDEX RANGE SCAN           | T2I  |    1 |       |    2 | 00:00:01 |
+|   6 |     TABLE ACCESS BY INDEX ROWID | T2   |    1 |     9 |    3 | 00:00:01 |
+---------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+------------------------------------------
+* 4 - filter("T1"."D"=10)
+* 5 - access("T1"."A"="T2"."A")
+
+Hint Report (identified by operation id / Query Block Name / Object Alias):
+Total hints for statement: 1 (U - Unused (1))
+-------------------------------------------------------------------------------
+
+ 0 -  STATEMENT
+       U -  NO_ADAPTIVE_PLAN / rejected by IGNORE_OPTIM_EMBEDDED_HINTS
+
+Test Plan
+-----------------------------
+ Plan Id          : 4006
+ Plan Hash Value  : 3332660104
+
+----------------------------------------------------------------------------
+| Id  | Operation             | Name | Rows    | Bytes   | Cost | Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT      |      |       1 |      22 | 2197 | 00:00:01 |
+|   1 |   SORT AGGREGATE      |      |       1 |      22 |      |          |
+| * 2 |    HASH JOIN          |      |       2 |      44 | 2197 | 00:00:01 |
+| * 3 |     TABLE ACCESS FULL | T1   |       2 |      26 | 1099 | 00:00:01 |
+|   4 |     TABLE ACCESS FULL | T2   | 1000000 | 9000000 | 1095 | 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+------------------------------------------
+* 2 - access("T1"."A"="T2"."A")
+* 3 - filter("T1"."D"=10)
+
+Hint Report (identified by operation id / Query Block Name / Object Alias):
+Total hints for statement: 1 (U - Unused (1))
+-------------------------------------------------------------------------------
+
+ 0 -  STATEMENT
+       U -  NO_ADAPTIVE_PLAN / rejected by IGNORE_OPTIM_EMBEDDED_HINTS
+---------------------------------------------------------------------------------------------
+
+
+SQL> !vi REA*
+
+SQL> !vi RE*
+
+SQL> !vi spm.sql
+
+SQL> 
+SQL> 
+SQL> !vi spm.sql
+
+SQL> exit
