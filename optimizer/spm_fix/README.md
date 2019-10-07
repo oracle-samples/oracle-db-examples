@@ -4,7 +4,7 @@ SPM will search for historic plans, choose the best one and enforce it with a SQ
 
 This demonstration is intended for use in Oracle Database 18c onwards. The primary script is "spm.sql", which demonstrates how to use SPM to find and implement a better plan.
 
-It works as follows:
+Create the user, create the tables and then run "example.sql". It works as follows:
 
 - Tables T1 and T2 have data skew
 - Q1 is a query that joins T1 and T2
