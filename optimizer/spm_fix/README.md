@@ -14,6 +14,7 @@ It works as follows:
 - The good plan is tested (automatically) by SPM and a SQL plan baseline is created
 - Q1 now uses the good plan
 
+```
 $ sqlplus / as sysdba     [or connect to PDB ADMIN]
 SQL> @@user
 SQL> connect spmdemo/spmdemo
@@ -25,7 +26,16 @@ SQL> @@tab
 -- Review/execute the following script
 --
 SQL> @@example
+```
 
 Note that AWR is accessed. Check the Oracle Database License Guide for details.
 
 The test creates two tables T1 and T2 - use a test database
+
+DISCLAIMER:
+   <br/>-- These scripts are provided for educational purposes only.
+   <br/>-- They are NOT supported by Oracle World Wide Technical Support.
+   <br/>-- The scripts have been tested and they appear to work as intended.
+   <br/>-- You should always run scripts on a test instance.
+
+
