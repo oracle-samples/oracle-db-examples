@@ -12,7 +12,7 @@ Create the user, create the tables and then run "example.sql". It works as follo
 - We drop the histograms and this induces a poor plan for Q1
 - SPM is initiated and it finds the previous good plan
 - The good plan is tested (automatically) by SPM and a SQL plan baseline is created
-- Q1 now uses the good plan
+- Q1 now uses the good plan!
 
 ```
 $ sqlplus / as sysdba     [or connect to PDB ADMIN]
