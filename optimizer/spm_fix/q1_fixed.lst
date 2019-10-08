@@ -1,0 +1,49 @@
+SQL> @@q1
+
+ SUM(T1.C)  SUM(T2.C)
+---------- ----------
+    250001     250001
+
+Elapsed: 00:00:00.12
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  0ptw8zskuh9r4, child number 3
+-------------------------------------
+select /*+ NO_ADAPTIVE_PLAN */ sum(t1.c), sum(t2.c) from   t1, t2 where
+ t1.a = t2.a and    t1.d = 10
+
+Plan hash value: 906334482
+
+----------------------------------------------------------------------------
+| Id  | Operation           | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |      |       |       |  1109 (100)|          |
+|   1 |  SORT AGGREGATE     |      |     1 |    22 |            |          |
+|*  2 |   HASH JOIN         |      |     2 |    44 |  1109   (2)| 00:00:01 |
+|*  3 |    TABLE ACCESS FULL| T1   |     2 |    26 |   554   (2)| 00:00:01 |
+|   4 |    TABLE ACCESS FULL| T2   |   500K|  4394K|   552   (2)| 00:00:01 |
+----------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("T1"."A"="T2"."A")
+   3 - filter("T1"."D"=10)
+
+Hint Report (identified by operation id / Query Block Name / Object Alias):
+Total hints for statement: 1 (U - Unused (1))
+---------------------------------------------------------------------------
+
+   0 -  STATEMENT
+         U -  NO_ADAPTIVE_PLAN / rejected by IGNORE_OPTIM_EMBEDDED_HINTS
+
+Note
+-----
+   - SQL plan baseline SQL_PLAN_2jnv3vhwv9nsnc6a45b88 used for this statement
+
+
+34 rows selected.
+
+Elapsed: 00:00:00.04
+SQL> spool off

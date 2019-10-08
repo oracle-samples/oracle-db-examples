@@ -1,0 +1,29 @@
+SQL> @q1many
+SQL> @@snap
+SQL> EXEC DBMS_WORKLOAD_REPOSITORY.create_snapshot;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:01.01
+SQL> declare
+  2    n1 number(10);
+  3    n2 number(10);
+  4  begin
+  5    for i in 1..100
+  6    loop
+  7       execute immediate
+  8         'select /*+ NO_ADAPTIVE_PLAN */ sum(t1.c), sum(t2.c) from t1, t2 where t1.a = t2.a and t1.d = 10' into n1,n2;
+  9    end loop;
+ 10  end;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:14.85
+SQL> @@snap
+SQL> EXEC DBMS_WORKLOAD_REPOSITORY.create_snapshot;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.48
+SQL> spool off
