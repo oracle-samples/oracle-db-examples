@@ -1,5 +1,5 @@
 This example demonstrates how to connect to an Oracle Cloud Autonomous Transaction Processing Database (ATP).  The same steps can be used to connect to an Autonomous Data Warehouse.
-##Prerequisites
+## Prerequisites
 - Have an Oracle ATP instance provisioned and running. (If you don’t have a current instance, you can [sign up for a free trial](https://www.oracle.com/cloud/free/).)
   The examples will use an instance named DemoATP.
 - Have a database schema and password created that you can use for testing.
@@ -7,7 +7,7 @@ This example demonstrates how to connect to an Oracle Cloud Autonomous Transacti
 - Download and install Oracle Database Instant Client.
 - (Optional but a good idea) Have Oracle SQLcl installed to verify the connection in a neutral environment.
 
-##Download Client Credentials (Oracle Wallet)
+## Download Client Credentials (Oracle Wallet)
 With the prerequisites complete, download the client credentials for your Oracle ATP Database instance.
 1. Go to the Service Console for your ATP instance.
 1. Click Administration.
@@ -29,10 +29,10 @@ With the prerequisites complete, download the client credentials for your Oracle
 The tnsnames.ora file includes auto-generated TNS Name values. You can refer to the documentation for an explanation of when to use each of these.
 The examples will use the DemoATP_TP TNS Name value.
 
-##Test the Connection: Optional but Recommended
+## Test the Connection: Optional but Recommended
 Now test the connection from your Oracle SQLcl or Oracle SQL Developer tool.
 
-###Oracle SQLcl.
+### Oracle SQLcl.
 To test the connection from Oracle SQLcl, do the following:
 
 1. Start Oracle SQLcl in nolog mode.
@@ -66,7 +66,7 @@ To test the connection from Oracle SQLcl, do the following:
    Release 18.0.0.0.0 – Production
    Version 18.4.0.0.0
    ```
-##Connect From Ruby
+## Connect From Ruby
 
 1. Download and install the ruby-oci8 driver.
 1. Set the following environment variables.
