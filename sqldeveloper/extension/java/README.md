@@ -16,3 +16,6 @@ A quick object action to dump the list of connection / objects types as INFO mes
 * [ContextMenuAction](ContextMenuAction)
 A quick context menu action on FUNCTION, PROCEDURE code editor to insert a static string and
 a PLDoc template if PL/Scope information is available.
+
+* [InsertTemplateAction](InsertTemplateAction)
+A quick context menu action on code editor to insert a template string for @maternaDev01
