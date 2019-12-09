@@ -84,9 +84,11 @@ awr.sh -a system/manager@//awrhost/awr
  222390028           12 1
  283265821          208 1
  313070952         1701 1,2,3,4,5,6,7
+```
 
 This shows a list of all databases, the total number of snapshots for each, and the list of instances.  The second column (C) will have a value if the database is your own database and it is either not a pdb (N), is a pdb (P) or is the root of a PDB (/).  A sample output is this:
 
+```
       DBID C     SCOUNT INST_LIST
 ---------- - ---------- --------------------------------------------------
 3370815010 P       1558 2,3,6,7,8
