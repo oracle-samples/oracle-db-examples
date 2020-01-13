@@ -15,10 +15,6 @@ connect spmdemo/spmdemo
 -- Run the testq1 multiple times and capture in AWR
 -- Assuming a SQL Disagnostics Pack licence.
 --
--- We could also load Q1 into a SQL Tuning Set because
--- this source is also searched by SPM for previous plans.
--- SQL tuning sets required a SQL Tuning Pack licence.
---
 @@q1many
 --
 -- Induce a bad plan for Q1 by dropping the histograms
