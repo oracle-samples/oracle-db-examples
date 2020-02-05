@@ -1,0 +1,503 @@
+Rem
+Rem $Header: rdbms/demo/dmsvcdem.sql /main/16 2017/08/02 07:39:16 mmcracke Exp $
+Rem
+Rem dmsvcdem.sql
+Rem
+Rem Copyright (c) 2003, 2017, Oracle and/or its affiliates. 
+Rem All rights reserved.
+Rem
+Rem    NAME
+Rem      dmsvcdem.sql - Sample program for the DBMS_DATA_MINING package.
+Rem
+Rem    DESCRIPTION
+Rem      This script creates a classification model
+Rem      using the SVM algorithm
+Rem      and data in the SH (Sales History) schema in the RDBMS. 
+Rem
+Rem    NOTES
+Rem      This script demonstrates the use of the new Oracle
+Rem      SQL functions for scoring models against new data, and
+Rem      the computation of various test metrics based on these
+Rem      new SQL functions.
+Rem
+Rem    MODIFIED   (MM/DD/YY)
+Rem    mmcracke    07/27/17 - Adjust analytic query in Business Use Case 5
+Rem    bmilenov    09/22/15 - bug-21394151: view cleanup
+Rem    bmilenov    05/13/15 - bug-21083653: Linear coefficient model view
+Rem    amozes      01/05/15 - changes for repeatability
+Rem    yincwang    03/22/12 - use auto data prep
+Rem    amozes      01/23/12 - updates for 12c
+Rem    xbarr       01/06/12 - add prediction_details output
+Rem    ramkrish    03/06/08 - bug 6820838 - clas_weights instead of priors
+Rem    ramkrish    06/14/07 - remove commit after settings
+Rem    ramkrish    10/25/07 - replace deprecated get_model calls with catalog
+Rem                           queries
+Rem    jyarmus     10/18/06 - reduce precision of accuracy and AUC
+Rem    ktaylor     07/11/05 - minor edits to comments 
+Rem    jcjeon      01/18/05 - add column format 
+Rem    dmukhin     01/12/05 - bug 4053211: missing value treatment
+Rem    dmukhin     12/07/04 - 4053822 - lift and roc computation 
+Rem    bmilenov    11/04/04 - Edit comments, add priors, remove costs
+Rem    ramkrish    09/27/04 - add data analysis and comments/cleanup
+Rem    bmilenov    05/18/04 - Change zscore to minmax normalization
+Rem    ramkrish    10/02/03 - Creation
+  
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
+-----------------------------------------------------------------------
+--                            SAMPLE PROBLEM
+-----------------------------------------------------------------------
+-- Given demographic and purchase data about a set of customers, predict
+-- customer's response to an affinity card program using an SVM classifier.
+--
+
+-----------------------------------------------------------------------
+--                            SET UP AND ANALYZE THE DATA
+-----------------------------------------------------------------------
+
+-------
+-- DATA
+-------
+-- The data for this sample is composed from base tables in SH Schema
+-- (See Sample Schema Documentation) and presented through these views:
+-- mining_data_build_v (build data)
+-- mining_data_test_v  (test data)
+-- mining_data_apply_v (apply data)
+-- (See dmsh.sql for view definitions).
+--
+
+
+-----------------------------------------------------------------------
+--                            BUILD THE MODEL
+-----------------------------------------------------------------------
+
+-- Cleanup old model with the same name for repeat runs
+BEGIN DBMS_DATA_MINING.DROP_MODEL('SVMC_SH_Clas_sample');
+EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+
+
+------------------
+-- SPECIFY SETTINGS
+--
+-- Cleanup old settings table for repeat runs
+BEGIN EXECUTE IMMEDIATE 'DROP TABLE svmc_sh_sample_settings';
+EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+BEGIN EXECUTE IMMEDIATE 'DROP TABLE svmc_sh_sample_class_wt';  
+EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+
+
+-- CREATE AND POPULATE A CLASS WEIGHTS TABLE
+--
+-- A class weights table is used to influence the weighting of target classes
+-- during model creation. For example, weights of (0.9, 0.1) for a binary
+-- problem specify that an error in the first class has significantly
+-- higher penalty that an error in the second class. Weights of (0.5, 0.5)
+-- do not introduce a differential weight and would produce the same
+-- model as when no weights are provided.
+--
+CREATE TABLE svmc_sh_sample_class_wt (
+  target_value NUMBER,
+  class_weight NUMBER);
+INSERT INTO svmc_sh_sample_class_wt VALUES (0,0.35);
+INSERT INTO svmc_sh_sample_class_wt VALUES (1,0.65);
+COMMIT;
+
+-- CREATE AND POPULATE A SETTINGS TABLE
+--
+set echo off
+CREATE TABLE svmc_sh_sample_settings (
+  setting_name  VARCHAR2(30),
+  setting_value VARCHAR2(4000));
+set echo on
+
+-- The default classification algorithm is Naive Bayes. So override
+-- this choice to SVM using a settings table.
+-- SVM chooses a kernel type automatically. This choice can be overriden
+-- by the user. Linear kernel is preferred for high dimensional data, and 
+-- Gaussian kernel for low dimensional data. Here we use linear kernel
+-- to demonstrate the coefficient model view, which applies only for
+-- linear kernel models.
+--    
+BEGIN 
+-- Populate settings table
+  INSERT INTO svmc_sh_sample_settings (setting_name, setting_value) VALUES
+  (dbms_data_mining.algo_name, dbms_data_mining.algo_support_vector_machines);
+  INSERT INTO svmc_sh_sample_settings (setting_name, setting_value) VALUES
+  (dbms_data_mining.svms_kernel_function, dbms_data_mining.svms_linear);
+  INSERT INTO svmc_sh_sample_settings (setting_name, setting_value) VALUES
+  (dbms_data_mining.clas_weights_table_name, 'svmc_sh_sample_class_wt');
+  insert into svmc_sh_sample_settings (setting_name, setting_value) VALUES
+  (dbms_data_mining.prep_auto, dbms_data_mining.prep_auto_on);
+  -- Examples of other possible overrides are:
+  --(dbms_data_mining.svms_kernel_function, dbms_data_mining.svms_gaussian);
+  --(dbms_data_mining.svms_kernel_function, dbms_data_mining.svms_complexity_factor); 
+END;
+/
+
+---------------------
+-- CREATE A NEW MODEL
+--
+-- Build a new SVM Model
+BEGIN
+  DBMS_DATA_MINING.CREATE_MODEL(
+    model_name          => 'SVMC_SH_Clas_sample',
+    mining_function     => dbms_data_mining.classification,
+    data_table_name     => 'mining_data_build_v',
+    case_id_column_name => 'cust_id',
+    target_column_name  => 'affinity_card',
+    settings_table_name => 'svmc_sh_sample_settings');
+END;
+/
+
+-------------------------
+-- DISPLAY MODEL SETTINGS
+--
+column setting_name format a30
+column setting_value format a30
+SELECT setting_name, setting_value
+  FROM user_mining_model_settings
+ WHERE model_name = 'SVMC_SH_CLAS_SAMPLE'
+ORDER BY setting_name;
+
+--------------------------
+-- DISPLAY MODEL SIGNATURE
+--
+column attribute_name format a40
+column attribute_type format a20
+SELECT attribute_name, attribute_type
+  FROM user_mining_model_attributes
+ WHERE model_name = 'SVMC_SH_CLAS_SAMPLE'
+ORDER BY attribute_name;
+
+------------------------
+-- DISPLAY MODEL DETAILS
+--
+-- Get a list of model views
+col view_name format a30
+col view_type format a50
+SELECT view_name, view_type FROM user_mining_model_views
+  WHERE model_name='SVMC_SH_CLAS_SAMPLE'
+  ORDER BY view_name;
+
+-- The coefficient indicates the relative influence of a given
+-- (attribute, value) pair on the target value. A negative
+-- coefficient value indicates a negative influence.
+--
+-- NOTE: The row in the SVM model details output with a NULL attribute_name
+-- shows the value for SVM bias under the COEFFICIENT column.
+--
+SET line 120
+column aname format a30
+column aval  format a30
+column coeff format 9.99
+SELECT target_value, attribute_name aname, attribute_value aval, 
+    coefficient coeff
+  FROM DM$VLSVMC_SH_CLAS_SAMPLE
+WHERE ABS(coefficient) > 0.01  
+ORDER BY target_value, ABS(coefficient) DESC;
+  
+-----------------------------------------------------------------------
+--                               TEST THE MODEL
+-----------------------------------------------------------------------
+
+
+------------------------------------
+-- COMPUTE METRICS TO TEST THE MODEL
+--
+-- The queries shown below demonstrate the use of SQL data mining functions
+-- along with analytic functions to compute various test metrics. In these
+-- queries:
+--
+-- Modelname:             svmc_sh_clas_sample
+-- # of Lift Quantiles:   10
+-- Target attribute:      affinity_card
+-- Positive target value: 1
+-- (Change these as appropriate for a different example)
+
+-- Compute CONFUSION MATRIX
+--
+-- This query demonstates how to generate a confusion matrix using the
+-- SQL prediction functions for scoring. The returned columns match the
+-- schema of the table generated by COMPUTE_CONFUSION_MATRIX procedure.
+--
+SELECT affinity_card AS actual_target_value,
+       PREDICTION(svmc_sh_clas_sample USING *) AS predicted_target_value,
+       COUNT(*) AS value
+  FROM mining_data_test_v
+ GROUP BY affinity_card, PREDICTION(svmc_sh_clas_sample USING *)
+ ORDER BY 1, 2;
+
+-- Compute ACCURACY
+--
+column accuracy format 9.99
+
+SELECT SUM(correct)/COUNT(*) AS accuracy
+  FROM (SELECT DECODE(affinity_card,
+                 PREDICTION(svmc_sh_clas_sample USING *), 1, 0) AS correct
+          FROM mining_data_test_v);
+
+-- Compute CUMULATIVE LIFT, GAIN Charts.
+--
+-- The cumulative gain chart is a popular version of the lift chart, and
+-- it maps cumulative gain (Y axis) against the cumulative records (X axis).
+--
+-- The cumulative lift chart is another popular representation of lift, and
+-- it maps cumulative lift (Y axis) against the cumulative records (X axis).
+--
+-- The query also returns the probability associated with each quantile, so
+-- that when the cut-off point for Lift is selected, you can correlate it
+-- with a probability value (say P_cutoff). You can then use this value of
+-- P_cutoff in a prediction query as follows:
+--
+-- SELECT *
+--   FROM records_to_be_scored
+--  WHERE PREDICTION_PROBABILITY(svmc_sh_clas_sample, 1 USING *) > P_cutoff;
+--
+-- In the query below
+--
+-- q_num     - Quantile Number
+-- pos_cnt   - # of records that predict the positive target
+-- pos_prob  - the probability associated with predicting a positive target
+--             value for a given new record
+-- cume_recs - % Cumulative Records upto quantile
+-- cume_gain - % Cumulative Gain
+-- cume_lift - Cumulative Lift
+--
+-- Note that the LIFT can also be computed using 
+-- DBMS_DATA_MINING.COMPUTE_LIFT function, see examples in dmnbdemo.sql.
+--
+WITH
+pos_prob_and_counts AS (
+SELECT PREDICTION_PROBABILITY(svmc_sh_clas_sample, 1 USING *) pos_prob,
+       -- hit count for positive target value
+       DECODE(affinity_card, 1, 1, 0) pos_cnt
+  FROM mining_data_test_v
+),
+qtile_and_smear AS (
+SELECT NTILE(10) OVER (ORDER BY pos_prob DESC) q_num,
+       pos_prob,
+       -- smear the counts across records with the same probability to
+       -- eliminate potential biased distribution across qtl boundaries
+       AVG(pos_cnt) OVER (PARTITION BY pos_prob) pos_cnt
+  FROM pos_prob_and_counts
+),
+cume_and_total_counts AS (
+SELECT q_num,
+       -- inner sum for counts within q_num groups,
+       -- outer sum for cume counts
+       MIN(pos_prob) pos_prob,
+       SUM(COUNT(*)) OVER (ORDER BY q_num) cume_recs,
+       SUM(SUM(pos_cnt)) OVER (ORDER BY q_num) cume_pos_cnt,
+       SUM(COUNT(*)) OVER () total_recs,
+       SUM(SUM(pos_cnt)) OVER () total_pos_cnt
+  FROM qtile_and_smear
+ GROUP BY q_num
+)
+SELECT pos_prob,
+       100*(cume_recs/total_recs) cume_recs,
+       100*(cume_pos_cnt/total_pos_cnt) cume_gain,
+       (cume_pos_cnt/total_pos_cnt)/(cume_recs/total_recs) cume_lift
+  FROM cume_and_total_counts
+ ORDER BY pos_prob DESC;
+
+-- Compute ROC CURVE
+--
+-- This can be used to find the operating point for classification.
+--
+-- The ROC curve plots true positive fraction - TPF (Y axis) against
+-- false positive fraction - FPF (X axis). Note that the query picks
+-- only the corner points (top tpf switch points for a given fpf) and
+-- the last point. It should be noted that the query does not generate
+-- the first point, i.e (tpf, fpf) = (0, 0). All of the remaining points
+-- are computed, but are then filtered based on the criterion above. For
+-- example, the query picks points a,b,c,d and not points o,e,f,g,h,i,j. 
+--
+-- The Area Under the Curve (next query) is computed using the trapezoid
+-- rule applied to all tpf change points (i.e. summing up the areas of
+-- the trapezoids formed by the points for each segment along the X axis;
+-- (recall that trapezoid Area = 0.5h (A+B); h=> hieght, A, B are sides).
+-- In the example, this means the curve covering the area would trace
+-- points o,e,a,g,b,c,d.
+--
+-- |
+-- |        .c .j .d
+-- |  .b .h .i
+-- |  .g
+-- .a .f
+-- .e
+-- .__.__.__.__.__.__
+-- o
+--
+-- Note that the ROC curve can also be computed using 
+-- DBMS_DATA_MINING.COMPUTE_ROC function, see examples in dmnbdemo.sql.
+--
+column prob format 9.9999
+column fpf  format 9.9999
+column tpf  format 9.9999
+
+WITH
+pos_prob_and_counts AS (
+SELECT PREDICTION_PROBABILITY(svmc_sh_clas_sample, 1 USING *) pos_prob,
+       -- hit count for positive target value
+       DECODE(affinity_card, 1, 1, 0) pos_cnt
+  FROM mining_data_test_v
+),
+cume_and_total_counts AS (
+SELECT pos_prob,
+       pos_cnt,
+       SUM(pos_cnt) OVER (ORDER BY pos_prob DESC) cume_pos_cnt, 
+       SUM(pos_cnt) OVER () tot_pos_cnt,
+       SUM(1 - pos_cnt) OVER (ORDER BY pos_prob DESC) cume_neg_cnt,
+       SUM(1 - pos_cnt) OVER () tot_neg_cnt
+  FROM pos_prob_and_counts
+),
+roc_corners AS (
+SELECT MIN(pos_prob) pos_prob,
+       MAX(cume_pos_cnt) cume_pos_cnt, cume_neg_cnt,
+       MAX(tot_pos_cnt) tot_pos_cnt, MAX(tot_neg_cnt) tot_neg_cnt
+  FROM cume_and_total_counts
+ WHERE pos_cnt = 1                      -- tpf switch points
+    OR (cume_pos_cnt = tot_pos_cnt AND  -- top-right point 
+        cume_neg_cnt = tot_neg_cnt)
+ GROUP BY cume_neg_cnt
+)
+SELECT pos_prob prob,
+       cume_pos_cnt/tot_pos_cnt tpf,
+       cume_neg_cnt/tot_neg_cnt fpf,
+       cume_pos_cnt tp,
+       tot_pos_cnt - cume_pos_cnt fn,
+       cume_neg_cnt fp,
+       tot_neg_cnt - cume_neg_cnt tn
+  FROM roc_corners
+ ORDER BY fpf;
+
+-- Compute AUC (Area Under the roc Curve)
+--
+-- See notes on ROC Curve and AUC computation above
+--
+column auc format 9.99
+
+WITH
+pos_prob_and_counts AS (
+SELECT PREDICTION_PROBABILITY(svmc_sh_clas_sample, 1 USING *) pos_prob,
+       DECODE(affinity_card, 1, 1, 0) pos_cnt
+  FROM mining_data_test_v
+),
+tpf_fpf AS (
+SELECT  pos_cnt,
+       SUM(pos_cnt) OVER (ORDER BY pos_prob DESC) /
+         SUM(pos_cnt) OVER () tpf,
+       SUM(1 - pos_cnt) OVER (ORDER BY pos_prob DESC) /
+         SUM(1 - pos_cnt) OVER () fpf
+  FROM pos_prob_and_counts
+),
+trapezoid_areas AS (
+SELECT 0.5 * (fpf - LAG(fpf, 1, 0) OVER (ORDER BY fpf, tpf)) *
+        (tpf + LAG(tpf, 1, 0) OVER (ORDER BY fpf, tpf)) area
+  FROM tpf_fpf
+ WHERE pos_cnt = 1
+    OR (tpf = 1 AND fpf = 1)
+)
+SELECT SUM(area) auc
+  FROM trapezoid_areas;
+
+-----------------------------------------------------------------------
+--                               APPLY THE MODEL
+-----------------------------------------------------------------------
+
+
+-------------------------------------------------
+-- SCORE NEW DATA USING SQL DATA MINING FUNCTIONS
+--
+------------------
+-- BUSINESS CASE 1
+-- Find the 10 customers who live in Italy that are most likely 
+-- to use an affinity card.
+--
+SELECT cust_id FROM
+(SELECT cust_id, 
+        rank() over (order by PREDICTION_PROBABILITY(svmc_sh_clas_sample, 1
+                     USING *) DESC, cust_id) rnk
+   FROM mining_data_apply_v
+  WHERE country_name = 'Italy')
+where rnk <= 10
+order by rnk;
+
+------------------
+-- BUSINESS CASE 2
+-- Find the average age of customers who are likely to use an
+-- affinity card. Break out the results by gender.
+--
+column cust_gender format a12
+SELECT cust_gender,
+       COUNT(*) AS cnt,
+       ROUND(AVG(age)) AS avg_age
+  FROM mining_data_apply_v
+ WHERE PREDICTION(svmc_sh_clas_sample USING *) = 1
+GROUP BY cust_gender
+ORDER BY cust_gender;
+
+------------------
+-- BUSINESS CASE 3
+-- List ten customers (ordered by their id) along with their likelihood to
+-- use or reject the affinity card (Note: while this example has a
+-- binary target, such a query is useful in multi-class classification -
+-- Low, Med, High for example).
+--
+column prediction format 9;
+column probability format 9.999999999
+column cost format 9.999999999
+SELECT T.cust_id, S.prediction, S.probability
+  FROM (SELECT cust_id,
+               PREDICTION_SET(svmc_sh_clas_sample USING *) pset
+          FROM mining_data_apply_v
+         WHERE cust_id < 100011) T,
+       TABLE(T.pset) S
+ORDER BY cust_id, S.prediction;
+
+
+------------------
+-- BUSINESS CASE 4
+-- Find customers whose profession is Tech Support
+-- with > 75% likelihood of using the affinity card,
+-- and explain the attributes which make them likely
+-- to use an affinity card.
+--
+set long 20000
+SELECT cust_id, PREDICTION_DETAILS(svmc_sh_clas_sample, 1 USING *) PD
+  FROM mining_data_apply_v
+ WHERE PREDICTION_PROBABILITY(svmc_sh_clas_sample, 1 USING *) > 0.75
+       AND occupation = 'TechSup'
+ORDER BY cust_id;
+
+-----------------------------------------------------------------------
+--    BUILD and APPLY a transient model using analytic functions
+-----------------------------------------------------------------------
+-- In addition to creating a persistent model that is stored as a schema
+-- object, models can be built and scored on data on the fly using
+-- Oracle's analytic function syntax.
+
+----------------------
+-- BUSINESS USE CASE 5
+-- 
+-- Identify rows that do not currently have an affinity card, but
+-- the customer pattern is like those that do have such a card.
+-- Perform this analysis by building a classification model on the
+-- fly and scoring it against the same data, and extract those
+-- customers who do not have a card, but are predicted to have a card
+-- based on observed patterns.
+-- All necessary data preparation steps are automatically performed.
+select cust_id, round(pred_prob,2) pred_prob from
+(select cust_id, affinity_card, 
+        prediction(for to_char(affinity_card) using AGE, CUST_GENDER, YRS_RESIDENCE) over () pred_card,
+        prediction_probability(for to_char(affinity_card),1 using AGE, CUST_GENDER, YRS_RESIDENCE) over () pred_prob
+ from mining_data_build_v)
+where affinity_card = 0
+  and pred_card = 1
+order by 2 desc, 1;
