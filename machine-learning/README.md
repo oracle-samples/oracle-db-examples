@@ -8,18 +8,24 @@ With Oracle Machine Learning, Oracle moves the algorithms to the data, processin
 The following structure represent the available APIs and environments for the different examples of the Oracle Machine Learning components:
 
 * datasets - example data in CSV format
+
 * gui - Oracle Data Miner examples
-* notebooks (Oracle Machine Learning Noteboks, Zeppelin, Jupyter, or Oracle Data Studio) 
-  * r - Oracle Machine Learning for R Notebooks
-  * sql - Oracle Machine Learning for SQL Notebooks (include Autonomous Database OML Notebooks)
-  * python - Oracle Machine Learning for Python Notebooks
+
+* notebooks (Oracle Machine Learning Noteboks, Zeppelin, Jupyter, or Oracle Data Studio)
   * mixed - examples of use of mixed APIs in the same Notebook
+  * python - Oracle Machine Learning for Python Notebooks
+  * r - Oracle Machine Learning for R Notebooks, and Oracle Machine Learning for Spark Notebooks
+  * sql - Notebooks for the Oracle Machine Learning for SQL and also the Oracle Machine Learning Notebooks (based on Zeppelin) included with Oracle ADW and ATP
+
 * python - Oracle Machine Learning for Python examples
+
 * r
-  * oml4r - Oracle Machine Learning for R (in-Database)
-  * oml4spark - Oracle Machine Learning for Spark (in-Data Lake)
+  * oml4r - Oracle Machine Learning for R (in-Database) R code examples
+  * oml4spark - Oracle Machine Learning for Spark (in-Data Lake) R code examples
+
 * sql
-  * 19c - Oracle Machine Learning for SQL for Oracle Database 19c
-  * 20c - Oracle Machine Learning for SQL for Oracle Database 20c
+  * 19c - Oracle Machine Learning for SQL examples for Oracle Database 19c
+  * 20c - Oracle Machine Learning for SQL examples for Oracle Database 20c
   
 For more information please visit our main page for Oracle Machine Learning at https://oracle.com/machine-learning
+
