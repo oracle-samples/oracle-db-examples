@@ -3,7 +3,7 @@
 ## First things first: Getting the pieces
 
 ### Java JDK 8
-We are currently using [jdk1.8](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-javase8-2177648.html)
+We are currently using [jdk1.8](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)
 
 ### SQL Developer
 You'll need a copy of [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) both as a deployment location for testing and as the source for required library files.
