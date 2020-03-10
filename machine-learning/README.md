@@ -1,5 +1,5 @@
 # Oracle Machine Learning Examples
-The Oracle Machine Learning product family enables scalable data science projects. Data scientists, analysts, developers, and IT can achieve data science project goals faster while taking full advantage of the Oracle platform.
+The Oracle Machine Learning product family enables scalable data science projects. Data scientists, analysts, developers, and IT can achieve data science project goals faster while taking full advantage of the Oracle platform -- on-premise, in Oracle Database Cloud Service and Oracle Autonomous Database (ADW/ATP).
 
 Oracle Machine Learning consists of complementary components supporting scalable machine learning algorithms for in-database and big data environments, notebook technology, SQL and R APIs, and Hadoop/Spark environments.
 
@@ -9,7 +9,7 @@ The following structure represent the available APIs and environments for the di
 
 * __datasets__ - example data in CSV format
 
-* __gui__ - Oracle Data Miner examples
+* __odmr__ - Oracle Data Miner extension to SQL Developer - examples
 
 * __notebooks__ (Oracle Machine Learning Noteboks, Zeppelin, Jupyter, or Oracle Data Studio)
   * __mixed__ - examples of use of mixed APIs in the same Notebook
