@@ -6,10 +6,10 @@ Depending on requirements, this can be done in either XML or java and deployed b
 
 ### New
 
-* [XML Based Favorites Example](xml/favorites)
+* [Connection Helper](java/ConnectionHelper) - Accept connection info from the command line (and maybe on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html))
 
+* Added resource reference for Philipp Salvisberg's [Example-based tutorials](https://github.com/PhilippSalvisberg/sqldev) to extend SQL Developer functionality. (external)
 
-* [Example Update Center](https://github.com/bjeffrie/sqldev-update-center) (external) with pre-built cfu bundles for these examples. 
 
 ### Contents
 
@@ -19,8 +19,19 @@ Depending on requirements, this can be done in either XML or java and deployed b
 * ["Simple" User Extensions (XML)](xml)
 
 
+* [XML Based Favorites Example](xml/favorites)
+
+
 * [Standard Extensions (java)](java)
 
 
 * [Check For Updates (cfu)](cfu)
- 
+
+
+### External Resources
+Please note these are links to external resources. They are not supplied or supported by Oracle.
+
+* [Example Update Center](https://github.com/bjeffrie/sqldev-update-center) (external) with pre-built cfu bundles for these examples. 
+
+* Philipp Salvisberg's [Example-based tutorials](https://github.com/PhilippSalvisberg/sqldev) to extend SQL Developer functionality. (external)
+

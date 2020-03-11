@@ -22,13 +22,17 @@ Where:
 
 ### TODO
 * Preference page _(May need/want preference page as a load trigger hook)_
-  * CheckBox: Accept connection info on command line [false]
-  * CheckBox: Persist command line connections [false]
+  * Labelled sub-panel: Command Line
+    * CheckBox: Accept connection info on command line [false]
+    * CheckBox: Persist command line connections [false]
 * [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html)
 * Preference page
-  * NumericSpinner: Listener port [4444]
-  * CheckBox: Autostart server
-  * Button: Start now 
+  * Labelled sub-panel: External Connection Server
+    * NumericSpinner: Listener port [4444]
+    * CheckBox: Persist external connections [false]
+    * CheckBox: Autostart server
+    * Button: Start now 
 * Simple client test app for [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html)
 
 
+[//]: # (https://github.com/PhilippSalvisberg/sqldev)
