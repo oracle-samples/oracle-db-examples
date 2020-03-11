@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---   Oracle Machine Learning for SQL (OML4SQL)
+--   Oracle Machine Learning for SQL (OML4SQL) 20c
 -- 
 --   Setup - Creates Demo Views and Tables - dmsh.sql
 --   

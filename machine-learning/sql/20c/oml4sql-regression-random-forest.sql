@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---   Oracle Machine Learning for SQL (OML4SQL)
+--   Oracle Machine Learning for SQL (OML4SQL) 20c
 -- 
 --   Regression - Random Forest Algorithm - dmrrfdemo.sql
 --   

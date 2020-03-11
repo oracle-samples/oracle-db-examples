@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---   Oracle Machine Learning for SQL (OML4SQL)
+--   Oracle Machine Learning for SQL (OML4SQL) 20c
 -- 
 --   OML R Extensible - Attribute Importance via RF Algorithm - dmraidemo.sql
 --   

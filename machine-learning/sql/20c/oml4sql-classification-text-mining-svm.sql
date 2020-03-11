@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---   Oracle Machine Learning for SQL
+--   Oracle Machine Learning for SQL (OML4SQL) 20c
 -- 
 --   Classification - SVM Algorithm with Text Mining - dmtxtsvm.sql
 --   
