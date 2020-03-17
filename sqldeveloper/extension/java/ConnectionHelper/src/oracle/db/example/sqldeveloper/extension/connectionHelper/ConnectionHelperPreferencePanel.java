@@ -43,10 +43,19 @@ public class ConnectionHelperPreferencePanel extends DefaultTraversablePanel {
 		JSpinner.NumberEditor editor = new JSpinner.NumberEditor(svrPort, "###0"); //$NON-NLS-1$
 		svrPort.setEditor(editor);
 		
-		// Add action listeners for the enable check boxes
+		// Add action listeners for the enable check boxes TODO: Add StructureChangeListener 
+		// in Addin to watch these ... or ... add buttons to manually execute/start them?
+		// The more I think about it, I like this better than buttons. Maybe better than 
+		// the listener but the listener would also demonstrate how to listen for preference
+		// changes.
 		clAcceptConn.addActionListener(e -> {
 			if (clAcceptConn.isSelected()) {
 				ConnectionHelper.processCommandLineArgs();
+			}
+		});
+		svrAutostart.addActionListener(e -> {
+			if (svrAutostart.isSelected()) {
+				ConnectionHelperServer.start();
 			}
 		});
 		
@@ -64,11 +73,6 @@ public class ConnectionHelperPreferencePanel extends DefaultTraversablePanel {
 		builder.add(builder.indentedField().label().withText(ConnectionHelperResources.getString(ConnectionHelperResources.EXT_CONN_SVR_PERSIST_CONN))
 				.component(svrPersistConn));
 		builder.addVerticalSpring();
-		
-		// TODO TEMP until svr built
-		svrAutostart.setEnabled(false);
-		svrPort.setEnabled(false);
-		svrPersistConn.setEnabled(false);
 	}
 
 	/* (non-Javadoc)

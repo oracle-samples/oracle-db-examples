@@ -34,6 +34,9 @@ public class ConnectionHelperAddin implements Addin {
 				if (ConnectionHelperPreferenceModel.getInstance().isAcceptCommandLineConnections()) {
 					ConnectionHelper.processCommandLineArgs();
 				}
+				if (ConnectionHelperPreferenceModel.getInstance().isAutostartExternalConnectionServer()) {
+					ConnectionHelperServer.start();
+				}
 			}
 
 			@Override

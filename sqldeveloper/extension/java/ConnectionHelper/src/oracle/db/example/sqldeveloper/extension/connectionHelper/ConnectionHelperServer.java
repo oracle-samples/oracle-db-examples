@@ -53,7 +53,9 @@ public class ConnectionHelperServer {
 			try (ServerSocket serverSocket = new ServerSocket(port)) {
 				while (listening) {
 					checkCanProceed();
+					this.setMessage("Waiting for connection");
 					ConnectionHelperTask helperTask = new ConnectionHelperTask(serverSocket.accept()); 
+					this.setMessage("Initializing ConnectionHelperTask");
 					RaptorTaskManager.getInstance().addTask(helperTask);
 				}
 			}
@@ -90,10 +92,8 @@ public class ConnectionHelperServer {
 		@Override
 		protected Void doWork() throws TaskException {
 			try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-				String inputLine;
-				while ((inputLine = in.readLine()) != null) {
-					ConnectionHelper.processPotentialConnectionRequest(inputLine);
-				}
+				String inputLine= in.readLine();
+				ConnectionHelper.processPotentialConnectionRequest(inputLine);
 			}
 			catch (Throwable t) {
 				throw asTaskException(t);

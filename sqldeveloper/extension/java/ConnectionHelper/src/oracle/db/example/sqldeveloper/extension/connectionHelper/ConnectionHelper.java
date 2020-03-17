@@ -75,7 +75,7 @@ public class ConnectionHelper {
 	
 	// TODO Refactor to handle request from server
 	public static void processPotentialConnectionRequest(String arg) {
-		
+		processPotentialConnectionArgument(arg);
 	}
 
 }
