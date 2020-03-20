@@ -5,10 +5,14 @@
 ## OML4R Best Practices
 ## Predicting Flight Delays - U.S. Airports
 ##
-## (c) 2020 Oracle Corporation
+## Copyright (c) 2020 Oracle Corporation                          
+##
+## The Universal Permissive License (UPL), Version 1.0
+## 
+## https://oss.oracle.com/licenses/upl/
 ##
 ################################################
-
+# Load the ORE library
 ## Data Explanation
 ## Flights data, from nycflights13 package: 
 ## An R data package containing all out-bound flights from NYC in 2013 + useful metdata

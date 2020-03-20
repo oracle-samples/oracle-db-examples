@@ -4,10 +4,13 @@
 --## 
 --## Hands-On Lab
 --##
---## (c) 2020 Oracle Corporation
+--## Copyright (c) 2020 Oracle Corporation                          
+--##
+--## The Universal Permissive License (UPL), Version 1.0
+--## 
+--## https://oss.oracle.com/licenses/upl/
 --##
 --###################################################################
-
 -- Connect to rquser schema to execute
 
 select 1 A, 2 B from dual; -- Example: returns one row with values and column names specified 

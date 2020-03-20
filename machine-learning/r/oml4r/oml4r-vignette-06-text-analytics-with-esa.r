@@ -4,10 +4,13 @@
 ##
 ## Text Analysis with Explicit Semantic Analysis (ESA)
 ##
-## (c) 2020 Oracle Corporation
+## Copyright (c) 2020 Oracle Corporation                          
+##
+## The Universal Permissive License (UPL), Version 1.0
+## 
+## https://oss.oracle.com/licenses/upl/
 ##
 ################################################
-
 # In this vignette, we explore text analytics using the Explicit Semantic Analysis
 # algorithm to extract features from a sample data set. Then, we use the 
 # ESA model that was pre-built on millions of Wikipedia articles and reduced to 

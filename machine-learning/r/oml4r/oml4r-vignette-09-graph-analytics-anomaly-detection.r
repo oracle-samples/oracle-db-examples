@@ -4,10 +4,14 @@
 ##
 ## Graph Analytics and Anomaly Detection
 ##
-## (c) 2020 Oracle Corporation
+## Copyright (c) 2020 Oracle Corporation                          
+##
+## The Universal Permissive License (UPL), Version 1.0
+## 
+## https://oss.oracle.com/licenses/upl/
 ##
 ################################################
-
+# Load the ORE library
 # Oracle Machine Learning for R (ORE) 1.5.1 includes the 
 # availability of the R package OAAgraph, which provides a single, 
 # unified interface supporting the complementary use of machine learning 

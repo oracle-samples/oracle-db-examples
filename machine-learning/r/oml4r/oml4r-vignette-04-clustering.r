@@ -4,10 +4,13 @@
 ##
 ## Clustering
 ##
-## (c) 2020 Oracle Corporation
+## Copyright (c) 2020 Oracle Corporation                          
+##
+## The Universal Permissive License (UPL), Version 1.0
+## 
+## https://oss.oracle.com/licenses/upl/
 ##
 ################################################
-
 # In this vignette, we explore clustering on generated data and the AUTO data set. 
 #
 # We will highlight a few aspects of ORE: 

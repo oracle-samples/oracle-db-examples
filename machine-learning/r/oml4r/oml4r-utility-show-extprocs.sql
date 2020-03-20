@@ -4,10 +4,13 @@
 --## 
 --## Utility to find Extprocs
 --##
---## (c) 2020 Oracle Corporation
+--## Copyright (c) 2020 Oracle Corporation                          
+--##
+--## The Universal Permissive License (UPL), Version 1.0
+--## 
+--## https://oss.oracle.com/licenses/upl/
 --##
 --###################################################################
-
 create or replace procedure ShowExtProcs is
   -- Cursor to find all running extprocs
   Cursor GetExtprocs is
