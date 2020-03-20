@@ -1,14 +1,29 @@
-########################################################
-# OML4Spark Tutorial 001 - Getting Started with HDFS   #
-#                                                      #
-# Simple OML4Spark 2.8.x Introduction                  #
-#                                                      #
-# Accessing Data in HDFS, pushing data from R to HDFS  #
-# and vice-versa                                       #
-#                                                      #
-# (c) 2020 Oracle Corporation                          #
-#                                                      #
-########################################################
+#######################################################
+# OML4Spark Tutorial 001 - Getting Started with HDFS   
+#                                                      
+# OML4Spark a.k.a ORAAH makes the open source R scripting 
+# language and environment ready for the enterprise and big data. 
+# Designed for problems involving both large and small volumes 
+# of data, Oracle Machine Learning for Spark integrates R with 
+# Data Lakes, allowing users to execute R commands and scripts 
+# for data processing, statistical and machine learning analyses 
+# on HIVE, IMPALA, Spark DataFrame tables and views using R and 
+# Spark SQL syntax. Many familiar R functions are overloaded and 
+# translate R functions into SQL for in-Data Lake execution. 
+# In this script, we highlight the following components.
+#
+# - Basic connectivity to the Cluster
+# - Pushing R dataframe to temporary HDFS storage
+# - Visualization of HDFS Data
+# - Creating permanent storage on HDFS
+# - Pulling Data from HDFS into R dataframe
+# 
+# Copyright (c) 2020 Oracle Corporation                        
+# The Universal Permissive License (UPL), Version 1.0          
+#                                                              
+# https://oss.oracle.com/licenses/upl/   
+#                                                      
+#######################################################
 
 # Once inside the R Session, either on a Terminal running R
 # or inside an RStudio Server session, the following command loads
