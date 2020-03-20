@@ -1,23 +1,10 @@
-Rem
-Rem $Header: rdbms/demo/dmrrfdemo.sql /main/3 2016/08/29 21:37:44 qinwan Exp $
-Rem
-Rem tmrgtrfdemo.sql
-Rem
-Rem Copyright (c) 2015, 2016, Oracle and/or its affiliates. 
-Rem All rights reserved.
-Rem
-Rem    NAME
-Rem      tmrgtrfdemo.sql - <one-line expansion of the name>
-Rem
-Rem    DESCRIPTION
-Rem      <short description of component this file declares/defines>
-Rem
-Rem    NOTES
-Rem      <other useful comments, qualifications, etc.>
-Rem
-Rem    MODIFIED   (MM/DD/YY)
-Rem    ffeli       10/15/15 - Created
-Rem
+-----------------------------------------------------------------------
+--   Oracle Machine Learning for SQL (OML4SQL) 19c
+-- 
+--   OML R Extensible - Regression and Classification via RF  - tmrgtrfdemo.sql
+--   
+--   Copyright (c) 2020 Oracle and/or its affilitiates. 
+-----------------------------------------------------------------------
 
 SET ECHO ON
 SET FEEDBACK 1

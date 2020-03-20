@@ -1,24 +1,10 @@
-Rem
-Rem $Header: rdbms/demo/dmrkmdemo.sql /main/2 2015/11/25 06:00:57 qinwan Exp $
-Rem
-Rem dmrkmdemo.sql
-Rem
-Rem Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
-Rem
-Rem    NAME
-Rem      dmrkmdemo.sql - Sample program for ODM R Extensible
-Rem
-Rem    DESCRIPTION
-Rem      This file uses R scripts and  ODM R extensible to build a kmeans
-Rem      model and score new data in ODM framework.
-Rem
-Rem    NOTES
-Rem      
-Rem
-Rem    MODIFIED   (MM/DD/YY)
-Rem    qinwan      11/20/15 - remove clustercenter
-Rem    lbzhang     10/21/15 - Created
-Rem
+-----------------------------------------------------------------------
+--   Oracle Machine Learning for SQL (OML4SQL) 19c
+-- 
+--   OML R Extensible - Clustering via k-Means - tmrkmdemo.sql
+--   
+--   Copyright (c) 2020 Oracle and/or its affilitiates. 
+-----------------------------------------------------------------------
 
 SET serveroutput ON
 SET trimspool ON  

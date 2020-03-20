@@ -1,25 +1,10 @@
-Rem
-Rem $Header: rdbms/demo/dmrpcademo.sql /main/2 2015/11/25 06:00:57 qinwan Exp $
-Rem
-Rem dmrpcademo.sql
-Rem
-Rem Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
-Rem
-Rem    NAME
-Rem      dmrpcademo.sql - Sample program for ODM R Extensible
-Rem
-Rem    DESCRIPTION
-Rem      This file uses R scripts and ODM R extensible to build a PCA
-Rem      model and score new data in ODM framework.
-Rem
-Rem    NOTES
-Rem
-Rem
-Rem    MODIFIED   (MM/DD/YY)
-Rem    qinwan      11/20/15 - remove featurematrix
-Rem    lbzhang     10/26/15 - Created
-Rem
-
+-----------------------------------------------------------------------
+--   Oracle Machine Learning for SQL (OML4SQL) 19c
+-- 
+--   OML R Extensible - Feature Extraction via PCA  - dmrpcademo.sql
+--   
+--   Copyright (c) 2020 Oracle and/or its affilitiates. 
+-----------------------------------------------------------------------
 
 SET serveroutput ON
 SET trimspool ON  

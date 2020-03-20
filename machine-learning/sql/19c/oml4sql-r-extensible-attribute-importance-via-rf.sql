@@ -17,7 +17,7 @@ SET PAGESIZE 100
 -------------------------------------------------------------------------------
 --                         ATTRIBUTE IMPORTANCE DEMO
 -------------------------------------------------------------------------------
--- Explaination:
+-- Explanation:
 -- This demo shows how to implement the attribute importance algorithm in 
 -- Oracle Data Mining using R randomForest algorithm
 

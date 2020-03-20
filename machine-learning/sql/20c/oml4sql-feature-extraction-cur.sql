@@ -3,7 +3,11 @@
 -- 
 --   Feature and Row Extraction - CUR Decomposition Algorithm - dmcurdemo.sql
 --   
---   Copyright (c) 2020 Oracle and/or its affilitiates. 
+--   Copyright (c) 2020 Oracle Corporation and/or its affilitiates.
+--
+--  The Universal Permissive License (UPL), Version 1.0
+--
+--  https://oss.oracle.com/licenses/upl/
 -----------------------------------------------------------------------
 SET ECHO ON
 SET FEEDBACK 1
