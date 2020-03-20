@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<WorkflowProcess Version="11.2.1.1.1" xmlns="http://xmlns.oracle.com/odmr11">
+    <Nodes>
+        <DataSource Status="Complete" Name="SALES" Id="10001">
+            <Icon YCOORD="120" XCOORD="90"></Icon>
+            <Messages/>
+            <CacheSettings GenerateCache="false" UseFullData="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10001" as (select /*+ inline */ "SALES"."PROMO_ID", 
+"SALES"."TIME_ID", 
+"SALES"."CHANNEL_ID", 
+"SALES"."CUST_ID", 
+"SALES"."PROD_ID", 
+"SALES"."QUANTITY_SOLD", 
+"SALES"."AMOUNT_SOLD" 
+from "SH"."SALES"  )</SQLExpression>
+            <Attributes>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROMO_ID"/>
+                <Attribute Status="Valid" DataType="DATE" Name="TIME_ID"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="CHANNEL_ID"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="CUST_ID"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_ID"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="QUANTITY_SOLD"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="AMOUNT_SOLD"/>
+            </Attributes>
+            <SourceTable Name="SALES" Schema="SH"/>
+        </DataSource>
+        <DataSource Status="Complete" Name="PRODUCTS" Id="10005">
+            <Icon YCOORD="224" XCOORD="84"></Icon>
+            <Messages/>
+            <CacheSettings GenerateCache="false" UseFullData="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10005" as (select /*+ inline */ "PRODUCTS"."PROD_EFF_FROM", 
+"PRODUCTS"."PROD_TOTAL", 
+"PRODUCTS"."PROD_SUBCATEGORY_DESC", 
+"PRODUCTS"."PROD_PACK_SIZE", 
+"PRODUCTS"."PROD_CATEGORY", 
+"PRODUCTS"."PROD_WEIGHT_CLASS", 
+"PRODUCTS"."PROD_CATEGORY_ID", 
+"PRODUCTS"."PROD_SUBCATEGORY", 
+"PRODUCTS"."PROD_UNIT_OF_MEASURE", 
+"PRODUCTS"."PROD_LIST_PRICE", 
+"PRODUCTS"."PROD_VALID", 
+"PRODUCTS"."PROD_TOTAL_ID", 
+"PRODUCTS"."PROD_CATEGORY_DESC", 
+"PRODUCTS"."SUPPLIER_ID", 
+"PRODUCTS"."PROD_SRC_ID", 
+"PRODUCTS"."PROD_SUBCATEGORY_ID", 
+"PRODUCTS"."PROD_STATUS", 
+"PRODUCTS"."PROD_EFF_TO", 
+"PRODUCTS"."PROD_ID", 
+"PRODUCTS"."PROD_DESC", 
+"PRODUCTS"."PROD_NAME", 
+"PRODUCTS"."PROD_MIN_PRICE" 
+from "SH"."PRODUCTS"  )</SQLExpression>
+            <Attributes>
+                <Attribute Status="Valid" DataType="DATE" Name="PROD_EFF_FROM"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_TOTAL"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_SUBCATEGORY_DESC"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_PACK_SIZE"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_CATEGORY"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_WEIGHT_CLASS"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_CATEGORY_ID"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_SUBCATEGORY"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_UNIT_OF_MEASURE"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_LIST_PRICE"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_VALID"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_TOTAL_ID"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_CATEGORY_DESC"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="SUPPLIER_ID"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_SRC_ID"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_SUBCATEGORY_ID"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_STATUS"/>
+                <Attribute Status="Valid" DataType="DATE" Name="PROD_EFF_TO"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_ID"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_DESC"/>
+                <Attribute Status="Valid" DataType="VARCHAR2" Name="PROD_NAME"/>
+                <Attribute Status="Valid" DataType="NUMBER" Name="PROD_MIN_PRICE"/>
+            </Attributes>
+            <SourceTable Name="PRODUCTS" Schema="SH"/>
+        </DataSource>
+        <Join UseCartesian="false" Status="Complete" Name="Join" Id="10006">
+            <Icon YCOORD="207" XCOORD="227"></Icon>
+            <Messages/>
+            <CacheSettings GenerateCache="false" UseFullData="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10006" as (SELECT /*+ inline */
+"SALES"."PROMO_ID"
+, "SALES"."TIME_ID"
+, "SALES"."CHANNEL_ID"
+, "SALES"."CUST_ID"
+, "SALES"."PROD_ID"
+, "SALES"."QUANTITY_SOLD"
+, "SALES"."AMOUNT_SOLD"
+, "PRODUCTS"."PROD_NAME"
+
+FROM
+{INPUT_SOURCE:10001} "SALES"
+
+INNER JOIN {INPUT_SOURCE:10005} "PRODUCTS"
+ON "SALES"."PROD_ID" = "PRODUCTS"."PROD_ID"
+ )</SQLExpression>
+            <KeyColumns AutoSpec="No">
+                <JoinColumn Type="Inner">
+                    <LeftColumn NodeName="SALES" NodeId="10001" Key="Yes" Status="Valid" DataType="NUMBER" Name="PROD_ID"/>
+                    <RightColumn NodeName="PRODUCTS" NodeId="10005" Key="Yes" Status="Valid" DataType="NUMBER" Name="PROD_ID"/>
+                </JoinColumn>
+            </KeyColumns>
+            <OutputColumns AutoSpec="No">
+                <RefDBColumn NodeName="SALES" NodeId="10001" Status="Valid" DataType="NUMBER" Name="PROMO_ID"/>
+                <RefDBColumn NodeName="SALES" NodeId="10001" Status="Valid" DataType="DATE" Name="TIME_ID"/>
+                <RefDBColumn NodeName="SALES" NodeId="10001" Status="Valid" DataType="NUMBER" Name="CHANNEL_ID"/>
+                <RefDBColumn NodeName="SALES" NodeId="10001" Status="Valid" DataType="NUMBER" Name="CUST_ID"/>
+                <RefDBColumn NodeName="SALES" NodeId="10001" Status="Valid" DataType="NUMBER" Name="PROD_ID"/>
+                <RefDBColumn NodeName="SALES" NodeId="10001" Status="Valid" DataType="NUMBER" Name="QUANTITY_SOLD"/>
+                <RefDBColumn NodeName="SALES" NodeId="10001" Status="Valid" DataType="NUMBER" Name="AMOUNT_SOLD"/>
+                <RefDBColumn NodeName="PRODUCTS" NodeId="10005" Status="Valid" DataType="VARCHAR2" Name="PROD_NAME"/>
+            </OutputColumns>
+        </Join>
+        <AssociationBuild MaxDistinctItemValue="10" Status="Complete" Name="Assoc Build" Id="10003">
+            <Icon YCOORD="118" XCOORD="224"></Icon>
+            <Messages/>
+            <BuildDataSource SourceId="10001"/>
+            <CaseAttributes>
+                <Attribute Status="Valid" DataType="NUMBER" Name="CUST_ID"/>
+                <Attribute Status="Valid" DataType="DATE" Name="TIME_ID"/>
+            </CaseAttributes>
+            <MiningAttributes/>
+            <ItemID Status="Valid" DataType="NUMBER" Name="PROD_ID"/>
+            <Models>
+                <AprioriModel UseForOutput="true" Annotation="" CreationDate="2012-12-13T17:04:20.000000" Status="Complete" Name="ASSOC_AP_1_24" Id="10014">
+                    <InputMiningData MiningUsage="MANUAL" DataUsage="MANUAL">
+                        <MiningAttributes/>
+                    </InputMiningData>
+                    <AprioriAlgo>
+                        <ASSO_MAX_RULE_LENGTH>3</ASSO_MAX_RULE_LENGTH>
+                        <ASSO_MIN_CONFIDENCE>0.1</ASSO_MIN_CONFIDENCE>
+                        <ASSO_MIN_SUPPORT>0.01</ASSO_MIN_SUPPORT>
+                    </AprioriAlgo>
+                </AprioriModel>
+            </Models>
+        </AssociationBuild>
+        <AssociationBuild MaxDistinctItemValue="10" Status="Complete" Name="Assoc Build 1" Id="10009">
+            <Icon YCOORD="207" XCOORD="341"></Icon>
+            <Messages/>
+            <BuildDataSource SourceId="10006"/>
+            <CaseAttributes>
+                <Attribute Status="Valid" DataType="NUMBER" Name="CUST_ID"/>
+                <Attribute Status="Valid" DataType="DATE" Name="TIME_ID"/>
+            </CaseAttributes>
+            <MiningAttributes/>
+            <ItemID Status="Valid" DataType="VARCHAR2" Name="PROD_NAME"/>
+            <Models>
+                <AprioriModel UseForOutput="true" Annotation="" CreationDate="2012-12-13T17:03:22.000000" Status="Complete" Name="ASSOC_AP_2_24" Id="10015">
+                    <InputMiningData MiningUsage="MANUAL" DataUsage="MANUAL">
+                        <MiningAttributes/>
+                    </InputMiningData>
+                    <AprioriAlgo>
+                        <ASSO_MAX_RULE_LENGTH>3</ASSO_MAX_RULE_LENGTH>
+                        <ASSO_MIN_CONFIDENCE>0.1</ASSO_MIN_CONFIDENCE>
+                        <ASSO_MIN_SUPPORT>0.01</ASSO_MIN_SUPPORT>
+                    </AprioriAlgo>
+                </AprioriModel>
+            </Models>
+        </AssociationBuild>
+        <ModelDetails Status="Complete" Name="Model Details" Id="10012">
+            <Icon YCOORD="207" XCOORD="460"></Icon>
+            <Messages/>
+            <CacheSettings GenerateCache="false" UseFullData="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10012" as (select "MODEL_SCHEMA",
+"MODEL_NAME",
+"ID",
+"ANTECEDENT_ITEMS",
+"CONSEQUENT_ITEMS",
+"SUPPORT",
+"CONFIDENCE",
+"LIFT",
+"ANTECEDENT_SUPPORT",
+"CONSEQUENT_SUPPORT",
+"LENGTH" from (SELECT CAST('ODMUSER' AS VARCHAR2(30)) as "MODEL_SCHEMA", 
+     CAST('ASSOC_AP_2_24' AS VARCHAR2(30)) as "MODEL_NAME", 
+     AR.rule_id as "ID", 
+     REPLACE(REPLACE(REPLACE(REPLACE( REPLACE(REPLACE(EXTRACT(XMLELEMENT("R", XMLAGG( XMLELEMENT("V", NVL2( ant_pred.attribute_subname, ant_pred.attribute_name || '.' || ant_pred.attribute_subname, ant_pred.attribute_name) || ' ' || ant_pred.conditional_operator || ' ' 
+         ||ant_pred.attribute_str_value
+         ||ant_pred.attribute_num_value))), '/R/V').getstringval(),'&amp;gt;','&gt;'),'&amp;lt;','&lt;'), '&lt;/V&gt;&lt;V&gt;',', '),'IN',' '),'&lt;V&gt;', ''),'&lt;/V&gt;','') AS ANTECEDENT_ITEMS, 
+     MAX(NVL2( cons_pred.attribute_subname, cons_pred.attribute_name || '.' || cons_pred.attribute_subname, cons_pred.attribute_name) || ' ' || cons_pred.conditional_operator || ' ' 
+         ||ant_pred.attribute_str_value
+         ||ant_pred.attribute_num_value) consequent_items,
+     AVG(ar.rule_support) AS SUPPORT,
+     AVG(ar.rule_confidence) AS CONFIDENCE,
+     AVG(ar.rule_lift) AS LIFT,
+     AVG(ar.antecedent_support) AS ANTECEDENT_SUPPORT,
+     AVG(ar.consequent_support) AS CONSEQUENT_SUPPORT,
+     AVG(ar.number_of_items) AS LENGTH
+ FROM TABLE(dbms_data_mining.get_association_rules('"ODMUSER"."ASSOC_AP_2_24"')) AR, 
+  TABLE(AR.antecedent) ant_pred ,  TABLE(AR.consequent) cons_pred
+ GROUP BY AR.rule_id 
+) )</SQLExpression>
+            <ModelDetailsOutput AutoSpec="Yes" MiningAlgorithm="APRIORI_ASSOCIATION_RULES" MiningFunction="ASSOCIATION" Type="ARRulesStringVersion">
+                <Models>
+                    <Model NodeId="10009" IsModelBuilt="false" ModelId="10015" UseForOutput="true" Status="Valid" MiningAlgorithm="APRIORI_ASSOCIATION_RULES" MiningFunction="ASSOCIATION" Name="ASSOC_AP_2_24" Schema=""/>
+                </Models>
+                <Attributes>
+                    <Attribute Status="Valid" DataType="VARCHAR2" Name="MODEL_SCHEMA"/>
+                    <Attribute Status="Valid" DataType="VARCHAR2" Name="MODEL_NAME"/>
+                    <Attribute Status="Valid" DataType="NUMBER" Name="ID"/>
+                    <Attribute Status="Valid" DataType="VARCHAR2" Name="ANTECEDENT_ITEMS"/>
+                    <Attribute Status="Valid" DataType="VARCHAR2" Name="CONSEQUENT_ITEMS"/>
+                    <Attribute Status="Valid" DataType="NUMBER" Name="SUPPORT"/>
+                    <Attribute Status="Valid" DataType="NUMBER" Name="CONFIDENCE"/>
+                    <Attribute Status="Valid" DataType="NUMBER" Name="LIFT"/>
+                    <Attribute Status="Valid" DataType="NUMBER" Name="ANTECEDENT_SUPPORT"/>
+                    <Attribute Status="Valid" DataType="NUMBER" Name="CONSEQUENT_SUPPORT"/>
+                    <Attribute Status="Valid" DataType="NUMBER" Name="LENGTH"/>
+                </Attributes>
+            </ModelDetailsOutput>
+        </ModelDetails>
+    </Nodes>
+    <Links>
+        <Link Label="From &quot;SALES&quot; to &quot;Assoc Build&quot;" Name="Link" To="10003" From="10001" Id="10004">
+            <ConnectorGraphicsInfo>
+                <Coordinates YCoordinate="0.0" XCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Label="From &quot;SALES&quot; to &quot;Join&quot;" Name="Link" To="10006" From="10001" Id="10007">
+            <ConnectorGraphicsInfo>
+                <Coordinates YCoordinate="0.0" XCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Label="From &quot;PRODUCTS&quot; to &quot;Join&quot;" Name="Link" To="10006" From="10005" Id="10008">
+            <ConnectorGraphicsInfo>
+                <Coordinates YCoordinate="0.0" XCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Label="From &quot;Join&quot; to &quot;Assoc Build 1&quot;" Name="Link" To="10009" From="10006" Id="10011">
+            <ConnectorGraphicsInfo>
+                <Coordinates YCoordinate="0.0" XCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Label="From &quot;Assoc Build 1&quot; to &quot;Model Details&quot;" Name="Link" To="10012" From="10009" Id="10013">
+            <ConnectorGraphicsInfo>
+                <Coordinates YCoordinate="0.0" XCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+    </Links>
+</WorkflowProcess>

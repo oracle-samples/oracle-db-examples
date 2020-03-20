@@ -1,18 +1,31 @@
-# Oracle Machine Learning
-Oracle Machine Learning is a collaborative user interface for data scientists and business and data analysts who perform machine learning in the Autonomous Databases--Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP).   
+# Oracle Machine Learning Examples
+The Oracle Machine Learning product family enables scalable data science projects. Data scientists, analysts, developers, and IT can achieve data science project goals faster while taking full advantage of the Oracle platform -- on-premise, in Oracle Database Cloud Service and Oracle Autonomous Database (ADW/ATP).
 
-Oracle Machine Learning enables data scientists, citizen data scientists, and data analysts to work together to explore their data visually and develop analytical methodologies in the Autonomous Data Warehouse Cloud. Oracle's high performance, parallel and scalable in-Database implementations of machine learning algorithms are exposed via SQL and PL/SQL using notebook technologies. Oracle Machine Learning enables teams to collaborate to build, assess, and deploy machine learning models, while increasing data scientist productivity Oracle Machine Learning focuses on ease of use and simplified machine learning for data science – from preparation through deployment – all in the Autonomous Database.
+Oracle Machine Learning consists of complementary components supporting scalable machine learning algorithms for in-database and big data environments, notebook technology, SQL and R APIs, and Hadoop/Spark environments.
 
-Based on Apache Zeppelin notebook technology, Oracle Machine Learning provides a common platform with a single interface that can connect to multiple data sources and access multiple back-end Autonomous Database servers. Multi-user collaboration enables the same notebook document to be opened simultaneously by different users, such that changes made by one user to a notebook are instantaneously reflected to all users viewing that notebook. To support enterprise requirements for security, authentication, and auditing, Oracle Machine Learning supports privilege-based access to data, models, and notebooks, as well as being integrated with Oracle security protocols.
+With Oracle Machine Learning, Oracle moves the algorithms to the data, processing data where it resides—minimizing or eliminating data movement, achieving scalability, preserving security, and accelerating time-to-model deployment. Oracle delivers parallelized in-database implementations of machine learning algorithms and integration with open source R.
 
+The following structure represent the available APIs and environments for the different examples of the Oracle Machine Learning components:
 
-Key Features:   
+* __datasets__ - example data in CSV format
 
-* Collaborative UI for data scientists
-* Enables sharing of notebooks and templates with permissions and execution scheduling 
-* Access to 30+ parallel, scalable in-Database implementations of machine learning algorithms
-* SQL and PL/SQL scripting language supported
-* Enables and supports deployments of enterprise machine learning methodologies in both Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP)
+* __odmr__ - Oracle Data Miner extension to SQL Developer - examples
 
+* __notebooks__ (Oracle Machine Learning Noteboks, Zeppelin, Jupyter, or Oracle Data Studio)
+  * __mixed__ - examples of use of mixed APIs in the same Notebook
+  * __python__ - Oracle Machine Learning for Python Notebooks (coming soon)
+  * __r__ - Oracle Machine Learning for R Notebooks, and Oracle Machine Learning for Spark Notebooks
+  * __sql__ - Notebooks for the Oracle Machine Learning for SQL and also the Oracle Machine Learning Notebooks (based on Zeppelin) included with Oracle ADW and ATP
 
- See Introducing Oracle Machine Learning SQL Notebooks for the Oracle Autonomous Data Warehouse Cloud! blog post (https://blogs.oracle.com/datamining/introducing-oracle-machine-learning-sql-notebooks-for-the-oracle-autonomous-data-warehouse-cloud ) for more information.  
+* __python__ - Oracle Machine Learning for Python examples (coming soon)
+
+* __r__
+  * __oml4r__ - Oracle Machine Learning for R (in-Database) R code examples
+  * __oml4spark__ - Oracle Machine Learning for Spark (in-Data Lake) R code examples
+
+* __sql__
+  * __19c__ - Oracle Machine Learning for SQL examples for Oracle Database 19c
+  * __20c__ - Oracle Machine Learning for SQL examples for Oracle Database 20c
+  
+For more information please visit our main page for Oracle Machine Learning at https://oracle.com/machine-learning
+
