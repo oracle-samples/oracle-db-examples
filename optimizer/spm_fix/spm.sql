@@ -82,11 +82,6 @@ BEGIN
       parameter => 'ALTERNATE_PLAN_BASELINE', 
       value     => 'EXISTING');
 
---
--- You can use CURSOR_CACHE+SQL_TUNING_SET+AUTOMATIC_WORKLOAD_REPOSITORY
--- if you have the Oracle Tuning and Oracle Diagnostic Packs.
--- See Oracle License Guide for details.
---
    DBMS_SPM.SET_EVOLVE_TASK_PARAMETER( 
       task_name => tname,
       parameter => 'ALTERNATE_PLAN_SOURCE', 

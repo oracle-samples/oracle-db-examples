@@ -1,5 +1,10 @@
 # AoJ: ADBA over JDBC
 
+
+** 
+Please note that although this material is valid and can be closed/branched, the work on the ADBA project has been terminated.
+**
+
 ADBA is Asynchronous Database Access, a non-blocking database access api that 
 Oracle is proposing as a Java standard. ADBA was announced at 
 [JavaOne 2016](https://static.rainfocus.com/oracle/oow16/sess/1461693351182001EmRq/ppt/CONF1578%2020160916.pdf) 
