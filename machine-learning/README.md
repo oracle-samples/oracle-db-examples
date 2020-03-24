@@ -17,9 +17,10 @@ The following structure represent the available APIs and environments for the di
   * __r__ - Oracle Machine Learning for R Notebooks, and Oracle Machine Learning for Spark Notebooks
   * __sql__ - Notebooks for the Oracle Machine Learning for SQL and also the Oracle Machine Learning Notebooks (based on Zeppelin) included with Oracle ADW and ATP
 
-* __python__ - Oracle Machine Learning for Python examples (coming soon)
+* __python__ (Python language examples)
+  * __oml4py__ - Oracle Machine Learning for Python examples (coming soon)
 
-* __r__
+* __r__ (R language examples)
   * __oml4r__ - Oracle Machine Learning for R (in-Database) R code examples
   * __oml4spark__ - Oracle Machine Learning for Spark (in-Data Lake) R code examples
 
