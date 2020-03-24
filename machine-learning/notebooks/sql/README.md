@@ -15,4 +15,4 @@ Key Features:
 * Enables and supports deployments of enterprise machine learning methodologies in both Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP)
 
 
- See Introducing Oracle Machine Learning SQL Notebooks for the Oracle Autonomous Data Warehouse Cloud! blog post (https://blogs.oracle.com/datamining/introducing-oracle-machine-learning-sql-notebooks-for-the-oracle-autonomous-data-warehouse-cloud ) for more information.  
+ See Introducing Oracle Machine Learning Notebooks for the Oracle Autonomous Data Warehouse! blog post (https://blogs.oracle.com/datamining/introducing-oracle-machine-learning-sql-notebooks-for-the-oracle-autonomous-data-warehouse-cloud ) for more information.  
