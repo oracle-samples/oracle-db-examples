@@ -28,5 +28,10 @@ The following structure represent the available APIs and environments for the di
   * __19c__ - Oracle Machine Learning for SQL examples for Oracle Database 19c
   * __20c__ - Oracle Machine Learning for SQL examples for Oracle Database 20c
   
-For more information please visit our main page for Oracle Machine Learning at https://oracle.com/machine-learning
+For more information please visit our main page [Oracle Machine Learning](https://oracle.com/machine-learning)
+
+ #### Copyright (c) 2020 Oracle Corporation and/or its affilitiates.
+
+ ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
+
 

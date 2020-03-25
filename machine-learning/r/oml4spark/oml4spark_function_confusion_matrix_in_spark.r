@@ -1,5 +1,6 @@
 ###############################################################
-# 2020_confusionMatrixInSpark.R                                
+# oml4spark_function_confusion_matrix_in_spark.r
+# 
 # Function to Compute a Confusion Matrix based on Spark SQL    
 # given a Dataset that contains Actuals and Predicted          
 #                                                              
@@ -18,7 +19,7 @@
 ###############################################################
 
 ########################################################################################
-### COMPUTING A CONFUSION MATRIX FOR BINARY CLASSIFIERS IN-MEMORY IN SPARK VIA ORAAH ###
+### COMPUTING A CONFUSION MATRIX FOR BINARY CLASSIFIERS IN-MEMORY IN SPARK VIA OML4Spark ###
 ########################################################################################
 confusionMatrixInSpark <- function(list_of_model_pred) {
   model <- list_of_model_pred[[1]]

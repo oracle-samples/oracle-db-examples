@@ -1,4 +1,6 @@
 ##################################################################
+# oml4spark_function_variable_selection_via_glm.r
+#
 # Function to create Variable Selection using Logistic Regression 
 # analysis.  Variables are selected based on the Correlation to   
 # Target                                                          

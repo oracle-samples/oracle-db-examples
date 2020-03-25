@@ -1,11 +1,13 @@
 ###############################################################
-# Function to create Variable Selection using only SVD based   
+# oml4spark_function_variable_selection_via_pca.r
+# 
+# Function to create Variable Selection using only PCA based   
 # analysis.  Variables are selected based on the Total         
 # Variability of any Normally-scaled variable                  
 # given a Dataset          
 #                                                              
-# Usage: selectVariablesViaSVD ( formulaForSVD ,                      
-#                                inputForSVD ,                    
+# Usage: selectVariablesViaPCA ( formulaForPCA ,                      
+#                                inputForPCA ,                    
 #                                feedback = FALSE ,               
 #                                varianceExplainedCutoff=0.90,
 #                                minSignificanceEigenVectors = 0.20 
@@ -18,34 +20,32 @@
 #                                                              
 ###############################################################
 
-##########################################################
-### VARIABLE SELECTION WITH SINGLE VALUE DECOMPOSITION ###
-### WITH SUPPORT FOR NUMERICALS AND FACTORS            ###
-### ONLY BASED ON OVERALL VARIABILITY, NOT THE TARGET  ###
-##########################################################
-
-### Principal Components Analysis for Variable Selection
+############################################################
+### VARIABLE SELECTION WITH PRINCIPAL COMPONENT ANALYSIS ###
+### WITH SUPPORT FOR NUMERICALS AND FACTORS              ###
+### ONLY BASED ON OVERALL VARIABILITY, NOT THE TARGET    ###
+############################################################
 
 ## INPUT IS ORIGINAL DATASET AND FORMULA
 ## OPTIONAL INPUTS ARE: CUMULATIVE PERCENT VARIANCE EXPLANATION, CORRELATION 
-selectVariablesViaSVD <- function(formulaForSVD, 
-                                  inputForSVD, 
+selectVariablesViaPCA <- function(formulaForPCA, 
+                                  inputForPCA, 
                                   feedback=FALSE, 
                                   varianceExplainedCutoff=0.90 ,   
                                   minSignificanceEigenVectors = 0.20 )
 {
   
-  formulaForSVD <- paste0('~ ',gsub(".*~","",Reduce(paste, deparse(formulaForSVD))))
+  formulaForPCA <- paste0('~ ',gsub(".*~","",Reduce(paste, deparse(formulaForPCA))))
   
-  if (!(grepl(Reduce(paste, deparse(formulaForSVD)),"-1"))) {
-    formulaForSVD <- paste0(formulaForSVD," -1")
+  if (!(grepl(Reduce(paste, deparse(formulaForPCA)),"-1"))) {
+    formulaForPCA <- paste0(formulaForPCA," -1")
   }
   
   if (grepl(feedback, "FULL", fixed = TRUE)) 
   {verbose_user <- TRUE
   } else {verbose_user <- FALSE}
   
-  dmm <- orch.model.matrix(formulaForSVD, data=inputForSVD, 
+  dmm <- orch.model.matrix(formulaForPCA, data=inputForPCA, 
                            type = 'dmm', factorMode = "none", 
                            verbose = verbose_user)
   
@@ -56,15 +56,13 @@ selectVariablesViaSVD <- function(formulaForSVD,
     print(eigenVectorNames)
   }  
   
-  # Build the PCA Model asking for 10 Components
-  
   # Need to scale variables first.
-  scaledData <- orch.df.scale(data=inputForSVD, method = 'unitization_zero_minimum')
+  scaledData <- orch.df.scale(data=inputForPCA, method = 'unitization_zero_minimum')
   # Review the Scaled Data
   scaledData$show(5L)
   
   # Run the PCA requesting up to 100 Components
-  model_dspca <- orch.dspca(formula = formulaForSVD, data=scaledData, 
+  model_dspca <- orch.dspca(formula = formulaForPCA, data=scaledData, 
                             k = min(length(eigenVectorNames),100), 
                             formU = FALSE,
                             verbose = verbose_user)
@@ -75,7 +73,7 @@ selectVariablesViaSVD <- function(formulaForSVD,
   # Capture Partial Eigenvalues
   eigenValues <- coef_pca$s
   
-  # Number of computed SVD Components
+  # Number of computed PCA Components
   numComputedComponents <- length(eigenValues)
   
   # IF necessary, let's complement the rest of the estimated Eigenvalues
