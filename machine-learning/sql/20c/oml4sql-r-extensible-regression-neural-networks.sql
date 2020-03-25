@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 20c
 -- 
---   R Extensible - Regression - Neural Networks Algorithm - dmrnndemo.sql
+--   OML R Extensible - Regression - Neural Networks Algorithm - dmrnndemo.sql
 --   
 --   Copyright (c) 2020 Oracle Corporation and/or its affilitiates.
 --

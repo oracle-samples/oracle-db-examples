@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 20c
 -- 
---   Singular Value Decomposition Demo - dmsvddemo.sql
+--   Feature Extraction - Singular Value Decomposition Demo - dmsvddemo.sql
 --   
 --   Copyright (c) 2020 Oracle Corporation and/or its affilitiates.
 --
