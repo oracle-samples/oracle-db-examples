@@ -1,14 +1,9 @@
 #######################################################
 # OML4Spark Tutorial 002 - Getting Started with HIVE,      
-<<<<<<< HEAD
 #   IMPALA and Spark Data Frames                                                
 # 
 # oml4spark_tutorial_getting_started_with_hive_impala_spark.r
 # 
-=======
-# IMPALA and Spark Data Frames                                                
-#                                                       
->>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 # Accessing Data stored as HIVE tables, using the 
 # Transparency Layer to process data via HIVE and IMPALA, 
 # executing queries, loading data into and from HDFS, 
@@ -68,11 +63,7 @@ library(ORCH)
 # (if you are not using Cloudera, you need to find the proper folder for your ../hadoop/lib/native)
 # rsession-ld-library-path=/usr/java/latest/jre/lib/amd64/server:/usr/lib64/R/lib:/opt/cloudera/parcels/CDH/lib/hadoop/lib/native:/usr/lib64/R/port/Linux-X64/lib
 
-<<<<<<< HEAD
 # OML4Spark's HIVE connectivity will use the HIVE Server2 Thrift Port, usually 10000 (hive.server2.thrift.port setting in Cloudera Manager).
-=======
-# ORAAH's HIVE connectivity will use the HIVE Server2 Thrift Port, usually 10000 (hive.server2.thrift.port setting in Cloudera Manager).
->>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 
 # Connect to HIVE using the default port. Password is not necessary since the OS user would have been authorized access to
 # HDFS and HIVE
@@ -207,11 +198,7 @@ summary(local_subset_of_data)
 #  Working with Cloudera IMPALA #
 #################################
 
-<<<<<<< HEAD
 # OML4Spark's IMPALA connectivity will use IMPALA's Daemon HiveServer2 Port, usually 21050 (hs2_port setting in Cloudera Manager)
-=======
-# ORAAH's IMPALA connectivity will use IMPALA's Daemon HiveServer2 Port, usually 21050 (hs2_port setting in Cloudera Manager)
->>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 # The ore.connect() command will automatically disconnect any previous connections
 # With the all=FALSE option, we are asking not to sync all the tables with the environment, and we will have
 # to specify the tables we want to work with manually using an ore.sync, or upload new tables
