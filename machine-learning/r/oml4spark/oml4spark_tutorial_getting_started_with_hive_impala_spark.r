@@ -1,7 +1,9 @@
 #######################################################
 # OML4Spark Tutorial 002 - Getting Started with HIVE,      
-# IMPALA and Spark Data Frames                                                
-#                                                       
+#   IMPALA and Spark Data Frames                                                
+# 
+# oml4spark_tutorial_getting_started_with_hive_impala_spark.r
+# 
 # Accessing Data stored as HIVE tables, using the 
 # Transparency Layer to process data via HIVE and IMPALA, 
 # executing queries, loading data into and from HDFS, 
@@ -61,7 +63,7 @@ library(ORCH)
 # (if you are not using Cloudera, you need to find the proper folder for your ../hadoop/lib/native)
 # rsession-ld-library-path=/usr/java/latest/jre/lib/amd64/server:/usr/lib64/R/lib:/opt/cloudera/parcels/CDH/lib/hadoop/lib/native:/usr/lib64/R/port/Linux-X64/lib
 
-# ORAAH's HIVE connectivity will use the HIVE Server2 Thrift Port, usually 10000 (hive.server2.thrift.port setting in Cloudera Manager).
+# OML4Spark's HIVE connectivity will use the HIVE Server2 Thrift Port, usually 10000 (hive.server2.thrift.port setting in Cloudera Manager).
 
 # Connect to HIVE using the default port. Password is not necessary since the OS user would have been authorized access to
 # HDFS and HIVE
@@ -196,7 +198,7 @@ summary(local_subset_of_data)
 #  Working with Cloudera IMPALA #
 #################################
 
-# ORAAH's IMPALA connectivity will use IMPALA's Daemon HiveServer2 Port, usually 21050 (hs2_port setting in Cloudera Manager)
+# OML4Spark's IMPALA connectivity will use IMPALA's Daemon HiveServer2 Port, usually 21050 (hs2_port setting in Cloudera Manager)
 # The ore.connect() command will automatically disconnect any previous connections
 # With the all=FALSE option, we are asking not to sync all the tables with the environment, and we will have
 # to specify the tables we want to work with manually using an ore.sync, or upload new tables
