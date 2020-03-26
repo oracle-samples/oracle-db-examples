@@ -24,7 +24,7 @@ The following structure represent the available APIs and environments for the di
   * __oml4r__ - Oracle Machine Learning for R (in-Database) R code examples
   * __oml4spark__ - Oracle Machine Learning for Spark (in-Data Lake) R code examples
 
-* __sql__
+* __sql__ (SQL and PL/SQL examples)
   * __19c__ - Oracle Machine Learning for SQL examples for Oracle Database 19c
   * __20c__ - Oracle Machine Learning for SQL examples for Oracle Database 20c
   
