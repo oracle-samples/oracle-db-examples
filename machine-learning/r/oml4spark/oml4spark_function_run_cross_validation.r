@@ -1,7 +1,12 @@
 ######################################################################
+<<<<<<< HEAD
 # oml4spark_function_run_cross_validation.r
 # 
 # Function to run a k-Fold Cross-Validation using all OML4Spark           
+=======
+# 2020_runCrossValidation.R                                           
+# Function to run a k-Fold Cross-Validation using all ORAAH           
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 # classification algorithms available                                       
 #                                                                     
 # Process a Balanced Dataset based on Input                           
@@ -39,8 +44,13 @@
 runCrossValidation <- function(input_xval, formula_xval, numKFolds=3, selectedStatistic='MathewsCorrCoef', legend=' ', feedback=FALSE ) {
   
   # Load functions required
+<<<<<<< HEAD
   source ('~/oml4spark_function_confusion_matrix_in_spark.r')
   source ('~/oml4spark_function_build_all_classification_models.r')
+=======
+  source ('~/R_scripts/2020_confusionMatrixInSpark.R')
+  source ('~/R_scripts/2020_buildAllClassificationModels.R')
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
   
   if (grepl(feedback, "FULL", fixed = TRUE)) 
   {verbose_user <- TRUE

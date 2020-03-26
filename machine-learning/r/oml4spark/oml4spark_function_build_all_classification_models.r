@@ -1,8 +1,14 @@
 ###############################################################
+<<<<<<< HEAD
 # oml4spark_function_build_all_classification_models.r
 #
 # Function to Build all classification Models available in     
 # OML4Spark and export their predictions against a given TEST data 
+=======
+# 2020_buildAllClassificationModels.R                          
+# Function to Build all classification Models available in     
+# ORAAH and export their predictions against a given TEST data 
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 # provided                                                     
 #                                                              
 # Input can be HDFS ID, HIVE, IMPALA, Spark DF or R dataframe  
@@ -24,7 +30,11 @@
 ###############################################################
 
 ##################################################################
+<<<<<<< HEAD
 ### BUILDING ALL POSSIBLE BINARY CLASSIFICATION MODELS WITH OML4Spark
+=======
+### BUILDING ALL POSSIBLE BINARY CLASSIFICATION MODELS WITH ORAAH
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 ##################################################################
 # INPUT_DATA=buildFolds
 # TEST_DATA=testFold
@@ -48,7 +58,11 @@ buildAllClassificationModels <- function(INPUT_DATA,TEST_DATA, formula_class,
   aux.formula[1] <- paste0("as.factor(",targetFromFormula,")")
   formula_softmax <- as.formula(paste(aux.formula,collapse=" "))
   
+<<<<<<< HEAD
   if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('OML4Spark GLM2...')
+=======
+  if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('ORAAH GLM2...')
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
   timing_glm2 <- list()
   start.time <- Sys.time()
   model_glm2 <- orch.glm2(formula = formula_class, data = INPUT_DATA, verbose=verbose_user)  
@@ -62,7 +76,11 @@ buildAllClassificationModels <- function(INPUT_DATA,TEST_DATA, formula_class,
   timing_glm2[[4]] <- format(score_timing,digits=4)
   if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('done in ',timing_glm2[[1]]+timing_glm2[[3]] ,'secs \n')
   
+<<<<<<< HEAD
   if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('OML4Spark Neural with Entropy Output Activation...')
+=======
+  if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('ORAAH Neural with Entropy Output Activation...')
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
   timing_neu_ent <- list()
   start.time <- Sys.time()
   model_neu_ent <- orch.neural2(formula = formula_class, data = INPUT_DATA, 
@@ -79,7 +97,11 @@ buildAllClassificationModels <- function(INPUT_DATA,TEST_DATA, formula_class,
   timing_neu_ent[[4]] <- format(score_timing,digits=4)
   if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('done in ',timing_neu_ent[[1]]+timing_neu_ent[[3]] ,'secs \n')
   
+<<<<<<< HEAD
   if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('OML4Spark Neural with SoftMax Output Activation...')
+=======
+  if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('ORAAH Neural with SoftMax Output Activation...')
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
   timing_neu_sof <- list()
   start.time <- Sys.time()
   model_neu_sof <- orch.neural2(formula = formula_softmax, data = INPUT_DATA, 
@@ -97,7 +119,11 @@ buildAllClassificationModels <- function(INPUT_DATA,TEST_DATA, formula_class,
   if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('done in ',timing_neu_sof[[1]]+timing_neu_sof[[3]] ,'secs \n')
   
   if (sum(grepl(':',formula_class,fixed=TRUE))==0) {
+<<<<<<< HEAD
     if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('OML4Spark ELM...')
+=======
+    if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('ORAAH ELM...')
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
     timing_elm <- list()
     start.time <- Sys.time()
     model_elm <- orch.elm(formula = formula_class, data = INPUT_DATA,zScoreX = TRUE, 
@@ -116,7 +142,11 @@ buildAllClassificationModels <- function(INPUT_DATA,TEST_DATA, formula_class,
   }
   
   if (sum(grepl(':',formula_class,fixed=TRUE))==0) {
+<<<<<<< HEAD
     if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('OML4Spark H-ELM...')
+=======
+    if (grepl(feedback, "FULL|TRUE", fixed = TRUE)) cat('ORAAH H-ELM...')
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
     timing_helm <- list()
     start.time <- Sys.time()
     model_helm <- orch.helm(formula = formula_class, data = INPUT_DATA,zScoreX = TRUE,
@@ -229,11 +259,19 @@ buildAllClassificationModels <- function(INPUT_DATA,TEST_DATA, formula_class,
   # Predictions Vector (which contains the Actual plus Predictions)
   out <- list()
   if (sum(grepl(':',formula_class,fixed=TRUE))==0) {
+<<<<<<< HEAD
     out <- list(list(model_glm2,pred_glm2,paste0('OML4Spark GLM2',legend),timing_glm2),
                 list(model_neu_ent,pred_neu_ent, paste0('OML4Spark Neural Nets - Entropy Activation',legend),timing_neu_ent),
                 list(model_neu_sof,pred_neu_sof, paste0('OML4Spark Neural Nets - SoftMax Activation',legend),timing_neu_sof),
                 list(model_elm,pred_elm, paste0('OML4Spark Extreme Learning Machines',legend),timing_elm),
                 list(model_helm,pred_helm, paste0('OML4Spark Hybrid-Extreme Learning Machines',legend),timing_helm),
+=======
+    out <- list(list(model_glm2,pred_glm2,paste0('ORAAH GLM2',legend),timing_glm2),
+                list(model_neu_ent,pred_neu_ent, paste0('ORAAH Neural Nets - Entropy Activation',legend),timing_neu_ent),
+                list(model_neu_sof,pred_neu_sof, paste0('ORAAH Neural Nets - SoftMax Activation',legend),timing_neu_sof),
+                list(model_elm,pred_elm, paste0('ORAAH Extreme Learning Machines',legend),timing_elm),
+                list(model_helm,pred_helm, paste0('ORAAH Hybrid-Extreme Learning Machines',legend),timing_helm),
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
                 list(model_logistic,pred_logistic, paste0('Spark MLlib Logistic',legend),timing_logistic),
                 list(model_dt,pred_dt, paste0('Spark MLlib Decision Trees',legend),timing_dt),
                 list(model_rf,pred_rf, paste0('Spark MLlib Random Forest',legend),timing_rf),
@@ -242,9 +280,15 @@ buildAllClassificationModels <- function(INPUT_DATA,TEST_DATA, formula_class,
                 #              list(model_lasso,pred_lasso, paste0('Spark MLlib LASSO',legend),timing_lasso)
     )
   } else {
+<<<<<<< HEAD
     out <- list(list(model_glm2,pred_glm2,paste0('OML4Spark GLM2',legend),timing_glm2),
                 list(model_neu_ent,pred_neu_ent, paste0('OML4Spark Neural Nets - Entropy Activation',legend),timing_neu_ent),
                 list(model_neu_sof,pred_neu_sof, paste0('OML4Spark Neural Nets - SoftMax Activation',legend),timing_neu_sof))
+=======
+    out <- list(list(model_glm2,pred_glm2,paste0('ORAAH GLM2',legend),timing_glm2),
+                list(model_neu_ent,pred_neu_ent, paste0('ORAAH Neural Nets - Entropy Activation',legend),timing_neu_ent),
+                list(model_neu_sof,pred_neu_sof, paste0('ORAAH Neural Nets - SoftMax Activation',legend),timing_neu_sof))
+>>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
   }
   
   return(out)
