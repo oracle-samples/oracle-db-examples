@@ -1,5 +1,4 @@
 #########################################################
-<<<<<<< HEAD
 # oml4spark_function_zeppelin_visualization_z_show.r
 #
 # Function to help publish graphically in Apache Zeppelin and   
@@ -7,13 +6,6 @@
 # input, including R dataframes, OML4Spark DFS ID (HDFS),    
 # HIVE tables, IMPALA tables and Spark Dataframes mapped 
 # via OML4Spark 2.8.x algorithms or orch.df.* functions      
-=======
-# Function to help publish graphically in Zeppelin and   
-# Big Data Manager Notebooks several different types of  
-# input, including R dataframes, ORAAH DFS ID (HDFS),    
-# HIVE tables, IMPALA tables and Spark Dataframes mapped 
-# via ORAAH 2.8.x algorithms or orch.df.* functions      
->>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 #                                                        
 # Usage: z.show( data , # of records )                 
 #                                                        
@@ -30,11 +22,7 @@
 
 z.show <- function(dat,n=1000){
   eachRowPrint <- function(x) paste0(paste(x,collapse="\t"),"\n")
-<<<<<<< HEAD
   # Verify if OML4Spark packages are loaded
-=======
-  # Verify if ORAAH packages are loaded
->>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
   if ("ORCH" %in% (.packages())) {
     # For Spark DF
     if ((spark.connected()) && (class(dat)[1]=="jobjRef")) {
@@ -97,11 +85,7 @@ z.show <- function(dat,n=1000){
             } else return(paste0("INPUT Not a valid R Dataframe, HIVE or IMPALA table, nor Spark DF"))
     
   } else
-<<<<<<< HEAD
     # The OML4Spark libraries are not loaded so only R Dataframes can be used
-=======
-    # The ORAAH libraries are not loaded so only R Dataframes can be used
->>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
     # For R Dataframe
     if (is.data.frame(dat)){
       cols <- paste0(paste(unlist(colnames(dat)),collapse="\t"),"\n")
