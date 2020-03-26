@@ -1,10 +1,6 @@
 ###############################################################
-<<<<<<< HEAD
 # oml4spark_function_create_balanced_input.r    
 # 
-=======
-# 2020_createBalancedInput.R                                   
->>>>>>> 8945494b52ac9bc44b58fa04e6d5087098ff4195
 # Function to create a Balanced Dataset based on Input         
 # Dataset and formula.                                         
 #                                                              
