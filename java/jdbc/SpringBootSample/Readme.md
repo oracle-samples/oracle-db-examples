@@ -1,5 +1,14 @@
-# SpringBootSample
-This is a Jdbc sample using Oracle UCP in SpringBoot. The sample creates a SpringBoot application and performs different JDBC operations.
+# Spring Boot Sample
+This is a SpringBoot sample using Oracle JDBC and UCP to connect to Autonomous Database. The sample creates a SpringBoot application and performs different JDBC operations. 
+(a)
+
+# Main Components of the code 
+* **OracleJdbcAppication.java**: This is the main class where we have the methods to perform some database operations. 
+* **DataSourceConfig.java**: This is the class where the datasource is created by reading the values from application.properties. 
+* **EmployeeServiceImpl.java**: This is the bean where the business logic is present. It implements the interface EmployeeServe.java. 
+* **Employee.java and AllTables.java**:
+* **EmployeeDAOImpl.java and AllTablesDAOImpl.java**: These are the Data Access Object classes to access the data from the database. 
+* **
 
 ## Directory Structure
 ```
