@@ -21,4 +21,7 @@ a PLDoc template if PL/Scope information is available.
 A quick context menu action on code editor to insert a template string for @maternaDev01
 
 * [ConnectionHelper](ConnectionHelper)
-Accept connection info from the command line (and maybe on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html))
+Optionally accept connection info from the command line and/or on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html)
+
+* [ConnectionHelperClient](ConnectionHelperClient)
+A simple command line client for the ConnectionHelper socket server.

@@ -6,7 +6,11 @@ Depending on requirements, this can be done in either XML or java and deployed b
 
 ### New
 
-* [Connection Helper](java/ConnectionHelper) - Accept connection info from the command line (and maybe on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html))
+* [ConnectionHelper](java/ConnectionHelper)
+Optionally accept connection info from the command line and/or on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html)
+
+* [ConnectionHelperClient](java/ConnectionHelperClient)
+A simple command line client for the ConnectionHelper socket server.
 
 * Added resource reference for Philipp Salvisberg's [Example-based tutorials](https://github.com/PhilippSalvisberg/sqldev) to extend SQL Developer functionality. (external)
 

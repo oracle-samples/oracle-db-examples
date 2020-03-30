@@ -1,4 +1,18 @@
-// Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+/*
+Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved. 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+*/
 
 package oracle.db.example.sqldeveloper.extension.connectionHelper;
 
@@ -21,7 +35,7 @@ public class ConnectionHelperPreferenceModel extends HashStructureAdapter {
 	private static final String COMMAND_LINE_PERSIST_CONN = "COMMAND_LINE_PERSIST_CONN"; //$NON-NLS-1$
 	
 	private static final String EXT_CONN_SVR_PORT = "EXT_CONN_SVR_PORT"; //$NON-NLS-1$
-	private static final Integer EXT_CONN_SVR_DEFAULT_PORT = 4444;
+	private static final Integer EXT_CONN_SVR_DEFAULT_PORT = 51521; // 49152-65535 https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=1&page=24
 	private static final String EXT_CONN_SVR_AUTOSTART = "EXT_CONN_SVR_AUTOSTART"; //$NON-NLS-1$
 	private static final String EXT_CONN_SVR_PERSIST_CONN = "EXT_CONN_SVR_PERSIST_CONN"; //$NON-NLS-1$
 
