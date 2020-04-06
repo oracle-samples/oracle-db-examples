@@ -12,6 +12,7 @@ This is a SpringBoot sample using Oracle JDBC and UCP to connect to Autonomous D
 * **Employee.java and AllTables.java**: These are the DAO classes represents the Model of the application. 
 * **EmployeeDAOImpl.java and AllTablesDAOImpl.java**: These are the Data Access Object classes to access the data from the database. 
 * **pom.xml**: Maven build script with all the necessary dependencies for the application to run. 
+* **application.properties**: Contains all the database specific details such as database URL, database username, database password etc., 
 
 ## Directory Structure
 ```
