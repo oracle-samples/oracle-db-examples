@@ -40,13 +40,13 @@ public class ConnectionHelper {
 	
 	/**
 	 * Process each command line argument as a potential connection request
+	 * looking for -conName=user[/[pw]]@host:port(:sid|/svc)[#role]
 	 */
 	public static void processCommandLineArgs() {
 		if (!processedCommandLineArgs) {
 	        String[] args = Ide.getIdeArgs().getArgs();
 	        boolean persist = ConnectionHelperPreferenceModel.getInstance().isPersistCommandLineConnections();
 	        for (String arg : args) {
-	        	System.out.println(arg);
 	        	ConnectionHelper.processPotentialConnectionArgument(arg, persist);
 	        }
 	        processedCommandLineArgs = true;
@@ -55,7 +55,7 @@ public class ConnectionHelper {
 
 	/**
 	 * Process the string received by the ConnectionHelperServer as a potential connection request
-	 * @param arg
+	 * @param arg connection info. format = -conName=user[/[pw]]@host:port(:sid|/svc)[#role]
 	 */
 	public static void processPotentialConnectionRequest(String arg) {
 		processPotentialConnectionArgument(arg, ConnectionHelperPreferenceModel.getInstance().isPersistExternalConnectionServerConnections());

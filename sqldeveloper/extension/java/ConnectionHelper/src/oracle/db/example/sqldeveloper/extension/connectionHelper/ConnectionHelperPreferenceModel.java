@@ -29,15 +29,15 @@ import oracle.javatools.data.PropertyStorage;
  */
 public class ConnectionHelperPreferenceModel extends HashStructureAdapter {
 
-	private static final String DATA_KEY = ConnectionHelperPreferenceModel.class.getName();
+	static final String DATA_KEY = ConnectionHelperPreferenceModel.class.getName();
 	
-	private static final String COMMAND_LINE_ACCEPT_CONN = "COMMAND_LINE_ACCEPT_CONN"; //$NON-NLS-1$
-	private static final String COMMAND_LINE_PERSIST_CONN = "COMMAND_LINE_PERSIST_CONN"; //$NON-NLS-1$
+	static final String COMMAND_LINE_ACCEPT_CONN = "COMMAND_LINE_ACCEPT_CONN"; //$NON-NLS-1$
+	static final String COMMAND_LINE_PERSIST_CONN = "COMMAND_LINE_PERSIST_CONN"; //$NON-NLS-1$
 	
-	private static final String EXT_CONN_SVR_PORT = "EXT_CONN_SVR_PORT"; //$NON-NLS-1$
-	private static final Integer EXT_CONN_SVR_DEFAULT_PORT = 51521; // 49152-65535 https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=1&page=24
-	private static final String EXT_CONN_SVR_AUTOSTART = "EXT_CONN_SVR_AUTOSTART"; //$NON-NLS-1$
-	private static final String EXT_CONN_SVR_PERSIST_CONN = "EXT_CONN_SVR_PERSIST_CONN"; //$NON-NLS-1$
+	static final String EXT_CONN_SVR_PORT = "EXT_CONN_SVR_PORT"; //$NON-NLS-1$
+	static final Integer EXT_CONN_SVR_DEFAULT_PORT = 51521; // 49152-65535 https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=1&page=24
+	static final String EXT_CONN_SVR_AUTOSTART = "EXT_CONN_SVR_AUTOSTART"; //$NON-NLS-1$
+	static final String EXT_CONN_SVR_PERSIST_CONN = "EXT_CONN_SVR_PERSIST_CONN"; //$NON-NLS-1$
 
 	private ConnectionHelperPreferenceModel(HashStructure hash) {
 		super(hash);

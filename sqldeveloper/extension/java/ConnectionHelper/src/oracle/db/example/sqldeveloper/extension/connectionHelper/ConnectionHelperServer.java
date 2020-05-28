@@ -43,11 +43,12 @@ public class ConnectionHelperServer {
 	private static final String NAME_TEMPLATE = "%s-%d"; //$NON-NLS-1$
 	
 	public static void start() {
-		stop();
-		int port = ConnectionHelperPreferenceModel.getInstance().getExternalConnectionServerPort();
-		serverTask = new ServerTask(String.format(NAME_TEMPLATE, ConnectionHelperServer.class.getSimpleName(), port), port);
-		listening = true;
-		RaptorTaskManager.getInstance().addTask(serverTask);
+		if (!listening) {
+			int port = ConnectionHelperPreferenceModel.getInstance().getExternalConnectionServerPort();
+			serverTask = new ServerTask(String.format(NAME_TEMPLATE, ConnectionHelperServer.class.getSimpleName(), port), port);
+			listening = true;
+			RaptorTaskManager.getInstance().addTask(serverTask);
+		}
 	}
 	
 	public static void stop() {
@@ -55,6 +56,10 @@ public class ConnectionHelperServer {
 			serverTask.requestCancel();
 			serverTask = null;
 		}
+	}
+	
+	public static boolean isRunning() {
+		return listening && null == serverTask;
 	}
 	
 	private static class ServerTask extends RaptorTask<Void> {
@@ -73,6 +78,8 @@ public class ConnectionHelperServer {
 		public boolean cancel() {
 			if (socket != null) {
 				try {
+					listening = false;
+					serverTask = null;
 					socket.close();
 				} catch (IOException e) {
 					Logger.ignore(getClass(), e);
@@ -88,6 +95,8 @@ public class ConnectionHelperServer {
 				while (listening) {
 					checkCanProceed();
 					this.setMessage("Waiting for connection");
+					// accept() listens for a connection to be made to this socket and accepts it. 
+					// The method blocks until a connection is made.
 					ConnectionHelperTask helperTask = new ConnectionHelperTask(serverSocket.accept()); 
 					this.setMessage("Initializing ConnectionHelperTask");
 					RaptorTaskManager.getInstance().addTask(helperTask);
@@ -145,7 +154,7 @@ public class ConnectionHelperServer {
 		
 	}
 
-	public static TaskException asTaskException(Throwable t) {
+	private static TaskException asTaskException(Throwable t) {
 		if (t instanceof TaskException) {
 			return (TaskException)t;
 		} else {

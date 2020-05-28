@@ -62,16 +62,16 @@ public class ConnectionHelperPreferencePanel extends DefaultTraversablePanel {
 		// The more I think about it, I like this better than buttons. Maybe better than 
 		// the listener but the listener would also demonstrate how to listen for preference
 		// changes.
-		clAcceptConn.addActionListener(e -> {
-			if (clAcceptConn.isSelected()) {
-				ConnectionHelper.processCommandLineArgs();
-			}
-		});
-		svrAutostart.addActionListener(e -> {
-			if (svrAutostart.isSelected()) {
-				ConnectionHelperServer.start();
-			}
-		});
+//		clAcceptConn.addActionListener(e -> {
+//			if (clAcceptConn.isSelected()) {
+//				ConnectionHelper.processCommandLineArgs();
+//			}
+//		});
+//		svrAutostart.addActionListener(e -> {
+//			if (svrAutostart.isSelected()) {
+//				ConnectionHelperServer.start();
+//			}
+//		});
 		
 		final FieldLayoutBuilder builder = new FieldLayoutBuilder(this);
 		builder.setAlignLabelsLeft(true);

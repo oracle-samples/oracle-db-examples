@@ -16,11 +16,17 @@ limitations under the License.
 
 package oracle.db.example.sqldeveloper.extension.connectionHelper;
 
-import oracle.dbtools.util.Logger;
+import static oracle.db.example.sqldeveloper.extension.connectionHelper.ConnectionHelperPreferenceModel.COMMAND_LINE_ACCEPT_CONN;
+import static oracle.db.example.sqldeveloper.extension.connectionHelper.ConnectionHelperPreferenceModel.EXT_CONN_SVR_AUTOSTART;
+import static oracle.db.example.sqldeveloper.extension.connectionHelper.ConnectionHelperPreferenceModel.EXT_CONN_SVR_PORT;
+
 import oracle.ide.Addin;
 import oracle.ide.Ide;
 import oracle.ide.IdeEvent;
 import oracle.ide.IdeListener;
+import oracle.javatools.data.ChangeInfo;
+import oracle.javatools.data.StructureChangeEvent;
+import oracle.javatools.data.StructureChangeListener;
 
 /**
  * ConnectionHelperAddin
@@ -30,13 +36,10 @@ import oracle.ide.IdeListener;
  */
 public class ConnectionHelperAddin implements Addin {
 
-	/* (non-Javadoc)
-	 * @see oracle.ide.Addin#initialize()
-	 */
 	@Override
 	public void initialize() {
-		Logger.info(getClass(), "Initialize"); // TODO REMOVE
-		addIdeListener(); // Don't do any checking now, need system initialized first.
+		addIdeListener();
+		addPreferenceListener();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -45,10 +48,11 @@ public class ConnectionHelperAddin implements Addin {
 
 			@Override
 			public void mainWindowOpened(IdeEvent e) {
-				if (ConnectionHelperPreferenceModel.getInstance().isAcceptCommandLineConnections()) {
+				ConnectionHelperPreferenceModel model = ConnectionHelperPreferenceModel.getInstance();
+				if (model.isAcceptCommandLineConnections()) {
 					ConnectionHelper.processCommandLineArgs();
 				}
-				if (ConnectionHelperPreferenceModel.getInstance().isAutostartExternalConnectionServer()) {
+				if (model.isAutostartExternalConnectionServer()) {
 					ConnectionHelperServer.start();
 				}
 			}
@@ -59,4 +63,35 @@ public class ConnectionHelperAddin implements Addin {
 			public void mainWindowClosing(IdeEvent e) {} // Don't care
 		});
 	}
+
+	private void addPreferenceListener() {
+		ConnectionHelperPreferenceModel.getInstance().addStructureChangeListener(new StructureChangeListener() {
+			@Override
+			public void structureValuesChanged(StructureChangeEvent e) {
+				for (ChangeInfo change : e.getChangeDetails()) {
+					switch(change.getPropertyName()) {
+					case COMMAND_LINE_ACCEPT_CONN: 
+						if (change.getNewValueAsBoolean()) {
+							ConnectionHelper.processCommandLineArgs();
+						}
+						break;
+					case EXT_CONN_SVR_AUTOSTART:
+						if (change.getNewValueAsBoolean()) {
+							ConnectionHelperServer.start();
+						}
+						break;
+					case EXT_CONN_SVR_PORT:
+						if (ConnectionHelperServer.isRunning()) {
+							ConnectionHelperServer.stop();
+							ConnectionHelperServer.start();
+						}
+						break;
+					default: 
+						break; // nothing 
+					}
+				}
+			}
+		});
+	}
+
 }
