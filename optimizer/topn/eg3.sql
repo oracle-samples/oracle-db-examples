@@ -1,5 +1,3 @@
-connect scott/tiger
-
 SELECT deptno, job, APPROX_SUM(sal) sum_sal,
        APPROX_SUM(sal,'MAX_ERROR') sum_sal_err
 FROM   emp
