@@ -1,5 +1,3 @@
-connect scott/tiger 
-
 SELECT deptno, job, APPROX_SUM(sal), APPROX_COUNT(*)
 FROM   emp
 GROUP BY deptno, job

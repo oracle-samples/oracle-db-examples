@@ -1,5 +1,3 @@
-connect scott/tiger
-
 SELECT deptno, job, APPROX_SUM(sal),
        APPROX_RANK(partition by deptno ORDER BY APPROX_SUM(sal) desc) rk
 FROM   emp
