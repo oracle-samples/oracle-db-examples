@@ -1,14 +1,4 @@
-These are examples for the
-[cx_Oracle driver](https://oracle.github.io/python-cx_Oracle).
-
-Download and install from [PyPI](https://pypi.python.org/pypi/cx_Oracle) or
-issue the command:
-
-``python -m pip install cx_Oracle --upgrade``
-
-[Documentation](http://cx-oracle.readthedocs.io/en/latest/index.html)
-[Issues and questions](https://github.com/oracle/python-cx_Oracle/issues)
-
+This directory contains samples for cx_Oracle.
 
 1. The schemas and SQL objects that are referenced in the samples can be
    created by running the Python script [SetupSamples.py][1]. The script

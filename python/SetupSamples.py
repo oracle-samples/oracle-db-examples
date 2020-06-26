@@ -10,16 +10,13 @@
 # demonstration of PL/SQL editioning.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 
 import SampleEnv
 import DropSamples
 
-# connect as SYSDBA
-conn = cx_Oracle.connect(SampleEnv.GetSysdbaConnectString(),
-        mode = cx_Oracle.SYSDBA)
+# connect as administrative user (usually SYSTEM or ADMIN)
+conn = cx_Oracle.connect(SampleEnv.GetAdminConnectString())
 
 # drop existing users and editions, if applicable
 DropSamples.DropSamples(conn)

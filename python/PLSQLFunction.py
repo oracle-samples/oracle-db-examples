@@ -8,8 +8,6 @@
 # Demonstrate how to call a PL/SQL function and get its return value.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 

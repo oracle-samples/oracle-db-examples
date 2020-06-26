@@ -13,8 +13,6 @@
 # higher.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 
@@ -27,9 +25,14 @@ cursor.execute("select sysdate from dual")
 today, = cursor.fetchone()
 print("Fetch of current date before timeout:", today)
 
+# dbms_session.sleep() replaces dbms_lock.sleep() from Oracle Database 18c
+sleepProcName = "dbms_session.sleep" \
+        if int(connection.version.split(".")[0]) >= 18 \
+        else "dbms_lock.sleep"
+
 print("Sleeping...should time out...")
 try:
-    cursor.callproc("dbms_lock.sleep", (3,))
+    cursor.callproc(sleepProcName, (3,))
 except cx_Oracle.DatabaseError as e:
     print("ERROR:", e)
 

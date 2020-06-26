@@ -33,20 +33,12 @@
 # This script requires cx_Oracle 5.3 and higher.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 import sys
 
 # constants
 CONNECT_STRING = "localhost/orcl-tg"
-
-# for Python 2.7 we need raw_input
-try:
-    input = raw_input
-except NameError:
-    pass
 
 # create transaction and generate a recoverable error
 pool = cx_Oracle.SessionPool(SampleEnv.GetMainUser(),

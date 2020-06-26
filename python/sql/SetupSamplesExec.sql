@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------------------
- * Copyright 2017, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2017, 2020, Oracle and/or its affiliates. All rights reserved.
  *---------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
@@ -17,8 +17,6 @@ alter session set nls_numeric_characters='.,'
 /
 
 create user &main_user identified by &main_password
-quota unlimited on users
-default tablespace users
 /
 
 grant
@@ -27,13 +25,28 @@ grant
     create procedure,
     create type,
     select any dictionary,
-    change notification
+    change notification,
+    unlimited tablespace
 to &main_user
 /
 
 grant execute on dbms_aqadm to &main_user
 /
-grant execute on dbms_lock to &main_user
+
+begin
+    execute immediate 'begin dbms_session.sleep(0); end;';
+exception
+when others then
+    begin
+        execute immediate 'grant execute on dbms_lock to &main_user';
+    exception
+    when others then
+        raise_application_error(-20000,
+                'Ensure the following grant is made: ' ||
+                'grant execute on dbms_lock to ' || user ||
+                ' with grant option');
+    end;
+end;
 /
 
 begin
@@ -190,7 +203,7 @@ create table &main_user..PlsqlSessionCallbacks (
 )
 /
 
--- create queue table and queues for demonstrating advanced queuing
+-- create queue table, queues and subscribers for demonstrating Advanced Queuing
 begin
 
     dbms_aqadm.create_queue_table('&main_user..BOOK_QUEUE_TAB',
@@ -203,6 +216,17 @@ begin
     dbms_aqadm.create_queue('&main_user..DEMO_RAW_QUEUE',
             '&main_user..RAW_QUEUE_TAB');
     dbms_aqadm.start_queue('&main_user..DEMO_RAW_QUEUE');
+
+    dbms_aqadm.create_queue_table('&main_user..RAW_QUEUE_MULTI_TAB', 'RAW',
+             multiple_consumers => true);
+    dbms_aqadm.create_queue('&main_user..DEMO_RAW_QUEUE_MULTI',
+            '&main_user..RAW_QUEUE_MULTI_TAB');
+    dbms_aqadm.start_queue('&main_user..DEMO_RAW_QUEUE_MULTI');
+
+    dbms_aqadm.add_subscriber('&main_user..DEMO_RAW_QUEUE_MULTI',
+            sys.aq$_agent('SUBSCRIBER_A', null, null));
+    dbms_aqadm.add_subscriber('&main_user..DEMO_RAW_QUEUE_MULTI',
+            sys.aq$_agent('SUBSCRIBER_B', null, null));
 
 end;
 /

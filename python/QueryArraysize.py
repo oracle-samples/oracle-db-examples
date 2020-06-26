@@ -10,8 +10,6 @@
 # from a large table.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import time
 import cx_Oracle
 import SampleEnv

@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2020, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,10 +25,12 @@
 # There is no difference in how a connection is used once it has been
 # established.
 #
-# This script requires cx_Oracle 5.0 and higher.
+# DRCP has most benefit when used in conjunction with cx_Oracle's local
+# connection pool, see the cx_Oracle documentation.
+#
+# This script requires cx_Oracle 5.0 or higher.
+#
 #------------------------------------------------------------------------------
-
-from __future__ import print_function
 
 import cx_Oracle
 import SampleEnv

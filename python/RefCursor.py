@@ -7,8 +7,6 @@
 #   Demonstrates the use of REF cursors with cx_Oracle.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 

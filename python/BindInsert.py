@@ -8,8 +8,6 @@
 # Demonstrate how to insert a row into a table using bind variables.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 

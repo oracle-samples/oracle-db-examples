@@ -13,8 +13,6 @@
 # is new in cx_Oracle 7.0.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 

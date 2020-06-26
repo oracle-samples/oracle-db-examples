@@ -16,8 +16,9 @@
 #     CX_ORACLE_SAMPLES_EDITION_PASSWORD: password of user for editioning
 #     CX_ORACLE_SAMPLES_EDITION_NAME: name of edition for editioning
 #     CX_ORACLE_SAMPLES_CONNECT_STRING: connect string
-#     CX_ORACLE_SAMPLES_SYSDBA_USER: SYSDBA user for setting up samples
-#     CX_ORACLE_SAMPLES_SYSDBA_PASSWORD: SYSDBA password for setting up samples
+#     CX_ORACLE_SAMPLES_DRCP_CONNECT_STRING: DRCP connect string
+#     CX_ORACLE_SAMPLES_ADMIN_USER: admin user for setting up samples
+#     CX_ORACLE_SAMPLES_ADMIN_PASSWORD: admin password for setting up samples
 #
 # CX_ORACLE_SAMPLES_CONNECT_STRING can be set to an Easy Connect string, or a
 # Net Service Name from a tnsnames.ora file or external naming service,
@@ -29,31 +30,27 @@
 #   [//]host_name[:port][/service_name][:server_type][/instance_name]
 #
 # Commonly just the host_name and service_name are needed
-# e.g. "localhost/orclpdb" or "localhost/XE"
+# e.g. "localhost/orclpdb1" or "localhost/XEPDB1"
 #
 # If using a tnsnames.ora file, the file can be in a default
 # location such as $ORACLE_HOME/network/admin/tnsnames.ora or
 # /etc/tnsnames.ora.  Alternatively set the TNS_ADMIN environment
 # variable and put the file in $TNS_ADMIN/tnsnames.ora.
+#
+# The administrative user for cloud databases is ADMIN and the administrative
+# user for on premises databases is SYSTEM.
 #------------------------------------------------------------------------------
-
-from __future__ import print_function
 
 import getpass
 import os
 import sys
 
-# for Python 2.7 we need raw_input
-try:
-    input = raw_input
-except NameError:
-    pass
-
 # default values
 DEFAULT_MAIN_USER = "pythondemo"
 DEFAULT_EDITION_USER = "pythoneditions"
 DEFAULT_EDITION_NAME = "python_e1"
-DEFAULT_CONNECT_STRING = "localhost/orclpdb"
+DEFAULT_CONNECT_STRING = "localhost/orclpdb1"
+DEFAULT_DRCP_CONNECT_STRING = "localhost/orclpdb1:pooled"
 
 # dictionary containing all parameters; these are acquired as needed by the
 # methods below (which should be used instead of consulting this dictionary
@@ -103,17 +100,18 @@ def GetMainConnectString(password=None):
     return "%s/%s@%s" % (GetMainUser(), password, GetConnectString())
 
 def GetDrcpConnectString():
-    return GetMainConnectString() + ":pooled"
+    connectString = GetValue("DRCP_CONNECT_STRING", "DRCP Connect String",
+            DEFAULT_DRCP_CONNECT_STRING)
+    return "%s/%s@%s" % (GetMainUser(), GetMainPassword(), connectString)
 
 def GetEditionConnectString():
     return "%s/%s@%s" % \
             (GetEditionUser(), GetEditionPassword(), GetConnectString())
 
-def GetSysdbaConnectString():
-    sysdbaUser = GetValue("SYSDBA_USER", "SYSDBA user", "sys")
-    sysdbaPassword = GetValue("SYSDBA_PASSWORD",
-            "Password for %s" % sysdbaUser)
-    return "%s/%s@%s" % (sysdbaUser, sysdbaPassword, GetConnectString())
+def GetAdminConnectString():
+    adminUser = GetValue("ADMIN_USER", "Administrative user", "admin")
+    adminPassword = GetValue("ADMIN_PASSWORD", "Password for %s" % adminUser)
+    return "%s/%s@%s" % (adminUser, adminPassword, GetConnectString())
 
 def RunSqlScript(conn, scriptName, **kwargs):
     statementParts = []
@@ -128,7 +126,11 @@ def RunSqlScript(conn, scriptName, **kwargs):
             if statement:
                 for searchValue, replaceValue in replaceValues:
                     statement = statement.replace(searchValue, replaceValue)
-                cursor.execute(statement)
+                try:
+                    cursor.execute(statement)
+                except:
+                    print("Failed to execute SQL:", statement)
+                    raise
             statementParts = []
         else:
             statementParts.append(line)
@@ -145,4 +147,3 @@ def RunSqlScript(conn, scriptName, **kwargs):
             prevName = name
             prevObjType = objType
         print("    %s/%s %s" % (lineNum, position, text))
-
