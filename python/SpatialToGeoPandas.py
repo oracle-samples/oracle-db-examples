@@ -22,8 +22,6 @@
 # dependencies (see http://geopandas.org/install.html).
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import SampleEnv
 import cx_Oracle
 from shapely.wkb import loads

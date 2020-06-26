@@ -11,8 +11,6 @@
 # Database 12.1 and higher.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 import datetime

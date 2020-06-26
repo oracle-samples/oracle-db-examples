@@ -9,8 +9,6 @@
 # subclassed cursor and row factory.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import collections
 import cx_Oracle
 import SampleEnv

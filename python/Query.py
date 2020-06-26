@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2020, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -7,8 +7,6 @@
 #
 # Demonstrate how to perform a query in different ways.
 #------------------------------------------------------------------------------
-
-from __future__ import print_function
 
 import cx_Oracle
 import SampleEnv
@@ -38,4 +36,11 @@ print("Fetch many rows")
 cursor.execute(sql)
 res = cursor.fetchmany(numRows=3)
 print(res)
+print()
 
+print("Fetch each row as a Dictionary")
+cursor.execute(sql)
+columns = [col[0] for col in cursor.description]
+cursor.rowfactory = lambda *args: dict(zip(columns, args))
+for row in cursor:
+    print(row)

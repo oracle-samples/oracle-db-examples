@@ -8,8 +8,6 @@
 # Drops the database objects used for the cx_Oracle samples.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 
@@ -21,8 +19,6 @@ def DropSamples(conn):
             edition_name = SampleEnv.GetEditionName())
 
 if __name__ == "__main__":
-    conn = cx_Oracle.connect(SampleEnv.GetSysdbaConnectString(),
-            mode = cx_Oracle.SYSDBA)
+    conn = cx_Oracle.connect(SampleEnv.GetAdminConnectString())
     DropSamples(conn)
     print("Done.")
-

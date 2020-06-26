@@ -12,8 +12,6 @@
 # The user must have been granted the SODA_APP privilege.
 #------------------------------------------------------------------------------
 
-from __future__ import print_function
-
 import cx_Oracle
 import SampleEnv
 
