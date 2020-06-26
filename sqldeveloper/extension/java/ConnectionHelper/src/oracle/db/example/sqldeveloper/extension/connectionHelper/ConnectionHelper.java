@@ -61,8 +61,6 @@ public class ConnectionHelper {
 		processPotentialConnectionArgument(arg, ConnectionHelperPreferenceModel.getInstance().isPersistExternalConnectionServerConnections());
 	}
 
-	// -system_DB120101=system/dbtools@llg00hon.uk.oracle.com:1521/DB12201
-    // -sysdba_DB120101=sys/dbtools@llg00hon.uk.oracle.com:1521/DB12201#SYSDBA
     // TODO? Look up valid character requirements for each group
     // format = -conName=user[/[pw]]@host:port(:sid|/svc)[#role]
     //           1       2      4    5    6     8    9     11
@@ -108,7 +106,7 @@ public class ConnectionHelper {
 	 * @since SQL Developer 20.1
 	 */
 	private static class ConnectionHelperShutdownHook implements ShutdownHook {
-		public ArrayList<String> fqNames = new ArrayList<>();
+		private ArrayList<String> fqNames = new ArrayList<>();
 		
 		public void add(String fqName) {
 			fqNames.add(fqName);
