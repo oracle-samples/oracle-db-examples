@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2020, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -45,7 +45,8 @@ async function run() {
        ORDER BY id`,
       [],  // no binds
       {
-        fetchArraySize: 150 // internal buffer size can be adjusted for performance tuning
+        prefetchRows:   150,  // internal buffer sizes can be adjusted for performance tuning
+        fetchArraySize: 150
       }
     );
 
@@ -70,6 +71,7 @@ async function run() {
 
       stream.on('end', function() {
         // console.log("stream 'end' event"); // all data has been fetched
+        stream.destroy();                     // clean up resources being used
       });
 
       stream.on('close', function() {

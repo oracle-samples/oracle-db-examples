@@ -1,17 +1,6 @@
 # Node-oracledb Examples
 
-This directory contains [node-oracledb 4.1](https://www.npmjs.com/package/oracledb) examples.
-
-The node-oracledb add-on for Node.js powers high performance Oracle Database applications.
-
-[Node-oracledb documentation](https://oracle.github.io/node-oracledb/doc/api.html)
-
-[Issues and questions](https://github.com/oracle/node-oracledb/issues)
-
-Issues and questions about node-oracledb can be posted on
-[GitHub](https://github.com/oracle/node-oracledb/issues) or
-[Slack](https://node-oracledb.slack.com/) ([link to join
-Slack](https://join.slack.com/t/node-oracledb/shared_invite/enQtNDU4Mjc2NzM5OTA2LWMzY2ZlZDY5MDdlMGZiMGRkY2IzYjI5OGU4YTEzZWM5YjQ3ODUzMjcxNWQyNzE4MzM5YjNkYjVmNDk5OWU5NDM).
+This directory contains [node-oracledb](https://www.npmjs.com/package/oracledb) examples.
 
 To run the examples:
 
@@ -111,6 +100,7 @@ File Name                                                 | Description
 [`selectjson.js`](selectjson.js)                          | Shows some JSON features of Oracle Database
 [`selectjsonblob.js`](selectjsonblob.js)                  | Shows how to use a BLOB as a JSON column store
 [`selectobject.js`](selectobject.js)                      | Insert and query a named Oracle database object
+[`selectnestedcursor.js`](selectnestedcursor.js)          | Shows selecting from a nested cursor
 [`selectstream.js`](selectstream.js)                      | Executes a basic query using a Readable Stream
 [`selectvarray.js`](selectvarray.js)                      | Shows inserting and selecting from a VARRAY column
 [`sessionfixup.js`](sessionfixup.js)                      | Shows a pooled connection callback to efficiently set session state
