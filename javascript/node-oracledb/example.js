@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -34,6 +34,12 @@ process.env.ORA_SDTZ = 'UTC';
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing your Oracle
+// Client Libraries.  If this is not done, then a standard search heuristic is
+// used, see the node-oracledb documentation.
+// oracledb.initOracleClient({ libDir: 'C:\instantclient_19_3' });                    // Windows
+// oracledb.initOracleClient({ libDir: '/Users/your_username/instantclient_19_3' });  // macOS
 
 async function run() {
   let connection;
@@ -99,16 +105,18 @@ async function run() {
 
     // For a complete list of options see the documentation.
     options = {
-      outFormat: oracledb.OUT_FORMAT_OBJECT   // query result format
-      // extendedMetaData: true,   // get extra metadata
-      // fetchArraySize: 100       // internal buffer allocation size for tuning
+      outFormat: oracledb.OUT_FORMAT_OBJECT,   // query result format
+      // extendedMetaData: true,               // get extra metadata
+      // prefetchRows:     100,                // internal buffer allocation size for tuning
+      // fetchArraySize:   100                 // internal buffer allocation size for tuning
     };
 
     result = await connection.execute(sql, binds, options);
 
-    console.log("Column metadata: ", result.metaData);
+    console.log("Metadata: ");
+    console.dir(result.metaData, { depth: null });
     console.log("Query results: ");
-    console.log(result.rows);
+    console.dir(result.rows, { depth: null });
 
     //
     // Show the date.  The value of ORA_SDTZ affects the output

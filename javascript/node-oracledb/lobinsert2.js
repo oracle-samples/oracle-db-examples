@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2020, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -63,40 +63,28 @@ async function run() {
 
     const doStream = new Promise((resolve, reject) => {
 
-      let errorHandled = false;
-
-      lob.on('close', () => {
-        // console.log("lob.on 'close' event");
+      lob.on('finish', () => {
+        // console.log("lob.on 'finish' event");
         connection.commit((err) => {
           if (err) {
-            if (!errorHandled) {
-              errorHandled = true;
-              reject(err);
-            }
+            lob.destroy(err);
           } else {
             console.log("Text inserted successfully.");
             resolve();
           }
         });
       });
+
       lob.on('error', (err) => {
         // console.log("lob.on 'error' event");
-        if (!errorHandled) {
-          errorHandled = true;
-          lob.close(() => {
-            reject(err);
-          });
-        }
+        reject(err);
       });
 
       console.log('Reading from ' + inFileName);
       const inStream = fs.createReadStream(inFileName);
       inStream.on('error', (err) => {
         // console.log("inStream.on 'error' event");
-        if (!errorHandled) {
-          errorHandled = true;
-          reject(err);
-        }
+        lob.destroy(err);
       });
 
       inStream.pipe(lob);  // copies the text to the LOB
