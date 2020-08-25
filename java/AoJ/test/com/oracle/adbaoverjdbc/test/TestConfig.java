@@ -38,7 +38,7 @@ import static com.oracle.adbaoverjdbc.test.TestConfig.Configurable.*;
  * For example, this -D command line option would configure the database user:
  * <br>
  * <code>
- * java -Dcom.oracle.adbaoverjdbc.test.TestConfig.USER=SCOTT ...
+ * java -Dcom.oracle.adbaoverjdbc.test.TestConfig.USER=testuser ...
  * </code>
  * <br>
  * For convenience, configurable values can be identified by their short name,
@@ -46,7 +46,7 @@ import static com.oracle.adbaoverjdbc.test.TestConfig.Configurable.*;
  * example, this -D command line option would also configure the database user:
  * <br>
  * <code>
- * java -DUSER=SCOTT ...
+ * java -DUSER=testuser ...
  * </code>
  * <br>
  * While convenient, potential collisions can arise if some other component 

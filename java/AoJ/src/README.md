@@ -50,10 +50,9 @@ To run the sample file you will need a SQL database and corresponding JDBC drive
 has been run with [Oracle Database 12c](http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html)
 and [Oracle Database 12c JDBC](http://www.oracle.com/technetwork/database/application-development/jdbc/downloads/index.html),
 but it should work with any reasonably standard compliant SQL database and JDBC
-driver. The sample file uses the scott/tiger schema available 
-[here](https://github.com/oracle/dotnet-db-samples/blob/master/schemas/scott.sql).
+driver. The sample file uses the table 'emp' and 'dept'. So, you can create a user "testuser" and 'emp' and 'dept' tables using [JDBCSampleData.sql](https://github.com/oracle/oracle-db-examples/blob/master/java/jdbc/BasicSamples/JDBCSampleData.sql).
 
-Start the database and load ```scott.sql```. Edit ```com.oracle.adbaoverjdbc.test.FirstLight.java```
+Start the database and make sure to create 'testuser' and needed tables using [JDBCSampleData.sql](https://github.com/oracle/oracle-db-examples/blob/master/java/jdbc/BasicSamples/JDBCSampleData.sql). Edit ```com.oracle.adbaoverjdbc.test.FirstLight.java```
 and set the constant ```URL``` to an appropriate value. AoJ will pass this value
 to ```java.sql.DriverManager.getSession```. If you are using a database other
 than Oracle you should change the value of the constant ```TRIVIAL``` to some
@@ -62,7 +61,7 @@ very trivial ```SELECT``` query.
 ## Sample Code
 
 The following test case should give you some idea of what AoJ can do. It  should
-run with any JDBC driver connecting to a database with the scott schema. This is
+run with any JDBC driver connecting to a database with the 'testuser' schema. This is
 the last test in ```com.oracle.adbaoverjdbc.test.FirstLight.java```. For an 
 introduction to ADBA see the 
 [JavaOne 2017 presentation](http://www.oracle.com/technetwork/database/application-development/jdbc/con1491-3961036.pdf). 
