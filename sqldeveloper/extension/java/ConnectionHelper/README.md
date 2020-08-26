@@ -1,6 +1,8 @@
 # SQL Developer Examples
 ## ConnectionHelper
-Optionally accept connection info from the command line and/or on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html)
+Optionally accept connection info from the command line and/or on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html). For use with the socket server, see also the [ConnectionHelperClient](../ConnectionHelperClient/README.md) example.
+
+*Note: The cfu bundle includes the client. It can be found in <sqldev_home>sqldeveloper/extension/oracle.db.example.sqldeveloper.extension.connectionHelper/ConnectionHelperClient.jar*
 
 ### Command Line
 sqldeveloper -_conName_**=**_user_\[**/**\[_pw_]]**@**_host_**:**_port_(**:**_sid_|**/**_svc_)\[**#**_role_]

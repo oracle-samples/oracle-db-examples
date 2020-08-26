@@ -14,10 +14,11 @@
     -->
 	
     <target name="jar" depends="compile" description="Create the extension jar">
-        <jar basedir="${built}/classes" destfile="${built}/${extension.filename}" excludes="**/.data/*" />
+        <jar basedir="${built}/classes" destfile="${built.destination.file}" excludes="**/.data/*" />
 		<manifest file="${jar.manifest.template}" mode="update">
 			<attribute name="Main-Class" value="ConnectionHelperClient" />
 		</manifest>
+        <jar destfile="${built.destination.file}" update="true" manifest="${jar.manifest.template}" />
     </target>
     <target name="deploy" depends="jar, manifest" description="Deploy plugins directory">
         <copy file="${built}/${extension.filename}" tofile="${ide.home}/sqldeveloper/lib/${extension.filename}" />
