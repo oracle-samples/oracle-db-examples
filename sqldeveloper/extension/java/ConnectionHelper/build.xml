@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="windows-1252" ?>
 <project name="ConnectionHelper" default="_deploy">
-    <!-- imports -->
+	<!-- This one needs direct link to the project page for doc-->
+	<property name="extension.owner.url" value="https://github.com/oracle/oracle-db-examples/tree/master/sqldeveloper/extension/java/ConnectionHelper" />
+
+	<!-- override _cfu to include the client. -->
+    <property name="ch.client.dir" value="${basedir}/../ConnectionHelperClient" />
+    <property name="ch.client.jar" value="ConnectionHelperClient.jar" />
+    <target name="_cfu" depends="clean,jar,manifest" description="Create CFU bundle">
+        <echo message="Need to build ConnectionHelperClient..." />
+        <ant dir="${ch.client.dir}" target="clean" inheritAll="false" />
+        <ant dir="${ch.client.dir}" target="jar" inheritAll="false" />
+        <echo message="and create a local built/lib directory..." />
+        <mkdir dir="${built}/lib" />
+        <echo message="to copy the client jar before building the cfu bundle." />
+        <copy file="${ch.client.dir}/built/${ch.client.jar}" tofile="${built}/lib/${ch.client.jar}" />
+        <antcall target="cfu-inc" inheritAll="true" inheritRefs="true" />
+    </target>
+
+	<!-- imports -->
 	<import file="../../buildtools/ant/build.xml" />
 
     <!-- bundle dependencies -->
