@@ -6,6 +6,8 @@ Depending on requirements, this can be done in either XML or java and deployed b
 
 ### New
 
+* [Managing Extensions](./ManagingExtensions.md) - ([Issue 113](https://github.com/oracle/oracle-db-examples/issues/113)) How to add, disable, and remove extensions.
+
 * [ConnectionHelper](java/ConnectionHelper)
 Optionally accept connection info from the command line and/or on a [SocketServer](https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html)
 
@@ -18,6 +20,9 @@ A simple command line client for the ConnectionHelper socket server.
 ### Contents
 
 * [Set Up / Tutorial](./setup.md) - A step by step guide to building your first extension and check for updates bundle.
+
+
+* [Managing Extensions](./ManagingExtensions.md) - How to add, disable, and remove extensions.
 
 
 * ["Simple" User Extensions (XML)](xml)
