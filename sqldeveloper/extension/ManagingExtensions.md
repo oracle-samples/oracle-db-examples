@@ -17,7 +17,7 @@ Navigate to Help->Check for Updates.
 ![Select update source image](images/ME-CFU-Check-1.png)
 
 ##### Adding an Update Center
-If you need to add a reference to an update center, press the Add button to enter the name and location. If the new update center is web based, enter the URL. If it is file system based, enter the path or use the browse button. There is an external _(not supported by Oracle)_ [example update center](https://github.com/bjeffrie/sqldev-update-center) for these extensions. You can add https://gitcdn.xyz/repo/bjeffrie/sqldev-update-center/master/update-center.xml as an update center location to access it.
+If you need to add a reference to an update center, press the Add button to enter the name and location. If the new update center is web based, enter the URL. If it is file system based, enter the path or use the browse button. There is an external _(not supported by Oracle)_ [example update center](https://github.com/bjeffrie/sqldev-update-center) for these extensions. You can add https://raw.githubusercontent.com/bjeffrie/sqldev-update-center/master/update-center.xml as an update center location to access it.
 ![Add update center dialog image](images/ME-CFU-Add-1.png)
 
 ##### Using an Update Center
