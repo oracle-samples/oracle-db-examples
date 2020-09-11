@@ -1,4 +1,4 @@
-select /* PATCHTEST*/  /*+ USE_HASH(tab1 tab2) */
+select /* PATCHTEST*/  /*+ USE_HASH(tab1) */
 sum(num)
 from   tab1
 where  id in (select id
