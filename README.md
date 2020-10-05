@@ -13,6 +13,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [plsql](./plsql) | PL/SQL based examples |
 | [python](./python) | Python based examples |
 | [ruby](./ruby) | Ruby based examples |
+| [spatial](./spatial) | Spatial examples |
 | [sql](./sql) | SQL based examples |
 | [sqldeveloper](./sqldeveloper) | [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) examples |
 

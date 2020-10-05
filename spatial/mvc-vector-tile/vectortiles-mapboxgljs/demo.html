@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Display a map</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+<style>
+  body { margin: 0; padding: 0; }
+  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    //if you have an account with Mapbox, enter the access token here.
+    //mapboxgl.accessToken = '<your access token here>';
+  
+    var mapInstance = new mapboxgl.Map({
+            container: 'map',
+
+            // This defines where to load the background map tiles.
+            // If you have an account with Mapbox you can set the style to 
+            // your hosted maps from Mapbox server.
+            style: 'map-styles/world_map/oracle_world_map.json',
+
+            center: [-122, 37],
+            zoom: 4.5
+        });
+
+    var showMapViewerPointTheme = function() {
+        //Change the below MapViewer URL, data source and theme values accordingly.
+        var mvURL ="http://localhost:8080/mapviewer";
+        var mvDataSrc = "mvdemo";  //mapviewer data source
+        var mvTheme = "CUSTOMERS"; //mapviewer pre-defined theme containing POINT type geometries.
+
+        //URL to MapViewer generated vector tiles for the specified theme.
+        var vectorTileUrl = mvURL+"/vt/"+mvDataSrc+"/{z}/{x}/{y}.mvt?t="+mvTheme ;
+
+        //defines a Mapbox source based on the vector tiles for the theme CUSTOMERS.
+        var source = {
+            "type" : "vector",  
+            "tiles" : [vectorTileUrl], // a vector tile source
+            "minzoom" : 0,
+            "maxzoom" : 19
+        };
+
+        mapInstance.addSource("my-customers-source", source);
+
+        //Defines a Mapbox layer that is contained inside the above source. It is
+        //also the only layer in the source. 
+        var layer = {
+            "id" : "my-customers-layer",
+            "type" : "circle",  //Mapbox rendering type: circle
+            "source": 'my-customers-source',
+            
+            //Each mapviewer generated vector tile source always contains only one
+            //layer, whose name is the same as the original MapViewer theme's name.
+            "source-layer" : mvTheme,
+            
+            //defines the rendering details
+            "paint" : {
+                "circle-radius": 10,
+                "circle-color": 'rgb(111, 111, 111)',
+                "circle-opacity": .8
+            }
+        };
+
+        mapInstance.addLayer(layer);
+
+
+        // when a click event occurs on a feature in the "my-customers-layer" layer,
+        // open a popup at the location and show the attributes from the layer. The
+        // attributes are the "info columns" defined for the original MapViewer theme.
+        
+        mapInstance.on('click', 'my-customers-layer', function(e) {
+            var coords = e.features[0].geometry.coordinates.slice();
+            var props = e.features[0].properties;
+
+            // simple HTML string with all the properties (info columns) and values.
+            var popupContentsHtml = 'NAME:'+props.NAME+ 
+                ' | CITY:'+props.CITY +
+                ' | SALES:'+props.SALES +
+                ' | ACCOUNT_MGR:'+ props.ACCOUNT_MGR;
+
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coords[0]) > 180) {
+                coords[0] += e.lngLat.lng > coords[0] ? 360 : -360;
+            }
+             
+            new mapboxgl.Popup()
+                .setLngLat(coords)
+                .setHTML(popupContentsHtml)
+                .addTo(mapInstance);
+
+        });
+    };
+    
+    mapInstance.on('load', showMapViewerPointTheme);
+
+
+</script>
+
+</body>
+</html>
