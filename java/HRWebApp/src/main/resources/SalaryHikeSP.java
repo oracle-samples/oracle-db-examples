@@ -31,11 +31,7 @@ public class SalaryHikeSP {
    *  Increment the Salary
    */
   public static ResultSet incrementSalary (int percentIncrease) throws SQLException {
-    int updateCount = 0;
-    int totalemployees = 0;
-    int tier3emp = 0;
-    int tier2emp = 0;
-    int tier1emp = 0;
+    int updateCount = 0,totalemployees = 0,tier3emp = 0,tier2emp = 0,tier1emp = 0;    
     float totalsalary = 0.0f;
     float minsalary = 0.0f;
     float maxsalary = 0.0f;
