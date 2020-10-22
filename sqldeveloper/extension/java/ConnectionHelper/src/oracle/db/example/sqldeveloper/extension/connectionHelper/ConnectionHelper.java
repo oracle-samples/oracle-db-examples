@@ -64,7 +64,7 @@ public class ConnectionHelper {
     // TODO? Look up valid character requirements for each group
     // format = -conName=user[/[pw]]@host:port(:sid|/svc)[#role]
     //           1       2      4    5    6     8    9     11
-    private static final String conRegex = "-(.*)=([^\\/]*)(\\/([^@]*))?@([^:]*):([^:]*)(:([a-zA-Z0-9_]*)|\\/([a-zA-Z0-9_]*))(#([a-zA-Z0-9_]*))?"; //$NON-NLS-1$
+    private static final String conRegex = "-(.*)=([^\\/]*)(\\/([^@]*))?@([^:]*):([^:]*)(:([a-zA-Z0-9_.]*)|\\/([a-zA-Z0-9_.]*))(#([a-zA-Z0-9_]*))?"; //$NON-NLS-1$
     private static final Pattern conArg = Pattern.compile(conRegex);
 	
     private static void processPotentialConnectionArgument(String arg, boolean persist) {
