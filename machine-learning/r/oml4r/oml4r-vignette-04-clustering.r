@@ -93,7 +93,7 @@ tail(predict(km.mod1,X,type=c("class","raw"),supplemental.cols=c("x","y")),3)  #
 tail(predict(km.mod1,X,type="raw",supplemental.cols=c("x","y")),3)             # ask for only raw probabilities with supp data
 
 ###################################################
-# Use Oracle Orthoginal Partitioning Clustering 
+# Use Oracle Orthogonal Partitioning Clustering 
 # density-based algorithm
 ###################################################
 
