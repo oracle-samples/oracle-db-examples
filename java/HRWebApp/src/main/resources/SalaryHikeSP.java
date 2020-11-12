@@ -32,15 +32,8 @@ public class SalaryHikeSP {
    */
   public static ResultSet incrementSalary (int percentIncrease) throws SQLException {
     int updateCount = 0,totalemployees = 0,tier3emp = 0,tier2emp = 0,tier1emp = 0;    
-    float totalsalary = 0.0f;
-    float minsalary = 0.0f;
-    float maxsalary = 0.0f;
-    float totalbudget = 0.0f;
-    float tier3hike = 0.0f;
-    float tier2hike = 0.0f;
-    float tier1hike = 0.0f;
-
-
+    float totalsalary = 0.0f,minsalary = 0.0f,maxsalary = 0.0f,totalbudget = 0.0f,tier3hike = 0.0f,tier2hike = 0.0f,tier1hike = 0.0f;
+    
     // Percentage to divide the salary hike budget into
     // three tiers based on the salary range
     // Tier 1 salary range is 15,001 to 25,000
