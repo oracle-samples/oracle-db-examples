@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.*/
+/* Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+Licensed under the Universal Permissive License v 1.0 
+as shown at http://oss.oracle.com/licenses/upl */
 
 /*
  DESCRIPTION
@@ -46,7 +48,7 @@ import oracle.ucp.jdbc.PoolDataSource;
 
 public class ADBQuickStart {
  
-  // Make sure to have Oracle JDBC driver 18c or above 
+  // Make sure to have Oracle JDBC release 18c or higher 
   // to pass TNS_ADMIN as part of a connection URL.
   // TNS_ADMIN - Should be the path where the client credentials zip file is downloaded. 
   // wallet_dbname - This is the TNS Alias that you can get from tnsnames.ora.
@@ -132,15 +134,16 @@ public class ADBQuickStart {
            resultSet.getString(3)+ " " + resultSet.getString(4) + " " +
            resultSet.getInt(5));
         }
-      System.out.println("\nSuccessfully established a connection to Autonomous Database\n");
-      }
+        System.out.println("\nSuccessfully established a connection to Autonomous Database\n");
+       }
       }
     }
     catch (SQLException e) {
       System.out.println("ADBQuickStart - "
           + "doSQLWork()- SQLException occurred : " + e.getMessage());
     } 
-  }
-}
+  } // doSQLWork
+ 
+} // ADBQuickStart 
 
     
