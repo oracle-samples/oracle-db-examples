@@ -5,10 +5,10 @@
  The code sample demonstrates establishing a connection to Autonomous Database (ATP/ADW) using
  Oracle JDBC driver and Universal Connection Pool (UCP). It does the following.  
  
- (a)Set the connection factory class name to 
+ (a) Set the connection factory class name to 
  oracle.jdbc.pool.OracleDataSource before getting a connection.   
- (b)Set the connection pool properties(e.g.,minPoolSize, maxPoolSize). 
- (c)Get the connection and perform some database operations. 
+ (b) Set the connection pool properties(e.g.,minPoolSize, maxPoolSize). 
+ (c) Get the connection and perform some database operations. 
  For a quick test, the sample retrieves 20 records from the Sales History (SH) schema 
  that is accessible to any DB users on autonomous Database.  
  
@@ -16,7 +16,7 @@
  You will need to enter the DB_PASSWORD of your Autonomous Database through console
  while running the sample.  
  Step 2: Download the latest Oracle JDBC driver(ojdbc8.jar) and UCP (ucp.jar) 
- along with oraclepki.jar, osdt_core.jar and osdt_cert.jar to your classpath.  
+ along with oraclepki.jar, osdt_core.jar and osdt_cert.jar and add to your classpath.  
  Refer to https://www.oracle.com/database/technologies/maven-central-guide.html               
  Step 3: Compile and Run the sample. 
  
@@ -33,6 +33,8 @@
  MODIFIED    (MM/DD/YY)
  nbsundar    11/09/2020 - Creation 
  */
+package com.oracle.jdbctest;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,9 +49,12 @@ public class ADBQuickStart {
   // Make sure to have Oracle JDBC driver 18c or above 
   // to pass TNS_ADMIN as part of a connection URL.
   // TNS_ADMIN - Should be the path where the client credentials zip file is downloaded. 
+  // wallet_dbname - This is the TNS Alias that you can get from tnsnames.ora.
   final static String DB_URL="jdbc:oracle:thin:@wallet_dbname?TNS_ADMIN=/Users/test/wallet_dbname/";
-  // Update the Database Username and Password to point to your Autonomous Database
+  // Update the Database Username to point to your Autonomous Database. For a quick testing, you can 
+  // use "admin" user. 
   final static String DB_USER = "admin";
+  // For security reasons, you will need to provide database password through console.  
   static String DB_PASSWORD ;
   final static String CONN_FACTORY_CLASS_NAME="oracle.jdbc.pool.OracleDataSource";
 
@@ -57,8 +62,6 @@ public class ADBQuickStart {
    * The sample demonstrates UCP as client side connection pool.
    */
   public static void main(String args[]) throws Exception {
-  
-    
     // For security purposes, you must enter the password through the console 
     try {
       Scanner scanner = new Scanner(System.in);
@@ -91,7 +94,6 @@ public class ADBQuickStart {
     // connections allowed on the connection pool.
     pds.setMaxPoolSize(20);
 
-
     // Get the database connection from UCP.
     try (Connection conn = pds.getConnection()) {
       System.out.println("Available connections after checkout: "
@@ -106,8 +108,7 @@ public class ADBQuickStart {
         + pds.getAvailableConnectionsCount());
     System.out.println("Borrowed connections after checkin: "
         + pds.getBorrowedConnectionsCount());
-  }
-  
+  }  
 
   /*
    * Selects 20 rows from the SH (Sales History) Schema that is the accessible to all 
