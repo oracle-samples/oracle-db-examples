@@ -158,3 +158,7 @@ Add three Form items:
 - format: **xlsx**
 - name: **`<Your name>`**
 - to: **`<your emailaddress>`**
+
+### Example using Curl
+```
+curl -v -F format=xlsx -F name="John Doe" -F to=example@oracle.com <REST_HANDLER_URL>
