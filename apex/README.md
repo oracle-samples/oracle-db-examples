@@ -5,6 +5,7 @@ This directory contains examples for APEX.
 | Repo/Folder name  | Description |
 | ------------- | ------------- |
 | [plugins](./plugins) | Plug-In examples |
+| [sample-code](./sample-code) | Example Code |
 
 ## Documentation
 You can find the online documentation of Oracle Application Express  under [https://docs.oracle.com/en/database/oracle/application-express/20.2/index.html](https://docs.oracle.com/en/database/oracle/application-express/20.2/index.html)
