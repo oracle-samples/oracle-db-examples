@@ -11,13 +11,13 @@ These code snippets were used during the APEX Office Hours session about [Super 
 Please go to SQL Workshop / Utilities / Sample Datasets. Click the Install button for EMP / DEPT.
 
 ## Examples
-- [1-basic.sql](examples/1-basic.sql)
-- [2-columns.sql](examples/2-columns.sql)
-- [3-column-groups.sql](examples/3-column-groups.sql)
-- [4-highlights.sql](examples/4-highlights.sql)
-- [5-aggregates.sql](examples/5-aggregates.sql)
-- [6-styling.sql](examples/6-styling.sql)
-- [7-mail.sql](examples/7-mail.sql)
+- [1-basic.sql](1-basic.sql)
+- [2-columns.sql](2-columns.sql)
+- [3-column-groups.sql](3-column-groups.sql)
+- [4-highlights.sql](4-highlights.sql)
+- [5-aggregates.sql](5-aggregates.sql)
+- [6-styling.sql](6-styling.sql)
+- [7-mail.sql](7-mail.sql)
 
 ## How to use the examples
 Each example can be run as a REST Resource Handler.
