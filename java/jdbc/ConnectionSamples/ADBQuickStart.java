@@ -103,10 +103,10 @@ public class ADBQuickStart {
       System.out.println("Borrowed connections after checkout: "
           + pds.getBorrowedConnectionsCount());       
       // Perform a database operation
-        doSQLWork(conn);
-      } catch (SQLException e) {
-          System.out.println("ADBQuickStart - "
-            + "doSQLWork()- SQLException occurred : " + e.getMessage());
+      doSQLWork(conn);
+    } catch (SQLException e) {
+        System.out.println("ADBQuickStart - "
+          + "doSQLWork()- SQLException occurred : " + e.getMessage());
     } 
     
     System.out.println("Available connections after checkin: "
