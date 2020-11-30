@@ -55,7 +55,8 @@ public class ADBQuickStart {
   public static void main(String args[]) throws Exception {
     // Make sure to have Oracle JDBC driver 18c or above 
     // to pass TNS_ADMIN as part of a connection URL.
-    // TNS_ADMIN - Should be the path where the client credentials zip file is downloaded. 
+    // TNS_ADMIN - Should be the path where the client credentials zip (wallet_dbname.zip) file is downloaded. 
+    // dbname_medium - It is the TNS alias present in tnsnames.ora.
     final String DB_URL="jdbc:oracle:thin:@dbname_medium?TNS_ADMIN=/Users/test/wallet_dbname/";
     // Update the Database Username and Password to point to your Autonomous Database
     final String DB_USER = "admin";
@@ -100,16 +101,13 @@ public class ADBQuickStart {
       System.out.println("Available connections after checkout: "
           + pds.getAvailableConnectionsCount());
       System.out.println("Borrowed connections after checkout: "
-          + pds.getBorrowedConnectionsCount());
-          
+          + pds.getBorrowedConnectionsCount());       
       // Perform a database operation
-      try {
         doSQLWork(conn);
       } catch (SQLException e) {
           System.out.println("ADBQuickStart - "
             + "doSQLWork()- SQLException occurred : " + e.getMessage());
-       } 
-    }
+    } 
     
     System.out.println("Available connections after checkin: "
         + pds.getAvailableConnectionsCount());
@@ -124,15 +122,15 @@ public class ADBQuickStart {
     String queryStatement = "SELECT CUST_ID, CUST_FIRST_NAME, CUST_LAST_NAME, CUST_CITY," 
       + "CUST_CREDIT_LIMIT FROM SH.CUSTOMERS WHERE ROWNUM < 20 order by CUST_ID";
       
-    System.out.println("Query is " + queryStatement);
+    System.out.println("\n Query is " + queryStatement);
     
     conn.setAutoCommit(false);
     // Prepare a statement to execute the SQL Queries.
     try (Statement statement = conn.createStatement(); 
       // Select 20 rows from the CUSTOMERS table from SH schema. 
       ResultSet resultSet = statement.executeQuery(queryStatement)) {
-        System.out.println("\nCUST_ID" + " " + "CUST_FIRST_NAME" + " " + "CUST_LAST_NAME" 
-        + " " + "CUST_CITY" + " " + "CUST_CREDIT_LIMIT");
+        System.out.println(String.join(" ", "\nCUST_ID", "CUST_FIRST_NAME", 
+             "CUST_LAST_NAME", "CUST_CITY", "CUST_CREDIT_LIMIT"));
         System.out.println("-----------------------------------------------------------");
         while (resultSet.next()) {
           System.out.println(resultSet.getString(1) + " " + resultSet.getString(2) + " " +
