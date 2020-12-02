@@ -137,7 +137,7 @@ public class ADBQuickStart {
            resultSet.getString(3)+ " " + resultSet.getString(4) + " " +
            resultSet.getInt(5));
         }
-      System.out.println("\nSuccessfully established a connection to Autonomous Database\n");
+      System.out.println("\nCongratulations! You have successfully used Oracle Autonomous Database\n");
       } 
   } // End of doSQLWork
   
