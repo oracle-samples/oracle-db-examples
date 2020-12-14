@@ -142,7 +142,7 @@ function showMap() {
       });
     map = new OM.Map(
         document.getElementById('map'),
-        { mapviewerURL: "http://localhost:8080mapviewer",
+        { mapviewerURL: location.protocol + "//" + location.host + "/mapviewer",
           universe: myUniv
         }) ;
     states();	  
@@ -222,7 +222,7 @@ function states()
             type: OM.layer.VectorLayer.TYPE_PREDEFINED, 
             dataSource: "mvdemo", 
             theme: "us_states_bi", 
-            url: "http://localhost:8080/mapviewer",
+            url: location.protocol + "//" + location.host + "/mapviewer",
             loadOnDemand: false
           },
           boundingTheme:true
@@ -327,7 +327,7 @@ function stateRtClick(evt){
                    dataSource: "mvdemo",
                    sql: "select county,totpop,geom32775 from counties_32775_moved where state_abrv="+
                         "'"+foi.getAttributeValue('_label_')+"'",
-                   url: "http://localhost:8080/mapviewer"}});			   
+                   url: location.protocol + "//" + location.host + "/mapviewer"}});			   
 
 
   countyByState.setVisible(true);
