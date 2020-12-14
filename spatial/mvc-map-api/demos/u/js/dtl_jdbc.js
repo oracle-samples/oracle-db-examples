@@ -1,6 +1,6 @@
     var myuniv;
     var myconfig;
-    var baseURL = "http://localhost:8080/mapviewer";
+    var baseURL = location.protocol + "//" + location.host + "/mapviewer";
     function showMap() {
         var map = new OM.Map(
                 document.getElementById('map'),

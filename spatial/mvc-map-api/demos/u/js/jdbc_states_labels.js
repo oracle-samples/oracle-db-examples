@@ -29,7 +29,7 @@
                     type: OM.layer.VectorLayer.TYPE_JDBC, 
                     dataSource: "mvdemo", 
                     sql: "select state, POPPSQMI, geom  from states", 
-                    url: "http://localhost:8080/mapviewer",
+                    url: location.protocol + "//" + location.host + "/mapviewer",
                     loadOnDemand: true // only load the data if in viewport
                 },
                 renderingStyle: getColorScheme(),
@@ -65,7 +65,7 @@
             def:{type: OM.layer.VectorLayer.TYPE_JDBC, 
                 dataSource: "mvdemo", 
                 sql: "select state_abrv, totpop, geom  from states", 
-                url: "http://localhost:8080/mapviewer",
+                url: location.protocol + "//" + location.host + "/mapviewer",
                 loadOnDemand: true,
                 labelColumn: "STATE_ABRV"
             },

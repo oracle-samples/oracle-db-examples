@@ -10,7 +10,7 @@ function showMap() {
     var tileLayer = new OM.layer.TileLayer("layer1", 
         { dataSource:"mvdemo", 
           tileLayer:"demo_map", 
-          tileServerURL: "http://localhost:8080/mapviewer/mcserver"
+          tileServerURL: location.protocol + "//" + location.host + "/mapviewer"
         });
 
     map.addLayer(tileLayer);

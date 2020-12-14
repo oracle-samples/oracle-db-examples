@@ -148,7 +148,7 @@
 //                      type: OM.layer.VectorLayer.TYPE_JDBC, 
 //                      dataSource:"apexmaps", 
 //                      sql: "select ID, TYPE, NAME, GEOM  from lines", 
-//                      url: "http://localhost:8080/mapviewer"
+//                      url: location.protocol + "//"+ location.host+"/mapviewer"
 //                  },
 //                  //boundingTheme: true,
 //                  renderingStyle: cStyle,
@@ -249,7 +249,7 @@
 //              type: OM.layer.VectorLayer.TYPE_JDBC, 
 //              dataSource:"apexmaps", 
 //              sql: "select ID, TYPE, NAME, GEOM  from polygons", 
-//              url: "http://localhost:8080/mapviewer"
+//              url: location.protocol + "//"+ location.host+"/mapviewer"
 //          },
 //          boundingTheme: true,
 //          renderingStyle: cStyle,
