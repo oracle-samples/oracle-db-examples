@@ -111,9 +111,9 @@ async function create(emp) {
   employee.employee_id = {
     dir: oracledb.BIND_OUT,
     type: oracledb.NUMBER
-  }
+  };
 
-  const result = await database.simpleExecute(createSql, employee);
+  const result = await database.simpleExecute(createSql, employee, { autoCommit: true });
 
   employee.employee_id = result.outBinds.employee_id[0];
 
@@ -138,7 +138,7 @@ const updateSql =
 
 async function update(emp) {
   const employee = Object.assign({}, emp);
-  const result = await database.simpleExecute(updateSql, employee);
+  const result = await database.simpleExecute(updateSql, employee, { autoCommit: true });
 
   if (result.rowsAffected && result.rowsAffected === 1) {
     return employee;
@@ -160,7 +160,7 @@ const deleteSql =
 
     :rowcount := sql%rowcount;
 
-  end;`
+  end;`;
 
 async function del(id) {
   const binds = {
@@ -169,8 +169,8 @@ async function del(id) {
       dir: oracledb.BIND_OUT,
       type: oracledb.NUMBER
     }
-  }
-  const result = await database.simpleExecute(deleteSql, binds);
+  };
+  const result = await database.simpleExecute(deleteSql, binds, { autoCommit: true });
 
   return result.outBinds.rowcount === 1;
 }

@@ -4,6 +4,7 @@ const dbConfig = require('./config/database.js');
 const defaultThreadPoolSize = 4;
 
 // Increase thread pool size by poolMax
+// !!! Note: On Windows this won't have an effect. Instead the variable must be set before Node.js is started !!!
 process.env.UV_THREADPOOL_SIZE = dbConfig.hrPool.poolMax + defaultThreadPoolSize;
 
 async function startup() {
@@ -66,19 +67,19 @@ async function shutdown(e) {
   }
 }
 
-process.on('SIGTERM', () => {
+process.once('SIGTERM', () => {
   console.log('Received SIGTERM');
 
   shutdown();
 });
 
-process.on('SIGINT', () => {
+process.once('SIGINT', () => {
   console.log('Received SIGINT');
 
   shutdown();
 });
 
-process.on('uncaughtException', err => {
+process.once('uncaughtException', err => {
   console.log('Uncaught exception');
   console.error(err);
 

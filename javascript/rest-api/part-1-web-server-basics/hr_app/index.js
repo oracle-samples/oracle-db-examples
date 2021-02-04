@@ -40,19 +40,19 @@ async function shutdown(e) {
   }
 }
 
-process.on('SIGTERM', () => {
+process.once('SIGTERM', () => {
   console.log('Received SIGTERM');
 
   shutdown();
 });
 
-process.on('SIGINT', () => {
+process.once('SIGINT', () => {
   console.log('Received SIGINT');
 
   shutdown();
 });
 
-process.on('uncaughtException', err => {
+process.once('uncaughtException', err => {
   console.log('Uncaught exception');
   console.error(err);
 
