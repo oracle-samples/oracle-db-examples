@@ -1,0 +1,1742 @@
+{
+	"info": {
+		"_postman_id": "cddddd57-f92d-4726-ba24-34b0784eecac",
+		"name": "3.OML Model Mgt & Deployment",
+		"description": "Collection for Oracle Machine Learning Model Management and Deployment:\n* Manage and Deploy OAA Models\n* Manage and Deploy ONNX Models\n* Manage and Deploy Cognitive Text Models\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List All Models",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4bb89b11-e0c2-4d26-849e-8e37131a4cb2",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>version</th>",
+							"<th>modelType</th>",
+							"<th>createdBy</th>",
+							"<th>modelId</th>",
+							"<th>modelName</th>",
+							"<th>namespace</th>",
+							"<th>shared</th>",
+							"<th>storedOn</th>",
+							"<th>links.rel</th>",
+							"<th>links.href</th>",
+							"</tr>",
+							"{{#each response.items}}",
+							"<tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"<td id={{@key}}>{{version}}</td>",
+							"<td>{{modelType}}</td>",
+							"<td>{{createdBy}}</td>",
+							"<td>{{modelId}}</td>",
+							"<td>{{modelName}}</td>",
+							"<td>{{namespace}}</td>",
+							"<td>{{shared}}</td>",
+							"<td>{{storedOn}}</td>",
+							"{{#each links}}",
+							"<td>{{rel}}</td>",
+							"<td>{{href}}</td>",
+							"{{/each}}",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "List OML Models",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e0869c97-a422-4439-9078-1dcf521032ca",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>version</th>",
+							"<th>modelType</th>",
+							"<th>createdBy</th>",
+							"<th>modelId</th>",
+							"<th>modelName</th>",
+							"<th>namespace</th>",
+							"<th>shared</th>",
+							"<th>storedOn</th>",
+							"<th>links.rel</th>",
+							"<th>links.href</th>",
+							"</tr>",
+							"{{#each response.items}}",
+							"<tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"<td id={{@key}}>{{version}}</td>",
+							"<td>{{modelType}}</td>",
+							"<td>{{createdBy}}</td>",
+							"<td>{{modelId}}</td>",
+							"<td>{{modelName}}</td>",
+							"<td>{{namespace}}</td>",
+							"<td>{{shared}}</td>",
+							"<td>{{storedOn}}</td>",
+							"{{#each links}}",
+							"<td>{{rel}}</td>",
+							"<td>{{href}}</td>",
+							"{{/each}}",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models?namespace=OML_MODELS",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					],
+					"query": [
+						{
+							"key": "namespace",
+							"value": "OML_MODELS"
+						}
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Store OML Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5604bb61-2c52-41cc-8618-b2019009f866",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"omlModelID\",jsonData.modelId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "modelName",
+							"value": "{{omlModelName}}",
+							"description": "The name of the model",
+							"type": "text"
+						},
+						{
+							"key": "modelType",
+							"value": "OML",
+							"description": "The type of the model (OML, ONNX or ONNX_IMG)",
+							"type": "text"
+						},
+						{
+							"key": "version",
+							"value": "1.0",
+							"description": "The version for this model",
+							"type": "text"
+						},
+						{
+							"key": "shared",
+							"value": "true",
+							"description": "Whether this model can be deployed by other users ",
+							"type": "text"
+						},
+						{
+							"key": "namespace",
+							"value": "OML_MODELS",
+							"description": "A namespace for fiiling the model and filtering",
+							"type": "text"
+						},
+						{
+							"key": "modelData",
+							"description": "The model file.",
+							"type": "file",
+							"src": "/Users/marancib/Oracle Content - Accounts/Oracle Content/Advanced Analytics/2020 Planning/Machine Learning/OMLServices/oml models/omlModel.mod"
+						}
+					],
+					"options": {
+						"formdata": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Model Namespace",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"namespace\":\"NEW_OML_PROJECT\"\n }"
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{omlModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{omlModelID}}"
+					]
+				},
+				"description": "Update the namespace of the model identified by the modelId. Only the creator of a model is allowed to update the namespace of a model."
+			},
+			"response": [
+				{
+					"name": "Problem connecting to the repository, executing an update, or other unexpected error.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Bad request.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Unauthorized.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Not authorized to update model",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Forbidden",
+					"code": 403,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Resource not found.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Successfully updated model namespace for model with specified modelId.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "Get Model details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4ea7ad26-02e2-4e19-a12c-f1990a13939e",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>storedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"",
+							"        <tr>",
+							"            <td>{{response.version}}</td>",
+							"            <td>{{response.modelType}}</td>",
+							"            <td>{{response.createdBy}}</td>",
+							"            <td>{{response.modelId}}</td>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.namespace}}</td>",
+							"            <td>{{response.shared}}</td>",
+							"            <td>{{response.storedOn}}</td>",
+							"            {{#each response.links}}",
+							"                <td>{{rel}}</td>",
+							"                <td>{{href}}</td>",
+							"            {{/each}}",
+							"        </tr>",
+							"",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{omlModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{omlModelID}}"
+					]
+				},
+				"description": "# Get information about the model identified by the modelId. Only shared models, and models created by the caller will be found by this method. This method does NOT return the model content or metaData."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Model Metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "690ed1fa-f337-4428-9ed6-02d803edd859",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>modelName</th>",
+							"            <th>algorithm</th>",
+							"            <th>miningFunction</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.algorithm}}</td>",
+							"            <td>{{response.miningFunction}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Output Attributes </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>output.name</th>",
+							"            <th>output.attributeType</th>",
+							"            <th>labels</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.output.name}}</td>",
+							"            <td>{{response.output.attributeType}}</td>",
+							"            <td>{{response.labels}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Input Attributes </h3>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>attributes.name</th>",
+							"            <th>attributes.attributeType</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"        {{#each response.attributes}}",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{omlModelID}}/metadata",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{omlModelID}}",
+						"metadata"
+					]
+				},
+				"description": "# Get the metadata for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Model Content (RAW BLOB)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{omlModelID}}/content",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{omlModelID}}",
+						"content"
+					]
+				},
+				"description": "# Get the model content for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Create OML Scoring Endpoint",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"modelId\":\"{{omlModelID}}\",\n\t\"uri\":\"{{omlModelURI}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Model deployment details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "93cff336-28ce-43f4-ba31-7ed4ad0db95d",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>miningFunction</th>",
+							"            <th>algorithm</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.version}}</td>",
+							"            <td>{{response.modelType}}</td>",
+							"            <td>{{response.createdBy}}</td>",
+							"            <td>{{response.modelId}}</td>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.namespace}}</td>",
+							"            <td>{{response.metadata.miningFunction}}</td>",
+							"            <td>{{response.metadata.algorithm}}</td>",
+							"            {{#each response.links}}",
+							"                <td>{{rel}}</td>",
+							"                <td>{{href}}</td>",
+							"            {{/each}}",
+							"            <td>{{response.shared}}</td>",
+							"            <td>{{response.uri}}</td>",
+							"            <td>{{response.deployedOn}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Output Attributes </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>metadata.output.name</th>",
+							"            <th>metadata.output.attributeType</th>",
+							"            <th>metadata.labels</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.metadata.output.name}}</td>",
+							"            <td>{{response.metadata.output.attributeType}}</td>",
+							"            <td>{{response.metadata.labels}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Input Attributes </h3>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>metadata.attributes.name</th>",
+							"            <th>metadata.attributeType</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"        {{#each response.metadata.attributes}}",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{omlModelURI}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{omlModelURI}}"
+					]
+				},
+				"description": "# Gets the details of the endpoint identified by the uri. Only shared endpoints and endpoints created by the caller are visible to the caller. The details include the model metadata along with other descriptive information."
+			},
+			"response": []
+		},
+		{
+			"name": "Get OML Scoring REST API Doc",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{omlModelURI}}/api",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{omlModelURI}}",
+						"api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List All Model deployments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "89c6e785-3ec5-4dae-bdf2-9042e898169d",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.items}}",
+							"            <tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"                <td id={{@key}}>{{version}}</td>",
+							"                <td>{{modelType}}</td>",
+							"                <td>{{createdBy}}</td>",
+							"                <td>{{modelId}}</td>",
+							"                <td>{{modelName}}</td>",
+							"                <td>{{namespace}}</td>",
+							"                <td>{{shared}}</td>",
+							"                <td>{{uri}}</td>                ",
+							"                <td>{{deployedOn}}</td>",
+							"                {{#each links}}",
+							"                   <td>{{rel}}</td>",
+							"                   <td>{{href}}</td>",
+							"                {{/each}}",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					]
+				},
+				"description": "# Get the list of models that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared models and models created by the caller are visible to the caller. This method does NOT return the model content or metadata."
+			},
+			"response": []
+		},
+		{
+			"name": "List OML Model deployments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9aadd364-0b5c-4807-bca9-607d43cfab54",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.items}}",
+							"            <tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"                <td id={{@key}}>{{version}}</td>",
+							"                <td>{{modelType}}</td>",
+							"                <td>{{createdBy}}</td>",
+							"                <td>{{modelId}}</td>",
+							"                <td>{{modelName}}</td>",
+							"                <td>{{namespace}}</td>",
+							"                <td>{{shared}}</td>",
+							"                <td>{{uri}}</td>                ",
+							"                <td>{{deployedOn}}</td>",
+							"                {{#each links}}",
+							"                   <td>{{rel}}</td>",
+							"                   <td>{{href}}</td>",
+							"                {{/each}}",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment?namespace=OML_MODELS",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					],
+					"query": [
+						{
+							"key": "namespace",
+							"value": "OML_MODELS"
+						}
+					]
+				},
+				"description": "# Get the list of models that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared models and models created by the caller are visible to the caller. This method does NOT return the model content or metadata."
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Model (Single Classification)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dc9d8b03-f453-49b4-9bd3-389ca4c0a45a",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Scoring Results </h3>",
+							"",
+							"{{#each response.scoringResults}}",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>label</th>",
+							"<th>probability</th>",
+							"</tr>",
+							"{{#each classifications}}",
+							"<tr>",
+							"<td>{{label}}</td>",
+							"<td>{{probability}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"{{/each}}",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"inputRecords\": [\n\t\t{\n\t\t\t\"AGE\":41,\n\t\t\t\"BOOKKEEPING_APPLICATION\": 1,\n\t\t\t\"CUST_GENDER\":\"M\",\n\t\t\t\"CUST_MARITAL_STATUS\":\"NeverM\",\n\t\t\t\"EDUCATION\":\"HS-grad\",\n\t\t\t\"HOME_THEATER_PACKAGE\":1,\n\t\t\t\"HOUSEHOLD_SIZE\":\"4\",\n\t\t\t\"OCCUPATION\":\"Crafts\",\n\t\t\t\"YRS_RESIDENCE\":6,\n\t\t\t\"Y_BOX_GAMES\":1\n\t\t}\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{omlModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{omlModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Model (Multi Classifications)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ebba7dcd-a948-421a-a4b4-82e7915cdd74",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Scoring Results </h3>",
+							"",
+							"{{#each response.scoringResults}}",
+							"<a style=\"color:gray\">Customer # {{@key}}</a>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>label</th>",
+							"<th>probability</th>",
+							"</tr>",
+							"{{#each classifications}}",
+							"<tr>",
+							"<td>{{label}}</td>",
+							"<td>{{probability}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"{{/each}}",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"inputRecords\": [\n\t\t{\n\t\t\t\"AGE\":41,\n\t\t\t\"BOOKKEEPING_APPLICATION\":1,\n\t\t\t\"CUST_GENDER\":\"M\",\n\t\t\t\"CUST_MARITAL_STATUS\":\"NeverM\",\n\t\t\t\"EDUCATION\":\"HS-grad\",\n\t\t\t\"HOME_THEATER_PACKAGE\":1,\n\t\t\t\"HOUSEHOLD_SIZE\":\"4\",\n\t\t\t\"OCCUPATION\":\"Crafts\",\n\t\t\t\"YRS_RESIDENCE\":6,\n\t\t\t\"Y_BOX_GAMES\":1\n        },\n        {\n\t\t\t\"AGE\":39,\n\t\t\t\"BOOKKEEPING_APPLICATION\":0,\n\t\t\t\"CUST_GENDER\":\"F\",\n\t\t\t\"CUST_MARITAL_STATUS\":\"Married\",\n\t\t\t\"EDUCATION\":\"Masters\",\n\t\t\t\"HOME_THEATER_PACKAGE\":1,\n\t\t\t\"HOUSEHOLD_SIZE\":\"3\",\n\t\t\t\"OCCUPATION\":\"Exec.\",\n\t\t\t\"YRS_RESIDENCE\":6,\n\t\t\t\"Y_BOX_GAMES\":1\n\t\t}\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{omlModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{omlModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Model (Single Class w Pred Details)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ee9f73b1-c7f3-4268-a3d3-ccb3badcb55b",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Scoring Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>label</th>",
+							"<th>probability</th>",
+							"</tr>",
+							"{{#each response.scoringResults}}",
+							"{{#each classifications}}",
+							"<tr>",
+							"<td>{{label}}</td>",
+							"<td>{{probability}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Prediction Details </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Column Name</th>",
+							"<th>weight</th>",
+							"</tr>",
+							"{{#each response.scoringResults}}",
+							"{{#each details}}",
+							"<tr>",
+							"<td>{{columnName}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"topNdetails\":5,\n    \"inputRecords\": [\n\t\t{\n\t\t\t\"AGE\":41,\n\t\t\t\"BOOKKEEPING_APPLICATION\": 1,\n\t\t\t\"CUST_GENDER\":\"M\",\n\t\t\t\"CUST_MARITAL_STATUS\":\"NeverM\",\n\t\t\t\"EDUCATION\":\"HS-grad\",\n\t\t\t\"HOME_THEATER_PACKAGE\":1,\n\t\t\t\"HOUSEHOLD_SIZE\":\"4\",\n\t\t\t\"OCCUPATION\":\"Crafts\",\n\t\t\t\"YRS_RESIDENCE\":6,\n\t\t\t\"Y_BOX_GAMES\":1\n\t\t}\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{omlModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{omlModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Model (Multi Class w Pred Details)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cd3fdab6-dde8-4de0-9aeb-24a3d31324c8",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"",
+							"",
+							"{{#each response.scoringResults}}",
+							"<h5 style=\"color:gray\">Customer # {{@key}}</h5>",
+							"<h4 style=\"color:gray\"> Scoring Results </h4>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>label</th>",
+							"<th>probability</th>",
+							"</tr>",
+							"{{#each classifications}}",
+							"<tr>",
+							"<td>{{label}}</td>",
+							"<td>{{probability}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h4 style=\"color:gray\"> Prediction Details </h4>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Column Name</th>",
+							"<th>weight</th>",
+							"</tr>",
+							"{{#each details}}",
+							"<tr>",
+							"<td>{{columnName}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"{{/each}}",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"topNdetails\":5,\n    \"inputRecords\": [\n\t\t{\n\t\t\t\"AGE\":41,\n\t\t\t\"BOOKKEEPING_APPLICATION\": 1,\n\t\t\t\"CUST_GENDER\":\"M\",\n\t\t\t\"CUST_MARITAL_STATUS\":\"NeverM\",\n\t\t\t\"EDUCATION\":\"HS-grad\",\n\t\t\t\"HOME_THEATER_PACKAGE\":1,\n\t\t\t\"HOUSEHOLD_SIZE\":\"4\",\n\t\t\t\"OCCUPATION\":\"Crafts\",\n\t\t\t\"YRS_RESIDENCE\":6,\n\t\t\t\"Y_BOX_GAMES\":1\n\t\t},\n        {\n\t\t\t\"AGE\":39,\n\t\t\t\"BOOKKEEPING_APPLICATION\":0,\n\t\t\t\"CUST_GENDER\":\"F\",\n\t\t\t\"CUST_MARITAL_STATUS\":\"Married\",\n\t\t\t\"EDUCATION\":\"Masters\",\n\t\t\t\"HOME_THEATER_PACKAGE\":1,\n\t\t\t\"HOUSEHOLD_SIZE\":\"3\",\n\t\t\t\"OCCUPATION\":\"Exec.\",\n\t\t\t\"YRS_RESIDENCE\":6,\n\t\t\t\"Y_BOX_GAMES\":1\n\t\t}\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{omlModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{omlModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove OML Scoring Endpoint",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{omlModelURI}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{omlModelURI}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete OML Model",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{omlModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{omlModelID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "3131e5eb-3d9b-48e4-8209-6c32033e48df",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f7dc5a5f-7992-420d-b11b-40f28beee8d3",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "5c270cc1-4a7b-4727-a219-d24cd73d82a7",
+			"key": "omlmodserver",
+			"value": "https://138.1.39.21",
+			"type": "string"
+		},
+		{
+			"id": "b7bb4910-531c-48d3-b470-11cb0be96cc6",
+			"key": "oaaModelName",
+			"value": "myOAAModel",
+			"type": "string"
+		},
+		{
+			"id": "c817b5c1-d780-4da7-b0fd-42bebe650388",
+			"key": "oaaModelVersion",
+			"value": "1.0",
+			"type": "string"
+		},
+		{
+			"id": "01dae665-9dd1-4aab-bf2f-784d1765e71b",
+			"key": "oaaModelType",
+			"value": "OML",
+			"type": "string"
+		},
+		{
+			"id": "db89ad29-f7be-445e-9501-ec80d2ad0ea7",
+			"key": "onnxMLModelName",
+			"value": "myOnnxMLModel",
+			"type": "string"
+		},
+		{
+			"id": "112c957c-8552-4898-a9d9-b7177e4b9ac1",
+			"key": "onnxMLModelVersion",
+			"value": "1.0",
+			"type": "string"
+		},
+		{
+			"id": "f77ce712-48aa-4e81-beb3-2a8a272d4a2b",
+			"key": "onnxImageModelName",
+			"value": "myOnnxImageModel",
+			"type": "string"
+		},
+		{
+			"id": "17d58c48-b572-44d6-a07c-6891d3f168e1",
+			"key": "onnxImageModelVersion",
+			"value": "1.0",
+			"type": "string"
+		},
+		{
+			"id": "08bf9a3a-54e3-4cf1-884a-6ffea2f392c8",
+			"key": "oaaDeployURI",
+			"value": "myOMLModel",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

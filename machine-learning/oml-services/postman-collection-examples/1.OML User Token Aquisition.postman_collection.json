@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "84edd343-0091-4989-a237-bc9c3829d2fc",
+		"name": "1.OML User Token Aquisition",
+		"description": "Collection to aquire a JWT from OML User API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get User Token ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7d29e43a-4bdd-4315-9983-a830ddbb034f",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\",jsonData.accessToken);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"grant_type\":\"password\",\n\t\"username\": \"{{username}}\",\n\t\"password\": \"{{password}}\"\n\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlusers/tenants/{{tenant}}/databases/{{database}}/api/oauth2/v1/token",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlusers",
+						"tenants",
+						"{{tenant}}",
+						"databases",
+						"{{database}}",
+						"api",
+						"oauth2",
+						"v1",
+						"token"
+					]
+				},
+				"description": "Get a JWT from the OML User Service"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a527c1f2-172d-4f18-a2d1-de92a5fd6a72",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d0c6b774-37a3-4e48-8415-7272369fff7d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
