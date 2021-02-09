@@ -5,8 +5,9 @@ Following Oracle's philosophy of moving the algorithms and not the data, the exe
 
 Oracle also provides easy mechanism for running R-extensible scripts directly inside the Oracle Database.
 
-**The following are a list of demos containing SQL code for learning about (OML4SQL)** 
-- Files on the current folder 
+**The following are a list of demos containing SQL code for learning about (OML4SQL)**
+
+Files on the current folder:
  * dmsh.sql - Setup - Creates Demo Views and Tables
  * dmshgrants.sql - Setup - Grants Privileges to Users
  * oml4sql-anomaly-detection-1class-svm.sql - Anomaly Detection - One Class SVM Algorithm
