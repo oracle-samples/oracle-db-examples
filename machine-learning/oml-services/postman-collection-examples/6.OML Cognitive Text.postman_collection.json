@@ -1,0 +1,1654 @@
+{
+	"info": {
+		"_postman_id": "b8d2cff5-92c3-4ea1-85ad-cb227a651002",
+		"name": "6.OML Cognitive Text",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List Cognitive-Text Endpoints",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "73d39fc1-bc4d-4afe-b808-8b66f490e564",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <h3 style=\"color:gray\">Main Endpoint Entry</h3>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Relative</th>",
+							"            <th>Hypertext Reference</th>",
+							"        </tr>",
+							"        {{#each response.links}}",
+							"        <tr>",
+							"            <td>{{rel}}</td>",
+							"            <td>{{href}}</td>",
+							"        </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\">Cognitive Text Components available</h3>",
+							"{{#each response.items}}",
+							"<h5 style=\"color:gray\">Endpoint Name: <b>{{name}}</b></h5>",
+							"<h6 style=\"color:gray\"><b>Description: </b>{{description}}</h6>",
+							"    <table class=\"tftable\" border=\"1\">        ",
+							"        <tr>",
+							"            <th>Relationship</th>",
+							"            <th>Hypertext Reference</th>",
+							"        </tr>",
+							"    {{#each links}}",
+							"        <tr>",
+							"            <td>{{rel}}</td>",
+							"            <td>{{href}}</td>",
+							"        </tr>",
+							"    {{/each}} ",
+							"    </table>",
+							"",
+							"    {{/each}}",
+							"    ",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text"
+					]
+				},
+				"description": "List Cognitive-Text Endpoints"
+			},
+			"response": []
+		},
+		{
+			"name": "Text Keywords",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f814e4b6-ab13-4b8a-ad18-7a5f893b64ae",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Keyword Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>keyword</th>",
+							"<th>weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each keywordResults}}",
+							"<tr>",
+							"<td>{{keyword}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"textList\":[\"With Oracle Machine Learning, Oracle moves the algorithms to the data. Oracle runs machine learning within the database, where the data reside. This approach minimizes or eliminates data movement, achieves scalability, preserves data security, and accelerates time-to-model deployment. Oracle delivers parallelized in-database implementations of machine learning algorithms and integration with the leading open source environments R and Python. Oracle Machine Learning delivers the performance, scalability, and automation required by enterprise-scale data science projects – both on-premises and in the Cloud.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/keywords",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"keywords"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Summary",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "410f51d5-6794-47bb-a832-4d12abcc16a4",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Summary Sentences </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Sentence</th>",
+							"<th>Weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each summaryResults}}",
+							"<tr>",
+							"<td>{{sentence}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"textList\":[\"With Oracle Machine Learning, Oracle moves the algorithms to the data. Oracle runs machine learning within the database, where the data reside. This approach minimizes or eliminates data movement, achieves scalability, preserves data security, and accelerates time-to-model deployment. Oracle delivers parallelized in-database implementations of machine learning algorithms and integration with the leading open source environments R and Python. Oracle Machine Learning delivers the performance, scalability, and automation required by enterprise-scale data science projects – both on-premises and in the Cloud.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/summary",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"summary"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Sentiment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bba10bc6-6b67-4fd2-bf87-abffd3eb9a6b",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Sentiment Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Sentiment</th>",
+							"<th>Confidence</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each sentimentResults}}",
+							"<tr>",
+							"<td>{{sentiment}}</td>",
+							"<td>{{confidence}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"textList\":[\"With Oracle Machine Learning, Oracle moves the algorithms to the data. Oracle runs machine learning within the database, where the data reside. This approach minimizes or eliminates data movement, achieves scalability, preserves data security, and accelerates time-to-model deployment. Oracle delivers parallelized in-database implementations of machine learning algorithms and integration with the leading open source environments R and Python. Oracle Machine Learning delivers the performance, scalability, and automation required by enterprise-scale data science projects – both on-premises and in the Cloud.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/sentiment",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"sentiment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Topics",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a741b365-66ea-46d5-9847-fa840a47ce06",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Topic Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>keyword</th>",
+							"<th>weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each topicResults}}",
+							"<tr>",
+							"<td>{{topic}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"textList\":[\"With Oracle Machine Learning, Oracle moves the algorithms to the data. Oracle runs machine learning within the database, where the data reside. This approach minimizes or eliminates data movement, achieves scalability, preserves data security, and accelerates time-to-model deployment. Oracle delivers parallelized in-database implementations of machine learning algorithms and integration with the leading open source environments R and Python. Oracle Machine Learning delivers the performance, scalability, and automation required by enterprise-scale data science projects – both on-premises and in the Cloud.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/topics",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"topics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Similarity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d2805a5b-dd93-4f20-892b-b1e4b2bb8646",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Text Similarity for probe:\"Machine Learning algorithms\"</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Text</th>",
+							"<th>Similarity</th>",
+							"</tr>",
+							"{{#each response}}",
+							"<tr>",
+							"<td>{{text}}</td>",
+							"<td>{{similarity}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"probe\":\"Machine Learning algorithms\",\n\t\"textList\":[\"With Oracle Machine Learning, Oracle moves the algorithms to the data. Oracle runs machine learning within the database, where the data reside. This approach minimizes or eliminates data movement, achieves scalability, preserves data security, and accelerates time-to-model deployment. Oracle delivers parallelized in-database implementations of machine learning algorithms and integration with the leading open source environments R and Python. Oracle Machine Learning delivers the performance, scalability, and automation required by enterprise-scale data science projects – both on-premises and in the Cloud.\"],\n\t\"sortDirection\":\"DESC\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/similarity",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"similarity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Features",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4a4064b3-eeb9-44f1-9de2-0f64b297ce6b",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Text Features for:</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Submitted Text</th>",
+							"</tr>",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Weights</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Weights on Wikipedia Embeddings</th>",
+							"</tr>",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{scoringResults.weights}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"textList\":[\"With Oracle Machine Learning, Oracle moves the algorithms to the data.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/features",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"features"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Keywords (Spanish)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5960e212-0489-4849-b5ed-09c8e7fd6709",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Keyword Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Keyword</th>",
+							"<th>Weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each keywordResults}}",
+							"<tr>",
+							"<td>{{keyword}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"language\": \"SPANISH\",\n  \"textList\":[\"Con Oracle Machine Learning, Oracle mueve los algoritmos hacia los datos. Oracle ejecuta el machine learning dentro del database, donde residen los datos.  Este abordaje minimiza o elimina el movimiento de datos, alcanza escalabilidad, preserva la seguridad de datos, y accelera el tiempo de  implementación para el modelo.  Oracle posee implementaciones paralelizadas de algoritmos in-database e integración con los entornos open source R y Python.  Oracle Machine Learning entrega la performance, escalabilidad y automación requeridas por proyectos de data science de escala corporativa - ya sea en las instalaciones locales como en la nube.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/keywords",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"keywords"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Summary (Spanish)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a2c9e7ea-70e4-421c-ac53-43e6e1c5fcbf",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Summary Sentences </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Sentence</th>",
+							"<th>Weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each summaryResults}}",
+							"<tr>",
+							"<td>{{sentence}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"language\": \"SPANISH\",\n  \"textList\":[\"Con Oracle Machine Learning, Oracle mueve los algoritmos hacia los datos. Oracle ejecuta el machine learning dentro del database, donde residen los datos.  Este abordaje minimiza o elimina el movimiento de datos, alcanza escalabilidad, preserva la seguridad de datos, y accelera el tiempo de  implementación para el modelo.  Oracle posee implementaciones paralelizadas de algoritmos in-database e integración con los entornos open source R y Python.  Oracle Machine Learning entrega la performance, escalabilidad y automación requeridas por proyectos de data science de escala corporativa - ya sea en las instalaciones locales como en la nube.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/summary",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"summary"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Topics (Spanish)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1e0af4d2-8695-429a-bbef-c3ca54ca792f",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Topic Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Topic</th>",
+							"<th>Weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each topicResults}}",
+							"<tr>",
+							"<td>{{topic}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"language\": \"SPANISH\",\n  \"textList\":[\"Con Oracle Machine Learning, Oracle mueve los algoritmos hacia los datos. Oracle ejecuta el machine learning dentro del database, donde residen los datos.  Este abordaje minimiza o elimina el movimiento de datos, alcanza escalabilidad, preserva la seguridad de datos, y accelera el tiempo de  implementación para el modelo.  Oracle posee implementaciones paralelizadas de algoritmos in-database e integración con los entornos open source R y Python.  Oracle Machine Learning entrega la performance, escalabilidad y automación requeridas por proyectos de data science de escala corporativa - ya sea en las instalaciones locales como en la nube.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/topics",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"topics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Similarity (Spanish)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dfa63a23-ca5c-4273-a109-6c80ef3c6a7a",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Text Similarity for probe:\"Algoritmos de Machine Learning\"</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Text</th>",
+							"<th>Similarity</th>",
+							"</tr>",
+							"{{#each response}}",
+							"<tr>",
+							"<td>{{text}}</td>",
+							"<td>{{similarity}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"probe\":\"Algoritmos de Machine Learning\",\n\t\"language\": \"SPANISH\",\n    \"textList\":[\"Con Oracle Machine Learning, Oracle mueve los algoritmos hacia los datos. Oracle ejecuta el machine learning dentro del database, donde residen los datos.  Este abordaje minimiza o elimina el movimiento de datos, alcanza escalabilidad, preserva la seguridad de datos, y accelera el tiempo de  implementación para el modelo.  Oracle posee implementaciones paralelizadas de algoritmos in-database e integración con los entornos open source R y Python.  Oracle Machine Learning entrega la performance, escalabilidad y automación requeridas por proyectos de data science de escala corporativa - ya sea en las instalaciones locales como en la nube.\"],\n\t\"sortDirection\":\"DESC\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/similarity",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"similarity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Features (Spanish)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7cd5181c-fc8f-4272-828f-d5fab5180d88",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Text Features for:</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Submitted Text</th>",
+							"</tr>",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Weights</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Weights on Wikipedia Embeddings</th>",
+							"</tr>",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{scoringResults.weights}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"language\": \"SPANISH\",\n  \"textList\":[\"Con Oracle Machine Learning, Oracle mueve los algoritmos hacia los datos.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/features",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"features"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Keywords (French)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be426534-0de3-433f-8733-70e35b9d91ed",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Keyword Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Keyword</th>",
+							"<th>Weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each keywordResults}}",
+							"<tr>",
+							"<td>{{keyword}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"language\": \"FRENCH\",\n  \"textList\":[\"Avec Oracle Machine Learning, Oracle déplace les algorithmes vers les données. Oracle exécute machine learning dans la base de données, où résident les données. Cette approche minimise ou élimine le mouvement des données, permet une évolutivité, préserve la sécurité des données et accélère le déploiement du modèle. Oracle a parallélisé les implémentations d'algorithmes dans la base de données et l'intégration avec les environnements open source R et Python. Oracle Machine Learning offre les performances, l'évolutivité et l'automatisation requises par les projets de science des données à l'échelle de l'entreprise, sur site ou dans le cloud.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/keywords",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"keywords"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Summary (French)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "399f1839-ebff-4ccc-b748-e52ecb2bc829",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Summary Sentences </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Sentence</th>",
+							"<th>Weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each summaryResults}}",
+							"<tr>",
+							"<td>{{sentence}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"language\": \"FRENCH\",\n  \"textList\":[\"Avec Oracle Machine Learning, Oracle déplace les algorithmes vers les données. Oracle exécute machine learning dans la base de données, où résident les données. Cette approche minimise ou élimine le mouvement des données, permet une évolutivité, préserve la sécurité des données et accélère le déploiement du modèle. Oracle a parallélisé les implémentations d'algorithmes dans la base de données et l'intégration avec les environnements open source R et Python. Oracle Machine Learning offre les performances, l'évolutivité et l'automatisation requises par les projets de science des données à l'échelle de l'entreprise, sur site ou dans le cloud.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/summary",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"summary"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Topics (French)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47e4ccab-e677-4f04-bc5d-53b43544348c",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Original Text </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Topic Results </h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Topic</th>",
+							"<th>Weight</th>",
+							"</tr>",
+							"{{#each response}}",
+							"{{#each topicResults}}",
+							"<tr>",
+							"<td>{{topic}}</td>",
+							"<td>{{weight}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"topN\":5,\n  \"language\": \"FRENCH\",\n  \"textList\":[\"Avec Oracle Machine Learning, Oracle déplace les algorithmes vers les données. Oracle exécute machine learning dans la base de données, où résident les données. Cette approche minimise ou élimine le mouvement des données, permet une évolutivité, préserve la sécurité des données et accélère le déploiement du modèle. Oracle a parallélisé les implémentations d'algorithmes dans la base de données et l'intégration avec les environnements open source R et Python. Oracle Machine Learning offre les performances, l'évolutivité et l'automatisation requises par les projets de science des données à l'échelle de l'entreprise, sur site ou dans le cloud.\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/topics",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"topics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Similarity (French)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2303f583-6217-4738-81ac-e1867956050e",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Text Similarity for probe:\"Algorithmes d'Machine Learning\"</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Text</th>",
+							"<th>Similarity</th>",
+							"</tr>",
+							"{{#each response}}",
+							"<tr>",
+							"<td>{{text}}</td>",
+							"<td>{{similarity}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"probe\":\"Algorithmes d'Machine Learning\",\n\t\"language\": \"FRENCH\",\n    \"textList\":[\"Avec Oracle Machine Learning, Oracle déplace les algorithmes vers les données. Oracle exécute machine learning dans la base de données, où résident les données. Cette approche minimise ou élimine le mouvement des données, permet une évolutivité, préserve la sécurité des données et accélère le déploiement du modèle. Oracle a parallélisé les implémentations d'algorithmes dans la base de données et l'intégration avec les environnements open source R et Python. Oracle Machine Learning offre les performances, l'évolutivité et l'automatisation requises par les projets de science des données à l'échelle de l'entreprise, sur site ou dans le cloud.\"],\n\t\"sortDirection\":\"DESC\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/similarity",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"similarity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Text Features (French)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2ebd4aac-6f59-4e0a-9d0d-73c879295b31",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> Text Features for:</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Submitted Text</th>",
+							"</tr>",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{text}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"<h3 style=\"color:gray\"> Weights</h3>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>Weights on Wikipedia Embeddings</th>",
+							"</tr>",
+							"<tr>",
+							"{{#each response}}",
+							"<td>{{scoringResults.weights}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"language\": \"FRENCH\",\n  \"textList\":[\"Avec Oracle Machine Learning, Oracle déplace les algorithmes vers les données\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/cognitive-text/features",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"cognitive-text",
+						"features"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f209bfeb-9d23-49ee-9054-0f8c9d44c19d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "bc5e88fe-c42d-40a5-b6b5-6a104003ff11",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -1,0 +1,1497 @@
+{
+	"info": {
+		"_postman_id": "97397adf-d8ab-4c93-ad3b-2905f960350d",
+		"name": "4.ONNX Classical ML",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List All Models",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6f1d6cfc-d4c4-4cf5-9592-397cdaa50528",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>version</th>",
+							"<th>modelType</th>",
+							"<th>createdBy</th>",
+							"<th>modelId</th>",
+							"<th>modelName</th>",
+							"<th>namespace</th>",
+							"<th>shared</th>",
+							"<th>storedOn</th>",
+							"<th>links.rel</th>",
+							"<th>links.href</th>",
+							"</tr>",
+							"{{#each response.items}}",
+							"<tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"<td id={{@key}}>{{version}}</td>",
+							"<td>{{modelType}}</td>",
+							"<td>{{createdBy}}</td>",
+							"<td>{{modelId}}</td>",
+							"<td>{{modelName}}</td>",
+							"<td>{{namespace}}</td>",
+							"<td>{{shared}}</td>",
+							"<td>{{storedOn}}</td>",
+							"{{#each links}}",
+							"<td>{{rel}}</td>",
+							"<td>{{href}}</td>",
+							"{{/each}}",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List ONNX ML Models",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7b36898d-043e-4f46-b613-d11a8d0e2f4d",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>version</th>",
+							"<th>modelType</th>",
+							"<th>createdBy</th>",
+							"<th>modelId</th>",
+							"<th>modelName</th>",
+							"<th>namespace</th>",
+							"<th>shared</th>",
+							"<th>storedOn</th>",
+							"<th>links.rel</th>",
+							"<th>links.href</th>",
+							"</tr>",
+							"{{#each response.items}}",
+							"<tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"<td id={{@key}}>{{version}}</td>",
+							"<td>{{modelType}}</td>",
+							"<td>{{createdBy}}</td>",
+							"<td>{{modelId}}</td>",
+							"<td>{{modelName}}</td>",
+							"<td>{{namespace}}</td>",
+							"<td>{{shared}}</td>",
+							"<td>{{storedOn}}</td>",
+							"{{#each links}}",
+							"<td>{{rel}}</td>",
+							"<td>{{href}}</td>",
+							"{{/each}}",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models?namespace=ONNX_MODELS",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					],
+					"query": [
+						{
+							"key": "namespace",
+							"value": "ONNX_MODELS"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Store ONNX ML Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "79086bd1-fdcc-47ed-baab-c1f81dd26caa",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"onnxMLModelID\",jsonData.modelId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "modelName",
+							"value": "{{onnxMLModelName}}",
+							"description": "The name of the model.",
+							"type": "text"
+						},
+						{
+							"key": "version",
+							"value": "1.1",
+							"description": "The version of the model.",
+							"type": "text"
+						},
+						{
+							"key": "modelType",
+							"value": "ONNX",
+							"description": "The model type. Valid types are (OML, ONNX and ONNX_IMG)",
+							"type": "text"
+						},
+						{
+							"key": "shared",
+							"value": "true",
+							"description": "Flag indicating if this model can be used by other users.",
+							"type": "text"
+						},
+						{
+							"key": "namespace",
+							"value": "ONNX_MODELS",
+							"description": "A namespace for fiiling the model and filtering",
+							"type": "text"
+						},
+						{
+							"key": "modelData",
+							"description": "The model binary. NOTE: ONNX models must be uploaded as zip files. The ONNX model is included in the zip.",
+							"type": "file",
+							"src": "/Users/marancib/Oracle Content - Accounts/Oracle Content/Advanced Analytics/2020 Planning/Machine Learning/OMLServices/onnx_models/sk_cl_pipeline_titanic_onnx.zip"
+						}
+					],
+					"options": {
+						"formdata": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update ONNX Model Namespace",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"namespace\": \"NEW_ONNX_ML_PROJECT\"\n}"
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxMLModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxMLModelID}}"
+					]
+				},
+				"description": "Update the namespace of the model identified by the modelId. Only the creator of a model is allowed to update the namespace of a model."
+			},
+			"response": [
+				{
+					"name": "Resource not found.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Problem connecting to the repository, executing an update, or other unexpected error.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Not authorized to update model",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Forbidden",
+					"code": 403,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Bad request.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Successfully updated model namespace for model with specified modelId.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"name": "Unauthorized.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get ONNX Model details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "efdbc8c1-9a64-42ad-badf-a2bd3096567a",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>storedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"",
+							"        <tr>",
+							"            <td>{{response.version}}</td>",
+							"            <td>{{response.modelType}}</td>",
+							"            <td>{{response.createdBy}}</td>",
+							"            <td>{{response.modelId}}</td>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.namespace}}</td>",
+							"            <td>{{response.shared}}</td>",
+							"            <td>{{response.storedOn}}</td>",
+							"            {{#each response.links}}",
+							"                <td>{{rel}}</td>",
+							"                <td>{{href}}</td>",
+							"            {{/each}}",
+							"        </tr>",
+							"",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxMLModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxMLModelID}}"
+					]
+				},
+				"description": "# Get the metadata for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Model Metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3bbfc453-54e3-4126-a873-6318c1e50c1e",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>modelName</th>",
+							"            <th>algorithm</th>",
+							"            <th>miningFunction</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.algorithm}}</td>",
+							"            <td>{{response.miningFunction}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> ONNX Output Attributes </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"       </tr>",
+							"",
+							"      {{#each response.outputs}}",
+							"        <tr>",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>            ",
+							"        </tr>",
+							"      {{/each}}",
+							"    </table>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Labels</th>",
+							"        </tr>",
+							"        <tr>",
+							"            <td>{{response.labels}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Input Attributes </h3>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"            <th>Shape</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"        {{#each response.onnxAttributes}}",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"            <td>{{shape}}</td>",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxMLModelID}}/metadata",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxMLModelID}}",
+						"metadata"
+					]
+				},
+				"description": "# Get the metadata for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Model Content (RAW BLOB)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxMLModelID}}/content",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxMLModelID}}",
+						"content"
+					]
+				},
+				"description": "# Get the model content for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Create ONNX Scoring Endpoint",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"modelId\":\"{{onnxMLModelID}}\",\n\t\"uri\":\"{{onnxMLModelURI}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Model deployment details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d70cd232-e1e3-473a-be15-6f17a57e2aa2",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>miningFunction</th>",
+							"            <th>algorithm</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.version}}</td>",
+							"            <td>{{response.modelType}}</td>",
+							"            <td>{{response.createdBy}}</td>",
+							"            <td>{{response.modelId}}</td>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.namespace}}</td>",
+							"            <td>{{response.metadata.miningFunction}}</td>",
+							"            <td>{{response.metadata.algorithm}}</td>",
+							"            {{#each response.links}}",
+							"                <td>{{rel}}</td>",
+							"                <td>{{href}}</td>",
+							"            {{/each}}",
+							"            <td>{{response.shared}}</td>",
+							"            <td>{{response.uri}}</td>",
+							"            <td>{{response.deployedOn}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> ONNX Output Attributes </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"       </tr>",
+							"",
+							"      {{#each response.metadata.outputs}}",
+							"        <tr>",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"        </tr>",
+							"      {{/each}}",
+							"    </table>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Labels</th>",
+							"        </tr>",
+							"        <tr>",
+							"            <td>{{response.metadata.labels}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Input Attributes </h3>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"        {{#each response.metadata.onnxAttributes}}",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxMLModelURI}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxMLModelURI}}"
+					]
+				},
+				"description": "# Gets the details of the endpoint identified by the uri. Only shared endpoints and endpoints created by the caller are visible to the caller. The details include the model metadata along with other descriptive information."
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Model Scoring REST API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxMLModelURI}}/api",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxMLModelURI}}",
+						"api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List All Model deployments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3f5e7c7d-f2a1-422b-a208-0959cf6126e4",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.items}}",
+							"            <tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"                <td id={{@key}}>{{version}}</td>",
+							"                <td>{{modelType}}</td>",
+							"                <td>{{createdBy}}</td>",
+							"                <td>{{modelId}}</td>",
+							"                <td>{{modelName}}</td>",
+							"                <td>{{namespace}}</td>",
+							"                <td>{{shared}}</td>",
+							"                <td>{{uri}}</td>                ",
+							"                <td>{{deployedOn}}</td>",
+							"                {{#each links}}",
+							"                   <td>{{rel}}</td>",
+							"                   <td>{{href}}</td>",
+							"                {{/each}}",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					]
+				},
+				"description": "# Get the list of models that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared models and models created by the caller are visible to the caller. This method does NOT return the model content or metadata."
+			},
+			"response": []
+		},
+		{
+			"name": "List ONNX Model deployments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f674119b-b871-4c97-8957-1d5128ba540f",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.items}}",
+							"            <tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"                <td id={{@key}}>{{version}}</td>",
+							"                <td>{{modelType}}</td>",
+							"                <td>{{createdBy}}</td>",
+							"                <td>{{modelId}}</td>",
+							"                <td>{{modelName}}</td>",
+							"                <td>{{namespace}}</td>",
+							"                <td>{{shared}}</td>",
+							"                <td>{{uri}}</td>                ",
+							"                <td>{{deployedOn}}</td>",
+							"                {{#each links}}",
+							"                   <td>{{rel}}</td>",
+							"                   <td>{{href}}</td>",
+							"                {{/each}}",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment?namespace=ONNX_MODELS",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					],
+					"query": [
+						{
+							"key": "namespace",
+							"value": "ONNX_MODELS"
+						}
+					]
+				},
+				"description": "# Get the list of models that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared models and models created by the caller are visible to the caller. This method does NOT return the model content or metadata."
+			},
+			"response": []
+		},
+		{
+			"name": "Score ONNX ML Model (Single Classification)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f22b9d53-29da-4c63-9975-e592b8f7e743",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> ONNX Model Scoring Results </h3>",
+							"{{#each response.scoringResults}}",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>label</th>",
+							"<th>probability</th>",
+							"</tr>",
+							"{{#each classifications}}",
+							"<tr>",
+							"<td>{{label}}</td>",
+							"<td>{{probability}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"{{/each}}",
+							"",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n    \"inputRecords\":[{ \"pclass\":  [[\"3\"]], \n                      \"sex\":     [[\"male\"]],\n                      \"age\":     [[\"NaN\"]],\n                      \"fare\":    [[22.3583]],\n                      \"embarked\":[[\"C\"]]\n                    }]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxMLModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxMLModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Score ONNX ML Model (Multiple Classifications)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d5d7ec40-168a-43d2-801f-1689877661d2",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<h3 style=\"color:gray\"> ONNX Model Scoring Results </h3>",
+							"{{#each response.scoringResults}}",
+							"<a style=\"color:gray\">Customer # {{@key}}</a>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>label</th>",
+							"<th>probability</th>",
+							"</tr>",
+							"{{#each classifications}}",
+							"<tr>",
+							"<td>{{label}}</td>",
+							"<td>{{probability}}</td>",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"{{/each}}",
+							"",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n    \"inputRecords\":[{ \"pclass\":  [[\"3\"],    [\"3\"]],\n                      \"sex\":     [[\"male\"], [\"female\"]],\n                      \"age\":     [[\"NaN\"],  [\"5\"]],\n                      \"fare\":    [[22.3583],[22.3583]], \n                      \"embarked\":[[\"C\"],    [\"C\"]]\n                    }]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxMLModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxMLModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ONNX ML Endpoint",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxMLModelURI}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxMLModelURI}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ONNX ML Model",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxMLModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxMLModelID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d1416882-33c1-45fe-90e1-2afe35f1f0d5",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "852353ea-8907-457c-bc75-8a49a4524d97",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "f1777158-1da2-4941-bbdc-bfb70329d973",
+			"key": "omlmodserver",
+			"value": "https://138.1.39.21",
+			"type": "string"
+		},
+		{
+			"id": "7313ea23-b8e2-4820-9ceb-c99a7241bd9a",
+			"key": "modelName",
+			"value": "onnxTitanicModel",
+			"type": "string"
+		},
+		{
+			"id": "add95a90-05ce-4379-bd0b-dd28b7e41348",
+			"key": "modelVersion",
+			"value": "1.0",
+			"type": "string"
+		},
+		{
+			"id": "5fc04d5c-6082-4e4d-b602-be8841347d4d",
+			"key": "onnxDeployURI",
+			"value": "titanic",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
