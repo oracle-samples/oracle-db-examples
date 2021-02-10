@@ -2,14 +2,14 @@
 
 /*
  DESCRIPTION
- The code sample creates a new database user. 
- (a) Make sure to provide the connection URL and the admin username and password. 
- (b) Provide a new user and password that you want to create. 
+ The code sample creates a new database user and grants the required privileges. 
+ (a) Edit this file and update the connection URL along with the admin username and password. 
+ (b) Also, provide a new database user and password that you want to create. 
  
  NOTES  Use JDK 1.8 and above  
  
  MODIFIED    (MM/DD/YY)
- nbsundar    02/04/21 - Creation (Contributor - kmensah)
+ nbsundar    02/10/21 - Creation (Contributor - kmensah)
  */
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,13 +19,14 @@ import oracle.ucp.jdbc.PoolDataSourceFactory;
 import oracle.ucp.jdbc.PoolDataSource;
 
 public class CreateUser {
-  // Update the 
+  // The following connection string is pointing to Oracle XE database. 
+  // Change this URL to the specific connnection string that you have. 
   final static String DB_URL="jdbc:oracle:thin:@//localhost:1521/XEPDB1";
   // Enter the admin database username associated with your XE installation
   // It is usually "sys as sysdba" 
-  final static String AdminUSER = "<yourDBUser>";
+  final static String AdminUSER = "<DBAdminUser>";
   // Enter the password for the admin user 
-  final static String AdminPASSWORD = "<yourDBPassword>";
+  final static String AdminPASSWORD = "<DBAdminPassword>";
   
   
   // Enter the new database user that you want to create
@@ -35,7 +36,9 @@ public class CreateUser {
   final static String CONN_FACTORY_CLASS_NAME="oracle.jdbc.pool.OracleDataSource";
   
   /*
-   * The sample demonstrates UCP as client side connection pool.
+   * Sample to create a new database user and password and grant the required privileges.
+   * As a required step, you will need to provide the database connection string, 
+   * admin username and password to create a new database user. 
    */
   public static void main(String args[]) throws Exception {
     // Get the PoolDataSource for UCP
@@ -47,6 +50,7 @@ public class CreateUser {
     pds.setPassword(DB_PASSWORD);
     pds.setConnectionPoolName("JDBC_UCP_POOL");
     
+    // Create a new database user along with granting the required privileges. 
     String createUserSQL = "BEGIN " +
     "EXECUTE IMMEDIATE ('CREATE USER " + newDBUser + " IDENTIFIED BY " + newDBPassword + 
     " DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS'); " +
@@ -55,8 +59,7 @@ public class CreateUser {
     " CREATE MATERIALIZED VIEW TO " + newDBUser + "'); " +
     "END;";
 
-    // Default is 0. Set the initial number of connections to be created
-    // when UCP is started.
+    // Initial number of connections to be created when UCP is started.
     pds.setInitialPoolSize(5);
 
     // Minimum number of connections that is maintained by UCP at runtime
@@ -70,7 +73,7 @@ public class CreateUser {
       conn.setAutoCommit(false);
       // Prepare a statement to execute the SQL Queries.
       Statement statement = conn.createStatement();
-      // Create a table CUSTOMER
+      // Create a new database user and grant privileges
       statement.executeUpdate(createUserSQL);
       System.out.println("New Database user " + newDBUser + " created");
     } catch (SQLException e) {
