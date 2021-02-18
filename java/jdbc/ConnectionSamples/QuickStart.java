@@ -58,19 +58,10 @@ public class QuickStart {
     pds.setTimeoutCheckInterval(5);
     pds.setInactiveConnectionTimeout(10);
 
-    // Get the database connection from UCP.
+    // Get the database connection from UCP
     try (Connection conn = pds.getConnection()) {
-      System.out.println("Available connections after checkout: "
-          + pds.getAvailableConnectionsCount());
-      System.out.println("Borrowed connections after checkout: "
-          + pds.getBorrowedConnectionsCount());
       doSQLWork(conn);
     }
-    
-    System.out.println("Available connections after checkin: "
-        + pds.getAvailableConnectionsCount());
-    System.out.println("Borrowed connections after checkin: "
-        + pds.getBorrowedConnectionsCount());
   }
 
   /*
@@ -117,7 +108,7 @@ public class QuickStart {
       while (resultSet.next()) {
         System.out.println(resultSet.getString(1) + "\t\t" + resultSet.getInt(2));
       }
-      System.out.println("\nSuccessfully tested a connection from UCP");
+      System.out.println("\nCongratulations!! You have successfully used Oracle Database");
     }
     catch (SQLException e) {
       System.out.println("QuickStart - "
