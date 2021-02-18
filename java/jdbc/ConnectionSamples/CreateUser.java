@@ -9,7 +9,7 @@
  NOTES  Use JDK 1.8 and above  
  
  MODIFIED    (MM/DD/YY)
- nbsundar    02/10/21 - Creation (Contributor - kmensah)
+ nbsundar    02/17/21 - Creation (Contributor - kmensah)
  */
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,7 +27,6 @@ public class CreateUser {
   final static String AdminUSER = "<DBAdminUser>";
   // Enter the password for the admin user 
   final static String AdminPASSWORD = "<DBAdminPassword>";
-  
   
   // Enter the new database user that you want to create
   final static String newDBUser = "<db-new-username>";
