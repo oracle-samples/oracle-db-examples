@@ -45,7 +45,7 @@ public class QuickStart {
    */
   public static void main(String args[]) throws Exception {
   
-    // Get the PoolDataSource for UCP
+    // Get a pooled connection 
     PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
     // Set the connection factory 
     pds.setConnectionFactoryClassName(CONN_FACTORY_CLASS_NAME);
@@ -87,7 +87,7 @@ public class QuickStart {
       statement.executeUpdate(createSQL);
       System.out.println("New table 'todoitem' is created");
       
-      //Insert sample data
+      //Sample data for populating the 'todoitem'
       String[] description = { "Task 1", "Task 2", "Task 3", "Task 4", "Task 5" };
       int[] done = { 0, 0, 1, 0, 1 };
       
@@ -103,7 +103,7 @@ public class QuickStart {
        
       System.out.println("New records are inserted");
       
-      // Verify the data from the table "todoitem"
+      // Query the 'todoitem' table to list tasks and task completion status 
       ResultSet resultSet = statement.executeQuery("SELECT DESCRIPTION, DONE FROM TODOITEM");
       System.out.println("\nNew table 'todoitem' contains:");
       System.out.println("DESCRIPTION" + "\t" + "DONE");
