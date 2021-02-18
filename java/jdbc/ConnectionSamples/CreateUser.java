@@ -20,10 +20,10 @@ import oracle.ucp.jdbc.PoolDataSource;
 
 public class CreateUser {
   // The following connection string is pointing to Oracle XE database. 
-  // Change this URL to the specific connnection string that you have. 
+  // Change this URL to match your target database (Oracle XE or else).
   final static String DB_URL="jdbc:oracle:thin:@//localhost:1521/XEPDB1";
-  // Enter the admin database username associated with your XE installation
-  // It is usually "sys as sysdba" 
+  // Enter the database admin user
+  // It is usually "sys as sysdba" for Oracle XE database. 
   final static String AdminUSER = "<DBAdminUser>";
   // Enter the password for the admin user 
   final static String AdminPASSWORD = "<DBAdminPassword>";
@@ -37,17 +37,17 @@ public class CreateUser {
   
   /*
    * Sample to create a new database user and password and grant the required privileges.
-   * As a required step, you will need to provide the database connection string, 
-   * admin username and password to create a new database user. 
+   * Requirement: database connection string, admin user and admin password 
    */
   public static void main(String args[]) throws Exception {
     // Get the PoolDataSource for UCP
     PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
-    // Set the connection factory first before all other properties
+    // Set the connection factory 
     pds.setConnectionFactoryClassName(CONN_FACTORY_CLASS_NAME);
+   
     pds.setURL(DB_URL);
-    pds.setUser(DB_USER);
-    pds.setPassword(DB_PASSWORD);
+    pds.setUser(AdminUSER);
+    pds.setPassword(AdminPASSWORD);
     pds.setConnectionPoolName("JDBC_UCP_POOL");
     
     // Create a new database user along with granting the required privileges. 
@@ -58,26 +58,24 @@ public class CreateUser {
     " CREATE PROCEDURE, CREATE TABLE, CREATE TRIGGER, CREATE TYPE, " + 
     " CREATE MATERIALIZED VIEW TO " + newDBUser + "'); " +
     "END;";
-
-    // Initial number of connections to be created when UCP is started.
+   
+    // Set the connection pool properties
     pds.setInitialPoolSize(5);
-
-    // Minimum number of connections that is maintained by UCP at runtime
     pds.setMinPoolSize(5);
-
-    // Maximum number of connections allowed on the connection pool
     pds.setMaxPoolSize(20);
+    pds.setTimeoutCheckInterval(5);
+    pds.setInactiveConnectionTimeout(10);
 
     // Get the database connection from UCP.
     try (Connection conn = pds.getConnection()) {
       conn.setAutoCommit(false);
-      // Prepare a statement to execute the SQL Queries.
+      // Prepare a statement to execute the SQL Statement.
       Statement statement = conn.createStatement();
       // Create a new database user and grant privileges
       statement.executeUpdate(createUserSQL);
       System.out.println("New Database user " + newDBUser + " created");
     } catch (SQLException e) {
-      System.out.println("QuickStart - "
+      System.out.println("CreateUser - "
           + "CreateUser - SQLException occurred : " + e.getMessage());
     }
   } // End of main
