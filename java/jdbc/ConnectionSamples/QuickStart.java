@@ -16,6 +16,9 @@ as shown at http://oss.oracle.com/licenses/upl
  MODIFIED    (MM/DD/YY)
  nbsundar    02/17/21 - Creation (Contributor - kmensah)
  */
+
+package com.oracle.jdbctest;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
