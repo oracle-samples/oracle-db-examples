@@ -13,7 +13,16 @@ Key Features:
 * Python, SQL and PL/SQL scripting language supported
 * Enables and supports deployments of enterprise machine learning methodologies in Autonomous Data Warehouse (ADW), Autonomous Transactional Database (ATP) and Autonomous JSON Database (AJD)
 
-This current folder contains the examples based on Oracle Machine Learning for Python (OML4Py) used for the Developer Live Labs from January 2021
+This current folder contains the examples based on Oracle Machine Learning for Python (OML4Py) used for the Developer Live Labs from January 2021:
+
+ * Lab 0 Run Me First OML4Py table creation and grants - please execute this notebook first, since it contains tables and views used by the Labs
+ * Lab 1 Getting Started with OML4Py - Basic Introduction to the OML Notebooks environment and layout
+ * Lab 2 OML4Py Transparency Layer - Examples on how to use Transparency Layer from Python
+ * Lab 3 OML4Py Algorithms - Examples of using Oracle Machine Learning Algorithms from Python
+ * Lab 4 OML4Py Datastore - Examples of storing Python scripts and objects into Oracle Database (OML4Py Datastore)
+ * Lab 5 OML4Py Embedded Python Execution - Examples of using open-source Python scripts and algorithms (like SciKit-Learn) with OML4Py
+ * Lab 6 OML4Py AutoML - Examples of how to execute OML AutoML processes to identify the ideal algorithms and tune the models.
+ * OML4Py Try It Yourself Answers - Solutions to the "Try It Yourself" sections of the Labs
 
 More information on the site [Oracle Developer Live - AI and ML for Your Enterprise](https://developer.oracle.com/developer-live/ai-ml-enterprise/)
 
