@@ -37,7 +37,7 @@ public class OracleJdbcApplication implements CommandLineRunner {
 		// Insert a new employee into EMP table
 		employeeService.insertEmployee(new Employee(7954,"TAYLOR","MANAGER",7839, Date.valueOf("2020-03-20"),5300,0,10));
 		System.out.println("List of Employees after the update");
-		// Displays the list of employees after the new employee record is inserted
+		// Displays the list of employees after a new employee record is inserted
 		employeeService.displayEmployees();		
 	}
 
