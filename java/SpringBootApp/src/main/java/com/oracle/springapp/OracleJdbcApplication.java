@@ -28,11 +28,16 @@ public class OracleJdbcApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		
+		// Displays 20 table names from ALL_TABLES
 		employeeService.displayTableNames();
 		System.out.println("List of employees");
+		// Displays the list of employees from EMP table
 		employeeService.displayEmployees();
+		// Insert a new employee into EMP table
 		employeeService.insertEmployee(new Employee(7954,"TAYLOR","MANAGER",7839, Date.valueOf("2020-03-20"),5300,0,10));
 		System.out.println("List of Employees after the update");
+		// Displays the list of employees after the new employee record is inserted
 		employeeService.displayEmployees();		
 	}
 
