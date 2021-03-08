@@ -1,13 +1,9 @@
 package com.oracle.springapp.dao.impl;
 
-
-
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -15,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import com.oracle.springapp.dao.EmployeeDAO;
 import com.oracle.springapp.model.Employee;
-
 
 /**
  * Simple Java class which uses Spring's JdbcDaoSupport class to implement
@@ -50,16 +45,13 @@ public class EmployeeDAOImpl extends JdbcDaoSupport implements EmployeeDAO {
 		
 		
 	}
-
 	
 	@Override
 	public void insertEmployee(Employee employee) {
 		String sql = "Select max(empno) from emp"; 
 	    int[] emp_no = new int[1];
 	    //getJdbcTemplate().query(sql, (rs, rowNum) -> emp_no[rowNum] = rs.getInt(1));
-	    getJdbcTemplate().query(sql, (resultSet, rowNumber) -> emp_no[rowNumber] = resultSet.getInt(1));
-
-	    
+	    getJdbcTemplate().query(sql, (resultSet, rowNumber) -> emp_no[rowNumber] = resultSet.getInt(1));	    
 	    System.out.println("Max emploee number is: " + emp_no[0]);
 	    
 	    sql = "INSERT INTO EMP VALUES(?,?,?,?,?,?,?,?)";
@@ -75,6 +67,4 @@ public class EmployeeDAOImpl extends JdbcDaoSupport implements EmployeeDAO {
 				employee.getDeptno()
 		});
 	}
-
-
 }
