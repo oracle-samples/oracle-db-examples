@@ -25,7 +25,6 @@ SpringBootSample
         │   └── com
         │       └── oracle
         │           └── springapp
-        │               ├── DataSourceConfig.java
         │               ├── OracleJdbcApplication.java
         │               ├── dao
         │               │   ├── AllTablesDAO.java
