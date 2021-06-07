@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -28,6 +28,17 @@
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
+
 async function run() {
 
   let connection;
@@ -39,9 +50,10 @@ async function run() {
 
     await connection.execute(
       `CREATE OR REPLACE FUNCTION no_func
-         (p1_in IN VARCHAR2, p2_in IN VARCHAR2) RETURN VARCHAR2
+         (p1_in IN VARCHAR2, p2_in IN VARCHAR2, p3_out OUT NUMBER) RETURN VARCHAR2
        AS
        BEGIN
+         p3_out := 123;
          RETURN p1_in || ' ' || p2_in;
        END;`
     );
@@ -50,17 +62,18 @@ async function run() {
     //
     // The equivalent call with PL/SQL named parameter syntax is:
     // `BEGIN
-    //    :ret := no_func(p1_in => :p1, p2_in => :p2);
+    //    :ret := no_func(p1_in => :p1, p2_in => :p2, p3_out => :p3);
     //  END;`
 
     const result = await connection.execute(
       `BEGIN
-         :ret := no_func(:p1, :p2);
+         :ret := no_func(:p1, :p2, :p3);
        END;`,
       {
         p1:  'Chris', // Bind type is determined from the data.  Default direction is BIND_IN
         p2:  'Jones',
-        ret:  { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: 40 }
+        p3:  { dir: oracledb.BIND_OUT, type: oracledb.NUMBER },
+        ret: { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: 40 }
       });
 
     console.log(result.outBinds);
