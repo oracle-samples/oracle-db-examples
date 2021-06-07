@@ -3,13 +3,13 @@
  *---------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
- * SetupSamples.sql
+ * setup_samples.sql
  *   Creates and populates schemas with the database objects used by the
  * cx_Oracle samples. An edition is also created for the demonstration of
  * PL/SQL editioning.
  *
  * Run this like:
- *   sqlplus sys/syspassword@hostname/servicename as sysdba @SetupSamples
+ *   sqlplus sys/syspassword@hostname/servicename as sysdba @setup_samples
  *---------------------------------------------------------------------------*/
 
 whenever sqlerror exit failure
@@ -27,8 +27,7 @@ accept edition_name char default python_e1 -
 set feedback on
 
 -- perform work
-@@DropSamplesExec.sql
-@@SetupSamplesExec.sql
+@@drop_samples_exec.sql
+@@setup_samples_exec.sql
 
 exit
-

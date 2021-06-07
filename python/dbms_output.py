@@ -1,17 +1,17 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2020, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# DbmsOutput.py
+# dbms_output.py
 #   This script demonstrates one method of fetching the lines produced by
 # the DBMS_OUTPUT package.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 cursor = connection.cursor()
 
 # enable DBMS_OUTPUT

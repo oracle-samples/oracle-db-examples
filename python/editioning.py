@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -8,7 +8,7 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# Editioning.py
+# editioning.py
 #   This script demonstrates the use of Edition-Based Redefinition, available
 # in Oracle# Database 11.2 and higher. See the Oracle documentation on the
 # subject for additional information. Adjust the contants at the top of the
@@ -17,15 +17,16 @@
 # This script requires cx_Oracle 5.3 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
 import os
 
+import cx_Oracle as oracledb
+import sample_env
+
 # connect to the editions user and create a procedure
-editionConnectString = SampleEnv.GetEditionConnectString()
-connection = cx_Oracle.connect(editionConnectString)
-print("Edition should be None, actual value is:",
-        repr(connection.edition))
+edition_connect_string = sample_env.get_edition_connect_string()
+edition_name = sample_env.get_edition_name()
+connection = oracledb.connect(edition_connect_string)
+print("Edition should be None, actual value is:", repr(connection.edition))
 cursor = connection.cursor()
 cursor.execute("""
         create or replace function TestEditions return varchar2 as
@@ -34,12 +35,12 @@ cursor.execute("""
         end;""")
 result = cursor.callfunc("TestEditions", str)
 print("Function should return 'Base Procedure', actually returns:",
-        repr(result))
+      repr(result))
 
 # next, change the edition and recreate the procedure in the new edition
-cursor.execute("alter session set edition = %s" % SampleEnv.GetEditionName())
-print("Edition should be", repr(SampleEnv.GetEditionName().upper()),
-        "actual value is:", repr(connection.edition))
+cursor.execute("alter session set edition = %s" % edition_name)
+print("Edition should be", repr(edition_name.upper()),
+      "actual value is:", repr(connection.edition))
 cursor.execute("""
         create or replace function TestEditions return varchar2 as
         begin
@@ -47,30 +48,29 @@ cursor.execute("""
         end;""")
 result = cursor.callfunc("TestEditions", str)
 print("Function should return 'Edition 1 Procedure', actually returns:",
-        repr(result))
+      repr(result))
 
 # next, change the edition back to the base edition and demonstrate that the
 # original function is being called
 cursor.execute("alter session set edition = ORA$BASE")
 result = cursor.callfunc("TestEditions", str)
 print("Function should return 'Base Procedure', actually returns:",
-        repr(result))
+      repr(result))
 
 # the edition can be set upon connection
-connection = cx_Oracle.connect(editionConnectString,
-        edition = SampleEnv.GetEditionName().upper())
+connection = oracledb.connect(edition_connect_string,
+                              edition=edition_name.upper())
 cursor = connection.cursor()
 result = cursor.callfunc("TestEditions", str)
 print("Function should return 'Edition 1 Procedure', actually returns:",
-        repr(result))
+      repr(result))
 
 # it can also be set via the environment variable ORA_EDITION
-os.environ["ORA_EDITION"] = SampleEnv.GetEditionName().upper()
-connection = cx_Oracle.connect(editionConnectString)
-print("Edition should be", repr(SampleEnv.GetEditionName().upper()),
-        "actual value is:", repr(connection.edition))
+os.environ["ORA_EDITION"] = edition_name.upper()
+connection = oracledb.connect(edition_connect_string)
+print("Edition should be", repr(edition_name.upper()),
+      "actual value is:", repr(connection.edition))
 cursor = connection.cursor()
 result = cursor.callfunc("TestEditions", str)
 print("Function should return 'Edition 1 Procedure', actually returns:",
-        repr(result))
-
+      repr(result))

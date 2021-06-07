@@ -1,18 +1,18 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# LastRowid.py
+# last_rowid.py
 #   Demonstrates the use of the cursor.lastrowid attribute.
 #
 # This script requires cx_Oracle 7.3 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 
 row1 = [1, "First"]
 row2 = [2, "Second"]

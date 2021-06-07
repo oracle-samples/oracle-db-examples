@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2019, 2020, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# SessionCallbackPLSQL.py
+# session_callback_plsql.py
 #
 # Demonstrate how to use a connection pool session callback written in
 # PL/SQL. The callback is invoked whenever the tag requested by the application
@@ -13,23 +13,23 @@
 # database.
 #
 # The primary advantage to this approach over the equivalent approach shown in
-# SessionCallback.py is when DRCP is used, as the callback is invoked on the
+# session_callback.py is when DRCP is used, as the callback is invoked on the
 # server and no round trip is required to set state.
 #
 # This script requires cx_Oracle 7.1 or higher.
 #
-# Also see SessionCallback.py
+# Also see session_callback.py
 #
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
 # create pool with session callback defined
-pool = cx_Oracle.SessionPool(SampleEnv.GetMainUser(),
-        SampleEnv.GetMainPassword(), SampleEnv.GetConnectString(), min=2,
-        max=5, increment=1, threaded=True,
-        sessionCallback="pkg_SessionCallback.TheCallback")
+pool = oracledb.SessionPool(user=sample_env.get_main_user(),
+                            password=sample_env.get_main_password(),
+                            dsn=sample_env.get_connect_string(), min=2, max=5,
+                            increment=1, session_callback="pkg_SessionCallback.TheCallback")
 
 # truncate table logging calls to PL/SQL session callback
 with pool.acquire() as conn:

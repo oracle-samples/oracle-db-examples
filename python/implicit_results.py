@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -8,7 +8,7 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# ImplicitResults.py
+# implicit_results.py
 #   This script demonstrates the use of the 12.1 feature that allows PL/SQL
 # procedures to return result sets implicitly, without having to explicitly
 # define them.
@@ -16,10 +16,10 @@
 # This script requires cx_Oracle 5.3 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 cursor = connection.cursor()
 
 # use PL/SQL block to return two cursors
@@ -42,9 +42,8 @@ cursor.execute("""
         end;""")
 
 # display results
-for ix, resultSet in enumerate(cursor.getimplicitresults()):
+for ix, result_set in enumerate(cursor.getimplicitresults()):
     print("Result Set #" + str(ix + 1))
-    for row in resultSet:
+    for row in result_set:
         print(row)
     print()
-

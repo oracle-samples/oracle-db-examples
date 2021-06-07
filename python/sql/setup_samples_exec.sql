@@ -3,12 +3,12 @@
  *---------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
- * SetupSamplesExec.sql
+ * setup_samples_exec.sql
  *   This script performs the actual work of creating and populating the
  * schemas with the database objects used by the cx_Oracle samples. An edition
  * is also created for the demonstration of PL/SQL editioning. It is called by
- * the SetupSamples.sql file after acquiring the necessary parameters and also
- * by the Python script SetupSamples.py.
+ * the setup_samples.sql file after acquiring the necessary parameters and also
+ * by the Python script setup_samples.py.
  *---------------------------------------------------------------------------*/
 
 alter session set nls_date_format = 'YYYY-MM-DD HH24:MI:SS'
@@ -30,7 +30,7 @@ grant
 to &main_user
 /
 
-grant execute on dbms_aqadm to &main_user
+grant aq_administrator_role to &main_user
 /
 
 begin
@@ -382,6 +382,15 @@ begin
 end;
 /
 
+create procedure &main_user..myrefcursorproc2 (
+    a_RefCursor                         out sys_refcursor
+) as
+begin
+    open a_RefCursor for
+        select *
+        from TestTempTable;
+end;
+/
 
 --
 -- Create package for demoing PL/SQL collections and records.
@@ -547,4 +556,3 @@ create or replace package body &main_user..pkg_SessionCallback as
 
 end;
 /
-

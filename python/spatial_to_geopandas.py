@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# SpatialToGeoPandas.py
+# spatial_to_geopandas.py
 #   GeoPandas is a popular python library for working with geospatial data.
 # GeoPandas extends the Pandas data analysis library with geospatial support
 # using the Shapely library for geometry object support.
@@ -22,13 +22,14 @@
 # dependencies (see http://geopandas.org/install.html).
 #------------------------------------------------------------------------------
 
-import SampleEnv
-import cx_Oracle
 from shapely.wkb import loads
 import geopandas as gpd
 
+import cx_Oracle as oracledb
+import sample_env
+
 # create Oracle connection and cursor objects
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 cursor = connection.cursor()
 
 # enable autocommit to avoid the additional round trip to the database to
@@ -38,10 +39,10 @@ connection.autocommit = True
 
 # define output type handler to fetch LOBs, avoiding the second round trip to
 # the database to read the LOB contents
-def OutputTypeHandler(cursor, name, defaultType, size, precision, scale):
-    if defaultType == cx_Oracle.BLOB:
-        return cursor.var(cx_Oracle.LONG_BINARY, arraysize = cursor.arraysize)
-connection.outputtypehandler = OutputTypeHandler
+def output_type_handler(cursor, name, default_type, size, precision, scale):
+    if default_type == oracledb.BLOB:
+        return cursor.var(oracledb.LONG_BINARY, arraysize=cursor.arraysize)
+connection.outputtypehandler = output_type_handler
 
 # drop and create table
 print("Dropping and creating table...")
@@ -60,23 +61,23 @@ cursor.execute("""
         )""")
 
 # acquire types used for creating SDO_GEOMETRY objects
-typeObj = connection.gettype("MDSYS.SDO_GEOMETRY")
-elementInfoTypeObj = connection.gettype("MDSYS.SDO_ELEM_INFO_ARRAY")
-ordinateTypeObj = connection.gettype("MDSYS.SDO_ORDINATE_ARRAY")
+type_obj = connection.gettype("MDSYS.SDO_GEOMETRY")
+element_info_type_obj = connection.gettype("MDSYS.SDO_ELEM_INFO_ARRAY")
+ordinate_type_obj = connection.gettype("MDSYS.SDO_ORDINATE_ARRAY")
 
 # define function for creating an SDO_GEOMETRY object
-def CreateGeometryObj(*ordinates):
-    geometry = typeObj.newobject()
+def create_geometry_obj(*ordinates):
+    geometry = type_obj.newobject()
     geometry.SDO_GTYPE = 2003
     geometry.SDO_SRID = 8307
-    geometry.SDO_ELEM_INFO = elementInfoTypeObj.newobject()
+    geometry.SDO_ELEM_INFO = element_info_type_obj.newobject()
     geometry.SDO_ELEM_INFO.extend([1, 1003, 1])
-    geometry.SDO_ORDINATES = ordinateTypeObj.newobject()
+    geometry.SDO_ORDINATES = ordinate_type_obj.newobject()
     geometry.SDO_ORDINATES.extend(ordinates)
     return geometry
 
 # create SDO_GEOMETRY objects for three adjacent states in the USA
-geometryNevada = CreateGeometryObj(-114.052025, 37.103989, -114.049797,
+geometry_nevada = create_geometry_obj(-114.052025, 37.103989, -114.049797,
         37.000423, -113.484375, 37, -112.898598, 37.000401,-112.539604,
         37.000683, -112, 37.000977, -111.412048, 37.001514, -111.133018,
         37.00079,-110.75, 37.003201, -110.5, 37.004265, -110.469505, 36.998001,
@@ -96,7 +97,7 @@ geometryNevada = CreateGeometryObj(-114.052025, 37.103989, -114.049797,
         -114.049339, 38.572968, -114.049095, 38.14864, -114.0476,
         37.80946,-114.05098, 37.746284, -114.051666, 37.604805, -114.052025,
         37.103989)
-geometryWyoming = CreateGeometryObj(-111.045815, 41.251774, -111.045982,
+geometry_wyoming = create_geometry_obj(-111.045815, 41.251774, -111.045982,
         40.998013, -110.5, 40.994801, -110.047768, 40.997696, -110, 40.997398,
         -109.534233, 40.998184, -109.2313, 41.002102, -109.0494, 41.000702,
         -108.525368, 40.999634, -107.917793, 41.002071, -107.317177, 41.002956,
@@ -120,7 +121,7 @@ geometryWyoming = CreateGeometryObj(-111.045815, 41.251774, -111.045982,
         -111.043846, 43.3158, -111.043381, 43.02013, -111.042786, 42.719578,
         -111.045967, 42.513187, -111.045944, 42.001633, -111.045097, 41.579899,
         -111.045815, 41.251774)
-geometryColorado = CreateGeometryObj(-109.045143, 37.375, -109.044571,
+geometry_colorado = create_geometry_obj(-109.045143, 37.375, -109.044571,
         36.999088, -108.378571, 36.999516, -107.481133, 37, -107.420311, 37,
         -106.876701, 37.00013, -106.869209, 36.992416, -106.475639, 36.993748,
         -106.006058, 36.995327, -105.717834, 36.995823, -105.220055, 36.995144,
@@ -151,9 +152,9 @@ geometryColorado = CreateGeometryObj(-109.045143, 37.375, -109.044571,
 # will skip the metadata and indexes.
 print("Adding rows to table...")
 data = [
-    ('Nevada', geometryNevada),
-    ('Colorado', geometryColorado),
-    ('Wyoming', geometryWyoming)
+    ('Nevada', geometry_nevada),
+    ('Colorado', geometry_colorado),
+    ('Wyoming', geometry_wyoming)
 ]
 cursor.executemany('insert into TestStates values (:state, :obj)', data)
 
@@ -168,7 +169,7 @@ cursor.executemany('insert into TestStates values (:state, :obj)', data)
 cursor.execute("""
         SELECT state, sdo_util.to_wkbgeometry(geometry)
         FROM TestStates""")
-gdf = gpd.GeoDataFrame(cursor.fetchall(), columns = ['state', 'wkbgeometry'])
+gdf = gpd.GeoDataFrame(cursor.fetchall(), columns=['state', 'wkbgeometry'])
 
 # create GeoSeries to replace the WKB geometry column
 gdf['geometry'] = gpd.GeoSeries(gdf['wkbgeometry'].apply(lambda x: loads(x)))
@@ -183,4 +184,3 @@ print(gdf)
 print()
 print("GeoPandas combining the 3 geometries into a single geometry...")
 print(gdf.unary_union)
-

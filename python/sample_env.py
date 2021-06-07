@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2017, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, 2020, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -57,93 +57,95 @@ DEFAULT_DRCP_CONNECT_STRING = "localhost/orclpdb1:pooled"
 # directly) and then stored so that a value is not requested more than once
 PARAMETERS = {}
 
-def GetValue(name, label, defaultValue=""):
+def get_value(name, label, default_value=""):
     value = PARAMETERS.get(name)
     if value is not None:
         return value
-    envName = "CX_ORACLE_SAMPLES_" + name
-    value = os.environ.get(envName)
+    env_name = "CX_ORACLE_SAMPLES_" + name
+    value = os.environ.get(env_name)
     if value is None:
-        if defaultValue:
-            label += " [%s]" % defaultValue
+        if default_value:
+            label += " [%s]" % default_value
         label += ": "
-        if defaultValue:
+        if default_value:
             value = input(label).strip()
         else:
             value = getpass.getpass(label)
         if not value:
-            value = defaultValue
+            value = default_value
     PARAMETERS[name] = value
     return value
 
-def GetMainUser():
-    return GetValue("MAIN_USER", "Main User Name", DEFAULT_MAIN_USER)
+def get_main_user():
+    return get_value("MAIN_USER", "Main User Name", DEFAULT_MAIN_USER)
 
-def GetMainPassword():
-    return GetValue("MAIN_PASSWORD", "Password for %s" % GetMainUser())
+def get_main_password():
+    return get_value("MAIN_PASSWORD", "Password for %s" % get_main_user())
 
-def GetEditionUser():
-    return GetValue("EDITION_USER", "Edition User Name", DEFAULT_EDITION_USER)
+def get_edition_user():
+    return get_value("EDITION_USER", "Edition User Name", DEFAULT_EDITION_USER)
 
-def GetEditionPassword():
-    return GetValue("EDITION_PASSWORD", "Password for %s" % GetEditionUser())
+def get_edition_password():
+    return get_value("EDITION_PASSWORD",
+                     "Password for %s" % get_edition_user())
 
-def GetEditionName():
-    return GetValue("EDITION_NAME", "Edition Name", DEFAULT_EDITION_NAME)
+def get_edition_name():
+    return get_value("EDITION_NAME", "Edition Name", DEFAULT_EDITION_NAME)
 
-def GetConnectString():
-    return GetValue("CONNECT_STRING", "Connect String", DEFAULT_CONNECT_STRING)
+def get_connect_string():
+    return get_value("CONNECT_STRING", "Connect String",
+                     DEFAULT_CONNECT_STRING)
 
-def GetMainConnectString(password=None):
+def get_main_connect_string(password=None):
     if password is None:
-        password = GetMainPassword()
-    return "%s/%s@%s" % (GetMainUser(), password, GetConnectString())
+        password = get_main_password()
+    return "%s/%s@%s" % (get_main_user(), password, get_connect_string())
 
-def GetDrcpConnectString():
-    connectString = GetValue("DRCP_CONNECT_STRING", "DRCP Connect String",
-            DEFAULT_DRCP_CONNECT_STRING)
-    return "%s/%s@%s" % (GetMainUser(), GetMainPassword(), connectString)
+def get_drcp_connect_string():
+    connect_string = get_value("DRCP_CONNECT_STRING", "DRCP Connect String",
+                               DEFAULT_DRCP_CONNECT_STRING)
+    return "%s/%s@%s" % (get_main_user(), get_main_password(), connect_string)
 
-def GetEditionConnectString():
+def get_edition_connect_string():
     return "%s/%s@%s" % \
-            (GetEditionUser(), GetEditionPassword(), GetConnectString())
+            (get_edition_user(), get_edition_password(), get_connect_string())
 
-def GetAdminConnectString():
-    adminUser = GetValue("ADMIN_USER", "Administrative user", "admin")
-    adminPassword = GetValue("ADMIN_PASSWORD", "Password for %s" % adminUser)
-    return "%s/%s@%s" % (adminUser, adminPassword, GetConnectString())
+def get_admin_connect_string():
+    admin_user = get_value("ADMIN_USER", "Administrative user", "admin")
+    admin_password = get_value("ADMIN_PASSWORD", "Password for %s" % admin_user)
+    return "%s/%s@%s" % (admin_user, admin_password, get_connect_string())
 
-def RunSqlScript(conn, scriptName, **kwargs):
-    statementParts = []
+def run_sql_script(conn, script_name, **kwargs):
+    statement_parts = []
     cursor = conn.cursor()
-    replaceValues = [("&" + k + ".", v) for k, v in kwargs.items()] + \
-            [("&" + k, v) for k, v in kwargs.items()]
-    scriptDir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    fileName = os.path.join(scriptDir, "sql", scriptName + "Exec.sql")
-    for line in open(fileName):
+    replace_values = [("&" + k + ".", v) for k, v in kwargs.items()] + \
+                     [("&" + k, v) for k, v in kwargs.items()]
+    script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    file_name = os.path.join(script_dir, "sql", script_name + "_exec.sql")
+    for line in open(file_name):
         if line.strip() == "/":
-            statement = "".join(statementParts).strip()
+            statement = "".join(statement_parts).strip()
             if statement:
-                for searchValue, replaceValue in replaceValues:
-                    statement = statement.replace(searchValue, replaceValue)
+                for search_value, replace_value in replace_values:
+                    statement = statement.replace(search_value, replace_value)
                 try:
                     cursor.execute(statement)
                 except:
                     print("Failed to execute SQL:", statement)
                     raise
-            statementParts = []
+            statement_parts = []
         else:
-            statementParts.append(line)
+            statement_parts.append(line)
     cursor.execute("""
             select name, type, line, position, text
             from dba_errors
             where owner = upper(:owner)
             order by name, type, line, position""",
-            owner = GetMainUser())
-    prevName = prevObjType = None
-    for name, objType, lineNum, position, text in cursor:
-        if name != prevName or objType != prevObjType:
-            print("%s (%s)" % (name, objType))
-            prevName = name
-            prevObjType = objType
-        print("    %s/%s %s" % (lineNum, position, text))
+            owner = get_main_user())
+    prev_name = prev_obj_type = None
+    for name, obj_type, line_num, position, text in cursor:
+        if name != prev_name or obj_type != prev_obj_type:
+            print("%s (%s)" % (name, obj_type))
+            prev_name = name
+            prev_obj_type = obj_type
+        print("    %s/%s %s" % (line_num, position, text))

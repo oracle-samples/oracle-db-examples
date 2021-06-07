@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2017, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# ReturnNumbersAsDecimals.py
+# return_numbers_as_decimals.py
 #   Returns all numbers as decimals by means of an output type handler. This is
 # needed if the full decimal precision of Oracle numbers is required by the
 # application. See this article
@@ -14,18 +14,18 @@
 # This script requires cx_Oracle 5.0 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
 import decimal
-import SampleEnv
 
-def OutputTypeHandler(cursor, name, defaultType, size, precision, scale):
-    if defaultType == cx_Oracle.NUMBER:
-        return cursor.var(decimal.Decimal, arraysize = cursor.arraysize)
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
-connection.outputtypehandler = OutputTypeHandler
+def output_type_handler(cursor, name, default_type, size, precision, scale):
+    if default_type == oracledb.NUMBER:
+        return cursor.var(decimal.Decimal, arraysize=cursor.arraysize)
+
+connection = oracledb.connect(sample_env.get_main_connect_string())
+connection.outputtypehandler = output_type_handler
 cursor = connection.cursor()
 cursor.execute("select * from TestNumbers")
 for row in cursor:
     print("Row:", row)
-

@@ -1,17 +1,17 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2020, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# Query.py
+# query.py
 #
 # Demonstrate how to perform a query in different ways.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 
 sql = """
         select * from SampleQueryTab
@@ -34,7 +34,7 @@ print()
 
 print("Fetch many rows")
 cursor.execute(sql)
-res = cursor.fetchmany(numRows=3)
+res = cursor.fetchmany(3)
 print(res)
 print()
 

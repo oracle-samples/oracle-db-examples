@@ -1,21 +1,20 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# PLSQLProcedure.py
+# plsql_procedure.py
 #
 # Demonstrate how to call a PL/SQL stored procedure and get the results of an
 # OUT variable.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 
 cursor = connection.cursor()
 myvar = cursor.var(int)
 cursor.callproc('myproc', (123, myvar))
 print(myvar.getvalue())
-

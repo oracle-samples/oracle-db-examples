@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -8,7 +8,7 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# RowsAsInstance.py
+# rows_as_instance.py
 #   Returns rows as instances instead of tuples. See the ceDatabase.Row class
 # in the cx_PyGenLib project (http://cx-pygenlib.sourceforge.net) for a more
 # advanced example.
@@ -16,17 +16,17 @@
 # This script requires cx_Oracle 4.3 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-class Test(object):
+class Test:
 
     def __init__(self, a, b, c):
         self.a = a
         self.b = b
         self.c = c
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 cursor = connection.cursor()
 
 # change this to False if you want to create the table yourself using SQL*Plus
@@ -55,4 +55,3 @@ cursor.rowfactory = Test
 print("Rows:")
 for row in cursor:
     print("a = %s, b = %s, c = %s" % (row.a, row.b, row.c))
-

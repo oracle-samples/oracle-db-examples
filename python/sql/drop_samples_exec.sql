@@ -3,11 +3,11 @@
  *---------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
- * DropSamplesExec.sql
+ * drop_samples_exec.sql
  *   This script performs the actual work of dropping the database schemas and
- * edition used by the cx_Oracle samples. It is called by the DropSamples.sql
- * and SetupSamples.sql files after acquiring the necessary parameters and
- * also by the Python script DropSamples.py.
+ * edition used by the cx_Oracle samples. It is called by the drop_samples.sql
+ * and setup_samples.sql files after acquiring the necessary parameters and
+ * also by the Python script drop_samples.py.
  *---------------------------------------------------------------------------*/
 
 begin
@@ -30,4 +30,3 @@ begin
 
 end;
 /
-

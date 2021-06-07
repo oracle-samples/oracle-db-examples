@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2020, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -8,7 +8,7 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# DRCP.py
+# drcp.py
 #   This script demonstrates the use of Database Resident Connection Pooling
 # (DRCP) which provides a connection pool in the database server, thereby
 # reducing the cost of creating and tearing down client connections. The pool
@@ -32,13 +32,12 @@
 #
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-conn = cx_Oracle.connect(SampleEnv.GetDrcpConnectString(), cclass = "PYCLASS",
-        purity = cx_Oracle.ATTR_PURITY_SELF)
+conn = oracledb.connect(sample_env.get_drcp_connect_string(),
+                        cclass="PYCLASS", purity=oracledb.ATTR_PURITY_SELF)
 cursor = conn.cursor()
 print("Performing query using DRCP...")
 for row in cursor.execute("select * from TestNumbers order by IntCol"):
     print(row)
-

@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# BindQuery.py
+# bind_query.py
 #
 # Demonstrate how to perform a simple query limiting the rows retrieved using
 # a bind variable. Since the query that is executed is identical, no additional
@@ -12,10 +12,10 @@
 # special characters or SQL injection attacks.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 
 cursor = connection.cursor()
 sql = 'select * from SampleQueryTab where id = :bvid'
@@ -29,4 +29,3 @@ print("Query results with id = 1")
 for row in cursor.execute(sql, bvid = 1):
     print(row)
 print()
-

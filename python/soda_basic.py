@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# SodaBasic.py
+# soda_basic.py
 #   A basic Simple Oracle Document Access (SODA) example.
 #
 # This script requires cx_Oracle 7.0 and higher.
@@ -12,10 +12,10 @@
 # The user must have been granted the SODA_APP privilege.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 
 # The general recommendation for simple SODA usage is to enable autocommit
 connection.autocommit = True
@@ -23,16 +23,49 @@ connection.autocommit = True
 # Create the parent object for SODA
 soda = connection.getSodaDatabase()
 
+# drop the collection if it already exists in order to ensure that the sample
+# runs smoothly each time
+collection = soda.openCollection("mycollection")
+if collection is not None:
+    collection.drop()
+
+# Explicit metadata is used for maximum version portability.
+# Refer to the documentation.
+metadata = {
+    "keyColumn": {
+        "name": "ID"
+    },
+    "contentColumn": {
+        "name": "JSON_DOCUMENT",
+        "sqlType": "BLOB"
+    },
+    "versionColumn": {
+        "name": "VERSION",
+        "method": "UUID"
+    },
+    "lastModifiedColumn": {
+        "name": "LAST_MODIFIED"
+    },
+    "creationTimeColumn": {
+        "name": "CREATED_ON"
+    }
+}
+
 # Create a new SODA collection and index
 # This will open an existing collection, if the name is already in use.
-collection = soda.createCollection("mycollection")
+collection = soda.createCollection("mycollection", metadata)
 
-indexSpec = { 'name': 'CITY_IDX',
-                  'fields': [ {
-                    'path': 'address.city',
-                    'datatype': 'string',
-                    'order': 'asc' } ] }
-collection.createIndex(indexSpec)
+index_spec = {
+    'name': 'CITY_IDX',
+    'fields': [
+        {
+            'path': 'address.city',
+            'datatype': 'string',
+            'order': 'asc'
+        }
+    ]
+}
+collection.createIndex(index_spec)
 
 # Insert a document.
 # A system generated key is created by default.
@@ -85,4 +118,3 @@ print('Collection has', c,  'documents')
 # Drop the collection
 if collection.drop():
     print('Collection was dropped')
-

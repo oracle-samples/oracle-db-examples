@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -8,24 +8,22 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# DatabaseStartup.py
-#   This script demonstrates starting up a database using Python. It is only
-# possible in Oracle 10g Release 2 and higher. The connection used assumes that
-# the environment variable ORACLE_SID has been set.
+# database_startup.py
+#   This script demonstrates starting up a database using Python. The
+# connection used assumes that the environment variable ORACLE_SID has been
+# set.
 #
 # This script requires cx_Oracle 4.3 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
+import cx_Oracle as oracledb
 
 # the connection must be in PRELIM_AUTH mode
-connection = cx_Oracle.connect("/",
-        mode = cx_Oracle.SYSDBA | cx_Oracle.PRELIM_AUTH)
+connection = oracledb.connect(mode=oracledb.SYSDBA | oracledb.PRELIM_AUTH)
 connection.startup()
 
 # the following statements must be issued in normal SYSDBA mode
-connection = cx_Oracle.connect("/", mode = cx_Oracle.SYSDBA)
+connection = oracledb.connect("/", mode=oracledb.SYSDBA)
 cursor = connection.cursor()
 cursor.execute("alter database mount")
 cursor.execute("alter database open")
-

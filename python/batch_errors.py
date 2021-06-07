@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# BatchErrors.py
+# batch_errors.py
 #
 # Demonstrate the use of the Oracle Database 12.1 feature that allows
 # cursor.executemany() to complete successfully, even if errors take
@@ -15,14 +15,14 @@
 # This script requires cx_Oracle 5.2 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 cursor = connection.cursor()
 
 # define data to insert
-dataToInsert = [
+data_to_insert = [
     (1016, 10, 'Child B of Parent 10'),
     (1017, 10, 'Child C of Parent 10'),
     (1018, 20, 'Child D of Parent 20'),
@@ -39,15 +39,15 @@ cursor.execute("""
         from ChildTable""")
 count, = cursor.fetchone()
 print("number of rows in child table:", int(count))
-print("number of rows to insert:", len(dataToInsert))
+print("number of rows to insert:", len(data_to_insert))
 
 # old method: executemany() with data errors results in stoppage after the
 # first error takes place; the row count is updated to show how many rows
 # actually succeeded
 try:
     cursor.executemany("insert into ChildTable values (:1, :2, :3)",
-            dataToInsert)
-except cx_Oracle.DatabaseError as e:
+                       data_to_insert)
+except oracledb.DatabaseError as e:
     error, = e.args
     print("FAILED with error:", error.message)
     print("number of rows which succeeded:", cursor.rowcount)
@@ -64,12 +64,12 @@ connection.rollback()
 
 # new method: executemany() with batch errors enabled (and array DML row counts
 # also enabled) results in no immediate error being raised
-cursor.executemany("insert into ChildTable values (:1, :2, :3)", dataToInsert,
-        batcherrors = True, arraydmlrowcounts = True)
+cursor.executemany("insert into ChildTable values (:1, :2, :3)",
+                   data_to_insert, batcherrors=True, arraydmlrowcounts=True)
 
 # where errors have taken place, the row count is 0; otherwise it is 1
-rowCounts = cursor.getarraydmlrowcounts()
-print("Array DML row counts:", rowCounts)
+row_counts = cursor.getarraydmlrowcounts()
+print("Array DML row counts:", row_counts)
 
 # display the errors that have taken place
 errors = cursor.getbatcherrors()

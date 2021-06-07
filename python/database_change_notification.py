@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -8,7 +8,7 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# DatabaseChangeNotification.py
+# database_change_notification.py
 #   This script demonstrates using database change notification in Python, a
 # feature that is available in Oracle 10g Release 2. Once this script is
 # running, use another session to insert, update or delete rows from the table
@@ -17,9 +17,10 @@
 # This script requires cx_Oracle 5.3 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
 import time
+
+import cx_Oracle as oracledb
+import sample_env
 
 registered = True
 
@@ -44,9 +45,10 @@ def callback(message):
                 print("-" * 60)
         print("=" * 60)
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString(), events = True)
-sub = connection.subscribe(callback = callback, timeout = 1800,
-        qos = cx_Oracle.SUBSCR_QOS_ROWIDS)
+connection = oracledb.connect(sample_env.get_main_connect_string(),
+                              events=True)
+sub = connection.subscribe(callback=callback, timeout=1800,
+                           qos=oracledb.SUBSCR_QOS_ROWIDS)
 print("Subscription:", sub)
 print("--> Connection:", sub.connection)
 print("--> ID:", sub.id)
@@ -55,10 +57,9 @@ print("--> Namespace:", sub.namespace)
 print("--> Protocol:", sub.protocol)
 print("--> Timeout:", sub.timeout)
 print("--> Operations:", sub.operations)
-print("--> Rowids?:", bool(sub.qos & cx_Oracle.SUBSCR_QOS_ROWIDS))
+print("--> Rowids?:", bool(sub.qos & oracledb.SUBSCR_QOS_ROWIDS))
 sub.registerquery("select * from TestTempTable")
 
 while registered:
     print("Waiting for notifications....")
     time.sleep(5)
-

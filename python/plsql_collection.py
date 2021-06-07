@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# PLSQLCollection.py
+# plsql_collection.py
 #
 # Demonstrate how to get the value of a PL/SQL collection from a stored
 # procedure.
@@ -13,15 +13,15 @@
 # is new in cx_Oracle 7.0.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
-import SampleEnv
+import cx_Oracle as oracledb
+import sample_env
 
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 
 # create new empty object of the correct type
 # note the use of a PL/SQL type defined in a package
-typeObj = connection.gettype("PKG_DEMO.UDT_STRINGLIST")
-obj = typeObj.newobject()
+type_obj = connection.gettype("PKG_DEMO.UDT_STRINGLIST")
+obj = type_obj.newobject()
 
 # call the stored procedure which will populate the object
 cursor = connection.cursor()
@@ -44,4 +44,3 @@ print()
 print("Values of collection as dictionary:")
 print(obj.asdict())
 print()
-

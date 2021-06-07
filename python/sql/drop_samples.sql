@@ -3,11 +3,11 @@
  *---------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
- * DropSamples.sql
+ * drop_samples.sql
  *   Drops database objects used for cx_Oracle samples.
  *
  * Run this like:
- *   sqlplus sys/syspassword@hostname/servicename as sysdba @DropSamples
+ *   sqlplus sys/syspassword@hostname/servicename as sysdba @drop_samples
  *---------------------------------------------------------------------------*/
 
 whenever sqlerror exit failure
@@ -23,7 +23,6 @@ accept edition_name char default python_e1 -
 set feedback on
 
 -- perform work
-@@DropSamplesExec.sql
+@@drop_samples_exec.sql
 
 exit
-

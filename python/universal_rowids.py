@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2017, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, 2021, Oracle and/or its affiliates. All rights reserved.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -8,16 +8,17 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# UniversalRowids.py
+# universal_rowids.py
 #   This script demonstrates the use of universal rowids. Universal rowids are
 # used to identify rows in index organized tables.
 #
 # This script requires cx_Oracle 6.0 and higher.
 #------------------------------------------------------------------------------
 
-import cx_Oracle
 import datetime
-import SampleEnv
+
+import cx_Oracle as oracledb
+import sample_env
 
 DATA = [
     (1, "String #1", datetime.datetime(2017, 4, 4)),
@@ -26,7 +27,7 @@ DATA = [
 ]
 
 # truncate table so sample can be rerun
-connection = cx_Oracle.connect(SampleEnv.GetMainConnectString())
+connection = oracledb.connect(sample_env.get_main_connect_string())
 cursor = connection.cursor()
 print("Truncating table...")
 cursor.execute("truncate table TestUniversalRowids")
@@ -50,8 +51,7 @@ for rowid in rowids:
             from TestUniversalRowids
             where rowid = :rid""",
             rid = rowid)
-    intCol, stringCol, dateCol = cursor.fetchone()
-    print("IntCol:", intCol)
-    print("StringCol:", stringCol)
+    int_col, string_col, dateCol = cursor.fetchone()
+    print("IntCol:", int_col)
+    print("StringCol:", string_col)
     print("DateCol:", dateCol)
-
