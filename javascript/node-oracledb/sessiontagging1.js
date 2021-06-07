@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, 2020, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -49,21 +49,32 @@ const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 const httpPort = 7000;
 
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
+
 // initSession() will be invoked internally when each brand new pooled
 // connection is first used, or when a getConnection() call requests a
 // connection tag and a connection without an identical tag is
-// returned.  Its callback function 'cb' should be invoked only when
-// all desired session state has been set.
+// returned.  Its callback function 'callbackFn' should be invoked only
+// when all desired session state has been set.
 // This implementation assumes that every pool.getConnection() will
 // request a tag having the format USER_TZ=X, where X is a valid
 // Oracle timezone.  See sessiontagging2.js for a more complete
 // implementation.
-function initSession(connection, requestedTag, cb) {
+function initSession(connection, requestedTag, callbackFn) {
   console.log(`In initSession. requested tag: ${requestedTag}, actual tag: ${connection.tag}`);
 
   const tagParts = requestedTag.split('=');
   if (tagParts[0] != 'USER_TZ') {
-    cb(new Error('Error: Only property USER_TZ is supported'));
+    callbackFn(new Error('Error: Only property USER_TZ is supported'));
     return;
   }
 
@@ -74,7 +85,7 @@ function initSession(connection, requestedTag, cb) {
     `ALTER SESSION SET TIME_ZONE = '${tagParts[1]}'`,
     (err) => {
       connection.tag = requestedTag; // Record the connection's new state
-      cb(err);
+      callbackFn(err);
     }
   );
 }
@@ -130,7 +141,7 @@ async function handleRequest(request, response) {
     //   the desired session state be set.
     connection = await oracledb.getConnection({poolAlias: 'default', tag: sessionTagNeeded /*, matchAnyTag: true */});
     const result = await connection.execute(`SELECT TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') FROM DUAL`);
-    console.log( `getConnection() tag needed was ${sessionTagNeeded}\n  ${result.rows[0][0]}`);
+    console.log(`getConnection() tag needed was ${sessionTagNeeded}\n  ${result.rows[0][0]}`);
   } catch (err) {
     console.error(err.message);
   } finally {
@@ -156,7 +167,7 @@ async function closePoolAndExit() {
     // Database are 19c (or later).
     await oracledb.getPool().close(3);
     process.exit(0);
-  } catch(err) {
+  } catch (err) {
     console.error(err.message);
     process.exit(1);
   }

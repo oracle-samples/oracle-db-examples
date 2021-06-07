@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -16,19 +16,30 @@
  * limitations under the License.
  *
  * NAME
- *   dmlrupd1.js
+ *   dmlrupd.js
  *
  * DESCRIPTION
- *   Example of 'DML Returning' with a single row match.
- *   The ROWID of the changed record is returned.  This is how to get
- *   the 'last insert id'.
+ *   Example of 'DML Returning' with multiple rows matched.
+ *   The ROWIDs of the changed records are returned.  This is how to get
+ *   the 'last insert id' of multiple rows.  For a single row, use "lastRowid".
  *
  *   This example uses Node 8's async/await syntax.
  *
  *****************************************************************************/
 
-const oracledb = require( 'oracledb' );
+const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 async function run() {
 
@@ -54,7 +65,7 @@ async function run() {
     for (const s of stmts) {
       try {
         await connection.execute(s);
-      } catch(e) {
+      } catch (e) {
         if (e.errorNum != 942)
           console.error(e);
       }
@@ -69,15 +80,17 @@ async function run() {
     const sql =
           `UPDATE no_dmlrupdtab
            SET name = :name
-           WHERE id = :id
-           RETURNING ROWID INTO :rid`;
+           WHERE id IN (:id1, :id2)
+           RETURNING id, ROWID INTO :ids, :rids`;
 
     const result = await connection.execute(
       sql,
       {
-        id:    1001,
-        name:  "Krishna",
-        rid:   { type: oracledb.STRING, dir: oracledb.BIND_OUT }
+        id1:   1001,
+        id2:   1002,
+        name:  "Chris",
+        ids:   { type: oracledb.NUMBER, dir: oracledb.BIND_OUT },
+        rids:  { type: oracledb.STRING, dir: oracledb.BIND_OUT }
       },
       { autoCommit: true }
     );

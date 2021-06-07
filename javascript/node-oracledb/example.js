@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -21,11 +21,11 @@
  * DESCRIPTION
  *   A basic node-oracledb example using Node.js 8's async/await syntax.
  *
- *   For connection pool examples see connectionpool.js and webappawait.js
+ *   For connection pool examples see connectionpool.js and webapp.js
  *   For a ResultSet example see resultset1.js
  *   For a query stream example see selectstream.js
  *
- *   This example requires node-oracledb 2.2 or later.
+ *   This example requires node-oracledb 5 or later.
  *
  *****************************************************************************/
 
@@ -35,11 +35,16 @@ process.env.ORA_SDTZ = 'UTC';
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 
-// On Windows and macOS, you can specify the directory containing your Oracle
-// Client Libraries.  If this is not done, then a standard search heuristic is
-// used, see the node-oracledb documentation.
-// oracledb.initOracleClient({ libDir: 'C:\instantclient_19_3' });                    // Windows
-// oracledb.initOracleClient({ libDir: '/Users/your_username/instantclient_19_3' });  // macOS
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 async function run() {
   let connection;
@@ -63,7 +68,7 @@ async function run() {
     for (const s of stmts) {
       try {
         await connection.execute(s);
-      } catch(e) {
+      } catch (e) {
         if (e.errorNum != 942)
           console.error(e);
       }
