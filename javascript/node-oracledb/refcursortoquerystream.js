@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -23,9 +23,6 @@
  *   This is an alternative means of processing instead of using
  *   resultSet.getRows().
  *
- *   Scripts to create the HR schema can be found at:
- *   https://github.com/oracle/db-sample-schemas
- *
  *   This example requires node-oracledb 1.9 or later.
  *
  *   This example uses Node 8's async/await syntax.
@@ -34,6 +31,18 @@
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 async function run() {
   let connection;
@@ -41,11 +50,14 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupBf(connection);  // create the demo table
+
     const result = await connection.execute(
       `BEGIN
          OPEN :cursor FOR
-           SELECT department_id, department_name
-           FROM departments;
+           SELECT id, farmer
+           FROM no_banana_farmer
+           ORDER BY id;
        END;`,
       {
         cursor: {
@@ -63,10 +75,14 @@ async function run() {
         console.log(row);
       });
       queryStream.on('error', reject);
+      queryStream.on('end', function() {
+        queryStream.destroy(); // free up resources
+      });
       queryStream.on('close', resolve);
     });
 
     await consumeStream;
+
   } catch (err) {
     console.error(err);
   } finally {

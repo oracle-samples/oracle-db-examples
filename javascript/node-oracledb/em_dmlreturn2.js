@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -20,8 +20,6 @@
  *
  * DESCRIPTION
  *   executeMany() example of DML RETURNING that returns multiple values
- *   This example also uses Async/Await of Node 8.
- *   Use demo.sql to create the required schema.
  *
  *   This example requires node-oracledb 2.2 or later.
  *
@@ -31,9 +29,20 @@
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
 
-const truncateSql = "TRUNCATE TABLE em_tab";
-const insertSql = "INSERT INTO em_tab VALUES (:1, :2)";
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
+
+const insertSql = "INSERT INTO no_em_tab VALUES (:1, :2)";
 
 const insertData = [
   [1, "Test 1 (One)"],
@@ -53,7 +62,7 @@ const insertOptions = {
   ]
 };
 
-const deleteSql = "DELETE FROM em_tab WHERE id < :1 RETURNING id, val INTO :2, :3";
+const deleteSql = "DELETE FROM no_em_tab WHERE id < :1 RETURNING id, val INTO :2, :3";
 
 const deleteData = [
   [2],
@@ -75,7 +84,7 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
-    await connection.execute(truncateSql);
+    await demoSetup.setupEm(connection);  // create the demo tables
 
     await connection.executeMany(insertSql, insertData, insertOptions);
 

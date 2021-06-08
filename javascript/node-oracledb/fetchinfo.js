@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -21,10 +21,6 @@
  * DESCRIPTION
  *   Show how numbers and dates can be returned as strings using fetchAsString
  *   and fetchInfo
- *   Uses Oracle's sample HR schema.
- *
- *   Scripts to create the HR schema can be found at:
- *   https://github.com/oracle/db-sample-schemas
  *
  *   This example uses Node 8's async/await syntax.
  *
@@ -32,9 +28,20 @@
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 oracledb.fetchAsString = [ oracledb.NUMBER ];  // any number queried will be returned as a string
-//oracledb.fetchAsString = [ oracledb.NUMBER, oracledb.DATE ]; // both date and number can be used
 
 async function run() {
 
@@ -43,16 +50,18 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupBf(connection);  // create the demo table
+
     const result = await connection.execute(
-      `SELECT last_name, hire_date, salary, commission_pct
-       FROM employees
-       WHERE employee_id = :id`,
-      [178],
+      `SELECT id, farmer, picked, weight
+       FROM no_banana_farmer
+       WHERE id = :id`,
+      [2],
       {
         fetchInfo :
         {
-          "HIRE_DATE":      { type : oracledb.STRING },  // return the date as a string
-          "COMMISSION_PCT": { type : oracledb.DEFAULT }  // override oracledb.fetchAsString
+          "PICKED": { type : oracledb.STRING },  // return the date as a string
+          "WEIGHT": { type : oracledb.DEFAULT }  // override oracledb.fetchAsString
         }
       });
 

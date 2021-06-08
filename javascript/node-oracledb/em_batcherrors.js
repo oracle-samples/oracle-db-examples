@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -19,12 +19,11 @@
  *   em_batcherrors.js
  *
  * DESCRIPTION
- *   Array DML example showing batchErrors behavior.  Note, despite the
- *   autoCommit flag, no commit occurs because of data errors. However
- *   valid rows are part of a transaction that can be committed if
- *   desired.
- *   This example also uses Async/Await of Node 8.
- *   Use demo.sql to create the required schema.
+ *   Array DML example showing batchErrors behavior.
+ *
+ *   Note: Despite the autoCommit flag, no commit occurs because of data
+ *   errors. However valid rows are part of a transaction that can be committed
+ *   if desired.
  *
  *   This example requires node-oracledb 2.2 or later.
  *
@@ -34,8 +33,20 @@
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
 
-const sql = "INSERT INTO em_childtab VALUES (:1, :2, :3)";
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
+
+const sql = "INSERT INTO no_em_childtab VALUES (:1, :2, :3)";
 
 const binds = [
   [1016, 10, "Child 2 of Parent A"],
@@ -63,12 +74,9 @@ async function run() {
   let connection;
 
   try {
-    connection = await oracledb.getConnection(
-      {
-        user          : dbConfig.user,
-        password      : dbConfig.password,
-        connectString : dbConfig.connectString
-      });
+    connection = await oracledb.getConnection(dbConfig);
+
+    await demoSetup.setupEm(connection);  // create the demo tables
 
     const result = await connection.executeMany(sql, binds, options);
     console.log("Result is:", result);

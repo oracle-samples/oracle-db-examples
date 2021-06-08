@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<WorkflowProcess Version="12.1.0.2.3" DBVersion="12.1.0.2.0" Schema="" xmlns="http://xmlns.oracle.com/odmr11">
+    <Nodes>
+        <DataSource Id="10001" Name="MINING_DATA_BUILD_V" Status="Complete">
+            <Icon XCOORD="202" YCOORD="234"></Icon>
+            <Messages/>
+            <Parallelism Enable="false">
+                <SystemDetermined/>
+            </Parallelism>
+            <CacheSettings UseFullData="false" GenerateCache="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10001" as (select "MINING_DATA_BUILD_V"."BOOKKEEPING_APPLICATION", 
+"MINING_DATA_BUILD_V"."OS_DOC_SET_KANJI", 
+"MINING_DATA_BUILD_V"."CUST_ID", 
+"MINING_DATA_BUILD_V"."AFFINITY_CARD", 
+"MINING_DATA_BUILD_V"."BULK_PACK_DISKETTES", 
+"MINING_DATA_BUILD_V"."HOME_THEATER_PACKAGE", 
+"MINING_DATA_BUILD_V"."EDUCATION", 
+"MINING_DATA_BUILD_V"."Y_BOX_GAMES", 
+"MINING_DATA_BUILD_V"."YRS_RESIDENCE", 
+"MINING_DATA_BUILD_V"."PRINTER_SUPPLIES", 
+"MINING_DATA_BUILD_V"."FLAT_PANEL_MONITOR", 
+"MINING_DATA_BUILD_V"."CUST_INCOME_LEVEL", 
+"MINING_DATA_BUILD_V"."CUST_GENDER", 
+"MINING_DATA_BUILD_V"."CUST_MARITAL_STATUS", 
+"MINING_DATA_BUILD_V"."OCCUPATION", 
+"MINING_DATA_BUILD_V"."COUNTRY_NAME", 
+"MINING_DATA_BUILD_V"."HOUSEHOLD_SIZE", 
+"MINING_DATA_BUILD_V"."AGE" 
+from "DMUSER"."MINING_DATA_BUILD_V"  )</SQLExpression>
+            <Attributes>
+                <Attribute Name="BOOKKEEPING_APPLICATION" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="OS_DOC_SET_KANJI" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="BULK_PACK_DISKETTES" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="HOME_THEATER_PACKAGE" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                <Attribute Name="Y_BOX_GAMES" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="YRS_RESIDENCE" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="PRINTER_SUPPLIES" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="FLAT_PANEL_MONITOR" DataType="NUMBER" Status="Valid"/>
+                <Attribute Name="CUST_INCOME_LEVEL" DataType="VARCHAR2" Status="Valid"/>
+                <Attribute Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                <Attribute Name="CUST_MARITAL_STATUS" DataType="VARCHAR2" Status="Valid"/>
+                <Attribute Name="OCCUPATION" DataType="VARCHAR2" Status="Valid"/>
+                <Attribute Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                <Attribute Name="HOUSEHOLD_SIZE" DataType="VARCHAR2" Status="Valid"/>
+                <Attribute Name="AGE" DataType="NUMBER" Status="Valid"/>
+            </Attributes>
+            <SourceTable Schema="" Name="MINING_DATA_BUILD_V" Synonym="false"/>
+            <JSONColumns/>
+            <DataGuideSettings Generate="true" UseFullData="false" UseFullDoc="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <NumberOfValues>10000</NumberOfValues>
+            </DataGuideSettings>
+        </DataSource>
+        <DynamicPrediction Id="10002" Name="Prediction Query" Status="Complete">
+            <Icon XCOORD="552" YCOORD="190"></Icon>
+            <Messages/>
+            <Parallelism Enable="false">
+                <SystemDetermined/>
+            </Parallelism>
+            <CacheSettings UseFullData="false" GenerateCache="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10002" as (SELECT 	"AFFINITY_CARD",
+	"AGE",
+	"CUST_GENDER",
+	"CUST_ID",
+	"EDUCATION",
+PREDICTION( FOR "AGE" USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE",TO_CHAR("AFFINITY_CARD") "AFFINITY_CARD","CUST_GENDER")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_AGE_1"
+,PREDICTION( FOR "CUST_GENDER" USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE",TO_CHAR("AFFINITY_CARD") "AFFINITY_CARD","AGE")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_CUST_GENDER_1"
+,PREDICTION_PROBABILITY( FOR "CUST_GENDER" USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE",TO_CHAR("AFFINITY_CARD") "AFFINITY_CARD","AGE")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PROB_CUST_GENDER_1"
+,PREDICTION( FOR TO_CHAR("AFFINITY_CARD") USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE","AGE","CUST_GENDER")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_AFFINITY_CARD_2"
+,PREDICTION_PROBABILITY( FOR TO_CHAR("AFFINITY_CARD") USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE","AGE","CUST_GENDER")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PROB_AFFINITY_CARD_1"
+FROM {INPUT_SOURCE}
+ )</SQLExpression>
+            <PredictionAttributes>
+                <TargetAttributes>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="AGE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                </TargetAttributes>
+                <TargetValuesTable Name="ODMR$15_19_18_775000PJTKOCC" CreationDate="2015-07-08T15:19:18"/>
+            </PredictionAttributes>
+            <DynamicNodeBaseSettings>
+                <CaseAttributes>
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                </CaseAttributes>
+                <MiningAttributes AutoSpec="Yes">
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BOOKKEEPING_APPLICATION" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OS_DOC_SET_KANJI" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BULK_PACK_DISKETTES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOME_THEATER_PACKAGE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="Y_BOX_GAMES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="YRS_RESIDENCE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="No" Name="PRINTER_SUPPLIES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="FLAT_PANEL_MONITOR" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_INCOME_LEVEL" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_MARITAL_STATUS" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OCCUPATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOUSEHOLD_SIZE" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="AGE" DataType="NUMBER" Status="Valid"/>
+                </MiningAttributes>
+                <PartitionExpressions>
+                    <PartitionExpression>
+                        <PartitionAttribute Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                    </PartitionExpression>
+                </PartitionExpressions>
+                <DynamicApplyOutputColumns>
+                    <DynamicApplyOutputColumn>
+                        <TargetAttributeName>AGE</TargetAttributeName>
+                        <Prediction>
+                            <CostOption>
+                                <None/>
+                            </CostOption>
+                            <Column Name="PRED_AGE_1"/>
+                        </Prediction>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <TargetAttributeName>CUST_GENDER</TargetAttributeName>
+                        <Prediction>
+                            <CostOption>
+                                <None/>
+                            </CostOption>
+                            <Column Name="PRED_CUST_GENDER_1"/>
+                        </Prediction>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <TargetAttributeName>CUST_GENDER</TargetAttributeName>
+                        <PredictionProbability>
+                            <Column Name="PROB_CUST_GENDER_1"/>
+                        </PredictionProbability>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <TargetAttributeName>AFFINITY_CARD</TargetAttributeName>
+                        <Prediction>
+                            <CostOption>
+                                <None/>
+                            </CostOption>
+                            <Column Name="PRED_AFFINITY_CARD_2"/>
+                        </Prediction>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <TargetAttributeName>AFFINITY_CARD</TargetAttributeName>
+                        <PredictionProbability>
+                            <Column Name="PROB_AFFINITY_CARD_1"/>
+                        </PredictionProbability>
+                    </DynamicApplyOutputColumn>
+                </DynamicApplyOutputColumns>
+                <SQLPredictionExpression>"N$10002" as (SELECT 	"AFFINITY_CARD",
+	"AGE",
+	"CUST_GENDER",
+	"CUST_ID",
+	"EDUCATION",
+PREDICTION( FOR "AGE" USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE",TO_CHAR("AFFINITY_CARD") "AFFINITY_CARD","CUST_GENDER")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_AGE_1"
+,PREDICTION( FOR "CUST_GENDER" USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE",TO_CHAR("AFFINITY_CARD") "AFFINITY_CARD","AGE")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_CUST_GENDER_1"
+,PREDICTION_PROBABILITY( FOR "CUST_GENDER" USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE",TO_CHAR("AFFINITY_CARD") "AFFINITY_CARD","AGE")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PROB_CUST_GENDER_1"
+,PREDICTION( FOR TO_CHAR("AFFINITY_CARD") USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE","AGE","CUST_GENDER")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_AFFINITY_CARD_2"
+,PREDICTION_PROBABILITY( FOR TO_CHAR("AFFINITY_CARD") USING TO_CHAR("BOOKKEEPING_APPLICATION") "BOOKKEEPING_APPLICATION", TO_CHAR("OS_DOC_SET_KANJI") "OS_DOC_SET_KANJI", TO_CHAR("BULK_PACK_DISKETTES") "BULK_PACK_DISKETTES", TO_CHAR("HOME_THEATER_PACKAGE") "HOME_THEATER_PACKAGE", TO_CHAR("Y_BOX_GAMES") "Y_BOX_GAMES", "YRS_RESIDENCE", TO_CHAR("FLAT_PANEL_MONITOR") "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE","AGE","CUST_GENDER")
+    OVER (PARTITION BY "EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PROB_AFFINITY_CARD_1"
+FROM {INPUT_SOURCE}
+ )</SQLPredictionExpression>
+                <SupplementalAttributes AutoSpec="Yes">
+                    <Attribute xsi:type="MiningAttributeType" AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+                    <Attribute xsi:type="MiningAttributeType" AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="AGE" DataType="NUMBER" Status="Valid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+                    <Attribute xsi:type="MiningAttributeType" AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_GENDER" DataType="CHAR" Status="Valid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <Attribute Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                </SupplementalAttributes>
+                <HeuristicResult StatisticTable="ODMR$15_19_17_982000UIENKFZ">
+                    <Attribute Name="BOOKKEEPING_APPLICATION">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="OS_DOC_SET_KANJI">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="BULK_PACK_DISKETTES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="HOME_THEATER_PACKAGE">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="Y_BOX_GAMES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="PRINTER_SUPPLIES">
+                        <Reason Type="CONSTANT_LIMIT"/>
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="FLAT_PANEL_MONITOR">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                </HeuristicResult>
+            </DynamicNodeBaseSettings>
+        </DynamicPrediction>
+        <DynamicFeature Id="10008" Name="Feature Extraction Query" Status="Complete">
+            <Icon XCOORD="553" YCOORD="536"></Icon>
+            <Messages/>
+            <Parallelism Enable="false">
+                <SystemDetermined/>
+            </Parallelism>
+            <CacheSettings UseFullData="false" GenerateCache="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10008" as (SELECT 	"CUST_ID",
+CAST(FEATURE_SET(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (
+	ORDER BY "CUST_ID"
+    ) AS ODMR_FEATURE_SET_NUMVD) "FSET_1"
+FROM {INPUT_SOURCE}
+ )</SQLExpression>
+            <FeatureId>
+                <Column Name="10"/>
+            </FeatureId>
+            <DynamicNodeBaseSettings>
+                <CaseAttributes>
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                </CaseAttributes>
+                <MiningAttributes AutoSpec="Yes">
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BOOKKEEPING_APPLICATION" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OS_DOC_SET_KANJI" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BULK_PACK_DISKETTES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOME_THEATER_PACKAGE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="Y_BOX_GAMES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="YRS_RESIDENCE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="No" Name="PRINTER_SUPPLIES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="FLAT_PANEL_MONITOR" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_INCOME_LEVEL" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_MARITAL_STATUS" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OCCUPATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOUSEHOLD_SIZE" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="AGE" DataType="NUMBER" Status="Valid"/>
+                </MiningAttributes>
+                <PartitionExpressions/>
+                <DynamicApplyOutputColumns>
+                    <DynamicApplyOutputColumn>
+                        <FeatureSet>
+                            <Column Name="FSET_1" TopNValue="2147483647"/>
+                        </FeatureSet>
+                    </DynamicApplyOutputColumn>
+                </DynamicApplyOutputColumns>
+                <SQLPredictionExpression>"N$10008" as (SELECT 	"CUST_ID",
+CAST(FEATURE_SET(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (
+	ORDER BY "CUST_ID"
+    ) AS ODMR_FEATURE_SET_NUMVD) "FSET_1"
+FROM {INPUT_SOURCE}
+ )</SQLPredictionExpression>
+                <SupplementalAttributes AutoSpec="Yes">
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                </SupplementalAttributes>
+                <HeuristicResult StatisticTable="ODMR$15_24_22_274000YHXEYTB">
+                    <Attribute Name="BOOKKEEPING_APPLICATION">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="OS_DOC_SET_KANJI">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="AFFINITY_CARD">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="BULK_PACK_DISKETTES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="HOME_THEATER_PACKAGE">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="Y_BOX_GAMES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="PRINTER_SUPPLIES">
+                        <Reason Type="CONSTANT_LIMIT"/>
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="FLAT_PANEL_MONITOR">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                </HeuristicResult>
+            </DynamicNodeBaseSettings>
+        </DynamicFeature>
+        <DynamicCluster Id="10004" Name="Clustering Query" Status="Complete">
+            <Icon XCOORD="551" YCOORD="307"></Icon>
+            <Messages/>
+            <Parallelism Enable="false">
+                <SystemDetermined/>
+            </Parallelism>
+            <CacheSettings UseFullData="false" GenerateCache="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10004" as (SELECT 	"CUST_ID",
+	"COUNTRY_NAME",
+CLUSTER_ID(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "CLID_1"
+,CLUSTER_PROBABILITY(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "PROB_1"
+,CLUSTER_DETAILS(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "CDET_1"
+,CLUSTER_DISTANCE(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "CDST_1"
+FROM {INPUT_SOURCE}
+ )</SQLExpression>
+            <ClusterId>
+                <Column Name="10"/>
+            </ClusterId>
+            <DynamicNodeBaseSettings>
+                <CaseAttributes>
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                </CaseAttributes>
+                <MiningAttributes AutoSpec="Yes">
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BOOKKEEPING_APPLICATION" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OS_DOC_SET_KANJI" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BULK_PACK_DISKETTES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOME_THEATER_PACKAGE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="Y_BOX_GAMES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="YRS_RESIDENCE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="No" Name="PRINTER_SUPPLIES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="FLAT_PANEL_MONITOR" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_INCOME_LEVEL" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_MARITAL_STATUS" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OCCUPATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOUSEHOLD_SIZE" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="AGE" DataType="NUMBER" Status="Valid"/>
+                </MiningAttributes>
+                <PartitionExpressions>
+                    <PartitionExpression>
+                        <PartitionAttribute Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                    </PartitionExpression>
+                </PartitionExpressions>
+                <DynamicApplyOutputColumns>
+                    <DynamicApplyOutputColumn>
+                        <ClusterId>
+                            <Column Name="CLID_1"/>
+                        </ClusterId>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <ClusterProbability>
+                            <Column Name="PROB_1"/>
+                        </ClusterProbability>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <ClusterDetails>
+                            <Column Name="CDET_1"/>
+                        </ClusterDetails>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <ClusterDistance>
+                            <Column Name="CDST_1"/>
+                        </ClusterDistance>
+                    </DynamicApplyOutputColumn>
+                </DynamicApplyOutputColumns>
+                <SQLPredictionExpression>"N$10004" as (SELECT 	"CUST_ID",
+	"COUNTRY_NAME",
+CLUSTER_ID(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "CLID_1"
+,CLUSTER_PROBABILITY(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "PROB_1"
+,CLUSTER_DETAILS(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "CDET_1"
+,CLUSTER_DISTANCE(INTO 10 USING  "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_GENDER", "CUST_MARITAL_STATUS", "OCCUPATION", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "COUNTRY_NAME"
+	ORDER BY "CUST_ID"
+    ) "CDST_1"
+FROM {INPUT_SOURCE}
+ )</SQLPredictionExpression>
+                <SupplementalAttributes AutoSpec="Yes">
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <Attribute Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                </SupplementalAttributes>
+                <HeuristicResult StatisticTable="ODMR$15_21_25_908000YHOSQSA">
+                    <Attribute Name="BOOKKEEPING_APPLICATION">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="OS_DOC_SET_KANJI">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="AFFINITY_CARD">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="BULK_PACK_DISKETTES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="HOME_THEATER_PACKAGE">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="Y_BOX_GAMES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="PRINTER_SUPPLIES">
+                        <Reason Type="CONSTANT_LIMIT"/>
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="FLAT_PANEL_MONITOR">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                </HeuristicResult>
+            </DynamicNodeBaseSettings>
+        </DynamicCluster>
+        <DynamicAnomaly Id="10006" Name="Anomaly Detection Query" Status="Complete">
+            <Icon XCOORD="553" YCOORD="415"></Icon>
+            <Messages/>
+            <Parallelism Enable="false">
+                <SystemDetermined/>
+            </Parallelism>
+            <CacheSettings UseFullData="false" GenerateCache="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10006" as (SELECT 	"CUST_ID",
+	"CUST_GENDER",
+	"EDUCATION",
+PREDICTION( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER",
+	"EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_1"
+,PREDICTION_PROBABILITY( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER",
+	"EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PROB_1"
+,PREDICTION_DETAILS( OF ANOMALY , NULL , 5 ABS  USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER",
+	"EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PDET_1"
+FROM {INPUT_SOURCE}
+ )</SQLExpression>
+            <DynamicNodeBaseSettings>
+                <CaseAttributes>
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                </CaseAttributes>
+                <MiningAttributes AutoSpec="Yes">
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BOOKKEEPING_APPLICATION" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OS_DOC_SET_KANJI" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BULK_PACK_DISKETTES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOME_THEATER_PACKAGE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="Y_BOX_GAMES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="YRS_RESIDENCE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="No" Name="PRINTER_SUPPLIES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="FLAT_PANEL_MONITOR" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_INCOME_LEVEL" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_MARITAL_STATUS" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OCCUPATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOUSEHOLD_SIZE" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="AGE" DataType="NUMBER" Status="Valid"/>
+                </MiningAttributes>
+                <PartitionExpressions>
+                    <PartitionExpression>
+                        <PartitionAttribute Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    </PartitionExpression>
+                    <PartitionExpression>
+                        <PartitionAttribute Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                    </PartitionExpression>
+                </PartitionExpressions>
+                <DynamicApplyOutputColumns>
+                    <DynamicApplyOutputColumn>
+                        <Prediction>
+                            <CostOption>
+                                <None/>
+                            </CostOption>
+                            <Column Name="PRED_1"/>
+                        </Prediction>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <PredictionProbability>
+                            <Column Name="PROB_1"/>
+                        </PredictionProbability>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <PredictionDetails>
+                            <Column Name="PDET_1" TopNValue="5" Sort="ABS"/>
+                        </PredictionDetails>
+                    </DynamicApplyOutputColumn>
+                </DynamicApplyOutputColumns>
+                <SQLPredictionExpression>"N$10006" as (SELECT 	"CUST_ID",
+	"CUST_GENDER",
+	"EDUCATION",
+PREDICTION( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER",
+	"EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PRED_1"
+,PREDICTION_PROBABILITY( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER",
+	"EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PROB_1"
+,PREDICTION_DETAILS( OF ANOMALY , NULL , 5 ABS  USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "Y_BOX_GAMES", "YRS_RESIDENCE", "PRINTER_SUPPLIES", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER",
+	"EDUCATION"
+	ORDER BY "CUST_ID"
+    ) "PDET_1"
+FROM {INPUT_SOURCE}
+ )</SQLPredictionExpression>
+                <SupplementalAttributes AutoSpec="Yes">
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <Attribute Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    <Attribute Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                </SupplementalAttributes>
+                <HeuristicResult StatisticTable="ODMR$15_23_48_110000YVIPKER">
+                    <Attribute Name="BOOKKEEPING_APPLICATION">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="OS_DOC_SET_KANJI">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="AFFINITY_CARD">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="BULK_PACK_DISKETTES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="HOME_THEATER_PACKAGE">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="Y_BOX_GAMES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="PRINTER_SUPPLIES">
+                        <Reason Type="CONSTANT_LIMIT"/>
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="FLAT_PANEL_MONITOR">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                </HeuristicResult>
+            </DynamicNodeBaseSettings>
+        </DynamicAnomaly>
+        <DynamicAnomaly Id="10010" Name="Anomaly Detection Query 1" Status="Complete">
+            <Icon XCOORD="421" YCOORD="74"></Icon>
+            <Messages/>
+            <Parallelism Enable="false">
+                <SystemDetermined/>
+            </Parallelism>
+            <CacheSettings UseFullData="false" GenerateCache="false">
+                <NumberOfRows>2000</NumberOfRows>
+                <Method>
+                    <TopN/>
+                </Method>
+            </CacheSettings>
+            <SQLExpression>"N$10010" as (SELECT 	"CUST_ID",
+	"CUST_GENDER",
+PREDICTION( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER"
+	ORDER BY "CUST_ID"
+    ) "PRED_1"
+,PREDICTION_PROBABILITY( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER"
+	ORDER BY "CUST_ID"
+    ) "PROB_1"
+,PREDICTION_DETAILS( OF ANOMALY , NULL , 5 ABS  USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER"
+	ORDER BY "CUST_ID"
+    ) "PDET_1"
+FROM {INPUT_SOURCE}
+ )</SQLExpression>
+            <DynamicNodeBaseSettings>
+                <CaseAttributes>
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                </CaseAttributes>
+                <MiningAttributes AutoSpec="Yes">
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BOOKKEEPING_APPLICATION" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OS_DOC_SET_KANJI" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="AFFINITY_CARD" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="BULK_PACK_DISKETTES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOME_THEATER_PACKAGE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="EDUCATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="Y_BOX_GAMES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="YRS_RESIDENCE" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="No" Name="PRINTER_SUPPLIES" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="FLAT_PANEL_MONITOR" DataType="NUMBER" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_INCOME_LEVEL" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="CUST_MARITAL_STATUS" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="OCCUPATION" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="COUNTRY_NAME" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Categorical" Input="Yes" Name="HOUSEHOLD_SIZE" DataType="VARCHAR2" Status="Valid"/>
+                    <MiningAttribute AutoPrep="Yes" MiningType="Numerical" Input="Yes" Name="AGE" DataType="NUMBER" Status="Valid"/>
+                </MiningAttributes>
+                <PartitionExpressions>
+                    <PartitionExpression>
+                        <PartitionAttribute Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                    </PartitionExpression>
+                </PartitionExpressions>
+                <DynamicApplyOutputColumns>
+                    <DynamicApplyOutputColumn>
+                        <Prediction>
+                            <CostOption>
+                                <None/>
+                            </CostOption>
+                            <Column Name="PRED_1"/>
+                        </Prediction>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <PredictionProbability>
+                            <Column Name="PROB_1"/>
+                        </PredictionProbability>
+                    </DynamicApplyOutputColumn>
+                    <DynamicApplyOutputColumn>
+                        <PredictionDetails>
+                            <Column Name="PDET_1" TopNValue="5" Sort="ABS"/>
+                        </PredictionDetails>
+                    </DynamicApplyOutputColumn>
+                </DynamicApplyOutputColumns>
+                <SQLPredictionExpression>"N$10010" as (SELECT 	"CUST_ID",
+	"CUST_GENDER",
+PREDICTION( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER"
+	ORDER BY "CUST_ID"
+    ) "PRED_1"
+,PREDICTION_PROBABILITY( OF ANOMALY USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER"
+	ORDER BY "CUST_ID"
+    ) "PROB_1"
+,PREDICTION_DETAILS( OF ANOMALY , NULL , 5 ABS  USING "BOOKKEEPING_APPLICATION", "OS_DOC_SET_KANJI", "AFFINITY_CARD", "BULK_PACK_DISKETTES", "HOME_THEATER_PACKAGE", "EDUCATION", "Y_BOX_GAMES", "YRS_RESIDENCE", "FLAT_PANEL_MONITOR", "CUST_INCOME_LEVEL", "CUST_MARITAL_STATUS", "OCCUPATION", "COUNTRY_NAME", "HOUSEHOLD_SIZE", "AGE")
+    OVER (PARTITION BY "CUST_GENDER"
+	ORDER BY "CUST_ID"
+    ) "PDET_1"
+FROM {INPUT_SOURCE}
+ )</SQLPredictionExpression>
+                <SupplementalAttributes AutoSpec="Yes">
+                    <Attribute Name="CUST_ID" DataType="NUMBER" Status="Valid"/>
+                    <Attribute Name="CUST_GENDER" DataType="CHAR" Status="Valid"/>
+                </SupplementalAttributes>
+                <HeuristicResult StatisticTable="ODMR$14_54_21_145000WCPMCSO">
+                    <Attribute Name="BOOKKEEPING_APPLICATION">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="OS_DOC_SET_KANJI">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="AFFINITY_CARD">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="BULK_PACK_DISKETTES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="HOME_THEATER_PACKAGE">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="Y_BOX_GAMES">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="PRINTER_SUPPLIES">
+                        <Reason Type="CONSTANT_LIMIT"/>
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                    <Attribute Name="FLAT_PANEL_MONITOR">
+                        <Reason Type="NUM_TO_CAT_MINING_TYPE"/>
+                    </Attribute>
+                </HeuristicResult>
+            </DynamicNodeBaseSettings>
+        </DynamicAnomaly>
+    </Nodes>
+    <Links>
+        <Link Id="10003" From="10001" To="10002" Name="Link" Label="From &quot;MINING_DATA_BUILD_V&quot; to &quot;Prediction Query&quot;">
+            <ConnectorGraphicsInfo>
+                <Coordinates XCoordinate="0.0" YCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Id="10005" From="10001" To="10004" Name="Link" Label="From &quot;MINING_DATA_BUILD_V&quot; to &quot;Clustering Query&quot;">
+            <ConnectorGraphicsInfo>
+                <Coordinates XCoordinate="0.0" YCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Id="10007" From="10001" To="10006" Name="Link" Label="From &quot;MINING_DATA_BUILD_V&quot; to &quot;Anomaly Detection Query&quot;">
+            <ConnectorGraphicsInfo>
+                <Coordinates XCoordinate="0.0" YCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Id="10009" From="10001" To="10008" Name="Link" Label="From &quot;MINING_DATA_BUILD_V&quot; to &quot;Feature Extraction Query&quot;">
+            <ConnectorGraphicsInfo>
+                <Coordinates XCoordinate="0.0" YCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+        <Link Id="10011" From="10001" To="10010" Name="Link" Label="From &quot;MINING_DATA_BUILD_V&quot; to &quot;Anomaly Detection Query 1&quot;">
+            <ConnectorGraphicsInfo>
+                <Coordinates XCoordinate="0.0" YCoordinate="0.0"/>
+            </ConnectorGraphicsInfo>
+        </Link>
+    </Links>
+</WorkflowProcess>

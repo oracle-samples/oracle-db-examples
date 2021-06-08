@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -21,20 +21,26 @@
  * DESCRIPTION
  *   SELECTs a CLOB, streams it using 'data' events, and then displays it to the screen
  *
- *   Use demo.sql to create the required table or do:
- *     DROP TABLE mylobs;
- *     CREATE TABLE mylobs (id NUMBER, c CLOB, b BLOB);
- *
- *   Run lobinsert1.js to load data before running this example.
- *
  *   This example requires node-oracledb 1.12 or later.
  *
  *   This example uses Node 8's async/await syntax.
  *
  *****************************************************************************/
 
-var oracledb = require('oracledb');
-var dbConfig = require('./dbconfig.js');
+const oracledb = require('oracledb');
+const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 async function run() {
   let connection;
@@ -42,12 +48,14 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupLobs(connection, true);  // create the demo table with data
+
     //
     // Fetch a CLOB and write to the console
     //
-    let result = await connection.execute(`SELECT c FROM mylobs WHERE id = 1`);
+    let result = await connection.execute(`SELECT c FROM no_lobs WHERE id = 1`);
     if (result.rows.length === 0) {
-      throw new Error("No results.  Did you run lobinsert1.js?");
+      throw new Error("No row found");
     }
     const clob = result.rows[0][0];
     if (clob === null) {
@@ -57,7 +65,6 @@ async function run() {
     // Stream a CLOB and builds up a String piece-by-piece
     const doStream = new Promise((resolve, reject) => {
 
-      let errorHandled = false;
       let myclob = ""; // or myblob = Buffer.alloc(0) for BLOBs
 
       // node-oracledb's lob.pieceSize is the number of bytes retrieved
@@ -68,28 +75,26 @@ async function run() {
       clob.setEncoding('utf8');  // set the encoding so we get a 'string' not a 'buffer'
       clob.on('error', (err) => {
         // console.log("clob.on 'error' event");
-        if (!errorHandled) {
-          errorHandled = true;
-          clob.close(function() {
-            reject(err);
-          });
-        }
+        reject(err);
       });
+
       clob.on('data', (chunk) => {
         // Build up the string.  For larger LOBs you might want to print or use each chunk separately
         // console.log("clob.on 'data' event.  Got %d bytes of data", chunk.length);
         myclob += chunk; // or use Buffer.concat() for BLOBS
       });
+
       clob.on('end', () => {
         // console.log("clob.on 'end' event");
+        clob.destroy();
         console.log(myclob);
       });
+
       clob.on('close', () => {
         // console.log("clob.on 'close' event");
-        if (!errorHandled) {
-          resolve();
-        }
+        resolve();
       });
+
     });
 
     await doStream;

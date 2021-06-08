@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<project name="ConnectionHelperClient" default="deploy">
+    <import file="../../buildtools/ant/build.xml" />
+
+	<!-- This module has a custom compile classpath. It produces a standard
+	     executable jar file designed to be run from the command line. It can
+	     NOT depend on anything in SQL Developer. -->
+	<path id="compile.classpath" />
+	<path id="local.classpath" />
+
+	<!-- Raw jar, no osgi stuff
+	<property name="osgi.required.bundles" value="${osgi.bundle.oracle.core},${osgi.bundle.jfxrt},${osgi.bundle.utils-nodeps}" />
+	<property name="osgi.bundle.name" value="${osgi.bundle.jfx-nodeps}"/>
+    -->
+	
+    <target name="jar" depends="compile" description="Create the extension jar">
+        <jar basedir="${built}/classes" destfile="${built.destination.file}" excludes="**/.data/*" />
+		<manifest file="${jar.manifest.template}" mode="update">
+			<attribute name="Main-Class" value="ConnectionHelperClient" />
+		</manifest>
+        <jar destfile="${built.destination.file}" update="true" manifest="${jar.manifest.template}" />
+    </target>
+    <target name="deploy" depends="jar, manifest" description="Deploy plugins directory">
+        <copy file="${built}/${extension.filename}" tofile="${ide.home}/sqldeveloper/lib/${extension.filename}" />
+    	<!-- Raw jar, no osgi stuff
+    	<antcall target="bundleupdate-inc">
+    		<param name="bundle.location" value="../sqldeveloper/lib/${extension.filename}"/>
+    	</antcall>
+    	-->
+    </target>
+</project>

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -22,27 +22,24 @@
  *   Shows using a ResultSet to fetch rows from a REF CURSOR using getRows().
  *   Streaming is also possible (this is not shown).
  *
- *   Uses Oracle's sample HR schema.
- *   Use demo.sql to create the required procedure or do:
- *
- *  CREATE OR REPLACE PROCEDURE get_emp_rs (p_sal IN NUMBER, p_recordset OUT SYS_REFCURSOR)
- *  AS
- *  BEGIN
- *    OPEN p_recordset FOR
- *      SELECT first_name, salary, hire_date
- *      FROM   employees
- *      WHERE  salary > p_sal;
- *  END;
- *  /
- *
  *   This example uses Node 8's async/await syntax.
  *
  *****************************************************************************/
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
 
-const numRows = 3;  // number of rows to return from each call to getRows()
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 async function run() {
 
@@ -51,25 +48,52 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupBf(connection);  // create the demo table
+
+    //
+    // Create a PL/SQL procedure
+    //
+
+    await connection.execute(
+      `CREATE OR REPLACE PROCEDURE no_get_rs (p_id IN NUMBER, p_recordset OUT SYS_REFCURSOR)
+       AS
+       BEGIN
+         OPEN p_recordset FOR
+           SELECT farmer, weight, ripeness
+           FROM   no_banana_farmer
+           WHERE  id < p_id;
+       END;`
+    );
+
+    //
+    // Get a REF CURSOR result set
+    //
+
     const result = await connection.execute(
       `BEGIN
-         get_emp_rs(:sal, :cursor);
+         no_get_rs(:id, :cursor);
        END;`,
       {
-        sal:    12000,
-        cursor: { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }
+        id:     3,
+        cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
       });
 
     console.log("Cursor metadata:");
     console.log(result.outBinds.cursor.metaData);
 
+    //
     // Fetch rows from the REF CURSOR.
+    //
+
+    const resultSet = result.outBinds.cursor;
+    const numRows = 10;  // number of rows to return from each call to getRows()
+    let rows;
+
     // If getRows(numRows) returns:
     //   Zero rows               => there were no rows, or are no more rows to return
     //   Fewer than numRows rows => this was the last set of rows to get
     //   Exactly numRows rows    => there may be more rows to fetch
-    const resultSet = result.outBinds.cursor;
-    let rows;
+
     do {
       rows = await resultSet.getRows(numRows); // get numRows rows at a time
       if (rows.length > 0) {
@@ -77,6 +101,13 @@ async function run() {
         console.log(rows);
       }
     } while (rows.length === numRows);
+
+    // From node-oracledb 5.2, you can alternatively fetch all rows in one call.
+    // This is useful when the ResultSet is known to contain a small number of
+    // rows that will always fit in memory.
+    //
+    // rows = await resultSet.getRows();  // no parameter means get all rows
+    // console.log(rows);
 
     // always close the ResultSet
     await resultSet.close();

@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -22,8 +22,8 @@
  *   Shows how to time out long running database calls.
  *   See https://oracle.github.io/node-oracledb/doc/api.html#dbcalltimeouts
  *
- *   This example requires node-oracledb 3 or later.
- *   Node-oracledb must be using Oracle Client 18c libraries, or greater.
+ *   This example requires node-oracledb 3 (or later) and Oracle Client 18c
+ *   libraries (or later).
  *
  *   This example uses Node 8's async/await syntax.
  *
@@ -31,6 +31,17 @@
 
 const oracledb = require("oracledb");
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 const dboptime = 4; // seconds the simulated database operation will take
 const timeout  = 2; // seconds the application will wait for the database operation
@@ -40,6 +51,11 @@ async function run() {
   let connection;
 
   try {
+
+    if (oracledb.oracleClientVersion < 1800000000) {
+      throw new Error("Oracle Client libraries must be 18c or later");
+    }
+
     connection = await oracledb.getConnection(dbConfig);
 
     connection.callTimeout = timeout * 1000;  // milliseconds
@@ -65,5 +81,15 @@ async function run() {
     }
   }
 }
+
+process
+  .on('SIGTERM', function() {
+    console.log("\nTerminating");
+    process.exit(0);
+  })
+  .on('SIGINT', function() {
+    console.log("\nTerminating");
+    process.exit(0);
+  });
 
 run();

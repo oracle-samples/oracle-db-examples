@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -24,12 +24,6 @@
  *
  *   'Large' LOBs should be streamed as shown in lobstream1.js
  *
- *   Use demo.sql to create the required table or do:
- *     DROP TABLE mylobs;
- *     CREATE TABLE mylobs (id NUMBER, c CLOB, b BLOB);
- *
- *   Run lobinsert1.js to load data before running this example.
- *
  *   This example requires node-oracledb 1.13 or later.
  *
  *   This example uses Node 8's async/await syntax.
@@ -39,6 +33,18 @@
 const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 const blobOutFileName = 'lobselectout.jpg';  // file to write the BLOB to
 
@@ -55,11 +61,13 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupLobs(connection, true);  // create the demo table with data
+
     let result;
 
     // Fetch a CLOB
     result = await connection.execute(
-      `SELECT c FROM mylobs WHERE id = :idbv`,
+      `SELECT c FROM no_lobs WHERE id = :idbv`,
       [1]
       // An alternative to oracledb.fetchAsString is to pass execute()
       // options and use fetchInfo on the column:
@@ -67,7 +75,7 @@ async function run() {
     );
 
     if (result.rows.length === 0)
-      throw new Error("No results.  Did you run lobinsert1.js?");
+      throw new Error("No row found");
 
     const clob = result.rows[0][0];
     console.log('The CLOB was: ');
@@ -76,14 +84,14 @@ async function run() {
 
     // Fetch a BLOB
     result = await connection.execute(
-      `SELECT b FROM mylobs WHERE id = :idbv`,
+      `SELECT b FROM no_lobs WHERE id = :idbv`,
       [2]
       // An alternative to oracledb.fetchAsBuffer is to use fetchInfo on the column:
       // , { fetchInfo: {"B": {type: oracledb.BUFFER}} }
     );
 
     if (result.rows.length === 0)
-      throw new Error("No results.  Did you run lobinsert1.js?");
+      throw new Error("No row found");
 
     const blob = result.rows[0][0];
     console.log('Writing BLOB to lobselectout.jpg');

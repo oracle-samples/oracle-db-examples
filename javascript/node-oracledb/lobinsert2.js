@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -23,20 +23,27 @@
  *
  *   For smaller LOBs you will probably prefer the method shown in lobinsert1.js
  *
- *   Create clobexample.txt before running this example.
- *   Use demo.sql to create the required table or do:
- *     DROP TABLE mylobs;
- *     CREATE TABLE mylobs (id NUMBER, c CLOB, b BLOB);
- *
  *   This example requires node-oracledb 1.12 or later.
  *
  *****************************************************************************/
 
-var fs = require('fs');
-var oracledb = require('oracledb');
-var dbConfig = require('./dbconfig.js');
+const fs = require('fs');
+const oracledb = require('oracledb');
+const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
 
-var inFileName = 'clobexample.txt';  // the file with text to be inserted into the database
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
+
+const inFileName = 'clobexample.txt';  // the file with text to be inserted into the database
 
 async function run() {
 
@@ -45,8 +52,10 @@ async function run() {
   try {
     const connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupLobs(connection);  // create the demo table
+
     const result = await connection.execute(
-      `INSERT INTO mylobs (id, c) VALUES (:id, EMPTY_CLOB()) RETURNING c INTO :lobbv`,
+      `INSERT INTO no_lobs (id, c) VALUES (:id, EMPTY_CLOB()) RETURNING c INTO :lobbv`,
       {
         id: 4,
         lobbv: {type: oracledb.CLOB, dir: oracledb.BIND_OUT}
@@ -65,40 +74,28 @@ async function run() {
 
     const doStream = new Promise((resolve, reject) => {
 
-      let errorHandled = false;
-
-      lob.on('close', () => {
-        // console.log("lob.on 'close' event");
+      lob.on('finish', () => {
+        // console.log("lob.on 'finish' event");
         connection.commit((err) => {
           if (err) {
-            if (!errorHandled) {
-              errorHandled = true;
-              reject(err);
-            }
+            lob.destroy(err);
           } else {
             console.log("Text inserted successfully.");
             resolve();
           }
         });
       });
+
       lob.on('error', (err) => {
         // console.log("lob.on 'error' event");
-        if (!errorHandled) {
-          errorHandled = true;
-          lob.close(() => {
-            reject(err);
-          });
-        }
+        reject(err);
       });
 
       console.log('Reading from ' + inFileName);
-      var inStream = fs.createReadStream(inFileName);
+      const inStream = fs.createReadStream(inFileName);
       inStream.on('error', (err) => {
         // console.log("inStream.on 'error' event");
-        if (!errorHandled) {
-          errorHandled = true;
-          reject(err);
-        }
+        lob.destroy(err);
       });
 
       inStream.pipe(lob);  // copies the text to the LOB

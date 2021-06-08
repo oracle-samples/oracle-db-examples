@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -25,20 +25,29 @@
  *   Smaller amounts of data can be passed directly to PL/SQL without
  *   needed a temporary LOB.  See lobbinds.js
  *
- *   Create clobexample.txt before running this example.
- *   Use demo.sql to create the required schema.
- *
  *   This example requires node-oracledb 1.12.1 or later.
  *
  *   This example uses Node 8's async/await syntax.
  *
  *****************************************************************************/
 
-var fs = require('fs');
-var oracledb = require('oracledb');
-var dbConfig = require('./dbconfig.js');
+const fs = require('fs');
+const oracledb = require('oracledb');
+const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
 
-var inFileName = 'clobexample.txt';  // the file with text to be inserted into the database
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
+
+const inFileName = 'clobexample.txt';  // the file with text to be inserted into the database
 
 async function run() {
 
@@ -47,8 +56,7 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
-    // Cleanup anything other than lobinsert1.js demonstration data
-    await connection.execute(`DELETE FROM mylobs WHERE id > 2`);
+    await demoSetup.setupLobs(connection);  // create the demo table
 
     // Create an empty Temporary Lob
     const tempLob = await connection.createLob(oracledb.CLOB);
@@ -56,39 +64,29 @@ async function run() {
     // Helper function for loading data to the Temporary Lob
     const doStream = new Promise((resolve, reject) => {
 
-      let errorHandled = false;
-
-      tempLob.on('close', () => {
-        // console.log("templob.on 'close' event");
-      });
+      // Note: there is no 'close' event to destroy templob because it is needed
+      // for the INSERT
 
       tempLob.on('error', (err) => {
         // console.log("templob.on 'error' event");
-        if (!errorHandled) {
-          errorHandled = true;
-          reject(err);
-        }
+        reject(err);
       });
 
       tempLob.on('finish', () => {
         // console.log("templob.on 'finish' event");
         // The data was loaded into the temporary LOB
-        if (!errorHandled) {
-          resolve();
-        }
+        resolve();
       });
 
       console.log('Reading from ' + inFileName);
-      var inStream = fs.createReadStream(inFileName);
+      const inStream = fs.createReadStream(inFileName);
       inStream.on('error', (err) => {
         // console.log("inStream.on 'error' event");
-        if (!errorHandled) {
-          errorHandled = true;
-          reject(err);
-        }
+        tempLob.destroy(err);
       });
 
       inStream.pipe(tempLob);  // copies the text to the temporary LOB
+
     });
 
     // Load the data into the Temporary LOB
@@ -98,7 +96,7 @@ async function run() {
     console.log('Calling PL/SQL to insert the temporary LOB into the database');
     await connection.execute(
       `BEGIN
-         lobs_in(:id, :c, null);
+         no_lobs_in(:id, :c, null);
        END;`,
       {
         id: 3,
@@ -108,10 +106,20 @@ async function run() {
     );
     console.log("Call completed");
 
-    // Applications should close LOBs that were created using createLob()
-    await tempLob.close();
+    // Applications should destroy LOBs that were created using createLob().
+    tempLob.destroy();
+
+    // Wait for destroy() to emit the the close event.  This means the lob will
+    // be cleanly closed before the app closes the connection, otherwise a race
+    // will occur.
+    await new Promise((resolve, reject) => {
+      tempLob.on('error', reject);
+      tempLob.on('close', resolve);
+    });
 
   } catch (err) {
+    // Note: in this example the stream is not explicitly destroyed on error.
+    // This is left to the connection close to initiate.
     console.error(err);
   } finally {
     if (connection) {

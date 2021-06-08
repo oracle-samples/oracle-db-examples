@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -19,9 +19,7 @@
  *   em_dmlreturn1.js
  *
  * DESCRIPTION
- *   executeMany() example of DML RETURNING that returns single values
- *   This example also uses Async/Await of Node 8.
- *   Use demo.sql to create the required schema.
+ *   executeMany() example of DML RETURNING that returns single values.
  *
  *   This example requires node-oracledb 2.2 or later.
  *
@@ -31,9 +29,20 @@ x *****************************************************************************/
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
 
-const truncateSql = "TRUNCATE TABLE em_tab";
-const insertSql = "INSERT INTO em_tab VALUES (:1, :2) RETURNING ROWID, id, val INTO :3, :4, :5";
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
+
+const sql = "INSERT INTO no_em_tab VALUES (:1, :2) RETURNING ROWID, id, val INTO :3, :4, :5";
 
 const binds = [
   [1, "Test 1 (One)"],
@@ -59,9 +68,9 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
-    await connection.execute(truncateSql);
+    await demoSetup.setupEm(connection);  // create the demo tables
 
-    const result = await connection.executeMany(insertSql, binds, options);
+    const result = await connection.executeMany(sql, binds, options);
 
     console.log("rowsAffected is:", result.rowsAffected);
     console.log("Out binds:");

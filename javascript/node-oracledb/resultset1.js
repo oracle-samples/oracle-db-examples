@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -20,10 +20,6 @@
  *
  * DESCRIPTION
  *   Executes a query and uses a ResultSet to fetch rows with getRow().
- *   Uses Oracle's sample HR schema.
- *
- *   Note using queryStream() or getRows() is recommended instead of
- *   getRow().
  *
  *   This example requires node-oracledb 2.0.15 or later.
  *
@@ -33,15 +29,18 @@
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
 
-// For getRow(), the fetchArraySize property can be adjusted to tune
-// data transfer from the Oracle Database to node-oracledb.  The value
-// of fetchArraySize does not affect how, or when, rows are returned
-// by node-oracledb to the application.  Buffering is handled by
-// internally in node-oracledb.  Benchmark to choose the optimal size
-// for each application or query.
-//
-// oracledb.fetchArraySize = 100;  // default value is 100
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+if (process.platform === 'win32') { // Windows
+  oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_19_11' });
+} else if (process.platform === 'darwin') { // macOS
+  oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
+}
 
 async function run() {
   let connection;
@@ -49,14 +48,17 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupBf(connection);  // create the demo table
+
     const result = await connection.execute(
-      `SELECT employee_id, last_name
-       FROM employees
-       WHERE ROWNUM < 5
-       ORDER BY employee_id`,
+      `SELECT id, farmer
+       FROM no_banana_farmer
+       ORDER BY id`,
       [], // no bind variables
       {
-        resultSet: true // return a ResultSet (default is false)
+        resultSet: true,             // return a ResultSet (default is false)
+        // prefetchRows:   100,      // internal buffer allocation size for tuning
+        // fetchArraySize: 100       // internal buffer allocation size for tuning
       }
     );
 
@@ -71,6 +73,7 @@ async function run() {
 
     // always close the ResultSet
     await rs.close();
+
   } catch (err) {
     console.error(err);
   } finally {

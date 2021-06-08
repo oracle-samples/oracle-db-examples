@@ -63,7 +63,7 @@ public class UCPSample {
     // connections allowed on the connection pool.
     pds.setMaxPoolSize(20);
 
-    // Default is 30secs. Set the frequency ineconds to enforce the timeout
+    // Default is 30secs. Set the frequency in seconds to enforce the timeout
     // properties. Applies to inactiveConnectionTimeout(int secs),
     // AbandonedConnectionTimeout(secs)& TimeToLiveConnectionTimeout(int secs).
     // Range of valid values is 0 to Integer.MAX_VALUE. .
