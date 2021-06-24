@@ -6,6 +6,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
 | [dotnet](https://github.com/oracle/dotnet-db-samples) | .NET based examples |
 | [exadata-express](./exadata-express) | Exadata Express examples |
+| [spatial](./spatial) | Graph examples |
 | [java](./java)  | Java based examples |
 | [javascript](./javascript) | JavaScript based examples |
 | [machine-learning](./machine-learning) | Oracle Machine Learning examples |
