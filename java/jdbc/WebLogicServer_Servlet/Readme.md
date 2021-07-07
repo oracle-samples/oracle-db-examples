@@ -24,8 +24,8 @@ The Oracle JDBC drivers allow Java applications to connect and process data in t
 # Other Resources 
 
 * [Create and Deploy a Java Servlet using WebLogic Server](https://blogs.oracle.com/dev2dev/create-and-deploy-a-java-servlet-using-weblogic-server-wls)
-* [How to use the latest ojdbc8.jar in WebLogic Server?](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html#wls)
-* [Using Java Containers with Exadata Express Cloud Service (EECS)](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html#wls)
+* [How to connect to Autonomous Database using WebLogic Server?](https://www.oracle.com/database/technologies/java-connectivity-to-atp.html#WLS)
+
 
 
 
