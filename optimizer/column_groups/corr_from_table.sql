@@ -12,6 +12,8 @@
 --    Table owner
 --    Table name
 --    Sample percentage
+--    Y/N - Y to create the column groups immediately
+--          N to spool SQL to create column groups
 --
 var create_now varchar2(1)
 set echo off
