@@ -30,7 +30,9 @@ There are four demos:
     SQL> @run_test4
 </pre>
 
-It may be worth taking a closer look at "t4.sql" because it shows how you can "hide" statistics until you are ready to expose them to the workload. In this way you can make changes and test your queries before implementation. 
+Take a look at "t4.sql" because it shows how you can "hide" statistics until you are ready to expose them to the workload. In this way you can make changes and test your queries before implementation. 
+
+A script called "gather_ext.sql" is provided to demonstrate how to gather stats on extended statistics if stats have never been gathered.
 
 The demos make use of easy-to-use utility scripts. Here are some examples
 <pre>
