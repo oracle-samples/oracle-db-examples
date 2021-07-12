@@ -1,0 +1,26 @@
+SQL> 
+SQL> declare
+  2    stsname varchar2(100) := '&1';
+  3    cur DBMS_SQLTUNE.SQLSET_CURSOR;
+  4    cursor c1 is
+  5      select name
+  6      from   user_sqlset
+  7      where  name = stsname;
+  8  begin
+  9    for rec in c1
+ 10    loop
+ 11       dbms_sqltune.drop_sqlset(rec.name,user);
+ 12    end loop;
+ 13    dbms_sqltune.create_sqlset(stsname);
+ 14    open cur for
+ 15      select value(p)
+ 16      from   table(DBMS_SQLTUNE.SELECT_CURSOR_CACHE('sql_text like ''select /* STS MY_TEST_QUERY%''',NULL, NULL, NULL, NULL, 1, NULL,'ALL')) p;
+ 17    dbms_sqltune.load_sqlset(sqlset_name => stsname, populate_cursor => cur);
+ 18  END;
+ 19  /
+old   2:   stsname varchar2(100) := '&1';
+new   2:   stsname varchar2(100) := 'MY_EXAMPLE_SQLSET';
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off

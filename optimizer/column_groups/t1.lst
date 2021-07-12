@@ -1,0 +1,29 @@
+SQL> set echo on
+SQL> 
+SQL> declare
+  2    ORA_00942 exception; pragma Exception_Init(ORA_00942, -00942);
+  3  begin
+  4    execute immediate 'drop table tab_corr2';
+  5    exception when ORA_00942 then null;
+  6  end;
+  7  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> create table tab_corr2 as
+  2  select rownum n0,
+  3         rownum n1,
+  4         rownum n2
+  5  from   (select 1 from dual connect by rownum<10000);
+
+Table created.
+
+SQL> 
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'tab_corr2')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> spool off
