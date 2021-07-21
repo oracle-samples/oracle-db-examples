@@ -5,7 +5,6 @@
 --    Correlation is set to 80% - an arbitary figure
 --    Data types limited
 --    Only columns with shorter strings compared 
---    Columns checked must have a 'similar' number of distinct values (NDVs must not differ by 2X)
 --    A sample of rows can be used to speed up execution time - which can be substantial
 --
 -- Parameters:
@@ -15,6 +14,13 @@
 --    Y/N - Y to create the column groups immediately
 --          N to spool SQL to create column groups
 --
+ --
+  -- The cursor C1 includes some predicates I've commented out
+  -- If uncommented, they will reduce the number of columns comapared, but this
+  -- risks missing some correlated columns. I chose to leave these ideas
+  -- visible, but I think the best way to speed things up
+  -- is to reduce the row sample percentage
+  --
 var create_now varchar2(1)
 set echo off
 column tab_owner format a20
@@ -80,7 +86,7 @@ declare
     select t1.column_name c1, t2.column_name c2
     from   w t1, w t2 /* , (select num_rows from dba_tables where owner = :ownname and table_name = :tabname) t */
     where  t1.column_name > t2.column_name
-    and    greatest(t1.num_distinct,t2.num_distinct)/least(t1.num_distinct,t2.num_distinct)<2 /* Similar number of distinct values */
+    --and    greatest(t1.num_distinct,t2.num_distinct)/least(t1.num_distinct,t2.num_distinct)<2 /* Similar number of distinct values? */
     --and    t1.num_distinct < t.num_rows/10   /* Perhaps eliminate sequenced columns? */
     order by t1.column_name;
   c number(6,5);
