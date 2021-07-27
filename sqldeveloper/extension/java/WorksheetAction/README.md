@@ -8,7 +8,7 @@ Actions for the worksheet context menu and/or toolbar can be added via an Action
     . . .
     <hook>
         <sqldev-worksheet-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-worksheet">
-            <provider>my.great.MysteryActionProvider</provider>
+            <provider>oracle.db.example.sqldeveloper.extension.worksheetAction.ExampleActionProvider</provider>
         </sqldev-worksheet-hook>
     </hook>
 </extension>        
