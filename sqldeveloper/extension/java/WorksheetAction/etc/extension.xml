@@ -16,46 +16,37 @@ limitations under the License.
 -->
 
 <extension xmlns="http://jcp.org/jsr/198/extension-manifest"
-           id="@@extension.id@@" version="@@extension.version@@.@@extension.build@@"
-           esdk-version="1.0"
-           rsbundle-class="@@extension.resources@@">
+    id="@@extension.id@@"
+    version="@@extension.version@@.@@extension.build@@"
+    esdk-version="1.0" rsbundle-class="@@extension.resources@@">
 
     <name>@@extension.name@@</name>
     <owner>@@extension.owner@@ @@extension.owner.url@@</owner>
 
-<!--
-     <feature-category xmlns="http://xmlns.oracle.com/ide/extension" id="example-category">
-        <name>${CATEGORY_NAME}</name>
-        <description>${CATEGORY_DESCRIPTION}</description>
-    </feature-category>
-    Duplicate category definitions cause a severe error to be logged. 
-    Only way around it from the outside I can think of is an extension just to add
-    the category and all the others dependent on it.
-    The pre-defined ones are:
-{db-category=Database, ide-category=IDE, db-migrations-category=Database Migrations, 
- database-category=Database Development, java-se-category=Java SE, 
- vcs-category=Version Control, xml-category=XML}
-and example-category=Examples, if you've installed the XMLPackedExample
-Not supplying a category or giving a non-existent one will just show the extension
-at the root of the features tree.    
- -->
-    <feature id="@@extension.id@@" xmlns="http://xmlns.oracle.com/ide/extension">
+    <feature id="@@extension.id@@"
+        xmlns="http://xmlns.oracle.com/ide/extension">
         <name>@@extension.name@@</name>
         <description>@@extension.descr@@</description>
         <type>
-            <service can-user-disable="true" reload-if-used="true"/>
+            <service can-user-disable="true"
+                reload-if-used="true" />
         </type>
     </feature>
-	<trigger-hooks xmlns="http://xmlns.oracle.com/ide/extension">
-   		<triggers xmlns:c="http://xmlns.oracle.com/ide/customization">
-			<!--  Hack to add action to fully load the extension. 
-			      Typically (IMHO) worksheet actions would be part of a larger extension
-			      with more natural triggers
-			 -->
-            <actions xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension">
+
+    <trigger-hooks
+        xmlns="http://xmlns.oracle.com/ide/extension">
+        <triggers
+            xmlns:c="http://xmlns.oracle.com/ide/customization">
+<!--  Hack to add action to fully load the extension. 
+      Typically (IMHO) worksheet actions would be part of a larger extension
+      with more natural triggers
+ -->
+            <actions
+                xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension">
                 <action id="WorksheetAction.DUMMY">
                     <properties>
-                        <property name="Name">${WORKSHEET_ACTION_DUMMY}</property>
+                        <property name="Name">${WORKSHEET_ACTION_DUMMY}
+                        </property>
                         <!-- You could also use your own by putting path in rsbundle 
                              e.g., MY_ICON = /oracle/db/example/sqldeveloper/extension/dependency/icons/my_icon.png
                              and referencing its key as res:${MY_ICON} -->
@@ -63,62 +54,77 @@ at the root of the features tree.
                     </properties>
                 </action>
             </actions>
-            <controllers xmlns="http://xmlns.oracle.com/ide/extension">
-                <controller class="oracle.db.example.sqldeveloper.extension.worksheetAction.DummyActionController">
-                <!-- Not needed if the context-menu-hook is using a rule to determine if it shows up at all? -->
+            <controllers
+                xmlns="http://xmlns.oracle.com/ide/extension">
+                <controller
+                    class="oracle.db.example.sqldeveloper.extension.worksheetAction.DummyActionController">
                     <update-rules>
                         <update-rule rule="always-enabled">
-                            <action id="WorksheetAction.DUMMY"/>
+                            <action id="WorksheetAction.DUMMY" />
                         </update-rule>
                     </update-rules>
                 </controller>
             </controllers>
             <context-menu-hook rule="always-enabled">
-                <site idref="editor"/> <!-- can do multiple e.g.;, "db_nav;editor" -->
+                <site idref="editor" /> <!-- can do multiple e.g.;, "db_nav;editor" -->
                 <menu>
-                    <section xmlns="http://jcp.org/jsr/198/extension-manifest" id="SECTION_WINDOW_CTXT_MENU" weight="1.0">
-                        <item action-ref="WorksheetAction.DUMMY" weight="1.0"/>
+                    <section
+                        xmlns="http://jcp.org/jsr/198/extension-manifest"
+                        id="SECTION_WINDOW_CTXT_MENU" weight="1.0">
+                        <item action-ref="WorksheetAction.DUMMY"
+                            weight="1.0" />
                     </section>
                 </menu>
             </context-menu-hook>
-            <!--  end of force load extension hack -->
-   		</triggers>
-   	</trigger-hooks>
+<!--  end of force load extension hack -->
+        </triggers>
+    </trigger-hooks>
+    
     <hooks>
-        <jdeveloper-hook xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension">
+        <jdeveloper-hook
+            xmlns="http://xmlns.oracle.com/jdeveloper/1013/extension">
             <actions>
                 <action id="WorksheetAction.BOTH">
                     <properties>
-                        <property name="Name">${WORKSHEET_ACTION_BOTH}</property>
+                        <property name="Name">${WORKSHEET_ACTION_BOTH}
+                        </property>
                         <!-- You could also use your own by putting path in rsbundle 
                              e.g., MY_ICON = /oracle/db/example/sqldeveloper/extension/dependency/icons/my_icon.png
                              and referencing its key as res:${MY_ICON} -->
-                        <property name="SmallIcon">${OracleIcons.DEBUG_BLUE}</property>
+                        <property name="SmallIcon">${OracleIcons.DEBUG_BLUE}
+                        </property>
                     </properties>
                 </action>
                 <action id="WorksheetAction.CONTEXT_MENU_ONLY">
                     <properties>
-                        <property name="Name">${WORKSHEET_ACTION_CONTEXT_MENU_ONLY}</property>
+                        <property name="Name">${WORKSHEET_ACTION_CONTEXT_MENU_ONLY}
+                        </property>
                         <!-- You could also use your own by putting path in rsbundle 
                              e.g., MY_ICON = /oracle/db/example/sqldeveloper/extension/dependency/icons/my_icon.png
                              and referencing its key as res:${MY_ICON} -->
-                        <property name="SmallIcon">${OracleIcons.DEBUG_PURPLE}</property>
+                        <property name="SmallIcon">${OracleIcons.DEBUG_PURPLE}
+                        </property>
                     </properties>
                 </action>
                 <action id="WorksheetAction.TOOLBAR_ONLY">
                     <properties>
-                        <property name="Name">${WORKSHEET_ACTION_TOOLBAR_ONLY}</property>
+                        <property name="Name">${WORKSHEET_ACTION_TOOLBAR_ONLY}
+                        </property>
                         <!-- You could also use your own by putting path in rsbundle 
                              e.g., MY_ICON = /oracle/db/example/sqldeveloper/extension/dependency/icons/my_icon.png
                              and referencing its key as res:${MY_ICON} -->
-                        <property name="SmallIcon">${OracleIcons.DEBUG_YELLOW}</property>
+                        <property name="SmallIcon">${OracleIcons.DEBUG_YELLOW}
+                        </property>
                     </properties>
                 </action>
-            </actions>    
-        </jdeveloper-hook>    
-        <sqldev-worksheet-hook xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-worksheet">
-            <provider>oracle.db.example.sqldeveloper.extension.worksheetAction.ExampleActionProvider</provider>
+            </actions>
+        </jdeveloper-hook>
+        
+        <sqldev-worksheet-hook
+            xmlns="http://xmlns.oracle.com/sqldeveloper/sqldev-worksheet">
+            <provider>oracle.db.example.sqldeveloper.extension.worksheetAction.ExampleActionProvider
+            </provider>
         </sqldev-worksheet-hook>
-    </hooks>  
-   	
+    </hooks>
+
 </extension>
