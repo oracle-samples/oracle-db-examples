@@ -31,8 +31,7 @@ public class DummyActionController implements Controller {
 
     @Override
     public boolean update(IdeAction action, Context ctx) {
-        // Trigger-hook - return true so deferred loading works - huh, try false
-        return true;
+        // Trigger-hook - return true so deferred loading works
     }
 
 }
