@@ -6,6 +6,9 @@ Depending on requirements, this can be done in either XML or java and deployed b
 
 ### New
 
+* [WorksheetAction](java/WorksheetAction)
+How to add actions to the worksheet context menu and / or toolbar; execute the action directly or in a background task; and present advanced / detailed information in a result panel.
+
 * [Managing Extensions](./ManagingExtensions.md) - ([Issue 113](https://github.com/oracle/oracle-db-examples/issues/113)) How to add, disable, and remove extensions.
 
 * [ConnectionHelper](java/ConnectionHelper)
@@ -13,8 +16,6 @@ Optionally accept connection info from the command line and/or on a [SocketServe
 
 * [ConnectionHelperClient](java/ConnectionHelperClient)
 A simple command line client for the ConnectionHelper socket server.
-
-* Added resource reference for Philipp Salvisberg's [Example-based tutorials](https://github.com/PhilippSalvisberg/sqldev) to extend SQL Developer functionality. (external)
 
 
 ### Contents
