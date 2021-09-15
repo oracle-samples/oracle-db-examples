@@ -1,7 +1,8 @@
 # Creating a REST API with Node.js and Oracle Database
 
 This folder contains sample code from this series of articles:
-* [Start by learning about web server basics](https://blogs.oracle.com/oraclemagazine/build-rest-apis-for-nodejs-part-1)
-* [Add database connection pooling to your new REST API](https://blogs.oracle.com/oraclemagazine/build-rest-apis-for-nodejs-part-2)
-* [Add routing, controller, and database logic](https://blogs.oracle.com/oraclemagazine/build-rest-apis-for-nodejs-part-3)
-* [Complete the API by adding support for PUT, POST, and DELETE requests](https://blogs.oracle.com/oraclemagazine/build-rest-apis-for-nodejs-part-4)
+* [Part 1: Web Server Basics](https://dzone.com/articles/creating-a-rest-api-web-server-basics)
+* [Part 2: Database Basics](https://dzone.com/articles/creating-a-rest-api-database-basics)
+* [Part 3: Handling GET Requests](https://dzone.com/articles/creating-a-rest-api-handling-get-requests)
+* [Part 4: Handling POST, PUT and DELETE Requests](https://dzone.com/articles/creating-a-rest-api-handling-post-put-and-delete-r)
+* [Part 5: Manual Pagination, Sorting, and Filtering](https://dzone.com/articles/creating-a-rest-api-manual-pagination-sorting-and)
