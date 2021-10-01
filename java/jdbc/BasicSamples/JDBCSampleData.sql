@@ -14,7 +14,7 @@ Rem    nbsundar    04/06/18 - Created
 
 Rem Create a new user "testuser" that will be used in all JDBC code samples
 Rem Login as sysadmin before executing the script 
-CREATE USER testuser IDENTIFIED BY testuser123;
+CREATE USER testuser IDENTIFIED BY <your-testuser-password>;
 
 Rem Grant connect and resource access to the new "testuser"
 Rem so that the user can connect and create objects
