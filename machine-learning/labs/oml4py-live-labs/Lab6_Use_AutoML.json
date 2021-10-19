@@ -1,0 +1,971 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n# Use AutoML\n\n## Introduction\n\nThis lab walks you through the steps to use the AutoML functionality.\n\nEstimated Lab Time: 15 minutes\n\n### About AutoML\nAutoML (Automated Machine Learning) provides built-in data science expertise about data analytics and modeling that you can employ to build machine learning models.\n\n### Objectives\n\nIn this lab, you will learn how to:\n* Create data set (wine data) as a Pandas DataFrame and load into ADB\n* Use `automl.AlgorithmSelection` to rank the in-database algorithms by predicted score metric for classification or regression problems\n* Use `automl.FeatureSelection` to identify the most relevant feature subsets for the provided training data set and an in-database algorithm\n* Use `automl.ModelTuning` to tune hyperparameters for the specified algorithm and training data\n* Use `automl.ModelSelection` to select the top in-database algorithm and then tune the corresponding model in a single function invocation\n\nCopyright (c) 2021 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---\n\n## Task 1: Import libraries supporting OML4Py\n\n1.1. Run the following script to import the `oml` module, Pandas package, and the `automl` module from oml.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:12+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eUse AutoML\u003c/h1\u003e\n\u003ch2\u003eIntroduction\u003c/h2\u003e\n\u003cp\u003eThis lab walks you through the steps to use the AutoML functionality.\u003c/p\u003e\n\u003cp\u003eEstimated Lab Time: 15 minutes\u003c/p\u003e\n\u003ch3\u003eAbout AutoML\u003c/h3\u003e\n\u003cp\u003eAutoML (Automated Machine Learning) provides built-in data science expertise about data analytics and modeling that you can employ to build machine learning models.\u003c/p\u003e\n\u003ch3\u003eObjectives\u003c/h3\u003e\n\u003cp\u003eIn this lab, you will learn how to:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eCreate data set (wine data) as a Pandas DataFrame and load into ADB\u003c/li\u003e\n\u003cli\u003eUse \u003ccode\u003eautoml.AlgorithmSelection\u003c/code\u003e to rank the in-database algorithms by predicted score metric for classification or regression problems\u003c/li\u003e\n\u003cli\u003eUse \u003ccode\u003eautoml.FeatureSelection\u003c/code\u003e to identify the most relevant feature subsets for the provided training data set and an in-database algorithm\u003c/li\u003e\n\u003cli\u003eUse \u003ccode\u003eautoml.ModelTuning\u003c/code\u003e to tune hyperparameters for the specified algorithm and training data\u003c/li\u003e\n\u003cli\u003eUse \u003ccode\u003eautoml.ModelSelection\u003c/code\u003e to select the top in-database algorithm and then tune the corresponding model in a single function invocation\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eCopyright (c) 2021 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n\u003ch2\u003eTask 1: Import libraries supporting OML4Py\u003c/h2\u003e\n\u003cp\u003e1.1. Run the following script to import the \u003ccode\u003eoml\u003c/code\u003e module, Pandas package, and the \u003ccode\u003eautoml\u003c/code\u003e module from oml.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-1112681130",
+      "id": "20211001-190305_1708818525",
+      "dateCreated": "2021-03-20T08:36:20+0000",
+      "dateStarted": "2021-09-30T04:59:13+0000",
+      "dateFinished": "2021-09-30T04:59:15+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nimport pandas as pd\nimport oml\nfrom oml import automl",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:15+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_1069488886",
+      "id": "20211001-190305_1581733623",
+      "dateCreated": "2021-03-20T08:36:31+0000",
+      "dateStarted": "2021-09-30T04:59:16+0000",
+      "dateFinished": "2021-09-30T04:59:31+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n1.2. Use the `oml.sync` function to create an OML Dataframe `CUST_DF` as a proxy for the database table `CUSTOMER_INSURANCE_LTV`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:31+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e1.2. Use the \u003ccode\u003eoml.sync\u003c/code\u003e function to create an OML Dataframe \u003ccode\u003eCUST_DF\u003c/code\u003e as a proxy for the database table \u003ccode\u003eCUSTOMER_INSURANCE_LTV\u003c/code\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_855462745",
+      "id": "20211001-190305_1901244065",
+      "dateCreated": "2021-03-20T08:36:39+0000",
+      "dateStarted": "2021-09-30T04:59:32+0000",
+      "dateFinished": "2021-09-30T04:59:32+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nCUST_DF \u003d oml.sync(\"OMLUSER\", table \u003d \"CUSTOMER_INSURANCE_LTV\")\nprint(CUST_DF.shape)\nprint(CUST_DF.dtypes)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:32+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(13880, 31)\nMARITAL_STATUS            \u003cclass \u0027oml.core.string.String\u0027\u003e\nSTATE                     \u003cclass \u0027oml.core.string.String\u0027\u003e\nCREDIT_BALANCE              \u003cclass \u0027oml.core.float.Float\u0027\u003e\nCUSTOMER_TENURE             \u003cclass \u0027oml.core.float.Float\u0027\u003e\nMORTGAGE_AMOUNT             \u003cclass \u0027oml.core.float.Float\u0027\u003e\nBANK_FUNDS                  \u003cclass \u0027oml.core.float.Float\u0027\u003e\nNUM_DEPENDENTS              \u003cclass \u0027oml.core.float.Float\u0027\u003e\nHAS_CHILDREN                \u003cclass \u0027oml.core.float.Float\u0027\u003e\nINCOME                      \u003cclass \u0027oml.core.float.Float\u0027\u003e\nCUSTOMER_ID               \u003cclass \u0027oml.core.string.String\u0027\u003e\nGENDER                    \u003cclass \u0027oml.core.string.String\u0027\u003e\nPROFESSION                \u003cclass \u0027oml.core.string.String\u0027\u003e\nCREDIT_CARD_LIMITS          \u003cclass \u0027oml.core.float.Float\u0027\u003e\nREGION                    \u003cclass \u0027oml.core.string.String\u0027\u003e\nHOME_OWNERSHIP              \u003cclass \u0027oml.core.float.Float\u0027\u003e\nNUM_ONLINE_TRANS            \u003cclass \u0027oml.core.float.Float\u0027\u003e\nBUY_INSURANCE             \u003cclass \u0027oml.core.string.String\u0027\u003e\nMONTHLY_CHECKS              \u003cclass \u0027oml.core.float.Float\u0027\u003e\nNUM_TRANS_KIOSK             \u003cclass \u0027oml.core.float.Float\u0027\u003e\nAGE                         \u003cclass \u0027oml.core.float.Float\u0027\u003e\nMONEY_MONTLY_OVERDRAWN      \u003cclass \u0027oml.core.float.Float\u0027\u003e\nLTV                         \u003cclass \u0027oml.core.float.Float\u0027\u003e\nTOTAL_AUTOM_PAYMENTS        \u003cclass \u0027oml.core.float.Float\u0027\u003e\nNUM_TRANS_TELLER            \u003cclass \u0027oml.core.float.Float\u0027\u003e\nCHECKING_BALANCE            \u003cclass \u0027oml.core.float.Float\u0027\u003e\nNUM_TRANS_ATM               \u003cclass \u0027oml.core.float.Float\u0027\u003e\nLTV_BIN                   \u003cclass \u0027oml.core.string.String\u0027\u003e\nFIRST_NAME                \u003cclass \u0027oml.core.string.String\u0027\u003e\nNUM_MORTGAGES               \u003cclass \u0027oml.core.float.Float\u0027\u003e\nCAR_OWNERSHIP               \u003cclass \u0027oml.core.float.Float\u0027\u003e\nLAST_NAME                 \u003cclass \u0027oml.core.string.String\u0027\u003e\ndtype: object\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-1065057801",
+      "id": "20211001-190305_1554534768",
+      "dateCreated": "2021-03-20T08:36:39+0000",
+      "dateStarted": "2021-09-30T04:59:33+0000",
+      "dateFinished": "2021-09-30T04:59:33+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 2: Automated Algorithm Selection\nIn this task, you prepare the `CUST_DF` proxy object by separating predictors from the target, as it is standard for Python model building. This produces two new proxy objects that will be used in AutoML functions.\n\n2.1. Run the following script to split the `CUST_DF` data set into `CUST_X` (only containing the predictor attributes) and `CUST_y` (only containing the target attribute `BUY_INSURANCE`).",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-10-01T19:14:05+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 2: Automated Algorithm Selection\u003c/h2\u003e\n\u003cp\u003eIn this task, you prepare the \u003ccode\u003eCUST_DF\u003c/code\u003e proxy object by separating predictors from the target, as it is standard for Python model building. This produces two new proxy objects that will be used in AutoML functions.\u003c/p\u003e\n\u003cp\u003e2.1. Run the following script to split the \u003ccode\u003eCUST_DF\u003c/code\u003e data set into \u003ccode\u003eCUST_X\u003c/code\u003e (only containing the predictor attributes) and \u003ccode\u003eCUST_y\u003c/code\u003e (only containing the target attribute \u003ccode\u003eBUY_INSURANCE\u003c/code\u003e).\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-1645335741",
+      "id": "20211001-190305_1833036496",
+      "dateCreated": "2021-03-20T08:36:38+0000",
+      "dateStarted": "2021-10-01T19:14:04+0000",
+      "dateFinished": "2021-10-01T19:14:04+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nCUST_X ,CUST_y  \u003d CUST_DF.drop(\u0027BUY_INSURANCE\u0027), CUST_DF[\u0027BUY_INSURANCE\u0027]",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:34+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_1330678245",
+      "id": "20211001-190305_165017953",
+      "dateCreated": "2021-03-20T08:36:38+0000",
+      "dateStarted": "2021-09-30T04:59:34+0000",
+      "dateFinished": "2021-09-30T04:59:35+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n2.2. Run the following script to select the top `classification` algorithms for predicting whether a customer will buy insurance (`BUY_INSURANCE`). It displays the top 4 ranked algorithms (requested by the `k\u003d4`) and their `accuracy` (the metric we requested in `score_metric`).  \n\nThe script returns Random Forest (rf), Decision Tree (dt), Neural Networks (nn) and Generalized Linear Models (glm) as the Top 4 algorithms, and among these the Random Forest is ranked highest for this problem, and the string `selected_insur_alg` will be used in subsequent AutoML function calls.\n \n**Note**: AutoML also supports regression, and the AlgorithmSelection function has other options and metrics that can be found in the documentation links at the bottom of this notebook.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:35+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e2.2. Run the following script to select the top \u003ccode\u003eclassification\u003c/code\u003e algorithms for predicting whether a customer will buy insurance (\u003ccode\u003eBUY_INSURANCE\u003c/code\u003e). It displays the top 4 ranked algorithms (requested by the \u003ccode\u003ek\u003d4\u003c/code\u003e) and their \u003ccode\u003eaccuracy\u003c/code\u003e (the metric we requested in \u003ccode\u003escore_metric\u003c/code\u003e).\u003c/p\u003e\n\u003cp\u003eThe script returns Random Forest (rf), Decision Tree (dt), Neural Networks (nn) and Generalized Linear Models (glm) as the Top 4 algorithms, and among these the Random Forest is ranked highest for this problem, and the string \u003ccode\u003eselected_insur_alg\u003c/code\u003e will be used in subsequent AutoML function calls.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote\u003c/strong\u003e: AutoML also supports regression, and the AlgorithmSelection function has other options and metrics that can be found in the documentation links at the bottom of this notebook.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-996739866",
+      "id": "20211001-190305_1830189404",
+      "dateCreated": "2021-03-20T08:36:38+0000",
+      "dateStarted": "2021-09-30T04:59:35+0000",
+      "dateFinished": "2021-09-30T04:59:35+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nas_insur \u003d automl.AlgorithmSelection(mining_function\u003d\u0027classification\u0027, score_metric\u003d\u0027accuracy\u0027, parallel\u003d2)\n\ninsur_alg_ranking \u003d as_insur.select(CUST_X, CUST_y, k\u003d4, case_id\u003d\u0027CUSTOMER_ID\u0027)\n\nprint(\"Top ranked algorithms:\\n\", insur_alg_ranking)\n\nselected_insur_alg \u003d insur_alg_ranking[0][0]\n\nprint(\"\\nTop algorithm: \", selected_insur_alg)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:36+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Top ranked algorithms:\n [(\u0027rf\u0027, 0.8422005066956207), (\u0027dt\u0027, 0.8143322475570033), (\u0027nn\u0027, 0.7929786463988419), (\u0027glm\u0027, 0.7886355410785378)]\n\nTop algorithm:  rf\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_1276339464",
+      "id": "20211001-190305_1932236383",
+      "dateCreated": "2021-03-20T08:36:38+0000",
+      "dateStarted": "2021-09-30T04:59:36+0000",
+      "dateFinished": "2021-09-30T04:59:56+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 3: Automated Feature Selection\n\nIn this task, you determine the features that best support the selected algorithm. First define a FeatureSelection object with score metric `accuracy`. Then call the `reduce` function and specify the desired algorithm, in this case, as determined above and stored in the variable `selected_insur_alg`.\n\nThe result will be a a subset of the original columns, to which we will append our case ID (`CUSTOMER_ID`) and use it in the next task.\n\n3.1. Run the following script to define the Feature Selection object `fs_insur` and call the `reduce` function with the selected algorithms and CUST_DF proxy objects:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:56+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 3: Automated Feature Selection\u003c/h2\u003e\n\u003cp\u003eIn this task, you determine the features that best support the selected algorithm. First define a FeatureSelection object with score metric \u003ccode\u003eaccuracy\u003c/code\u003e. Then call the \u003ccode\u003ereduce\u003c/code\u003e function and specify the desired algorithm, in this case, as determined above and stored in the variable \u003ccode\u003eselected_insur_alg\u003c/code\u003e.\u003c/p\u003e\n\u003cp\u003eThe result will be a a subset of the original columns, to which we will append our case ID (\u003ccode\u003eCUSTOMER_ID\u003c/code\u003e) and use it in the next task.\u003c/p\u003e\n\u003cp\u003e3.1. Run the following script to define the Feature Selection object \u003ccode\u003efs_insur\u003c/code\u003e and call the \u003ccode\u003ereduce\u003c/code\u003e function with the selected algorithms and CUST_DF proxy objects:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_431601095",
+      "id": "20211001-190305_291435904",
+      "dateCreated": "2021-03-20T08:36:38+0000",
+      "dateStarted": "2021-09-30T04:59:57+0000",
+      "dateFinished": "2021-09-30T04:59:57+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nfs_insur \u003d automl.FeatureSelection(mining_function \u003d \u0027classification\u0027, score_metric \u003d \u0027accuracy\u0027, parallel\u003d2)\n\nselected_insur_features \u003d fs_insur.reduce(selected_insur_alg, CUST_X, CUST_y, case_id\u003d\u0027CUSTOMER_ID\u0027)\n\n# Add the CUSTOMER_ID back to the list\nselected_insur_features.append(\u0027CUSTOMER_ID\u0027)\n\nCUST_X_reduced \u003d CUST_X[:,selected_insur_features]\n\nprint(\"Selected columns (plus ID):\", CUST_X_reduced.columns)\n\nprint(\"Number of columns: \")\n\"{} reduced to {}\".format(len(CUST_X.columns), len(CUST_X_reduced.columns))",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T04:59:57+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Selected columns (plus ID): [\u0027MARITAL_STATUS\u0027, \u0027CREDIT_BALANCE\u0027, \u0027CUSTOMER_TENURE\u0027, \u0027MORTGAGE_AMOUNT\u0027, \u0027BANK_FUNDS\u0027, \u0027NUM_DEPENDENTS\u0027, \u0027HAS_CHILDREN\u0027, \u0027INCOME\u0027, \u0027GENDER\u0027, \u0027CREDIT_CARD_LIMITS\u0027, \u0027HOME_OWNERSHIP\u0027, \u0027NUM_ONLINE_TRANS\u0027, \u0027MONTHLY_CHECKS\u0027, \u0027NUM_TRANS_KIOSK\u0027, \u0027AGE\u0027, \u0027MONEY_MONTLY_OVERDRAWN\u0027, \u0027TOTAL_AUTOM_PAYMENTS\u0027, \u0027NUM_TRANS_TELLER\u0027, \u0027CHECKING_BALANCE\u0027, \u0027NUM_TRANS_ATM\u0027, \u0027NUM_MORTGAGES\u0027, \u0027CAR_OWNERSHIP\u0027, \u0027CUSTOMER_ID\u0027]\nNumber of columns: \n\u002730 reduced to 23\u0027\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-1628165696",
+      "id": "20211001-190305_937822267",
+      "dateCreated": "2021-03-20T08:36:38+0000",
+      "dateStarted": "2021-09-30T04:59:58+0000",
+      "dateFinished": "2021-09-30T05:00:38+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n### **Try it Yourself**\nTry other algorithms, such as `Decision Tree` or `Neural Network` in the first argument of the reduce function by replacing the string **selected_insur_alg** for **\u0027dt\u0027** or **\u0027nn\u0027** (with quotes), and see if different columns are selected.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:00:38+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eTry it Yourself\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eTry other algorithms, such as \u003ccode\u003eDecision Tree\u003c/code\u003e or \u003ccode\u003eNeural Network\u003c/code\u003e in the first argument of the reduce function by replacing the string \u003cstrong\u003eselected_insur_alg\u003c/strong\u003e for \u003cstrong\u003e\u0027dt\u0027\u003c/strong\u003e or \u003cstrong\u003e\u0027nn\u0027\u003c/strong\u003e (with quotes), and see if different columns are selected.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-689001889",
+      "id": "20211001-190305_1768180482",
+      "dateCreated": "2021-03-20T08:36:38+0000",
+      "dateStarted": "2021-09-30T05:00:39+0000",
+      "dateFinished": "2021-09-30T05:00:39+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 4: Automated Model Tuning\nAt this point, you are ready to build and tune the models you want to use.\n\nFirst, you define a `ModelTuning` object for classification.\nThen, invoke `tune`, which builds and tunes the best model using the algorithm selected above (stored as `selected_insur_alg`) and the reduced data features (stored as `CUST_X_reduced`).\n\nModel tuning returns a dictionary with the best model and the evaluation results of the other models tried. This also contains a list of the hyperparameter choices tried and their corresponding score.\n\n4.1. Run the following script to define the model tuning object `mt_insur` for classification and invoke the `tune` function on it.\n\n**NOTE:** It may take around a minute or two to run depending on the configuration",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-10-01T19:42:09+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 4: Automated Model Tuning\u003c/h2\u003e\n\u003cp\u003eAt this point, you are ready to build and tune the models you want to use.\u003c/p\u003e\n\u003cp\u003eFirst, you define a \u003ccode\u003eModelTuning\u003c/code\u003e object for classification.\n\u003cbr  /\u003eThen, invoke \u003ccode\u003etune\u003c/code\u003e, which builds and tunes the best model using the algorithm selected above (stored as \u003ccode\u003eselected_insur_alg\u003c/code\u003e) and the reduced data features (stored as \u003ccode\u003eCUST_X_reduced\u003c/code\u003e).\u003c/p\u003e\n\u003cp\u003eModel tuning returns a dictionary with the best model and the evaluation results of the other models tried. This also contains a list of the hyperparameter choices tried and their corresponding score.\u003c/p\u003e\n\u003cp\u003e4.1. Run the following script to define the model tuning object \u003ccode\u003emt_insur\u003c/code\u003e for classification and invoke the \u003ccode\u003etune\u003c/code\u003e function on it.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNOTE:\u003c/strong\u003e It may take around a minute or two to run depending on the configuration\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_339373217",
+      "id": "20211001-190305_1179824415",
+      "dateCreated": "2021-09-22T15:19:44+0000",
+      "dateStarted": "2021-10-01T19:42:07+0000",
+      "dateFinished": "2021-10-01T19:42:07+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nmt_insur \u003d automl.ModelTuning(mining_function \u003d \u0027classification\u0027, parallel\u003d2)\n\ninsur_tuned \u003d mt_insur.tune(selected_insur_alg, CUST_X_reduced, CUST_y, case_id\u003d\u0027CUSTOMER_ID\u0027)\n\ntop_insur_tuned \u003d insur_tuned[\u0027best_model\u0027]\ntop_insur_tuned",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:00:40+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Random Forest\n\nMining Function: CLASSIFICATION\n\nTarget: BUY_INSURANCE\n\nSettings: \n                    setting name            setting value\n0                      ALGO_NAME       ALGO_RANDOM_FOREST\n1              CLAS_MAX_SUP_BINS                       32\n2          CLAS_WEIGHTS_BALANCED                      OFF\n3                   ODMS_DETAILS             ODMS_DISABLE\n4   ODMS_MISSING_VALUE_TREATMENT  ODMS_MISSING_VALUE_AUTO\n5               ODMS_RANDOM_SEED                        0\n6                  ODMS_SAMPLING    ODMS_SAMPLING_DISABLE\n7                      PREP_AUTO                       ON\n8                      RFOR_MTRY                       15\n9                 RFOR_NUM_TREES                       20\n10           RFOR_SAMPLING_RATIO                      0.5\n11          TREE_IMPURITY_METRIC    TREE_IMPURITY_ENTROPY\n12           TREE_TERM_MAX_DEPTH                       16\n13         TREE_TERM_MINPCT_NODE                     0.05\n14        TREE_TERM_MINPCT_SPLIT                      0.1\n15         TREE_TERM_MINREC_NODE                       10\n16        TREE_TERM_MINREC_SPLIT                       20\n\nAttributes: \nAGE\nBANK_FUNDS\nCAR_OWNERSHIP\nCHECKING_BALANCE\nCREDIT_BALANCE\nCREDIT_CARD_LIMITS\nCUSTOMER_TENURE\nGENDER\nHAS_CHILDREN\nHOME_OWNERSHIP\nINCOME\nMARITAL_STATUS\nMONEY_MONTLY_OVERDRAWN\nMONTHLY_CHECKS\nMORTGAGE_AMOUNT\nNUM_DEPENDENTS\nNUM_MORTGAGES\nNUM_ONLINE_TRANS\nNUM_TRANS_ATM\nNUM_TRANS_KIOSK\nNUM_TRANS_TELLER\nTOTAL_AUTOM_PAYMENTS\n\nPartition: NO\n\n\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-283683340",
+      "id": "20211001-190305_549891744",
+      "dateCreated": "2021-03-20T08:36:37+0000",
+      "dateStarted": "2021-09-30T05:00:41+0000",
+      "dateFinished": "2021-09-30T05:01:48+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n4.2. Run the following script to **list the hyperparameters and their values** that were tried for the `top two models`, along with the corresponding model\u0027s score metric value (`accuracy`).",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:01:48+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e4.2. Run the following script to \u003cstrong\u003elist the hyperparameters and their values\u003c/strong\u003e that were tried for the \u003ccode\u003etop two models\u003c/code\u003e, along with the corresponding model\u0027s score metric value (\u003ccode\u003eaccuracy\u003c/code\u003e).\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_1366412492",
+      "id": "20211001-190305_661048659",
+      "dateCreated": "2021-03-20T08:36:37+0000",
+      "dateStarted": "2021-09-30T05:01:49+0000",
+      "dateFinished": "2021-09-30T05:01:49+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nhyper_tuned \u003d insur_tuned[\u0027all_evals\u0027]\n\nprint(*hyper_tuned[:2], sep\u003d\u0027\\n\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:01:49+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(0.8426247886495626, {\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 15, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_ENTROPY\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 0.1})\n(0.8426247886495626, {\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027ON\u0027, \u0027RFOR_MTRY\u0027: 15, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_ENTROPY\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 0.1})\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_385486466",
+      "id": "20211001-190305_1813102310",
+      "dateCreated": "2021-03-20T08:36:37+0000",
+      "dateStarted": "2021-09-30T05:01:50+0000",
+      "dateFinished": "2021-09-30T05:01:50+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n4.3. Run the following script to **list the hyperparameters and their values** that were tried for the `top ten models`, along with the corresponding model\u0027s score metric value (`accuracy`) in a better formatted way.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:01:50+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e4.3. Run the following script to \u003cstrong\u003elist the hyperparameters and their values\u003c/strong\u003e that were tried for the \u003ccode\u003etop ten models\u003c/code\u003e, along with the corresponding model\u0027s score metric value (\u003ccode\u003eaccuracy\u003c/code\u003e) in a better formatted way.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-1104115845",
+      "id": "20211001-190305_1066938418",
+      "dateCreated": "2021-09-22T15:54:18+0000",
+      "dateStarted": "2021-09-30T05:01:51+0000",
+      "dateFinished": "2021-09-30T05:01:51+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\ntuning_report \u003d pd.concat([pd.DataFrame([i+1 for i in range(10)], columns\u003d[\u0027Ranking\u0027]), \n                           pd.DataFrame(hyper_tuned[:10], columns\u003d[\u0027Accuracy\u0027,\u0027Model_Settings_Tried\u0027])], \n                           axis\u003d1)\n\nz.show(tuning_report.round(6))                         ",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:01:51+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "Ranking",
+                        "visible": true,
+                        "width": 150.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Accuracy",
+                        "visible": true,
+                        "width": 150.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Model_Settings_Tried",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Ranking": "string",
+                      "Accuracy": "string",
+                      "Model_Settings_Tried": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "Ranking\tAccuracy\tModel_Settings_Tried\n1\t0.842625\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 15, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_ENTROPY\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 0.1}\n2\t0.842625\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027ON\u0027, \u0027RFOR_MTRY\u0027: 15, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_ENTROPY\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 0.1}\n3\t0.840859\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 15, \u0027RFOR_NUM_TREES\u0027: 106, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_ENTROPY\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 0.1}\n4\t0.840383\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 11, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 6.673333333333333}\n5\t0.840383\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 11, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 6.673533233333333}\n6\t0.840383\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027ON\u0027, \u0027RFOR_MTRY\u0027: 11, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 6.673333333333333}\n7\t0.840383\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 11, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5000099, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 6.673333333333333}\n8\t0.840383\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 11, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 15, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 6.673333333333333}\n9\t0.840383\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 11, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 16, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.0500999, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 6.673333333333333}\n10\t0.840383\t{\u0027CLAS_MAX_SUP_BINS\u0027: 32, \u0027CLAS_WEIGHTS_BALANCED\u0027: \u0027OFF\u0027, \u0027RFOR_MTRY\u0027: 11, \u0027RFOR_NUM_TREES\u0027: 20, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027, \u0027TREE_TERM_MAX_DEPTH\u0027: 14, \u0027TREE_TERM_MINPCT_NODE\u0027: 0.05, \u0027TREE_TERM_MINPCT_SPLIT\u0027: 6.673333333333333}\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_1326155712",
+      "id": "20211001-190305_717109967",
+      "dateCreated": "2021-09-22T15:30:01+0000",
+      "dateStarted": "2021-09-30T05:01:52+0000",
+      "dateFinished": "2021-09-30T05:01:53+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n4.3. Run the following script to specify a custom search space to explore for model building using the `param_space` argument to the `tune` function. With this specification, model tuning will narrow the set of important hyperparameter values.\n**Note**: For illustration purposes we are using a different scoring metric, `f1_macro`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:01:53+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e4.3. Run the following script to specify a custom search space to explore for model building using the \u003ccode\u003eparam_space\u003c/code\u003e argument to the \u003ccode\u003etune\u003c/code\u003e function. With this specification, model tuning will narrow the set of important hyperparameter values.\n\u003cbr  /\u003e\u003cstrong\u003eNote\u003c/strong\u003e: For illustration purposes we are using a different scoring metric, \u003ccode\u003ef1_macro\u003c/code\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_472792646",
+      "id": "20211001-190305_992175774",
+      "dateCreated": "2021-03-20T08:40:16+0000",
+      "dateStarted": "2021-09-30T05:01:53+0000",
+      "dateFinished": "2021-09-30T05:01:53+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nsearch_space\u003d{\u0027RFOR_SAMPLING_RATIO\u0027: {\u0027type\u0027: \u0027continuous\u0027, \u0027range\u0027: [0.05, 0.5]},\n              \u0027RFOR_NUM_TREES\u0027: {\u0027type\u0027: \u0027discrete\u0027, \u0027range\u0027: [50, 55]},\n              \u0027TREE_IMPURITY_METRIC\u0027: {\u0027type\u0027: \u0027categorical\u0027,\n                                       \u0027range\u0027: [\u0027TREE_IMPURITY_ENTROPY\u0027, \u0027TREE_IMPURITY_GINI\u0027]},}\n\nmt2_insur \u003d automl.ModelTuning(mining_function\u003d\u0027classification\u0027, score_metric\u003d\u0027f1_macro\u0027, parallel\u003d2)\n\ninsur_tuned2 \u003d mt2_insur.tune(\u0027rf\u0027, CUST_X, CUST_y, case_id\u003d\u0027CUSTOMER_ID\u0027, param_space\u003dsearch_space)\n\nscore, params \u003d insur_tuned2[\u0027all_evals\u0027][0]\n\"{:.2}\".format(score)\n\nprint(\u0027The top model has an f1_macro of \u0027,score.round(4),\u0027 and parameters \u0027,params)\n\ntop_insur_tuned2 \u003d insur_tuned2[\u0027best_model\u0027]\ntop_insur_tuned2",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:01:53+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "The top model has an f1_macro of  0.8016  and parameters  {\u0027RFOR_NUM_TREES\u0027: 53, \u0027RFOR_SAMPLING_RATIO\u0027: 0.5, \u0027TREE_IMPURITY_METRIC\u0027: \u0027TREE_IMPURITY_GINI\u0027}\n\nAlgorithm Name: Random Forest\n\nMining Function: CLASSIFICATION\n\nTarget: BUY_INSURANCE\n\nSettings: \n                    setting name            setting value\n0                      ALGO_NAME       ALGO_RANDOM_FOREST\n1              CLAS_MAX_SUP_BINS                       32\n2          CLAS_WEIGHTS_BALANCED                      OFF\n3                   ODMS_DETAILS             ODMS_DISABLE\n4   ODMS_MISSING_VALUE_TREATMENT  ODMS_MISSING_VALUE_AUTO\n5               ODMS_RANDOM_SEED                        0\n6                  ODMS_SAMPLING    ODMS_SAMPLING_DISABLE\n7                      PREP_AUTO                       ON\n8                 RFOR_NUM_TREES                       53\n9            RFOR_SAMPLING_RATIO                      0.5\n10          TREE_IMPURITY_METRIC       TREE_IMPURITY_GINI\n11           TREE_TERM_MAX_DEPTH                       16\n12         TREE_TERM_MINPCT_NODE                      .05\n13        TREE_TERM_MINPCT_SPLIT                       .1\n14         TREE_TERM_MINREC_NODE                       10\n15        TREE_TERM_MINREC_SPLIT                       20\n\nAttributes: \nAGE\nBANK_FUNDS\nCAR_OWNERSHIP\nCHECKING_BALANCE\nCREDIT_BALANCE\nCREDIT_CARD_LIMITS\nCUSTOMER_TENURE\nGENDER\nHAS_CHILDREN\nHOME_OWNERSHIP\nINCOME\nLTV\nLTV_BIN\nMARITAL_STATUS\nMONEY_MONTLY_OVERDRAWN\nMONTHLY_CHECKS\nMORTGAGE_AMOUNT\nNUM_DEPENDENTS\nNUM_MORTGAGES\nNUM_ONLINE_TRANS\nNUM_TRANS_ATM\nNUM_TRANS_KIOSK\nNUM_TRANS_TELLER\nPROFESSION\nSTATE\nTOTAL_AUTOM_PAYMENTS\n\nPartition: NO\n\n\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-1996710300",
+      "id": "20211001-190305_1520703890",
+      "dateCreated": "2021-03-20T08:40:16+0000",
+      "dateStarted": "2021-09-30T05:01:54+0000",
+      "dateFinished": "2021-09-30T05:02:27+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 5: Automated Model Selection\nAs a short cut, you may choose to go directly to model selection on the training data. Model Selection automatically selects the top ranked algorithm (using Algorithm Selection) from the set of supported algorithms, then builds, tunes, and returns the model.\n\n5.1. Run the following script to define a` ModelSelection` object and invoke `select` for automatically building the best model on the `CUSTOMER_INSURANCE_LTV` dataset. The final model is displayed.\n\n**Note**: In the script below the option `k\u003d1` (the default is 3) tells ModelSelection to only return the top model, and the option `cv\u003d2` (the default is \u0027auto\u0027) requests that it uses 2 folds for a Stratified kFold Cross-Validation.  Mode details in the documentation links at the bottom of this notebook.\n\n*NOTE:* It may take around three to four minutes to run depending on the configuration",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-10-01T19:43:08+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 5: Automated Model Selection\u003c/h2\u003e\n\u003cp\u003eAs a short cut, you may choose to go directly to model selection on the training data. Model Selection automatically selects the top ranked algorithm (using Algorithm Selection) from the set of supported algorithms, then builds, tunes, and returns the model.\u003c/p\u003e\n\u003cp\u003e5.1. Run the following script to define a\u003ccode\u003eModelSelection\u003c/code\u003e object and invoke \u003ccode\u003eselect\u003c/code\u003e for automatically building the best model on the \u003ccode\u003eCUSTOMER_INSURANCE_LTV\u003c/code\u003e dataset. The final model is displayed.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote\u003c/strong\u003e: In the script below the option \u003ccode\u003ek\u003d1\u003c/code\u003e (the default is 3) tells ModelSelection to only return the top model, and the option \u003ccode\u003ecv\u003d2\u003c/code\u003e (the default is \u0027auto\u0027) requests that it uses 2 folds for a Stratified kFold Cross-Validation.  Mode details in the documentation links at the bottom of this notebook.\u003c/p\u003e\n\u003cp\u003e\u003cem\u003eNOTE:\u003c/em\u003e It may take around three to four minutes to run depending on the configuration\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_251014658",
+      "id": "20211001-190305_616807252",
+      "dateCreated": "2021-03-20T08:40:16+0000",
+      "dateStarted": "2021-10-01T19:43:07+0000",
+      "dateFinished": "2021-10-01T19:43:07+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nms_cust \u003d automl.ModelSelection(mining_function \u003d \u0027classification\u0027, parallel\u003d2)\n\ntop_model \u003d ms_cust.select(CUST_X, CUST_y, case_id\u003d\u0027CUSTOMER_ID\u0027, k\u003d1, cv\u003d2)\n\nprint(\u0027The top model is of the type: \u0027, top_model[1])\n\nprint(\u0027Model details:\u0027)\n\ntop_model[0]",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:02:28+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "The top model is of the type:  rf\nModel details:\n\nAlgorithm Name: Random Forest\n\nMining Function: CLASSIFICATION\n\nTarget: BUY_INSURANCE\n\nSettings: \n                    setting name            setting value\n0                      ALGO_NAME       ALGO_RANDOM_FOREST\n1              CLAS_MAX_SUP_BINS                       32\n2          CLAS_WEIGHTS_BALANCED                       ON\n3                   ODMS_DETAILS             ODMS_DISABLE\n4   ODMS_MISSING_VALUE_TREATMENT  ODMS_MISSING_VALUE_AUTO\n5               ODMS_RANDOM_SEED                        0\n6                  ODMS_SAMPLING    ODMS_SAMPLING_DISABLE\n7                      PREP_AUTO                       ON\n8                      RFOR_MTRY                       14\n9                 RFOR_NUM_TREES                      203\n10           RFOR_SAMPLING_RATIO                      0.5\n11          TREE_IMPURITY_METRIC       TREE_IMPURITY_GINI\n12           TREE_TERM_MAX_DEPTH                       16\n13         TREE_TERM_MINPCT_NODE                     0.05\n14        TREE_TERM_MINPCT_SPLIT                      0.1\n15         TREE_TERM_MINREC_NODE                       10\n16        TREE_TERM_MINREC_SPLIT                       20\n\nAttributes: \nAGE\nBANK_FUNDS\nCAR_OWNERSHIP\nCHECKING_BALANCE\nCREDIT_BALANCE\nCREDIT_CARD_LIMITS\nCUSTOMER_TENURE\nGENDER\nHAS_CHILDREN\nHOME_OWNERSHIP\nINCOME\nLTV\nLTV_BIN\nMARITAL_STATUS\nMONEY_MONTLY_OVERDRAWN\nMONTHLY_CHECKS\nMORTGAGE_AMOUNT\nNUM_DEPENDENTS\nNUM_MORTGAGES\nNUM_ONLINE_TRANS\nNUM_TRANS_ATM\nNUM_TRANS_KIOSK\nNUM_TRANS_TELLER\nPROFESSION\nSTATE\nTOTAL_AUTOM_PAYMENTS\n\nPartition: NO\n\n\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-1288621117",
+      "id": "20211001-190305_2138080577",
+      "dateCreated": "2021-03-20T08:40:16+0000",
+      "dateStarted": "2021-09-30T05:02:28+0000",
+      "dateFinished": "2021-09-30T05:05:53+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Learn More\n\n* \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/automatic-machine-learning.html#GUID-4B240E7A-1A8B-43B6-99A5-7FF86330805A\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/automatic-machine-learning.html#GUID-4B240E7A-1A8B-43B6-99A5-7FF86330805A\u0027);\"\u003eAutomated Machine Learning\u003c/a\u003e\n* \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\u0027);\"\u003eOracle Machine Learning Notebooks\u003c/a\u003e\n \n**Last Updated** - September 2021\n \nCopyright (c) 2021 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-30T05:05:53+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eLearn More\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/automatic-machine-learning.html#GUID-4B240E7A-1A8B-43B6-99A5-7FF86330805A\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/automatic-machine-learning.html#GUID-4B240E7A-1A8B-43B6-99A5-7FF86330805A\u0027);\"\u003eAutomated Machine Learning\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\u0027);\"\u003eOracle Machine Learning Notebooks\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003eLast Updated\u003c/strong\u003e - September 2021\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2021 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_713264564",
+      "id": "20211001-190305_1606880167",
+      "dateCreated": "2021-03-20T08:36:37+0000",
+      "dateStarted": "2021-09-30T05:05:54+0000",
+      "dateFinished": "2021-09-30T05:05:54+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T19:26:11+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985442_-395512476",
+      "id": "20211001-190305_626389316",
+      "dateCreated": "2021-03-20T08:36:37+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": false
+    }
+  ],
+  "name": "Lab 6: Use AutoML",
+  "id": "79624",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA96849F3DDA:OMLUSER:79624": [],
+    "ORA7A60DC9B32:OMLUSER:79624": [],
+    "ORA7CC90ACC73:OMLUSER:79624": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {}
+}
