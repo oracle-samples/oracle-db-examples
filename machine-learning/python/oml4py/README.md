@@ -1,14 +1,10 @@
-# Oracle Machine Learning components for the Python language (coming soon)
-Oracle Machine Learning for Python (OML4Py) is a component of the Oracle Machine Learning family of products.
+# Oracle Machine Learning for Python
+Oracle Machine Learning for Python (OML4Py) supports scalable in-database data exploration and preparation using native Python syntax, scalable in-database algorithms for machine learning model building and scoring, and automated machine learning (AutoML). Users can also invoke user-defined Python functions from Python, SQL and REST APIs using database-spawned Python engines. OML4Py increases data scientist productivity and reduces solution deployment complexity.
 
-OML4Py is going to be initially available inside Oracle Autonomous Database, but we expect it to be released later on all Oracle Database platforms.
+Python is a major programming language used for data science and machine learning. OML4Py is a feature on Oracle Autonomous Database that provides Python users access to powerful in-database functionality supporting data scientists for both scalability, performance, and ease of solution deployment. 
+
+OML4Py is available on premises for Oracle Database 21c. 
 
 For current examples for Oracle Machine Learning Notebooks with Autonomous Database, please look under the [machine-learning/notebooks/python](https://github.com/oracle/oracle-db-examples/tree/master/machine-learning/notebooks/python) folder in this repository
-
-Outside of the Autonomous Database, OML4Py will be compatible Oracle Linux 7.x (or RHEL 7.x) and Python 3.x.
-
-Notebook OML4Py Demos are available under the machine-learning/notebooks/python
-
-The examples here would run on either environment.
 
 #### Copyright (c) 2021 Oracle Corporation and/or its affilitiates.
