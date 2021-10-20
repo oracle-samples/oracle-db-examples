@@ -19,7 +19,7 @@ Key Features:
 
 This current folder contains the examples based on Oracle Machine Learning for Python (OML4Py), from data preparation and transformation, to the machine learning algorithms and scoring.
 
-The specific denomination "AskTOM_OML_Office_Hours" in the name of the file indicates that the Notebook was presented at one of the previous sessions of the [AskTOM Oracle Machine Learning Office Hours](https://asktom.oracle.com/pls/apex/asktom.search?oh=6801#sessions).
+The specific denomination "OfficeHours_" in the name of the file indicates that the Notebook was presented at one of the previous sessions of the [AskTOM Oracle Machine Learning Office Hours](https://asktom.oracle.com/pls/apex/asktom.search?oh=6801#sessions).
 
  See [Introducing Oracle Machine Learning Notebooks for the Oracle Autonomous Data Warehouse](https://blogs.oracle.com/datamining/introducing-oracle-machine-learning-sql-notebooks-for-the-oracle-autonomous-data-warehouse-cloud) blog post for more information.
 
