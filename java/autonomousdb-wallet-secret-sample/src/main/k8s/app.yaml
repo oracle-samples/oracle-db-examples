@@ -1,0 +1,39 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: adb-health-check
+spec:
+  volumes:
+  - name: wallet
+    secret:
+# Either the secret name of the downloaded wallet with the kubernetes operator
+# TODO add link to operator
+# Or the secret name holding the wallet created ad-hoc: 
+# kubectl create secret generic database-wallet --from-file=<path to wallet dir> 
+#      secretName: database-wallet
+      secretName: bindadblocal-instance-wallet
+  containers:
+  - name: adb-health-check
+    image: adb-health-check
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: wallet
+# mountPath must coincide with the one selected for oracle.net.wallet_location
+      mountPath: "/app/wallet"
+      readOnly: true
+    env:
+    - name: user
+      valueFrom:
+        secretKeyRef:
+          name: user-jdbc
+          key: user
+    - name: password
+      valueFrom:
+        secretKeyRef:
+          name: user-jdbc
+          key: password
+    - name: url
+      valueFrom:
+        secretKeyRef:
+          name: user-jdbc
+          key: url
