@@ -1,6 +1,6 @@
 # Java Sample Using an Oracle Wallet as a Kubernetes Secret
 
-In this minimalistic Java sample we show you how to use a wallet downloaded by the Oracle Database Operator for Kubernetes.
+In this minimalistic Java sample we show you how to use a wallet downloaded by the [Oracle Database Operator for Kubernetes](https://github.com/oracle/oracle-database-operator).
 
 An example is also provided to use a wallet downloaded from the Cloud Console.
 
@@ -15,7 +15,7 @@ The key part to understand its simplicity is that the deployment file uses the s
 If you want to configure a previously downloaded wallet you can just create the secret (and use the same secret name for the Pod's spec) pointing to the directory where you unzipped the wallet:
 
 ```sh
-kubectl create secret generic database-wallet --from-file=<path-to-wallets-unzipped-folder>
+kubectl create secret generic instance-wallet --from-file=<path-to-wallets-unzipped-folder>
 ```
 The Java microservice retrieves username, password and url also from a secret. To create it you can use the following script as an example:
 
