@@ -13,9 +13,14 @@ Key Features:
 * SQL and PL/SQL scripting language supported
 * Enables and supports deployments of enterprise machine learning methodologies in both Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP)
 
+The examples here cover a range of functionality and methods, from data preparation and data cleansing to machine learning algorithms and scoring.
+
+The specific denomination "DB21c" in the name of the file means that the algorithm that is is used in that demo is supported on that release only.
 
  See [Introducing Oracle Machine Learning Notebooks for the Oracle Autonomous Data Warehouse](https://blogs.oracle.com/datamining/introducing-oracle-machine-learning-sql-notebooks-for-the-oracle-autonomous-data-warehouse-cloud) blog post for more information.
 
-#### Copyright (c) 2020 Oracle Corporation and/or its affilitiates.
+Last updated on: October 2021
+
+#### Copyright (c) 2021 Oracle Corporation and/or its affilitiates.
 
 ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)

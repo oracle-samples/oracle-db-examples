@@ -1,0 +1,2890 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n# Store and manage Python objects and user-defined functions\n\n## Introduction\n\nThis lab walks you through the steps to use and work with datastores and the script repository.\n\nEstimated Lab Time: 20 minutes\n\n### About Datastore\n**Datastores** exist in the user’s Oracle Database schema. A datastore, and the objects it contains, persist in the database until explicitly deleted. By using a datastore, you can store Python objects in a named datastore entry. This named datastore can then be used in subsequent Python sessions, and even be made available to other users or programs by granting/revoking read permissions.\n\nPython objects, including OML4Py proxy objects, exist for the duration of the current Python session unless you explicitly save them. You can save one or more Python objects, including OML proxy objects, to a named datastore and then load those objects in a later Python session. This is also useful when using embedded Python execution.\nBy using a datastore, you can:\n* Save OML4Py and other Python objects for use across Python sessions\n* Grant or revoke read privilege access to a datastore or its objects to one or more users. You can restore the saved objects in another Python session.\n* Easily pass multiple and non-scalar arguments to Python functions for use in embedded Python execution from Python, REST, and SQL  API. **Note:** SQL and REST APIs support passing scalar values, such as datastore name or numeric values, only.\n* List available datastores and explore datastore contents\n\n### About the Python Script Repository\nOML4Py stores **named user-defined functions** called scripts in the script repository.  You can make scripts either private or global. A private script is available only to the owner. A global script is available to any user. For private scripts, the owner of the script may grant the read privilege to other users or revoke that privilege.\n\n* `oml.script.create` - Creates a script, which contains a single Python function definition, in the script repository.\n* `oml.script.dir` - Lists the scripts present in the script repository.\n* `oml.script.drop` - Drops a script from the script repository.\n* `oml.script.load` - Loads a script from the script repository into a Python session.\n* `oml.grant` - Grants read privilege permission to another user to a datastore or script owned by the current user.\n* `oml.revoke` - Revokes the read privilege permission that was granted to another user to a datastore or script owned by the current user.\n\nTo illustrate using the Python Script Repository, you will define a function `build_lm1` that will fit a regression model. Using this function, you will then create a script named `MyLM_function`.\n\n### Objectives\n\nIn this lab, you will learn how to:\n* Move objects between datastore and a Python sessions\n* Save Python objects in a datastore\n* Save model objects in a datastore\n* Load datastore objects into memory\n* View datastore and its details\n* Manage datastore privileges\n* Delete datastores\n* Use the Python Script Repository\n* Create Scripts in Repository\n* Store a function as a global function\n* Drop scripts from the Script Repository\n\n\n---\n\n## Task 1: Import libraries supporting OML4Py and create data table\n\nTo use OML4Py, first import the module `oml`. Also import the pandas library for pandas-specific functionality.\n\n1.1. Run the following commands to imports the `oml` module and the `Pandas` library. Import the Pandas library to work with oml DataFrames.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-10-01T19:08:38+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eStore and manage Python objects and user-defined functions\u003c/h1\u003e\n\u003ch2\u003eIntroduction\u003c/h2\u003e\n\u003cp\u003eThis lab walks you through the steps to use and work with datastores and the script repository.\u003c/p\u003e\n\u003cp\u003eEstimated Lab Time: 20 minutes\u003c/p\u003e\n\u003ch3\u003eAbout Datastore\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003eDatastores\u003c/strong\u003e exist in the user’s Oracle Database schema. A datastore, and the objects it contains, persist in the database until explicitly deleted. By using a datastore, you can store Python objects in a named datastore entry. This named datastore can then be used in subsequent Python sessions, and even be made available to other users or programs by granting/revoking read permissions.\u003c/p\u003e\n\u003cp\u003ePython objects, including OML4Py proxy objects, exist for the duration of the current Python session unless you explicitly save them. You can save one or more Python objects, including OML proxy objects, to a named datastore and then load those objects in a later Python session. This is also useful when using embedded Python execution.\n\u003cbr  /\u003eBy using a datastore, you can:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eSave OML4Py and other Python objects for use across Python sessions\u003c/li\u003e\n\u003cli\u003eGrant or revoke read privilege access to a datastore or its objects to one or more users. You can restore the saved objects in another Python session.\u003c/li\u003e\n\u003cli\u003eEasily pass multiple and non-scalar arguments to Python functions for use in embedded Python execution from Python, REST, and SQL  API. \u003cstrong\u003eNote:\u003c/strong\u003e SQL and REST APIs support passing scalar values, such as datastore name or numeric values, only.\u003c/li\u003e\n\u003cli\u003eList available datastores and explore datastore contents\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003eAbout the Python Script Repository\u003c/h3\u003e\n\u003cp\u003eOML4Py stores \u003cstrong\u003enamed user-defined functions\u003c/strong\u003e called scripts in the script repository.  You can make scripts either private or global. A private script is available only to the owner. A global script is available to any user. For private scripts, the owner of the script may grant the read privilege to other users or revoke that privilege.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.create\u003c/code\u003e - Creates a script, which contains a single Python function definition, in the script repository.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.dir\u003c/code\u003e - Lists the scripts present in the script repository.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.drop\u003c/code\u003e - Drops a script from the script repository.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.load\u003c/code\u003e - Loads a script from the script repository into a Python session.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.grant\u003c/code\u003e - Grants read privilege permission to another user to a datastore or script owned by the current user.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.revoke\u003c/code\u003e - Revokes the read privilege permission that was granted to another user to a datastore or script owned by the current user.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eTo illustrate using the Python Script Repository, you will define a function \u003ccode\u003ebuild_lm1\u003c/code\u003e that will fit a regression model. Using this function, you will then create a script named \u003ccode\u003eMyLM_function\u003c/code\u003e.\u003c/p\u003e\n\u003ch3\u003eObjectives\u003c/h3\u003e\n\u003cp\u003eIn this lab, you will learn how to:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eMove objects between datastore and a Python sessions\u003c/li\u003e\n\u003cli\u003eSave Python objects in a datastore\u003c/li\u003e\n\u003cli\u003eSave model objects in a datastore\u003c/li\u003e\n\u003cli\u003eLoad datastore objects into memory\u003c/li\u003e\n\u003cli\u003eView datastore and its details\u003c/li\u003e\n\u003cli\u003eManage datastore privileges\u003c/li\u003e\n\u003cli\u003eDelete datastores\u003c/li\u003e\n\u003cli\u003eUse the Python Script Repository\u003c/li\u003e\n\u003cli\u003eCreate Scripts in Repository\u003c/li\u003e\n\u003cli\u003eStore a function as a global function\u003c/li\u003e\n\u003cli\u003eDrop scripts from the Script Repository\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr /\u003e\n\u003ch2\u003eTask 1: Import libraries supporting OML4Py and create data table\u003c/h2\u003e\n\u003cp\u003eTo use OML4Py, first import the module \u003ccode\u003eoml\u003c/code\u003e. Also import the pandas library for pandas-specific functionality.\u003c/p\u003e\n\u003cp\u003e1.1. Run the following commands to imports the \u003ccode\u003eoml\u003c/code\u003e module and the \u003ccode\u003ePandas\u003c/code\u003e library. Import the Pandas library to work with oml DataFrames.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985096_52954701",
+      "id": "20211001-190305_996913071",
+      "dateCreated": "2021-03-20T07:54:35+0000",
+      "dateStarted": "2021-10-01T19:08:33+0000",
+      "dateFinished": "2021-10-01T19:08:33+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nimport pandas as pd\nimport oml",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:38+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985096_801114497",
+      "id": "20211001-190305_320537214",
+      "dateCreated": "2021-03-20T08:01:16+0000",
+      "dateStarted": "2021-09-22T21:30:38+0000",
+      "dateFinished": "2021-09-22T21:30:47+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 2: Create Pandas DataFrames and load them into Autonomous Database\n\nIn this step, you will work with three data set - IRIS data set, Diabetes data set, and Boston data set. Here, you will learn how to:\n\n* Load these three data sets and for each combine the target and predictors into a single DataFrame\n* Create and display the columns for each data set\n* Use the dataframe to explore the datastore functionality\n\n2.1. Run the following command to sync the IRIS table in the OMLUSER schema to an OML DataFrame proxy object:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:47+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 2: Create Pandas DataFrames and load them into Autonomous Database\u003c/h2\u003e\n\u003cp\u003eIn this step, you will work with three data set - IRIS data set, Diabetes data set, and Boston data set. Here, you will learn how to:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eLoad these three data sets and for each combine the target and predictors into a single DataFrame\u003c/li\u003e\n\u003cli\u003eCreate and display the columns for each data set\u003c/li\u003e\n\u003cli\u003eUse the dataframe to explore the datastore functionality\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e2.1. Run the following command to sync the IRIS table in the OMLUSER schema to an OML DataFrame proxy object:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-289992335",
+      "id": "20211001-190305_1386270052",
+      "dateCreated": "2021-03-20T08:01:23+0000",
+      "dateStarted": "2021-09-22T21:30:48+0000",
+      "dateFinished": "2021-09-22T21:30:48+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nIRIS \u003d oml.sync(\"OMLUSER\", view \u003d \"IRIS_VIEW\")\n\nprint(IRIS.columns)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:48+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[\u0027SEPAL_LENGTH\u0027, \u0027SEPAL_WIDTH\u0027, \u0027PETAL_LENGTH\u0027, \u0027PETAL_WIDTH\u0027, \u0027SPECIES\u0027]\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1966467587",
+      "id": "20211001-190305_1315106732",
+      "dateCreated": "2021-03-20T08:01:23+0000",
+      "dateStarted": "2021-09-22T21:30:48+0000",
+      "dateFinished": "2021-09-22T21:30:49+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n2.2. Run the following script to create the temporary Diabetes table:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:49+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e2.2. Run the following script to create the temporary Diabetes table:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_879549773",
+      "id": "20211001-190305_680671000",
+      "dateCreated": "2021-03-20T08:01:23+0000",
+      "dateStarted": "2021-09-22T21:30:49+0000",
+      "dateFinished": "2021-09-22T21:30:49+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nfrom sklearn import datasets\ndiabetes \u003d datasets.load_diabetes()\nx \u003d pd.DataFrame(diabetes.data, columns\u003ddiabetes.feature_names)\ny \u003d pd.DataFrame(diabetes.target, columns\u003d[\u0027disease_progression\u0027])\n\nDIABETES_TMP \u003d oml.push(pd.concat([x, y], axis\u003d1))\nprint(DIABETES_TMP.columns)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:49+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[\u0027age\u0027, \u0027sex\u0027, \u0027bmi\u0027, \u0027bp\u0027, \u0027s1\u0027, \u0027s2\u0027, \u0027s3\u0027, \u0027s4\u0027, \u0027s5\u0027, \u0027s6\u0027, \u0027disease_progression\u0027]\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_364140146",
+      "id": "20211001-190305_1674692742",
+      "dateCreated": "2021-03-20T08:01:23+0000",
+      "dateStarted": "2021-09-22T21:30:50+0000",
+      "dateFinished": "2021-09-22T21:30:50+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n2.3. Run the following script to create the Boston table:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:50+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e2.3. Run the following script to create the Boston table:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1765699267",
+      "id": "20211001-190305_936305269",
+      "dateCreated": "2021-03-20T08:01:23+0000",
+      "dateStarted": "2021-09-22T21:30:51+0000",
+      "dateFinished": "2021-09-22T21:30:51+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nboston \u003d datasets.load_boston()\nx \u003d pd.DataFrame(boston.data, columns \u003d boston.feature_names.tolist())\ny \u003d pd.DataFrame(boston.target, columns \u003d [\u0027Value\u0027])\n\nBOSTON_TMP \u003d oml.push(pd.concat([x, y], axis\u003d1))\nprint(BOSTON_TMP.columns)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:51+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[\u0027CRIM\u0027, \u0027ZN\u0027, \u0027INDUS\u0027, \u0027CHAS\u0027, \u0027NOX\u0027, \u0027RM\u0027, \u0027AGE\u0027, \u0027DIS\u0027, \u0027RAD\u0027, \u0027TAX\u0027, \u0027PTRATIO\u0027, \u0027B\u0027, \u0027LSTAT\u0027, \u0027Value\u0027]\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-58566424",
+      "id": "20211001-190305_1846043823",
+      "dateCreated": "2021-03-20T08:01:23+0000",
+      "dateStarted": "2021-09-22T21:30:51+0000",
+      "dateFinished": "2021-09-22T21:30:52+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 3: Save Python objects to a named datastore \n\nIn this task you will save the actual iris data set and the temporary BOSTON proxy object to a datastore named `ds_pydata`, overwriting if the named datastore already exists.\n\n**Note:** You can store actual data objects in a datastore, but large data objects should remain as database tables for performance and scalability.    \n\nBy storing the `BOSTON_TMP` object, the temporary table will not be deleted when the session terminates.\n\n3.1. Run the following script to save the `IRIS` and `BOSTON_TMP` tables in the Autonomous Database:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:52+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 3: Save Python objects to a named datastore\u003c/h2\u003e\n\u003cp\u003eIn this task you will save the actual iris data set and the temporary BOSTON proxy object to a datastore named \u003ccode\u003eds_pydata\u003c/code\u003e, overwriting if the named datastore already exists.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote:\u003c/strong\u003e You can store actual data objects in a datastore, but large data objects should remain as database tables for performance and scalability.\u003c/p\u003e\n\u003cp\u003eBy storing the \u003ccode\u003eBOSTON_TMP\u003c/code\u003e object, the temporary table will not be deleted when the session terminates.\u003c/p\u003e\n\u003cp\u003e3.1. Run the following script to save the \u003ccode\u003eIRIS\u003c/code\u003e and \u003ccode\u003eBOSTON_TMP\u003c/code\u003e tables in the Autonomous Database:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1162908882",
+      "id": "20211001-190305_1469822081",
+      "dateCreated": "2021-03-20T08:01:23+0000",
+      "dateStarted": "2021-09-22T21:30:52+0000",
+      "dateFinished": "2021-09-22T21:30:52+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.save(objs\u003d{\u0027oml_iris\u0027:IRIS, \u0027oml_boston\u0027:BOSTON_TMP},\n            name\u003d\"ds_pydata\", description \u003d \"python datasets\",\n            overwrite\u003dTrue)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:30:52+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-554849154",
+      "id": "20211001-190305_988005132",
+      "dateCreated": "2021-03-20T08:01:22+0000",
+      "dateStarted": "2021-09-22T21:30:53+0000",
+      "dateFinished": "2021-09-22T21:31:00+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n3.2. Save the `DIABETES_TMP` tables into the database.\n\n**Note:** The condition `append\u003dTRUE` adds the object to the datastore, if it already exists.  The default is `append\u003dFalse`, and in that case, you will receive an error stating that the datastore exists and it won\u0027t be able to create it again.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:00+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e3.2. Save the \u003ccode\u003eDIABETES_TMP\u003c/code\u003e tables into the database.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote:\u003c/strong\u003e The condition \u003ccode\u003eappend\u003dTRUE\u003c/code\u003e adds the object to the datastore, if it already exists.  The default is \u003ccode\u003eappend\u003dFalse\u003c/code\u003e, and in that case, you will receive an error stating that the datastore exists and it won\u0027t be able to create it again.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_718993695",
+      "id": "20211001-190305_2063487855",
+      "dateCreated": "2021-03-20T08:01:22+0000",
+      "dateStarted": "2021-09-22T21:31:01+0000",
+      "dateFinished": "2021-09-22T21:31:01+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.save(objs\u003d{\u0027oml_diabetes\u0027:DIABETES_TMP}, name\u003d\"ds_pydata\", append\u003dTrue)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:01+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-726830812",
+      "id": "20211001-190305_1476296067",
+      "dateCreated": "2021-03-20T08:01:22+0000",
+      "dateStarted": "2021-09-22T21:31:01+0000",
+      "dateFinished": "2021-09-22T21:31:03+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n3.3. Save the `IRIS` table to a new datastore, and then list the datastores. Notice that you see the datastore name, the number of objects in the datastore, the size in bytes consumed, when the datastore was create/updated, and any description provided by the user. The two datastores `ds_iris_data` and `ds_pydata` are present, with the latter containing the three objects you added.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:03+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e3.3. Save the \u003ccode\u003eIRIS\u003c/code\u003e table to a new datastore, and then list the datastores. Notice that you see the datastore name, the number of objects in the datastore, the size in bytes consumed, when the datastore was create/updated, and any description provided by the user. The two datastores \u003ccode\u003eds_iris_data\u003c/code\u003e and \u003ccode\u003eds_pydata\u003c/code\u003e are present, with the latter containing the three objects you added.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1474357595",
+      "id": "20211001-190305_1573643329",
+      "dateCreated": "2021-03-20T08:01:22+0000",
+      "dateStarted": "2021-09-22T21:31:04+0000",
+      "dateFinished": "2021-09-22T21:31:04+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.save(objs\u003d{\u0027iris\u0027:IRIS},\nname\u003d\"ds_iris_data\", description \u003d \"iris dataset\", overwrite\u003dTrue)\n\nz.show(oml.ds.dir())",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:04+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 194.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datastore_name": "string",
+                      "object_count": "string",
+                      "size": "string",
+                      "date": "string",
+                      "description": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "datastore_name\tobject_count\tsize\tdate\tdescription\nauc_result_ftr\t1\t21\t2021-07-02 19:10:24\tNone\nds-1\t3\t1449\t2021-09-22 19:10:28\tNone\nds_iris_data\t1\t698\t2021-09-22 21:31:05\tiris dataset\nds_pydata\t3\t2625\t2021-09-22 21:30:53\tpython datasets\nds_rf_species\t1\t164925\t2021-06-28 22:39:44\tRandom Forest model predicting Species from IRIS\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1401126777",
+      "id": "20211001-190305_2031396695",
+      "dateCreated": "2021-03-20T08:01:22+0000",
+      "dateStarted": "2021-09-22T21:31:04+0000",
+      "dateFinished": "2021-09-22T21:31:05+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 4: Save model objects in a datastore\n\nThis task illustrates how to store other types of objects in datastores. For this, you will create regression models using sklearn and OML4Py.\n\n4.1. Run the following script to build two regression models - `regr1` and `regr2`. The `regr1` uses the open  source function `LinearRegression()` and the `regr2` uses the OML function `oml.glm()`.\n\n**Note:** This highlights that both open source models and in-database model proxy objects can be stored in a datastore. Like tables created using `oml.push` function, default-named model proxy objects are dropped at the end of the database connection unless they are saved in a datastore.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:05+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 4: Save model objects in a datastore\u003c/h2\u003e\n\u003cp\u003eThis task illustrates how to store other types of objects in datastores. For this, you will create regression models using sklearn and OML4Py.\u003c/p\u003e\n\u003cp\u003e4.1. Run the following script to build two regression models - \u003ccode\u003eregr1\u003c/code\u003e and \u003ccode\u003eregr2\u003c/code\u003e. The \u003ccode\u003eregr1\u003c/code\u003e uses the open  source function \u003ccode\u003eLinearRegression()\u003c/code\u003e and the \u003ccode\u003eregr2\u003c/code\u003e uses the OML function \u003ccode\u003eoml.glm()\u003c/code\u003e.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote:\u003c/strong\u003e This highlights that both open source models and in-database model proxy objects can be stored in a datastore. Like tables created using \u003ccode\u003eoml.push\u003c/code\u003e function, default-named model proxy objects are dropped at the end of the database connection unless they are saved in a datastore.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1296805128",
+      "id": "20211001-190305_1903818289",
+      "dateCreated": "2021-03-20T08:01:22+0000",
+      "dateStarted": "2021-09-22T21:31:05+0000",
+      "dateFinished": "2021-09-22T21:31:05+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nfrom sklearn import linear_model\n\nregr1 \u003d linear_model.LinearRegression()\nregr1.fit(boston.data, boston.target)\n\nregr2 \u003d oml.glm(\"regression\")\nX \u003d BOSTON_TMP.drop(\u0027Value\u0027)\ny \u003d BOSTON_TMP[\u0027Value\u0027]\nregr2 \u003d regr2.fit(X, y)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:05+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1113589129",
+      "id": "20211001-190305_1431281656",
+      "dateCreated": "2021-03-20T08:03:13+0000",
+      "dateStarted": "2021-09-22T21:31:06+0000",
+      "dateFinished": "2021-09-22T21:31:08+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n4.2. Run the following script to save the objects `regr1` and `regr2` to the datastore `ds_pymodels`, and allow the read privilege to be granted to them.\n\n**Note:** `overwrite\u003dTrue` indicates that the contents of the datastore should be replaced.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:08+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e4.2. Run the following script to save the objects \u003ccode\u003eregr1\u003c/code\u003e and \u003ccode\u003eregr2\u003c/code\u003e to the datastore \u003ccode\u003eds_pymodels\u003c/code\u003e, and allow the read privilege to be granted to them.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote:\u003c/strong\u003e \u003ccode\u003eoverwrite\u003dTrue\u003c/code\u003e indicates that the contents of the datastore should be replaced.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_928617332",
+      "id": "20211001-190305_1462010108",
+      "dateCreated": "2021-03-20T08:03:13+0000",
+      "dateStarted": "2021-09-22T21:31:09+0000",
+      "dateFinished": "2021-09-22T21:31:09+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.save(objs\u003d{\u0027regr1\u0027:regr1, \u0027regr2\u0027:regr2},\n            name\u003d\"ds_pymodels\", grantable\u003dTrue,\n            overwrite\u003dTrue)\n\nz.show(oml.ds.dir())",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:09+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 224.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datastore_name": "string",
+                      "object_count": "string",
+                      "size": "string",
+                      "date": "string",
+                      "description": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "datastore_name\tobject_count\tsize\tdate\tdescription\nauc_result_ftr\t1\t21\t2021-07-02 19:10:24\tNone\nds-1\t3\t1449\t2021-09-22 19:10:28\tNone\nds_iris_data\t1\t698\t2021-09-22 21:31:05\tiris dataset\nds_pydata\t3\t2625\t2021-09-22 21:30:53\tpython datasets\nds_pymodels\t2\t4368\t2021-09-22 21:31:09\tNone\nds_rf_species\t1\t164925\t2021-06-28 22:39:44\tRandom Forest model predicting Species from IRIS\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_2090779520",
+      "id": "20211001-190305_190233424",
+      "dateCreated": "2021-03-20T08:03:13+0000",
+      "dateStarted": "2021-09-22T21:31:09+0000",
+      "dateFinished": "2021-09-22T21:31:09+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n4.3. Now grant the read privilege to all users by specifying `user\u003dNone`. Finally, list the datastores to which the read privilege has been granted.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:09+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e4.3. Now grant the read privilege to all users by specifying \u003ccode\u003euser\u003dNone\u003c/code\u003e. Finally, list the datastores to which the read privilege has been granted.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-510142804",
+      "id": "20211001-190305_899681397",
+      "dateCreated": "2021-03-20T08:03:13+0000",
+      "dateStarted": "2021-09-22T21:31:10+0000",
+      "dateFinished": "2021-09-22T21:31:10+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.grant(name\u003d\"ds_pymodels\", typ\u003d\"datastore\", user\u003dNone)\n\noml.ds.dir(dstype\u003d\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:10+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  datastore_name grantee\n0    ds_pymodels  PUBLIC\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1364708232",
+      "id": "20211001-190305_481944934",
+      "dateCreated": "2021-03-20T08:03:13+0000",
+      "dateStarted": "2021-09-22T21:31:11+0000",
+      "dateFinished": "2021-09-22T21:31:16+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 5:  Load datastore objects into memory\n\nIn this step, you load all Python objects from a datastore to the global workspace and sort the result by name. Notice that they have the name specified in the dictionary when saved.\n\n5.1. Run the following script to load the datastore `ds_pydata` into memory:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:16+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 5:  Load datastore objects into memory\u003c/h2\u003e\n\u003cp\u003eIn this step, you load all Python objects from a datastore to the global workspace and sort the result by name. Notice that they have the name specified in the dictionary when saved.\u003c/p\u003e\n\u003cp\u003e5.1. Run the following script to load the datastore \u003ccode\u003eds_pydata\u003c/code\u003e into memory:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_2145591561",
+      "id": "20211001-190305_1877587309",
+      "dateCreated": "2021-03-20T08:03:13+0000",
+      "dateStarted": "2021-09-22T21:31:17+0000",
+      "dateFinished": "2021-09-22T21:31:17+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nsorted(oml.ds.load(name\u003d\"ds_pydata\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:17+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[\u0027oml_boston\u0027, \u0027oml_diabetes\u0027, \u0027oml_iris\u0027]\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1100618748",
+      "id": "20211001-190305_1373315067",
+      "dateCreated": "2021-03-20T08:03:13+0000",
+      "dateStarted": "2021-09-22T21:31:17+0000",
+      "dateFinished": "2021-09-22T21:31:22+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n5.2. Run the following script to load the named Python object `regr2` (regression model), from the datastore to the global workspace.\n\n**Note:** Using the boolean `to_globals` parameter, you can specify whether the objects are loaded to a global workspace or to a dictionary object. If the argument is `to_globals\u003dTrue`, then `oml.ds.load` function loads the objects into the global workspace. If the argument is `to_globals\u003dFalse`, then the function returns a dict object that contains pairs of object names and values.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:22+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e5.2. Run the following script to load the named Python object \u003ccode\u003eregr2\u003c/code\u003e (regression model), from the datastore to the global workspace.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote:\u003c/strong\u003e Using the boolean \u003ccode\u003eto_globals\u003c/code\u003e parameter, you can specify whether the objects are loaded to a global workspace or to a dictionary object. If the argument is \u003ccode\u003eto_globals\u003dTrue\u003c/code\u003e, then \u003ccode\u003eoml.ds.load\u003c/code\u003e function loads the objects into the global workspace. If the argument is \u003ccode\u003eto_globals\u003dFalse\u003c/code\u003e, then the function returns a dict object that contains pairs of object names and values.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1540652604",
+      "id": "20211001-190305_1680699921",
+      "dateCreated": "2021-03-20T08:03:12+0000",
+      "dateStarted": "2021-09-22T21:31:23+0000",
+      "dateFinished": "2021-09-22T21:31:23+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.load(name\u003d\"ds_pymodels\", objs\u003d[\"regr2\"], to_globals\u003dTrue)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:23+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[\u0027regr2\u0027]\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-711872783",
+      "id": "20211001-190305_938228007",
+      "dateCreated": "2021-03-20T08:03:12+0000",
+      "dateStarted": "2021-09-22T21:31:23+0000",
+      "dateFinished": "2021-09-22T21:31:28+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n5.3. Run the following script to view the model details",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:29+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e5.3. Run the following script to view the model details\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1905590593",
+      "id": "20211001-190305_353149034",
+      "dateCreated": "2021-03-20T08:04:36+0000",
+      "dateStarted": "2021-09-22T21:31:29+0000",
+      "dateFinished": "2021-09-22T21:31:29+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nregr2",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:29+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Generalized Linear Model\n\nMining Function: REGRESSION\n\nTarget: Value\n\nSettings: \n                   setting name                  setting value\n0                     ALGO_NAME  ALGO_GENERALIZED_LINEAR_MODEL\n1               GLMS_CONF_LEVEL                            .95\n2           GLMS_FTR_GENERATION    GLMS_FTR_GENERATION_DISABLE\n3            GLMS_FTR_SELECTION     GLMS_FTR_SELECTION_DISABLE\n4                  ODMS_DETAILS                    ODMS_ENABLE\n5  ODMS_MISSING_VALUE_TREATMENT        ODMS_MISSING_VALUE_AUTO\n6                 ODMS_SAMPLING          ODMS_SAMPLING_DISABLE\n7                     PREP_AUTO                             ON\n\nComputed Settings: \n            setting name            setting value\n0    GLMS_CONV_TOLERANCE  .0000050000000000000004\n1    GLMS_NUM_ITERATIONS                       30\n2  GLMS_RIDGE_REGRESSION   GLMS_RIDGE_REG_DISABLE\n3            GLMS_SOLVER         GLMS_SOLVER_CHOL\n\nGlobal Statistics: \n             attribute name attribute value\n0         ADJUSTED_R_SQUARE         0.73379\n1                       AIC         1589.64\n2                 COEFF_VAR         21.0595\n3                 CONVERGED             YES\n4        CORRECTED_TOTAL_DF             505\n5          CORRECTED_TOT_SS         42716.3\n6            DEPENDENT_MEAN         22.5328\n7                  ERROR_DF             492\n8         ERROR_MEAN_SQUARE         22.5179\n9         ERROR_SUM_SQUARES         11078.8\n10                  F_VALUE         108.077\n11                    GMSEP         23.1597\n12               HOCKING_SP        0.045861\n13                      J_P         23.1409\n14                 MODEL_DF              13\n15          MODEL_F_P_VALUE               0\n16        MODEL_MEAN_SQUARE         2433.65\n17        MODEL_SUM_SQUARES         31637.5\n18               NUM_PARAMS              14\n19                 NUM_ROWS             506\n20          RANK_DEFICIENCY               0\n21             ROOT_MEAN_SQ          4.7453\n22                     R_SQ        0.740643\n23                     SBIC         1648.81\n24  VALID_COVARIANCE_MATRIX             YES\n\nAttributes: \nAGE\nB\nCHAS\nCRIM\nDIS\nINDUS\nLSTAT\nNOX\nPTRATIO\nRAD\nRM\nTAX\nZN\n\nPartition: NO\n\nCoefficients: \n\n   attribute name attribute value  ...       p value  significance code\n0     (Intercept)            None  ...  3.283438e-12                ***\n1             AGE            None  ...  9.582293e-01                   \n2               B            None  ...  5.728592e-04                ***\n3            CHAS            None  ...  1.925030e-03                 **\n4            CRIM            None  ...  1.086810e-03                 **\n5             DIS            None  ...  6.013491e-13                ***\n6           INDUS            None  ...  7.382881e-01                   \n7           LSTAT            None  ...  7.776912e-23                ***\n8             NOX            None  ...  4.245644e-06                ***\n9         PTRATIO            None  ...  1.308835e-12                ***\n10            RAD            None  ...  5.070529e-06                ***\n11             RM            None  ...  1.979441e-18                ***\n12            TAX            None  ...  1.111637e-03                 **\n13             ZN            None  ...  7.781097e-04                ***\n\n[14 rows x 7 columns]\n\nSignif. codes:  0 \u0027***\u0027 0.001 \u0027**\u0027 0.01 \u0027*\u0027 0.05 \u0027.\u0027 0.1 \u0027 \u0027 1 \u0027\n\nFit Details: \n\n                       name         value\n0         ADJUSTED_R_SQUARE      0.733790\n1                       AIC   1589.642798\n2                 COEFF_VAR     21.059508\n3        CORRECTED_TOTAL_DF    505.000000\n4          CORRECTED_TOT_SS  42716.295415\n5            DEPENDENT_MEAN     22.532806\n6                  ERROR_DF    492.000000\n7         ERROR_MEAN_SQUARE     22.517855\n8         ERROR_SUM_SQUARES  11078.784578\n9                   F_VALUE    108.076666\n10                    GMSEP     23.159731\n11               HOCKING_SP      0.045861\n12                      J_P     23.140878\n13          MODEL_CONVERGED      1.000000\n14                 MODEL_DF     13.000000\n15          MODEL_F_P_VALUE      0.000000\n16        MODEL_MEAN_SQUARE   2433.654680\n17        MODEL_SUM_SQUARES  31637.510837\n18               NUM_PARAMS     14.000000\n19                 NUM_ROWS    506.000000\n20          RANK_DEFICIENCY      0.000000\n21             ROOT_MEAN_SQ      4.745298\n22                     R_SQ      0.740643\n23                     SBIC   1648.814312\n24  VALID_COVARIANCE_MATRIX      1.000000\n\nRank: \n\n14\n\nDeviance: \n\n11078.784578\n\nAIC: \n\n1590\n\nNull Deviance: \n\n42716.295415\n\nDF Residual: \n\n492.0\n\nDF Null: \n\n505.0\n\nConverged: \n\nTrue\n\n\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1872109629",
+      "id": "20211001-190305_480334327",
+      "dateCreated": "2021-03-20T08:04:36+0000",
+      "dateStarted": "2021-09-22T21:31:29+0000",
+      "dateFinished": "2021-09-22T21:31:30+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n5.4. Run the following script to load the named Python object `regr1`, from the datastore to the user\u0027s workspace.\n\n**Note:** Using the boolean `to_globals` parameter, you can specify whether the objects are loaded to a global workspace or to a dictionary object. If the argument is `to_globals\u003dTrue`, then `oml.ds.load` function loads the objects into the global workspace. If the argument is `to_globals\u003dFalse`, then the function returns a dict object that contains pairs of object names and values.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:30+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e5.4. Run the following script to load the named Python object \u003ccode\u003eregr1\u003c/code\u003e, from the datastore to the user\u0027s workspace.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eNote:\u003c/strong\u003e Using the boolean \u003ccode\u003eto_globals\u003c/code\u003e parameter, you can specify whether the objects are loaded to a global workspace or to a dictionary object. If the argument is \u003ccode\u003eto_globals\u003dTrue\u003c/code\u003e, then \u003ccode\u003eoml.ds.load\u003c/code\u003e function loads the objects into the global workspace. If the argument is \u003ccode\u003eto_globals\u003dFalse\u003c/code\u003e, then the function returns a dict object that contains pairs of object names and values.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_717910306",
+      "id": "20211001-190305_320017800",
+      "dateCreated": "2021-03-20T08:04:36+0000",
+      "dateStarted": "2021-09-22T21:31:30+0000",
+      "dateFinished": "2021-09-22T21:31:30+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.load(name\u003d\"ds_pymodels\", objs\u003d[\"regr1\"], to_globals\u003dFalse)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:30+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "{\u0027regr1\u0027: LinearRegression()}\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1756652646",
+      "id": "20211001-190305_1163932620",
+      "dateCreated": "2021-03-20T08:04:36+0000",
+      "dateStarted": "2021-09-22T21:31:31+0000",
+      "dateFinished": "2021-09-22T21:31:34+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 6: View datastores and other details\n\nThis task shows how to work with datastores.\n\n6.1. Run the following script to get the list of named datastore entries and a count of the objects in each.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:34+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 6: View datastores and other details\u003c/h2\u003e\n\u003cp\u003eThis task shows how to work with datastores.\u003c/p\u003e\n\u003cp\u003e6.1. Run the following script to get the list of named datastore entries and a count of the objects in each.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_281717967",
+      "id": "20211001-190305_899663098",
+      "dateCreated": "2021-03-20T08:04:36+0000",
+      "dateStarted": "2021-09-22T21:31:35+0000",
+      "dateFinished": "2021-09-22T21:31:35+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nz.show(oml.ds.dir(dstype\u003d\"all\")[[\u0027owner\u0027, \u0027datastore_name\u0027, \u0027object_count\u0027]])",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:35+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 204.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "owner": "string",
+                      "datastore_name": "string",
+                      "object_count": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "owner\tdatastore_name\tobject_count\nOMLUSER\tauc_result_ftr\t1\nOMLUSER\tds-1\t3\nOMLUSER\tds_iris_data\t1\nOMLUSER\tds_pydata\t3\nOMLUSER\tds_pymodels\t2\nOMLUSER\tds_rf_species\t1\nOMLUSER02\tds_pymodels\t2\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-86973687",
+      "id": "20211001-190305_598152535",
+      "dateCreated": "2021-03-20T08:05:14+0000",
+      "dateStarted": "2021-09-22T21:31:35+0000",
+      "dateFinished": "2021-09-22T21:31:38+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n6.2. Run the following script to list the datastores to which other users have been granted the read privilege:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:38+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e6.2. Run the following script to list the datastores to which other users have been granted the read privilege:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-2107647293",
+      "id": "20211001-190305_680782846",
+      "dateCreated": "2021-03-20T08:05:13+0000",
+      "dateStarted": "2021-09-22T21:31:38+0000",
+      "dateFinished": "2021-09-22T21:31:38+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.dir(dstype\u003d\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:38+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  datastore_name grantee\n0    ds_pymodels  PUBLIC\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1995710535",
+      "id": "20211001-190305_1814643571",
+      "dateCreated": "2021-03-20T08:05:33+0000",
+      "dateStarted": "2021-09-22T21:31:39+0000",
+      "dateFinished": "2021-09-22T21:31:42+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 7: View contents of a datastore\n\nThis task shows how to view and describe the content of a datastore. This example shows the `ds_pydata` datastore. Notice that the three proxy objects are listed.\n\n7.1. Run the following script to list the content of a datastore. The script returns the description of three proxy objects - `oml_iris`, `oml_boston`, and `oml_diabetes`. It lists the class, size, length, row and column count for each object.     \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-10-01T19:10:22+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 7: View contents of a datastore\u003c/h2\u003e\n\u003cp\u003eThis task shows how to view and describe the content of a datastore. This example shows the \u003ccode\u003eds_pydata\u003c/code\u003e datastore. Notice that the three proxy objects are listed.\u003c/p\u003e\n\u003cp\u003e7.1. Run the following script to list the content of a datastore. The script returns the description of three proxy objects - \u003ccode\u003eoml_iris\u003c/code\u003e, \u003ccode\u003eoml_boston\u003c/code\u003e, and \u003ccode\u003eoml_diabetes\u003c/code\u003e. It lists the class, size, length, row and column count for each object.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1155324346",
+      "id": "20211001-190305_668656152",
+      "dateCreated": "2021-03-20T08:05:33+0000",
+      "dateStarted": "2021-10-01T19:10:21+0000",
+      "dateFinished": "2021-10-01T19:10:21+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nz.show(oml.ds.describe(name\u003d\u0027ds_pydata\u0027))",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:42+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 164.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "object_name": "string",
+                      "class": "string",
+                      "size": "string",
+                      "length": "string",
+                      "row_count": "string",
+                      "col_count": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "object_name\tclass\tsize\tlength\trow_count\tcol_count\noml_boston\toml.DataFrame\t1019\t506\t506\t14\noml_diabetes\toml.DataFrame\t909\t442\t442\t11\noml_iris\toml.DataFrame\t697\t150\t150\t5\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-197913242",
+      "id": "20211001-190305_1011631641",
+      "dateCreated": "2021-03-20T08:05:33+0000",
+      "dateStarted": "2021-09-22T21:31:43+0000",
+      "dateFinished": "2021-09-22T21:31:45+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 8: Manage datastore privileges\n\nThis task shows how to revoke read privilege, show datastores to which the read privilege has been granted, and again grant read privilege to a user.\n\n8.1. Run the following script to revoke the read privilege from every user:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:45+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 8: Manage datastore privileges\u003c/h2\u003e\n\u003cp\u003eThis task shows how to revoke read privilege, show datastores to which the read privilege has been granted, and again grant read privilege to a user.\u003c/p\u003e\n\u003cp\u003e8.1. Run the following script to revoke the read privilege from every user:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-2070939200",
+      "id": "20211001-190305_188188277",
+      "dateCreated": "2021-03-20T08:04:36+0000",
+      "dateStarted": "2021-09-22T21:31:45+0000",
+      "dateFinished": "2021-09-22T21:31:45+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.revoke(name\u003d\"ds_pymodels\", typ\u003d\"datastore\", user\u003dNone)\n\noml.ds.dir(dstype\u003d\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:45+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Empty DataFrame\nColumns: [datastore_name, grantee]\nIndex: []\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-863925790",
+      "id": "20211001-190305_757296827",
+      "dateCreated": "2021-03-20T08:06:04+0000",
+      "dateStarted": "2021-09-22T21:31:46+0000",
+      "dateFinished": "2021-09-22T21:31:46+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n8.2. Run the following script to grant read privilege to `OMLUSER2`.\n\nNote: If you are running this Notebook on your own tenancy, make sure to follow the instructions on creationg a new OMLUSER2, otherwise you will get an error. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:46+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e8.2. Run the following script to grant read privilege to \u003ccode\u003eOMLUSER2\u003c/code\u003e.\u003c/p\u003e\n\u003cp\u003eNote: If you are running this Notebook on your own tenancy, make sure to follow the instructions on creationg a new OMLUSER2, otherwise you will get an error.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-86184907",
+      "id": "20211001-190305_1561953061",
+      "dateCreated": "2021-03-20T08:06:04+0000",
+      "dateStarted": "2021-09-22T21:31:47+0000",
+      "dateFinished": "2021-09-22T21:31:47+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.grant(name\u003d\"ds_pymodels\", typ\u003d\"datastore\", user\u003d\"OMLUSER2\")\n\noml.ds.dir(dstype\u003d\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:47+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  datastore_name   grantee\n0    ds_pymodels  OMLUSER2\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1850554195",
+      "id": "20211001-190305_62614033",
+      "dateCreated": "2021-03-20T08:06:04+0000",
+      "dateStarted": "2021-09-22T21:31:47+0000",
+      "dateFinished": "2021-09-22T21:31:47+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 9: Delete Datastore Content\n\nThis task shows how to use the `oml.ds.delete` function to delete datastores or datastore content.\n\n9.1. Run the following script to delete datastore content:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:47+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 9: Delete Datastore Content\u003c/h2\u003e\n\u003cp\u003eThis task shows how to use the \u003ccode\u003eoml.ds.delete\u003c/code\u003e function to delete datastores or datastore content.\u003c/p\u003e\n\u003cp\u003e9.1. Run the following script to delete datastore content:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-297608191",
+      "id": "20211001-190305_872955965",
+      "dateCreated": "2021-03-20T08:03:12+0000",
+      "dateStarted": "2021-09-22T21:31:48+0000",
+      "dateFinished": "2021-09-22T21:31:48+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.ds.delete(name\u003d\"ds_pydata\", objs\u003d[\"IRIS\", \"oml_boston\"])\n\noml.ds.delete(name\u003d\"ds_pydata\")\n\noml.ds.delete(name\u003d\"_pymodels\", regex_match\u003dTrue)\n\nz.show(oml.ds.dir())",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:48+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 204.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datastore_name": "string",
+                      "object_count": "string",
+                      "size": "string",
+                      "date": "string",
+                      "description": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "datastore_name\tobject_count\tsize\tdate\tdescription\nauc_result_ftr\t1\t21\t2021-07-02 19:10:24\tNone\nds-1\t3\t1449\t2021-09-22 19:10:28\tNone\nds_iris_data\t1\t698\t2021-09-22 21:31:05\tiris dataset\nds_rf_species\t1\t164925\t2021-06-28 22:39:44\tRandom Forest model predicting Species from IRIS\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-2138929736",
+      "id": "20211001-190305_40416945",
+      "dateCreated": "2021-03-20T08:06:42+0000",
+      "dateStarted": "2021-09-22T21:31:48+0000",
+      "dateFinished": "2021-09-22T21:31:54+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 10: Use the Python Script Repository\nIn tasks 10 through 15, you  work with Python Script Repository.\n\nOML4Py stores named user-defined functions called scripts in the script repository.  You can make scripts either private or global. A private script is available only to the owner. A global script is available to any user. For private scripts, the owner of the script may grant the read privilege to other users or revoke that privilege.\n\n* `oml.script.create` - Creates a script, which contains a single Python function definition, in the script repository.\n* `oml.script.dir` - Lists the scripts present in the script repository.\n* `oml.script.drop` - Drops a script from the script repository.\n* `oml.script.load` - Loads a script from the script repository into a Python session.\n* `oml.grant` - Grants read privilege permission to another user to a datastore or script owned by the current user.\n* `oml.revoke` - Revokes the read privilege permission that was granted to another user to a datastore or script owned by the current user.\n\nTo illustrate using the Python Script Repository, you will define a function `build_lm1` that fits a regression model. Using this function, you then create a script named `MyLM_function`.\n\n10.1. To store a user-defined function in the script repository, it must be presented as a named string. Run the following script to define the function as a string, `build_lm_str`. **Note** the use of triple quotes to enable formatting.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:54+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 10: Use the Python Script Repository\u003c/h2\u003e\n\u003cp\u003eIn tasks 10 through 15, you  work with Python Script Repository.\u003c/p\u003e\n\u003cp\u003eOML4Py stores named user-defined functions called scripts in the script repository.  You can make scripts either private or global. A private script is available only to the owner. A global script is available to any user. For private scripts, the owner of the script may grant the read privilege to other users or revoke that privilege.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.create\u003c/code\u003e - Creates a script, which contains a single Python function definition, in the script repository.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.dir\u003c/code\u003e - Lists the scripts present in the script repository.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.drop\u003c/code\u003e - Drops a script from the script repository.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.script.load\u003c/code\u003e - Loads a script from the script repository into a Python session.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.grant\u003c/code\u003e - Grants read privilege permission to another user to a datastore or script owned by the current user.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eoml.revoke\u003c/code\u003e - Revokes the read privilege permission that was granted to another user to a datastore or script owned by the current user.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eTo illustrate using the Python Script Repository, you will define a function \u003ccode\u003ebuild_lm1\u003c/code\u003e that fits a regression model. Using this function, you then create a script named \u003ccode\u003eMyLM_function\u003c/code\u003e.\u003c/p\u003e\n\u003cp\u003e10.1. To store a user-defined function in the script repository, it must be presented as a named string. Run the following script to define the function as a string, \u003ccode\u003ebuild_lm_str\u003c/code\u003e. \u003cstrong\u003eNote\u003c/strong\u003e the use of triple quotes to enable formatting.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_576159475",
+      "id": "20211001-190305_326700402",
+      "dateCreated": "2021-09-21T19:05:22+0000",
+      "dateStarted": "2021-09-22T21:31:54+0000",
+      "dateFinished": "2021-09-22T21:31:54+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nbuild_lm_str \u003d \"\"\"def build_lm_str(dat):\n    from sklearn import linear_model\n    regr \u003d linear_model.LinearRegression()\n    import pandas as pd\n    dat \u003d pd.get_dummies(dat, drop_first\u003dTrue)\n    X \u003d dat[[\"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\", \"SPECIES_versicolor\", \"SPECIES_virginica\"]]\n    y \u003d dat[[\"SEPAL_LENGTH\"]]\n    regr.fit(X, y)\n    return regr\"\"\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:54+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-360679307",
+      "id": "20211001-190305_1263146734",
+      "dateCreated": "2021-09-21T19:10:58+0000",
+      "dateStarted": "2021-09-22T21:31:55+0000",
+      "dateFinished": "2021-09-22T21:31:55+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n10.2. Run the following script to view the string that you just created:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:55+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e10.2. Run the following script to view the string that you just created:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-387908981",
+      "id": "20211001-190305_1035320850",
+      "dateCreated": "2021-09-21T19:11:18+0000",
+      "dateStarted": "2021-09-22T21:31:55+0000",
+      "dateFinished": "2021-09-22T21:31:55+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nprint(build_lm_str)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:55+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "def build_lm_str(dat):\n    from sklearn import linear_model\n    regr \u003d linear_model.LinearRegression()\n    import pandas as pd\n    dat \u003d pd.get_dummies(dat, drop_first\u003dTrue)\n    X \u003d dat[[\"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\", \"SPECIES_versicolor\", \"SPECIES_virginica\"]]\n    y \u003d dat[[\"SEPAL_LENGTH\"]]\n    regr.fit(X, y)\n    return regr\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_804439835",
+      "id": "20211001-190305_2058308139",
+      "dateCreated": "2021-09-21T19:12:45+0000",
+      "dateStarted": "2021-09-22T21:31:56+0000",
+      "dateFinished": "2021-09-22T21:31:56+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 11: Create Scripts in Repository\nIn this task you will use the function `oml.script.create` to create a script `MyLM_function`.\n\n11.1. Run the `oml.script.drop` script first to check if a script by the name `MyLM_function` exists, and drop it if it exists. Then use the `oml.script.create` script to create the script `MyLM_function`. Note that we have the `overwrite` argument set to `True` in case the function already exists.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:56+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 11: Create Scripts in Repository\u003c/h2\u003e\n\u003cp\u003eIn this task you will use the function \u003ccode\u003eoml.script.create\u003c/code\u003e to create a script \u003ccode\u003eMyLM_function\u003c/code\u003e.\u003c/p\u003e\n\u003cp\u003e11.1. Run the \u003ccode\u003eoml.script.drop\u003c/code\u003e script first to check if a script by the name \u003ccode\u003eMyLM_function\u003c/code\u003e exists, and drop it if it exists. Then use the \u003ccode\u003eoml.script.create\u003c/code\u003e script to create the script \u003ccode\u003eMyLM_function\u003c/code\u003e. Note that we have the \u003ccode\u003eoverwrite\u003c/code\u003e argument set to \u003ccode\u003eTrue\u003c/code\u003e in case the function already exists.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1911387098",
+      "id": "20211001-190305_568773265",
+      "dateCreated": "2021-09-21T19:13:10+0000",
+      "dateStarted": "2021-09-22T21:31:56+0000",
+      "dateFinished": "2021-09-22T21:31:56+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n    \ntry:\n    oml.script.drop(\"MyLM_function\")\nexcept:\n    pass\n\noml.script.create(\"MyLM_function\", func\u003dbuild_lm_str, overwrite\u003dTrue)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:57+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1890863000",
+      "id": "20211001-190305_973100325",
+      "dateCreated": "2021-09-21T19:28:18+0000",
+      "dateStarted": "2021-09-22T21:31:57+0000",
+      "dateFinished": "2021-09-22T21:31:57+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n11.2. Run the `oml.script.dir` script to list the scripts to which the read privilege has been granted, and where `sctype` is set to `grant`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:57+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e11.2. Run the \u003ccode\u003eoml.script.dir\u003c/code\u003e script to list the scripts to which the read privilege has been granted, and where \u003ccode\u003esctype\u003c/code\u003e is set to \u003ccode\u003egrant\u003c/code\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1467472344",
+      "id": "20211001-190305_710228313",
+      "dateCreated": "2021-09-21T19:28:56+0000",
+      "dateStarted": "2021-09-22T21:31:58+0000",
+      "dateFinished": "2021-09-22T21:31:58+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.script.dir(sctype\u003d\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:58+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Empty DataFrame\nColumns: [name, grantee]\nIndex: []\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1545076377",
+      "id": "20211001-190305_715903018",
+      "dateCreated": "2021-09-21T19:29:33+0000",
+      "dateStarted": "2021-09-22T21:31:58+0000",
+      "dateFinished": "2021-09-22T21:31:58+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n11.3. Run the following script to load the named function `MyLM_function` into the Python engine for use as a typical Python function using  `oml.script.load`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:59+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e11.3. Run the following script to load the named function \u003ccode\u003eMyLM_function\u003c/code\u003e into the Python engine for use as a typical Python function using  \u003ccode\u003eoml.script.load\u003c/code\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-891621230",
+      "id": "20211001-190305_1024337324",
+      "dateCreated": "2021-09-21T19:30:33+0000",
+      "dateStarted": "2021-09-22T21:31:59+0000",
+      "dateFinished": "2021-09-22T21:31:59+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\nimport inspect\n\nMyLM_function \u003d oml.script.load(\"MyLM_function\")\nprint(\"Type\", type(MyLM_function))\nMyLM_function.get_source()\nprint(str(MyLM_function))\nprint(MyLM_function.get_source().read())",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:31:59+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type \u003cclass \u0027oml.script.script.Callable\u0027\u003e\n\u003coml.script.script.Callable object at 0x7f99b3f29f10\u003e\ndef build_lm_str(dat):\n    from sklearn import linear_model\n    regr \u003d linear_model.LinearRegression()\n    import pandas as pd\n    dat \u003d pd.get_dummies(dat, drop_first\u003dTrue)\n    X \u003d dat[[\"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\", \"SPECIES_versicolor\", \"SPECIES_virginica\"]]\n    y \u003d dat[[\"SEPAL_LENGTH\"]]\n    regr.fit(X, y)\n    return regr\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_837374725",
+      "id": "20211001-190305_94369365",
+      "dateCreated": "2021-09-21T19:31:18+0000",
+      "dateStarted": "2021-09-22T21:31:59+0000",
+      "dateFinished": "2021-09-22T21:32:00+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n11.4. Extract the function text string from the function object and use this to save in the script repository using `oml.script_create`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:00+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/osql",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e11.4. Extract the function text string from the function object and use this to save in the script repository using \u003ccode\u003eoml.script_create\u003c/code\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-565035728",
+      "id": "20211001-190305_109287502",
+      "dateCreated": "2021-09-21T19:31:41+0000",
+      "dateStarted": "2021-09-22T21:32:00+0000",
+      "dateFinished": "2021-09-22T21:32:00+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nloaded_str \u003d MyLM_function.get_source().read()\ntype(loaded_str)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:00+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u003cclass \u0027str\u0027\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-799312894",
+      "id": "20211001-190305_1927094836",
+      "dateCreated": "2021-09-21T19:32:12+0000",
+      "dateStarted": "2021-09-22T21:32:01+0000",
+      "dateFinished": "2021-09-22T21:32:01+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n11.5. Run the script `oml.script.create` to create a test function `MyTEST_function`:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:01+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e11.5. Run the script \u003ccode\u003eoml.script.create\u003c/code\u003e to create a test function \u003ccode\u003eMyTEST_function\u003c/code\u003e:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1779418054",
+      "id": "20211001-190305_1051875974",
+      "dateCreated": "2021-09-21T19:32:33+0000",
+      "dateStarted": "2021-09-22T21:32:01+0000",
+      "dateFinished": "2021-09-22T21:32:01+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.script.create(\"MyTEST_function\", func\u003dloaded_str, overwrite\u003dTrue)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:02+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-402739782",
+      "id": "20211001-190305_1147485787",
+      "dateCreated": "2021-09-21T19:32:54+0000",
+      "dateStarted": "2021-09-22T21:32:02+0000",
+      "dateFinished": "2021-09-22T21:32:02+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n11.6. Use `oml.script.dir` to list all the available scripts.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:02+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e11.6. Use \u003ccode\u003eoml.script.dir\u003c/code\u003e to list all the available scripts.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-624467411",
+      "id": "20211001-190305_1589550961",
+      "dateCreated": "2021-09-21T19:33:14+0000",
+      "dateStarted": "2021-09-22T21:32:03+0000",
+      "dateFinished": "2021-09-22T21:32:03+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nz.show(oml.script.dir(sctype\u003d\"all\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:03+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "owner": "string",
+                      "name": "string",
+                      "script": "string",
+                      "description": "string",
+                      "date": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "owner\tname\tscript\tdescription\tdate\nOMLUSER\tMyLM_function\tdef build_lm_str(dat):     from sklearn import linear_model     regr \u003d linear_model.LinearRegression()     import pandas as pd     dat \u003d pd.get_dummies(dat, drop_first\u003dTrue)     X \u003d dat[[\"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\", \"SPECIES_versicolor\", \"SPECIES_virginica\"]]     y \u003d dat[[\"SEPAL_LENGTH\"]]     regr.fit(X, y)     return regr\tNone\t2021-09-22 21:31:57\nOMLUSER\tMyTEST_function\tdef build_lm_str(dat):     from sklearn import linear_model     regr \u003d linear_model.LinearRegression()     import pandas as pd     dat \u003d pd.get_dummies(dat, drop_first\u003dTrue)     X \u003d dat[[\"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\", \"SPECIES_versicolor\", \"SPECIES_virginica\"]]     y \u003d dat[[\"SEPAL_LENGTH\"]]     regr.fit(X, y)     return regr\tNone\t2021-09-22 21:32:02\nOMLUSER\tRandomRedDots\tdef RandomRedDots (num_dots_1\u003d100, num_dots_2\u003d10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt       d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     fig \u003d plt.figure(1)     ax \u003d fig.add_subplot(111)     ax.scatter(range(0,int(num_dots_1)), np.random.rand(int(num_dots_1)),c\u003d\u0027r\u0027)     fig.suptitle(\"Random Red Dots\")     fig2 \u003d plt.figure(2)     ax2 \u003d fig2.add_subplot(111)     ax2.scatter(range(0,int(num_dots_2)), np.random.rand(int(num_dots_2)),c\u003d\u0027r\u0027)     fig2.suptitle(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 256     return df\tNone\t2021-09-21 17:14:16\nOMLUSER\tbuild_lm_1\tdef build_lm_1(dat):     import oml     from sklearn import linear_model     import matplotlib.pyplot as plt     lm \u003d linear_model.LinearRegression()     X \u003d dat[[\"PETAL_WIDTH\"]]     y \u003d dat[[\"PETAL_LENGTH\"]]     mod \u003d lm.fit(X, y)     pred \u003d mod.predict(dat[[\"PETAL_WIDTH\"]])     plt.scatter(dat.loc[:,\"PETAL_WIDTH\"], dat.loc[:,\"PETAL_LENGTH\"])     plt.plot(dat[[\"PETAL_WIDTH\"]], pred, color\u003d\u0027blue\u0027, linewidth\u003d3)     plt.grid(True)     plt.title(\u0027Prediction of Petal Length\u0027)     plt.xlabel(\u0027Petal Width\u0027)     plt.ylabel(\u0027Petal Length\u0027)     plt.show()     return mod\tNone\t2021-09-21 16:53:03\nOMLUSER\tgroup_count\tdef group_count(dat):   import oml   import pandas as pd   return pd.DataFrame([(dat[\"SPECIES\"][0], dat[\"SEPAL_LENGTH\"][0], dat.shape[0])],   columns \u003d [\"SPECIES\",\"SEPAL_LENGTH\", \"COUNT\"])\tNone\t2021-03-23 17:57:22\nOMLUSER\tsk_svc_fit\tdef fit(data):     from sklearn.svm import LinearSVC     x \u003d data.drop(\u0027SPECIES\u0027, axis \u003d 1).values     y \u003d data[\u0027SPECIES\u0027]     mod \u003d  LinearSVC().fit(x, y)     return mod\tNone\t2021-09-21 16:53:25\nPYQSYS\tRandomRedDots\tdef RandomRedDots (num_dots_1 \u003d 100, num_dots_2 \u003d 10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt     d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     plt.style.use(\u0027seaborn\u0027)     plt.figure(figsize\u003d[9,7])     plt.figure(1)     plt.scatter(range(0,num_dots_1), np.random.rand(100),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.figure(2)       plt.scatter(range(0,num_dots_2), np.random.rand(10),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 256     return df\tNone\t2021-09-22 19:10:36\nPYQSYS\tRandomRedDots2\tdef RandomRedDots2 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt     d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     fig \u003d plt.figure(1)     plt.style.use(\u0027seaborn\u0027)     plt.figure(figsize\u003d[9,7])     ax \u003d fig.add_subplot(111)     ax.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)     fig.suptitle(\"Random Red Dots\")     fig2 \u003d plt.figure(2)     ax2 \u003d fig2.add_subplot(111)     ax2.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)     fig2.suptitle(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 256     return df\tNone\t2021-09-22 19:10:45\nPYQSYS\tRandomRedDots3\tdef RandomRedDots3 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt     d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     plt.subplot(2,1, 1)     plt.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.subplot(2, 1, 2)     plt.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 128     return df\tNone\t2021-09-21 16:53:49\nPYQSYS\tTEST\tdef test2():     return print(\"Block 2 done. Starting block 3...\", end\u003d\"\")\tNone\t2021-08-13 17:37:02\nPYQSYS\tTEST4\tdef test4():     return print(\"Block 2 done.\\nStarting block 3...\", end\u003d\"\")\tNone\t2021-08-13 17:42:49\nPYQSYS\tTEST_FUN\tdef test_fun(dat):   import seaborn as sns   import oml   data \u003d oml.sync(dat)   may_flights \u003d FLIGHTS.query(\"month \u003d\u003d \u0027May\u0027\")   flights_wide \u003d FLIGHTS.pivot(\"year\", \"month\", \"passengers\")   sns.lineplot(data\u003dflights_wide)\tNone\t2021-08-13 22:38:54\nPYQSYS\talg_select\tdef alg_select(table, target, parallel):  import oml  from oml import automl  train_data \u003d oml.sync(table\u003dtable)  X_train, y_train \u003d train_data.drop(target), train_data[target]  asel \u003d automl.AlgorithmSelection(mining_function\u003d\u0027classification\u0027, score_metric\u003d\u0027accuracy\u0027, parallel\u003dparallel)  algo_ranking \u003d asel.select(X_train, y_train, k\u003d1)   best_algo \u003d algo_ranking[0][0]  message \u003d print(\"OML4Py AutoML Algorithm Selection: selected \"+best_algo+\" algorithm\")  return message\tAlgorithm Selection using OML4Py AutoML(string inputs for table and target, numeric input for parallel)\t2021-08-04 00:06:31\nPYQSYS\talgo_select\tdef algo_select(input, mining_function, score_metric, parallel):   import oml   from oml.automl import AlgorithmSelection   df \u003d oml.push(input)   train, test \u003d df.split(ratio\u003d(0.9, 0.1), seed \u003d 1234)   X, y \u003d train[:,0:-1], train[:,-1]   X_test, y_test \u003d test[:,0:-1], test[:,-1]   asel \u003d AlgorithmSelection(mining_function\u003dmining_function, score_metric\u003dscore_metric, parallel\u003dparallel)   scores \u003d [ \"{0}:{1:.3f}\".format(m, s) for m, s in asel.select(X, y, k\u003dNone) ]   return(\"Algorithm selection prediction scores: {}\".format(scores))\tAutoML algorithm selection with string inputs for data, mining_function, score_metric, and a numeric input for parallel\t2021-08-04 19:57:55\nPYQSYS\tbuild_automl\tdef build_automl(input_df):  import oml  from oml import automl  AUTOML_TABLE\u003dinput_df[\u0027AUTOML_TABLE\u0027][0]  AUTOML_NAME\u003dinput_df[\u0027AUTOML_NAME\u0027][0]  AUTOML_TARGET\u003dinput_df[\u0027AUTOML_TARGET\u0027][0]  AUTOML_PARALLEL\u003dint(input_df[\u0027AUTOML_PARALLEL\u0027])  train_data \u003d oml.sync(table\u003dAUTOML_TABLE)  X_train, y_train \u003d train_data.drop(AUTOML_TARGET) , train_data[AUTOML_TARGET]  try:   oml.drop(model\u003dAUTOML_NAME)  except:   pass  asel \u003d automl.AlgorithmSelection(mining_function\u003d\u0027classification\u0027, score_metric\u003d\u0027accuracy\u0027, parallel\u003dAUTOML_PARALLEL)  algo_ranking \u003d asel.select(X_train, y_train, k\u003d1)   best_algo \u003d algo_ranking[0][0]  print(\"AutoML Algorithm Selection: selected \"+best_algo+\" algorithm in \"+str(time.strftime(\"%Hh%Mm%Ss\", time.gmtime((time.time() - start)))))  fs_set \u003d automl.FeatureSelection(mining_function \u003d \u0027classification\u0027, score_metric \u003d \u0027balanced_accuracy\u0027, parallel\u003dAUTOML_PARALLEL)  selected_set \u003d fs_set.reduce(best_algo, X_train, y_train, cv\u003d\u0027auto\u0027, adaptive_sampling\u003dTrue)  X_train_reduced \u003d X_train[:,selected_set]  print(\"AutoML Feature Selection: selected \"+str(len(X_train_reduced.columns))+\" columns from the original \"+str(len(X_train.columns))+\" in \"+str(time.strftime(\"%Hh%Mm%Ss\", time.gmtime((time.time() - start)))))  atune \u003d automl.ModelTuning(mining_function \u003d \u0027classification\u0027, parallel\u003dAUTOML_PARALLEL)  results_at \u003d atune.tune(best_algo, X_train_reduced, y_train)  final_model \u003d results_at[\u0027best_model\u0027]  final_model.model_name \u003d AUTOML_NAME  message \u003d print(\"AutoML Tuning successfull for algorithm \"+str(best_algo)+\" using \"+str(len(X_train_reduced.columns))+\" columns into \"+AUTOML_NAME+\" in \"+str(time.strftime(\"%Hh%Mm%Ss\", time.gmtime((time.time() - start)))))  return message\tBuild AutoML model (String inputs for table, name, target and parallel)\t2021-08-03 23:39:03\nPYQSYS\tmy_pred\tdef my_pred(dat):     import pandas as pd     import oml     obj_dict \u003d oml.ds.load(name\u003d\"ds_regr\", to_globals\u003dFalse)       regr \u003d obj_dict[\"regr\"]     pred \u003d regr.predict(dat[[\u0027Sepal_Length\u0027,                               \u0027Sepal_Width\u0027,                              \u0027Petal_Length\u0027]])     return pd.concat([dat[[\u0027Species\u0027, \u0027Petal_Width\u0027]],                       pd.DataFrame(pred,                                    columns\u003d[\u0027Pred_Petal_Width\u0027])],                                    axis\u003d1)\tNone\t2021-04-30 01:02:04\nPYQSYS\tpred_oml_rf\tdef pred_oml_rf(data_string):  import oml  tab_name \u003d data_string.values[0][0]  dat \u003d oml.sync(table\u003dstr(tab_name))  saved_omlrf \u003d oml.rf(model_name\u003d\u0027RF_PRED_SPECIES\u0027)  output \u003d saved_omlrf.predict(dat.drop(\u0027SPECIES\u0027),                                supplemental_cols\u003ddat)  return output\tPred Species OML RF (String table name input)\t2021-06-29 14:46:17\nPYQSYS\tpred_rf_species\tdef pred_rf_species(dat):  import pandas as pd  import oml  obj_dict \u003d oml.ds.load(name\u003d\"ds_rf_species\", to_globals\u003dFalse)  rf_species \u003d obj_dict[\"rf_species\"]  pred \u003d rf_species.predict(dat[[\u0027PETAL_WIDTH\u0027,   \u0027SEPAL_WIDTH\u0027,  \u0027PETAL_LENGTH\u0027,  \u0027PETAL_WIDTH\u0027]])  return pd.concat([dat[[\u0027PETAL_LENGTH\u0027,\u0027PETAL_WIDTH\u0027,  \u0027SEPAL_LENGTH\u0027,\u0027SEPAL_WIDTH\u0027,  \u0027SPECIES\u0027]],   pd.DataFrame(pred,columns\u003d[\u0027PREDICTED_SPECIES\u0027])],  axis\u003d1)\tPred Species SKLearn RF (Table input)\t2021-06-29 14:45:41\nPYQSYS\tpred_rf_species_2\tdef pred_rf_species_2(data_string):  import pandas as pd  import oml  obj_dict \u003d oml.ds.load(name\u003d\"ds_rf_species\", to_globals\u003dFalse)  rf_species \u003d obj_dict[\"rf_species\"]  tab_name \u003d data_string.values[0][0]  dat \u003d oml.sync(table\u003dstr(tab_name)).pull()  pred \u003d rf_species.predict(dat[[\u0027PETAL_WIDTH\u0027,   \u0027SEPAL_WIDTH\u0027,  \u0027PETAL_LENGTH\u0027,  \u0027PETAL_WIDTH\u0027]])  return pd.concat([dat[[\u0027PETAL_LENGTH\u0027,\u0027PETAL_WIDTH\u0027,  \u0027SEPAL_LENGTH\u0027,\u0027SEPAL_WIDTH\u0027,  \u0027SPECIES\u0027]],   pd.DataFrame(pred,columns\u003d[\u0027PREDICTED_SPECIES\u0027])],  axis\u003d1)\tPred Species SKLearn RF (Table name input)\t2021-06-28 23:03:17\nPYQSYS\tpred_rf_species_3\tdef pred_rf_species_3(data_string):  import pandas as pd  import oml  obj_dict \u003d oml.ds.load(name\u003d\"ds_rf_species\", to_globals\u003dFalse)  rf_species \u003d obj_dict[\"rf_species\"]  print(\"What was received: \")  print(type(data_string))  print(data_string)  tab_name \u003d data_string.values[0][0]  print(\"Table name extracted: \")  print(type(tab_name))  print(tab_name)  try:     dat \u003d oml.sync(table\u003dstr(tab_name)).pull()    print (\u0027Loaded the table\u0027)    print(dat.head)  except:    print(\u0027Unable to load the table\u0027)  pred \u003d rf_species.predict(dat[[\u0027PETAL_WIDTH\u0027,   \u0027SEPAL_WIDTH\u0027,  \u0027PETAL_LENGTH\u0027,  \u0027PETAL_WIDTH\u0027]])  return pd.DataFrame(pred)\tPred Species SKLearn RF (Table name input)\t2021-06-28 15:18:29\nPYQSYS\ttrain_AML\t def train_aml(dat):  import pandas as pd   import oml  from oml import automl  import numpy as np  df \u003d oml.push(dat)  X_reg,y_reg \u003d df.drop(\u0027SEPAL_LENGTH\u0027), df[\u0027SEPAL_LENGTH\u0027]  est_reg \u003d automl.AlgorithmSelection(mining_function\u003d\u0027regression\u0027, score_metric\u003d\u0027r2\u0027, parallel\u003d1)  est_alg_ranking_reg \u003d est_reg.select(X_reg, y_reg ,k\u003d4)  print(\"Ranked algorithms:\", est_alg_ranking_reg)  selected_alg_reg \u003d next(iter(dict(est_alg_ranking_reg).keys()))  fs_reg \u003d automl.FeatureSelection(mining_function \u003d \u0027regression\u0027, score_metric \u003d \u0027r2\u0027, parallel\u003d1)  selected_features_reg \u003d fs_reg.reduce(selected_alg_reg, X_reg, y_reg)  X_reduced_reg \u003d X_reg[:,selected_features_reg]  mt_reg \u003d automl.ModelTuning(mining_function \u003d \u0027regression\u0027, parallel\u003d1)  results_reg \u003d mt_reg.tune(selected_alg_reg, X_reduced_reg, y_reg)  tuned_model_reg \u003d results_reg[\u0027best_model\u0027]  oml.ds.save(objs\u003d{\u0027tuned_model_reg\u0027:tuned_model_reg}, name\u003d\"trained_aml_regr\", grantable\u003dTrue, overwrite\u003dTrue)   return_json \u003d {\"status\" : \"Model Built\"}  print(return_json)  return return_json\tNone\t2021-06-27 23:22:19\nPYQSYS\ttrain_AML2\t def train_aml2(dat):  import pandas as pd   import oml  from oml import automl  import numpy as np  df \u003d oml.sync(query \u003d \"select * from IRIS\")  X_reg,y_reg \u003d df.drop(\u0027SEPAL_LENGTH\u0027), df[\u0027SEPAL_LENGTH\u0027]  est_reg \u003d automl.AlgorithmSelection(mining_function\u003d\u0027regression\u0027, score_metric\u003d\u0027r2\u0027, parallel\u003d1)  est_alg_ranking_reg \u003d est_reg.select(X_reg, y_reg ,k\u003d4)  print(\"Ranked algorithms:\", est_alg_ranking_reg)  selected_alg_reg \u003d next(iter(dict(est_alg_ranking_reg).keys()))  fs_reg \u003d automl.FeatureSelection(mining_function \u003d \u0027regression\u0027, score_metric \u003d \u0027r2\u0027, parallel\u003d1)  selected_features_reg \u003d fs_reg.reduce(selected_alg_reg, X_reg, y_reg)  X_reduced_reg \u003d X_reg[:,selected_features_reg]  mt_reg \u003d automl.ModelTuning(mining_function \u003d \u0027regression\u0027, parallel\u003d1)  results_reg \u003d mt_reg.tune(selected_alg_reg, X_reduced_reg, y_reg)  tuned_model_reg2 \u003d results_reg[\u0027best_model\u0027]  oml.ds.save(objs\u003d{\u0027tuned_model_reg2\u0027:tuned_model_reg2}, name\u003d\"trained_aml_regr2\", grantable\u003dTrue, overwrite\u003dTrue)   return_json \u003d {\"status\" : \"Model Built\"}  print(return_json)  return return_json\tNone\t2021-06-28 00:04:20\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1792817847",
+      "id": "20211001-190305_1164560912",
+      "dateCreated": "2021-09-21T19:33:53+0000",
+      "dateStarted": "2021-09-22T21:32:03+0000",
+      "dateFinished": "2021-09-22T21:32:04+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n11.7. Call the `table_apply` on `build_lm_str` and `loaded_str` functions. Note that these strings represent the same function `build_lm_str` that was saved to the script repository after assigning the function to a string object. The `loaded_str` is the string representation of the function extracted using `get_source().read()`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:04+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e11.7. Call the \u003ccode\u003etable_apply\u003c/code\u003e on \u003ccode\u003ebuild_lm_str\u003c/code\u003e and \u003ccode\u003eloaded_str\u003c/code\u003e functions. Note that these strings represent the same function \u003ccode\u003ebuild_lm_str\u003c/code\u003e that was saved to the script repository after assigning the function to a string object. The \u003ccode\u003eloaded_str\u003c/code\u003e is the string representation of the function extracted using \u003ccode\u003eget_source().read()\u003c/code\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1774261916",
+      "id": "20211001-190305_1763958353",
+      "dateCreated": "2021-09-21T19:34:29+0000",
+      "dateStarted": "2021-09-22T21:32:04+0000",
+      "dateFinished": "2021-09-22T21:32:04+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nmod1 \u003d oml.table_apply(data\u003dIRIS, func \u003d build_lm_str)\nmod1.coef_",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:04+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "array([[ 0.49588894,  0.82924391, -0.31515517, -0.72356196, -1.02349781]])\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-48176348",
+      "id": "20211001-190305_81375944",
+      "dateCreated": "2021-09-21T19:34:55+0000",
+      "dateStarted": "2021-09-22T21:32:05+0000",
+      "dateFinished": "2021-09-22T21:32:05+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\nRun the same function on `loaded_str`:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:05+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003eRun the same function on \u003ccode\u003eloaded_str\u003c/code\u003e:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_279959862",
+      "id": "20211001-190305_783740981",
+      "dateCreated": "2021-09-21T19:42:45+0000",
+      "dateStarted": "2021-09-22T21:32:05+0000",
+      "dateFinished": "2021-09-22T21:32:05+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nmod2 \u003d oml.table_apply(data\u003dIRIS, func \u003d loaded_str)\nmod2.coef_",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:05+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "array([[ 0.49588894,  0.82924391, -0.31515517, -0.72356196, -1.02349781]])\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-998226739",
+      "id": "20211001-190305_621057721",
+      "dateCreated": "2021-09-21T19:43:09+0000",
+      "dateStarted": "2021-09-22T21:32:06+0000",
+      "dateFinished": "2021-09-22T21:32:06+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 12: Store a function as a global  function\n\nA global function is one that can be accessed by any user.\n\nIn this step, you will define and save a global function `build_lm3`. You will then call that function `build_lm3` to build another model.\n\n12.1. Define and save the function `build_lm3`:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:06+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 12: Store a function as a global  function\u003c/h2\u003e\n\u003cp\u003eA global function is one that can be accessed by any user.\u003c/p\u003e\n\u003cp\u003eIn this step, you will define and save a global function \u003ccode\u003ebuild_lm3\u003c/code\u003e. You will then call that function \u003ccode\u003ebuild_lm3\u003c/code\u003e to build another model.\u003c/p\u003e\n\u003cp\u003e12.1. Define and save the function \u003ccode\u003ebuild_lm3\u003c/code\u003e:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1173749745",
+      "id": "20211001-190305_1377965342",
+      "dateCreated": "2021-09-21T19:43:35+0000",
+      "dateStarted": "2021-09-22T21:32:07+0000",
+      "dateFinished": "2021-09-22T21:32:07+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\nbuild_lm3 \u003d \"\"\"def build_lm3(dat):\n    from sklearn import linear_model\n    regr \u003d linear_model.LinearRegression()\n    X \u003d dat[[\"PETAL_WIDTH\"]]\n    y \u003d dat[[\"PETAL_LENGTH\"]]\n    regr.fit(X, y)\n    return regr\"\"\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:07+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_339154839",
+      "id": "20211001-190305_455389792",
+      "dateCreated": "2021-09-21T19:44:06+0000",
+      "dateStarted": "2021-09-22T21:32:07+0000",
+      "dateFinished": "2021-09-22T21:32:07+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n---\n12.2. Call the function `build_lm3` to build the model or model `MyGlobalML_function`:",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:07+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003e12.2. Call the function \u003ccode\u003ebuild_lm3\u003c/code\u003e to build the model or model \u003ccode\u003eMyGlobalML_function\u003c/code\u003e:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_1264003740",
+      "id": "20211001-190305_34262633",
+      "dateCreated": "2021-09-21T19:44:29+0000",
+      "dateStarted": "2021-09-22T21:32:08+0000",
+      "dateFinished": "2021-09-22T21:32:08+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.script.create(\"MyGlobalLM_function\", func\u003dbuild_lm3, is_global\u003dTrue, overwrite\u003dTrue)",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:08+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1565251898",
+      "id": "20211001-190305_62534095",
+      "dateCreated": "2021-09-21T19:44:53+0000",
+      "dateStarted": "2021-09-22T21:32:08+0000",
+      "dateFinished": "2021-09-22T21:32:09+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Task 13: Drop scripts from the Script Repository\nIn this task, you will perform the following:\n\n* Drop one of the private scripts.\n* Drop the global script.\n* List the available scripts again.\n\n**Note:** You can make the script either private or global. A global script is available to any user. A private script is available only to the owner or to users to whom the owner of the script has granted the read privilege.\n\n13.1. Run the following script to drop the private script `MyLM_function2`, drop the global script `MyGlobalML_function`, and then list the available scripts. The script first deletes the contents of datastore `ds_pydata`, and then deletes the datastore itself. It also deletes the datastore `ds_pymodel` using regular expression pattern matching.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:09+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eTask 13: Drop scripts from the Script Repository\u003c/h2\u003e\n\u003cp\u003eIn this task, you will perform the following:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eDrop one of the private scripts.\u003c/li\u003e\n\u003cli\u003eDrop the global script.\u003c/li\u003e\n\u003cli\u003eList the available scripts again.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003eNote:\u003c/strong\u003e You can make the script either private or global. A global script is available to any user. A private script is available only to the owner or to users to whom the owner of the script has granted the read privilege.\u003c/p\u003e\n\u003cp\u003e13.1. Run the following script to drop the private script \u003ccode\u003eMyLM_function2\u003c/code\u003e, drop the global script \u003ccode\u003eMyGlobalML_function\u003c/code\u003e, and then list the available scripts. The script first deletes the contents of datastore \u003ccode\u003eds_pydata\u003c/code\u003e, and then deletes the datastore itself. It also deletes the datastore \u003ccode\u003eds_pymodel\u003c/code\u003e using regular expression pattern matching.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_2079865027",
+      "id": "20211001-190305_1106398787",
+      "dateCreated": "2021-09-21T19:45:56+0000",
+      "dateStarted": "2021-09-22T21:32:09+0000",
+      "dateFinished": "2021-09-22T21:32:09+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%python\n\noml.script.drop(\"MyLM_function\")\noml.script.drop(\"MyGlobalLM_function\", is_global\u003dTrue)\nz.show(oml.script.dir(sctype\u003d\"all\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:09+0000",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "owner",
+                        "visible": true,
+                        "width": 150.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "name",
+                        "visible": true,
+                        "width": 180.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "script",
+                        "visible": true,
+                        "width": 703.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "description",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "date",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "owner": "string",
+                      "name": "string",
+                      "script": "string",
+                      "description": "string",
+                      "date": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "owner\tname\tscript\tdescription\tdate\nOMLUSER\tMyTEST_function\tdef build_lm_str(dat):     from sklearn import linear_model     regr \u003d linear_model.LinearRegression()     import pandas as pd     dat \u003d pd.get_dummies(dat, drop_first\u003dTrue)     X \u003d dat[[\"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\", \"SPECIES_versicolor\", \"SPECIES_virginica\"]]     y \u003d dat[[\"SEPAL_LENGTH\"]]     regr.fit(X, y)     return regr\tNone\t2021-09-22 21:32:02\nOMLUSER\tRandomRedDots\tdef RandomRedDots (num_dots_1\u003d100, num_dots_2\u003d10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt       d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     fig \u003d plt.figure(1)     ax \u003d fig.add_subplot(111)     ax.scatter(range(0,int(num_dots_1)), np.random.rand(int(num_dots_1)),c\u003d\u0027r\u0027)     fig.suptitle(\"Random Red Dots\")     fig2 \u003d plt.figure(2)     ax2 \u003d fig2.add_subplot(111)     ax2.scatter(range(0,int(num_dots_2)), np.random.rand(int(num_dots_2)),c\u003d\u0027r\u0027)     fig2.suptitle(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 256     return df\tNone\t2021-09-21 17:14:16\nOMLUSER\tbuild_lm_1\tdef build_lm_1(dat):     import oml     from sklearn import linear_model     import matplotlib.pyplot as plt     lm \u003d linear_model.LinearRegression()     X \u003d dat[[\"PETAL_WIDTH\"]]     y \u003d dat[[\"PETAL_LENGTH\"]]     mod \u003d lm.fit(X, y)     pred \u003d mod.predict(dat[[\"PETAL_WIDTH\"]])     plt.scatter(dat.loc[:,\"PETAL_WIDTH\"], dat.loc[:,\"PETAL_LENGTH\"])     plt.plot(dat[[\"PETAL_WIDTH\"]], pred, color\u003d\u0027blue\u0027, linewidth\u003d3)     plt.grid(True)     plt.title(\u0027Prediction of Petal Length\u0027)     plt.xlabel(\u0027Petal Width\u0027)     plt.ylabel(\u0027Petal Length\u0027)     plt.show()     return mod\tNone\t2021-09-21 16:53:03\nOMLUSER\tgroup_count\tdef group_count(dat):   import oml   import pandas as pd   return pd.DataFrame([(dat[\"SPECIES\"][0], dat[\"SEPAL_LENGTH\"][0], dat.shape[0])],   columns \u003d [\"SPECIES\",\"SEPAL_LENGTH\", \"COUNT\"])\tNone\t2021-03-23 17:57:22\nOMLUSER\tsk_svc_fit\tdef fit(data):     from sklearn.svm import LinearSVC     x \u003d data.drop(\u0027SPECIES\u0027, axis \u003d 1).values     y \u003d data[\u0027SPECIES\u0027]     mod \u003d  LinearSVC().fit(x, y)     return mod\tNone\t2021-09-21 16:53:25\nPYQSYS\tRandomRedDots\tdef RandomRedDots (num_dots_1 \u003d 100, num_dots_2 \u003d 10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt     d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     plt.style.use(\u0027seaborn\u0027)     plt.figure(figsize\u003d[9,7])     plt.figure(1)     plt.scatter(range(0,num_dots_1), np.random.rand(100),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.figure(2)       plt.scatter(range(0,num_dots_2), np.random.rand(10),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 256     return df\tNone\t2021-09-22 19:10:36\nPYQSYS\tRandomRedDots2\tdef RandomRedDots2 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt     d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     fig \u003d plt.figure(1)     plt.style.use(\u0027seaborn\u0027)     plt.figure(figsize\u003d[9,7])     ax \u003d fig.add_subplot(111)     ax.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)     fig.suptitle(\"Random Red Dots\")     fig2 \u003d plt.figure(2)     ax2 \u003d fig2.add_subplot(111)     ax2.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)     fig2.suptitle(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 256     return df\tNone\t2021-09-22 19:10:45\nPYQSYS\tRandomRedDots3\tdef RandomRedDots3 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):     import numpy as np     import pandas as pd     import matplotlib.pyplot as plt     d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}     df \u003d pd.DataFrame(data\u003dd)     plt.subplot(2,1, 1)     plt.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.subplot(2, 1, 2)     plt.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)     plt.title(\"Random Red Dots\")     plt.rcParams[\u0027figure.dpi\u0027] \u003d 128     return df\tNone\t2021-09-21 16:53:49\nPYQSYS\tTEST\tdef test2():     return print(\"Block 2 done. Starting block 3...\", end\u003d\"\")\tNone\t2021-08-13 17:37:02\nPYQSYS\tTEST4\tdef test4():     return print(\"Block 2 done.\\nStarting block 3...\", end\u003d\"\")\tNone\t2021-08-13 17:42:49\nPYQSYS\tTEST_FUN\tdef test_fun(dat):   import seaborn as sns   import oml   data \u003d oml.sync(dat)   may_flights \u003d FLIGHTS.query(\"month \u003d\u003d \u0027May\u0027\")   flights_wide \u003d FLIGHTS.pivot(\"year\", \"month\", \"passengers\")   sns.lineplot(data\u003dflights_wide)\tNone\t2021-08-13 22:38:54\nPYQSYS\talg_select\tdef alg_select(table, target, parallel):  import oml  from oml import automl  train_data \u003d oml.sync(table\u003dtable)  X_train, y_train \u003d train_data.drop(target), train_data[target]  asel \u003d automl.AlgorithmSelection(mining_function\u003d\u0027classification\u0027, score_metric\u003d\u0027accuracy\u0027, parallel\u003dparallel)  algo_ranking \u003d asel.select(X_train, y_train, k\u003d1)   best_algo \u003d algo_ranking[0][0]  message \u003d print(\"OML4Py AutoML Algorithm Selection: selected \"+best_algo+\" algorithm\")  return message\tAlgorithm Selection using OML4Py AutoML(string inputs for table and target, numeric input for parallel)\t2021-08-04 00:06:31\nPYQSYS\talgo_select\tdef algo_select(input, mining_function, score_metric, parallel):   import oml   from oml.automl import AlgorithmSelection   df \u003d oml.push(input)   train, test \u003d df.split(ratio\u003d(0.9, 0.1), seed \u003d 1234)   X, y \u003d train[:,0:-1], train[:,-1]   X_test, y_test \u003d test[:,0:-1], test[:,-1]   asel \u003d AlgorithmSelection(mining_function\u003dmining_function, score_metric\u003dscore_metric, parallel\u003dparallel)   scores \u003d [ \"{0}:{1:.3f}\".format(m, s) for m, s in asel.select(X, y, k\u003dNone) ]   return(\"Algorithm selection prediction scores: {}\".format(scores))\tAutoML algorithm selection with string inputs for data, mining_function, score_metric, and a numeric input for parallel\t2021-08-04 19:57:55\nPYQSYS\tbuild_automl\tdef build_automl(input_df):  import oml  from oml import automl  AUTOML_TABLE\u003dinput_df[\u0027AUTOML_TABLE\u0027][0]  AUTOML_NAME\u003dinput_df[\u0027AUTOML_NAME\u0027][0]  AUTOML_TARGET\u003dinput_df[\u0027AUTOML_TARGET\u0027][0]  AUTOML_PARALLEL\u003dint(input_df[\u0027AUTOML_PARALLEL\u0027])  train_data \u003d oml.sync(table\u003dAUTOML_TABLE)  X_train, y_train \u003d train_data.drop(AUTOML_TARGET) , train_data[AUTOML_TARGET]  try:   oml.drop(model\u003dAUTOML_NAME)  except:   pass  asel \u003d automl.AlgorithmSelection(mining_function\u003d\u0027classification\u0027, score_metric\u003d\u0027accuracy\u0027, parallel\u003dAUTOML_PARALLEL)  algo_ranking \u003d asel.select(X_train, y_train, k\u003d1)   best_algo \u003d algo_ranking[0][0]  print(\"AutoML Algorithm Selection: selected \"+best_algo+\" algorithm in \"+str(time.strftime(\"%Hh%Mm%Ss\", time.gmtime((time.time() - start)))))  fs_set \u003d automl.FeatureSelection(mining_function \u003d \u0027classification\u0027, score_metric \u003d \u0027balanced_accuracy\u0027, parallel\u003dAUTOML_PARALLEL)  selected_set \u003d fs_set.reduce(best_algo, X_train, y_train, cv\u003d\u0027auto\u0027, adaptive_sampling\u003dTrue)  X_train_reduced \u003d X_train[:,selected_set]  print(\"AutoML Feature Selection: selected \"+str(len(X_train_reduced.columns))+\" columns from the original \"+str(len(X_train.columns))+\" in \"+str(time.strftime(\"%Hh%Mm%Ss\", time.gmtime((time.time() - start)))))  atune \u003d automl.ModelTuning(mining_function \u003d \u0027classification\u0027, parallel\u003dAUTOML_PARALLEL)  results_at \u003d atune.tune(best_algo, X_train_reduced, y_train)  final_model \u003d results_at[\u0027best_model\u0027]  final_model.model_name \u003d AUTOML_NAME  message \u003d print(\"AutoML Tuning successfull for algorithm \"+str(best_algo)+\" using \"+str(len(X_train_reduced.columns))+\" columns into \"+AUTOML_NAME+\" in \"+str(time.strftime(\"%Hh%Mm%Ss\", time.gmtime((time.time() - start)))))  return message\tBuild AutoML model (String inputs for table, name, target and parallel)\t2021-08-03 23:39:03\nPYQSYS\tmy_pred\tdef my_pred(dat):     import pandas as pd     import oml     obj_dict \u003d oml.ds.load(name\u003d\"ds_regr\", to_globals\u003dFalse)       regr \u003d obj_dict[\"regr\"]     pred \u003d regr.predict(dat[[\u0027Sepal_Length\u0027,                               \u0027Sepal_Width\u0027,                              \u0027Petal_Length\u0027]])     return pd.concat([dat[[\u0027Species\u0027, \u0027Petal_Width\u0027]],                       pd.DataFrame(pred,                                    columns\u003d[\u0027Pred_Petal_Width\u0027])],                                    axis\u003d1)\tNone\t2021-04-30 01:02:04\nPYQSYS\tpred_oml_rf\tdef pred_oml_rf(data_string):  import oml  tab_name \u003d data_string.values[0][0]  dat \u003d oml.sync(table\u003dstr(tab_name))  saved_omlrf \u003d oml.rf(model_name\u003d\u0027RF_PRED_SPECIES\u0027)  output \u003d saved_omlrf.predict(dat.drop(\u0027SPECIES\u0027),                                supplemental_cols\u003ddat)  return output\tPred Species OML RF (String table name input)\t2021-06-29 14:46:17\nPYQSYS\tpred_rf_species\tdef pred_rf_species(dat):  import pandas as pd  import oml  obj_dict \u003d oml.ds.load(name\u003d\"ds_rf_species\", to_globals\u003dFalse)  rf_species \u003d obj_dict[\"rf_species\"]  pred \u003d rf_species.predict(dat[[\u0027PETAL_WIDTH\u0027,   \u0027SEPAL_WIDTH\u0027,  \u0027PETAL_LENGTH\u0027,  \u0027PETAL_WIDTH\u0027]])  return pd.concat([dat[[\u0027PETAL_LENGTH\u0027,\u0027PETAL_WIDTH\u0027,  \u0027SEPAL_LENGTH\u0027,\u0027SEPAL_WIDTH\u0027,  \u0027SPECIES\u0027]],   pd.DataFrame(pred,columns\u003d[\u0027PREDICTED_SPECIES\u0027])],  axis\u003d1)\tPred Species SKLearn RF (Table input)\t2021-06-29 14:45:41\nPYQSYS\tpred_rf_species_2\tdef pred_rf_species_2(data_string):  import pandas as pd  import oml  obj_dict \u003d oml.ds.load(name\u003d\"ds_rf_species\", to_globals\u003dFalse)  rf_species \u003d obj_dict[\"rf_species\"]  tab_name \u003d data_string.values[0][0]  dat \u003d oml.sync(table\u003dstr(tab_name)).pull()  pred \u003d rf_species.predict(dat[[\u0027PETAL_WIDTH\u0027,   \u0027SEPAL_WIDTH\u0027,  \u0027PETAL_LENGTH\u0027,  \u0027PETAL_WIDTH\u0027]])  return pd.concat([dat[[\u0027PETAL_LENGTH\u0027,\u0027PETAL_WIDTH\u0027,  \u0027SEPAL_LENGTH\u0027,\u0027SEPAL_WIDTH\u0027,  \u0027SPECIES\u0027]],   pd.DataFrame(pred,columns\u003d[\u0027PREDICTED_SPECIES\u0027])],  axis\u003d1)\tPred Species SKLearn RF (Table name input)\t2021-06-28 23:03:17\nPYQSYS\tpred_rf_species_3\tdef pred_rf_species_3(data_string):  import pandas as pd  import oml  obj_dict \u003d oml.ds.load(name\u003d\"ds_rf_species\", to_globals\u003dFalse)  rf_species \u003d obj_dict[\"rf_species\"]  print(\"What was received: \")  print(type(data_string))  print(data_string)  tab_name \u003d data_string.values[0][0]  print(\"Table name extracted: \")  print(type(tab_name))  print(tab_name)  try:     dat \u003d oml.sync(table\u003dstr(tab_name)).pull()    print (\u0027Loaded the table\u0027)    print(dat.head)  except:    print(\u0027Unable to load the table\u0027)  pred \u003d rf_species.predict(dat[[\u0027PETAL_WIDTH\u0027,   \u0027SEPAL_WIDTH\u0027,  \u0027PETAL_LENGTH\u0027,  \u0027PETAL_WIDTH\u0027]])  return pd.DataFrame(pred)\tPred Species SKLearn RF (Table name input)\t2021-06-28 15:18:29\nPYQSYS\ttrain_AML\t def train_aml(dat):  import pandas as pd   import oml  from oml import automl  import numpy as np  df \u003d oml.push(dat)  X_reg,y_reg \u003d df.drop(\u0027SEPAL_LENGTH\u0027), df[\u0027SEPAL_LENGTH\u0027]  est_reg \u003d automl.AlgorithmSelection(mining_function\u003d\u0027regression\u0027, score_metric\u003d\u0027r2\u0027, parallel\u003d1)  est_alg_ranking_reg \u003d est_reg.select(X_reg, y_reg ,k\u003d4)  print(\"Ranked algorithms:\", est_alg_ranking_reg)  selected_alg_reg \u003d next(iter(dict(est_alg_ranking_reg).keys()))  fs_reg \u003d automl.FeatureSelection(mining_function \u003d \u0027regression\u0027, score_metric \u003d \u0027r2\u0027, parallel\u003d1)  selected_features_reg \u003d fs_reg.reduce(selected_alg_reg, X_reg, y_reg)  X_reduced_reg \u003d X_reg[:,selected_features_reg]  mt_reg \u003d automl.ModelTuning(mining_function \u003d \u0027regression\u0027, parallel\u003d1)  results_reg \u003d mt_reg.tune(selected_alg_reg, X_reduced_reg, y_reg)  tuned_model_reg \u003d results_reg[\u0027best_model\u0027]  oml.ds.save(objs\u003d{\u0027tuned_model_reg\u0027:tuned_model_reg}, name\u003d\"trained_aml_regr\", grantable\u003dTrue, overwrite\u003dTrue)   return_json \u003d {\"status\" : \"Model Built\"}  print(return_json)  return return_json\tNone\t2021-06-27 23:22:19\nPYQSYS\ttrain_AML2\t def train_aml2(dat):  import pandas as pd   import oml  from oml import automl  import numpy as np  df \u003d oml.sync(query \u003d \"select * from IRIS\")  X_reg,y_reg \u003d df.drop(\u0027SEPAL_LENGTH\u0027), df[\u0027SEPAL_LENGTH\u0027]  est_reg \u003d automl.AlgorithmSelection(mining_function\u003d\u0027regression\u0027, score_metric\u003d\u0027r2\u0027, parallel\u003d1)  est_alg_ranking_reg \u003d est_reg.select(X_reg, y_reg ,k\u003d4)  print(\"Ranked algorithms:\", est_alg_ranking_reg)  selected_alg_reg \u003d next(iter(dict(est_alg_ranking_reg).keys()))  fs_reg \u003d automl.FeatureSelection(mining_function \u003d \u0027regression\u0027, score_metric \u003d \u0027r2\u0027, parallel\u003d1)  selected_features_reg \u003d fs_reg.reduce(selected_alg_reg, X_reg, y_reg)  X_reduced_reg \u003d X_reg[:,selected_features_reg]  mt_reg \u003d automl.ModelTuning(mining_function \u003d \u0027regression\u0027, parallel\u003d1)  results_reg \u003d mt_reg.tune(selected_alg_reg, X_reduced_reg, y_reg)  tuned_model_reg2 \u003d results_reg[\u0027best_model\u0027]  oml.ds.save(objs\u003d{\u0027tuned_model_reg2\u0027:tuned_model_reg2}, name\u003d\"trained_aml_regr2\", grantable\u003dTrue, overwrite\u003dTrue)   return_json \u003d {\"status\" : \"Model Built\"}  print(return_json)  return return_json\tNone\t2021-06-28 00:04:20\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1288059817",
+      "id": "20211001-190305_2147173295",
+      "dateCreated": "2021-09-21T19:45:56+0000",
+      "dateStarted": "2021-09-22T21:32:10+0000",
+      "dateFinished": "2021-09-22T21:32:10+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md\n## Learn More\n\n* \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-oml4py-datastores.html#GUID-9FFB5C75-F8DB-4947-844D-4771475A2B39\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-oml4py-datastores.html#GUID-9FFB5C75-F8DB-4947-844D-4771475A2B39\u0027);\"\u003eAbout OML4Py Datastores\u003c/a\u003e\n* \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-the-script-repository.html#GUID-D62AEE6B-D827-4CE2-B18B-FD1E8249A539\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-the-script-repository.html#GUID-D62AEE6B-D827-4CE2-B18B-FD1E8249A539\u0027);\"\u003eAbout OML4Py Script Repository\u003c/a\u003e\n* \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\u0027);\"\u003eOracle Machine Learning Notebooks\u003c/a\u003e\n \n**Last Updated Date** - September 2021\n \nCopyright (c) 2021 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:10+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false,
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eLearn More\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-oml4py-datastores.html#GUID-9FFB5C75-F8DB-4947-844D-4771475A2B39\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-oml4py-datastores.html#GUID-9FFB5C75-F8DB-4947-844D-4771475A2B39\u0027);\"\u003eAbout OML4Py Datastores\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-the-script-repository.html#GUID-D62AEE6B-D827-4CE2-B18B-FD1E8249A539\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/about-the-script-repository.html#GUID-D62AEE6B-D827-4CE2-B18B-FD1E8249A539\u0027);\"\u003eAbout OML4Py Script Repository\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/\u0027);\"\u003eOracle Machine Learning Notebooks\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003eLast Updated Date\u003c/strong\u003e - September 2021\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2021 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_685228518",
+      "id": "20211001-190305_727098303",
+      "dateCreated": "2021-03-20T08:06:41+0000",
+      "dateStarted": "2021-09-22T21:32:10+0000",
+      "dateFinished": "2021-09-22T21:32:10+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": true
+    },
+    {
+      "text": "%md",
+      "user": "OMLUSER",
+      "dateUpdated": "2021-09-22T21:32:10+0000",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "interrupted": false,
+      "jobName": "paragraph_1633114985097_-1331865562",
+      "id": "20211001-190305_2033245011",
+      "dateCreated": "2021-03-20T08:06:41+0000",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "commited": false
+    }
+  ],
+  "name": "Lab 4: Store and manage Python objects and user-defined functions",
+  "id": "79620",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA96849F3DDA:OMLUSER:79620": [],
+    "ORA7A60DC9B32:OMLUSER:79620": [],
+    "ORA7CC90ACC73:OMLUSER:79620": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {}
+}
