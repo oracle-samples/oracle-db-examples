@@ -17,6 +17,7 @@ If you want to configure a previously downloaded wallet you can just create the 
 ```sh
 kubectl create secret generic instance-wallet --from-file=<path-to-wallets-unzipped-folder>
 ```
+
 The Java microservice retrieves username, password and url also from a secret. To create it you can use the following script as an example:
 
 ```sh
@@ -25,6 +26,7 @@ kubectl create secret generic user-jdbc \
   --from-literal=password='<password>' \
   --from-literal=url='jdbc:oracle:thin:@<alias-in-tnsnames.ora>'
 ```
+
 ## Install, build and deploy
 
 It is as simple as to build the maven project, create the docker image and deploy the Pod:
@@ -32,6 +34,14 @@ It is as simple as to build the maven project, create the docker image and deplo
 ```sh
 mvn clean install
 docker build -t adb-health-check target
+kubectl apply -f target/app.yaml
+```
+
+If you want to run the application as a [GraalVM Native Image](https://www.graalvm.org/reference-manual/native-image/), simply specify the different Dockerfile `target/Dockerfile.nativeimage` and repeat the rest of the steps.
+
+```sh
+mvn clean install
+docker build -f target/Dockerfile.nativeimage -t adb-health-check target
 kubectl apply -f target/app.yaml
 ```
 
