@@ -37,7 +37,9 @@ docker build -t adb-health-check target
 kubectl apply -f target/app.yaml
 ```
 
-If you want to run the application as a [GraalVM Native Image](https://www.graalvm.org/reference-manual/native-image/), simply specify the different Dockerfile `target/Dockerfile.nativeimage` and repeat the rest of the steps.
+If you want to run the application as a [GraalVM Native Image](https://www.graalvm.org/reference-manual/native-image/), it is very likely that the build process will be frozen since GraalVM Native Image compilation process is really RAM-intensive. To prevent from the issue, we recommend allotting the Docker engine around **9 to 12 GB of RAM**.
+
+After that, simply specify the different Dockerfile `target/Dockerfile.nativeimage` and repeat the rest of the steps. 
 
 ```sh
 mvn clean install
