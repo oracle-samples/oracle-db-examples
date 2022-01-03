@@ -1,0 +1,22 @@
+FROM ghcr.io/graalvm/graalvm-ce:21.3.0
+RUN gu install native-image
+
+RUN mkdir /app
+COPY libs /app/libs
+COPY ${project.artifactId}.jar /app
+
+RUN native-image -jar /app/${project.artifactId}.jar -H:Name=/app/${project.artifactId}
+
+FROM oraclelinux:8-slim
+RUN mkdir /app
+COPY --from=0 "/app/${project.artifactId}" "/app/${project.artifactId}"
+WORKDIR /app
+
+# The driver will look for the wallet in folder /app/wallet 
+# This value must match the one in the mountPath of the container
+# Reference in src/main/k8s/app.yaml
+
+CMD ["/app/${project.artifactId}", \
+  "-Doracle.net.tns_admin=/app/wallet", \
+  "-Doracle.net.wallet_location=/app/wallet", \
+  "-Doracle.jdbc.fanEnabled=false"]
