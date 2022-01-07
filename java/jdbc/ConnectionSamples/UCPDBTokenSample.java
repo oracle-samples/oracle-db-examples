@@ -6,8 +6,8 @@
    issued by the OCI Identity service. 
     
     Step 1: Enter the DB_URL to pointing to your Autonomous Database (ADB)
-    Step 2: Make sure to have either 21.4.0.0.1 or 19.13.0.0.1 JDBC driver 
-    and UCP (ucp.jar) in the classpath. Both must be from the same version. 
+    Step 2: Make sure to have either 21.4.0.0.1 or 19.13.0.0.1 or later versions of
+    JDBC driver and UCP (ucp.jar) in the classpath. Both must be from the same version. 
     Step 2: Compile and Run the sample UCPDBTokenSample
   
    NOTES
