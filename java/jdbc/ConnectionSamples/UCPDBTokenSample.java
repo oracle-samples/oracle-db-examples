@@ -2,13 +2,13 @@
 /*
    DESCRIPTION    
    The code sample shows how to use the JDBC driver and UCP to establish a
-   connection to the Autonomous Database (ADB) using database token 
+   connection to the Autonomous Database (ADB) using access token 
    issued by the OCI Identity service. 
     
     Step 1: Enter the DB_URL to pointing to your Autonomous Database (ADB)
     Step 2: Make sure to have either 21.4.0.0.1 or 19.13.0.0.1 or later versions of
     JDBC driver and UCP (ucp.jar) in the classpath. Both must be from the same version. 
-    Step 2: Compile and Run the sample UCPDBTokenSample
+    Step 3: Compile and run the sample UCPDBTokenSample
   
    NOTES
     Use JDK8 and above
@@ -36,9 +36,17 @@ public class UCPDBTokenSample {
   // Note that you need to pass the property oracle.jdbc.tokenAuthentication=OCI_TOKEN for token authentication 
   final static String DB_URL="jdbc:oracle:thin:@dbname_high?TNS_ADMIN=/Users/test/Walet/Wallet_dbname&oracle.jdbc.tokenAuthentication=OCI_TOKEN";
   
-  // If mutla TLS(mTLS) is disabled then, ADB connection does not require wallets. 
+  // If mutual TLS(mTLS) is disabled then, ADB connection does not require wallets. 
   // Copy the connection string from "DB Connection" tab from "Connection Strings" section choosing "TLS" in the dropdown
-  //final static String DB_URL="jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gebfdferevpozhjbqbs_dbname_medium.adb.oraclecloud.com)))?oracle.jdbc.tokenAuthentication=OCI_TOKEN";
+  //final static String DB_URL="jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gebqererpozhjbqbs_dbname_medium.adb.oraclecloud.com)))?oracle.jdbc.tokenAuthentication=OCI_TOKEN";
+   
+  // Enable IAM token authentication using long form connection string. 
+   /* 
+  final static String DB_URL="jdbc:oracle:thin:@(description="
+            + "(retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))"
+            + "(security=(token_auth=OCI_TOKEN))"
+            + "(connect_data=(service_name=gebfdferevpozhjbqbs_dbname_medium.adb.oraclecloud.com)))";
+  */
  
   final static String CONN_FACTORY_CLASS_NAME="oracle.jdbc.pool.OracleDataSource";
 
