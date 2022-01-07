@@ -37,10 +37,10 @@ public class JDBCDBTokenSample {
   //If mutual TLS (mTLS) is enabled then, ADB connection requires wallets. 
   // Download the wallet zip file and provide the path to the zip file as TNS_ADMIN 
   // Note that you need to pass the property oracle.jdbc.tokenAuthentication=OCI_TOKEN for token authentication 
-  final static String DB_URL="jdbc:oracle:thin:@demodb_high?TNS_ADMIN=/Users/nbsundar/ATPTesting/Wallet_DemoDB&oracle.jdbc.tokenAuthentication=OCI_TOKEN";
+  final static String DB_URL="jdbc:oracle:thin:@dbname_high?TNS_ADMIN=/Users/user/wallet/Wallet_dbname&oracle.jdbc.tokenAuthentication=OCI_TOKEN";
   // If mutla TLS(mTLS) is disabled then, ADB connection does not require wallets. 
   // Copy the connection string from "DB Connection" tab from "Connection Strings" section choosing "TLS" in the dropdown
-  //final static String DB_URL="jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gebqqvpozhjbqbs_testdb_medium.adb.oraclecloud.com)))?oracle.jdbc.tokenAuthentication=OCI_TOKEN";
+  //final static String DB_URL="jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gebqqeredfsozhjbqbs_dbname_medium.adb.oraclecloud.com)))?oracle.jdbc.tokenAuthentication=OCI_TOKEN";
 
 
   public static void main(String args[]) throws SQLException {
