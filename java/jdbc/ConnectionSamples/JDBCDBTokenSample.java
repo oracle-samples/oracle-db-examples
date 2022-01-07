@@ -3,19 +3,16 @@
 /*
    DESCRIPTION    
    The code sample shows how to use the JDBC driver to establish a connection
-   to the Autonomous Database (ADB) using database token 
+   to the Autonomous Database (ADB) using access token 
    issued by the OCI Identity service. 
-
-   You need to use either JDBC driver to use
-   database token authenticatio. 
     
-    Step 1: Enter the DB_URL to pointing to your Autonomous Database (ADB)
-    Step 2: Make sure to have either 21.4.0.0.1 or 19.13.0.0.1 JDBC driver 
-    in the classpath. 
-    Step 2: Compile and Run the sample JDBCDBTokenSample
+   Step 1: Enter the DB_URL to pointing to your Autonomous Database (ADB)
+   Step 2: Make sure to have either 21.4.0.0.1 or 19.13.0.0.1 JDBC driver 
+   in the classpath. 
+   Step 3: Compile and run the sample JDBCDBTokenSample
   
    NOTES
-    Use JDK 1.7 and above
+    Use JDK8 and above
    MODIFIED    (MM/DD/YY)
     nbsundar    1/7/21 - Creation 
  */
@@ -38,9 +35,14 @@ public class JDBCDBTokenSample {
   // Download the wallet zip file and provide the path to the zip file as TNS_ADMIN 
   // Note that you need to pass the property oracle.jdbc.tokenAuthentication=OCI_TOKEN for token authentication 
   final static String DB_URL="jdbc:oracle:thin:@dbname_high?TNS_ADMIN=/Users/user/wallet/Wallet_dbname&oracle.jdbc.tokenAuthentication=OCI_TOKEN";
-  // If mutla TLS(mTLS) is disabled then, ADB connection does not require wallets. 
+  // If mutual TLS(mTLS) is disabled then, ADB connection does not require wallets. 
   // Copy the connection string from "DB Connection" tab from "Connection Strings" section choosing "TLS" in the dropdown
   //final static String DB_URL="jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gebqqeredfsozhjbqbs_dbname_medium.adb.oraclecloud.com)))?oracle.jdbc.tokenAuthentication=OCI_TOKEN";
+  // Another way to enable token authentication in the long form connection string. 
+  final static String DB_URL="jdbc:oracle:thin:@(description="
+           + "(retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))"
+           + "(security=(token_auth=OCI_TOKEN))"
+           + "(connect_data=(service_name=gebqqeredfsozhjbqbs_dbname_medium.adb.oraclecloud.com)))?oracle.jdbc.tokenAuthentication=OCI_TOKEN";
 
 
   public static void main(String args[]) throws SQLException {
@@ -48,16 +50,10 @@ public class JDBCDBTokenSample {
     // For more connection related properties. Refer to 
     // the OracleConnection interface. 
     Properties properties = new Properties();     
-        
-    properties.put(OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH, "20");    
-    properties.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_TYPES, 
-          "(MD5,SHA1,SHA256,SHA384,SHA512)");
-    properties.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_LEVEL,
-          "REQUIRED");
-    // Connection property to enable database token authentication.
+ 
+   //Connection property to enable IAM token authentication.
    // properties.put(OracleConnection.CONNECTION_PROPERTY_TOKEN_AUTHENTICATION, "OCI_TOKEN");
-
-
+     
     OracleDataSource ods = new OracleDataSource();
     ods.setURL(DB_URL);    
     ods.setConnectionProperties(properties);
