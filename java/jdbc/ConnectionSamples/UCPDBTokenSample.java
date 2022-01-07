@@ -75,14 +75,8 @@ public class UCPDBTokenSample {
     pds.setMaxPoolSize(20);
 
     Properties properties = new Properties();     
-        
-    properties.put(OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH, "20");    
-    properties.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_TYPES, 
-          "(MD5,SHA1,SHA256,SHA384,SHA512)");
-    properties.put(OracleConnection.CONNECTION_PROPERTY_THIN_NET_CHECKSUM_LEVEL,
-          "REQUIRED");
     // Connection property to enable IAM-Authentication 
-    properties.put(OracleConnection.CONNECTION_PROPERTY_TOKEN_AUTHENTICATION, "OCI_TOKEN");
+   // properties.put(OracleConnection.CONNECTION_PROPERTY_TOKEN_AUTHENTICATION, "OCI_TOKEN");
 
     pds.setConnectionProperties(properties);
 
