@@ -3,6 +3,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 
 | Repo/Folder name  | Description |
 | ------------- | ------------- |
+| [apex](./apex) | APEX examples |
 | [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
 | [dotnet](https://github.com/oracle/dotnet-db-samples) | .NET based examples |
 | [java](./java)  | Java based examples |
@@ -23,6 +24,9 @@ You can find the online documentation of the Oracle Database under [docs.oracle.
 Some of the examples that you see within this repository can be executed in the free web-based tool: [LiveSQL.oracle.com](https://livesql.oracle.com).
 
 LiveSQL is also an excellent resource for getting started with Oracle Database.
+
+## Dev Gym
+If you would like to challenge yourself, you can take quizzes, workouts and classes at [DevGym.oracle.com](https://devgym.oracle.com).
 
 ## License
 
