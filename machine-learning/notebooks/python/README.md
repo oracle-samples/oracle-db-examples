@@ -21,7 +21,7 @@ This current folder contains the examples based on Oracle Machine Learning for P
 
 The specific denomination "OfficeHours_" in the name of the file indicates that the Notebook was presented at one of the previous sessions of the [AskTOM Oracle Machine Learning Office Hours](https://asktom.oracle.com/pls/apex/asktom.search?oh=6801#sessions).
 
-See [Introducing Oracle Machine Learning Notebooks for the Oracle Autonomous Data Warehouse](https://blogs.oracle.com/machinelearning/post/introducing-oracle-machine-learning-notebooks-for-oracle-autonomous-database) blog post for more information.
+See [Oracle Machine Learning Notebooks - Get Started](https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/) for more information.
 
 #### Copyright (c) 2022 Oracle Corporation and/or its affilitiates.
 

@@ -1,0 +1,1091 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n# Oracle Machine Learning for Python (OML4Py)\n\n***Oracle Machine Learning for Python*** (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automated machine learning (AutoML) features.\n\nIn this notebook, we highlight the AutoML workflow using OML4Py:\n\n* Automated algorithm selection - identify the most appropriate algorithm\n* Automated feature selection - select the features (predictors) that best support that algorithm\n* Automated model tuning - tune the model using algorithm hyperparameters and the selected features\n\nUsing the WINE dataset form scikit-learn, we use AutoML for classification on the \u0027target\u0027 column, and for regression on the \u0027proline\u0027 column. \n\nCopyright (c) 2021 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:56:50+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eOracle Machine Learning for Python (OML4Py)\u003c/h1\u003e\n\u003cp\u003e\u003cstrong\u003e\u003cem\u003eOracle Machine Learning for Python\u003c/em\u003e\u003c/strong\u003e (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automated machine learning (AutoML) features.\u003c/p\u003e\n\u003cp\u003eIn this notebook, we highlight the AutoML workflow using OML4Py:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eAutomated algorithm selection - identify the most appropriate algorithm\u003c/li\u003e\n\u003cli\u003eAutomated feature selection - select the features (predictors) that best support that algorithm\u003c/li\u003e\n\u003cli\u003eAutomated model tuning - tune the model using algorithm hyperparameters and the selected features\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eUsing the WINE dataset form scikit-learn, we use AutoML for classification on the \u0027target\u0027 column, and for regression on the \u0027proline\u0027 column.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2021 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259401_-2029185095",
+      "id": "20220124-201419_390361909",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T15:56:51+0000",
+      "dateFinished": "2022-03-10T15:56:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Import libraries supporting OML4Py \n\nTo use OML4Py, first import the package ***oml***. \n\nUsers can get online help using Python\u0027s help function and specifying the function of interest.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:56:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eImport libraries supporting OML4Py\u003c/h1\u003e\n\u003cp\u003eTo use OML4Py, first import the package \u003cstrong\u003e\u003cem\u003eoml\u003c/em\u003e\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003eUsers can get online help using Python\u0027s help function and specifying the function of interest.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259403_-24062180",
+      "id": "20220124-201419_492395226",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T15:56:53+0000",
+      "dateFinished": "2022-03-10T15:56:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Import libraries and set display options",
+      "text": "%python\n\nimport warnings\nwarnings.filterwarnings(\u0027ignore\u0027)\n\nimport pandas as pd\nimport oml\nfrom oml import automl\n\npd.set_option(\u0027display.max_rows\u0027, 500)\npd.set_option(\u0027display.max_columns\u0027, 500)\npd.set_option(\u0027display.width\u0027, 1000)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:56:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259403_1833265251",
+      "id": "20220124-201419_836919657",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T15:56:53+0000",
+      "dateFinished": "2022-03-10T15:57:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Create data sets as Pandas DataFrame and load into Oracle Database\n\nIn this example, we load the **wine** and **iris** data sets, combining target and predictors into a single DataFrame that matches the form the data would have as a database table. These DataFrame objects can then be loaded into Oracle Database using the ***create*** function.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:03+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eCreate data sets as Pandas DataFrame and load into Oracle Database\u003c/h1\u003e\n\u003cp\u003eIn this example, we load the \u003cstrong\u003ewine\u003c/strong\u003e and \u003cstrong\u003eiris\u003c/strong\u003e data sets, combining target and predictors into a single DataFrame that matches the form the data would have as a database table. These DataFrame objects can then be loaded into Oracle Database using the \u003cstrong\u003e\u003cem\u003ecreate\u003c/em\u003e\u003c/strong\u003e function.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259403_-729876451",
+      "id": "20220124-201419_718697513",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T15:57:04+0000",
+      "dateFinished": "2022-03-10T15:57:04+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create WINE data table",
+      "text": "%python\n\nfrom sklearn.datasets import load_wine\n\nwine \u003d load_wine()\nx \u003d pd.DataFrame(wine.data, columns \u003d wine[\"feature_names\"])\ny \u003d pd.DataFrame(list(map(lambda x: {0:\u0027class_0\u0027, 1: \u0027class_1\u0027, 2:\u0027class_2\u0027}[x], wine.target)), \n                 columns \u003d [\u0027target\u0027])\n\nwine_df \u003d pd.concat([x,y], axis\u003d1)\n\ntry:\n    oml.drop(table\u003d\"WINE\")\nexcept:\n    pass\nWINE \u003d oml.create(wine_df, table\u003d\"WINE\")\nprint(WINE.shape)\nprint(WINE.dtypes)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(178, 14)\nalcohol                           \u003cclass \u0027oml.core.float.Float\u0027\u003e\nmalic_acid                        \u003cclass \u0027oml.core.float.Float\u0027\u003e\nash                               \u003cclass \u0027oml.core.float.Float\u0027\u003e\nalcalinity_of_ash                 \u003cclass \u0027oml.core.float.Float\u0027\u003e\nmagnesium                         \u003cclass \u0027oml.core.float.Float\u0027\u003e\ntotal_phenols                     \u003cclass \u0027oml.core.float.Float\u0027\u003e\nflavanoids                        \u003cclass \u0027oml.core.float.Float\u0027\u003e\nnonflavanoid_phenols              \u003cclass \u0027oml.core.float.Float\u0027\u003e\nproanthocyanins                   \u003cclass \u0027oml.core.float.Float\u0027\u003e\ncolor_intensity                   \u003cclass \u0027oml.core.float.Float\u0027\u003e\nhue                               \u003cclass \u0027oml.core.float.Float\u0027\u003e\nod280/od315_of_diluted_wines      \u003cclass \u0027oml.core.float.Float\u0027\u003e\nproline                           \u003cclass \u0027oml.core.float.Float\u0027\u003e\ntarget                          \u003cclass \u0027oml.core.string.String\u0027\u003e\ndtype: object\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259403_-1198447953",
+      "id": "20220124-201419_507471773",
+      "dateCreated": "2020-06-09T22:06:50+0000",
+      "dateStarted": "2022-03-10T15:57:04+0000",
+      "dateFinished": "2022-03-10T15:57:05+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nz.show(WINE.head(20))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "alcohol": "string",
+                      "malic_acid": "string",
+                      "ash": "string",
+                      "alcalinity_of_ash": "string",
+                      "magnesium": "string",
+                      "total_phenols": "string",
+                      "flavanoids": "string",
+                      "nonflavanoid_phenols": "string",
+                      "proanthocyanins": "string",
+                      "color_intensity": "string",
+                      "hue": "string",
+                      "od280/od315_of_diluted_wines": "string",
+                      "proline": "string",
+                      "target": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "alcohol\tmalic_acid\tash\talcalinity_of_ash\tmagnesium\ttotal_phenols\tflavanoids\tnonflavanoid_phenols\tproanthocyanins\tcolor_intensity\thue\tod280/od315_of_diluted_wines\tproline\ttarget\n14.23\t1.71\t2.43\t15.6\t127\t2.8\t3.06\t0.28\t2.29\t5.64\t1.04\t3.92\t1065\tclass_0\n13.2\t1.78\t2.14\t11.2\t100\t2.65\t2.76\t0.26\t1.28\t4.38\t1.05\t3.4\t1050\tclass_0\n13.16\t2.36\t2.67\t18.6\t101\t2.8\t3.24\t0.3\t2.81\t5.68\t1.03\t3.17\t1185\tclass_0\n14.37\t1.95\t2.5\t16.8\t113\t3.85\t3.49\t0.24\t2.18\t7.8\t0.86\t3.45\t1480\tclass_0\n13.24\t2.59\t2.87\t21.0\t118\t2.8\t2.69\t0.39\t1.82\t4.32\t1.04\t2.93\t735\tclass_0\n14.2\t1.76\t2.45\t15.2\t112\t3.27\t3.39\t0.34\t1.97\t6.75\t1.05\t2.85\t1450\tclass_0\n14.39\t1.87\t2.45\t14.6\t96\t2.5\t2.52\t0.3\t1.98\t5.25\t1.02\t3.58\t1290\tclass_0\n14.06\t2.15\t2.61\t17.6\t121\t2.6\t2.51\t0.31\t1.25\t5.05\t1.06\t3.58\t1295\tclass_0\n14.83\t1.64\t2.17\t14.0\t97\t2.8\t2.98\t0.29\t1.98\t5.2\t1.08\t2.85\t1045\tclass_0\n13.86\t1.35\t2.27\t16.0\t98\t2.98\t3.15\t0.22\t1.85\t7.22\t1.01\t3.55\t1045\tclass_0\n14.1\t2.16\t2.3\t18.0\t105\t2.95\t3.32\t0.22\t2.38\t5.75\t1.25\t3.17\t1510\tclass_0\n14.12\t1.48\t2.32\t16.8\t95\t2.2\t2.43\t0.26\t1.57\t5.0\t1.17\t2.82\t1280\tclass_0\n13.75\t1.73\t2.41\t16.0\t89\t2.6\t2.76\t0.29\t1.81\t5.6\t1.15\t2.9\t1320\tclass_0\n14.75\t1.73\t2.39\t11.4\t91\t3.1\t3.69\t0.43\t2.81\t5.4\t1.25\t2.73\t1150\tclass_0\n14.38\t1.87\t2.38\t12.0\t102\t3.3\t3.64\t0.29\t2.96\t7.5\t1.2\t3.0\t1547\tclass_0\n13.63\t1.81\t2.7\t17.2\t112\t2.85\t2.91\t0.3\t1.46\t7.3\t1.28\t2.88\t1310\tclass_0\n14.3\t1.92\t2.72\t20.0\t120\t2.8\t3.14\t0.33\t1.97\t6.2\t1.07\t2.65\t1280\tclass_0\n13.83\t1.57\t2.62\t20.0\t115\t2.95\t3.4\t0.4\t1.72\t6.6\t1.13\t2.57\t1130\tclass_0\n14.19\t1.59\t2.48\t16.5\t108\t3.3\t3.93\t0.32\t1.86\t8.7\t1.23\t2.82\t1680\tclass_0\n13.64\t3.1\t2.56\t15.2\t116\t2.7\t3.03\t0.17\t1.66\t5.1\t0.96\t3.36\t845\tclass_0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259403_691523696",
+      "id": "20220124-201419_1231515914",
+      "dateCreated": "2020-08-11T15:01:56+0000",
+      "dateStarted": "2022-03-10T15:57:05+0000",
+      "dateFinished": "2022-03-10T15:57:05+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Automated Machine Learning (AutoML)\nThe AutoML workflow consists of \n\n- identify the most appropriate algorithm \n- select the features (predictors) that best support that algorithm\n- tune the model using algorithm hyperparameters and the selected features\n\n## Automated Algorithm Selection\n\nWhich algorithm is best to predict my target among those available with OML4Py?\n\n- Classification: Decision Tree, Generalized Linear Model, Naïve Bayes, Neural Network, RandomForest, Support Vector Machine\n- Regression: Generalized Linear Model, Neural Network, Support Vector Machine\n\nTo use AutoML algorithm selection, we create an ***AlgorithmSelection*** object, here with the \u0027accuracy\u0027 score metric. Then, we invoke ***select*** to get the top 4 predicted algorithms by setting k\u003d4. Automated algorithm selection ranks the algorithms from the set of supported in-database algorithms likely to produce better models using characteristics of the data set and technique. Algorithm Selection itself uses advanced machine learning and ***meta-learning*** techniques.\n\nUsers can select from a variety of ***score_metric*** options:\n\n- binary classification – accuracy (default), f1, precision, recall, roc_auc, f1_micro, f1_macro, f1_weighted, recall_micro, recall_macro, recall_weighted, precision_micro, precision_macro, precision_weighted\n- multiclass classification – accuracy (default), f1_micro, f1_macro, f1_weighted, recall_micro, recall_macro, recall_weighted, precision_micro, precision_macro, precision_weighted\n- regression – r2 (default), neg_mean_squared_error, neg_mean_absolute_error, neg_mean_squared_log_error, neg_median_absolute_error",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:05+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eAutomated Machine Learning (AutoML)\u003c/h1\u003e\n\u003cp\u003eThe AutoML workflow consists of\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eidentify the most appropriate algorithm\u003c/li\u003e\n\u003cli\u003eselect the features (predictors) that best support that algorithm\u003c/li\u003e\n\u003cli\u003etune the model using algorithm hyperparameters and the selected features\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch2\u003eAutomated Algorithm Selection\u003c/h2\u003e\n\u003cp\u003eWhich algorithm is best to predict my target among those available with OML4Py?\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eClassification: Decision Tree, Generalized Linear Model, Naïve Bayes, Neural Network, RandomForest, Support Vector Machine\u003c/li\u003e\n\u003cli\u003eRegression: Generalized Linear Model, Neural Network, Support Vector Machine\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eTo use AutoML algorithm selection, we create an \u003cstrong\u003e\u003cem\u003eAlgorithmSelection\u003c/em\u003e\u003c/strong\u003e object, here with the \u0027accuracy\u0027 score metric. Then, we invoke \u003cstrong\u003e\u003cem\u003eselect\u003c/em\u003e\u003c/strong\u003e to get the top 4 predicted algorithms by setting k\u003d4. Automated algorithm selection ranks the algorithms from the set of supported in-database algorithms likely to produce better models using characteristics of the data set and technique. Algorithm Selection itself uses advanced machine learning and \u003cstrong\u003e\u003cem\u003emeta-learning\u003c/em\u003e\u003c/strong\u003e techniques.\u003c/p\u003e\n\u003cp\u003eUsers can select from a variety of \u003cstrong\u003e\u003cem\u003escore_metric\u003c/em\u003e\u003c/strong\u003e options:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003ebinary classification – accuracy (default), f1, precision, recall, roc_auc, f1_micro, f1_macro, f1_weighted, recall_micro, recall_macro, recall_weighted, precision_micro, precision_macro, precision_weighted\u003c/li\u003e\n\u003cli\u003emulticlass classification – accuracy (default), f1_micro, f1_macro, f1_weighted, recall_micro, recall_macro, recall_weighted, precision_micro, precision_macro, precision_weighted\u003c/li\u003e\n\u003cli\u003eregression – r2 (default), neg_mean_squared_error, neg_mean_absolute_error, neg_mean_squared_log_error, neg_median_absolute_error\u003c/li\u003e\n\u003c/ul\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1316586771",
+      "id": "20220124-201419_1798092902",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T15:57:06+0000",
+      "dateFinished": "2022-03-10T15:57:06+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Prepare WINE classification data",
+      "text": "%python\n\nWINE_X_cl,WINE_y_cl \u003d WINE.drop(\u0027target\u0027), WINE[\u0027target\u0027]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1118128094",
+      "id": "20220124-201419_1916988950",
+      "dateCreated": "2020-08-12T21:25:31+0000",
+      "dateStarted": "2022-03-10T15:57:07+0000",
+      "dateFinished": "2022-03-10T15:57:07+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Prepare WINE regression data",
+      "text": "%python\n\nWINE_X_reg,WINE_y_reg \u003d WINE.drop(\u0027proline\u0027), WINE[\u0027proline\u0027]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1496355446",
+      "id": "20220124-201419_388267084",
+      "dateCreated": "2020-08-12T21:26:32+0000",
+      "dateStarted": "2022-03-10T15:57:07+0000",
+      "dateFinished": "2022-03-10T15:57:07+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compute classification algorithm ranking for WINE data set",
+      "text": "%python\n\nas_wine_cl \u003d automl.AlgorithmSelection(mining_function\u003d\u0027classification\u0027, \n                                          score_metric\u003d\u0027accuracy\u0027, parallel\u003d2)\n\nwine_alg_ranking_cl \u003d as_wine_cl.select(WINE_X_cl, WINE_y_cl, k\u003d4) \n\nprint(\"Ranked algorithms:\\n\", wine_alg_ranking_cl)\n\nselected_wine_alg_cl \u003d next(iter(dict(wine_alg_ranking_cl).keys()))\nprint(\"Best algorithm: \", selected_wine_alg_cl)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Ranked algorithms:\n [(\u0027svm_gaussian\u0027, 0.9825515947467167), (\u0027svm_linear\u0027, 0.9727954971857411), (\u0027nn\u0027, 0.9670812114714554), (\u0027rf\u0027, 0.9495470383275262)]\nBest algorithm:  svm_gaussian\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-2056885292",
+      "id": "20220124-201419_1706664067",
+      "dateCreated": "2020-06-09T22:31:24+0000",
+      "dateStarted": "2022-03-10T15:57:08+0000",
+      "dateFinished": "2022-03-10T15:57:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compute regression algorithm ranking for WINE data set",
+      "text": "%python\n\nas_wine_reg \u003d automl.AlgorithmSelection(mining_function\u003d\u0027regression\u0027, \n                                          score_metric\u003d\u0027r2\u0027, parallel\u003d2)\n\nwine_alg_ranking_reg \u003d as_wine_reg.select(WINE_X_reg, WINE_y_reg, k\u003d4) \n\nprint(\"Ranked algorithms:\\n\", wine_alg_ranking_reg)\n\nselected_wine_alg_reg \u003d next(iter(dict(wine_alg_ranking_reg).keys()))\nprint(\"Best algorithm: \", selected_wine_alg_reg)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:57:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Ranked algorithms:\n [(\u0027svm_gaussian\u0027, 0.7080349308361681), (\u0027glm_ridge\u0027, 0.7038075596910935), (\u0027glm\u0027, 0.7037129897197263), (\u0027svm_linear\u0027, 0.6920970033592116)]\nBest algorithm:  svm_gaussian\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-32722967",
+      "id": "20220124-201419_1809374170",
+      "dateCreated": "2020-08-10T19:52:17+0000",
+      "dateStarted": "2022-03-10T15:57:54+0000",
+      "dateFinished": "2022-03-10T15:58:34+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Automated Feature Selection\n\nNext, we determine the features that best support the selected algorithm. We first define a ***FeatureSelection*** object with score metric \u0027accuracy\u0027 and invoke ***reduce*** specifying the desired algorithm determined above and the train and test data set proxy objects. \n\nWe see the set of selected columns. Try other algorithms, e.g., svm_linear, to see if different columns are selected.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:58:34+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAutomated Feature Selection\u003c/h2\u003e\n\u003cp\u003eNext, we determine the features that best support the selected algorithm. We first define a \u003cstrong\u003e\u003cem\u003eFeatureSelection\u003c/em\u003e\u003c/strong\u003e object with score metric \u0027accuracy\u0027 and invoke \u003cstrong\u003e\u003cem\u003ereduce\u003c/em\u003e\u003c/strong\u003e specifying the desired algorithm determined above and the train and test data set proxy objects.\u003c/p\u003e\n\u003cp\u003eWe see the set of selected columns. Try other algorithms, e.g., svm_linear, to see if different columns are selected.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-1009737467",
+      "id": "20220124-201419_235911913",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T15:58:34+0000",
+      "dateFinished": "2022-03-10T15:58:34+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nfs_wine_cl \u003d automl.FeatureSelection(mining_function \u003d \u0027classification\u0027, \n                                     score_metric \u003d \u0027accuracy\u0027, parallel\u003d2)\n\nselected_wine_features_cl \u003d fs_wine_cl.reduce(selected_wine_alg_cl, \n                                              WINE_X_cl, WINE_y_cl)\n\nWINE_X_reduced_cl \u003d WINE_X_cl[:,selected_wine_features_cl]\n\nprint(\"Selected columns:\", WINE_X_reduced_cl.columns)\nprint(\"Number of columns:\")\n\"{}  reduced to {}\".format(len(WINE_X_cl.columns), len(selected_wine_features_cl))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:58:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Selected columns: [\u0027alcohol\u0027, \u0027ash\u0027, \u0027alcalinity_of_ash\u0027, \u0027flavanoids\u0027, \u0027nonflavanoid_phenols\u0027, \u0027color_intensity\u0027, \u0027hue\u0027, \u0027od280/od315_of_diluted_wines\u0027, \u0027proline\u0027]\nNumber of columns:\n\u002713  reduced to 9\u0027\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-657104485",
+      "id": "20220124-201419_981299576",
+      "dateCreated": "2020-06-09T22:33:31+0000",
+      "dateStarted": "2022-03-10T15:58:35+0000",
+      "dateFinished": "2022-03-10T15:59:12+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nfs_wine_reg \u003d automl.FeatureSelection(mining_function \u003d \u0027regression\u0027, \n                                     score_metric \u003d \u0027r2\u0027, parallel\u003d2)\n\nselected_wine_features_reg \u003d fs_wine_reg.reduce(selected_wine_alg_reg, \n                                                WINE_X_reg, WINE_y_reg)\n\nWINE_X_reduced_reg \u003d WINE_X_reg[:,selected_wine_features_reg]\n\nprint(\"Selected columns:\",WINE_X_reduced_reg.columns)\nprint(\"Number of columns:\")\n\"{}  reduced to {}\".format(len(WINE_X_reg.columns), len(selected_wine_features_reg))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:59:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Selected columns: [\u0027alcohol\u0027, \u0027magnesium\u0027, \u0027total_phenols\u0027, \u0027flavanoids\u0027, \u0027nonflavanoid_phenols\u0027, \u0027color_intensity\u0027, \u0027hue\u0027, \u0027od280/od315_of_diluted_wines\u0027, \u0027target\u0027]\nNumber of columns:\n\u002713  reduced to 9\u0027\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1176738392",
+      "id": "20220124-201419_317223692",
+      "dateCreated": "2020-08-11T15:05:39+0000",
+      "dateStarted": "2022-03-10T15:59:12+0000",
+      "dateFinished": "2022-03-10T16:00:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Automated Model Tuning\n\nAt this point, we\u0027re ready to build and tune the models we want to use. First, we define a ***ModelTuning*** object for classification. \nWe then invoke ***tune*** to produce the tuned model using the algorithm selected above and the reduced column data. \n\nThe result of model tuning is a dictionary with the \u0027best model\u0027 and \u0027all evals\u0027, which contains a list of all hyperparameter choices tried and their corresponding score\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:00:22+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAutomated Model Tuning\u003c/h2\u003e\n\u003cp\u003eAt this point, we\u0027re ready to build and tune the models we want to use. First, we define a \u003cstrong\u003e\u003cem\u003eModelTuning\u003c/em\u003e\u003c/strong\u003e object for classification.\n\u003cbr  /\u003eWe then invoke \u003cstrong\u003e\u003cem\u003etune\u003c/em\u003e\u003c/strong\u003e to produce the tuned model using the algorithm selected above and the reduced column data.\u003c/p\u003e\n\u003cp\u003eThe result of model tuning is a dictionary with the \u0027best model\u0027 and \u0027all evals\u0027, which contains a list of all hyperparameter choices tried and their corresponding score\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-696281872",
+      "id": "20220124-201419_1061387392",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T16:00:23+0000",
+      "dateFinished": "2022-03-10T16:00:23+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nmt_wine_cl \u003d automl.ModelTuning(mining_function \u003d \u0027classification\u0027, parallel\u003d2)\n\nresults_cl \u003d mt_wine_cl.tune(selected_wine_alg_cl, WINE_X_reduced_cl, WINE_y_cl)\ntuned_model_cl \u003d results_cl[\u0027best_model\u0027]\ntuned_model_cl",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:00:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Support Vector Machine\n\nMining Function: CLASSIFICATION\n\nTarget: target\n\nSettings: \n                    setting name                 setting value\n0                      ALGO_NAME  ALGO_SUPPORT_VECTOR_MACHINES\n1          CLAS_WEIGHTS_BALANCED                           OFF\n2                   ODMS_DETAILS                  ODMS_DISABLE\n3   ODMS_MISSING_VALUE_TREATMENT       ODMS_MISSING_VALUE_AUTO\n4                  ODMS_SAMPLING         ODMS_SAMPLING_DISABLE\n5                      PREP_AUTO                            ON\n6         SVMS_COMPLEXITY_FACTOR                            10\n7            SVMS_CONV_TOLERANCE                         .0001\n8           SVMS_KERNEL_FUNCTION                 SVMS_GAUSSIAN\n9                SVMS_NUM_PIVOTS                           200\n10                  SVMS_STD_DEV            2.1213203435596424\n\nAttributes: \nalcalinity_of_ash\nalcohol\nash\ncolor_intensity\nflavanoids\nhue\nnonflavanoid_phenols\nod280/od315_of_diluted_wines\nproline\n\nPartition: NO\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-422352645",
+      "id": "20220124-201419_1281900915",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T16:00:24+0000",
+      "dateFinished": "2022-03-10T16:03:24+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nmt_wine_reg \u003d automl.ModelTuning(mining_function \u003d \u0027regression\u0027, parallel\u003d2)\n\nresults_reg \u003d mt_wine_reg.tune(selected_wine_alg_reg, WINE_X_reduced_reg, WINE_y_reg)\ntuned_model_reg \u003d results_reg[\u0027best_model\u0027]\ntuned_model_reg",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:03:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Support Vector Machine\n\nMining Function: REGRESSION\n\nTarget: proline\n\nSettings: \n                    setting name                 setting value\n0                      ALGO_NAME  ALGO_SUPPORT_VECTOR_MACHINES\n1                   ODMS_DETAILS                  ODMS_DISABLE\n2   ODMS_MISSING_VALUE_TREATMENT       ODMS_MISSING_VALUE_AUTO\n3                  ODMS_SAMPLING         ODMS_SAMPLING_DISABLE\n4                      PREP_AUTO                            ON\n5         SVMS_COMPLEXITY_FACTOR                             3\n6            SVMS_CONV_TOLERANCE                         .0001\n7                   SVMS_EPSILON           0.33366666666666667\n8           SVMS_KERNEL_FUNCTION                 SVMS_GAUSSIAN\n9                SVMS_NUM_PIVOTS                           200\n10                  SVMS_STD_DEV            2.7839839380155995\n\nAttributes: \nalcohol\ncolor_intensity\nflavanoids\nhue\nmagnesium\nnonflavanoid_phenols\nod280/od315_of_diluted_wines\ntarget\ntotal_phenols\n\nPartition: NO\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_2111494273",
+      "id": "20220124-201419_491720503",
+      "dateCreated": "2020-08-11T15:09:15+0000",
+      "dateStarted": "2022-03-10T16:03:25+0000",
+      "dateFinished": "2022-03-10T16:08:04+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n### Specify a model tuning search space\n\nExplicitly indicate the search space you want to explore for model building using the ***param_space*** argument to the ***tune*** function. Below, we show using parameters for the Random Forest algorithm for classification and Neural Network for regression. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:08:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eSpecify a model tuning search space\u003c/h3\u003e\n\u003cp\u003eExplicitly indicate the search space you want to explore for model building using the \u003cstrong\u003e\u003cem\u003eparam_space\u003c/em\u003e\u003c/strong\u003e argument to the \u003cstrong\u003e\u003cem\u003etune\u003c/em\u003e\u003c/strong\u003e function. Below, we show using parameters for the Random Forest algorithm for classification and Neural Network for regression.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1592531748",
+      "id": "20220124-201419_1282310017",
+      "dateCreated": "2020-06-16T01:25:18+0000",
+      "dateStarted": "2022-03-10T16:08:05+0000",
+      "dateFinished": "2022-03-10T16:08:05+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nsearch_space\u003d{\u0027RFOR_SAMPLING_RATIO\u0027: {\u0027type\u0027: \u0027continuous\u0027, \u0027range\u0027: [0.05, 0.5]}, \n              \u0027RFOR_NUM_TREES\u0027: {\u0027type\u0027: \u0027discrete\u0027, \u0027range\u0027: [50, 55]}, \n              \u0027TREE_IMPURITY_METRIC\u0027: {\u0027type\u0027: \u0027categorical\u0027, \n              \u0027range\u0027: [\u0027TREE_IMPURITY_ENTROPY\u0027, \u0027TREE_IMPURITY_GINI\u0027]},}\n              \nat_wine2_cl \u003d automl.ModelTuning(mining_function\u003d\u0027classification\u0027, \n                                 score_metric\u003d\u0027f1_macro\u0027, parallel\u003d2)\nresults2_cl \u003d at_wine2_cl.tune(\u0027rf\u0027, WINE_X_cl, WINE_y_cl, \n                               param_space\u003dsearch_space)\nscore2_cl, params2_cl \u003d results2_cl[\u0027all_evals\u0027][0]\n\"{:.2}\".format(score2_cl)\n\ntuned_model2_cl \u003d results2_cl[\u0027best_model\u0027]\ntuned_model2_cl",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:08:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Random Forest\n\nMining Function: CLASSIFICATION\n\nTarget: target\n\nSettings: \n                    setting name            setting value\n0                      ALGO_NAME       ALGO_RANDOM_FOREST\n1              CLAS_MAX_SUP_BINS                       32\n2          CLAS_WEIGHTS_BALANCED                      OFF\n3                   ODMS_DETAILS             ODMS_DISABLE\n4   ODMS_MISSING_VALUE_TREATMENT  ODMS_MISSING_VALUE_AUTO\n5               ODMS_RANDOM_SEED                        0\n6                  ODMS_SAMPLING    ODMS_SAMPLING_DISABLE\n7                      PREP_AUTO                       ON\n8                 RFOR_NUM_TREES                       52\n9            RFOR_SAMPLING_RATIO                      0.2\n10          TREE_IMPURITY_METRIC       TREE_IMPURITY_GINI\n11           TREE_TERM_MAX_DEPTH                       16\n12         TREE_TERM_MINPCT_NODE                      .05\n13        TREE_TERM_MINPCT_SPLIT                       .1\n14         TREE_TERM_MINREC_NODE                       10\n15        TREE_TERM_MINREC_SPLIT                       20\n\nAttributes: \nalcalinity_of_ash\nalcohol\nash\ncolor_intensity\nflavanoids\nhue\nmagnesium\nnonflavanoid_phenols\nod280/od315_of_diluted_wines\nproline\ntotal_phenols\n\nPartition: NO\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_174289489",
+      "id": "20220124-201419_1752022512",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T16:08:06+0000",
+      "dateFinished": "2022-03-10T16:10:12+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nsearch_space\u003d{\n        \u0027NNET_REGULARIZER\u0027: {\n            \u0027range\u0027: [\u0027NNET_REGULARIZER_HELDASIDE\u0027, \u0027NNET_REGULARIZER_L2\u0027, \u0027NNET_REGULARIZER_NONE\u0027],\n            \u0027type\u0027: \u0027categorical\u0027,},\n        \u0027NNET_ALL_ACTIVATIONS\u0027: {\n            \u0027range\u0027: [\u0027NNET_ACTIVATIONS_LOG_SIG\u0027, \u0027NNET_ACTIVATIONS_LINEAR\u0027,  \u0027NNET_ACTIVATIONS_BIPOLAR_SIG\u0027],\n            \u0027type\u0027: \u0027categorical\u0027,},\n        \u0027NNET_HIDDEN_LAYERS\u0027: {\n            \u0027range\u0027: [1, 2],\n            \u0027type\u0027: \u0027discrete\u0027,},\n        \u0027NNET_NODES\u0027: {\n            \u0027range\u0027: [10, 20],\n            \u0027type\u0027: \u0027discrete\u0027,},\n        }\n\nat_wine2_reg \u003d automl.ModelTuning(mining_function\u003d\u0027regression\u0027, \n                                  score_metric\u003d\u0027r2\u0027, parallel\u003d2)\nresults2_reg \u003d at_wine2_reg.tune(\u0027nn\u0027, WINE_X_reg, WINE_y_reg,\n                                 param_space\u003dsearch_space)\nscore2_reg, params2_reg \u003d results2_reg[\u0027all_evals\u0027][0]\n\"{:.2}\".format(score2_reg)\n\ntuned_model2_reg \u003d results2_reg[\u0027best_model\u0027]\ntuned_model2_reg",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:10:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Neural Network\n\nMining Function: REGRESSION\n\nTarget: proline\n\nSettings: \n                    setting name                   setting value\n0                      ALGO_NAME             ALGO_NEURAL_NETWORK\n1       LBFGS_GRADIENT_TOLERANCE                      .000000001\n2            LBFGS_HISTORY_DEPTH                              20\n3            LBFGS_SCALE_HESSIAN      LBFGS_SCALE_HESSIAN_ENABLE\n4               NNET_ACTIVATIONS  \u0027NNET_ACTIVATIONS_BIPOLAR_SIG\u0027\n5        NNET_HELDASIDE_MAX_FAIL                               6\n6           NNET_HELDASIDE_RATIO                             .25\n7             NNET_HIDDEN_LAYERS                               1\n8                NNET_ITERATIONS                             100\n9           NNET_NODES_PER_LAYER                              50\n10              NNET_REGULARIZER      NNET_REGULARIZER_HELDASIDE\n11                NNET_TOLERANCE                         .000001\n12                  ODMS_DETAILS                    ODMS_DISABLE\n13  ODMS_MISSING_VALUE_TREATMENT         ODMS_MISSING_VALUE_AUTO\n14              ODMS_RANDOM_SEED                               0\n15                 ODMS_SAMPLING           ODMS_SAMPLING_DISABLE\n16                     PREP_AUTO                              ON\n\nAttributes: \nalcalinity_of_ash\nalcohol\nash\ncolor_intensity\nflavanoids\nhue\nmagnesium\nmalic_acid\nnonflavanoid_phenols\nod280/od315_of_diluted_wines\nproanthocyanins\ntarget\ntotal_phenols\n\nPartition: NO\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1747119088",
+      "id": "20220124-201419_1711278679",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T16:10:12+0000",
+      "dateFinished": "2022-03-10T16:11:26+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n## Automated Model Selection\nAs a short cut, users may go directly to model selection on the training data. Automated model selection chooses the best algorithm (using Algorithm Selection)\nfrom the set of supported algorithms, then builds, tunes and returns the model.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:11:26+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAutomated Model Selection\u003c/h2\u003e\n\u003cp\u003eAs a short cut, users may go directly to model selection on the training data. Automated model selection chooses the best algorithm (using Algorithm Selection)\n\u003cbr  /\u003efrom the set of supported algorithms, then builds, tunes and returns the model.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-477176526",
+      "id": "20220124-201419_64194327",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T16:11:27+0000",
+      "dateFinished": "2022-03-10T16:11:27+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nms_wine \u003d automl.ModelSelection(mining_function \u003d \u0027classification\u0027, parallel\u003d2)\n\nbest_model \u003d ms_wine.select(WINE_X_cl, WINE_y_cl, k\u003d1, cv\u003d2)\nbest_model\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:11:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(\nAlgorithm Name: Support Vector Machine\n\nMining Function: CLASSIFICATION\n\nTarget: target\n\nSettings: \n                    setting name                 setting value\n0                      ALGO_NAME  ALGO_SUPPORT_VECTOR_MACHINES\n1          CLAS_WEIGHTS_BALANCED                           OFF\n2                   ODMS_DETAILS                  ODMS_DISABLE\n3   ODMS_MISSING_VALUE_TREATMENT       ODMS_MISSING_VALUE_AUTO\n4                  ODMS_SAMPLING         ODMS_SAMPLING_DISABLE\n5                      PREP_AUTO                            ON\n6         SVMS_COMPLEXITY_FACTOR                            10\n7            SVMS_CONV_TOLERANCE                         .0001\n8           SVMS_KERNEL_FUNCTION                 SVMS_GAUSSIAN\n9                SVMS_NUM_PIVOTS                           200\n10                  SVMS_STD_DEV            2.5495097567963922\n\nAttributes: \nalcalinity_of_ash\nalcohol\nash\ncolor_intensity\nflavanoids\nhue\nmagnesium\nmalic_acid\nnonflavanoid_phenols\nod280/od315_of_diluted_wines\nproanthocyanins\nproline\ntotal_phenols\n\nPartition: NO\n\n, \u0027svm_gaussian\u0027)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-1786987655",
+      "id": "20220124-201419_1023308443",
+      "dateCreated": "2020-06-16T01:21:39+0000",
+      "dateStarted": "2022-03-10T16:11:28+0000",
+      "dateFinished": "2022-03-10T16:12:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nms_wine_reg \u003d automl.ModelSelection(mining_function \u003d \u0027regression\u0027, parallel\u003d2)\n\nbest_model_reg \u003d ms_wine_reg.select(WINE_X_reg, WINE_y_reg, k\u003d1, cv\u003d2)\nbest_model_reg\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:12:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(\nAlgorithm Name: Support Vector Machine\n\nMining Function: REGRESSION\n\nTarget: proline\n\nSettings: \n                    setting name                 setting value\n0                      ALGO_NAME  ALGO_SUPPORT_VECTOR_MACHINES\n1                   ODMS_DETAILS                  ODMS_DISABLE\n2   ODMS_MISSING_VALUE_TREATMENT       ODMS_MISSING_VALUE_AUTO\n3                  ODMS_SAMPLING         ODMS_SAMPLING_DISABLE\n4                      PREP_AUTO                            ON\n5         SVMS_COMPLEXITY_FACTOR                             3\n6            SVMS_CONV_TOLERANCE                         .0001\n7                   SVMS_EPSILON           0.33367165666666665\n8           SVMS_KERNEL_FUNCTION                 SVMS_GAUSSIAN\n9                SVMS_NUM_PIVOTS                           200\n10                  SVMS_STD_DEV             3.865035555105706\n\nAttributes: \nalcalinity_of_ash\nalcohol\nash\ncolor_intensity\nflavanoids\nhue\nmagnesium\nmalic_acid\nnonflavanoid_phenols\nod280/od315_of_diluted_wines\nproanthocyanins\ntarget\ntotal_phenols\n\nPartition: NO\n\n, \u0027svm_gaussian\u0027)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_-1808528192",
+      "id": "20220124-201419_964283081",
+      "dateCreated": "2020-06-16T00:23:47+0000",
+      "dateStarted": "2022-03-10T16:12:31+0000",
+      "dateFinished": "2022-03-10T16:13:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:13:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1363275828",
+      "id": "20220124-201419_1598893315",
+      "dateCreated": "2020-02-19T23:51:59+0000",
+      "dateStarted": "2022-03-10T16:13:59+0000",
+      "dateFinished": "2022-03-10T16:13:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T16:14:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055259404_1248364136",
+      "id": "20220124-201419_1085928130",
+      "dateCreated": "2020-05-18T17:49:58+0000",
+      "dateStarted": "2022-03-10T16:14:00+0000",
+      "dateFinished": "2022-03-10T16:14:00+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py -5- AutoML",
+  "id": "101009",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7CC90ACC73:shared_process": []
+  },
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

@@ -1,0 +1,867 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n#OML4Py Partitioned Model\nOracle Machine Learning enables automatically building an ensemble model comprised of multiple sub-models, one for each data partition. Sub-models exist and are used as one model, which results in simplified scoring using the top-level model only. The proper sub-model is chosen by the system based on partition value(s) in the row of data to be scored. Partitioned models achieve potentially better accuracy through multiple targeted models. \n\nIn this notebook, we build an SVM model to predict the number of years a customer resides at their residence but partitioned on customer gender. The model is then used to predict the target, then predict the target with prediction details. \n\n\nCopyright (c) 2022 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eOML4Py Partitioned Model\u003c/h1\u003e\n\u003cp\u003eOracle Machine Learning enables automatically building an ensemble model comprised of multiple sub-models, one for each data partition. Sub-models exist and are used as one model, which results in simplified scoring using the top-level model only. The proper sub-model is chosen by the system based on partition value(s) in the row of data to be scored. Partitioned models achieve potentially better accuracy through multiple targeted models.\u003c/p\u003e\n\u003cp\u003eIn this notebook, we build an SVM model to predict the number of years a customer resides at their residence but partitioned on customer gender. The model is then used to predict the target, then predict the target with prediction details.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2022 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-88581177",
+      "id": "20220124-201431_883818861",
+      "dateCreated": "2020-06-05T19:16:06+0000",
+      "dateStarted": "2022-03-10T17:27:01+0000",
+      "dateFinished": "2022-03-10T17:27:02+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information ...",
+      "text": "%md\n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u0027);\"\u003ehttps://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nOML Partitioned Model: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/partitioned-model.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/partitioned-model.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/partitioned-model.html\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u0027);\"\u003ehttps://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Partitioned Model: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/partitioned-model.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/partitioned-model.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/partitioned-model.html\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-1164848607",
+      "id": "20220124-201431_132202196",
+      "dateCreated": "2020-06-10T17:55:05+0000",
+      "dateStarted": "2022-03-10T17:27:03+0000",
+      "dateFinished": "2022-03-10T17:27:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Import libraries and set display options",
+      "text": "%python\n\nimport oml\nimport pandas as pd\n\npd.set_option(\u0027display.max_rows\u0027, 500)\npd.set_option(\u0027display.max_columns\u0027, 500)\npd.set_option(\u0027display.width\u0027, 1000)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:03+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_967659518",
+      "id": "20220124-201431_750948362",
+      "dateCreated": "2020-06-04T18:31:28+0000",
+      "dateStarted": "2022-03-10T17:27:03+0000",
+      "dateFinished": "2022-03-10T17:27:13+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Prepare CUSTOMER_DEMO dataset using data from the SH schema",
+      "text": "%python\n\nCUSTOMERS \u003d oml.sync(query \u003d \u0027SELECT CUST_ID, CUST_GENDER, CUST_MARITAL_STATUS, CUST_YEAR_OF_BIRTH, CUST_INCOME_LEVEL, CUST_CREDIT_LIMIT FROM SH.CUSTOMERS\u0027)\nSUPPLEMENTARY_DEMOGRAPHICS \u003d oml.sync(query \u003d \u0027SELECT CUST_ID, EDUCATION, AFFINITY_CARD, HOUSEHOLD_SIZE, OCCUPATION, YRS_RESIDENCE, Y_BOX_GAMES FROM SH.SUPPLEMENTARY_DEMOGRAPHICS\u0027)\nCUSTOMERS_DEMO \u003d CUSTOMERS.merge(SUPPLEMENTARY_DEMOGRAPHICS, how \u003d \"inner\", on \u003d \u0027CUST_ID\u0027, suffixes \u003d [\"\", \"\"])\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 8.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_588188062",
+      "id": "20220124-201431_1170975917",
+      "dateCreated": "2020-06-03T20:50:23+0000",
+      "dateStarted": "2022-03-10T17:27:14+0000",
+      "dateFinished": "2022-03-10T17:27:14+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display number of rows and columns",
+      "text": "%python\n\nCUSTOMERS_DEMO.shape",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(4500, 12)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-902878252",
+      "id": "20220124-201431_27949072",
+      "dateCreated": "2020-06-03T20:54:15+0000",
+      "dateStarted": "2022-03-10T17:27:14+0000",
+      "dateFinished": "2022-03-10T17:27:14+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display a few rows of CUSTOMERS_DEMO data",
+      "text": "%python\n\nz.show(CUSTOMERS_DEMO.head())",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "string",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "string",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "string",
+                      "HOUSEHOLD_SIZE": "string",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "string",
+                      "Y_BOX_GAMES": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\n103791\tM\tDivorc.\t1952\tB: 30,000 - 49,999\t3000\tHS-grad\t0\t2\tProf.\t5\t0\n100804\tF\tDivorc.\t1943\tA: Below 30,000\t1500\t\u003c Bach.\t0\t2\tProf.\t6\t0\n100593\tM\tMarried\t1963\tG: 130,000 - 149,999\t1500\tHS-grad\t1\t3\tProf.\t4\t0\n104077\tM\tNeverM\t1975\tL: 300,000 and above\t9000\tProfsc\t0\t2\tProf.\t3\t1\n101891\tM\tMarried\t1956\tJ: 190,000 - 249,999\t15000\tHS-grad\t1\t3\tCrafts\t5\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-807122873",
+      "id": "20220124-201431_263450991",
+      "dateCreated": "2020-06-03T20:53:41+0000",
+      "dateStarted": "2022-03-10T17:27:15+0000",
+      "dateFinished": "2022-03-10T17:27:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create data for train and test datasets and drop missing values",
+      "text": "%python\n\ndat \u003d CUSTOMERS_DEMO.split(ratio\u003d(0.8, 0.2), seed \u003d 6218945)\n\ndat[0] \u003d dat[0].dropna()\n\ntrain_x \u003d dat[0].drop(\u0027YRS_RESIDENCE\u0027)\ntrain_y \u003d dat[0][\u0027YRS_RESIDENCE\u0027]\ntest_dat \u003d dat[1]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-294061024",
+      "id": "20220124-201431_927560275",
+      "dateCreated": "2020-06-03T20:55:39+0000",
+      "dateStarted": "2022-03-10T17:27:23+0000",
+      "dateFinished": "2022-03-10T17:27:23+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "",
+      "text": "%md\n\n### Examples of possible setting overrides for Partitioning (Shared Settings)\n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm\n\nA complete list of settings can be found in the Documentation link:\n\n-- Algorithm Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\u0027);\"\u003eSupport Vector Machine\u003c/a\u003e\n\n-- Shared Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\u0027);\"\u003eAll algorithms\u003c/a\u003e\n\n-- Requests the building of a partitioned model. \n    The setting value is a comma-separated list of the machine learning attributes to be used to determine the in-list partition key values. These attributes are taken from the input columns, unless an XFORM_LIST parameter is passed to the model. If XFORM_LIST parameter is passed to the model, then the attributes are taken from the attributes produced by these transformations.  \n     \u0027odms_partition_columns\u0027 : \u0027\u003cComma separated list of attributes\u003e\u0027\n     \n-- Controls the parallel building of partitioned models.     \n    ODMS_PARTITION_BUILD_INTRA builds each partition in parallel using all slaves.\n    ODMS_PARTITION_BUILD_INTER builds each partition entirely in a single slave, but multiple partitions may be built at the same time because multiple slaves are active.\n    ODMS_PARTITION_BUILD_HYBRID combines the other two types and is recommended for most situations to adapt to dynamic environments. This is the default value.\n     \u0027odms_partition_build_type\u0027 : \u0027ODMS_PARTITION_BUILD_HYBRID\u0027",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eExamples of possible setting overrides for Partitioning (Shared Settings)\u003c/h3\u003e\n\u003cp\u003eIf the user does not override the default settings, then relevant settings are determined by the algorithm\u003c/p\u003e\n\u003cp\u003eA complete list of settings can be found in the Documentation link:\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Algorithm Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\u0027);\"\u003eSupport Vector Machine\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Shared Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\u0027);\"\u003eAll algorithms\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Requests the building of a partitioned model.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eThe setting value is a comma-separated list of the machine learning attributes to be used to determine the in-list partition key values. These attributes are taken from the input columns, unless an XFORM_LIST parameter is passed to the model. If XFORM_LIST parameter is passed to the model, then the attributes are taken from the attributes produced by these transformations.  \n \u0027odms_partition_columns\u0027 : \u0027\u0026lt;Comma separated list of attributes\u0026gt;\u0027\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Controls the parallel building of partitioned models.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eODMS_PARTITION_BUILD_INTRA builds each partition in parallel using all slaves.\nODMS_PARTITION_BUILD_INTER builds each partition entirely in a single slave, but multiple partitions may be built at the same time because multiple slaves are active.\nODMS_PARTITION_BUILD_HYBRID combines the other two types and is recommended for most situations to adapt to dynamic environments. This is the default value.\n \u0027odms_partition_build_type\u0027 : \u0027ODMS_PARTITION_BUILD_HYBRID\u0027\n\u003c/code\u003e\u003c/pre\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-241059119",
+      "id": "20220124-201431_796856019",
+      "dateCreated": "2021-08-18T06:04:45+0000",
+      "dateStarted": "2022-03-10T17:27:24+0000",
+      "dateFinished": "2022-03-10T17:27:24+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build Partitioned Model using the SVM algorithm to predict YRS_RESIDENCE, partitioned by CUST_GENDER",
+      "text": "%python\n\ntry:\n    oml.drop(model \u003d \u0027SVM_PARTITIONED_REGRESSION_MODEL\u0027) \nexcept:\n    pass\n\nsetting \u003d {\u0027svms_kernel_function\u0027 :\u0027dbms_data_mining.svms_linear\u0027,\n           \u0027odms_partition_columns\u0027:\u0027CUST_GENDER\u0027}\nsvm_mod \u003d oml.svm(\"regression\", **setting)\n \nsvm_mod.fit(train_x, train_y , model_name \u003d \u0027SVM_PARTITIONED_REGRESSION_MODEL\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nModel Name: SVM_PARTITIONED_REGRESSION_MODEL\n\nModel Owner: OMLUSER\n\nAlgorithm Name: Support Vector Machine\n\nMining Function: REGRESSION\n\nTarget: YRS_RESIDENCE\n\nSettings: \n                   setting name                 setting value\n0                     ALGO_NAME  ALGO_SUPPORT_VECTOR_MACHINES\n1                  ODMS_DETAILS                   ODMS_ENABLE\n2           ODMS_MAX_PARTITIONS                          1000\n3  ODMS_MISSING_VALUE_TREATMENT       ODMS_MISSING_VALUE_AUTO\n4        ODMS_PARTITION_COLUMNS                   CUST_GENDER\n5                 ODMS_SAMPLING         ODMS_SAMPLING_DISABLE\n6                     PREP_AUTO                            ON\n7           SVMS_CONV_TOLERANCE                         .0001\n8                  SVMS_EPSILON                            .1\n9          SVMS_KERNEL_FUNCTION                   SVMS_LINEAR\n\nComputed Settings: \n  partition name            setting name    setting value\n0              F  SVMS_COMPLEXITY_FACTOR                3\n1              F     SVMS_NUM_ITERATIONS               30\n2              F             SVMS_SOLVER  SVMS_SOLVER_IPM\n3              M  SVMS_COMPLEXITY_FACTOR                3\n4              M     SVMS_NUM_ITERATIONS               30\n5              M             SVMS_SOLVER  SVMS_SOLVER_IPM\n\nGlobal Statistics: \n  partition name attribute name attribute value\n0              F      CONVERGED             YES\n1              F     ITERATIONS            15.0\n2              F       NUM_ROWS          1213.0\n3              M      CONVERGED             YES\n4              M     ITERATIONS            16.0\n5              M       NUM_ROWS          2381.0\n\nAttributes: \nAFFINITY_CARD\nCUST_CREDIT_LIMIT\nCUST_GENDER\nCUST_ID\nCUST_INCOME_LEVEL\nCUST_MARITAL_STATUS\nCUST_YEAR_OF_BIRTH\nEDUCATION\nHOUSEHOLD_SIZE\nOCCUPATION\nY_BOX_GAMES\n\nPartition: YES\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-557645482",
+      "id": "20220124-201431_2101844436",
+      "dateCreated": "2020-06-03T21:10:30+0000",
+      "dateStarted": "2022-03-10T17:27:24+0000",
+      "dateFinished": "2022-03-10T17:27:28+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Predict on the test set and display prediction result - note the use of the top level model only",
+      "text": "%python\n\ny_pred_part \u003d svm_mod.predict(test_dat, test_dat)\n\nz.show(y_pred_part[[\u0027PARTITION_NAME\u0027, \u0027PREDICTION\u0027] + y_pred_part.columns].round(4).head())",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "PARTITION_NAME": "string",
+                      "PREDICTION": "string",
+                      "CUST_ID": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "string",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "string",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "string",
+                      "HOUSEHOLD_SIZE": "string",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "string",
+                      "Y_BOX_GAMES": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "PARTITION_NAME\tPREDICTION\tCUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\tPREDICTION\tPARTITION_NAME\nF\t4.3611\t100134\tF\tDivorc.\t1965\tL: 300,000 and above\t9000\tAssoc-A\t0\t2\tCleric.\t2\t0\t4.3611\tF\nF\t3.4255\t102828\tF\tNeverM\t1967\tE: 90,000 - 109,999\t10000\tHS-grad\t0\t1\tMachine\t4\t0\t3.4255\tF\nM\t3.1581\t103401\tM\tDivorc.\t1975\tI: 170,000 - 189,999\t10000\tHS-grad\t0\t2\tCrafts\t4\t1\t3.1581\tM\nM\t3.6503\t104077\tM\tNeverM\t1975\tL: 300,000 and above\t9000\tProfsc\t0\t2\tProf.\t3\t1\t3.6503\tM\nM\t1.9144\t101940\tM\tNeverM\t1981\tJ: 190,000 - 249,999\t7000\t\u003c Bach.\t0\t1\t?\t2\t1\t1.9144\tM\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-1433262556",
+      "id": "20220124-201431_1844389786",
+      "dateCreated": "2020-06-03T21:22:07+0000",
+      "dateStarted": "2022-03-10T17:27:28+0000",
+      "dateFinished": "2022-03-10T17:27:29+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show model global statistics for each partitioned sub-model",
+      "text": "%python\nz.show(svm_mod.global_stats)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "partition name": "string",
+                      "attribute name": "string",
+                      "attribute value": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "partition name\tattribute name\tattribute value\nF\tCONVERGED\tYES\nF\tITERATIONS\t15.0\nF\tNUM_ROWS\t1213.0\nM\tCONVERGED\tYES\nM\tITERATIONS\t16.0M\tNUM_ROWS\t2381.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_1516846773",
+      "id": "20220124-201431_298322846",
+      "dateCreated": "2020-06-03T21:22:23+0000",
+      "dateStarted": "2022-03-10T17:27:29+0000",
+      "dateFinished": "2022-03-10T17:27:29+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Materialize the test dataset",
+      "text": "%python\n\ntry:\n    oml.drop(table \u003d \u0027TEST_DATA\u0027)\nexcept:\n    pass\n_ \u003d test_dat.materialize(table \u003d \u0027TEST_DATA\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-447601332",
+      "id": "20220124-201431_1175885538",
+      "dateCreated": "2020-06-04T18:35:36+0000",
+      "dateStarted": "2022-03-10T17:27:30+0000",
+      "dateFinished": "2022-03-10T17:27:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display prediction details",
+      "text": "%python\n\ny_pred_part \u003d svm_mod.predict(test_dat, supplemental_cols \u003d test_dat[[\u0027CUST_ID\u0027, \u0027YRS_RESIDENCE\u0027]], topN_attrs \u003d True)\nz.show(y_pred_part.head())",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "PARTITION_NAME": "string",
+                      "CUST_ID": "string",
+                      "YRS_RESIDENCE": "string",
+                      "PREDICTION": "string",
+                      "NAME_1": "string",
+                      "VALUE_1": "string",
+                      "WEIGHT_1": "string",
+                      "NAME_2": "string",
+                      "VALUE_2": "string",
+                      "WEIGHT_2": "string",
+                      "NAME_3": "string",
+                      "VALUE_3": "string",
+                      "WEIGHT_3": "string",
+                      "NAME_4": "string",
+                      "VALUE_4": "string",
+                      "WEIGHT_4": "string",
+                      "NAME_5": "string",
+                      "VALUE_5": "string",
+                      "WEIGHT_5": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "PARTITION_NAME\tCUST_ID\tYRS_RESIDENCE\tPREDICTION\tNAME_1\tVALUE_1\tWEIGHT_1\tNAME_2\tVALUE_2\tWEIGHT_2\tNAME_3\tVALUE_3\tWEIGHT_3\tNAME_4\tVALUE_4\tWEIGHT_4\tNAME_5\tVALUE_5\tWEIGHT_5\nF\t100077\t4\t4.138059998358802\tCUST_YEAR_OF_BIRTH\t1959\t.397\tCUST_INCOME_LEVEL\tK: 250,000 - 299,999\t.086\tCUST_MARITAL_STATUS\tMarried\t.062\tCUST_CREDIT_LIMIT\t15000\t.01\tY_BOX_GAMES\t0\t.007\nF\t100117\t4\t3.568163602154671\tCUST_MARITAL_STATUS\tDivorc.\t.154\tCUST_INCOME_LEVEL\tI: 170,000 - 189,999\t.092\tY_BOX_GAMES\t0\t.016\tCUST_CREDIT_LIMIT\t9000\t.005\tAFFINITY_CARD\t0\t-.041\nF\t100134\t2\t4.361077206470856\tCUST_INCOME_LEVEL\tL: 300,000 and above\t.239\tCUST_MARITAL_STATUS\tDivorc.\t.235\tEDUCATION\tAssoc-A\t.221\tCUST_YEAR_OF_BIRTH\t1965\t.211\tY_BOX_GAMES\t0\t.025\nF\t100223\t3\t2.7120801984886125\tCUST_INCOME_LEVEL\tK: 250,000 - 299,999\t.089\tEDUCATION\tAssoc-V\t.044\tCUST_CREDIT_LIMIT\t9000\t.002\tY_BOX_GAMES\t1\t-.013\tAFFINITY_CARD\t0\t-.019\nF\t100237\t5\t4.708864590390222\tCUST_YEAR_OF_BIRTH\t1956\t.599\tCUST_MARITAL_STATUS\tDivorc.\t.073\tCUST_INCOME_LEVEL\tF: 110,000 - 129,999\t.064\tY_BOX_GAMES\t0\t.008\tCUST_CREDIT_LIMIT\t1500\t-.009\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_2074133165",
+      "id": "20220124-201431_132005581",
+      "dateCreated": "2021-06-08T18:42:17+0000",
+      "dateStarted": "2022-03-10T17:27:31+0000",
+      "dateFinished": "2022-03-10T17:27:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Demonstrate using the SQL interface so score data and display prediction details",
+      "text": "%sql\n\nSELECT CUST_ID,\n round(PREDICTION_YRS_RES,3) PRED_YRS_RES,\n RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),\u0027rank\u003d\"1\"/\u003e\u0027) FIRST_ATTRIBUTE,\n RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),\u0027rank\u003d\"2\"/\u003e\u0027) SECOND_ATTRIBUTE,\n RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),\u0027rank\u003d\"3\"/\u003e\u0027) THIRD_ATTRIBUTE\nFROM (SELECT CUST_ID,\n      PREDICTION(SVM_PARTITIONED_REGRESSION_MODEL USING *) PREDICTION_YRS_RES,\n      PREDICTION_DETAILS(SVM_PARTITIONED_REGRESSION_MODEL USING *) PD\n      FROM TEST_DATA\n      WHERE CUST_ID \u003c 100015\n      ORDER BY CUST_ID) OUT,\n      XMLTABLE(\u0027/Details\u0027\n               PASSING OUT.PD\n               COLUMNS \n               \"Attribute1\" XMLType PATH \u0027Attribute[1]\u0027,\n               \"Attribute2\" XMLType PATH \u0027Attribute[2]\u0027,\n               \"Attribute3\" XMLType PATH \u0027Attribute[3]\u0027) \n      OUTPRED\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "runOnSelectionChange": true,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PRED_YRS_RES": "string",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {
+          "CUST_ID": "\u0027101362\u0027"
+        },
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RES\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\n100007\t4.092\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1963\" weight\u003d\".319\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"L: 300,000 and above\" weight\u003d\".128\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".126\" \n100010\t2.978\t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"9000\" weight\u003d\".004\" \t\"CUST_ID\" actualValue\u003d\"100010\" weight\u003d\"-.001\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"L: 300,000 and above\" weight\u003d\"-.033\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-1675807646",
+      "id": "20220124-201431_328796763",
+      "dateCreated": "2020-06-04T18:21:37+0000",
+      "dateStarted": "2022-03-10T17:27:38+0000",
+      "dateFinished": "2022-03-10T17:27:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# End of Script\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-178659260",
+      "id": "20220124-201431_1113352013",
+      "dateCreated": "2020-06-04T18:22:32+0000",
+      "dateStarted": "2022-03-10T17:27:42+0000",
+      "dateFinished": "2022-03-10T17:27:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:27:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271442_-905804809",
+      "id": "20220124-201431_814696546",
+      "dateCreated": "2020-06-10T20:22:45+0000",
+      "dateStarted": "2022-03-10T17:27:42+0000",
+      "dateFinished": "2022-03-10T17:27:42+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py Partitioned Model SVM",
+  "id": "101108",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:shared_process": []
+  },
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}
