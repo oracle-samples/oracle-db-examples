@@ -1,0 +1,1538 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## Importing Wide Datasets using OML4Py\n\nOracle Database has a limit of 1,000 columns in a table or view. Machine learning projects may involve datasets, perhaps stored as CSV files, with a higher number of columns. OML4SQL in-database algorithms can handle such wide datasets by converting the columns to a special format known as \"nested columns\". This allows an efficient handling of high dimensional and sparse features, as well as accomodating more than 1000 predictor columns, when building OML machine learning models. However, importing a dataset with the more than 1,000 columns from a data file, such as a CSV file in Object Storage, involves some preprocessing. \n\nIn this notebook, we demonstrate the process of importing a wide dataset with 2,002 columns from CSV format into an Oracle Database table with nested columns. \n\nThe approach is to read the file by chunks, convert each chunk to a transactional format into a database table, and then pivot the data into the nested column format using SQL. Note that the nested column format can be used only through OML4SQL, not OML4Py. \n\nTo improve the efficiency of the CSV loading, the \"index apply\" functionality of OML4Py is also used to speed up the process and make it parallel.\n\nCopyright (c) 2022 Oracle Corporation                             \n###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eImporting Wide Datasets using OML4Py\u003c/h2\u003e\n\u003cp\u003eOracle Database has a limit of 1,000 columns in a table or view. Machine learning projects may involve datasets, perhaps stored as CSV files, with a higher number of columns. OML4SQL in-database algorithms can handle such wide datasets by converting the columns to a special format known as \u0026ldquo;nested columns\u0026rdquo;. This allows an efficient handling of high dimensional and sparse features, as well as accomodating more than 1000 predictor columns, when building OML machine learning models. However, importing a dataset with the more than 1,000 columns from a data file, such as a CSV file in Object Storage, involves some preprocessing.\u003c/p\u003e\n\u003cp\u003eIn this notebook, we demonstrate the process of importing a wide dataset with 2,002 columns from CSV format into an Oracle Database table with nested columns.\u003c/p\u003e\n\u003cp\u003eThe approach is to read the file by chunks, convert each chunk to a transactional format into a database table, and then pivot the data into the nested column format using SQL. Note that the nested column format can be used only through OML4SQL, not OML4Py.\u003c/p\u003e\n\u003cp\u003eTo improve the efficiency of the CSV loading, the \u0026ldquo;index apply\u0026rdquo; functionality of OML4Py is also used to speed up the process and make it parallel.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2022 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1643255166",
+      "id": "20220206-193042_342806901",
+      "dateCreated": "2021-12-11T22:38:17+0000",
+      "dateStarted": "2022-03-10T17:15:13+0000",
+      "dateFinished": "2022-03-10T17:15:14+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information",
+      "text": "%md\n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOracle Nested Columns Table Documentation \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/adobj/multilevel-collection-types.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/adobj/multilevel-collection-types.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/oracle-database/21/adobj/multilevel-collection-types.html\u003c/a\u003e\nOracle Machine Learning using Nested Data Documentation \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/using-nested-dita.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/using-nested-dita.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/using-nested-dita.html\u003c/a\u003e\nOracle Machine Learning OML4Py Embedded Python Execution Documentation \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/embedded-python-execution1.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/embedded-python-execution1.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/embedded-python-execution1.html\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOracle Nested Columns Table Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/adobj/multilevel-collection-types.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/adobj/multilevel-collection-types.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/oracle-database/21/adobj/multilevel-collection-types.html\u003c/a\u003e\n\u003cbr  /\u003eOracle Machine Learning using Nested Data Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/using-nested-dita.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/using-nested-dita.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/using-nested-dita.html\u003c/a\u003e\n\u003cbr  /\u003eOracle Machine Learning OML4Py Embedded Python Execution Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/embedded-python-execution1.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/embedded-python-execution1.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/embedded-python-execution1.html\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1290912149",
+      "id": "20220206-193042_1359353526",
+      "dateCreated": "2021-12-11T23:26:38+0000",
+      "dateStarted": "2022-03-10T17:15:15+0000",
+      "dateFinished": "2022-03-10T17:15:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Import python libraries",
+      "text": "%python\r\n\r\nimport pandas as pd\r\nimport oml\r\n\r\npd.set_option(\u0027display.max_rows\u0027, 500)\r\npd.set_option(\u0027display.max_columns\u0027, 500)\r\npd.set_option(\u0027display.width\u0027, 1000)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_40146115",
+      "id": "20220206-193042_1412957294",
+      "dateCreated": "2021-11-05T20:07:49+0000",
+      "dateStarted": "2022-03-10T17:15:15+0000",
+      "dateFinished": "2022-03-10T17:15:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create a table to hold the data in transactional format",
+      "text": "%script \n\nBEGIN\n     EXECUTE IMMEDIATE \u0027DROP TABLE TXN_TBL\u0027;\n     EXCEPTION WHEN OTHERS THEN NULL;\nEND;\n/\n\nCREATE TABLE TXN_TBL( ID NUMBER, \n                      NAME VARCHAR2(32),\n                      VALUE NUMBER\n                    );",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable TXN_TBL created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1974785073",
+      "id": "20220206-193042_520714692",
+      "dateCreated": "2021-11-05T20:39:31+0000",
+      "dateStarted": "2022-03-10T17:15:26+0000",
+      "dateFinished": "2022-03-10T17:15:29+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create a table that holds the label",
+      "text": "%script\n\nBEGIN\n     EXECUTE IMMEDIATE \u0027DROP TABLE WIDE_LABEL_TBL\u0027;\n     EXCEPTION WHEN OTHERS THEN NULL;\nEND;\n/\n\nCREATE TABLE WIDE_LABEL_TBL( ID NUMBER, \n                             CLASS INTEGER\n                            );\n/",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable WIDE_LABEL_TBL created.\n\n\n---------------------------\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1247052978",
+      "id": "20220206-193042_2106517033",
+      "dateCreated": "2021-11-05T21:14:46+0000",
+      "dateStarted": "2022-03-10T17:15:30+0000",
+      "dateFinished": "2022-03-10T17:15:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Create supporting user-defined Python functions\n* Function to insert multiple records into a database table\n* Function to read the data in partitions and pivot the data into transactions\n* Function for generating the partitions for the data\n\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eCreate supporting user-defined Python functions\u003c/h1\u003e\n\u003cul\u003e\n\u003cli\u003eFunction to insert multiple records into a database table\u003c/li\u003e\n\u003cli\u003eFunction to read the data in partitions and pivot the data into transactions\u003c/li\u003e\n\u003cli\u003eFunction for generating the partitions for the data\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_2050742413",
+      "id": "20220206-193042_475856008",
+      "dateCreated": "2021-12-17T16:58:02+0000",
+      "dateStarted": "2022-03-10T17:15:31+0000",
+      "dateFinished": "2022-03-10T17:15:31+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Functions to insert multiple records into the database table",
+      "text": "%python\n\nimport cx_Oracle\n\n# Insert records using the provided cursor, the statement, and the records\n\ndef insert_records(cr, records, statement):\n    try:        \n        cr.executemany(statement, records)\n        cr.connection.commit()\n    except cx_Oracle.Error as error:\n        print(\u0027Insert error:\u0027)\n        print(error)\n\n# Append the rows in a partition and call the insert_records function\n\ndef insertDF(df, statement):\n    cr \u003d oml.cursor()\n\n    records \u003d []\n    for row in df.itertuples(index\u003dFalse):\n        records.append(row)\n    insert_records(cr, records, statement)\n    cr.close()    ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_737266973",
+      "id": "20220206-193042_148082713",
+      "dateCreated": "2021-11-20T03:07:35+0000",
+      "dateStarted": "2022-03-10T17:15:32+0000",
+      "dateFinished": "2022-03-10T17:15:32+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Function that writes each partition into transactional format",
+      "text": "%python\n\nimport gc \n\ndef import_helper(idx, url, columns, ncol, partitions, chunk_size):\n    # Verifies the partition to read\n    read_rows \u003d partitions[idx-1][0]\n    # Check the largest index of that partition\n    total \u003d partitions[idx-1][1] + 1\n    \n    while read_rows \u003c total:\n        offset \u003d read_rows + 1\n        # Reads the data from the defined chunks\n        df \u003d pd.read_csv(url, skiprows \u003d offset, nrows \u003d chunk_size, header \u003d None)\n        read_rows +\u003d df.shape[0]\n        df.columns \u003d columns\n        # Pivots the data\n        txn_df \u003d pd.melt(df, id_vars \u003d [\u0027ID\u0027], value_vars \u003d columns[:ncol])\n        txn_df.columns \u003d [\u0027ID\u0027, \u0027NAME\u0027, \u0027VALUE\u0027]\n        print(\u0027Rows \u0027+str(min(txn_df[\u0027ID\u0027]))+\u0027 to \u0027+str(max(txn_df[\u0027ID\u0027]))+\n              \u0027: data pivoted\u0027)\n        # Write the pivotted data to a database table \n        statement \u003d \"INSERT INTO TXN_TBL (ID, NAME, VALUE) VALUES(:ID, :NAME, :VALUE)\"\n        insertDF(txn_df, statement)\n        statement \u003d \"INSERT INTO WIDE_LABEL_TBL (ID, CLASS) VALUES(:ID, :CLASS)\"\n        label_df \u003d df[[\u0027ID\u0027,\u0027CLASS\u0027]]\n        insertDF(label_df, statement)\n        print(\u0027Rows \u0027+str(min(txn_df[\u0027ID\u0027]))+\u0027 to \u0027+str(max(txn_df[\u0027ID\u0027]))+\n              \u0027: inserted into TXN_TBL \u0027+str(txn_df.shape[0])+\u0027 rows and \u0027+str(txn_df.shape[1])+\u0027 columns\u0027)\n        # Cleanup temporary elements used\n        del df\n        del txn_df\n        del label_df\n        gc.collect()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_564285076",
+      "id": "20220206-193042_1547706270",
+      "dateCreated": "2021-11-22T19:33:01+0000",
+      "dateStarted": "2022-03-10T17:15:33+0000",
+      "dateFinished": "2022-03-10T17:15:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Function for generating the partitions for the data",
+      "text": "%python\n\ndef generate_part(rows_to_process, num_partitions):\n    segment_size \u003d int(rows_to_process/num_partitions)\n    result \u003d []\n    for i in range(num_partitions):\n        result.append([i*segment_size, (i+1)*segment_size-1])\n    result[len(result)-1][1] \u003d rows_to_process-1\n    return result",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_278892008",
+      "id": "20220206-193042_1458902417",
+      "dateCreated": "2021-12-02T01:09:03+0000",
+      "dateStarted": "2022-03-10T17:15:34+0000",
+      "dateFinished": "2022-03-10T17:15:34+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# Non-parallel processing\n\nIn the following example, we process the data in chunks sequentially. This takes a significant amount of time. Later, we show doing this in parallel using embedded Python execution. \n\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eNon-parallel processing\u003c/h1\u003e\n\u003cp\u003eIn the following example, we process the data in chunks sequentially. This takes a significant amount of time. Later, we show doing this in parallel using embedded Python execution.\u003c/p\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-80037223",
+      "id": "20220206-193042_766905211",
+      "dateCreated": "2021-12-17T19:51:00+0000",
+      "dateStarted": "2022-03-10T17:15:34+0000",
+      "dateFinished": "2022-03-10T17:15:34+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check that the table is empty before inserting",
+      "text": "%sql\n\nSELECT COUNT(1) FROM TXN_TBL \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 87.5,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COUNT(1)": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNT(1)\n0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-112548229",
+      "id": "20220206-193042_972096908",
+      "dateCreated": "2021-11-20T03:17:43+0000",
+      "dateStarted": "2022-03-10T17:15:35+0000",
+      "dateFinished": "2022-03-10T17:15:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create separate partition slices to take advantage of parallelism ",
+      "text": "%python\n\n# Define the total number or rows to process from the dataset\n# to a fixed number for this example\nrows_to_process \u003d 2000\n\n# Specify the number of partitions to create\nnum_partitions \u003d 5\n\npartitions \u003d generate_part(rows_to_process, num_partitions)\nprint(\"Generated partitions:\\n\")\nprint(partitions)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Generated partitions:\n\n[[0, 399], [400, 799], [800, 1199], [1200, 1599], [1600, 1999]]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-1939173789",
+      "id": "20220206-193042_1704022467",
+      "dateCreated": "2021-12-02T01:08:26+0000",
+      "dateStarted": "2022-03-10T17:15:36+0000",
+      "dateFinished": "2022-03-10T17:15:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Sequential run processing the first 2000 rows",
+      "text": "%python\n\n\nurl \u003d \u0027https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML_Data/o/wide.csv\u0027\n\ndf \u003d pd.read_csv(url, nrows \u003d 0, skiprows \u003d 0)\ncolumns \u003d list(df.columns)\n\n# Number of numerical columns in the dataset to be processed\nncol \u003d 2000\n# Set the number of records to process at a time (per chunk)\nchunk_size \u003d 100\n\nfor i in range(1,6):\n    import_helper(i, url, columns, ncol, partitions, chunk_size)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:15:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Rows 0 to 99: data pivoted\nRows 0 to 99: inserted into TXN_TBL 200000 rows and 3 columns\nRows 100 to 199: data pivoted\nRows 100 to 199: inserted into TXN_TBL 200000 rows and 3 columns\nRows 200 to 299: data pivoted\nRows 200 to 299: inserted into TXN_TBL 200000 rows and 3 columns\nRows 300 to 399: data pivoted\nRows 300 to 399: inserted into TXN_TBL 200000 rows and 3 columns\nRows 400 to 499: data pivoted\nRows 400 to 499: inserted into TXN_TBL 200000 rows and 3 columns\nRows 500 to 599: data pivoted\nRows 500 to 599: inserted into TXN_TBL 200000 rows and 3 columns\nRows 600 to 699: data pivoted\nRows 600 to 699: inserted into TXN_TBL 200000 rows and 3 columns\nRows 700 to 799: data pivoted\nRows 700 to 799: inserted into TXN_TBL 200000 rows and 3 columns\nRows 800 to 899: data pivoted\nRows 800 to 899: inserted into TXN_TBL 200000 rows and 3 columns\nRows 900 to 999: data pivoted\nRows 900 to 999: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1000 to 1099: data pivoted\nRows 1000 to 1099: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1100 to 1199: data pivoted\nRows 1100 to 1199: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1200 to 1299: data pivoted\nRows 1200 to 1299: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1300 to 1399: data pivoted\nRows 1300 to 1399: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1400 to 1499: data pivoted\nRows 1400 to 1499: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1500 to 1599: data pivoted\nRows 1500 to 1599: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1600 to 1699: data pivoted\nRows 1600 to 1699: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1700 to 1799: data pivoted\nRows 1700 to 1799: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1800 to 1899: data pivoted\nRows 1800 to 1899: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1900 to 1999: data pivoted\nRows 1900 to 1999: inserted into TXN_TBL 200000 rows and 3 columns\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1039152657",
+      "id": "20220206-193042_464947581",
+      "dateCreated": "2021-11-22T20:24:16+0000",
+      "dateStarted": "2022-03-10T17:15:37+0000",
+      "dateFinished": "2022-03-10T17:21:14+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show a sample of the resulting transactions",
+      "text": "%sql\n\nselect * from TXN_TBL FETCH FIRST 20 ROWS ONLY\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:21:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ID": "string",
+                      "NAME": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ID\tNAME\tVALUE\n128\tCOL368\t-1.5943025177782977\n129\tCOL368\t-0.7677844229689769\n130\tCOL368\t-1.8558786223350867\n131\tCOL368\t1.5679654392035862\n132\tCOL368\t1.1837074339339326\n133\tCOL368\t1.93562446425337\n134\tCOL368\t0.4491800688747284\n135\tCOL368\t0.6184747020816096\n136\tCOL368\t-1.1074592671442336\n137\tCOL368\t-1.1807092536533583\n138\tCOL368\t-0.4634661143684699\n139\tCOL368\t-0.1457384345550404\n140\tCOL368\t0.914577534702834\n141\tCOL368\t-1.919622121322469\n142\tCOL368\t0.128044966012027\n143\tCOL368\t0.2106493561004577\n144\tCOL368\t0.5472908076643781\n145\tCOL368\t0.9572044831434644\n146\tCOL368\t0.457131916894276\n147\tCOL368\t0.8898845510267273\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1653536198",
+      "id": "20220206-193042_113681571",
+      "dateCreated": "2022-01-05T21:18:59+0000",
+      "dateStarted": "2022-03-10T17:21:14+0000",
+      "dateFinished": "2022-03-10T17:21:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n## Parallel processing using Embedded Python Execution\n\nThe performance improvement is relative to the degree of parallelism enabled. Depending on your Autonomous Database instances CPU allocation, you can explicitly choose the number of Python engines to spawn in parallel. \n\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:21:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eParallel processing using Embedded Python Execution\u003c/h2\u003e\n\u003cp\u003eThe performance improvement is relative to the degree of parallelism enabled. Depending on your Autonomous Database instances CPU allocation, you can explicitly choose the number of Python engines to spawn in parallel.\u003c/p\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-1750323513",
+      "id": "20220206-193042_933895314",
+      "dateCreated": "2022-01-05T22:00:54+0000",
+      "dateStarted": "2022-03-10T17:21:15+0000",
+      "dateFinished": "2022-03-10T17:21:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Remove all data before parallel run",
+      "text": "%script\n\nDELETE FROM WIDE_LABEL_TBL;\nDELETE FROM TXN_TBL;",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:21:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\n2,000 rows deleted.\n\n\n---------------------------\n\n4,000,000 rows deleted.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1440271617",
+      "id": "20220206-193042_1490705645",
+      "dateCreated": "2021-12-02T01:12:36+0000",
+      "dateStarted": "2022-03-10T17:21:16+0000",
+      "dateFinished": "2022-03-10T17:21:23+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Run in parallel using oml.index_apply",
+      "text": "%python\n\nurl \u003d \u0027https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML_Data/o/wide.csv\u0027\n\ndf \u003d pd.read_csv(url, nrows \u003d 0, skiprows \u003d 0)\ncolumns \u003d list(df.columns)\n\nncol \u003d 2000\nchunk_size \u003d 100\n_ \u003d oml.index_apply(times \u003d 5, func \u003d import_helper, url \u003d url, columns \u003d columns, \n                    ncol \u003d ncol, partitions \u003d partitions, chunk_size \u003d 100, \n                    graphics \u003d False, parallel \u003d True)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:21:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 8.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Rows 0 to 99: data pivoted\nRows 0 to 99: inserted into TXN_TBL 200000 rows and 3 columns\nRows 400 to 499: data pivoted\nRows 400 to 499: inserted into TXN_TBL 200000 rows and 3 columns\nRows 500 to 599: data pivoted\nRows 500 to 599: inserted into TXN_TBL 200000 rows and 3 columns\nRows 100 to 199: data pivoted\nRows 100 to 199: inserted into TXN_TBL 200000 rows and 3 columns\nRows 600 to 699: data pivoted\nRows 600 to 699: inserted into TXN_TBL 200000 rows and 3 columns\nRows 200 to 299: data pivoted\nRows 200 to 299: inserted into TXN_TBL 200000 rows and 3 columns\nRows 700 to 799: data pivoted\nRows 700 to 799: inserted into TXN_TBL 200000 rows and 3 columns\nRows 300 to 399: data pivoted\nRows 300 to 399: inserted into TXN_TBL 200000 rows and 3 columns\nRows 800 to 899: data pivoted\nRows 800 to 899: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1200 to 1299: data pivoted\nRows 1200 to 1299: inserted into TXN_TBL 200000 rows and 3 columns\nRows 900 to 999: data pivoted\nRows 900 to 999: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1300 to 1399: data pivoted\nRows 1300 to 1399: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1000 to 1099: data pivoted\nRows 1000 to 1099: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1400 to 1499: data pivoted\nRows 1400 to 1499: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1100 to 1199: data pivoted\nRows 1100 to 1199: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1500 to 1599: data pivoted\nRows 1500 to 1599: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1600 to 1699: data pivoted\nRows 1600 to 1699: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1700 to 1799: data pivoted\nRows 1700 to 1799: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1800 to 1899: data pivoted\nRows 1800 to 1899: inserted into TXN_TBL 200000 rows and 3 columns\nRows 1900 to 1999: data pivoted\nRows 1900 to 1999: inserted into TXN_TBL 200000 rows and 3 columns\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_551601380",
+      "id": "20220206-193042_1997069290",
+      "dateCreated": "2021-11-29T19:18:29+0000",
+      "dateStarted": "2022-03-10T17:21:24+0000",
+      "dateFinished": "2022-03-10T17:25:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check the total data loaded",
+      "text": "%sql\n\nselect count(1)\nfrom txn_tbl",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COUNT(1)": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNT(1)\n4000000\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-1277159092",
+      "id": "20220206-193042_1155045908",
+      "dateCreated": "2021-11-29T19:18:44+0000",
+      "dateStarted": "2022-03-10T17:25:17+0000",
+      "dateFinished": "2022-03-10T17:25:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check the table with id \u003d 0",
+      "text": "%sql\n\nselect *\nfrom txn_tbl\nwhere id \u003d 0",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:17+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ID": "number",
+                      "NAME": "string",
+                      "VALUE": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ID\tNAME\tVALUE\n0\tCOL647\t0.2084820458683239\n0\tCOL648\t0.1149705525514806\n0\tCOL649\t0.4386078247206566\n0\tCOL650\t-0.6141101395841582\n0\tCOL651\t1.0498989812868138\n0\tCOL652\t1.0927056264716788\n0\tCOL653\t0.3172288736825734\n0\tCOL654\t-0.5124287043018562\n0\tCOL1547\t0.0441788184104439\n0\tCOL1548\t-0.2664729067745782\n0\tCOL1549\t0.1805234748440052\n0\tCOL1550\t-1.0715197765452291\n0\tCOL1551\t-0.1529869488219506\n0\tCOL1552\t0.8103081578642636\n0\tCOL1553\t-0.7124469160178807\n0\tCOL1554\t0.481777016558328\n0\tCOL0\t-0.4175452721006504\n0\tCOL1\t-2.1853764017576744\n0\tCOL2\t0.2108818998742052\n0\tCOL3\t-1.1562715844852722\n0\tCOL4\t-0.7238367346971238\n0\tCOL5\t1.278638400129675\n0\tCOL6\t-1.6232633262532588\n0\tCOL7\t1.32707593155136\n0\tCOL8\t0.3797834409545846\n0\tCOL9\t2.5513628667347787\n0\tCOL10\t1.461949132903979\n0\tCOL11\t0.7824035393911826\n0\tCOL12\t0.7688348786015127\n0\tCOL13\t-0.0112154612857404\n0\tCOL14\t-0.8123496275437649\n0\tCOL15\t0.2150857521050694\n0\tCOL16\t-0.7262263816829306\n0\tCOL17\t-0.4945951085473849\n0\tCOL18\t1.2565600168304858\n0\tCOL19\t-1.2776882726351324\n0\tCOL20\t1.6072552267753246\n0\tCOL21\t-0.0886815920886308\n0\tCOL22\t-1.6566064816189454\n0\tCOL23\t-0.2070955404847912\n0\tCOL24\t-2.079389123728021\n0\tCOL25\t-0.8658887661738149\n0\tCOL26\t2.1957778834781565\n0\tCOL27\t1.2851418268696708\n0\tCOL28\t-0.395721271383341\n0\tCOL29\t0.662560408972298\n0\tCOL30\t1.441023053216252\n0\tCOL31\t0.6154231029013001\n0\tCOL32\t0.8189804542487552\n0\tCOL33\t-1.150176989831004\n0\tCOL34\t-0.0514540050443358\n0\tCOL35\t-1.045498236955734\n0\tCOL36\t1.1912197217497342\n0\tCOL37\t1.5270773270603146\n0\tCOL38\t-0.5069635465414716\n0\tCOL39\t0.2533653097021146\n0\tCOL40\t1.183965301894956\n0\tCOL41\t1.038833287044095\n0\tCOL42\t0.5346233949889704\n0\tCOL43\t-0.1915408578713292\n0\tCOL44\t2.355401127529039\n0\tCOL45\t-1.2130273783119254\n0\tCOL46\t-1.403917372520635\n0\tCOL47\t-0.636734584073369\n0\tCOL48\t1.3274735127825428\n0\tCOL49\t-1.3340017117962244\n0\tCOL50\t0.1803882909789939\n0\tCOL51\t0.1216258038093913\n0\tCOL52\t0.5962387451195008\n0\tCOL53\t1.8902099693771093\n0\tCOL54\t-0.2229179992409015\n0\tCOL55\t-0.88817335227845\n0\tCOL56\t1.0935636167083498\n0\tCOL57\t-0.7424287910710538\n0\tCOL58\t0.6751557545608898\n0\tCOL59\t0.4277660803537115\n0\tCOL60\t1.699835129721062\n0\tCOL61\t0.8859654612542953\n0\tCOL62\t-0.3913867217695375\n0\tCOL63\t1.5732738964473258\n0\tCOL64\t0.8642539599865459\n0\tCOL65\t0.798033412149093\n0\tCOL66\t-0.0266041440874725\n0\tCOL67\t-0.2573857195390601\n0\tCOL68\t0.6720095272682526\n0\tCOL69\t-0.8264735832070806\n0\tCOL70\t0.4632701647041438\n0\tCOL71\t1.1601958465445597\n0\tCOL72\t0.1077231037717468\n0\tCOL73\t2.680957854175028\n0\tCOL74\t0.9677212333627536\n0\tCOL75\t0.2107160166788409\n0\tCOL76\t0.0777171540787132\n0\tCOL77\t0.3489742253820843\n0\tCOL78\t-0.6686824724516647\n0\tCOL79\t0.5137626684360134\n0\tCOL80\t-0.2751536725493972\n0\tCOL81\t-0.6900781861642364\n0\tCOL123\t-0.0908097923250952\n0\tCOL124\t0.2638758242871424\n0\tCOL125\t-0.8526450100404181\n0\tCOL126\t-0.4534146593168122\n0\tCOL127\t0.1862975067234251\n0\tCOL128\t0.9765534296142157\n0\tCOL129\t1.3961400430036366\n0\tCOL130\t-0.3271382006053408\n0\tCOL131\t-0.6394501598055211\n0\tCOL132\t0.6215264570826162\n0\tCOL133\t1.2978279893325295\n0\tCOL134\t0.9129094479797082\n0\tCOL135\t-0.8607074028813784\n0\tCOL136\t1.1773586265907687\n0\tCOL137\t-2.406212700389444\n0\tCOL138\t-1.398500958860249\n0\tCOL139\t-0.0872419344399914\n0\tCOL140\t0.6426962878530301\n0\tCOL141\t-0.7818394098239095\n0\tCOL142\t0.6247374299987912\n0\tCOL143\t-0.5197328266532009\n0\tCOL144\t-1.90382851804442\n0\tCOL145\t-1.5450933824905473\n0\tCOL146\t-0.4024536777676103\n0\tCOL147\t1.084763170154057\n0\tCOL148\t-0.0537258099196507\n0\tCOL149\t-1.1370581051134434\n0\tCOL150\t0.8223703011774641\n0\tCOL151\t0.1391023854779711\n0\tCOL152\t-0.1831808143424958\n0\tCOL153\t-0.5260927556209161\n0\tCOL154\t-0.2267511001195416\n0\tCOL155\t0.1517446038176126\n0\tCOL156\t0.6052310751641048\n0\tCOL157\t1.5989579864575083\n0\tCOL158\t2.8657227545695627\n0\tCOL159\t-0.0081268142678821\n0\tCOL160\t-0.4609376699864297\n0\tCOL161\t-0.8457603809661606\n0\tCOL162\t-1.0892818805314584\n0\tCOL163\t0.0508894391045661\n0\tCOL164\t0.1643378820135362\n0\tCOL165\t0.5926636087653605\n0\tCOL166\t0.1630059570919096\n0\tCOL167\t0.1911279123558207\n0\tCOL168\t-2.3467645846430902\n0\tCOL169\t-1.273525415045423\n0\tCOL170\t-2.2967626225497653\n0\tCOL171\t1.670606950161322\n0\tCOL172\t2.3454503903925707\n0\tCOL173\t0.0998110507013752\n0\tCOL174\t0.935771487103844\n0\tCOL175\t-0.5490942799298636\n0\tCOL176\t-1.2202810731127758\n0\tCOL177\t0.45835316020499\n0\tCOL178\t-0.7787329271893643\n0\tCOL179\t0.2293632562949857\n0\tCOL180\t0.5552317593411411\n0\tCOL181\t0.3558322694088047\n0\tCOL182\t0.47108796454925\n0\tCOL183\t1.471218103547728\n0\tCOL184\t-0.6996639420423982\n0\tCOL185\t1.1374304744034232\n0\tCOL186\t-0.0645874511419463\n0\tCOL187\t0.1137998323711108\n0\tCOL188\t1.1888875149209417\n0\tCOL189\t-0.316888309854646\n0\tCOL190\t-1.506366156345906\n0\tCOL191\t1.7275366571656214\n0\tCOL192\t0.2461259131743173\n0\tCOL193\t-0.6615747771829974\n0\tCOL194\t0.8060177434386369\n0\tCOL195\t1.5400222002007449\n0\tCOL196\t0.542334116547923\n0\tCOL197\t2.077041059337167\n0\tCOL198\t-0.6597708177049134\n0\tCOL199\t-0.6217811999432319\n0\tCOL200\t-0.1839399501748134\n0\tCOL201\t-0.1035986333846067\n0\tCOL202\t0.5150203079522719\n0\tCOL203\t0.5883381922966109\n0\tCOL204\t0.5353771286990283\n0\tCOL82\t-0.4432088458428252\n0\tCOL83\t-0.1535934103345546\n0\tCOL84\t0.6014251325162414\n0\tCOL85\t-1.3039749375498386\n0\tCOL86\t-1.4211581517495286\n0\tCOL87\t-0.4519638430352645\n0\tCOL88\t-0.7352878491340444\n0\tCOL89\t-0.6150156367469765\n0\tCOL90\t0.333829871097366\n0\tCOL91\t2.3048366191944467\n0\tCOL92\t-1.0566940184434808\n0\tCOL93\t-1.2344054495354608\n0\tCOL94\t-1.2001223820356377\n0\tCOL95\t-0.7818311719616683\n0\tCOL96\t-0.3960865215045295\n0\tCOL97\t-1.116597444953333\n0\tCOL98\t0.7943738354349928\n0\tCOL99\t0.8172685608167636\n0\tCOL100\t0.0159568491333941\n0\tCOL101\t-0.225658274648799\n0\tCOL102\t-0.4021156332066649\n0\tCOL103\t0.5371715675898987\n0\tCOL104\t1.2044060731014818\n0\tCOL105\t-0.0284230802565924\n0\tCOL106\t-0.008590414665262\n0\tCOL107\t-1.4203990050416\n0\tCOL108\t-1.5852165428101574\n0\tCOL109\t0.0066978783987159\n0\tCOL110\t1.1555656457268664\n0\tCOL111\t-1.038960491842153\n0\tCOL112\t-0.7085090327604745\n0\tCOL113\t0.7679172739914901\n0\tCOL114\t1.5225844479853283\n0\tCOL115\t-1.30208131419957\n0\tCOL116\t-0.0980248842814036\n0\tCOL117\t1.1493135439067552\n0\tCOL118\t0.0232194444545188\n0\tCOL119\t1.243238021270944\n0\tCOL120\t-0.7508346478566567\n0\tCOL121\t0.4442528167057113\n0\tCOL122\t0.9182011824956416\n0\tCOL819\t-1.1446742724898922\n0\tCOL820\t-3.192028622884039\n0\tCOL821\t-1.6882638387059767\n0\tCOL822\t1.2856501375926352\n0\tCOL823\t1.488917329247928\n0\tCOL824\t-0.1861990020546897\n0\tCOL825\t-1.7943599642284287\n0\tCOL826\t-0.7654531506758723\n0\tCOL827\t-1.324062444923519\n0\tCOL828\t1.26694159355091\n0\tCOL829\t1.193769626968565\n0\tCOL830\t-1.5193918389437724\n0\tCOL831\t-0.0311434849009968\n0\tCOL832\t-0.28334421059927\n0\tCOL833\t-0.8483207952585692\n0\tCOL834\t1.3008371340933875\n0\tCOL835\t1.6435088955464532\n0\tCOL836\t0.5891699233207629\n0\tCOL837\t0.8962632288927213\n0\tCOL838\t-1.0067123530835116\n0\tCOL839\t1.4491808832496116\n0\tCOL840\t0.4383558977078028\n0\tCOL841\t0.0588754470984444\n0\tCOL842\t-0.855009319383121\n0\tCOL843\t1.2239561979819744\n0\tCOL844\t-0.1806149288189869\n0\tCOL845\t-0.674512419710094\n0\tCOL846\t-1.456524266275701\n0\tCOL847\t-0.8474721759046868\n0\tCOL848\t-1.1606073923111484\n0\tCOL849\t1.6824375003936798\n0\tCOL850\t-0.6486840472044944\n0\tCOL851\t-0.1121534284205095\n0\tCOL852\t-1.993199558187654\n0\tCOL853\t-0.7955558400853162\n0\tCOL854\t-0.9255669317194798\n0\tCOL855\t-1.2515750012270723\n0\tCOL856\t-0.6696464032827993\n0\tCOL857\t-0.7464418228826382\n0\tCOL858\t-0.6762013127812821\n0\tCOL859\t0.570340553069111\n0\tCOL860\t0.2152105838196701\n0\tCOL861\t0.7535077856550825\n0\tCOL862\t1.0097002219572406\n0\tCOL863\t-0.858349570962942\n0\tCOL864\t2.235612052602498\n0\tCOL865\t0.5825965872538383\n0\tCOL866\t-0.8993772580173147\n0\tCOL867\t0.0619009332333712\n0\tCOL868\t0.1536706945226477\n0\tCOL869\t-1.5653958563279402\n0\tCOL870\t-0.1882839614086785\n0\tCOL871\t0.0663759674336736\n0\tCOL872\t0.9010505582415904\n0\tCOL873\t-0.1230465663642257\n0\tCOL874\t1.7139709694612295\n0\tCOL875\t-0.3774761122149399\n0\tCOL876\t-0.910829078494826\n0\tCOL877\t2.0627871752806137\n0\tCOL878\t-1.3889055967202204\n0\tCOL879\t-0.1690553954466078\n0\tCOL880\t-0.3395476098582578\n0\tCOL881\t-0.5094028857481046\n0\tCOL882\t-1.378084109965486\n0\tCOL883\t-0.658491844949987\n0\tCOL884\t-0.3590488762601584\n0\tCOL885\t-1.0689780220222518\n0\tCOL886\t1.7497826008836506\n0\tCOL887\t-0.1178943638301348\n0\tCOL888\t-0.1484490867028002\n0\tCOL889\t1.5378329603438017\n0\tCOL890\t-1.4312513041491666\n0\tCOL891\t1.156696107768161\n0\tCOL892\t0.5746825709877252\n0\tCOL893\t-2.553614359758896\n0\tCOL894\t0.3845362504250105\n0\tCOL895\t-1.8019084628660724\n0\tCOL896\t-0.2372332285738397\n0\tCOL897\t1.7643847883315225\n0\tCOL898\t-1.6280374670759896\n0\tCOL899\t0.3190797507685562\n0\tCOL900\t1.5155168189740371\n0\tCOL901\t-0.4558213512153771\n0\tCOL902\t-0.5068204635992651\n0\tCOL903\t-0.1767397433005868\n0\tCOL904\t1.9578185725638653\n0\tCOL905\t-2.8071162500617737\n0\tCOL906\t1.6435523537937973\n0\tCOL907\t1.031908655785804\n0\tCOL908\t-0.7690116226105171\n0\tCOL909\t1.141622608030566\n0\tCOL910\t0.3824138961441785\n0\tCOL911\t-0.2013234205030409\n0\tCOL912\t-1.7494575301555373\n0\tCOL913\t0.0262796090460662\n0\tCOL914\t0.6139603995065017\n0\tCOL915\t-0.4195904046894954\n0\tCOL916\t0.5987973865748176\n0\tCOL917\t-0.556565111433135\n0\tCOL918\t-0.2815664840433455\n0\tCOL919\t0.1049973120894927\n0\tCOL920\t-1.8956805304753883\n0\tCOL921\t1.036886737130993\n0\tCOL922\t3.2751717797884417\n0\tCOL923\t1.5136921255479192\n0\tCOL924\t1.103052491886896\n0\tCOL925\t-0.4635438206492046\n0\tCOL926\t1.014910592522594\n0\tCOL927\t-0.936087654385148\n0\tCOL928\t0.5395293131598813\n0\tCOL929\t-0.0626796459523232\n0\tCOL930\t-0.6322101997955245\n0\tCOL931\t0.3512396082742289\n0\tCOL932\t1.0428991541879922\n0\tCOL933\t-2.4310946791202435\n0\tCOL975\t-0.0273825028610766\n0\tCOL976\t0.8917334475778165\n0\tCOL977\t1.9462537195088545\n0\tCOL978\t-0.5774435026014694\n0\tCOL979\t1.9125899394891612\n0\tCOL980\t0.9176351595013438\n0\tCOL981\t-0.1545226564252081\n0\tCOL982\t-0.2317650059210825\n0\tCOL983\t0.2224838709320764\n0\tCOL984\t1.6438424373264129\n0\tCOL985\t1.9812052101128244\n0\tCOL986\t-0.421601931140039\n0\tCOL987\t-0.1117620920197149\n0\tCOL988\t-2.0043000849981625\n0\tCOL989\t-0.4658458846863431\n0\tCOL990\t-0.0970579051409983\n0\tCOL991\t-1.1833037735022516\n0\tCOL992\t-0.6606888067072957\n0\tCOL993\t-1.1964463521147364\n0\tCOL994\t0.860722478217421\n0\tCOL995\t1.754687767993027\n0\tCOL996\t-0.3191378153204526\n0\tCOL997\t-0.9508746059936376\n0\tCOL998\t0.1717154652388967\n0\tCOL999\t0.4167352191493134\n0\tCOL1000\t1.3909287207650778\n0\tCOL1001\t-1.2769850090299606\n0\tCOL1002\t-1.302010517542583\n0\tCOL1003\t-0.4128729137018645\n0\tCOL1004\t0.7400666188421404\n0\tCOL1005\t-1.3207967721300713\n0\tCOL1006\t-0.9085144763887298\n0\tCOL1007\t1.2115316212968066\n0\tCOL1008\t0.9106382971575712\n0\tCOL1009\t-0.3560379438453583\n0\tCOL1010\t-1.2796165834645772\n0\tCOL1011\t1.2990665299690816\n0\tCOL1012\t1.1244249205531718\n0\tCOL1013\t1.7725804958152993\n0\tCOL1014\t-0.1859378665001091\n0\tCOL1015\t-0.5968033279937596\n0\tCOL1016\t0.3747795097845116\n0\tCOL1017\t-0.5429399160601837\n0\tCOL1018\t-0.2677264387826051\n0\tCOL1019\t0.3819128176278895\n0\tCOL1020\t-0.710490254796051\n0\tCOL1021\t0.9293354007995004\n0\tCOL1022\t-0.2227207365862451\n0\tCOL1023\t-0.3571505504253454\n0\tCOL1024\t-0.346904256740753\n0\tCOL1025\t-0.7435892521464879\n0\tCOL1026\t1.6072426402213895\n0\tCOL1027\t2.2002739228313044\n0\tCOL1028\t-0.7846953155297888\n0\tCOL1029\t-1.3423132996310534\n0\tCOL1030\t0.8721956926519258\n0\tCOL1031\t-0.5476763176023635\n0\tCOL1032\t-0.3724002657544661\n0\tCOL1033\t0.7960818438467241\n0\tCOL1034\t-1.043786052566979\n0\tCOL1035\t-1.063350706312775\n0\tCOL1036\t-1.336662792689858\n0\tCOL1037\t0.7609284742414204\n0\tCOL1038\t0.7275898277316404\n0\tCOL1039\t-2.1240223959476543\n0\tCOL1040\t-0.7259146919622091\n0\tCOL1041\t0.3828198199086285\n0\tCOL1042\t0.3218529630310026\n0\tCOL1043\t-1.1514566868132343\n0\tCOL1044\t-1.4497430083784224\n0\tCOL1045\t0.0080720786607157\n0\tCOL1046\t1.352731399355778\n0\tCOL1047\t0.5541204653998656\n0\tCOL1048\t0.5330356881542911\n0\tCOL1049\t1.289584034356397\n0\tCOL1050\t-0.5016768811108379\n0\tCOL1051\t0.4602578184680517\n0\tCOL1052\t-0.7500712208844104\n0\tCOL1053\t0.4826436067594181\n0\tCOL1054\t-0.2331566027287092\n0\tCOL1055\t-0.928880463487746\n0\tCOL1056\t-1.0371458609320343\n0\tCOL1057\t-1.122979366501641\n0\tCOL1058\t1.117677127285989\n0\tCOL1059\t0.5113030058953367\n0\tCOL1060\t-1.6727500297730693\n0\tCOL1061\t-0.6802212164675742\n0\tCOL1062\t-2.112928776210543\n0\tCOL1063\t-0.1454629750168817\n0\tCOL1064\t-0.5211584613648652\n0\tCOL1065\t0.6407742170709263\n0\tCOL1066\t-0.2381295579345728\n0\tCOL1067\t1.6364333642434767\n0\tCOL1068\t0.314963355212276\n0\tCOL1069\t0.2062655539749038\n0\tCOL1070\t1.7978568301738074\n0\tCOL1071\t0.2377056116035258\n0\tCOL1072\t0.4151080984762538\n0\tCOL1073\t2.355464088759528\n0\tCOL1074\t-0.7424642640064677\n0\tCOL1075\t0.2336666998169093\n0\tCOL1076\t0.8996984636015\n0\tCOL1077\t1.640420259193932\n0\tCOL1078\t0.6152879242404287\n0\tCOL1079\t0.9810434082483946\n0\tCOL1080\t-1.061377728969499\n0\tCOL1081\t1.471839527402054\n0\tCOL1082\t-0.6187707016821978\n0\tCOL1083\t-1.1708489233788728\n0\tCOL1084\t-2.3789896906073174\n0\tCOL1085\t-0.7013801708773929\n0\tCOL1086\t-2.541771924191888\n0\tCOL1087\t0.3859840139423461\n0\tCOL1088\t1.7163716920062602\n0\tCOL1089\t0.6629729086706253\n0\tCOL1090\t-0.0224732151582538\n0\tCOL1091\t-0.6166344689679827\n0\tCOL1092\t0.4004818060902266\n0\tCOL1093\t2.2200637961867566\n0\tCOL1094\t-0.5658729432000259\n0\tCOL1095\t0.8745943713464217\n0\tCOL1096\t-1.0551839191079202\n0\tCOL1097\t1.7023817278604594\n0\tCOL1098\t-0.0215026236954594\n0\tCOL1099\t0.1291178363031968\n0\tCOL1100\t-0.2369094794517721\n0\tCOL1101\t1.1548386646336608\n0\tCOL1102\t1.059814919377518\n0\tCOL1103\t-0.5322154803302273\n0\tCOL1104\t0.0968835591533537\n0\tCOL655\t-1.073557153509212\n0\tCOL656\t0.6852229961835131\n0\tCOL657\t1.2711153806862132\n0\tCOL658\t-0.3554900704768182\n0\tCOL659\t0.9661987905364594\n0\tCOL660\t-0.5646421892300638\n0\tCOL661\t-0.1690332731629201\n0\tCOL662\t-0.9754560804512789\n0\tCOL663\t0.2034450566425764\n0\tCOL664\t0.6735061414183527\n0\tCOL665\t-0.4821818912482009\n0\tCOL666\t-0.7483374012319484\n0\tCOL667\t1.5592081142616177\n0\tCOL668\t-1.1778890891139375\n0\tCOL669\t-1.568151958725863\n0\tCOL670\t1.6531608403363762\n0\tCOL671\t0.5293313431801762\n0\tCOL672\t-1.1283634532977904\n0\tCOL673\t-0.0049488992250228\n0\tCOL674\t-0.8351262213069105\n0\tCOL675\t-1.184206602102388\n0\tCOL676\t0.447709203126266\n0\tCOL677\t0.6808886029025857\n0\tCOL678\t0.1328225685963106\n0\tCOL679\t0.8142485228109442\n0\tCOL680\t1.2801834009666364\n0\tCOL681\t2.4262265016314277\n0\tCOL682\t-1.0111524326095198\n0\tCOL683\t-1.3657086202564068\n0\tCOL684\t0.4435157068447969\n0\tCOL685\t-0.3313288327272759\n0\tCOL686\t-0.3895950185278888\n0\tCOL687\t0.9326985919480482\n0\tCOL688\t1.0869508002735049\n0\tCOL689\t1.5541775135960083\n0\tCOL690\t-1.8992144806953437\n0\tCOL691\t0.5535721956382761\n0\tCOL692\t-1.5032686717219352\n0\tCOL693\t0.7805528515915545\n0\tCOL694\t0.2209732850184876\n0\tCOL695\t1.176891952041741\n0\tCOL696\t0.7719591602163336\n0\tCOL697\t2.3183167586005924\n0\tCOL698\t-0.4502615871774957\n0\tCOL699\t1.7152724959847272\n0\tCOL700\t-0.5098500627893876\n0\tCOL701\t-1.6955912867744447\n0\tCOL702\t1.084837655431062\n0\tCOL703\t1.0022774038385394\n0\tCOL704\t-2.670696427470143\n0\tCOL705\t-0.0555515590107724\n0\tCOL706\t1.0590787663768853\n0\tCOL707\t-0.1166910783351526\n0\tCOL708\t-0.6260755609502869\n0\tCOL709\t-0.2581271333035025\n0\tCOL710\t-1.0471739416876578\n0\tCOL711\t-0.5530901490270691\n0\tCOL712\t1.6760398213444985\n0\tCOL713\t0.5911975331960782\n0\tCOL714\t-0.289317184414643\n0\tCOL715\t1.3139646046900302\n0\tCOL716\t-0.6114847251978915\n0\tCOL717\t0.1792841937943722\n0\tCOL718\t-2.1934901178187167\n0\tCOL719\t-0.4490271028703011\n0\tCOL720\t0.876888742643505\n0\tCOL721\t0.8942159800230263\n0\tCOL722\t1.2950533485803013\n0\tCOL723\t1.1669694711819685\n0\tCOL724\t0.5617343016464329\n0\tCOL725\t0.3532023067193238\n0\tCOL726\t-0.3699975699867575\n0\tCOL727\t2.422766206114987\n0\tCOL728\t0.6285268611074245\n0\tCOL729\t0.7169974041863001\n0\tCOL730\t0.6660450104097183\n0\tCOL731\t0.5000853316050431\n0\tCOL732\t-1.1537927512963582\n0\tCOL733\t0.7061365420334842\n0\tCOL734\t0.0193322128264077\n0\tCOL735\t1.7171711280270694\n0\tCOL736\t-0.6030797270004019\n0\tCOL737\t-0.569103899982304\n0\tCOL738\t-0.1022140364565869\n0\tCOL739\t-0.3585396094695203\n0\tCOL740\t-0.9362213531335264\n0\tCOL741\t-0.2046120467611916\n0\tCOL742\t1.4936391758527543\n0\tCOL743\t-2.9359776569124247\n0\tCOL744\t0.2740445936227789\n0\tCOL745\t0.925427366617426\n0\tCOL746\t0.8247589052919971\n0\tCOL747\t0.1539738328532432\n0\tCOL748\t-0.6299457091662429\n0\tCOL749\t-1.331157349369458\n0\tCOL750\t0.0881204382939574\n0\tCOL751\t0.7114447441432067\n0\tCOL752\t-1.0194330482136045\n0\tCOL753\t-0.4970135152038902\n0\tCOL754\t-0.5442729712971266\n0\tCOL755\t0.3128420551706604\n0\tCOL756\t-0.8726757120979403\n0\tCOL757\t0.4453620905458008\n0\tCOL758\t0.383760311707667\n0\tCOL759\t0.116902248227888\n0\tCOL760\t-1.4903678720412683\n0\tCOL761\t-0.4659569936222982\n0\tCOL762\t0.313801803001928\n0\tCOL763\t1.3230256794731423\n0\tCOL764\t-0.9689951862721828\n0\tCOL765\t-0.2596436301445296\n0\tCOL766\t0.9173510269047104\n0\tCOL767\t1.2515838842666591\n0\tCOL768\t-0.7794751731586641\n0\tCOL769\t-0.4484855790421361\n0\tCOL770\t-0.4113900283253363\n0\tCOL771\t0.9371309433393924\n0\tCOL772\t-1.6472232620586802\n0\tCOL773\t1.337655580646011\n0\tCOL774\t0.0006460263103603\n0\tCOL775\t0.3332744623761075\n0\tCOL776\t-1.3908201540563374\n0\tCOL777\t1.0446992180803367\n0\tCOL778\t-1.6969440582934685\n0\tCOL779\t1.8786776127308915\n0\tCOL780\t-1.391063234067895\n0\tCOL781\t0.4793076303400829\n0\tCOL782\t-1.393653995174924\n0\tCOL783\t-1.0088630121398354\n0\tCOL784\t0.9051042928479184\n0\tCOL785\t-1.1465291979542576\n0\tCOL786\t0.638220399339516\n0\tCOL787\t0.0606779494670646\n0\tCOL788\t0.4842119730407596\n0\tCOL789\t0.1625597710164567\n0\tCOL790\t0.7436248230299272\n0\tCOL791\t0.0718578461206791\n0\tCOL792\t-0.8139206940423617\n0\tCOL793\t0.5664093741881272\n0\tCOL794\t-0.4757149858940849\n0\tCOL795\t0.2163357939469825\n0\tCOL796\t-0.5135553048329203\n0\tCOL797\t0.3391902654091043\n0\tCOL798\t0.9523384226237336\n0\tCOL799\t0.6584075859997833\n0\tCOL800\t-0.6021639514869775\n0\tCOL801\t-0.0396703711716683\n0\tCOL802\t0.4786667101479714\n0\tCOL803\t1.207187351748162\n0\tCOL804\t-1.1401582427562305\n0\tCOL805\t2.107147971506505\n0\tCOL806\t-0.4271895902813152\n0\tCOL807\t-1.4122321088036416\n0\tCOL808\t-0.1422794249146442\n0\tCOL809\t0.057084785340767\n0\tCOL810\t0.8220652505326853\n0\tCOL811\t0.9564295043575324\n0\tCOL812\t0.5313111608976951\n0\tCOL813\t-0.5783265363529145\n0\tCOL814\t0.0561083544140684\n0\tCOL815\t-0.1525691621179806\n0\tCOL816\t-1.00482188450971\n0\tCOL817\t-1.270287300718835\n0\tCOL818\t0.790096249340002\n0\tCOL934\t-0.2905105766773626\n0\tCOL935\t-0.0843322115910359\n0\tCOL936\t1.3354304286741578\n0\tCOL937\t0.4447255486595091\n0\tCOL938\t-1.0391794139596855\n0\tCOL939\t0.7666928773368795\n0\tCOL940\t-1.218533285724592\n0\tCOL941\t-0.6302341497525675\n0\tCOL942\t1.7858015655837982\n0\tCOL943\t0.4242074411309546\n0\tCOL944\t0.5211685634341036\n0\tCOL945\t-0.8152634573997317\n0\tCOL946\t-0.442357531230611\n0\tCOL947\t-0.2415288126531938\n0\tCOL948\t0.1483170322472306\n0\tCOL949\t-0.4881990429697114\n0\tCOL950\t1.0380414899617\n0\tCOL951\t-0.0333535564467905\n0\tCOL952\t0.931627990850704\n0\tCOL953\t1.3602630117968877\n0\tCOL954\t0.3221346897900747\n0\tCOL955\t-1.7014046381097148\n0\tCOL956\t1.5883182353201974\n0\tCOL957\t1.2610353436852746\n0\tCOL958\t0.3152206744881316\n0\tCOL959\t-1.634041080884031\n0\tCOL960\t0.4210378719528529\n0\tCOL961\t0.453634012847539\n0\tCOL962\t1.12354719016765\n0\tCOL963\t1.1220843541227763\n0\tCOL964\t1.1375672128900909\n0\tCOL965\t-1.116608542497333\n0\tCOL966\t0.2586563581412041\n0\tCOL967\t-0.0501047538855236\n0\tCOL968\t-0.694517161683515\n0\tCOL969\t0.4025824668320408\n0\tCOL970\t-0.5855353080751039\n0\tCOL971\t0.1152432362286308\n0\tCOL972\t0.6738552707789226\n0\tCOL973\t-0.9270141031570436\n0\tCOL974\t0.4107573594511429\n0\tCOL246\t1.7747017023141511\n0\tCOL247\t-0.0717944692266119\n0\tCOL248\t-1.4467863105626926\n0\tCOL249\t0.7049469659440296\n0\tCOL250\t0.2467143852464837\n0\tCOL251\t0.0773825909511251\n0\tCOL252\t-2.439869381142873\n0\tCOL253\t0.3044235258859336\n0\tCOL254\t-1.8688544397276812\n0\tCOL255\t0.7672370921684257\n0\tCOL256\t-0.5272321229969947\n0\tCOL257\t-0.117581902906376\n0\tCOL258\t1.3063300649441103\n0\tCOL259\t0.7615825179243653\n0\tCOL260\t0.6867381696108541\n0\tCOL261\t-1.0422876141518274\n0\tCOL262\t-0.54655106666718\n0\tCOL263\t-1.5023511834446144\n0\tCOL264\t0.0848140759119181\n0\tCOL265\t-1.582819913625539\n0\tCOL266\t0.5569784732961199\n0\tCOL267\t-1.0936245415620012\n0\tCOL268\t-1.120827472134753\n0\tCOL269\t0.0130160054689116\n0\tCOL270\t-0.8220195420532627\n0\tCOL271\t-1.6883130019911523\n0\tCOL272\t0.1974848539609233\n0\tCOL273\t1.2067057289509555\n0\tCOL274\t-1.1418877346170686\n0\tCOL275\t-0.8664930524881408\n0\tCOL276\t1.0828260973508586\n0\tCOL277\t0.456037523954585\n0\tCOL278\t0.1157856809033225\n0\tCOL279\t-1.745707679872203\n0\tCOL280\t0.8128921644149042\n0\tCOL281\t0.3969980904203096\n0\tCOL282\t-0.5246177792048926\n0\tCOL283\t-0.1315057922222199\n0\tCOL284\t-0.1559179550872685\n0\tCOL285\t1.53566321539825\n0\tCOL286\t0.0842268081800029\n0\tCOL287\t-0.5654903795042604\n0\tCOL288\t0.7400188567339363\n0\tCOL289\t-0.5141649912105672\n0\tCOL290\t1.1032638350666522\n0\tCOL291\t-0.5018025690101391\n0\tCOL292\t0.82086373775611\n0\tCOL293\t1.2848144772505865\n0\tCOL294\t-0.9718282970402252\n0\tCOL295\t-0.7213407050441888\n0\tCOL296\t-0.7525186486992637\n0\tCOL297\t-0.6667054202495286\n0\tCOL298\t0.2542775936324458\n0\tCOL299\t-1.5593334968037635\n0\tCOL300\t0.3414095481362063\n0\tCOL301\t0.2148385369661868\n0\tCOL302\t0.8377290267023237\n0\tCOL303\t0.5504990627353988\n0\tCOL304\t2.011106070780873\n0\tCOL305\t1.179140751745144\n0\tCOL306\t-0.5198086160206793\n0\tCOL307\t-1.795226389605428\n0\tCOL308\t-1.557088481912953\n0\tCOL309\t0.5925620593630829\n0\tCOL310\t-1.2323040453099383\n0\tCOL311\t0.7026256109788162\n0\tCOL312\t-2.7947663528713926\n0\tCOL313\t0.7199660578893362\n0\tCOL314\t0.758125582106711\n0\tCOL315\t-0.6939333788861639\n0\tCOL316\t-0.0541816034346704\n0\tCOL317\t0.9407918974446036\n0\tCOL318\t2.2256256728401413\n0\tCOL319\t-0.4533708379482249\n0\tCOL320\t-0.2402144653248818\n0\tCOL321\t0.3270634206779682\n0\tCOL322\t-0.6778952304214764\n0\tCOL323\t-1.088307148089054\n0\tCOL324\t0.8103888049107747\n0\tCOL325\t-0.1043882665274626\n0\tCOL326\t0.6354187613980086\n0\tCOL327\t-0.6902076409440644\n0\tCOL328\t-0.6054759207798428\n0\tCOL329\t-0.1317852679482306\n0\tCOL330\t-1.4883432728066457\n0\tCOL331\t-0.2991266484286305\n0\tCOL332\t-0.859297028915426\n0\tCOL333\t-0.7260446603425567\n0\tCOL334\t1.5067894192775044\n0\tCOL335\t0.5763981070239019\n0\tCOL336\t0.7728115447177879\n0\tCOL337\t0.6346514227411134\n0\tCOL338\t0.7171824409064962\n0\tCOL339\t0.2693248270223244\n0\tCOL340\t-0.501868126168336\n0\tCOL341\t0.2628820994945078\n0\tCOL342\t0.0825843803802964\n0\tCOL343\t0.945500633077704\n0\tCOL344\t-0.3724383393323467\n0\tCOL345\t-0.2779375835936349\n0\tCOL346\t-0.2291274446770358\n0\tCOL347\t-1.189510487251293\n0\tCOL348\t-2.550800308173311\n0\tCOL349\t0.4395500911055267\n0\tCOL350\t-0.5482982971260889\n0\tCOL351\t-1.1069454184658496\n0\tCOL352\t1.4306563649562416\n0\tCOL353\t-0.4237765292478754\n0\tCOL354\t-0.3949083611871559\n0\tCOL355\t-2.744749234400299\n0\tCOL356\t0.5897928209843883\n0\tCOL357\t-1.100125167256107\n0\tCOL358\t-1.0983751265581376\n0\tCOL359\t0.8109596505846813\n0\tCOL360\t0.3587771951248447\n0\tCOL361\t-0.1633150792857531\n0\tCOL362\t0.072973861403296\n0\tCOL363\t-0.5932694613469974\n0\tCOL364\t-1.012677439193131\n0\tCOL365\t0.4426539581158247\n0\tCOL366\t1.6613527696149952\n0\tCOL367\t1.0078143826272483\n0\tCOL368\t0.8877619884247594\n0\tCOL369\t-1.396694555937762\n0\tCOL370\t-1.1297773428246294\n0\tCOL371\t-1.1631813663236683\n0\tCOL372\t-1.3821687407458365\n0\tCOL373\t0.2448205955665654\n0\tCOL374\t-0.4006849076150748\n0\tCOL375\t-0.240541747579599\n0\tCOL376\t1.0641785059868696\n0\tCOL377\t-1.3168403880863202\n0\tCOL378\t-0.9979578516526588\n0\tCOL379\t-0.1908252556904786\n0\tCOL380\t0.7884171417166289\n0\tCOL381\t-0.815097987818323\n0\tCOL382\t0.2742062038269745\n0\tCOL383\t0.221263663931863\n0\tCOL384\t0.3972742094830396\n0\tCOL385\t-0.6549716065454279\n0\tCOL386\t-0.1254626738966191\n0\tCOL387\t-1.7486852462945437\n0\tCOL388\t-0.0033576224567717\n0\tCOL389\t0.5098175589458093\n0\tCOL390\t-0.8571068310447261\n0\tCOL391\t0.5238813834867303\n0\tCOL392\t1.7621777262523286\n0\tCOL393\t1.174244367825004\n0\tCOL394\t1.7784611038380638\n0\tCOL395\t1.0618872022121508\n0\tCOL396\t-0.937040251929823\n0\tCOL397\t-0.5554661408430374\n0\tCOL398\t1.6997918300820842\n0\tCOL399\t0.3722110958200347\n0\tCOL400\t1.930885264968466\n0\tCOL401\t0.0979716809943859\n0\tCOL402\t-0.0476206855918565\n0\tCOL403\t-0.7304816819111102\n0\tCOL404\t0.7237207868529942\n0\tCOL405\t-0.3383758927421115\n0\tCOL406\t0.0743154094951123\n0\tCOL407\t-1.120972601814764\n0\tCOL408\t0.8065406583602411\n0\tCOL409\t1.8974771300628976\n0\tCOL410\t-0.7042533416233082\n0\tCOL411\t1.4702565865523252\n0\tCOL412\t-0.2270955644726641\n0\tCOL413\t-0.957539001424938\n0\tCOL414\t0.4974801945299896\n0\tCOL415\t-0.1312620507745822\n0\tCOL416\t0.5804264859440513\n0\tCOL417\t0.975199948953493\n0\tCOL418\t-1.0314902127584753\n0\tCOL419\t-1.308864565819429\n0\tCOL420\t1.4558945020643803\n0\tCOL421\t-0.8168814450854212\n0\tCOL422\t1.1504789157760515\n0\tCOL423\t1.0708573464054725\n0\tCOL424\t0.366753674550091\n0\tCOL425\t-0.727684217351449\n0\tCOL426\t-0.8555255922411358\n0\tCOL427\t-0.025462882153509\n0\tCOL428\t1.5493466808229663\n0\tCOL429\t-0.6593264765652033\n0\tCOL430\t-1.5021267378426404\n0\tCOL431\t0.2453946522730583\n0\tCOL432\t0.1067411071151545\n0\tCOL433\t-0.813833671341016\n0\tCOL434\t2.026362783707003\n0\tCOL435\t-1.5446081165705006\n0\tCOL436\t-0.4565538366255421\n0\tCOL437\t0.4932320571979775\n0\tCOL438\t1.045668157935302\n0\tCOL439\t0.280016649543624\n0\tCOL440\t0.7593862083134906\n0\tCOL441\t0.2535131149038951\n0\tCOL442\t-0.4205100448933796\n0\tCOL443\t-0.8556247470501908\n0\tCOL444\t0.6708221491491216\n0\tCOL445\t0.3336362062517331\n0\tCOL446\t-0.9110422628707556\n0\tCOL447\t-1.5195289437927348\n0\tCOL448\t-2.348697426625008\n0\tCOL449\t0.938591420917262\n0\tCOL450\t0.4965820473085846\n0\tCOL524\t-0.1315799989196183\n0\tCOL525\t1.3106030831886408\n0\tCOL526\t1.521204499240412\n0\tCOL527\t-1.9879282181307345\n0\tCOL528\t-0.147337268370785\n0\tCOL529\t0.4673857695907659\n0\tCOL530\t-0.2351683052556819\n0\tCOL531\t-0.7790158783807132\n0\tCOL532\t1.3078709657364558\n0\tCOL533\t1.6628954762248775\n0\tCOL534\t-0.4225543216276003\n0\tCOL535\t0.6879104386205722\n0\tCOL536\t-1.3177575997520752\n0\tCOL537\t0.9759086602633208\n0\tCOL538\t-0.8156745374834725\n0\tCOL539\t0.1651715271424549\n0\tCOL540\t0.8915619961072352\n0\tCOL541\t-1.25446159105475\n0\tCOL542\t0.1997359884410196\n0\tCOL543\t-0.2736533667122653\n0\tCOL544\t-0.6647586617230125\n0\tCOL545\t1.2852990474536274\n0\tCOL546\t-0.5438611207287144\n0\tCOL547\t1.4460328078472495\n0\tCOL548\t1.3457496588032911\n0\tCOL549\t-0.3833621920718212\n0\tCOL550\t0.5266045717270043\n0\tCOL551\t2.1387213539447467\n0\tCOL552\t-0.3100878383777701\n0\tCOL553\t0.5624060686632902\n0\tCOL554\t-1.80855616875342\n0\tCOL555\t-0.9590754722604572\n0\tCOL556\t-1.708122920512285\n0\tCOL557\t-0.3591661174540144\n0\tCOL558\t-0.1213494656444091\n0\tCOL559\t-1.276791887244823\n0\tCOL560\t-0.8758745269028455\n0\tCOL561\t-2.81526779387215\n0\tCOL562\t-1.5585947618603704\n0\tCOL563\t0.2532876682269229\n0\tCOL564\t-0.8212445383704151\n0\tCOL451\t0.7517476536893896\n0\tCOL452\t0.3664854292489442\n0\tCOL453\t1.269408096209877\n0\tCOL454\t-2.065284389270216\n0\tCOL455\t-0.8121220365321594\n0\tCOL456\t1.1940625826969504\n0\tCOL457\t-0.8459021841514959\n0\tCOL458\t1.7692611076098357\n0\tCOL459\t0.353080218315547\n0\tCOL460\t-0.0352687406243705\n0\tCOL461\t1.1079268343509134\n0\tCOL462\t0.8255404699866253\n0\tCOL463\t0.6817570131143722\n0\tCOL464\t-0.6629167196012272\n0\tCOL465\t1.0819352599309926\n0\tCOL466\t1.0185953932259144\n0\tCOL467\t0.0554804050456417\n0\tCOL468\t-0.4965741625015074\n0\tCOL469\t0.8047249100826372\n0\tCOL470\t-0.0377524655593852\n0\tCOL471\t-0.3532385275457061\n0\tCOL472\t0.3316658125875069\n0\tCOL473\t0.7156189490821345\n0\tCOL474\t-0.4717911436103104\n0\tCOL475\t-0.1907682826254603\n0\tCOL476\t0.2253200004224139\n0\tCOL477\t0.3820043259524963\n0\tCOL478\t0.014536910244359\n0\tCOL479\t-0.9727303052649302\n0\tCOL480\t0.3156227965369094\n0\tCOL481\t1.3103630690326498\n0\tCOL482\t-0.4335156283929965\n0\tCOL483\t-0.0664672560984107\n0\tCOL484\t0.0423905809931297\n0\tCOL485\t-0.6154236422002439\n0\tCOL486\t-0.2012594461221461\n0\tCOL487\t-0.709256504556205\n0\tCOL488\t-0.5584314683800271\n0\tCOL489\t-0.957987229578966\n0\tCOL490\t0.4756921316707252\n0\tCOL491\t-0.6799352202390482\n0\tCOL573\t0.8374523213570064\n0\tCOL574\t-0.221447361857687\n0\tCOL575\t-0.3776014804859665\n0\tCOL576\t0.4962996323956228\n0\tCOL577\t1.0875132741363338\n0\tCOL578\t0.3724312020708342\n0\tCOL579\t0.7346922809039382\n0\tCOL580\t0.396867065439218\n0\tCOL581\t-0.813729690172513\n0\tCOL582\t-1.2260796122903288\n0\tCOL583\t-0.9451602621788447\n0\tCOL584\t0.1366255309374484\n0\tCOL585\t-1.5330866859854584\n0\tCOL586\t0.6718562672488367\n0\tCOL587\t-1.4927919358649138\n0\tCOL588\t-0.7154036002543311\n0\tCOL589\t-0.8221270052735787\n0\tCOL590\t-1.1197046945747005\n0\tCOL591\t-0.3580603985692274\n0\tCOL592\t0.5821854454088097\n0\tCOL593\t0.0359206538920143\n0\tCOL594\t1.281511349242246\n0\tCOL595\t-1.493773089287471\n0\tCOL596\t1.3195756227970556\n0\tCOL597\t-2.562991118934184\n0\tCOL598\t-1.935736620494817\n0\tCOL599\t0.4168846251645655\n0\tCOL600\t1.1426459123697617\n0\tCOL601\t0.1480226420339908\n0\tCOL602\t1.0709114473063068\n0\tCOL603\t0.8535146611905846\n0\tCOL604\t1.088229601892203\n0\tCOL605\t0.1841589270039723\n0\tCOL606\t-0.3326803526206317\n0\tCOL607\t0.8335597165261878\n0\tCOL608\t-0.4478590249674478\n0\tCOL609\t-1.6701275547489636\n0\tCOL610\t0.6399967622910088\n0\tCOL611\t-1.842328379868838\n0\tCOL612\t1.859825937725749\n0\tCOL613\t1.017339306131648\n0\tCOL614\t-1.5178969407571976\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-199518624",
+      "id": "20220206-193042_594624657",
+      "dateCreated": "2021-11-18T16:10:23+0000",
+      "dateStarted": "2022-03-10T17:25:17+0000",
+      "dateFinished": "2022-03-10T17:25:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check if there are any duplicates",
+      "text": "%sql\n\nSELECT count(distinct name)\nFROM TXN_TBL\nwhere id \u003d 0\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COUNT(DISTINCTNAME)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNT(DISTINCTNAME)\n2000\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_132187388",
+      "id": "20220206-193042_692473126",
+      "dateCreated": "2021-11-08T19:52:22+0000",
+      "dateStarted": "2022-03-10T17:25:18+0000",
+      "dateFinished": "2022-03-10T17:25:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show the label/class and the id",
+      "text": "%sql\n\nSELECT * FROM WIDE_LABEL_TBL\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ID": "string",
+                      "CLASS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ID\tCLASS\n700\t1\n701\t1\n702\t0\n703\t1\n704\t1\n705\t1\n706\t1\n707\t0\n708\t0\n709\t1\n710\t1\n711\t1\n712\t1\n713\t1\n714\t1\n715\t0\n716\t0\n717\t0\n718\t1\n719\t1\n720\t0\n721\t1\n722\t1\n723\t0\n724\t1\n725\t0\n726\t0\n727\t0\n728\t0\n729\t0\n730\t1\n731\t0\n732\t0\n733\t1\n734\t0\n735\t0\n736\t0\n737\t0\n738\t1\n739\t0\n740\t1\n741\t0\n742\t1\n743\t1\n744\t0\n745\t1\n746\t1\n747\t0\n748\t0\n749\t1\n750\t0\n751\t0\n752\t1\n753\t0\n754\t0\n755\t1\n756\t1\n757\t1\n758\t0\n759\t0\n760\t0\n761\t1\n762\t0\n763\t1\n764\t0\n765\t1\n766\t1\n767\t0\n768\t1\n769\t0\n770\t0\n771\t1\n772\t0\n773\t0\n774\t1\n775\t0\n776\t0\n777\t1\n778\t0\n779\t1\n780\t1\n781\t0\n782\t0\n783\t1\n784\t0\n785\t1\n786\t1\n787\t1\n788\t1\n789\t1\n790\t1\n791\t1\n792\t0\n793\t1\n794\t0\n795\t1\n796\t0\n797\t1\n798\t1\n799\t1\n300\t1\n301\t0\n302\t1\n303\t1\n304\t0\n305\t1\n306\t0\n307\t0\n308\t1\n309\t0\n310\t0\n311\t0\n312\t1\n313\t1\n314\t0\n315\t0\n316\t0\n317\t1\n318\t0\n319\t1\n320\t0\n321\t1\n322\t0\n323\t0\n324\t0\n325\t0\n326\t0\n327\t0\n328\t0\n329\t0\n330\t0\n331\t0\n332\t1\n333\t0\n334\t1\n335\t0\n336\t0\n337\t0\n338\t0\n339\t1\n340\t1\n341\t1\n342\t0\n343\t0\n344\t0\n345\t0\n346\t0\n347\t1\n348\t1\n349\t1\n350\t1\n351\t0\n352\t0\n353\t0\n354\t1\n355\t0\n356\t0\n357\t0\n358\t1\n359\t0\n360\t1\n361\t1\n362\t1\n363\t1\n364\t1\n365\t1\n366\t1\n367\t1\n368\t0\n369\t0\n370\t1\n371\t0\n372\t0\n373\t1\n374\t1\n375\t0\n376\t1\n377\t1\n378\t1\n379\t1\n380\t1\n381\t1\n382\t1\n383\t1\n384\t0\n385\t0\n386\t1\n387\t0\n388\t1\n389\t1\n390\t0\n391\t0\n392\t1\n393\t1\n394\t1\n395\t1\n396\t1\n397\t0\n398\t1\n399\t0\n400\t0\n401\t1\n402\t1\n403\t1\n404\t0\n405\t1\n406\t0\n407\t1\n408\t1\n409\t0\n410\t1\n411\t0\n412\t1\n413\t0\n414\t1\n415\t0\n416\t1\n417\t0\n418\t0\n419\t0\n420\t1\n421\t1\n422\t0\n423\t1\n424\t1\n425\t0\n426\t1\n427\t0\n428\t0\n429\t0\n430\t1\n431\t1\n432\t1\n433\t1\n434\t0\n435\t1\n436\t0\n437\t0\n438\t0\n439\t1\n440\t0\n441\t1\n442\t0\n443\t0\n444\t1\n445\t0\n446\t1\n447\t0\n448\t0\n449\t0\n450\t1\n451\t1\n452\t0\n453\t1\n454\t0\n455\t0\n456\t1\n457\t1\n458\t0\n459\t1\n460\t1\n461\t1\n462\t1\n463\t1\n464\t1\n465\t0\n466\t1\n467\t0\n468\t1\n469\t0\n470\t1\n471\t0\n472\t0\n473\t1\n474\t0\n475\t0\n476\t1\n477\t1\n478\t1\n479\t0\n480\t0\n481\t1\n482\t0\n483\t1\n484\t0\n485\t1\n486\t1\n487\t0\n488\t1\n489\t0\n490\t1\n491\t1\n492\t0\n493\t1\n494\t0\n495\t1\n496\t1\n497\t1\n498\t1\n499\t1\n500\t1\n501\t0\n502\t1\n503\t1\n504\t1\n505\t1\n506\t1\n507\t0\n508\t0\n509\t0\n510\t1\n511\t0\n512\t0\n513\t1\n514\t1\n515\t0\n516\t1\n517\t0\n518\t1\n519\t1\n520\t1\n521\t1\n522\t1\n523\t1\n524\t1\n525\t1\n526\t1\n527\t0\n528\t1\n529\t1\n530\t0\n531\t0\n532\t0\n533\t0\n534\t1\n535\t0\n536\t1\n537\t0\n538\t0\n539\t0\n540\t0\n541\t1\n542\t0\n543\t1\n544\t0\n545\t0\n546\t1\n547\t1\n548\t1\n549\t1\n550\t0\n551\t0\n552\t1\n553\t1\n554\t1\n555\t1\n556\t1\n557\t0\n558\t1\n559\t1\n560\t0\n561\t0\n562\t0\n563\t0\n564\t1\n565\t1\n566\t0\n567\t1\n568\t1\n569\t0\n570\t1\n571\t0\n572\t0\n573\t1\n574\t0\n575\t1\n576\t0\n577\t1\n578\t1\n579\t0\n580\t1\n581\t1\n582\t0\n583\t1\n584\t1\n585\t1\n586\t1\n587\t0\n588\t1\n589\t0\n590\t1\n591\t1\n592\t1\n593\t0\n594\t0\n595\t0\n596\t0\n597\t0\n598\t1\n599\t1\n0\t1\n1\t1\n2\t0\n3\t0\n4\t1\n5\t1\n6\t0\n7\t0\n8\t0\n9\t0\n10\t0\n11\t0\n12\t0\n13\t0\n14\t0\n15\t0\n16\t0\n17\t1\n18\t1\n19\t0\n20\t1\n21\t1\n22\t1\n23\t0\n24\t0\n25\t0\n26\t1\n27\t1\n28\t1\n29\t0\n30\t0\n31\t1\n32\t0\n33\t0\n34\t1\n35\t1\n36\t0\n37\t0\n38\t1\n39\t0\n40\t1\n41\t0\n42\t1\n43\t1\n44\t0\n45\t0\n46\t1\n47\t0\n48\t1\n49\t1\n50\t1\n51\t0\n52\t1\n53\t0\n54\t0\n55\t0\n56\t1\n57\t0\n58\t1\n59\t1\n60\t1\n61\t0\n62\t0\n63\t1\n64\t0\n65\t0\n66\t1\n67\t0\n68\t0\n69\t1\n70\t0\n71\t1\n72\t1\n73\t1\n74\t1\n75\t0\n76\t0\n77\t1\n78\t1\n79\t1\n80\t1\n81\t1\n82\t1\n83\t0\n84\t1\n85\t0\n86\t0\n87\t1\n88\t1\n89\t1\n90\t1\n91\t1\n92\t1\n93\t1\n94\t0\n95\t0\n96\t1\n97\t0\n98\t1\n99\t0\n100\t0\n101\t0\n102\t0\n103\t0\n104\t0\n105\t0\n106\t1\n107\t1\n108\t1\n109\t0\n110\t0\n111\t0\n112\t1\n113\t0\n114\t1\n115\t0\n116\t1\n117\t1\n118\t1\n119\t0\n120\t1\n121\t0\n122\t0\n123\t0\n124\t1\n125\t0\n126\t1\n127\t1\n128\t0\n129\t1\n130\t0\n131\t1\n132\t1\n133\t1\n134\t0\n135\t0\n136\t1\n137\t0\n138\t0\n139\t0\n140\t1\n141\t1\n142\t0\n143\t0\n144\t0\n145\t0\n146\t0\n147\t1\n148\t0\n149\t0\n150\t0\n151\t1\n152\t1\n153\t0\n154\t0\n155\t1\n156\t1\n157\t1\n158\t1\n159\t1\n160\t1\n161\t0\n162\t0\n163\t1\n164\t1\n165\t1\n166\t0\n167\t1\n168\t0\n169\t0\n170\t1\n171\t0\n172\t0\n173\t0\n174\t0\n175\t0\n176\t1\n177\t0\n178\t0\n179\t1\n180\t0\n181\t0\n182\t1\n183\t1\n184\t0\n185\t1\n186\t1\n187\t0\n188\t0\n189\t0\n190\t1\n191\t1\n192\t1\n193\t1\n194\t0\n195\t1\n196\t1\n197\t0\n198\t0\n199\t0\n600\t1\n601\t1\n602\t1\n603\t0\n604\t1\n605\t0\n606\t0\n607\t0\n608\t1\n609\t1\n610\t1\n611\t0\n612\t1\n613\t1\n614\t0\n615\t1\n616\t0\n617\t1\n618\t0\n619\t0\n620\t0\n621\t1\n622\t1\n623\t0\n624\t1\n625\t1\n626\t1\n627\t0\n628\t0\n629\t0\n630\t0\n631\t0\n632\t1\n633\t1\n634\t1\n635\t0\n636\t1\n637\t0\n638\t0\n639\t0\n640\t0\n641\t0\n642\t1\n643\t1\n644\t1\n645\t1\n646\t0\n647\t0\n648\t1\n649\t0\n650\t0\n651\t0\n652\t1\n653\t0\n654\t0\n655\t0\n656\t1\n657\t0\n658\t0\n659\t1\n660\t1\n661\t1\n662\t0\n663\t1\n664\t1\n665\t0\n666\t0\n667\t1\n668\t1\n669\t1\n670\t0\n671\t0\n672\t0\n673\t0\n674\t0\n675\t0\n676\t0\n677\t1\n678\t1\n679\t0\n680\t0\n681\t0\n682\t0\n683\t0\n684\t0\n685\t0\n686\t1\n687\t0\n688\t0\n689\t1\n690\t0\n691\t0\n692\t0\n693\t1\n694\t0\n695\t0\n696\t1\n697\t1\n698\t0\n699\t0\n200\t1\n201\t0\n202\t1\n203\t0\n204\t0\n205\t0\n206\t0\n207\t1\n208\t0\n209\t0\n210\t0\n211\t1\n212\t0\n213\t0\n214\t0\n215\t1\n216\t1\n217\t0\n218\t1\n219\t0\n220\t0\n221\t1\n222\t0\n223\t0\n224\t0\n225\t0\n226\t0\n227\t1\n228\t0\n229\t1\n230\t0\n231\t1\n232\t0\n233\t1\n234\t0\n235\t1\n236\t1\n237\t0\n238\t1\n239\t1\n240\t1\n241\t0\n242\t1\n243\t0\n244\t1\n245\t1\n246\t0\n247\t1\n248\t1\n249\t1\n250\t0\n251\t0\n252\t0\n253\t1\n254\t0\n255\t1\n256\t1\n257\t1\n258\t1\n259\t0\n260\t1\n261\t1\n262\t1\n263\t0\n264\t0\n265\t1\n266\t0\n267\t0\n268\t0\n269\t1\n270\t0\n271\t1\n272\t1\n273\t0\n274\t1\n275\t1\n276\t1\n277\t0\n278\t0\n279\t0\n280\t1\n281\t0\n282\t0\n283\t0\n284\t1\n285\t0\n286\t1\n287\t1\n288\t1\n289\t0\n290\t1\n291\t1\n292\t0\n293\t0\n294\t0\n295\t1\n296\t0\n297\t1\n298\t0\n299\t0\n1300\t0\n1301\t1\n1302\t0\n1303\t0\n1304\t0\n1305\t0\n1306\t1\n1307\t1\n1308\t1\n1309\t1\n1310\t0\n1311\t1\n1312\t1\n1313\t0\n1314\t0\n1315\t1\n1316\t1\n1317\t0\n1318\t1\n1319\t0\n1320\t1\n1321\t1\n1322\t0\n1323\t0\n1324\t0\n1325\t1\n1326\t1\n1327\t1\n1328\t0\n1329\t1\n1330\t0\n1331\t1\n1332\t0\n1333\t1\n1334\t1\n1335\t1\n1336\t1\n1337\t1\n1338\t0\n1339\t1\n1340\t1\n1341\t1\n1342\t1\n1343\t0\n1344\t0\n1345\t0\n1346\t1\n1347\t0\n1348\t0\n1349\t1\n1350\t1\n1351\t1\n1352\t1\n1353\t0\n1354\t1\n1355\t0\n1356\t0\n1357\t0\n1358\t1\n1359\t0\n1360\t0\n1361\t0\n1362\t1\n1363\t0\n1364\t1\n1365\t0\n1366\t0\n1367\t1\n1368\t0\n1369\t1\n1370\t0\n1371\t1\n1372\t1\n1373\t1\n1374\t0\n1375\t1\n1376\t1\n1377\t0\n1378\t1\n1379\t0\n1380\t1\n1381\t0\n1382\t1\n1383\t1\n1384\t1\n1385\t0\n1386\t0\n1387\t1\n1388\t1\n1389\t0\n1390\t1\n1391\t1\n1392\t1\n1393\t1\n1394\t1\n1395\t0\n1396\t0\n1397\t1\n1398\t0\n1399\t1\n1000\t1\n1001\t1\n1002\t1\n1003\t0\n1004\t0\n1005\t0\n1006\t1\n1007\t0\n1008\t0\n1009\t0\n1010\t1\n1011\t1\n1012\t0\n1013\t1\n1014\t0\n1015\t1\n1016\t0\n1017\t0\n1018\t1\n1019\t1\n1020\t0\n1021\t1\n1022\t0\n1023\t0\n1024\t0\n1025\t0\n1026\t0\n1027\t1\n1028\t0\n1029\t1\n1030\t0\n1031\t1\n1032\t1\n1033\t0\n1034\t0\n1035\t0\n1036\t0\n1037\t0\n1038\t1\n1039\t0\n1040\t1\n1041\t0\n1042\t0\n1043\t1\n1044\t1\n1045\t1\n1046\t1\n1047\t1\n1048\t1\n1049\t1\n1050\t1\n1051\t1\n1052\t0\n1053\t1\n1054\t0\n1055\t0\n1056\t1\n1057\t0\n1058\t1\n1059\t1\n1060\t0\n1061\t0\n1062\t1\n1063\t0\n1064\t1\n1065\t1\n1066\t1\n1067\t1\n1068\t0\n1069\t0\n1070\t1\n1071\t0\n1072\t0\n1073\t1\n1074\t0\n1075\t0\n1076\t0\n1077\t0\n1078\t1\n1079\t0\n1080\t0\n1081\t1\n1082\t0\n1083\t1\n1084\t0\n1085\t1\n1086\t1\n1087\t1\n1088\t0\n1089\t1\n1090\t0\n1091\t1\n1092\t0\n1093\t0\n1094\t1\n1095\t0\n1096\t0\n1097\t0\n1098\t0\n1099\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1641309515",
+      "id": "20220206-193042_404755567",
+      "dateCreated": "2021-11-08T20:04:43+0000",
+      "dateStarted": "2022-03-10T17:25:19+0000",
+      "dateFinished": "2022-03-10T17:25:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n## Create the nested column from the transactional data\n\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eCreate the nested column from the transactional data\u003c/h2\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-2021859453",
+      "id": "20220206-193042_405288261",
+      "dateCreated": "2022-01-05T23:59:43+0000",
+      "dateStarted": "2022-03-10T17:25:20+0000",
+      "dateFinished": "2022-03-10T17:25:20+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create the nested column table and join the labels",
+      "text": "%script\n\n\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE TXN_NESTED_COL_NUM\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\n\nCREATE TABLE  TXN_NESTED_COL_NUM\n  NESTED TABLE txn_nested store AS txn_nested_tab AS \nSELECT m.id, m.CLASS, txn_nested\n  FROM WIDE_LABEL_TBL m,\n  ( SELECT features.id,\n           cast(COLLECT(dm_nested_numerical(features.name,features.value)) \n                        as dm_nested_numericals)  txn_nested\n    FROM TXN_TBL features\n    group by features.id) n\n  WHERE m.id \u003d n.id  \n/\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:20+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable TXN_NESTED_COL_NUM created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_934291802",
+      "id": "20220206-193042_838114073",
+      "dateCreated": "2021-11-05T16:56:41+0000",
+      "dateStarted": "2022-03-10T17:25:21+0000",
+      "dateFinished": "2022-03-10T17:25:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check that the table contains our nested column",
+      "text": "%script\n\nSELECT * FROM TXN_NESTED_COL_NUM FETCH FIRST 5 ROWS ONLY\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ID": "string",
+                      "CLASS": "string",
+                      "TXN_NESTED": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ID   CLASS   TXN_NESTED                  \n   0       1 oracle.sql.ARRAY@75df5d8c   \n   1       1 oracle.sql.ARRAY@3b90ef36   \n   2       0 oracle.sql.ARRAY@106fd2f    \n   3       0 oracle.sql.ARRAY@2f13fbe6   \n   4       1 oracle.sql.ARRAY@20afe0b5   \n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1425234643",
+      "id": "20220206-193042_717279100",
+      "dateCreated": "2022-01-06T00:04:14+0000",
+      "dateStarted": "2022-03-10T17:25:53+0000",
+      "dateFinished": "2022-03-10T17:25:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n## Building a Machine Learning model with a Nested Column as input\n\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eBuilding a Machine Learning model with a Nested Column as input\u003c/h2\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_118954930",
+      "id": "20220206-193042_853222695",
+      "dateCreated": "2022-01-06T00:02:21+0000",
+      "dateStarted": "2022-03-10T17:25:54+0000",
+      "dateFinished": "2022-03-10T17:25:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build a model using the nested column via OML4SQL",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027GLM_CLAS_USING_NESTED_COLUMN\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\n\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n\nBEGIN\n   \n    v_setlst(dbms_data_mining.algo_name) :\u003d dbms_data_mining.algo_generalized_linear_model;\n    v_setlst(dbms_data_mining.prep_auto) :\u003d  dbms_data_mining.prep_auto_on;\n   \n   \n    DBMS_DATA_MINING.CREATE_MODEL2(\n        model_name          \u003d\u003e \u0027GLM_CLAS_USING_NESTED_COLUMN\u0027,\n        mining_function     \u003d\u003e dbms_data_mining.classification,\n        data_query          \u003d\u003e \u0027select * from TXN_NESTED_COL_NUM\u0027,\n        set_list            \u003d\u003e v_setlst,\n        case_id_column_name \u003d\u003e \u0027ID\u0027,\n        target_column_name  \u003d\u003e \u0027CLASS\u0027);\nEND;\n/ ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:25:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ID": "string",
+                      "CLASS": "string",
+                      "TXN_NESTED": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-1672804783",
+      "id": "20220206-193042_1803594788",
+      "dateCreated": "2021-11-08T20:10:07+0000",
+      "dateStarted": "2022-03-10T17:25:55+0000",
+      "dateFinished": "2022-03-10T17:26:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View the attributes used in building the model",
+      "text": "%sql\n\nSELECT attribute_name, attribute_type\n  FROM user_mining_model_attributes\n WHERE model_name \u003d \u0027GLM_CLAS_USING_NESTED_COLUMN\u0027\nORDER BY attribute_name;",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:26:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ATTRIBUTE_NAME\tATTRIBUTE_TYPE\nCLASS\tCATEGORICAL\nTXN_NESTED\tNUMERICAL\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1433182954",
+      "id": "20220206-193042_2117721630",
+      "dateCreated": "2021-11-08T20:15:21+0000",
+      "dateStarted": "2022-03-10T17:26:26+0000",
+      "dateFinished": "2022-03-10T17:26:26+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "List of available model views with various model details",
+      "text": "%sql\n\nSELECT *\n  FROM user_mining_model_views\n WHERE model_name \u003d \u0027GLM_CLAS_USING_NESTED_COLUMN\u0027",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:26:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MODEL_NAME": "string",
+                      "VIEW_NAME": "string",
+                      "VIEW_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MODEL_NAME\tVIEW_NAME\tVIEW_TYPE\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VNGLM_CLAS_USING_NESTED_COLUMN\tNormalization and Missing Value Handling\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VCGLM_CLAS_USING_NESTED_COLUMN\tScoring Cost Matrix\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VSGLM_CLAS_USING_NESTED_COLUMN\tComputed Settings\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VAGLM_CLAS_USING_NESTED_COLUMN\tGLM Classification Row Diagnostics\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VGGLM_CLAS_USING_NESTED_COLUMN\tGlobal Name-Value Pairs\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VWGLM_CLAS_USING_NESTED_COLUMN\tModel Build Alerts\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VDGLM_CLAS_USING_NESTED_COLUMN\tGLM Classification Attribute Diagnostics\nGLM_CLAS_USING_NESTED_COLUMN\tDM$VTGLM_CLAS_USING_NESTED_COLUMN\tClassification Targets\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_1371209456",
+      "id": "20220206-193042_1387156874",
+      "dateCreated": "2022-01-06T00:06:37+0000",
+      "dateStarted": "2022-03-10T17:26:27+0000",
+      "dateFinished": "2022-03-10T17:26:27+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:26:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644175842732_-932658684",
+      "id": "20220206-193042_959946981",
+      "dateCreated": "2021-11-08T20:56:54+0000",
+      "dateStarted": "2022-03-10T17:26:27+0000",
+      "dateFinished": "2022-03-10T17:26:28+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:26:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1644177111975_1195472823",
+      "id": "paragraph_1644177111975_1195472823",
+      "dateCreated": "2022-02-06T19:51:51+0000",
+      "dateStarted": "2022-03-10T17:26:28+0000",
+      "dateFinished": "2022-03-10T17:26:28+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py Importing Wide Datasets",
+  "id": "103337",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4Py Importing Wide Datasets"
+}

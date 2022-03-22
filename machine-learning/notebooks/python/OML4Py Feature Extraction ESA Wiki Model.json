@@ -1,0 +1,1475 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## Explicit Semantic Analysis (ESA) for Text Analytics\n\nExplicit Semantic Analysis (ESA) supports unsupervised learning for feature extraction of explicit features based on an existing knowledge base, and supervised learning for classification. It is the process of understanding the meaning of a section of text as a combination of the concepts found in the text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA offers some unique benefits. Most notably, it improves text document categorization by calculating `semantic relatedness` (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.\n\nThe Oracle Machine Learning for Python function *oml.esa* extracts text-based features from a corpus of documents and performs document similarity comparisons. All processing occurs inside Oracle Autonomous Database.\n\nIn this notebook, we\u0027ll use the Wikipedia Model as an example:\n\n - Create an OML4Py proxy ESA model object for the pre-loaded Wikipedia model \n - Examples of using the Wiki ESA model\n - Basic ESA Wiki model features for words\n - Basic ESA Wiki model features for phrases\n - ESA Wiki Model document similarity on phrases\n - ESA Wiki Model document similarity on long phrases\n\nCopyright (c) 2022 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:09+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eExplicit Semantic Analysis (ESA) for Text Analytics\u003c/h2\u003e\n\u003cp\u003eExplicit Semantic Analysis (ESA) supports unsupervised learning for feature extraction of explicit features based on an existing knowledge base, and supervised learning for classification. It is the process of understanding the meaning of a section of text as a combination of the concepts found in the text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA offers some unique benefits. Most notably, it improves text document categorization by calculating \u003ccode\u003esemantic relatedness\u003c/code\u003e (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.\u003c/p\u003e\n\u003cp\u003eThe Oracle Machine Learning for Python function \u003cem\u003eoml.esa\u003c/em\u003e extracts text-based features from a corpus of documents and performs document similarity comparisons. All processing occurs inside Oracle Autonomous Database.\u003c/p\u003e\n\u003cp\u003eIn this notebook, we\u0027ll use the Wikipedia Model as an example:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eCreate an OML4Py proxy ESA model object for the pre-loaded Wikipedia model\u003c/li\u003e\n\u003cli\u003eExamples of using the Wiki ESA model\u003c/li\u003e\n\u003cli\u003eBasic ESA Wiki model features for words\u003c/li\u003e\n\u003cli\u003eBasic ESA Wiki model features for phrases\u003c/li\u003e\n\u003cli\u003eESA Wiki Model document similarity on phrases\u003c/li\u003e\n\u003cli\u003eESA Wiki Model document similarity on long phrases\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eCopyright (c) 2022 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1712212302",
+      "id": "20220124-201431_1225571609",
+      "dateCreated": "2021-02-17T07:34:52+0000",
+      "dateStarted": "2022-03-10T17:06:09+0000",
+      "dateFinished": "2022-03-10T17:06:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u0027);\"\u003ehttps://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nOML Explicit Semantic Analysis: \u003ca href\u003d\"https://www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-explicit-semantic-analysis\u0027);\"\u003ehttps://www.oracle.com/goto/ml-explicit-semantic-analysis\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u0027);\"\u003ehttps://github.com/oracle/oracle-db-examples/tree/master/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Explicit Semantic Analysis: \u003ca href\u003d\"https: //www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-explicit-semantic-analysis\u0027);\"\u003ehttps://www.oracle.com/goto/ml-explicit-semantic-analysis\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_2127641677",
+      "id": "20220124-201431_1887265713",
+      "dateCreated": "2021-07-20T18:14:43+0000",
+      "dateStarted": "2022-03-10T17:06:11+0000",
+      "dateFinished": "2022-03-10T17:06:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# Using the Wikipedia model as an example\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:11+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eUsing the Wikipedia model as an example\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_948842041",
+      "id": "20220124-201431_1599672228",
+      "dateCreated": "2021-02-17T07:36:05+0000",
+      "dateStarted": "2022-03-10T17:06:12+0000",
+      "dateFinished": "2022-03-10T17:06:12+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Delete existing policies and create new policies for the Wiki Lexer",
+      "text": "%python\n\n# Should be executed in a separate session, otherwise it will not work\n# Specify settings for the Policy\ncur \u003d cursor()\ncur.execute(\"BEGIN ctx_ddl.drop_policy(\u0027wiki_txtpol\u0027); EXCEPTION WHEN OTHERS THEN NULL; END;\")\ncur.execute(\"BEGIN ctx_ddl.drop_preference( \u0027wiki_lexer\u0027); EXCEPTION WHEN OTHERS THEN NULL; END;\")\ncur.execute(\"BEGIN ctx_ddl.create_preference(\u0027wiki_lexer\u0027, \u0027BASIC_LEXER\u0027); END;\")\ncur.execute(\"BEGIN ctx_ddl.set_attribute(\u0027wiki_lexer\u0027, \u0027INDEX_STEMS\u0027, \u0027ENGLISH\u0027); END;\")\ncur.execute(\"BEGIN ctx_ddl.create_policy(policy_name \u003d\u003e \u0027wiki_txtpol\u0027, lexer \u003d\u003e \u0027wiki_lexer\u0027); END;\")\ncur.close()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_295104278",
+      "id": "20220124-201431_2000394915",
+      "dateCreated": "2021-02-18T02:03:31+0000",
+      "dateStarted": "2021-02-18T04:51:12+0000",
+      "dateFinished": "2021-02-18T04:51:13+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md \n### The model was pre-loaded to the Oracle Autonomous Database because it is a large 800 MB model object.\n#### Follow the Setup from Oracle blogs:\n1. \u003ca href\u003d\"https://blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2\u0027);\"\u003e New Wikipedia-Based Cognitive Model Available for Text Processing \u003c/a\u003e blog post\n2. \u003ca href\u003d\"https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\u0027);\"\u003e Text Analytics using a pre-built Wikipedia-based Topic Model \u003c/a\u003e blog post\n3. \u003ca href\u003d\"https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\u0027);\"\u003e Explicit Semantic Analysis (ESA) for Text Analytics \u003c/a\u003e blog post\n\nWe need to create the proxy for the existing model into OML4Py\n - If the model is available on the same user, you can use the code:\n    In Python: \"esa_wiki_mod \u003d oml.esa(model_name \u003d \u0027in-db wiki modelname\u0027) \"\n - If the model is available on a different schema, you need to:\n    1. Run as SYSDBA a \"grant execute on model to \u003cuser\u003e or public\" in sql; then\n    2. In Python \"esa_wiki_mod \u003d oml.esa(model_name \u003d \u0027in-db wiki modelname\u0027, model_owner \u003d \u0027model owner schema name\u0027) \"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eThe model was pre-loaded to the Oracle Autonomous Database because it is a large 800 MB model object.\u003c/h3\u003e\n\u003ch4\u003eFollow the Setup from Oracle blogs:\u003c/h4\u003e\n\u003col\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2\u0027);\"\u003e New Wikipedia-Based Cognitive Model Available for Text Processing \u003c/a\u003e blog post\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\u0027);\"\u003e Text Analytics using a pre-built Wikipedia-based Topic Model \u003c/a\u003e blog post\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\u0027);\"\u003e Explicit Semantic Analysis (ESA) for Text Analytics \u003c/a\u003e blog post\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003eWe need to create the proxy for the existing model into OML4Py\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eIf the model is available on the same user, you can use the code:\n\u003cbr  /\u003eIn Python: \u0026ldquo;esa_wiki_mod \u003d oml.esa(model_name \u003d \u0027in-db wiki modelname\u0027) \"\u003c/li\u003e\n\u003cli\u003eIf the model is available on a different schema, you need to:\u003col\u003e\n\u003cli\u003eRun as SYSDBA a \u0026ldquo;grant execute on model to \u003cuser\u003e or public\u0026rdquo; in sql; then\u003c/li\u003e\n\u003cli\u003eIn Python \u0026ldquo;esa_wiki_mod \u003d oml.esa(model_name \u003d \u0027in-db wiki modelname\u0027, model_owner \u003d \u0027model owner schema name\u0027) \"\u003c/li\u003e\n\u003c/ol\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_1604432835",
+      "id": "20220124-201431_1542657320",
+      "dateCreated": "2021-02-17T20:50:44+0000",
+      "dateStarted": "2022-03-10T17:06:13+0000",
+      "dateFinished": "2022-03-10T17:06:13+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%python\n\nimport oml\nimport pandas as pd\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1289100019",
+      "id": "20220124-201431_1074300172",
+      "dateCreated": "2021-07-15T22:16:39+0000",
+      "dateStarted": "2022-03-10T17:06:14+0000",
+      "dateFinished": "2022-03-10T17:06:24+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check to see if the pre-loaded model is available",
+      "text": "%sql\n\n-- We should expect one row with the model WIKI_MODEL\nselect MODEL_NAME, MINING_FUNCTION, ALGORITHM, ALGORITHM_TYPE, CREATION_DATE from USER_MINING_MODELS where MODEL_NAME\u003d\u0027WIKI_MODEL\u0027\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 104.667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MODEL_NAME": "string",
+                      "MINING_FUNCTION": "string",
+                      "ALGORITHM": "string",
+                      "ALGORITHM_TYPE": "string",
+                      "CREATION_DATE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MODEL_NAME\tMINING_FUNCTION\tALGORITHM\tALGORITHM_TYPE\tCREATION_DATE\nWIKI_MODEL\tFEATURE_EXTRACTION\tEXPLICIT_SEMANTIC_ANALYS\tNATIVE\t2021-02-18 02:13:11\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-571239258",
+      "id": "20220124-201431_1471907462",
+      "dateCreated": "2021-02-18T04:58:16+0000",
+      "dateStarted": "2022-03-10T17:06:25+0000",
+      "dateFinished": "2022-03-10T17:06:27+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create an OML4Py proxy ESA model object for the pre-loaded Wikipedia model ",
+      "text": "%python\n\nesa_wiki_mod \u003d oml.esa(model_name \u003d \u0027wiki_model\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-462037948",
+      "id": "20220124-201431_2088693840",
+      "dateCreated": "2021-02-17T22:42:42+0000",
+      "dateStarted": "2022-03-10T17:06:28+0000",
+      "dateFinished": "2022-03-10T17:06:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check the first 1,000 rows of the 21.7 mi rows of features",
+      "text": "%python\n\nz.show(esa_wiki_mod.features.head(1000).round(4))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:06:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "COEFFICIENT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tATTRIBUTE_NAME\tATTRIBUTE_VALUE\tCOEFFICIENT\n\u0027Amr ibn al-\u0027As\tTEXT.AAS\tNone\t0.0382\n\u0027Amr ibn al-\u0027As\tTEXT.ABD\tNone\t0.0558\n\u0027Amr ibn al-\u0027As\tTEXT.ABDULLAH\tNone\t0.0383\n\u0027Amr ibn al-\u0027As\tTEXT.ABJAR\tNone\t0.0523\n\u0027Amr ibn al-\u0027As\tTEXT.ABU\tNone\t0.1191\n\u0027Amr ibn al-\u0027As\tTEXT.ABYSSINIA\tNone\t0.0695\n\u0027Amr ibn al-\u0027As\tTEXT.AGREE\tNone\t0.0303\n\u0027Amr ibn al-\u0027As\tTEXT.AH\tNone\t0.0259\n\u0027Amr ibn al-\u0027As\tTEXT.AJNADAYN\tNone\t0.0517\n\u0027Amr ibn al-\u0027As\tTEXT.ALABAMA\tNone\t0.1369\n\u0027Amr ibn al-\u0027As\tTEXT.ALEXANDRIA\tNone\t0.0552\n\u0027Amr ibn al-\u0027As\tTEXT.ALI\tNone\t0.1337\n\u0027Amr ibn al-\u0027As\tTEXT.ALLAH\tNone\t0.0555\n\u0027Amr ibn al-\u0027As\tTEXT.AMR\tNone\t0.6049\n\u0027Amr ibn al-\u0027As\tTEXT.ANWAR\tNone\t0.0304\n\u0027Amr ibn al-\u0027As\tTEXT.ARAB\tNone\t0.0825\n\u0027Amr ibn al-\u0027As\tTEXT.ARBITER\tNone\t0.0985\n\u0027Amr ibn al-\u0027As\tTEXT.ARI\tNone\t0.0281\n\u0027Amr ibn al-\u0027As\tTEXT.ARMAH\tNone\t0.0463\n\u0027Amr ibn al-\u0027As\tTEXT.ASHTAR\tNone\t0.0469\n\u0027Amr ibn al-\u0027As\tTEXT.AWIYA\tNone\t0.0452\n\u0027Amr ibn al-\u0027As\tTEXT.AWIYAH\tNone\t0.3036\n\u0027Amr ibn al-\u0027As\tTEXT.BABYLON\tNone\t0.0516\n\u0027Amr ibn al-\u0027As\tTEXT.BAKR\tNone\t0.066\n\u0027Amr ibn al-\u0027As\tTEXT.BANU\tNone\t0.0331\n\u0027Amr ibn al-\u0027As\tTEXT.BEHOLD\tNone\t0.0302\n\u0027Amr ibn al-\u0027As\tTEXT.BILBEIS\tNone\t0.0499\n\u0027Amr ibn al-\u0027As\tTEXT.BINT\tNone\t0.0539\n\u0027Amr ibn al-\u0027As\tTEXT.BYZANTINE\tNone\t0.0714\n\u0027Amr ibn al-\u0027As\tTEXT.CAIRO\tNone\t0.0354\n\u0027Amr ibn al-\u0027As\tTEXT.CALIPH\tNone\t0.0558\n\u0027Amr ibn al-\u0027As\tTEXT.CALIPHATE\tNone\t0.0412\n\u0027Amr ibn al-\u0027As\tTEXT.CARAVAN\tNone\t0.0255\n\u0027Amr ibn al-\u0027As\tTEXT.CAREFUL\tNone\t0.0207\n\u0027Amr ibn al-\u0027As\tTEXT.CONQUEST\tNone\t0.0653\n\u0027Amr ibn al-\u0027As\tTEXT.CONTINGENT\tNone\t0.0218\n\u0027Amr ibn al-\u0027As\tTEXT.COPT\tNone\t0.0461\n\u0027Amr ibn al-\u0027As\tTEXT.COPTIC\tNone\t0.0296\n\u0027Amr ibn al-\u0027As\tTEXT.DAMASCUS\tNone\t0.0397\n\u0027Amr ibn al-\u0027As\tTEXT.DEALING\tNone\t0.026\n\u0027Amr ibn al-\u0027As\tTEXT.DELEGATION\tNone\t0.0201\n\u0027Amr ibn al-\u0027As\tTEXT.DEPOSE\tNone\t0.0214\n\u0027Amr ibn al-\u0027As\tTEXT.DESPICABLE\tNone\t0.0359\n\u0027Amr ibn al-\u0027As\tTEXT.DETERMINEDLY\tNone\t0.0424\n\u0027Amr ibn al-\u0027As\tTEXT.DHAT\tNone\t0.0523\n\u0027Amr ibn al-\u0027As\tTEXT.DHUL\tNone\t0.0444\n\u0027Amr ibn al-\u0027As\tTEXT.DISTRUST\tNone\t0.0254\n\u0027Amr ibn al-\u0027As\tTEXT.EGYPT\tNone\t0.1236\n\u0027Amr ibn al-\u0027As\tTEXT.EGYPTIAN\tNone\t0.0646\n\u0027Amr ibn al-\u0027As\tTEXT.EIGHTY\tNone\t0.0207\n\u0027Amr ibn al-\u0027As\tTEXT.ENVOY\tNone\t0.0236\n\u0027Amr ibn al-\u0027As\tTEXT.FIRMLY\tNone\t0.0213\n\u0027Amr ibn al-\u0027As\tTEXT.FITNA\tNone\t0.0418\n\u0027Amr ibn al-\u0027As\tTEXT.FORTIFY\tNone\t0.02\n\u0027Amr ibn al-\u0027As\tTEXT.FUSTAT\tNone\t0.0634\n\u0027Amr ibn al-\u0027As\tTEXT.GLUBB\tNone\t0.0465\n\u0027Amr ibn al-\u0027As\tTEXT.HADITH\tNone\t0.0319\n\u0027Amr ibn al-\u0027As\tTEXT.HAGAR\tNone\t0.037\n\u0027Amr ibn al-\u0027As\tTEXT.HAJJAJ\tNone\t0.0428\n\u0027Amr ibn al-\u0027As\tTEXT.HELIOPOLIS\tNone\t0.0782\n\u0027Amr ibn al-\u0027As\tTEXT.HIJ\tNone\t0.0499\n\u0027Amr ibn al-\u0027As\tTEXT.HILF\tNone\t0.0503\n\u0027Amr ibn al-\u0027As\tTEXT.HISHAM\tNone\t0.0367\n\u0027Amr ibn al-\u0027As\tTEXT.HOSTILE\tNone\t0.0184\n\u0027Amr ibn al-\u0027As\tTEXT.IBN\tNone\t0.2922\n\u0027Amr ibn al-\u0027As\tTEXT.INVADER\tNone\t0.0332\n\u0027Amr ibn al-\u0027As\tTEXT.INVOKE\tNone\t0.0217\n\u0027Amr ibn al-\u0027As\tTEXT.JARRAH\tNone\t0.0396\n\u0027Amr ibn al-\u0027As\tTEXT.KHALID\tNone\t0.0447\n\u0027Amr ibn al-\u0027As\tTEXT.KHATTAB\tNone\t0.0588\n\u0027Amr ibn al-\u0027As\tTEXT.KIN\tNone\t0.0269\n\u0027Amr ibn al-\u0027As\tTEXT.KITH\tNone\t0.0455\n\u0027Amr ibn al-\u0027As\tTEXT.KULTHUM\tNone\t0.0447\n\u0027Amr ibn al-\u0027As\tTEXT.LASTLY\tNone\t0.0265\n\u0027Amr ibn al-\u0027As\tTEXT.MALIK\tNone\t0.0264\n\u0027Amr ibn al-\u0027As\tTEXT.MECCA\tNone\t0.04\n\u0027Amr ibn al-\u0027As\tTEXT.MEDINA\tNone\t0.0532\n\u0027Amr ibn al-\u0027As\tTEXT.MERCY\tNone\t0.0214\n\u0027Amr ibn al-\u0027As\tTEXT.MESSENGER\tNone\t0.022\n\u0027Amr ibn al-\u0027As\tTEXT.MOSQUE\tNone\t0.0745\n\u0027Amr ibn al-\u0027As\tTEXT.MU\tNone\t0.1725\n\u0027Amr ibn al-\u0027As\tTEXT.MUHAMMAD\tNone\t0.1018\n\u0027Amr ibn al-\u0027As\tTEXT.MUNABBIH\tNone\t0.0492\n\u0027Amr ibn al-\u0027As\tTEXT.MUSA\tNone\t0.1041\n\u0027Amr ibn al-\u0027As\tTEXT.MUSLIM\tNone\t0.097\n\u0027Amr ibn al-\u0027As\tTEXT.NEGUS\tNone\t0.0417\n\u0027Amr ibn al-\u0027As\tTEXT.NEITHER\tNone\t0.0258\n\u0027Amr ibn al-\u0027As\tTEXT.NILE\tNone\t0.0374\n\u0027Amr ibn al-\u0027As\tTEXT.OBLIGE\tNone\t0.0208\n\u0027Amr ibn al-\u0027As\tTEXT.OMAN\tNone\t0.0277\n\u0027Amr ibn al-\u0027As\tTEXT.OSAMA\tNone\t0.031\n\u0027Amr ibn al-\u0027As\tTEXT.PATRIARCH\tNone\t0.0233\n\u0027Amr ibn al-\u0027As\tTEXT.PATRONAGE\tNone\t0.0215\n\u0027Amr ibn al-\u0027As\tTEXT.PELUSIUM\tNone\t0.0447\n\u0027Amr ibn al-\u0027As\tTEXT.PRAY\tNone\t0.0209\n\u0027Amr ibn al-\u0027As\tTEXT.PROPHET\tNone\t0.0318\n\u0027Amr ibn al-\u0027As\tTEXT.QAIS\tNone\t0.043\n\u0027Amr ibn al-\u0027As\tTEXT.QAYS\tNone\t0.0625\n\u0027Amr ibn al-\u0027As\tTEXT.QUR\tNone\t0.0434\n\u0027Amr ibn al-\u0027As\tTEXT.QURAISH\tNone\t0.0463\n\u0027Amr ibn al-\u0027As\tTEXT.QURAN\tNone\t0.0423\n\u0027Amr ibn al-\u0027As\tTEXT.QURAYSH\tNone\t0.1565\n\u0027Amr ibn al-\u0027As\tTEXT.REAPPOINT\tNone\t0.0314\n\u0027Amr ibn al-\u0027As\tTEXT.RETORT\tNone\t0.0302\n\u0027Amr ibn al-\u0027As\tTEXT.RIGHTEOUS\tNone\t0.0266\n\u0027Amr ibn al-\u0027As\tTEXT.RULER\tNone\t0.0385\n\u0027Amr ibn al-\u0027As\tTEXT.SAHABA\tNone\t0.0626\n\u0027Amr ibn al-\u0027As\tTEXT.SAHM\tNone\t0.044\n\u0027Amr ibn al-\u0027As\tTEXT.SHREWD\tNone\t0.0311\n\u0027Amr ibn al-\u0027As\tTEXT.SIFFIN\tNone\t0.1438\n\u0027Amr ibn al-\u0027As\tTEXT.SINAI\tNone\t0.0267\n\u0027Amr ibn al-\u0027As\tTEXT.SKIRMISH\tNone\t0.0234\n\u0027Amr ibn al-\u0027As\tTEXT.SPEAR\tNone\t0.0219\n\u0027Amr ibn al-\u0027As\tTEXT.STIR\tNone\t0.0227\n\u0027Amr ibn al-\u0027As\tTEXT.SUNNAH\tNone\t0.0365\n\u0027Amr ibn al-\u0027As\tTEXT.SUNNI\tNone\t0.0255\n\u0027Amr ibn al-\u0027As\tTEXT.SURELY\tNone\t0.0266\n\u0027Amr ibn al-\u0027As\tTEXT.SYRIA\tNone\t0.0305\n\u0027Amr ibn al-\u0027As\tTEXT.TENT\tNone\t0.0227\n\u0027Amr ibn al-\u0027As\tTEXT.THEODORUS\tNone\t0.0396\n\u0027Amr ibn al-\u0027As\tTEXT.TOWARDS\tNone\t0.0208\n\u0027Amr ibn al-\u0027As\tTEXT.UBAIDAH\tNone\t0.0469\n\u0027Amr ibn al-\u0027As\tTEXT.UHUD\tNone\t0.0457\n\u0027Amr ibn al-\u0027As\tTEXT.UMAR\tNone\t0.1218\n\u0027Amr ibn al-\u0027As\tTEXT.UMM\tNone\t0.0341\n\u0027Amr ibn al-\u0027As\tTEXT.UQBA\tNone\t0.0436\n\u0027Amr ibn al-\u0027As\tTEXT.UTHMAN\tNone\t0.0362\n\u0027Amr ibn al-\u0027As\tTEXT.VERDICT\tNone\t0.0355\n\u0027Amr ibn al-\u0027As\tTEXT.WALID\tNone\t0.0512\n\u0027Amr ibn al-\u0027As\tTEXT.WICKED\tNone\t0.025\n\u0027Amr ibn al-\u0027As\tTEXT.WITHSTAND\tNone\t0.0229\n\u0027Amr ibn al-\u0027As\tTEXT.YAMAN\tNone\t0.0416\n\u0027Amr ibn al-\u0027As\tTEXT.YARMOUK\tNone\t0.042\n\u0027Ndrangheta\tTEXT.ACTIVITY\tNone\t0.0276\n\u0027Ndrangheta\tTEXT.ADORATION\tNone\t0.011\n\u0027Ndrangheta\tTEXT.ALESSANDRO\tNone\t0.0093\n\u0027Ndrangheta\tTEXT.AMPLE\tNone\t0.009\n\u0027Ndrangheta\tTEXT.ANARCHIC\tNone\t0.0126\n\u0027Ndrangheta\tTEXT.ANTIMAFIA\tNone\t0.0433\n\u0027Ndrangheta\tTEXT.APULIAN\tNone\t0.0151\n\u0027Ndrangheta\tTEXT.ARGENTINIAN\tNone\t0.0105\n\u0027Ndrangheta\tTEXT.ARREST\tNone\t0.0571\n\u0027Ndrangheta\tTEXT.ASPROMONTE\tNone\t0.017\n\u0027Ndrangheta\tTEXT.AUC\tNone\t0.0146\n\u0027Ndrangheta\tTEXT.BAKERY\tNone\t0.0095\n\u0027Ndrangheta\tTEXT.BANDEROLE\tNone\t0.0185\n\u0027Ndrangheta\tTEXT.BANDITRY\tNone\t0.0134\n\u0027Ndrangheta\tTEXT.BARBARO\tNone\t0.0431\n\u0027Ndrangheta\tTEXT.BEHAN\tNone\t0.0136\n\u0027Ndrangheta\tTEXT.BENVENUTO\tNone\t0.0141\n\u0027Ndrangheta\tTEXT.BERNARDO\tNone\t0.0099\n\u0027Ndrangheta\tTEXT.BKA\tNone\t0.025\n\u0027Ndrangheta\tTEXT.BLACKMAIL\tNone\t0.0142\n\u0027Ndrangheta\tTEXT.BND\tNone\t0.0159\n\u0027Ndrangheta\tTEXT.BOCCIA\tNone\t0.017\n\u0027Ndrangheta\tTEXT.BONANNO\tNone\t0.0211\n\u0027Ndrangheta\tTEXT.BOSS\tNone\t0.0519\n\u0027Ndrangheta\tTEXT.BROKERAGE\tNone\t0.0112\n\u0027Ndrangheta\tTEXT.BUNDESKRIMINALAMT\tNone\t0.0185\n\u0027Ndrangheta\tTEXT.BUNDESNACHRICHTENDIENST\tNone\t0.0173\n\u0027Ndrangheta\tTEXT.CALABRIA\tNone\t0.2175\n\u0027Ndrangheta\tTEXT.CALABRIAN\tNone\t0.0761\n\u0027Ndrangheta\tTEXT.CAMORRA\tNone\t0.0455\n\u0027Ndrangheta\tTEXT.CANNED\tNone\t0.0107\n\u0027Ndrangheta\tTEXT.CANS\tNone\t0.0106\n\u0027Ndrangheta\tTEXT.CANTO\tNone\t0.0106\n\u0027Ndrangheta\tTEXT.CAPO\tNone\t0.0101\n\u0027Ndrangheta\tTEXT.CARMINE\tNone\t0.011\n\u0027Ndrangheta\tTEXT.CARTEL\tNone\t0.0155\n\u0027Ndrangheta\tTEXT.CATANZARO\tNone\t0.0154\n\u0027Ndrangheta\tTEXT.CENTRO\tNone\t0.0097\n\u0027Ndrangheta\tTEXT.CISTERNA\tNone\t0.0161\n\u0027Ndrangheta\tTEXT.CLAN\tNone\t0.1028\n\u0027Ndrangheta\tTEXT.CLANDESTINE\tNone\t0.0095\n\u0027Ndrangheta\tTEXT.COCAINE\tNone\t0.1202\n\u0027Ndrangheta\tTEXT.COHESION\tNone\t0.01\n\u0027Ndrangheta\tTEXT.COLLEGIAL\tNone\t0.0137\n\u0027Ndrangheta\tTEXT.COLOMBIAN\tNone\t0.0095\n\u0027Ndrangheta\tTEXT.COMMISSIONE\tNone\t0.0173\n\u0027Ndrangheta\tTEXT.CONTRABAND\tNone\t0.0117\n\u0027Ndrangheta\tTEXT.CORONA\tNone\t0.0102\n\u0027Ndrangheta\tTEXT.CORRADO\tNone\t0.0127\n\u0027Ndrangheta\tTEXT.CORRIERE\tNone\t0.0138\n\u0027Ndrangheta\tTEXT.COSA\tNone\t0.0383\n\u0027Ndrangheta\tTEXT.COSENZA\tNone\t0.0226\n\u0027Ndrangheta\tTEXT.COSIMO\tNone\t0.0247\n\u0027Ndrangheta\tTEXT.COSMIN\tNone\t0.0163\n\u0027Ndrangheta\tTEXT.COUNCILORS\tNone\t0.0168\n\u0027Ndrangheta\tTEXT.COURAGEOUS\tNone\t0.0099\n\u0027Ndrangheta\tTEXT.CRIME\tNone\t0.0545\n\u0027Ndrangheta\tTEXT.CRIMINAL\tNone\t0.0416\n\u0027Ndrangheta\tTEXT.DEALERSHIP\tNone\t0.01\n\u0027Ndrangheta\tTEXT.DEFIANT\tNone\t0.0108\n\u0027Ndrangheta\tTEXT.DIA\tNone\t0.0114\n\u0027Ndrangheta\tTEXT.DICKIE\tNone\t0.0115\n\u0027Ndrangheta\tTEXT.DIENST\tNone\t0.0153\n\u0027Ndrangheta\tTEXT.DIREZIONE\tNone\t0.0179\n\u0027Ndrangheta\tTEXT.DISASSEMBLE\tNone\t0.0109\n\u0027Ndrangheta\tTEXT.DNR\tNone\t0.0235\n\u0027Ndrangheta\tTEXT.DOMENICO\tNone\t0.0153\n\u0027Ndrangheta\tTEXT.DOSSIER\tNone\t0.0117\n\u0027Ndrangheta\tTEXT.DOUGH\tNone\t0.0112\n\u0027Ndrangheta\tTEXT.DRUG\tNone\t0.0586\n\u0027Ndrangheta\tTEXT.ECSTASY\tNone\t0.0156\n\u0027Ndrangheta\tTEXT.EDITORE\tNone\t0.0125\n\u0027Ndrangheta\tTEXT.EMCDDA\tNone\t0.0187\n\u0027Ndrangheta\tTEXT.ERNESTO\tNone\t0.0154\n\u0027Ndrangheta\tTEXT.EUROPOL\tNone\t0.0234\n\u0027Ndrangheta\tTEXT.EUROS\tNone\t0.0096\n\u0027Ndrangheta\tTEXT.EXCOMMUNICATE\tNone\t0.0102\n\u0027Ndrangheta\tTEXT.EXCOMMUNICATION\tNone\t0.0111\n\u0027Ndrangheta\tTEXT.EXONERATE\tNone\t0.0104\n\u0027Ndrangheta\tTEXT.EXPORTATION\tNone\t0.0129\n\u0027Ndrangheta\tTEXT.EXTORT\tNone\t0.0112\n\u0027Ndrangheta\tTEXT.EXTORTION\tNone\t0.0425\n\u0027Ndrangheta\tTEXT.EXTRADITE\tNone\t0.0114\n\u0027Ndrangheta\tTEXT.EXTRADITION\tNone\t0.0167\n\u0027Ndrangheta\tTEXT.FABIO\tNone\t0.0106\n\u0027Ndrangheta\tTEXT.FAMILIAL\tNone\t0.0101\n\u0027Ndrangheta\tTEXT.FEDERICO\tNone\t0.0096\n\u0027Ndrangheta\tTEXT.FINANZA\tNone\t0.0158\n\u0027Ndrangheta\tTEXT.FOOTSTEP\tNone\t0.009\n\u0027Ndrangheta\tTEXT.FORGIONE\tNone\t0.0172\n\u0027Ndrangheta\tTEXT.FORMIGONI\tNone\t0.0187\n\u0027Ndrangheta\tTEXT.FRANCESCO\tNone\t0.0205\n\u0027Ndrangheta\tTEXT.FRAUDULENT\tNone\t0.0097\n\u0027Ndrangheta\tTEXT.FRAUENFELD\tNone\t0.0247\n\u0027Ndrangheta\tTEXT.FREEMASONRY\tNone\t0.0117\n\u0027Ndrangheta\tTEXT.FUGITIVE\tNone\t0.0129\n\u0027Ndrangheta\tTEXT.GAMBINO\tNone\t0.026\n\u0027Ndrangheta\tTEXT.GANGLAND\tNone\t0.0141\n\u0027Ndrangheta\tTEXT.GETTY\tNone\t0.0108\n\u0027Ndrangheta\tTEXT.GIOIA\tNone\t0.0199\n\u0027Ndrangheta\tTEXT.GIORGI\tNone\t0.0128\n\u0027Ndrangheta\tTEXT.GIOVANI\tNone\t0.0151\n\u0027Ndrangheta\tTEXT.GIUSEPPE\tNone\t0.0289\n\u0027Ndrangheta\tTEXT.GODFATHER\tNone\t0.0091\n\u0027Ndrangheta\tTEXT.GONZI\tNone\t0.0542\n\u0027Ndrangheta\tTEXT.GRASSO\tNone\t0.0149\n\u0027Ndrangheta\tTEXT.GUARDIA\tNone\t0.0115\n\u0027Ndrangheta\tTEXT.GUIDO\tNone\t0.0147\n\u0027Ndrangheta\tTEXT.HANDOVER\tNone\t0.0112\n\u0027Ndrangheta\tTEXT.HELVETICA\tNone\t0.0145\n\u0027Ndrangheta\tTEXT.HEROIN\tNone\t0.0141\n\u0027Ndrangheta\tTEXT.HEROISM\tNone\t0.0104\n\u0027Ndrangheta\tTEXT.HIERARCHICAL\tNone\t0.0092\n\u0027Ndrangheta\tTEXT.HIERARCHICALLY\tNone\t0.0134\n\u0027Ndrangheta\tTEXT.HODDER\tNone\t0.0112\n\u0027Ndrangheta\tTEXT.HOMICIDE\tNone\t0.0092\n\u0027Ndrangheta\tTEXT.IBERIAN\tNone\t0.0091\n\u0027Ndrangheta\tTEXT.ILLICIT\tNone\t0.0144\n\u0027Ndrangheta\tTEXT.ILVA\tNone\t0.0185\n\u0027Ndrangheta\tTEXT.IMPORTATION\tNone\t0.01\n\u0027Ndrangheta\tTEXT.IMPORTER\tNone\t0.0103\n\u0027Ndrangheta\tTEXT.INCONSPICUOUS\tNone\t0.0129\n\u0027Ndrangheta\tTEXT.INDICTABLE\tNone\t0.0289\n\u0027Ndrangheta\tTEXT.INDICTMENT\tNone\t0.0094\n\u0027Ndrangheta\tTEXT.INFILTRATE\tNone\t0.0212\n\u0027Ndrangheta\tTEXT.INFILTRATION\tNone\t0.0299\n\u0027Ndrangheta\tTEXT.INTIMIDATION\tNone\t0.0095\n\u0027Ndrangheta\tTEXT.IONIAN\tNone\t0.011\n\u0027Ndrangheta\tTEXT.IONIC\tNone\t0.0102\n\u0027Ndrangheta\tTEXT.IRREGULARITY\tNone\t0.0094\n\u0027Ndrangheta\tTEXT.ITALIAN\tNone\t0.0643\n\u0027Ndrangheta\tTEXT.ITALIANO\tNone\t0.0181\n\u0027Ndrangheta\tTEXT.ITALY\tNone\t0.0737\n\u0027Ndrangheta\tTEXT.JOERG\tNone\t0.0171\n\u0027Ndrangheta\tTEXT.KANTON\tNone\t0.0166\n\u0027Ndrangheta\tTEXT.KIDNAPPING\tNone\t0.0121\n\u0027Ndrangheta\tTEXT.KILOGRAM\tNone\t0.0099\n\u0027Ndrangheta\tTEXT.KIN\tNone\t0.0095\n\u0027Ndrangheta\tTEXT.KLAUS\tNone\t0.0091\n\u0027Ndrangheta\tTEXT.LAMPE\tNone\t0.0143\n\u0027Ndrangheta\tTEXT.LAUNDER\tNone\t0.0758\n\u0027Ndrangheta\tTEXT.LEGITIMATIZE\tNone\t0.0094\n\u0027Ndrangheta\tTEXT.LEGITIMATIZING\tNone\t0.0126\n\u0027Ndrangheta\tTEXT.LEGITIMIZE\tNone\t0.0101\n\u0027Ndrangheta\tTEXT.LETIZIA\tNone\t0.0149\n\u0027Ndrangheta\tTEXT.LIBRI\tNone\t0.012\n\u0027Ndrangheta\tTEXT.LINCHPIN\tNone\t0.014\n\u0027Ndrangheta\tTEXT.LOCALE\tNone\t0.0233\n\u0027Ndrangheta\tTEXT.LOCRI\tNone\t0.0245\n\u0027Ndrangheta\tTEXT.LOMBARDY\tNone\t0.0216\n\u0027Ndrangheta\tTEXT.LUCA\tNone\t0.0484\n\u0027Ndrangheta\tTEXT.LUMIA\tNone\t0.0161\n\u0027Ndrangheta\tTEXT.MAFIA\tNone\t0.1143\n\u0027Ndrangheta\tTEXT.MAFIOSA\tNone\t0.0187\n\u0027Ndrangheta\tTEXT.MAFIOSO\tNone\t0.02\n\u0027Ndrangheta\tTEXT.MANCUSO\tNone\t0.0145\n\u0027Ndrangheta\tTEXT.MANLY\tNone\t0.0106\n\u0027Ndrangheta\tTEXT.MATERIALIZED\tNone\t0.0117\n\u0027Ndrangheta\tTEXT.METICULOUSLY\tNone\t0.0112\n\u0027Ndrangheta\tTEXT.NARCOTIC\tNone\t0.0097\n\u0027Ndrangheta\tTEXT.NATIONALE\tNone\t0.0096\n\u0027Ndrangheta\tTEXT.NDRANGHETA\tNone\t0.8657\n\u0027Ndrangheta\tTEXT.NEAPOLITAN\tNone\t0.0166\n\u0027Ndrangheta\tTEXT.NOSTRA\tNone\t0.0368\n\u0027Ndrangheta\tTEXT.OBEDIENCE\tNone\t0.0094\n\u0027Ndrangheta\tTEXT.ONORATA\tNone\t0.0185\n\u0027Ndrangheta\tTEXT.ONORE\tNone\t0.0234\n\u0027Ndrangheta\tTEXT.OPERAZIONE\tNone\t0.0175\n\u0027Ndrangheta\tTEXT.ORDEAL\tNone\t0.0101\n\u0027Ndrangheta\tTEXT.ORLOVA\tNone\t0.0166\n\u0027Ndrangheta\tTEXT.OVERHEAR\tNone\t0.0098\n\u0027Ndrangheta\tTEXT.PADRINO\tNone\t0.0179\n\u0027Ndrangheta\tTEXT.PALMI\tNone\t0.017\n\u0027Ndrangheta\tTEXT.PAOLI\tNone\t0.0132\n\u0027Ndrangheta\tTEXT.PARLOR\tNone\t0.0097\n\u0027Ndrangheta\tTEXT.PASQUALE\tNone\t0.0178\n\u0027Ndrangheta\tTEXT.PASTRY\tNone\t0.0107\n\u0027Ndrangheta\tTEXT.PDL\tNone\t0.014\n\u0027Ndrangheta\tTEXT.PELLE\tNone\t0.0212\n\u0027Ndrangheta\tTEXT.PELLEGRINI\tNone\t0.0135\n\u0027Ndrangheta\tTEXT.PENTITO\tNone\t0.0168\n\u0027Ndrangheta\tTEXT.PESCE\tNone\t0.0156\n\u0027Ndrangheta\tTEXT.PIEDMONT\tNone\t0.0094\n\u0027Ndrangheta\tTEXT.PIERO\tNone\t0.0107\n\u0027Ndrangheta\tTEXT.PILL\tNone\t0.0135\n\u0027Ndrangheta\tTEXT.PINO\tNone\t0.0117\n\u0027Ndrangheta\tTEXT.PIZZERIA\tNone\t0.0131\n\u0027Ndrangheta\tTEXT.POLLINO\tNone\t0.0185\n\u0027Ndrangheta\tTEXT.PREEMINENCE\tNone\t0.0131\n\u0027Ndrangheta\tTEXT.PREFECT\tNone\t0.0095\n\u0027Ndrangheta\tTEXT.PRESTI\tNone\t0.0172\n\u0027Ndrangheta\tTEXT.PRIMORDIAL\tNone\t0.0106\n\u0027Ndrangheta\tTEXT.PRINCIPALE\tNone\t0.0169\n\u0027Ndrangheta\tTEXT.PROSECUTOR\tNone\t0.0232\n\u0027Ndrangheta\tTEXT.PROVINCIA\tNone\t0.0256\n\u0027Ndrangheta\tTEXT.PYRAMIDAL\tNone\t0.0117\n\u0027Ndrangheta\tTEXT.QUAIL\tNone\t0.0177\n\u0027Ndrangheta\tTEXT.QUINTINO\tNone\t0.0166\n\u0027Ndrangheta\tTEXT.RACKETEER\tNone\t0.0114\n\u0027Ndrangheta\tTEXT.RAFFAELE\tNone\t0.0126\n\u0027Ndrangheta\tTEXT.RCMP\tNone\t0.0127\n\u0027Ndrangheta\tTEXT.RECHERCHE\tNone\t0.0125\n\u0027Ndrangheta\tTEXT.REGGIO\tNone\t0.0652\n\u0027Ndrangheta\tTEXT.RESULTANT\tNone\t0.0092\n\u0027Ndrangheta\tTEXT.ROCCO\tNone\t0.0109\n\u0027Ndrangheta\tTEXT.ROSMINI\tNone\t0.0176\n\u0027Ndrangheta\tTEXT.ROTTERDAM\tNone\t0.0096\n\u0027Ndrangheta\tTEXT.SACRA\tNone\t0.0124\n\u0027Ndrangheta\tTEXT.SALVATORE\tNone\t0.0155\n\u0027Ndrangheta\tTEXT.SANGU\tNone\t0.0266\n\u0027Ndrangheta\tTEXT.SAW\tNone\t0.0108\n\u0027Ndrangheta\tTEXT.SEAPORT\tNone\t0.0092\n\u0027Ndrangheta\tTEXT.SECRECY\tNone\t0.0091\n\u0027Ndrangheta\tTEXT.SEMINARA\tNone\t0.0185\n\u0027Ndrangheta\tTEXT.SERGI\tNone\t0.015\n\u0027Ndrangheta\tTEXT.SERUM\tNone\t0.0099\n\u0027Ndrangheta\tTEXT.SHARKING\tNone\t0.0154\n\u0027Ndrangheta\tTEXT.SHOTGUN\tNone\t0.0095\n\u0027Ndrangheta\tTEXT.SICILIAN\tNone\t0.0575\n\u0027Ndrangheta\tTEXT.SILENCER\tNone\t0.0136\n\u0027Ndrangheta\tTEXT.SIMONETTA\tNone\t0.0157\n\u0027Ndrangheta\tTEXT.SKIM\tNone\t0.024\n\u0027Ndrangheta\tTEXT.SLAB\tNone\t0.0094\n\u0027Ndrangheta\tTEXT.SLOVAK\tNone\t0.0144\n\u0027Ndrangheta\tTEXT.SMUGGLE\tNone\t0.0321\n\u0027Ndrangheta\tTEXT.SOTTO\tNone\t0.0135\n\u0027Ndrangheta\tTEXT.SPARKASSE\tNone\t0.0167\n\u0027Ndrangheta\tTEXT.STEFANO\tNone\t0.01\n\u0027Ndrangheta\tTEXT.STIRLING\tNone\t0.0092\n\u0027Ndrangheta\tTEXT.STOUGHTON\tNone\t0.0112\n\u0027Ndrangheta\tTEXT.STRANGIO\tNone\t0.0374\n\u0027Ndrangheta\tTEXT.SUBSTANTIATE\tNone\t0.0105\n\u0027Ndrangheta\tTEXT.SUBUNIT\tNone\t0.0115\n\u0027Ndrangheta\tTEXT.SUL\tNone\t0.0109\n\u0027Ndrangheta\tTEXT.SUPERORDINATE\tNone\t0.0418\n\u0027Ndrangheta\tTEXT.SUPERVISORY\tNone\t0.0102\n\u0027Ndrangheta\tTEXT.SURACI\tNone\t0.0182\n\u0027Ndrangheta\tTEXT.TARANTO\tNone\t0.0122\n\u0027Ndrangheta\tTEXT.TAURO\tNone\t0.0245\n\u0027Ndrangheta\tTEXT.THURINGIA\tNone\t0.0117\n\u0027Ndrangheta\tTEXT.TRAFFIC\tNone\t0.045\n\u0027Ndrangheta\tTEXT.TRANSATLANTIC\tNone\t0.0094\n\u0027Ndrangheta\tTEXT.TRANSFERAL\tNone\t0.0165\n\u0027Ndrangheta\tTEXT.TRANSNATIONAL\tNone\t0.0102\n\u0027Ndrangheta\tTEXT.TUNA\tNone\t0.0107\n\u0027Ndrangheta\tTEXT.TURIN\tNone\t0.0138\n\u0027Ndrangheta\tTEXT.TYRRHENIAN\tNone\t0.0132\n\u0027Ndrangheta\tTEXT.ULM\tNone\t0.012\n\u0027Ndrangheta\tTEXT.UNDERCOVER\tNone\t0.0225\n\u0027Ndrangheta\tTEXT.UNDERSCORE\tNone\t0.0101\n\u0027Ndrangheta\tTEXT.UNEARTH\tNone\t0.0092\n\u0027Ndrangheta\tTEXT.UNITA\tNone\t0.014\n\u0027Ndrangheta\tTEXT.UNLICENSED\tNone\t0.0109\n\u0027Ndrangheta\tTEXT.UNODC\tNone\t0.0151\n\u0027Ndrangheta\tTEXT.UNPROFESSIONAL\tNone\t0.0127\n\u0027Ndrangheta\tTEXT.UOMINI\tNone\t0.0157\n\u0027Ndrangheta\tTEXT.URIBE\tNone\t0.0136\n\u0027Ndrangheta\tTEXT.USURY\tNone\t0.0195\n\u0027Ndrangheta\tTEXT.VALAIS\tNone\t0.0205\n\u0027Ndrangheta\tTEXT.VALENTE\tNone\t0.0212\n\u0027Ndrangheta\tTEXT.VALIANT\tNone\t0.0099\n\u0027Ndrangheta\tTEXT.VARESE\tNone\t0.0133\n\u0027Ndrangheta\tTEXT.WIKILEAKS\tNone\t0.0116\n\u0027Ndrangheta\tTEXT.WIRETAP\tNone\t0.0116\n\u0027Ndrangheta\tTEXT.WOODBRIDGE\tNone\t0.0165\n\u0027Ndrangheta\tTEXT.ZETA\tNone\t0.0099\n\u0027Pataphysics\tTEXT.ABERRATION\tNone\t0.0223\n\u0027Pataphysics\tTEXT.ABSOLU\tNone\t0.0329\n\u0027Pataphysics\tTEXT.ABSOLUTE\tNone\t0.0288\n\u0027Pataphysics\tTEXT.ABSURDISM\tNone\t0.0315\n\u0027Pataphysics\tTEXT.ACTUELLE\tNone\t0.032\n\u0027Pataphysics\tTEXT.ADJECTIVE\tNone\t0.0165\n\u0027Pataphysics\tTEXT.AGAMBEN\tNone\t0.0455\n\u0027Pataphysics\tTEXT.ALFORTVILLE\tNone\t0.0347\n\u0027Pataphysics\tTEXT.AMOK\tNone\t0.0258\n\u0027Pataphysics\tTEXT.ANIMATRONIC\tNone\t0.0374\n\u0027Pataphysics\tTEXT.ANOMALY\tNone\t0.0269\n\u0027Pataphysics\tTEXT.ANTINOMY\tNone\t0.0493\n\u0027Pataphysics\tTEXT.APOSTROPHE\tNone\t0.0463\n\u0027Pataphysics\tTEXT.APPENDAGE\tNone\t0.0221\n\u0027Pataphysics\tTEXT.ARBITRARY\tNone\t0.0151\n\u0027Pataphysics\tTEXT.ARISTOTLE\tNone\t0.0168\n\u0027Pataphysics\tTEXT.ARNAUD\tNone\t0.0222\n\u0027Pataphysics\tTEXT.ARRABAL\tNone\t0.0315\n\u0027Pataphysics\tTEXT.ARTICULATION\tNone\t0.019\n\u0027Pataphysics\tTEXT.ASCENSION\tNone\t0.0164\n\u0027Pataphysics\tTEXT.ASGER\tNone\t0.031\n\u0027Pataphysics\tTEXT.AUTOLUX\tNone\t0.034\n\u0027Pataphysics\tTEXT.AUTOMATON\tNone\t0.0244\n\u0027Pataphysics\tTEXT.BAUDRILLARD\tNone\t0.0278\n\u0027Pataphysics\tTEXT.BEAUMONT\tNone\t0.018\n\u0027Pataphysics\tTEXT.BELLY\tNone\t0.0164\n\u0027Pataphysics\tTEXT.BLANCHOT\tNone\t0.0633\n\u0027Pataphysics\tTEXT.BLOOMSBURY\tNone\t0.019\n\u0027Pataphysics\tTEXT.BOSSE\tNone\t0.0282\n\u0027Pataphysics\tTEXT.BRASCHI\tNone\t0.0267\n\u0027Pataphysics\tTEXT.BREWTON\tNone\t0.048\n\u0027Pataphysics\tTEXT.BRYARS\tNone\t0.0452\n\u0027Pataphysics\tTEXT.BUDAPEST\tNone\t0.0167\n\u0027Pataphysics\tTEXT.BUENOS\tNone\t0.0162\n\u0027Pataphysics\tTEXT.BUMBLE\tNone\t0.0215\n\u0027Pataphysics\tTEXT.CAHIERS\tNone\t0.0236\n\u0027Pataphysics\tTEXT.CAL\tNone\t0.0168\n\u0027Pataphysics\tTEXT.CELESTIAL\tNone\t0.0169\n\u0027Pataphysics\tTEXT.CHANDELIER\tNone\t0.0218\n\u0027Pataphysics\tTEXT.CHESSBOARD\tNone\t0.0269\n\u0027Pataphysics\tTEXT.CHICO\tNone\t0.0198\n\u0027Pataphysics\tTEXT.CHIME\tNone\t0.0198\n\u0027Pataphysics\tTEXT.CHIPMUNK\tNone\t0.0221\n\u0027Pataphysics\tTEXT.CHRISTOPHE\tNone\t0.0302\n\u0027Pataphysics\tTEXT.CLINAMEN\tNone\t0.0505\n\u0027Pataphysics\tTEXT.CLOSET\tNone\t0.0181\n\u0027Pataphysics\tTEXT.COLLEGIUM\tNone\t0.0232\n\u0027Pataphysics\tTEXT.CONCEIT\tNone\t0.023\n\u0027Pataphysics\tTEXT.CONCEPTUAL\tNone\t0.016\n\u0027Pataphysics\tTEXT.CONSCIOUSLY\tNone\t0.0179\n\u0027Pataphysics\tTEXT.CORBUSIER\tNone\t0.0238\n\u0027Pataphysics\tTEXT.CROCODILE\tNone\t0.0182\n\u0027Pataphysics\tTEXT.CURATED\tNone\t0.0188\n\u0027Pataphysics\tTEXT.CURATOR\tNone\t0.0249\n\u0027Pataphysics\tTEXT.CURIOSITY\tNone\t0.0169\n\u0027Pataphysics\tTEXT.CZECHOSLOVAKIA\tNone\t0.0246\n\u0027Pataphysics\tTEXT.DADA\tNone\t0.0208\n\u0027Pataphysics\tTEXT.DIGEST\tNone\t0.0162\n\u0027Pataphysics\tTEXT.DISAPPEARANCE\tNone\t0.0233\n\u0027Pataphysics\tTEXT.DOGMA\tNone\t0.0189\n\u0027Pataphysics\tTEXT.DOSSIER\tNone\t0.022\n\u0027Pataphysics\tTEXT.DUALITY\tNone\t0.0206\n\u0027Pataphysics\tTEXT.DUCHAMP\tNone\t0.0353\n\u0027Pataphysics\tTEXT.EDISON\tNone\t0.0171\n\u0027Pataphysics\tTEXT.ELEMENTARE\tNone\t0.034\n\u0027Pataphysics\tTEXT.ENLARGER\tNone\t0.0317\n\u0027Pataphysics\tTEXT.ESTEBAN\tNone\t0.0209\n\u0027Pataphysics\tTEXT.EXHIBIT\tNone\t0.0277\n\u0027Pataphysics\tTEXT.EXIST\tNone\t0.0204\n\u0027Pataphysics\tTEXT.EXPRESSIONISM\tNone\t0.0217\n\u0027Pataphysics\tTEXT.FAUST\tNone\t0.0196\n\u0027Pataphysics\tTEXT.FERREIRA\tNone\t0.0219\n\u0027Pataphysics\tTEXT.FIGURATIVE\tNone\t0.0294\n\u0027Pataphysics\tTEXT.FIRESIGN\tNone\t0.0304\n\u0027Pataphysics\tTEXT.FREAK\tNone\t0.0173\n\u0027Pataphysics\tTEXT.GAVIN\tNone\t0.0246\n\u0027Pataphysics\tTEXT.GENET\tNone\t0.025\n\u0027Pataphysics\tTEXT.GESTATION\tNone\t0.0208\n\u0027Pataphysics\tTEXT.GIANNINA\tNone\t0.0272\n\u0027Pataphysics\tTEXT.GLIMPSE\tNone\t0.0172\n\u0027Pataphysics\tTEXT.GRAFFITI\tNone\t0.0181\n\u0027Pataphysics\tTEXT.GREGORIAN\tNone\t0.0373\n\u0027Pataphysics\tTEXT.GROUCHO\tNone\t0.0237\n\u0027Pataphysics\tTEXT.HA\tNone\t0.0227\n\u0027Pataphysics\tTEXT.HAHA\tNone\t0.0297\n\u0027Pataphysics\tTEXT.HARNESS\tNone\t0.0164\n\u0027Pataphysics\tTEXT.HARPO\tNone\t0.026\n\u0027Pataphysics\tTEXT.HEIGHTEN\tNone\t0.016\n\u0027Pataphysics\tTEXT.HILLYER\tNone\t0.0431\n\u0027Pataphysics\tTEXT.HIRSUTISM\tNone\t0.0331\n\u0027Pataphysics\tTEXT.HOLOGRAPHIC\tNone\t0.0228\n\u0027Pataphysics\tTEXT.HUGILL\tNone\t0.0779\n\u0027Pataphysics\tTEXT.IMAGINARY\tNone\t0.091\n\u0027Pataphysics\tTEXT.IMAGINATIVE\tNone\t0.0181\n\u0027Pataphysics\tTEXT.INCOMPATIBLE\tNone\t0.0164\n\u0027Pataphysics\tTEXT.INTERACTIVE\tNone\t0.0261\n\u0027Pataphysics\tTEXT.INTERNATIONALIZATION\tNone\t0.0226\n\u0027Pataphysics\tTEXT.IONESCO\tNone\t0.0398\n\u0027Pataphysics\tTEXT.IST\tNone\t0.0206\n\u0027Pataphysics\tTEXT.IUNIVERSE\tNone\t0.0267\n\u0027Pataphysics\tTEXT.JARRY\tNone\t0.2995\n\u0027Pataphysics\tTEXT.JEAN\tNone\t0.0344\n\u0027Pataphysics\tTEXT.JORN\tNone\t0.0297\n\u0027Pataphysics\tTEXT.JULIEN\tNone\t0.0187\n\u0027Pataphysics\tTEXT.JUXTAPOSE\tNone\t0.0203\n\u0027Pataphysics\tTEXT.KAFKA\tNone\t0.0223\n\u0027Pataphysics\tTEXT.LENNON\tNone\t0.0171\n\u0027Pataphysics\tTEXT.LESCURE\tNone\t0.0337\n\u0027Pataphysics\tTEXT.LIL\tNone\t0.0182\n\u0027Pataphysics\tTEXT.LINEAMENT\tNone\t0.0312\n\u0027Pataphysics\tTEXT.LOPEZ\tNone\t0.0245\n\u0027Pataphysics\tTEXT.LUC\tNone\t0.0179\n\u0027Pataphysics\tTEXT.LUPTON\tNone\t0.0258\n\u0027Pataphysics\tTEXT.MAGNIFICENCE\tNone\t0.0236\n\u0027Pataphysics\tTEXT.MARCEL\tNone\t0.0239\n\u0027Pataphysics\tTEXT.META\tNone\t0.0174\n\u0027Pataphysics\tTEXT.METAFICTION\tNone\t0.0292\n\u0027Pataphysics\tTEXT.METAPHOR\tNone\t0.101\n\u0027Pataphysics\tTEXT.METAPHORICAL\tNone\t0.0417\n\u0027Pataphysics\tTEXT.METAPHYSIC\tNone\t0.1053\n\u0027Pataphysics\tTEXT.MINUS\tNone\t0.0163\n\u0027Pataphysics\tTEXT.MIREILLE\tNone\t0.0257\n\u0027Pataphysics\tTEXT.MOLLET\tNone\t0.0298\n\u0027Pataphysics\tTEXT.MONTFORT\tNone\t0.0218\n\u0027Pataphysics\tTEXT.MUSIQUE\tNone\t0.0208\n\u0027Pataphysics\tTEXT.MUTUALLY\tNone\t0.0151\n\u0027Pataphysics\tTEXT.MYRIAD\tNone\t0.0182\n\u0027Pataphysics\tTEXT.NAGE\tNone\t0.0313\n\u0027Pataphysics\tTEXT.NEOPHILOLOGUS\tNone\t0.0352\n\u0027Pataphysics\tTEXT.NICKLE\tNone\t0.0288\n\u0027Pataphysics\tTEXT.NIGHTINGALE\tNone\t0.0194\n\u0027Pataphysics\tTEXT.NOTATION\tNone\t0.0166\n\u0027Pataphysics\tTEXT.OCCULTATION\tNone\t0.0268\n\u0027Pataphysics\tTEXT.OFFENBACH\tNone\t0.0233\n\u0027Pataphysics\tTEXT.OFFSHOOT\tNone\t0.0171\n\u0027Pataphysics\tTEXT.OLFACTORY\tNone\t0.0235\n\u0027Pataphysics\tTEXT.ORACLE\tNone\t0.0172\n\u0027Pataphysics\tTEXT.ORNAMENTATION\tNone\t0.02\n\u0027Pataphysics\tTEXT.ORTHOGRAPHY\tNone\t0.0188\n\u0027Pataphysics\tTEXT.OULIPO\tNone\t0.0337\n\u0027Pataphysics\tTEXT.OUTLANDISH\tNone\t0.0218\n\u0027Pataphysics\tTEXT.PA\tNone\t0.0183\n\u0027Pataphysics\tTEXT.PABLO\tNone\t0.0229\n\u0027Pataphysics\tTEXT.PARADOX\tNone\t0.0169\n\u0027Pataphysics\tTEXT.PATAPHYSICS\tNone\t0.8162\n\u0027Pataphysics\tTEXT.PATE\tNone\t0.0367\n\u0027Pataphysics\tTEXT.PATTE\tNone\t0.032\n\u0027Pataphysics\tTEXT.PEANUT\tNone\t0.0178\n\u0027Pataphysics\tTEXT.PEIXOTO\tNone\t0.0305\n\u0027Pataphysics\tTEXT.PERIPHERY\tNone\t0.0181\n\u0027Pataphysics\tTEXT.PERRON\tNone\t0.0287\n\u0027Pataphysics\tTEXT.PHYSIQUE\tNone\t0.0404\n\u0027Pataphysics\tTEXT.PLASTICITY\tNone\t0.0233\n\u0027Pataphysics\tTEXT.PRACTITIONER\tNone\t0.0211\n\u0027Pataphysics\tTEXT.PRANK\tNone\t0.0188\n\u0027Pataphysics\tTEXT.PREFERABLE\tNone\t0.019\n\u0027Pataphysics\tTEXT.PROLEGOMENON\tNone\t0.0264\n\u0027Pataphysics\tTEXT.PSEUDOSCIENCE\tNone\t0.0227\n\u0027Pataphysics\tTEXT.PSYCHEDELIC\tNone\t0.0174\n\u0027Pataphysics\tTEXT.PUN\tNone\t0.0479\n\u0027Pataphysics\tTEXT.PURPORTEDLY\tNone\t0.018\n\u0027Pataphysics\tTEXT.QUENEAU\tNone\t0.0449\n\u0027Pataphysics\tTEXT.REALITY\tNone\t0.0356\n\u0027Pataphysics\tTEXT.REALIZING\tNone\t0.0184\n\u0027Pataphysics\tTEXT.RECONSTITUTE\tNone\t0.0177\n\u0027Pataphysics\tTEXT.RECONSTRUCTIVE\tNone\t0.0238\n\u0027Pataphysics\tTEXT.REITERATE\tNone\t0.0163\n\u0027Pataphysics\tTEXT.RENE\tNone\t0.0194\n\u0027Pataphysics\tTEXT.RENNES\tNone\t0.0231\n\u0027Pataphysics\tTEXT.REPRESS\tNone\t0.0177\n\u0027Pataphysics\tTEXT.REVUE\tNone\t0.0164\n\u0027Pataphysics\tTEXT.RIDDLE\tNone\t0.0173\n\u0027Pataphysics\tTEXT.RIGID\tNone\t0.0151\n\u0027Pataphysics\tTEXT.ROI\tNone\t0.0195\n\u0027Pataphysics\tTEXT.SABLE\tNone\t0.0199\n\u0027Pataphysics\tTEXT.SAF\tNone\t0.0257\n\u0027Pataphysics\tTEXT.SANDOMIR\tNone\t0.0337\n\u0027Pataphysics\tTEXT.SEPARATION\tNone\t0.0287\n\u0027Pataphysics\tTEXT.SERENDIPITY\tNone\t0.027\n\u0027Pataphysics\tTEXT.SHATTUCK\tNone\t0.0403\n\u0027Pataphysics\tTEXT.SIMILARITY\tNone\t0.0233\n\u0027Pataphysics\tTEXT.SITUATIONIST\tNone\t0.027\n\u0027Pataphysics\tTEXT.SLY\tNone\t0.0293\n\u0027Pataphysics\tTEXT.SNORKEL\tNone\t0.0233\n\u0027Pataphysics\tTEXT.SPECULATIVE\tNone\t0.017\n\u0027Pataphysics\tTEXT.SPILLER\tNone\t0.027\n\u0027Pataphysics\tTEXT.SPOOF\tNone\t0.0166\n\u0027Pataphysics\tTEXT.STAROSTA\tNone\t0.0302\n\u0027Pataphysics\tTEXT.STRIDE\tNone\t0.0176\n\u0027Pataphysics\tTEXT.SUBCOMMITTEE\tNone\t0.0193\n\u0027Pataphysics\tTEXT.SUBLIMINAL\tNone\t0.0247\n\u0027Pataphysics\tTEXT.SUBTLE\tNone\t0.0146\n\u0027Pataphysics\tTEXT.SUPPLEMENTARY\tNone\t0.0174\n\u0027Pataphysics\tTEXT.SWERVE\tNone\t0.0346\n\u0027Pataphysics\tTEXT.SYMBOLICALLY\tNone\t0.0186\n\u0027Pataphysics\tTEXT.SYMMETRY\tNone\t0.0177\n\u0027Pataphysics\tTEXT.SYNONYMOUS\tNone\t0.0153\n\u0027Pataphysics\tTEXT.SYZYGY\tNone\t0.0615\n\u0027Pataphysics\tTEXT.TA\tNone\t0.034\n\u0027Pataphysics\tTEXT.TANYA\tNone\t0.0202\n\u0027Pataphysics\tTEXT.TARA\tNone\t0.017\n\u0027Pataphysics\tTEXT.TENUOUS\tNone\t0.0202\n\u0027Pataphysics\tTEXT.TRANSCEND\tNone\t0.0176\n\u0027Pataphysics\tTEXT.TRANSCENDENT\tNone\t0.0207\n\u0027Pataphysics\tTEXT.TROLL\tNone\t0.0206\n\u0027Pataphysics\tTEXT.TROPE\tNone\t0.0206\n\u0027Pataphysics\tTEXT.TROUPE\tNone\t0.0247\n\u0027Pataphysics\tTEXT.TUSCALOOSA\tNone\t0.023\n\u0027Pataphysics\tTEXT.UBU\tNone\t0.0389\n\u0027Pataphysics\tTEXT.UNDERTONE\tNone\t0.0218\n\u0027Pataphysics\tTEXT.UNPREDICTABLE\tNone\t0.0173\n\u0027Pataphysics\tTEXT.UNREALITY\tNone\t0.0271\n\u0027Pataphysics\tTEXT.UNRELATED\tNone\t0.021\n\u0027Pataphysics\tTEXT.UNSETTLE\tNone\t0.0186\n\u0027Pataphysics\tTEXT.UNUSUALLY\tNone\t0.0208\n\u0027Pataphysics\tTEXT.USELESS\tNone\t0.017\n\u0027Pataphysics\tTEXT.VIAN\tNone\t0.0437\n\u0027Pataphysics\tTEXT.VIGIL\tNone\t0.0199\n\u0027Pataphysics\tTEXT.VILNIUS\tNone\t0.0315\n\u0027Pataphysics\tTEXT.VIRTUALITY\tNone\t0.031\n\u0027Pataphysics\tTEXT.VULGATE\tNone\t0.0222\n\u0027Pataphysics\tTEXT.ZU\tNone\t0.0181\n\u0027Til Death\tTEXT.AIRDATE\tNone\t0.0669\n\u0027Til Death\tTEXT.AIRSTREAM\tNone\t0.1401\n\u0027Til Death\tTEXT.ALISON\tNone\t0.0415\n\u0027Til Death\tTEXT.ALLISON\tNone\t0.1654\n\u0027Til Death\tTEXT.ALONGSIDE\tNone\t0.0347\n\u0027Til Death\tTEXT.ATTRIBUTE\tNone\t0.0207\n\u0027Til Death\tTEXT.BACKYARD\tNone\t0.0726\n\u0027Til Death\tTEXT.BAKAY\tNone\t0.0846\n\u0027Til Death\tTEXT.BARRY\tNone\t0.0411\n\u0027Til Death\tTEXT.BATCH\tNone\t0.0821\n\u0027Til Death\tTEXT.BETH\tNone\t0.0408\n\u0027Til Death\tTEXT.BIODIESEL\tNone\t0.1215\n\u0027Til Death\tTEXT.BOSTWICK\tNone\t0.0689\n\u0027Til Death\tTEXT.BOYFRIEND\tNone\t0.0563\n\u0027Til Death\tTEXT.BRAD\tNone\t0.0517\n\u0027Til Death\tTEXT.BROAD\tNone\t0.0411\n\u0027Til Death\tTEXT.CANCEL\tNone\t0.0451\n\u0027Til Death\tTEXT.CANCELLED\tNone\t0.0678\n\u0027Til Death\tTEXT.CATHY\tNone\t0.0472\n\u0027Til Death\tTEXT.CHELTENHAM\tNone\t0.0498\n\u0027Til Death\tTEXT.CHO\tNone\t0.0497\n\u0027Til Death\tTEXT.CLERY\tNone\t0.1153\n\u0027Til Death\tTEXT.COMPANION\tNone\t0.0274\n\u0027Til Death\tTEXT.CONSIGN\tNone\t0.0562\n\u0027Til Death\tTEXT.CONVINCE\tNone\t0.0221\n\u0027Til Death\tTEXT.COPE\tNone\t0.0349\n\u0027Til Death\tTEXT.COVET\tNone\t0.045\n\u0027Til Death\tTEXT.DEATH\tNone\t0.0818\n\u0027Til Death\tTEXT.DISCOUNT\tNone\t0.0375\n\u0027Til Death\tTEXT.DISTURB\tNone\t0.0342\n\u0027Til Death\tTEXT.DOESN\tNone\t0.0294\n\u0027Til Death\tTEXT.DONNA\tNone\t0.0388\n\u0027Til Death\tTEXT.DOUG\tNone\t0.1013\n\u0027Til Death\tTEXT.DUFFY\tNone\t0.0454\n\u0027Til Death\tTEXT.DVDS\tNone\t0.0633\n\u0027Til Death\tTEXT.EDDIE\tNone\t0.236\n\u0027Til Death\tTEXT.EPISODE\tNone\t0.2208\n\u0027Til Death\tTEXT.EX\tNone\t0.0351\n\u0027Til Death\tTEXT.EYE\tNone\t0.0274\n\u0027Til Death\tTEXT.FINALE\tNone\t0.0329\n\u0027Til Death\tTEXT.FISHER\tNone\t0.0498\n\u0027Til Death\tTEXT.FOCUS\tNone\t0.0281\n\u0027Til Death\tTEXT.FOSTER\tNone\t0.052\n\u0027Til Death\tTEXT.FOUR\tNone\t0.022\n\u0027Til Death\tTEXT.FOX\tNone\t0.0814\n\u0027Til Death\tTEXT.FRESHMAN\tNone\t0.0351\n\u0027Til Death\tTEXT.FRIDAYS\tNone\t0.0468\n\u0027Til Death\tTEXT.FUN\tNone\t0.0296\n\u0027Til Death\tTEXT.GARRETT\tNone\t0.0615\n\u0027Til Death\tTEXT.GETTV\tNone\t0.0772\n\u0027Til Death\tTEXT.GOLDSMITH\tNone\t0.0448\n\u0027Til Death\tTEXT.HALT\tNone\t0.029\n\u0027Til Death\tTEXT.HIATUS\tNone\t0.0354\n\u0027Til Death\tTEXT.HIPPIE\tNone\t0.0473\n\u0027Til Death\tTEXT.HUSBAND\tNone\t0.0362\n\u0027Til Death\tTEXT.IDEALISTIC\tNone\t0.0508\n\u0027Til Death\tTEXT.IDOL\tNone\t0.0337\n\u0027Til Death\tTEXT.INITIALLY\tNone\t0.0263\n\u0027Til Death\tTEXT.JEFF\tNone\t0.0662\n\u0027Til Death\tTEXT.JOELY\tNone\t0.1094\n\u0027Til Death\tTEXT.JOSH\tNone\t0.0339\n\u0027Til Death\tTEXT.JOY\tNone\t0.1462\n\u0027Til Death\tTEXT.KAT\tNone\t0.1018\n\u0027Til Death\tTEXT.KATE\tNone\t0.0662\n\u0027Til Death\tTEXT.KATHLEEN\tNone\t0.0397\n\u0027Til Death\tTEXT.KAYE\tNone\t0.0949\n\u0027Til Death\tTEXT.KAZAN\tNone\t0.05\n\u0027Til Death\tTEXT.KENNY\tNone\t0.1045\n\u0027Til Death\tTEXT.KRYSTEN\tNone\t0.1223\n\u0027Til Death\tTEXT.KYM\tNone\t0.0633\n\u0027Til Death\tTEXT.LAINIE\tNone\t0.0766\n\u0027Til Death\tTEXT.LAMBERT\tNone\t0.0402\n\u0027Til Death\tTEXT.LATE\tNone\t0.0079\n\u0027Til Death\tTEXT.LAURA\tNone\t0.0502\n\u0027Til Death\tTEXT.LINDSEY\tNone\t0.1167\n\u0027Til Death\tTEXT.MAIN\tNone\t0.0334\n\u0027Til Death\tTEXT.MANGANIELLO\tNone\t0.0789\n\u0027Til Death\tTEXT.MAYWEATHER\tNone\t0.0676\n\u0027Til Death\tTEXT.MICUCCI\tNone\t0.1631\n\u0027Til Death\tTEXT.MULL\tNone\t0.056\n\u0027Til Death\tTEXT.NEALON\tNone\t0.0744\n\u0027Til Death\tTEXT.NEIGHBOR\tNone\t0.0278\n\u0027Til Death\tTEXT.NEWLYWED\tNone\t0.084\n\u0027Til Death\tTEXT.NICOLE\tNone\t0.0402\n\u0027Til Death\tTEXT.OPTIMISTIC\tNone\t0.0433\n\u0027Til Death\tTEXT.PAIR\tNone\t0.0304\n\u0027Til Death\tTEXT.PERKIN\tNone\t0.0401\n\u0027Til Death\tTEXT.PICK\tNone\t0.0295\n\u0027Til Death\tTEXT.PLACA\tNone\t0.0879\n\u0027Til Death\tTEXT.PREMISE\tNone\t0.0305\n\u0027Til Death\tTEXT.PRINCIPAL\tNone\t0.0293\n\u0027Til Death\tTEXT.PRODUCE\tNone\t0.0328\n\u0027Til Death\tTEXT.PULL\tNone\t0.0223\n\u0027Til Death\tTEXT.RATING\tNone\t0.1088\n\u0027Til Death\tTEXT.RECUR\tNone\t0.1054\n\u0027Til Death\tTEXT.RENEW\tNone\t0.0379\n\u0027Til Death\tTEXT.RENEWAL\tNone\t0.0359\n\u0027Til Death\tTEXT.RERUN\tNone\t0.0456\n\u0027Til Death\tTEXT.RESPECTIVELY\tNone\t0.0264\n\u0027Til Death\tTEXT.RITTER\tNone\t0.0722\n\u0027Til Death\tTEXT.RUSS\tNone\t0.0439\n\u0027Til Death\tTEXT.SARCASTIC\tNone\t0.051\n\u0027Til Death\tTEXT.SASSO\tNone\t0.0665\n\u0027Til Death\tTEXT.SCHEDULE\tNone\t0.027\n\u0027Til Death\tTEXT.SEASON\tNone\t0.2898\n\u0027Til Death\tTEXT.SEASONAL\tNone\t0.033\n\u0027Til Death\tTEXT.SEPTEMBER\tNone\t0.0228\n\u0027Til Death\tTEXT.SHARP\tNone\t0.0547\n\u0027Til Death\tTEXT.SHOW\tNone\t0.0433\n\u0027Til Death\tTEXT.SIMONA\tNone\t0.0632\n\u0027Til Death\tTEXT.SIT-COM\tNone\t0.1009\n\u0027Til Death\tTEXT.SLOT\tNone\t0.0336\n\u0027Til Death\tTEXT.SMOOVE\tNone\t0.1946\n\u0027Til Death\tTEXT.SONY\tNone\t0.0503\n\u0027Til Death\tTEXT.SPIKE\tNone\t0.0355\n\u0027Til Death\tTEXT.STAN\tNone\t0.0356\n\u0027Til Death\tTEXT.STARK\tNone\t0.1713\n\u0027Til Death\tTEXT.STARKS\tNone\t0.2351\n\u0027Til Death\tTEXT.STEPH\tNone\t0.131\n\u0027Til Death\tTEXT.STRAHAN\tNone\t0.0656\n\u0027Til Death\tTEXT.STU\tNone\t0.0524\n\u0027Til Death\tTEXT.SUBURBAN\tNone\t0.0307\n\u0027Til Death\tTEXT.SURPRISE\tNone\t0.0224\n\u0027Til Death\tTEXT.SYNDICATION\tNone\t0.0878\n\u0027Til Death\tTEXT.THREE\tNone\t0.0119\n\u0027Til Death\tTEXT.THURSDAYS\tNone\t0.0504\n\u0027Til Death\tTEXT.TIL\tNone\t0.1235\n\u0027Til Death\tTEXT.TIMM\tNone\t0.1246\n\u0027Til Death\tTEXT.TINA\tNone\t0.0419\n\u0027Til Death\tTEXT.TUCSON\tNone\t0.0467\n\u0027Til Death\tTEXT.TYCOON\tNone\t0.0482\n\u0027Til Death\tTEXT.UNAIRED\tNone\t0.0879\n\u0027Til Death\tTEXT.UNEMPLOYED\tNone\t0.0404\n\u0027Til Death\tTEXT.UPFRONT\tNone\t0.0582\n\u0027Til Death\tTEXT.VIABLE\tNone\t0.0351\n\u0027Til Death\tTEXT.VON\tNone\t0.0604\n\u0027Til Death\tTEXT.WEDNESDAYS\tNone\t0.1024\n\u0027Til Death\tTEXT.WESTCHESTER\tNone\t0.0743\n\u0027Til Death\tTEXT.WGN\tNone\t0.0576\n\u0027Til Death\tTEXT.WHITEY\tNone\t0.0573\n\u0027Til Death\tTEXT.WHITLEY\tNone\t0.0543\n\u0027Til Death\tTEXT.WIFE\tNone\t0.0328\n\u0027Til Death\tTEXT.WOODCOCK\tNone\t0.1499\n\u0027Til Death\tTEXT.XLIV\tNone\t0.0635\n\u0027Til Death\tTEXT.YEAGLEY\tNone\t0.089\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ADAPTATION\tNone\t0.0428\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ADDIO\tNone\t0.0445\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ALAIN\tNone\t0.0258\n\u0027Tis Pity She\u0027s a Whore\tTEXT.AMBIGUITY\tNone\t0.0257\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ANDERSSON\tNone\t0.0346\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ANGELIQUE\tNone\t0.0363\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ANNABELLA\tNone\t0.508\n\u0027Tis Pity She\u0027s a Whore\tTEXT.APPRECIATION\tNone\t0.0215\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ARROGANT\tNone\t0.0272\n\u0027Tis Pity She\u0027s a Whore\tTEXT.AVENGE\tNone\t0.0246\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BANDIT\tNone\t0.0381\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BANDITTI\tNone\t0.0492\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BANISH\tNone\t0.0252\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BARBICAN\tNone\t0.0492\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BEFRIEND\tNone\t0.0222\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BEG\tNone\t0.0222\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BETROTH\tNone\t0.0309\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BIBI\tNone\t0.0352\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BILLINGTON\tNone\t0.0362\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BLACKSTAR\tNone\t0.0466\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BOLOGNA\tNone\t0.026\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BONAVENTURA\tNone\t0.1035\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BOOKSELLER\tNone\t0.0303\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BOWIE\tNone\t0.0254\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BRT\tNone\t0.0354\n\u0027Tis Pity She\u0027s a Whore\tTEXT.BUCKLEY\tNone\t0.0269\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CANDLELIGHT\tNone\t0.0345\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CARDINAL\tNone\t0.0531\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CHEAT\tNone\t0.0233\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CHEEK\tNone\t0.0248\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CHERIE\tNone\t0.0369\n\u0027Tis Pity She\u0027s a Whore\tTEXT.COCKPIT\tNone\t0.0279\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CONDEMNATION\tNone\t0.0252\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CONFINE\tNone\t0.0184\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CONSUMMATE\tNone\t0.0294\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CONVENT\tNone\t0.0232\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CONVINCE\tNone\t0.0265\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CRANHAM\tNone\t0.0466\n\u0027Tis Pity She\u0027s a Whore\tTEXT.CRUDELE\tNone\t0.0534\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DAMIEN\tNone\t0.0421\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DAMN\tNone\t0.0233\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DECLAN\tNone\t0.0506\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DELON\tNone\t0.0417\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DESPERATE\tNone\t0.0212\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DICE\tNone\t0.0298\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DISGUISE\tNone\t0.0203\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DISTRAUGHT\tNone\t0.0292\n\u0027Tis Pity She\u0027s a Whore\tTEXT.DONNELLAN\tNone\t0.0882\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ESQUE\tNone\t0.0312\n\u0027Tis Pity She\u0027s a Whore\tTEXT.EUPHEMISTIC\tNone\t0.0417\n\u0027Tis Pity She\u0027s a Whore\tTEXT.FEAST\tNone\t0.0411\n\u0027Tis Pity She\u0027s a Whore\tTEXT.FLORIO\tNone\t0.115\n\u0027Tis Pity She\u0027s a Whore\tTEXT.FORD\tNone\t0.0538\n\u0027Tis Pity She\u0027s a Whore\tTEXT.FRATELLO\tNone\t0.0442\n\u0027Tis Pity She\u0027s a Whore\tTEXT.FRIAR\tNone\t0.0912\n\u0027Tis Pity She\u0027s a Whore\tTEXT.FURIOUS\tNone\t0.0233\n\u0027Tis Pity She\u0027s a Whore\tTEXT.GINA\tNone\t0.0288\n\u0027Tis Pity She\u0027s a Whore\tTEXT.GIOVANNI\tNone\t0.2138\n\u0027Tis Pity She\u0027s a Whore\tTEXT.GIUSEPPE\tNone\t0.0354\n\u0027Tis Pity She\u0027s a Whore\tTEXT.GREENAWAY\tNone\t0.0381\n\u0027Tis Pity She\u0027s a Whore\tTEXT.GRIFFI\tNone\t0.0782\n\u0027Tis Pity She\u0027s a Whore\tTEXT.GRIMALDI\tNone\t0.129\n\u0027Tis Pity She\u0027s a Whore\tTEXT.GUILT\tNone\t0.0237\n\u0027Tis Pity She\u0027s a Whore\tTEXT.HATHITRUST\tNone\t0.0441\n\u0027Tis Pity She\u0027s a Whore\tTEXT.HENRIETTA\tNone\t0.029\n\u0027Tis Pity She\u0027s a Whore\tTEXT.HERSELF\tNone\t0.0309\n\u0027Tis Pity She\u0027s a Whore\tTEXT.INCEST\tNone\t0.0477\n\u0027Tis Pity She\u0027s a Whore\tTEXT.INCESTUOUS\tNone\t0.0532\n\u0027Tis Pity She\u0027s a Whore\tTEXT.INCOMPLETE\tNone\t0.0212\n\u0027Tis Pity She\u0027s a Whore\tTEXT.INSULT\tNone\t0.0207\n\u0027Tis Pity She\u0027s a Whore\tTEXT.INTERVENE\tNone\t0.0189\n\u0027Tis Pity She\u0027s a Whore\tTEXT.JACOBIAN\tNone\t0.0339\n\u0027Tis Pity She\u0027s a Whore\tTEXT.JESSIE\tNone\t0.0272\n\u0027Tis Pity She\u0027s a Whore\tTEXT.JOWL\tNone\t0.0442\n\u0027Tis Pity She\u0027s a Whore\tTEXT.LONGHURST\tNone\t0.0424\n\u0027Tis Pity She\u0027s a Whore\tTEXT.LUCHINO\tNone\t0.0398\n\u0027Tis Pity She\u0027s a Whore\tTEXT.LUNGHI\tNone\t0.0499\n\u0027Tis Pity She\u0027s a Whore\tTEXT.LYDIA\tNone\t0.0276\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MAETERLINCK\tNone\t0.0422\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MASQUE\tNone\t0.0331\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MEANWHILE\tNone\t0.0221\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MISTAKENLY\tNone\t0.0239\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MOB\tNone\t0.0214\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MOLONY\tNone\t0.0688\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MORDAUNT\tNone\t0.0414\n\u0027Tis Pity She\u0027s a Whore\tTEXT.MUNBY\tNone\t0.0486\n\u0027Tis Pity She\u0027s a Whore\tTEXT.NEWLYWED\tNone\t0.0336\n\u0027Tis Pity She\u0027s a Whore\tTEXT.NIECE\tNone\t0.0342\n\u0027Tis Pity She\u0027s a Whore\tTEXT.NOBLEMAN\tNone\t0.0269\n\u0027Tis Pity She\u0027s a Whore\tTEXT.NUNCIO\tNone\t0.0353\n\u0027Tis Pity She\u0027s a Whore\tTEXT.OBVIOUSLY\tNone\t0.0225\n\u0027Tis Pity She\u0027s a Whore\tTEXT.OFFEND\tNone\t0.0226\n\u0027Tis Pity She\u0027s a Whore\tTEXT.OKE\tNone\t0.0416\n\u0027Tis Pity She\u0027s a Whore\tTEXT.OMIT\tNone\t0.0203\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ORMEROD\tNone\t0.0425\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PARAMOUR\tNone\t0.0399\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PARMA\tNone\t0.0875\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PASSIONATE\tNone\t0.023\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PATRONI\tNone\t0.076\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PAULINE\tNone\t0.0251\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PEPYS\tNone\t0.0346\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PETERBOROUGH\tNone\t0.0284\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PITTY\tNone\t0.0492\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PITY\tNone\t0.1433\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PLAYHOUSE\tNone\t0.0243\n\u0027Tis Pity She\u0027s a Whore\tTEXT.POGGIO\tNone\t0.0593\n\u0027Tis Pity She\u0027s a Whore\tTEXT.POISON\tNone\t0.0285\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PREGNANCY\tNone\t0.0336\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PRETEND\tNone\t0.0222\n\u0027Tis Pity She\u0027s a Whore\tTEXT.PROPHECY\tNone\t0.0249\n\u0027Tis Pity She\u0027s a Whore\tTEXT.QUARTO\tNone\t0.0362\n\u0027Tis Pity She\u0027s a Whore\tTEXT.RAMPLING\tNone\t0.0412\n\u0027Tis Pity She\u0027s a Whore\tTEXT.REPENT\tNone\t0.0315\n\u0027Tis Pity She\u0027s a Whore\tTEXT.REPENTANCE\tNone\t0.0319\n\u0027Tis Pity She\u0027s a Whore\tTEXT.REVEAL\tNone\t0.0281\n\u0027Tis Pity She\u0027s a Whore\tTEXT.REVENGE\tNone\t0.0378\n\u0027Tis Pity She\u0027s a Whore\tTEXT.REVIVE\tNone\t0.0227\n\u0027Tis Pity She\u0027s a Whore\tTEXT.RID\tNone\t0.0234\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ROLAND\tNone\t0.0224\n\u0027Tis Pity She\u0027s a Whore\tTEXT.ROMY\tNone\t0.0388\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SALISBURY\tNone\t0.0254\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SCEAUX\tNone\t0.0469\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SCHNEIDER\tNone\t0.0259\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SERVANT\tNone\t0.0342\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SHAFTESBURY\tNone\t0.0333\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SHEE\tNone\t0.0448\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SKEWER\tNone\t0.037\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SORANZO\tNone\t0.5007\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SPOUT\tNone\t0.0344\n\u0027Tis Pity She\u0027s a Whore\tTEXT.STAB\tNone\t0.0587\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SUITOR\tNone\t0.0768\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SYLLABLE\tNone\t0.0254\n\u0027Tis Pity She\u0027s a Whore\tTEXT.SYNOPSIS\tNone\t0.0264\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TALENTED\tNone\t0.0204\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TARANTINO\tNone\t0.0327\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TERRIBLE\tNone\t0.0209\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TI\tNone\t0.1584\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TOAST\tNone\t0.0279\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TOBIAS\tNone\t0.0288\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TUMULTUOUS\tNone\t0.0284\n\u0027Tis Pity She\u0027s a Whore\tTEXT.TURVEY\tNone\t0.0441\n\u0027Tis Pity She\u0027s a Whore\tTEXT.UNEDITED\tNone\t0.0347\n\u0027Tis Pity She\u0027s a Whore\tTEXT.UNFORTUNATELY\tNone\t0.0191\n\u0027Tis Pity She\u0027s a Whore\tTEXT.UNSETTLE\tNone\t0.0283\n\u0027Tis Pity She\u0027s a Whore\tTEXT.UNSTOPPABLE\tNone\t0.0333\n\u0027Tis Pity She\u0027s a Whore\tTEXT.VASQUES\tNone\t0.2401\n\u0027Tis Pity She\u0027s a Whore\tTEXT.VERBALLY\tNone\t0.0421\n\u0027Tis Pity She\u0027s a Whore\tTEXT.VICKERS\tNone\t0.0271\n\u0027Tis Pity She\u0027s a Whore\tTEXT.VILLAINY\tNone\t0.0392\n\u0027Tis Pity She\u0027s a Whore\tTEXT.VIRTUOUS\tNone\t0.0292\n\u0027Tis Pity She\u0027s a Whore\tTEXT.VISCONTI\tNone\t0.0328\n\u0027Tis Pity She\u0027s a Whore\tTEXT.VISUALLY\tNone\t0.0242\n\u0027Tis Pity She\u0027s a Whore\tTEXT.WANAMAKER\tNone\t0.0368\n\u0027Tis Pity She\u0027s a Whore\tTEXT.WHORE\tNone\t0.1592\n\u0027Tis Pity She\u0027s a Whore\tTEXT.WIELD\tNone\t0.0238\n\u0027Tis Pity She\u0027s a Whore\tTEXT.WILLINGLY\tNone\t0.0286\n\u0027s-Hertogenbosch\tTEXT.AA\tNone\t0.0357\n\u0027s-Hertogenbosch\tTEXT.ADEQUATE\tNone\t0.0193\n\u0027s-Hertogenbosch\tTEXT.ARCHERY\tNone\t0.0288\n\u0027s-Hertogenbosch\tTEXT.ARIE\tNone\t0.0302\n\u0027s-Hertogenbosch\tTEXT.ARRIVA\tNone\t0.0311\n\u0027s-Hertogenbosch\tTEXT.ATP\tNone\t0.0285\n\u0027s-Hertogenbosch\tTEXT.ATTRACTIVE\tNone\t0.019\n\u0027s-Hertogenbosch\tTEXT.BANDANA\tNone\t0.0409\n\u0027s-Hertogenbosch\tTEXT.BATAVIAN\tNone\t0.0367\n\u0027s-Hertogenbosch\tTEXT.BERLAYMONT\tNone\t0.049\n\u0027s-Hertogenbosch\tTEXT.BESIEGE\tNone\t0.0212\n\u0027s-Hertogenbosch\tTEXT.BIKE\tNone\t0.0409\n\u0027s-Hertogenbosch\tTEXT.BISHOPRIC\tNone\t0.0257\n\u0027s-Hertogenbosch\tTEXT.BOIS\tNone\t0.028\n\u0027s-Hertogenbosch\tTEXT.BONAPARTE\tNone\t0.027\n\u0027s-Hertogenbosch\tTEXT.BOSCH\tNone\t0.1779\n\u0027s-Hertogenbosch\tTEXT.BOSSCHE\tNone\t0.0477\n\u0027s-Hertogenbosch\tTEXT.BOZE\tNone\t0.049\n\u0027s-Hertogenbosch\tTEXT.BRABANT\tNone\t0.0781\n\u0027s-Hertogenbosch\tTEXT.BRABANTIAN\tNone\t0.0681\n\u0027s-Hertogenbosch\tTEXT.BRABANTINE\tNone\t0.0498\n\u0027s-Hertogenbosch\tTEXT.BREMNER\tNone\t0.038\n\u0027s-Hertogenbosch\tTEXT.BUSLINES\tNone\t0.0442\n\u0027s-Hertogenbosch\tTEXT.CALVINIST\tNone\t0.0286\n\u0027s-Hertogenbosch\tTEXT.CARNAVAL\tNone\t0.0368\n\u0027s-Hertogenbosch\tTEXT.CARNIVAL\tNone\t0.0544\n\u0027s-Hertogenbosch\tTEXT.CARTOGRAPHER\tNone\t0.031\n\u0027s-Hertogenbosch\tTEXT.CATASTROPHIC\tNone\t0.0247\n\u0027s-Hertogenbosch\tTEXT.CERAMIC\tNone\t0.0441\n\u0027s-Hertogenbosch\tTEXT.CFB\tNone\t0.0298\n\u0027s-Hertogenbosch\tTEXT.CHOCOLATE\tNone\t0.0233\n\u0027s-Hertogenbosch\tTEXT.CHRONICLER\tNone\t0.0257\n\u0027s-Hertogenbosch\tTEXT.CITY\tNone\t0.0803\n\u0027s-Hertogenbosch\tTEXT.CLASSICALISM\tNone\t0.0313\n\u0027s-Hertogenbosch\tTEXT.COLLOQUIAL\tNone\t0.0267\n\u0027s-Hertogenbosch\tTEXT.COLLOQUIALLY\tNone\t0.0226\n\u0027s-Hertogenbosch\tTEXT.CONFRATERNITY\tNone\t0.0373\n\u0027s-Hertogenbosch\tTEXT.CONTEMPORANEOUS\tNone\t0.0276\n\u0027s-Hertogenbosch\tTEXT.CONTRACTION\tNone\t0.0256\n\u0027s-Hertogenbosch\tTEXT.CONVENIENT\tNone\t0.0217\n\u0027s-Hertogenbosch\tTEXT.COPYIST\tNone\t0.0355\n\u0027s-Hertogenbosch\tTEXT.CRAFTSMAN\tNone\t0.0233\n\u0027s-Hertogenbosch\tTEXT.CREVECOEUR\tNone\t0.0494\n\u0027s-Hertogenbosch\tTEXT.CYCLIST\tNone\t0.0369\n\u0027s-Hertogenbosch\tTEXT.DEFENCE\tNone\t0.0235\n\u0027s-Hertogenbosch\tTEXT.DEN\tNone\t0.1135\n\u0027s-Hertogenbosch\tTEXT.DIMINISH\tNone\t0.0183\n\u0027s-Hertogenbosch\tTEXT.DISORDERLY\tNone\t0.0308\n\u0027s-Hertogenbosch\tTEXT.DIVERT\tNone\t0.0301\n\u0027s-Hertogenbosch\tTEXT.DONK\tNone\t0.0486\n\u0027s-Hertogenbosch\tTEXT.DONNER\tNone\t0.0333\n\u0027s-Hertogenbosch\tTEXT.DUC\tNone\t0.0307\n\u0027s-Hertogenbosch\tTEXT.DUNE\tNone\t0.0249\n\u0027s-Hertogenbosch\tTEXT.DUTCH\tNone\t0.0826\n\u0027s-Hertogenbosch\tTEXT.DYKE\tNone\t0.0262\n\u0027s-Hertogenbosch\tTEXT.EIGHTY\tNone\t0.0308\n\u0027s-Hertogenbosch\tTEXT.ENCROACHMENT\tNone\t0.0286\n\u0027s-Hertogenbosch\tTEXT.ENGELEN\tNone\t0.0524\n\u0027s-Hertogenbosch\tTEXT.ETHOLOGIST\tNone\t0.0415\n\u0027s-Hertogenbosch\tTEXT.FABRIC\tNone\t0.0217\n\u0027s-Hertogenbosch\tTEXT.FEMININ\tNone\t0.0524\n\u0027s-Hertogenbosch\tTEXT.FIERY\tNone\t0.0267\n\u0027s-Hertogenbosch\tTEXT.FOOTBALLER\tNone\t0.049\n\u0027s-Hertogenbosch\tTEXT.FORTIFICATION\tNone\t0.0413\n\u0027s-Hertogenbosch\tTEXT.FORTIFY\tNone\t0.0198\n\u0027s-Hertogenbosch\tTEXT.FORTRESS\tNone\t0.0554\n\u0027s-Hertogenbosch\tTEXT.FRAN\tNone\t0.0269\n\u0027s-Hertogenbosch\tTEXT.FREDERIK\tNone\t0.0306\n\u0027s-Hertogenbosch\tTEXT.FROG\tNone\t0.0233\n\u0027s-Hertogenbosch\tTEXT.GELRE\tNone\t0.0729\n\u0027s-Hertogenbosch\tTEXT.GENERALITY\tNone\t0.0339\n\u0027s-Hertogenbosch\tTEXT.GEO\tNone\t0.0274\n\u0027s-Hertogenbosch\tTEXT.GERARDUS\tNone\t0.0403\n\u0027s-Hertogenbosch\tTEXT.GERHARD\tNone\t0.026\n\u0027s-Hertogenbosch\tTEXT.GRASS\tNone\t0.0355\n\u0027s-Hertogenbosch\tTEXT.GREATLY\tNone\t0.0194\n\u0027s-Hertogenbosch\tTEXT.GRIET\tNone\t0.0517\n\u0027s-Hertogenbosch\tTEXT.HABSBURG\tNone\t0.049\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1754793949",
+      "id": "20220124-201431_1063772322",
+      "dateCreated": "2021-02-18T05:03:57+0000",
+      "dateStarted": "2022-03-10T17:06:36+0000",
+      "dateFinished": "2022-03-10T17:07:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Basic settings of the ESA Wiki model and the 21.7 mi rows of features",
+      "text": "%python\n\nesa_wiki_mod.set_params",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:07:03+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 364.667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "COEFFICIENT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u003cbound method odmModel.set_params of \nModel Name: WIKI_MODEL\n\nModel Owner: OMLUSER\n\nAlgorithm Name: Explicit Semantic Analysis\n\nMining Function: FEATURE_EXTRACTION\n\nSettings: \n                   setting name                  setting value\n0                     ALGO_NAME  ALGO_EXPLICIT_SEMANTIC_ANALYS\n1                ESAS_MIN_ITEMS                             25\n2            ESAS_TOPN_FEATURES                           1000\n3          ESAS_VALUE_THRESHOLD                      .00000001\n4  ODMS_MISSING_VALUE_TREATMENT        ODMS_MISSING_VALUE_AUTO\n5                 ODMS_SAMPLING          ODMS_SAMPLING_DISABLE\n6        ODMS_TEXT_MAX_FEATURES                         200000\n7       ODMS_TEXT_MIN_DOCUMENTS                              5\n8         ODMS_TEXT_POLICY_NAME                    wiki_txtpol\n9                     PREP_AUTO                             ON\n\nGlobal Statistics: \n  attribute name  attribute value\n0       NUM_ROWS           127263\n\nAttributes: \nTEXT\n\nPartition: NO\n\nFeatures: \n\n                       FEATURE_ID  ATTRIBUTE_NAME ATTRIBUTE_VALUE  COEFFICIENT\n0                 \u0027Amr ibn al-\u0027As        TEXT.AAS            None     0.038216\n1                 \u0027Amr ibn al-\u0027As        TEXT.ABD            None     0.055846\n2                 \u0027Amr ibn al-\u0027As   TEXT.ABDULLAH            None     0.038298\n3                 \u0027Amr ibn al-\u0027As      TEXT.ABJAR            None     0.052299\n4                 \u0027Amr ibn al-\u0027As        TEXT.ABU            None     0.119079\n...                           ...             ...             ...          ...\n21750646  Zyuden Sentai Kyoryuger     TEXT.YAMATO            None     0.062015\n21750647  Zyuden Sentai Kyoryuger     TEXT.YUSUKE            None     0.057247\n21750648  Zyuden Sentai Kyoryuger     TEXT.ZYUDEN            None     0.283449\n21750649  Zyuden Sentai Kyoryuger   TEXT.ZYUOHGER            None     0.047132\n21750650  Zyuden Sentai Kyoryuger  TEXT.ZYURANGER            None     0.073791\n\n[21750651 rows x 4 columns]\n\n\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_496916589",
+      "id": "20220124-201431_994259623",
+      "dateCreated": "2021-02-18T05:12:02+0000",
+      "dateStarted": "2022-03-10T17:07:04+0000",
+      "dateFinished": "2022-03-10T17:09:06+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md \n# Examples using the Wiki ESA model\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eExamples using the Wiki ESA model\u003c/h1\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_487155398",
+      "id": "20220124-201431_818355455",
+      "dateCreated": "2021-02-18T05:22:27+0000",
+      "dateStarted": "2022-03-10T17:09:07+0000",
+      "dateFinished": "2022-03-10T17:09:07+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Basic example of ESA features for the word \u0027Bank\u0027  using the Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027Bank\u0027]}))\nz.show(esa_wiki_mod.transform(temp_pd))\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "UserWarning:Result is not pivoted because the feature number is larger than the pivot limit 100\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nBanking in Australia\t0.1315659582812627\nBank\t0.12849754351686726\nBank of America\t0.12473066375959004\nCentral bank\t0.1197576026968893\nBankBoston\t0.11536394616391579\nStandard Bank\t0.11380302918449736\nCommonwealth Bank\t0.10959263625942921\nBank of England\t0.1088084369470836\nBank run\t0.1065147243112437\nNational Provincial Bank\t0.10517066260609576\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_619621638",
+      "id": "20220124-201431_993035975",
+      "dateCreated": "2021-02-18T05:35:05+0000",
+      "dateStarted": "2022-03-10T17:09:08+0000",
+      "dateFinished": "2022-03-10T17:09:09+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA Features for the words \u0027NFL games\u0027  using the Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027NFL Games\u0027]}))\nz.show(esa_wiki_mod.transform(temp_pd))\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nNFL Network\t0.14891764714401004\nNFL Films\t0.1353721055548557\nThe NFL Today\t0.12779327803336324\nNational Football League\t0.11940747887741375\nNFL Sunday Ticket\t0.117067625291956\nInside the NFL\t0.11163307758151528\nNFL International Series\t0.10738976731178129\nProfessional American football championship games\t0.10543738677657868\nNFL Europe\t0.09899840441087654\nNational Football League Draft\t0.09593817068270678\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1437378098",
+      "id": "20220124-201431_1003619315",
+      "dateCreated": "2021-02-18T05:37:39+0000",
+      "dateStarted": "2022-03-10T17:09:10+0000",
+      "dateFinished": "2022-03-10T17:09:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA Features for a text about Astronomy  using the Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027A group of European-led astronomers has made a photograph of what appears to be a planet orbiting another star. If so, it would be the first confirmed picture of a world beyond our solar system.\u0027]}))\nz.show(esa_wiki_mod.transform(temp_pd))\n\n\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nFritz Haber\t0.1949371547650959\nSolar System\t0.175206654266355\nPlanetary system\t0.1749551660056489\nPlanet\t0.16589336764578985\nFormation and evolution of the Solar System\t0.1541314779936064\nSolar analog\t0.15350282500018386\nPlanets in science fiction\t0.13236270987318005\nPlanetary habitability\t0.1283266050843719\nExoplanet\t0.12227780960435798\nFirst Solar\t0.1190838726969703\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_1419568981",
+      "id": "20220124-201431_430364708",
+      "dateCreated": "2021-02-18T05:31:47+0000",
+      "dateStarted": "2022-03-10T17:09:12+0000",
+      "dateFinished": "2022-03-10T17:09:13+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA Features for a text about diet and health using the Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027Nearly 70 percent of Americans say they are careful about what they eat, and even more say diet is essential to good health, according to a new nationwide health poll in which obesity ranked second among the biggest health concerns.\u0027]}))\nz.show(esa_wiki_mod.transform(temp_pd))\n\n\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nObesity\t0.2767468534798877\nMaher Arar\t0.2579351231181886\nChildhood obesity\t0.212642671371397\nHealthy diet\t0.18826415099877117\nHealth\t0.17081907209881544\nNutrition\t0.12807093494404598\nPublic health\t0.12437512000391548\nHealth promotion\t0.12109756777946158\nMen\u0027s Health\t0.11496755990346992\nSocial issue\t0.11410112967283544\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-2123808044",
+      "id": "20220124-201431_286134027",
+      "dateCreated": "2021-02-18T05:42:21+0000",
+      "dateStarted": "2022-03-10T17:09:14+0000",
+      "dateFinished": "2022-03-10T17:09:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA Features for a long text on stocks and the Fed using the Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027The more things change... Yes, I\u0027\u0027m inclined to agree, especially with regards to the historical relationship between stock prices and bond yields. The two have generally traded together, rising during periods of economic growth and falling during periods of contraction. Consider the period from 1998 through 2010, during which the U.S. economy experienced two expansions as well as two recessions: Then central banks came to the rescue. Fed Chairman Ben Bernanke led from Washington with the help of the bank\u0027\u0027s current $3.6T balance sheet. He\u0027\u0027s accompanied by Mario Draghi at the European Central Bank and an equally forthright Shinzo Abe in Japan. Their coordinated monetary expansion has provided all the sugar needed for an equities moonshot, while they vowed to hold global borrowing costs at record lows\u0027]}))\nz.show(esa_wiki_mod.transform(temp_pd))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nMario Draghi\t0.24037576171299804\nBen Bernanke\t0.2221630541966304\nGroup of Thirty\t0.18669094628819033\nBank of Japan\t0.11759596635595797\nEconomy of Japan\t0.10723760682465146\nMonetary reform\t0.09989730358984214\nGreat Depression\t0.09815980234207439\nMoney supply\t0.09810361381368604\nAbenomics\t0.0978167373126341\nBank of Canada\t0.09528206234753946\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_41958227",
+      "id": "20220124-201431_775402835",
+      "dateCreated": "2021-02-18T05:44:42+0000",
+      "dateStarted": "2022-03-10T17:09:16+0000",
+      "dateFinished": "2022-03-10T17:09:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# Comparing Strings for Similarity of Text using the Wikipedia Model\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:17+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eComparing Strings for Similarity of Text using the Wikipedia Model\u003c/h1\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_990853684",
+      "id": "20220124-201431_89253629",
+      "dateCreated": "2021-02-17T08:22:31+0000",
+      "dateStarted": "2022-03-10T17:09:18+0000",
+      "dateFinished": "2022-03-10T17:09:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Comparison of \u0027street\u0027 vs. \u0027avenue\u0027 using the ESA Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027street\u0027,\u0027avenue\u0027]}))\nz.show(esa_wiki_mod.feature_compare(temp_pd,\n                                    compare_cols \u003d [\u0027TEXT\u0027]))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 89.3333,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.21517782041738132\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_532964441",
+      "id": "20220124-201431_714697099",
+      "dateCreated": "2021-02-18T05:48:47+0000",
+      "dateStarted": "2022-03-10T17:09:19+0000",
+      "dateFinished": "2022-03-10T17:09:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Simple comparison of \u0027street\u0027 vs. \u0027farm\u0027 using the ESA Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027street\u0027,\u0027farm\u0027]}))\nz.show(esa_wiki_mod.feature_compare(temp_pd,\n                                    compare_cols \u003d [\u0027TEXT\u0027]))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84.1667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.01233916572729532\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_1167797780",
+      "id": "20220124-201431_1267617156",
+      "dateCreated": "2021-02-18T05:53:06+0000",
+      "dateStarted": "2022-03-10T17:09:20+0000",
+      "dateFinished": "2022-03-10T17:09:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Comparison of two simple texts about Golf using the ESA Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027There are several PGA tour golfers from South Africa\u0027,\n                                         \u0027Nick Price won the 2002 Mastercard Colonial Open\u0027]}))\nz.show(esa_wiki_mod.feature_compare(temp_pd,\n                                    compare_cols \u003d [\u0027TEXT\u0027]))\n                                    ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84.1667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.05163661424407873\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-305466723",
+      "id": "20220124-201431_1484846219",
+      "dateCreated": "2021-02-18T05:55:31+0000",
+      "dateStarted": "2022-03-10T17:09:21+0000",
+      "dateFinished": "2022-03-10T17:09:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Comparison of texts about Golf and Football using the ESA Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027There are several PGA tour golfers from South Africa\u0027,\n                                         \u0027John Elway played quarterback for the Denver Broncos\u0027]}))\nz.show(esa_wiki_mod.feature_compare(temp_pd,\n                                    compare_cols \u003d [\u0027TEXT\u0027]))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84.1667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.0026231226741847413\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1333517252",
+      "id": "20220124-201431_1391232872",
+      "dateCreated": "2021-02-18T05:57:28+0000",
+      "dateStarted": "2022-03-10T17:09:22+0000",
+      "dateFinished": "2022-03-10T17:09:23+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "News on Nasa Rover and SpaceX Moon Gateway using ESA Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027NASA Perseverance Mars rover closed in on the red planet after a journey of 293 million miles, hurtling toward a nail-biting seven-minute descent to touchdown Thursday. The mission is an unprecedented attempt to find signs of past microbial life at the site of an ancient martian river, delta and lakebed. Mission managers at NASA Jet Propulsion Laboratory in Pasadena, California, said Wednesday that the spacecraft, still attached to its interplanetary cruise stage, is healthy and flawlessly executing its final approach to Jezero Crater.\u0027,\n    \u0027NASA has selected SpaceX to deliver the first two segments of the moon-orbiting Gateway space station for its upcoming Artemis program, which aims to put astronauts back on the moon. The elements will launch atop a Falcon Heavy rocket, sometime in 2024. The flight, which is the second to be awarded to SpaceX this week will carry the Gateway\u0027\u0027s power and habitation modules.  Once deposited in lunar orbit, the Gateway will serve as an outpost for astronauts and equipment heading to the moon as part of NASA Artemis program. Roughly one-sixth the size of the International Space Station, the Gateway will support research investigations, crew, and expeditions to the lunar surface.\u0027]}))\nz.show(esa_wiki_mod.feature_compare(temp_pd,\n                                    compare_cols \u003d [\u0027TEXT\u0027]))\n                                    ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84.1667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.4868245114801608\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1016933541",
+      "id": "20220124-201431_869824911",
+      "dateCreated": "2021-02-18T06:05:03+0000",
+      "dateStarted": "2022-03-10T17:09:24+0000",
+      "dateFinished": "2022-03-10T17:09:24+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "News on Nasa Rover and Tennis Naomi Osaka using ESA Wikipedia model",
+      "text": "%python\n\ntemp_pd \u003d oml.push(pd.DataFrame({\u0027TEXT\u0027:[\u0027NASA Perseverance Mars rover closed in on the red planet after a journey of 293 million miles, hurtling toward a nail-biting seven-minute descent to touchdown Thursday. The mission is an unprecedented attempt to find signs of past microbial life at the site of an ancient martian river, delta and lakebed. Mission managers at NASA Jet Propulsion Laboratory in Pasadena, California, said Wednesday that the spacecraft, still attached to its interplanetary cruise stage, is healthy and flawlessly executing its final approach to Jezero Crater.\u0027,\n    \u0027Naomi Osaka, who hasnt lost an official match since last February, put together a dominating performance in the Australian Open semifinals, beating Williams 6-3, 6-4 and ending hopes that the 39-year old American would tie Margaret Court all-time Slam record at this tournament. Osaka, seeking her fourth major title and second Australian Open championship, will play the winner of the second semifinal between American Jennifer Brady, the No. 22 seed, and No. 25 seed Karolina Muchova.\u0027]}))\nz.show(esa_wiki_mod.feature_compare(temp_pd,\n                                    compare_cols \u003d [\u0027TEXT\u0027]))\n                                    ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84.1667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.03987043350098296\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1600048047",
+      "id": "20220124-201431_168030237",
+      "dateCreated": "2021-02-18T06:13:34+0000",
+      "dateStarted": "2022-03-10T17:09:25+0000",
+      "dateFinished": "2022-03-10T17:09:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n---\n# End of Script\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:09:25+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch1\u003eEnd of Script\u003c/h1\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055271540_-1886489752",
+      "id": "20220124-201431_1442347386",
+      "dateCreated": "2021-02-17T07:34:52+0000",
+      "dateStarted": "2022-03-10T17:09:26+0000",
+      "dateFinished": "2022-03-10T17:09:26+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py Feature Extraction ESA Wiki Model",
+  "id": "101110",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA7CC90ACC73:shared_process": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4Py Feature Extraction ESA Wiki Model"
+}

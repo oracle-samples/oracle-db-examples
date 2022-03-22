@@ -1,5 +1,5 @@
 # Oracle Machine Learning Notebooks
-Oracle Machine Learning Notebooks is a collaborative user interface for data scientists and business and data analysts who perform machine learning in Oracle Autonomous Database -Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP).   
+Oracle Machine Learning Notebooks is a collaborative user interface for data scientists and business and data analysts who perform machine learning in Oracle Autonomous Database.   
 
 Oracle Machine Learning Notebooks enables data scientists, citizen data scientists, and data analysts to work together to explore their data visually and develop analytical methodologies in the Autonomous Data Warehouse Cloud. Oracle's high performance, parallel and scalable in-Database implementations of machine learning algorithms are exposed via SQL and PL/SQL using notebook technologies. Oracle Machine Learning enables teams to collaborate to build, assess, and deploy machine learning models, while increasing data scientist productivity Oracle Machine Learning focuses on ease of use and simplified machine learning for data science – from preparation through deployment – all in Oracle Autonomous Database.
 
@@ -10,17 +10,17 @@ Key Features:
 * Collaborative UI for data scientists
 * Enables sharing of notebooks and templates with permissions and execution scheduling 
 * Access to 30+ parallel, scalable in-Database implementations of machine learning algorithms
-* SQL and PL/SQL scripting language supported
+* SQL, PL/SQL scripts and Python language supported
 * Enables and supports deployments of enterprise machine learning methodologies in both Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP)
 
 The examples here cover a range of functionality and methods, from data preparation and data cleansing to machine learning algorithms and scoring.
 
 The specific denomination "DB21c" in the name of the file means that the algorithm that is is used in that demo is supported on that release only.
 
- See [Introducing Oracle Machine Learning Notebooks for the Oracle Autonomous Data Warehouse](https://blogs.oracle.com/datamining/introducing-oracle-machine-learning-sql-notebooks-for-the-oracle-autonomous-data-warehouse-cloud) blog post for more information.
+ See [Oracle Machine Learning Notebooks - Get Started](https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/) for more information.
 
-Last updated on: October 2021
+Last updated on: March 2022
 
-#### Copyright (c) 2021 Oracle Corporation and/or its affilitiates.
+#### Copyright (c) 2022 Oracle Corporation and/or its affilitiates.
 
 ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
