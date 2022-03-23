@@ -7,4 +7,6 @@ OML4Py is available on premises for Oracle Database 21c.
 
 For current examples for Oracle Machine Learning Notebooks with Autonomous Database, please look under the [machine-learning/notebooks/python](https://github.com/oracle/oracle-db-examples/tree/master/machine-learning/notebooks/python) folder in this repository
 
-#### Copyright (c) 2021 Oracle Corporation and/or its affilitiates.
+These Jupyter notebooks are compatible with the current OML4Py client
+
+#### Copyright (c) 2022 Oracle Corporation and/or its affilitiates.
