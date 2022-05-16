@@ -4,8 +4,8 @@ as shown at http://oss.oracle.com/licenses/upl */
 
 /*
  DESCRIPTION
- The code sample maps uses the jpaRepository to return
- all students
+ The StudentService class uses a StudentRepository object to retrieve a
+ list of all students
 
  Peter Song    05/11/2022 - Creation
  */

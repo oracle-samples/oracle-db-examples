@@ -6,9 +6,9 @@ retrieve the data from the Autonomous Database.
 
 # Main Components of the Code
 
-* TestController.java: Has one get mapping that uses StudentService to retrieve all the Students
-* Student.java: Models the Student class to the Students table in the database
-* StudentRepository.java: Extends JpaRepository to utilize built-in queries
-* StudentService.java: Implements one method that retrieves all students
-* application.properties: provides database connection information along with UCP
+* TestController.java: TestController.java is the RestController that maps the public endpoints to the students table. In this case, it maps '/students' to a list of all students.
+* Student.java: Models the Student class to the Students table in the database.
+* StudentRepository.java: Extends JpaRepository to utilize built-in queries.
+* StudentService.java: Implements one method that retrieves all students.
+* application.properties: Provides database connection information along with UCP connection information
 
