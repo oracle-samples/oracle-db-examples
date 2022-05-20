@@ -1,0 +1,266 @@
+<center>
+                               <table class="otn01v0" width="85%">
+                                 <tr>
+                                   <td>
+                                     <h1>                                      Progressive Relaxation
+                                    </h1>
+Progressive Relaxation is a advanced technique for text searching, first introduced in Oracle 10g. 
+                                     <p>This paper aims to familiarize you with the technique, and explain when and how you can make use of it. It assumes a basic working knowledge of Oracle Text, such as the operators used in query expressions.</p>
+                                     <h3>                                      When Would I Use I It?
+                                    </h3>
+                                     <p>First, let's consider a search scenario.</p>
+                                     <p>You have a web site selling books. A user searches for "Michael Crichton" in the "search author" box. OK, easy enough. You do the search, and return the top 10 hits (or whatever) that match the search criteria.</p>
+                                     <p>But what if the user mis-spells the firstname, and searches for "Michel Crichton"? In this case, a good strategy for handling this might be to find the top 10 hits from these searches:</p>
+                                     <ol>
+                                       <li>Any books where the author is exactly "Michel Crichton"</li>
+                                       <li>Any books containing a fuzzy match of each word, in the right order</li>
+                                       <li>Any books having either exact word</li>
+                                       <li>Any books having a fuzzy match of either word.</li>
+                                    </ol>
+Of course we can do this in a search like 
+                                     <pre>
+                                       
+  select book_id from books 
+    where contains (author, '(michel crichton) OR (?michel ?crichton) 
+    OR (michel OR crichton) OR (?michel OR ?crichton)
+
+                                    </pre>
+
+But there are two problems with this search: 
+                                     <ol>
+                                       <li>From the user's point of view, hits which are a poor match will be mixed in with hits which are a good match. The user wants to see good matches displayed first.</li>
+                                       <li>From the system's point of view, the search is inefficient. Even if there were plenty of hits for exactly "Michel Crichton", it would still have to do all the work of the fuzzy expansions and fetch data for all the rows which satisfy the query.</li>
+                                    </ol>
+                                     <p>An alternative is to run four separate queries. This way, we can do the exact search first, and then only run the queries with more relaxed criteria if they are needed to get enough hits for the results page.</p>
+                                     <p>But apart from the inefficiency of (potentially) running multiple queries, we need to de-duplicate the results. The "relaxed" queries will in many cases hit the rows returned by the exact queries (as well as many other less exact hits). To avoid duplicates in the result set, the application must screen these hits out, a potentially expensive task in terms of programming and maintenance, if not raw performance.</p>
+                                     <h3>                                      The Solution
+                                    </h3>
+                                     <p>To solve this problem, Oracle Text in Oracle Database 10g introduces "progressive relaxation". This allows you to specify the different searches to run, and Oracle will run each in turn, returning de-duplicated results until the application stops fetching hits.</p>
+                                     <p>The scores returned are manipulated such that if you order by score, you can be sure that all the rows specified by an earlier criteria will be returned before those specified by a later criteria.</p>
+                                     <h3>                                      Benefits
+                                    </h3>
+The benefits of progressive relaxtion is that an application developer can specify operations to be applied to a user query in a declarative manner. It is not necessary to parse the the query and apply operators to each search term - the developer just specifies what options should be applied to each term, and how they should be combined (eg  
+                                    <code>AND</code> or  
+                                    <code>OR</code>) 
+                                     <p>The application also benefits from automatic de-duplication of results at a very early stage in the query (before docid to rowid translation) which is much more efficient than doing it at the final stage, as you would have to if you were running multiple queries.</p>
+                                     <h3>                                      Query Templates
+                                    </h3>
+                                     <p>The actual implementation of progressive relaxation is via the query template mechanism. If you have not come across this before, don't worry - it's quite straightforward and the examples should make it clear. Basically a query template is an XML fragment that is used in the CONTAINS clause in place of a simple query string.</p>
+                                     <p>There are some other things that you can do with query templates, such as specifying language, query grammars and scoring options, but we won't be covering them here.</p>
+                                     <p>So - on to our first example:</p>
+                                     <pre>
+                                       
+create table mybooks (title varchar2(20), author varchar2(20));
+
+insert into mybooks values ('Consider the Lillies', 'Ian Crichton Smith');
+insert into mybooks values ('Sphere',               'Michael Crichton');
+insert into mybooks values ('Stupid White Men',     'Michael Moore');
+insert into mybooks values ('Lonely Day',           'Michaela Criton');
+insert into mybooks values ('How to Teach Poetry',  'Michaela Morgan');
+
+create index auth_idx on mybooks (author) indextype is ctxsys.context;
+
+SELECT score(1), title, author FROM mybooks WHERE CONTAINS (author, '
+&lt;query&gt;
+   &lt;textquery&gt;
+     &lt;progression&gt;
+       &lt;seq&gt;michael crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael ?crichton&lt;/seq&gt;
+       &lt;seq&gt;michael OR crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael OR ?crichton&lt;/seq&gt;
+     &lt;/progression&gt;
+   &lt;/textquery&gt;
+&lt;/query&gt;', 1) &gt; 0 ORDER BY score(1) DESC;
+
+                                    </pre>
+
+The output of this query is: 
+                                     <pre>
+                                       
+ SCORE(1) TITLE          AUTHOR
+---------- -------------------- --------------------
+        76 Sphere               Michael Crichton
+        51 Lonely Day           Michaela Criton
+        26 Stupid White Men     Michael Moore
+        26 Consider the Lillies Ian Crichton Smith
+         1 How to Teach Poetry  Michaela Morgan
+
+                                    </pre>
+
+                                     <p>We can see that the first line is an exact match, according to the first &lt;seq&gt; entry in our progression sequence. The second line corresponds to a fuzzy match of each term in order - our second criteria. The third and fourth rows come from the exact "micheal OR chrichton" and finally the last row has a single match which is a fuzzy hit on one of the terms.</p>
+                                     <p>Now obviously in this example, we are fetching all the rows, so there is no major advantage in using progressive relaxation. We can limit it to only return the first two hits, using a PL/SQL cursor:</p>
+                                     <pre>
+                                       
+set serveroutput on format wrapped
+
+declare
+  max_rows integer := 2;
+  counter  integer := 0;
+begin
+  -- do the headings
+  dbms_output.put_line(rpad('Score', 8)||rpad('Title', 20)||rpad('Author', 20));
+  dbms_output.put_line(rpad('-----', 8)||rpad('-----', 20)||rpad('------', 20));
+  -- loop for the required number of rows
+  for c in (select score(1) scr, title, author from mybooks where contains (author, '
+
+&lt;query&gt;
+   &lt;textquery&gt;
+     &lt;progression&gt;
+       &lt;seq&gt;michael crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael ?crichton&lt;/seq&gt;
+       &lt;seq&gt;michael OR crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael OR ?crichton&lt;/seq&gt;
+     &lt;/progression&gt;
+   &lt;/textquery&gt;
+&lt;/query&gt;
+          ', 1) &gt; 0) loop
+    dbms_output.put_line(rpad(c.scr, 8)||rpad(c.title, 20)||rpad(c.author, 20));
+    counter := counter + 1;
+    exit when counter &gt;= max_rows;
+  end loop;
+end;
+/
+
+                                    </pre>
+
+The output from this is 
+                                     <pre>
+                                       
+Score     Title               Author
+-----   -----               ------
+76      Sphere              Michael Crichton
+51      Lonely Day          Michaela Criton
+
+                                    </pre>
+
+                                     <p>Now there's one more feature that we - as an application designer - might want. And that's to stop the search after it has evaluated the first successful search criteria. So in our example, if we get one or more hits on exactly "michael chrichton", we don't want to try any of the other searches. If the exact search fails, we want to try the others only until one of them returns one or more rows.</p>
+                                     <p>There's (currently) no way to do this as part of the query template syntax. However, it is possible to do this at the application level by looking at the scores returned. Let's have a closer look at our complete results from the last test:</p>
+                                     <pre>
+                                       
+    Score Title                Author
+     ----- -----                ------
+        76 Sphere               Michael Crichton
+        51 Lonely Day           Michaela Criton
+        26 Stupid White Men     Michael Moore
+        26 Consider the Lillies Ian Crichton Smith
+         1 How to Teach Poetry  Michaela Morgan
+
+                                    </pre>
+
+Now, given that the maximum score of a text query is 100, and that we had four &lt;seq&gt; steps in our search, we might be able to notice something here. Specifically, any match on the first step will always score in the top quarter of the possible results - 76% to 100%. The next step will score in the range 51-75%, the next 26-50%, and the final step 1-25%. If we had had five steps in our query, the scores would have been in the ranges 81-100%, 61-80%, 41-60%, 21-40% and 1-20%. 
+                                     <p>So in order to stop our results after the first valid search, we need to detect the score crossing one of these boundaries. In order to do this we MUST know in advance how many steps there are. The PL/SQL for all this is a little more tricky than before:</p>
+                                     <pre>
+                                       
+declare
+  max_rows         integer := 2;
+  counter          integer := 0;
+  number_of_steps  integer := 4;
+  score_range_size integer;      -- 33 for 3 steps, 25 for 4, 20 for 5 etc
+  this_score_group integer;      -- final step is 1, penultimate step is 2 ...
+  last_score_group integer := 0; -- to compare change
+begin
+  -- do the headings
+  dbms_output.put_line(rpad('Score', 8)||rpad('Title', 20)||rpad('Author', 20));
+  dbms_output.put_line(rpad('-----', 8)||rpad('-----', 20)||rpad('------', 20));
+  for c in (select score(1) scr, title, author from mybooks where contains (author, '
+
+&lt;query&gt;
+   &lt;textquery&gt;
+     &lt;progression&gt;
+       &lt;seq&gt;michael crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael ?crichton&lt;/seq&gt;
+       &lt;seq&gt;michael OR crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael OR ?crichton&lt;/seq&gt;
+     &lt;/progression&gt;
+   &lt;/textquery&gt;
+&lt;/query&gt;
+        ', 1) &gt; 0) loop
+
+    score_range_size := 100/number_of_steps;
+    this_score_group := c.scr/score_range_size;
+
+    exit when this_score_group &lt; last_score_group;
+    last_score_group := this_score_group;
+
+    dbms_output.put_line(rpad(c.scr  , 8)||rpad(c.title, 20)||rpad(c.author, 20));
+
+    counter := counter + 1;
+    exit when counter &gt;= max_rows;
+
+  end loop;
+end;
+/
+
+                                    </pre>
+
+The output from this is: 
+                                     <pre>
+                                       
+Score   Title               Author
+-----   -----               ------
+76      Sphere              Michael Crichton
+
+                                    </pre>
+
+We could add a new, stricter step (remembering to increase the number_of_steps variable). This won't actually find anything but will demonstrate that the procedure continues until it does find at least one row: 
+                                     <pre>
+                                       
+ number of steps  number := 5;
+...
+&lt;query&gt;
+   &lt;textquery&gt;
+     &lt;progression&gt;
+       &lt;seq&gt;michael p crichton&lt;/seq&gt;
+       &lt;seq&gt;michael crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael ?crichton&lt;/seq&gt;
+       &lt;seq&gt;michael OR crichton&lt;/seq&gt;
+       &lt;seq&gt;?michael OR ?crichton&lt;/seq&gt;
+     &lt;/progression&gt;
+   &lt;/textquery&gt;
+&lt;/query&gt;
+
+                                    </pre>
+
+and our output would be: 
+                                     <pre>
+                                       
+Score   Title               Author
+-----   -----               ------
+61      Sphere              Michael Crichton
+
+                                    </pre>
+
+We could, of course, use similar techniques to this to identify which of the hits are exact matches, which were found using FUZZY search, and which contained only some of the search terms. By knowing the score, we know which of the sequences caused the match, and therefore why we obtained that particular hit.
+
+<p>
+
+Finally there is a simplification which makes life easier for the application developer. Generating the full syntax above can be complicated to program. So there is a "shorthand" syntax, known as a "query rewrite template": 
+                                     <pre>
+                                       
+&lt;query&gt;
+   &lt;textquery&gt; michael crichton
+     &lt;progression&gt;
+       &lt;seq&gt;&lt;rewrite&gt;transform((TOKENS, "{", "}", " "))&lt;/rewrite&gt;&lt;/seq&gt;
+       &lt;seq&gt;&lt;rewrite&gt;transform((TOKENS, "?{", "}", " "))&lt;/rewrite&gt;/seq&gt;
+       &lt;seq&gt;&lt;rewrite&gt;transform((TOKENS, "{", "}", "OR"))&lt;/rewrite&gt;&lt;/seq&gt;
+       &lt;seq&gt;&lt;rewrite&gt;transform((TOKENS, "?{", "}", "OR"))&lt;/rewrite&gt;&lt;/seq&gt;
+     &lt;/progression&gt;
+   &lt;/textquery&gt;
+&lt;/query&gt;
+
+                                    </pre>
+
+This will generate the same four-step syntax as used above. The arguments after TOKENS are as follows: 
+                                     <ul>
+                                       <li>Prefix - what to put before each token</li>
+                                       <li>Suffix - what to put after each token</li>
+                                       <li>Connector - an operator to link each token. Space causes a phrase search.</li>
+                                    </ul>
+It is usually a good idea to surround each term with braces "{}", in case the user has entered a reserved word like STEM or NT. Beware, though, that adding a wild card after a brace can have strange effects - {dog}% is not the same as dog%.
+                                  </td>
+                                </tr>
+                              </table>
+                            </center><p/><hr/><p>Last modified May 2019 by  
+                              <a href="mailto:roger.ford@oracle.com">Roger Ford</a>
+                            </p><p/><hr/><p/>
+					
