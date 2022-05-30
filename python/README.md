@@ -5,11 +5,11 @@ Oracle Database.
 
 1.  The schemas and SQL objects that are referenced in the samples can be
     created by running the Python script
-    [create_schema.py][https://github.com/oracle-samples/oracle-db-examples/blob/main/python/create_schema.py]. The
+    [create_schema.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/create_schema.py). The
     script requires SYSDBA privileges and will prompt for these credentials as
     well as the names of the schemas and edition that will be created, unless a
     number of environment variables are set as documented in the Python script
-    [sample_env.py][https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py]. Run
+    [sample_env.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py). Run
     the script using the following command:
 
         python create_schema.py
@@ -20,11 +20,11 @@ Oracle Database.
 
 3.  After running python-oracledb samples, the schemas and SQL objects can be
     dropped by running the Python script
-    [drop_schema.py][https://github.com/oracle-samples/oracle-db-examples/blob/main/python/drop_schema.py]. The
+    [drop_schema.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/drop_schema.py). The
     script requires SYSDBA privileges and will prompt for these credentials as
     well as the names of the schemas and edition that will be dropped, unless a
     number of environment variables are set as documented in the Python script
-    [sample_env.py][https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py]. Run
+    [sample_env.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py). Run
     the script using the following command:
 
         python drop_schema.py
