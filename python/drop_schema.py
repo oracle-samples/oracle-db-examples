@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# Copyright (c) 2020, 2022, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -23,32 +23,26 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# query_arraysize.py
+# drop_schema.py
 #
-# Demonstrates how to alter the array size and prefetch rows value on a cursor
-# in order to reduce the number of network round trips and overhead required to
-# fetch all of the rows from a large table.
+# Drops the database objects used by the python-oracledb samples.
+#
+# This script is also executed by the Python script sample_setup.py for
+# dropping the existing users and editions, if applicable, before creating the
+# sample schemas and editions.
 #------------------------------------------------------------------------------
-
-import time
 
 import oracledb
 import sample_env
 
-# determine whether to use python-oracledb thin mode or thick mode
-if not sample_env.get_is_thin():
-    oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
+def drop_schema(conn):
+    print("Dropping sample schemas and edition...")
+    sample_env.run_sql_script(conn, "drop_schema",
+                              main_user=sample_env.get_main_user(),
+                              edition_user=sample_env.get_edition_user(),
+                              edition_name=sample_env.get_edition_name())
 
-connection = oracledb.connect(sample_env.get_main_connect_string())
-
-start = time.time()
-
-cursor = connection.cursor()
-cursor.prefetchrows = 1000
-cursor.arraysize = 1000
-cursor.execute('select * from bigtab')
-res = cursor.fetchall()
-# print(res)  # uncomment to display the query results
-
-elapsed = (time.time() - start)
-print("Retrieved", len(res), "rows in", elapsed, "seconds")
+if __name__ == "__main__":
+    conn = oracledb.connect(sample_env.get_admin_connect_string())
+    drop_schema(conn)
+    print("Done.")

@@ -1,11 +1,31 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, 2022, Oracle and/or its affiliates.
+#
+# This software is dual-licensed to you under the Universal Permissive License
+# (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+# 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+# either license.
+#
+# If you elect to accept the software under the Apache License, Version 2.0,
+# the following applies:
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 # session_callback_plsql.py
 #
-# Demonstrate how to use a connection pool session callback written in
+# Demonstrates how to use a connection pool session callback written in
 # PL/SQL. The callback is invoked whenever the tag requested by the application
 # does not match the tag associated with the session in the pool. It should be
 # used to set session state, so that the application can count on known session
@@ -16,20 +36,21 @@
 # session_callback.py is when DRCP is used, as the callback is invoked on the
 # server and no round trip is required to set state.
 #
-# This script requires cx_Oracle 7.1 or higher.
-#
 # Also see session_callback.py
-#
 #------------------------------------------------------------------------------
 
-import cx_Oracle as oracledb
+import oracledb
 import sample_env
 
+# this script is currently only supported in python-oracledb thick mode
+oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
+
 # create pool with session callback defined
-pool = oracledb.SessionPool(user=sample_env.get_main_user(),
+pool = oracledb.create_pool(user=sample_env.get_main_user(),
                             password=sample_env.get_main_password(),
                             dsn=sample_env.get_connect_string(), min=2, max=5,
-                            increment=1, session_callback="pkg_SessionCallback.TheCallback")
+                            increment=1,
+                            session_callback="pkg_SessionCallback.TheCallback")
 
 # truncate table logging calls to PL/SQL session callback
 with pool.acquire() as conn:
