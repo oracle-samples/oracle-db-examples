@@ -1,20 +1,42 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+#
+# This software is dual-licensed to you under the Universal Permissive License
+# (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+# 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+# either license.
+#
+# If you elect to accept the software under the Apache License, Version 2.0,
+# the following applies:
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 # plsql_record.py
 #
-# Demonstrate how to bind (in and out) a PL/SQL record.
+# Demonstrates how to bind (in and out) a PL/SQL record.
 #
-# This feature is new in cx_Oracle 5.3 and is only available in Oracle
-# Database 12.1 and higher.
+# This feature is only available in Oracle Database 12.1 and higher.
 #------------------------------------------------------------------------------
 
 import datetime
 
-import cx_Oracle as oracledb
+import oracledb
 import sample_env
+
+# this script is currently only supported in python-oracledb thick mode
+oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 connection = oracledb.connect(sample_env.get_main_connect_string())
 

@@ -1,26 +1,48 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
 # Portions Copyright 2001-2007, Computronix (Canada) Ltd., Edmonton, Alberta,
 # Canada. All rights reserved.
+#
+# This software is dual-licensed to you under the Universal Permissive License
+# (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+# 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+# either license.
+#
+# If you elect to accept the software under the Apache License, Version 2.0,
+# the following applies:
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# type_handlers.py
-#   This script demonstrates the use of input and output type handlers as well
-# as variable input and output converters. These methods can be used to extend
-# cx_Oracle in many ways. This script demonstrates the binding and querying of
-# SQL objects as Python objects.
+# type_handlers_objects.py
 #
-# This script requires cx_Oracle 5.0 and higher.
+# Demonstrates the use of input and output type handlers as well as variable
+# input and output converters. These methods can be used to extend
+# python-oracledb in many ways. This script demonstrates the binding and
+# querying of SQL objects as Python objects.
 #------------------------------------------------------------------------------
 
 import datetime
 
-import cx_Oracle as oracledb
+import oracledb
 import sample_env
+
+# this script is currently only supported in python-oracledb thick mode
+oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 con = oracledb.connect(sample_env.get_main_connect_string())
 obj_type = con.gettype("UDT_BUILDING")
@@ -70,23 +92,17 @@ buildings = [
 cur = con.cursor()
 cur.inputtypehandler = input_type_handler
 for building in buildings:
-    try:
-        cur.execute("insert into TestBuildings values (:1, :2)",
+    cur.execute("insert into BuildingsAsObjects values (:1, :2)",
                 (building.building_id, building))
-    except oracledb.DatabaseError as e:
-        error, = e.args
-        print("CONTEXT:", error.context)
-        print("MESSAGE:", error.message)
-        raise
 
 print("NO OUTPUT TYPE HANDLER:")
-for row in cur.execute("select * from TestBuildings order by BuildingId"):
+for row in cur.execute("select * from BuildingsAsObjects order by BuildingId"):
     print(row)
 print()
 
 cur = con.cursor()
 cur.outputtypehandler = output_type_handler
 print("WITH OUTPUT TYPE HANDLER:")
-for row in cur.execute("select * from TestBuildings order by BuildingId"):
+for row in cur.execute("select * from BuildingsAsObjects order by BuildingId"):
     print(row)
 print()

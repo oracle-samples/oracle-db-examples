@@ -1,25 +1,47 @@
 #------------------------------------------------------------------------------
-# Copyright (c) 2020, 2021, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2020, 2022, Oracle and/or its affiliates.
+#
+# This software is dual-licensed to you under the Universal Permissive License
+# (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+# 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+# either license.
+#
+# If you elect to accept the software under the Apache License, Version 2.0,
+# the following applies:
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 # cqn2.py
-#   This script demonstrates using continuous query notification in Python, a
-# feature that is available in Oracle 11g and later. Once this script is
-# running, use another session to insert, update or delete rows from the table
-# TestTempTable and you will see the notification of that change.
 #
-#   This script differs from cqn.py in that it shows how a connection can be
+# Demonstrates using continuous query notification in Python, a feature that is
+# available in Oracle 11g and later. Once this script is running, use another
+# session to insert, update or delete rows from the table TestTempTable and you
+# will see the notification of that change.
+#
+# This script differs from cqn.py in that it shows how a connection can be
 # acquired from a session pool and used to query the changes that have been
 # made.
-#
-# This script requires cx_Oracle 7 or higher.
 #------------------------------------------------------------------------------
 
 import time
 
-import cx_Oracle as oracledb
+import oracledb
 import sample_env
+
+# this script is currently only supported in python-oracledb thick mode
+oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 registered = True
 
@@ -58,7 +80,7 @@ def callback(message):
                 print("   ", num_rows_deleted, "rows deleted")
             print("=" * 60)
 
-pool = oracledb.SessionPool(user=sample_env.get_main_user(),
+pool = oracledb.create_pool(user=sample_env.get_main_user(),
                             password=sample_env.get_main_password(),
                             dsn=sample_env.get_connect_string(), min=2, max=5,
                             increment=1, events=True)
