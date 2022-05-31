@@ -33,7 +33,7 @@ The following dashboards are included:
 
 ## Navigating the Environment
 
-The dashboards have selectors for `fleet`, `pod`, `cluster`, and `server` that enable users to navigate within the environment. You set the `fleet`, `pod`, and `cluster` on the servers as metric tags. By default, all metric streams include these tags. For more on configuring metric tags, see [Tagging Metric Observations](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-737B58F4-3FE3-4F42-8CB5-294D6CEECFCA).
+The dashboards have selectors for `fleet`, `pod`, `cluster`, and `server` that enable users to navigate within the environment. To use these navigation selectors in the dashboards, you need to set `fleet`, `pod`, and `cluster` as metric tags on your servers. To configure metric tags, see [Tagging Metric Observations](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-737B58F4-3FE3-4F42-8CB5-294D6CEECFCA).
 
 The following example shows one way to use the `fleet`, `pod`, and `cluster` selectors:
 
