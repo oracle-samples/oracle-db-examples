@@ -1,27 +1,35 @@
-![Oracle Exadata](./docs/Oracle_Exadata_cmyk.png)
+![Oracle Exadata](../docs/Oracle_Exadata_cmyk.png)
 
-#Oracle Exadata Examples
+#Oracle Exadata Real-Time Insight
 
-This directory includes the supplemental materials and demo contents for Oracle Exadata Database Machine.
+Commencing with Oracle Exadata System Software 22.1, you can use the _Oracle Exadata Real-Time Insight_ feature to enable real-time monitoring of your Exadata systems.
 
-## Examples
+Real-time insight provides infrastructure to:
 
-- [Oracle Exadata Real-Time Insight](./insight) - Exadata SW 22.1 feature to enable real-time monitoring of your Exadata systems.
+- **Categorize** specific metrics as fine-grained, and enable the collection of fine-grained metrics as often as every second
+
+- **Stream** fine-grained metric observations to user-defined locations in real-time, using either push (upload) or pull (download) transmission models
+
+- **Integrate** Exadata metrics with popular observability platforms, time-series databases, and visualization applications
+  
 
 ## Get started
 
-- [Exadata Software What's New](https://docs.oracle.com/en/engineered-systems/exadata-database-machine/dbmso/new-features.html)
+- [Exadata 22.1 Software Release](https://docs.oracle.com/en/engineered-systems/exadata-database-machine/dbmso/new-features.html)
 - [Monitoring Exadata](https://docs.oracle.com/en/engineered-systems/exadata-database-machine/sagug/exadata-storage-server-monitoring.html)
+
 
 ## Documentation
 
 You can find the online documentation of Oracle Exadata under [docs.oracle.com/en/engineered-systems/exadata-database-machine/](https://docs.oracle.com/en/engineered-systems/exadata-database-machine)
+
 
 ## Contributing
 
 If you're interested in contributing to the Oracle Exadata demo project:
 
 - Start by reading the [Contributing guide](https://github.com/oracle-samples/oracle-db-examples/blob/main/CONTRIBUTING.md).
+
 
 ## Get Involved
 
@@ -37,4 +45,4 @@ You can get involved with Exadata.
 
 ## License
 
-See [LICENSING.md](https://github.com/oracle-samples/oracle-db-examples/blob/main/LICENSE.md) for details.
+See [LICENSING.md](https://github.com/oracle-samples/oracle-db-examples/blob/main/LICENSE.md) for licensing details of the oracle-db-examples repository.
