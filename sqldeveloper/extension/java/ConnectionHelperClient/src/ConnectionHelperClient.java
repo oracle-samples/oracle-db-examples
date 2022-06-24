@@ -53,8 +53,14 @@ public class ConnectionHelperClient {
 	                        new InputStreamReader(svrSocket.getInputStream()));
 	            ) {
                     out.println(connectionInfo);
-                    System.out.println(in.readLine()); // TODO: What kind of responses do we want?
-	            } catch (UnknownHostException e) {
+					for (;;) {
+						String line = in.readLine();
+						if (line == null) {
+							break;
+						}
+						System.out.println(line);
+					}
+				} catch (UnknownHostException e) {
 	                System.err.println("Don't know about host " + localhost);
 	                System.exit(1);
 	            } catch (IOException e) {
