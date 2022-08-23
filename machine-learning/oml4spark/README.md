@@ -24,9 +24,11 @@ ORAAH's custom LM/GLM/MLP NN algorithms on Spark scale better and run faster tha
     * Function to compute Confusion Matrix and statistics (oml4spark_function_confusion_matrix_in_spark.r)
     * Function to build all OML4Spark models (oml4spark_function_build_all_classification_models.r)
 
+**Included in this folder are also Zeppelin-compatible Notebooks that can be used to run examples of OML4Spark
+
 [1]:https://www.oracle.com/database/technologies/datawarehouse-bigdata/oml4spark.html
 
-#### Copyright (c) 2020 Oracle Corporation and its affiliates
+#### Copyright (c) 2022 Oracle Corporation and its affiliates
 
 ##### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
 
