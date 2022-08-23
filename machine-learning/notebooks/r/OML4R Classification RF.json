@@ -1,0 +1,1320 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## Classification Modeling to Predict Target Customers using Random Forest\n\nOracle Machine Learning for R (OML4R) makes the open source R scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior into SQL for running in-database.\n\nIn this notebook, we highlight the Random Forest algorithm for classification in OML4R and predict customers most likely to be positive responders to an Affinity Card loyalty program.\n\nHigh Affinity Card responders (target value = 1) are defined as those customers who, when given a loyalty or affinity card, hyper-respond, that is, increase purchases more than the Affinity Card program's offered discount.\n\nThis notebook builds and applies a classification random forest model using the Sales History (SH) schema data. All processing occurs inside Oracle Autonomous Database.\n\nCopyright (c) 2022 Oracle Corporation\n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 9,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Classification Modeling to Predict Target Customers using Random Forest</h2>\n<p>Oracle Machine Learning for R (OML4R) makes the open source R scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior into SQL for running in-database.</p>\n<p>In this notebook, we highlight the Random Forest algorithm for classification in OML4R and predict customers most likely to be positive responders to an Affinity Card loyalty program.</p>\n<p>High Affinity Card responders (target value = 1) are defined as those customers who, when given a loyalty or affinity card, hyper-respond, that is, increase purchases more than the Affinity Card program's offered discount.</p>\n<p>This notebook builds and applies a classification random forest model using the Sales History (SH) schema data. All processing occurs inside Oracle Autonomous Database.</p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-682582401",
+      "id": "20220727-210734_742492989",
+      "dateCreated": "2022-04-26T21:22:07+0000",
+      "dateStarted": "2022-07-29T16:50:41+0000",
+      "dateFinished": "2022-07-29T16:50:43+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "text": "%md\n<dl>\n<img src=\"http://www.oracle.com/technetwork/database/options/advanced-analytics/classification-5663162.jpg\" alt=\"OML Notebooks\" width=\"250\"/>\n</dl>",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<dl>\n<img src=\"http://www.oracle.com/technetwork/database/options/advanced-analytics/classification-5663162.jpg\" alt=\"OML Notebooks\" width=\"250\"/>\n</dl>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-586478079",
+      "id": "20220727-210734_1311312360",
+      "dateCreated": "2022-07-27T20:02:13+0000",
+      "dateStarted": "2022-07-29T16:50:43+0000",
+      "dateFinished": "2022-07-29T16:50:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "For more information ...",
+      "text": "%md\nOracle ADW Documentation: <a href=\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\nOML Folder on Oracle Github: <a href=\"https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle/oracle-db-examples/tree/master/machine-learning');\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\nOML Web Page: <a href=\"https://www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\nOML Classification: <a href=\"https://www.oracle.com/goto/ml-classification\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-classification');\">https://www.oracle.com/goto/ml-classification</a>\nOML Random Forest: <a href=\"https://oracle.com/goto/ml-random-forest\" onclick=\"return ! window.open('https://oracle.com/goto/ml-random-forest');\">https://oracle.com/goto/ml-random-forest</a>",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Oracle ADW Documentation: <a href=\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\n<br  />OML Folder on Oracle Github: <a href=\"https: //github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle/oracle-db-examples/tree/master/machine-learning');\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\n<br  />OML Web Page: <a href=\"https: //www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\n<br  />OML Classification: <a href=\"https: //www.oracle.com/goto/ml-classification\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-classification');\">https://www.oracle.com/goto/ml-classification</a>\n<br  />OML Random Forest: <a href=\"https: //oracle.com/goto/ml-random-forest\" onclick=\"return ! window.open('https://oracle.com/goto/ml-random-forest');\">https://oracle.com/goto/ml-random-forest</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-437759706",
+      "id": "20220727-210734_1062278568",
+      "dateCreated": "2022-07-27T20:00:27+0000",
+      "dateStarted": "2022-07-29T16:50:43+0000",
+      "dateFinished": "2022-07-29T16:50:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%r\n\nlibrary(ORE)\noptions(ore.warn.order=FALSE)\nore.sync(query = c(\"SUP_DEM\" = \"select * from SH.SUPPLEMENTARY_DEMOGRAPHICS\"))\nore.attach()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-1889776303",
+      "id": "20220727-210734_1534903401",
+      "dateCreated": "2022-04-26T21:22:53+0000",
+      "dateStarted": "2022-07-29T16:50:43+0000",
+      "dateFinished": "2022-07-29T16:50:57+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "Display a few rows from SUPPLEMENTARY_DEMOGRAPHICS",
+      "text": "%r\n\nz.show(head(SUP_DEM))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "EDUCATION": "string",
+                      "OCCUPATION": "string",
+                      "HOUSEHOLD_SIZE": "number",
+                      "YRS_RESIDENCE": "number",
+                      "AFFINITY_CARD": "number",
+                      "BULK_PACK_DISKETTES": "number",
+                      "FLAT_PANEL_MONITOR": "number",
+                      "HOME_THEATER_PACKAGE": "number",
+                      "BOOKKEEPING_APPLICATION": "number",
+                      "PRINTER_SUPPLIES": "number",
+                      "Y_BOX_GAMES": "number",
+                      "OS_DOC_SET_KANJI": "number",
+                      "COMMENTS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "EDUCATION": "string",
+                      "OCCUPATION": "string",
+                      "HOUSEHOLD_SIZE": "number",
+                      "YRS_RESIDENCE": "number",
+                      "AFFINITY_CARD": "number",
+                      "BULK_PACK_DISKETTES": "number",
+                      "FLAT_PANEL_MONITOR": "number",
+                      "HOME_THEATER_PACKAGE": "number",
+                      "BOOKKEEPING_APPLICATION": "number",
+                      "PRINTER_SUPPLIES": "number",
+                      "Y_BOX_GAMES": "number",
+                      "OS_DOC_SET_KANJI": "number",
+                      "COMMENTS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tEDUCATION\tOCCUPATION\tHOUSEHOLD_SIZE\tYRS_RESIDENCE\tAFFINITY_CARD\tBULK_PACK_DISKETTES\tFLAT_PANEL_MONITOR\tHOME_THEATER_PACKAGE\tBOOKKEEPING_APPLICATION\tPRINTER_SUPPLIES\tY_BOX_GAMES\tOS_DOC_SET_KANJI\tCOMMENTS\n102547\t10th\tOther\t1\t0\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n101050\t10th\tOther\t1\t0\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n100040\t11th\tSales\t1\t0\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n102117\tHS-grad\tFarming\t1\t0\t0\t0\t0\t0\t1\t1\t1\t0\tNA\n101074\t10th\tHandler\t1\t1\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n104179\t10th\tHandler\t1\t1\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-264110314",
+      "id": "20220727-210734_2076488792",
+      "dateCreated": "2022-04-26T21:23:24+0000",
+      "dateStarted": "2022-07-29T16:50:58+0000",
+      "dateFinished": "2022-07-29T16:50:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Display number of rows and columns",
+      "text": "%r\n\ndim(SUP_DEM)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>4500</li><li>14</li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_1518366784",
+      "id": "20220727-210734_2107933825",
+      "dateCreated": "2022-06-02T22:35:46+0000",
+      "dateStarted": "2022-07-29T16:50:58+0000",
+      "dateFinished": "2022-07-29T16:50:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Show distribution of AFFINITY_CARD responders",
+      "text": "%r\n\nz.show(ore.crosstab(~AFFINITY_CARD,SUP_DEM))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "AFFINITY_CARD": "number",
+                      "ORE.FREQ": "number",
+                      "ORE.STRATA": "number",
+                      "ORE.GROUP": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "AFFINITY_CARD",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "ORE.FREQ",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "AFFINITY_CARD\tORE.FREQ\tORE.STRATA\tORE.GROUP\n0\t3428\t1\t1\n1\t1072\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-400018188",
+      "id": "20220727-210734_1248801480",
+      "dateCreated": "2022-06-02T22:38:41+0000",
+      "dateStarted": "2022-07-29T16:50:59+0000",
+      "dateFinished": "2022-07-29T16:50:59+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "title": "Graph HOUSEHOLD_SIZE grouped by AFFINITY_CARD responders",
+      "text": "%r\n\nz.show(ore.crosstab(AFFINITY_CARD~HOUSEHOLD_SIZE,SUP_DEM))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "ORE.FREQ": "number",
+                      "ORE.STRATA": "number",
+                      "ORE.GROUP": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": true
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "HOUSEHOLD_SIZE",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [
+                {
+                  "name": "AFFINITY_CARD",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "values": [
+                {
+                  "name": "ORE.FREQ",
+                  "index": 2,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "AFFINITY_CARD\tHOUSEHOLD_SIZE\tORE.FREQ\tORE.STRATA\tORE.GROUP\n0\t1\t681\t1\t1\n0\t2\t1040\t1\t1\n0\t3\t973\t1\t1\n0\t4-5\t112\t1\t1\n0\t6-8\t146\t1\t1\n0\t9+\t476\t1\t1\n1\t1\t11\t1\t1\n1\t2\t109\t1\t1\n1\t3\t814\t1\t1\n1\t4-5\t107\t1\t1\n1\t6-8\t2\t1\t1\n1\t9+\t29\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_141983382",
+      "id": "20220727-210734_2005792864",
+      "dateCreated": "2022-04-26T21:24:19+0000",
+      "dateStarted": "2022-07-29T16:50:59+0000",
+      "dateFinished": "2022-07-29T16:50:59+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "text": "%r\n\nDEMO_DF <- SUP_DEM[,c(\"CUST_ID\", 'AFFINITY_CARD', \"BOOKKEEPING_APPLICATION\", \"BULK_PACK_DISKETTES\", \"EDUCATION\", \n                      \"FLAT_PANEL_MONITOR\", \"HOME_THEATER_PACKAGE\", \"HOUSEHOLD_SIZE\", \"OCCUPATION\", \"OS_DOC_SET_KANJI\", \n                      \"PRINTER_SUPPLIES\", \"YRS_RESIDENCE\", \"Y_BOX_GAMES\")]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:50:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_1974776815",
+      "id": "20220727-210734_691397821",
+      "dateCreated": "2022-06-23T01:02:04+0000",
+      "dateStarted": "2022-07-29T16:50:59+0000",
+      "dateFinished": "2022-07-29T16:51:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "Create train and test data (60/40 split)",
+      "text": "%r\n\nsampleSize <- 600\nindex <- sample(1:nrow(SUP_DEM),sampleSize)\ngroup <- as.integer(1:nrow(SUP_DEM) %in% index)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-650176243",
+      "id": "20220727-210734_1886190998",
+      "dateCreated": "2022-06-02T22:40:19+0000",
+      "dateStarted": "2022-07-29T16:51:00+0000",
+      "dateFinished": "2022-07-29T16:51:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "Create train and test data sets",
+      "text": "%r\n\nset.seed(123)\nrownames(DEMO_DF) <- DEMO_DF$CUST_ID\n\nsampleSize <- .6 * nrow(DEMO_DF)\nindex <- sample(1:nrow(DEMO_DF),sampleSize)\n\n# Create training data set\nDEMO_DF.train <- DEMO_DF[index,]\n\n# Create test data set\nDEMO_DF.test <- DEMO_DF[setdiff(1:nrow(DEMO_DF),index),]\n\nclass(DEMO_DF.train)\ncat(\"\\nTraining data: \")\ndim(DEMO_DF.train)\n\nclass(DEMO_DF.test)\ncat(\"\\nTest data: \")\ndim(DEMO_DF.test)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.frame'\nTraining data: \n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>2700</li><li>13</li></ol>\n\n"
+          },
+          {
+            "type": "HTML",
+            "data": "'ore.frame'\nTest data: \n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>1800</li><li>13</li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_285081521",
+      "id": "20220727-210734_1534121693",
+      "dateCreated": "2022-07-27T19:45:41+0000",
+      "dateStarted": "2022-07-29T16:51:00+0000",
+      "dateFinished": "2022-07-29T16:51:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "text": "%md\n## Build a Random Forest Model using Default settings",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 52,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Build a Random Forest Model using Default settings</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-457775090",
+      "id": "20220727-210734_1567019266",
+      "dateCreated": "2022-06-02T22:43:03+0000",
+      "dateStarted": "2022-07-29T16:51:02+0000",
+      "dateFinished": "2022-07-29T16:51:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "text": "%r\n\nMOD <- ore.odmRF(AFFINITY_CARD~., DEMO_DF)     \n#tree10 <- grabTree(MOD, k = 10, labelVar = TRUE) \n\nRES <- predict(MOD, DEMO_DF, type=c(\"class\",\"raw\"), supplemental.cols= \"AFFINITY_CARD\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-239207627",
+      "id": "20220727-210734_1257310069",
+      "dateCreated": "2022-06-24T18:37:40+0000",
+      "dateStarted": "2022-07-29T16:51:02+0000",
+      "dateFinished": "2022-07-29T16:51:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "title": "Confusion Matrix",
+      "text": "%r\n\nC_MATRIX <- with(RES, table(AFFINITY_CARD, PREDICTION))   \nC_MATRIX",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "             PREDICTION\nAFFINITY_CARD    0    1\n            0 3199  229\n            1  465  607"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_278184840",
+      "id": "20220727-210734_988187002",
+      "dateCreated": "2022-06-02T22:42:48+0000",
+      "dateStarted": "2022-07-29T16:51:05+0000",
+      "dateFinished": "2022-07-29T16:51:05+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "Show model accuracy",
+      "text": "%r\n\nACCURACY <- C_MATRIX/sum(C_MATRIX)\nround(sum(diag(ACCURACY)),3)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "0.846"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_1061734194",
+      "id": "20220727-210734_1736275653",
+      "dateCreated": "2022-06-02T22:44:37+0000",
+      "dateStarted": "2022-07-29T16:51:05+0000",
+      "dateFinished": "2022-07-29T16:51:05+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "text": "%md\n\n### Examples of possible setting overrides for Random Forest \n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm\n\nA complete list of settings can be found in the Documentation link:\n\n-- Algorithm Settings: <a href=\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-481B6C67-B26E-4689-AD4C-98062D5A2117\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-481B6C67-B26E-4689-AD4C-98062D5A2117');\">Random Forest</a>\n\n-- Shared Settings: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B');\">All Algorithms</a>\n\n-- Specify a row weight column \n    'ODMS_ROW_WEIGHT_COLUMN_NAME' = '<row_weight_column_name>'\n   \n-- Specify a missing value treatment method.  The default is to replace with mean (numeric features), mode (categorical features) or delete the row\n    'ODMS_MISSING_VALUE_TREATMENT' = 'ODMS_MISSING_VALUE_DELETE_ROW'\n   \n-- Specify the number of trees in the forest.  It requires a number between 1 and 65535 (including the edges).  The default is 20.\n    'RFOR_NUM_TREES' = '20'\n\n-- Specify the fraction of the training data to be randomly sampled for use in the construction of an individual tree. The default is half of the number of rows in the training data. It requires a fraction between 0 and 1 (excluding the edges)\n    'RFOR_SAMPLING_RATIO' = '0.5'\n\n-- Specify the size of the random subset of columns to be considered when choosing a split at a node. For each node, the size of the pool remains the same, but the specific candidate columns change. The default is half of the columns in the model signature. The special value 0 indicates that the candidate pool includes all columns.  It requires a number equal to or greater than 0.\n    'RFOR_MTRY' = '0'",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>Examples of possible setting overrides for Random Forest</h3>\n<p>If the user does not override the default settings, then relevant settings are determined by the algorithm</p>\n<p>A complete list of settings can be found in the Documentation link:</p>\n<p>&ndash; Algorithm Settings: <a href=\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-481B6C67-B26E-4689-AD4C-98062D5A2117\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-481B6C67-B26E-4689-AD4C-98062D5A2117');\">Random Forest</a></p>\n<p>&ndash; Shared Settings: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B');\">All Algorithms</a></p>\n<p>&ndash; Specify a row weight column</p>\n<pre><code>'ODMS_ROW_WEIGHT_COLUMN_NAME' = '&lt;row_weight_column_name&gt;'\n</code></pre>\n<p>&ndash; Specify a missing value treatment method.  The default is to replace with mean (numeric features), mode (categorical features) or delete the row</p>\n<pre><code>'ODMS_MISSING_VALUE_TREATMENT' = 'ODMS_MISSING_VALUE_DELETE_ROW'\n</code></pre>\n<p>&ndash; Specify the number of trees in the forest.  It requires a number between 1 and 65535 (including the edges).  The default is 20.</p>\n<pre><code>'RFOR_NUM_TREES' = '20'\n</code></pre>\n<p>&ndash; Specify the fraction of the training data to be randomly sampled for use in the construction of an individual tree. The default is half of the number of rows in the training data. It requires a fraction between 0 and 1 (excluding the edges)</p>\n<pre><code>'RFOR_SAMPLING_RATIO' = '0.5'\n</code></pre>\n<p>&ndash; Specify the size of the random subset of columns to be considered when choosing a split at a node. For each node, the size of the pool remains the same, but the specific candidate columns change. The default is half of the columns in the model signature. The special value 0 indicates that the candidate pool includes all columns.  It requires a number equal to or greater than 0.</p>\n<pre><code>'RFOR_MTRY' = '0'\n</code></pre>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-1416825319",
+      "id": "20220727-210734_209212905",
+      "dateCreated": "2022-06-02T22:45:46+0000",
+      "dateStarted": "2022-07-29T16:51:06+0000",
+      "dateFinished": "2022-07-29T16:51:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "Build a Random Forest Model using Explicit settings",
+      "text": "%r\n\nore.exec(\"BEGIN DBMS_DATA_MINING.DROP_MODEL(model_name=> 'RF_CLASSIFICATION_MODEL'); EXCEPTION WHEN others THEN null; END;\")\n\nsettings = list(RFOR_MTRY = 3, \n                RFOR_NUM_TREES = 100, \n                RFOR_SAMPLING_RATIO =0.5,\n                model_name=\"RF_CLASSIFICATION_MODEL\")\n\nMOD2 <- ore.odmRF(AFFINITY_CARD~., DEMO_DF.train, odm.settings= settings)\n\n\nRES2 <- predict(MOD2, DEMO_DF.test, type= c(\"class\",\"raw\"), norm.votes=TRUE, cache.model=TRUE, \n                supplemental.cols=c(\"CUST_ID\", \"AFFINITY_CARD\", \"BOOKKEEPING_APPLICATION\", \"BULK_PACK_DISKETTES\", \n                                    \"EDUCATION\", \"FLAT_PANEL_MONITOR\", \"HOME_THEATER_PACKAGE\", \"HOUSEHOLD_SIZE\", \n                                    \"OCCUPATION\", \"OS_DOC_SET_KANJI\", \"PRINTER_SUPPLIES\", \"YRS_RESIDENCE\", \"Y_BOX_GAMES\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 8,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Warning message:\n“The created mining model RF_CLASSIFICATION_MODEL is explicitly named. ORE does not manage this mining model's life cycle.”\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_449029638",
+      "id": "20220727-210734_1324360124",
+      "dateCreated": "2022-06-02T22:45:36+0000",
+      "dateStarted": "2022-07-29T16:51:06+0000",
+      "dateFinished": "2022-07-29T16:51:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "title": "Confusion Matrix",
+      "text": "%r\n\nC_MATRIX2 <- with(RES2, table(AFFINITY_CARD, PREDICTION))  \nC_MATRIX2",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 4,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "             PREDICTION\nAFFINITY_CARD    0    1\n            0 1324   66\n            1  216  194"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_1958113318",
+      "id": "20220727-210734_1079233601",
+      "dateCreated": "2022-06-02T22:45:02+0000",
+      "dateStarted": "2022-07-29T16:51:10+0000",
+      "dateFinished": "2022-07-29T16:51:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "title": "Show model accuracy",
+      "text": "%r\n\nACCURACY2 <- C_MATRIX2/sum(C_MATRIX2)\nround(sum(diag(ACCURACY2)),3)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 4,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "0.843"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_2143079742",
+      "id": "20220727-210734_1276395984",
+      "dateCreated": "2022-06-02T22:46:53+0000",
+      "dateStarted": "2022-07-29T16:51:11+0000",
+      "dateFinished": "2022-07-29T16:51:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%md\n## Display ROC Curve, Lift Chart, and Distribution Chart",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Display ROC Curve, Lift Chart, and Distribution Chart</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-700791645",
+      "id": "20220727-210734_42828454",
+      "dateCreated": "2022-06-02T22:47:17+0000",
+      "dateStarted": "2022-07-29T16:51:11+0000",
+      "dateFinished": "2022-07-29T16:51:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%r\n\n# BAR PLOT\nres <- ore.pull(RES)\nsensitivity <- res[order(res$\"'1'\",decreasing = TRUE), ]\nsens <- sum(sensitivity$\"'0'\")/sum(sensitivity$\"'0'\") - cumsum(sensitivity$\"'0'\")/sum(sensitivity$\"'0'\")\nspec <- cumsum(sensitivity$\"'1'\")/sum(sensitivity$\"'1'\")\n\n# LIFT CHART\ndecile2 <- quantile(sensitivity$\"'1'\", probs = seq(.1, .9, by = .1))\ndf_sens <- as.data.frame(sensitivity$\"'1'\", col.names = c(\"sens\"))\ndf_sens$decile = as.numeric(cut(1-cumsum(df_sens$sens), breaks=10))\n\n\n# DISTRIBUTION CHART\ndx <- density(res$\"'0'\")\ndx2 <- density(res$\"'1'\")\n\n# PLOTS 3x1\npar(mfrow=c(3,3))\nplot(1 - spec, sens, type = \"l\", col = \"darkred\", ylab = \"Sensitivity\", xlab = \"1 - Specificity\", main = 'ROC Curve')\nabline(c(0,0),c(1,1))\npaste(\"AUC: \", round(sum(spec*diff(c(0, 1 - sens))),3)) \n\nbarplot(table(df_sens$decile), xlab = 'Decile', ylab = 'Actual Targets', main = 'Lift Chart', col = \"darkred\")\n\nplot(dx, lwd = 2, col = \"burlywood\",\n     main = \"Density\")\nlines(dx2, lwd = 2, col = \"darkred\")\n# Add the data-poins with noise in the X-axis\nrug(jitter(res$\"'0'\"),col='burlywood')\nrug(jitter(res$\"'1'\"),col='darkred')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<span style=white-space:pre-wrap>'AUC:  0.885'</span>\n"
+          },
+          {
+            "type": "IMG",
+            "data": "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\ndDnwvPOiKNpcVLR05swlL720eNq05DXICeWlpfmffpr/6afJKU06d95/wICul15aG3efyWzS\nNvlxyZpvc1odWMnCu42wi+Lx+OjRo6+//vrU1NSHHnpo+PDhdT0iQnDEEUf84Q9/GDVq1DPP\nPDN27Njbb789iqK//OUvp512WuOtbgq119q0aVPknsYEJ2effWr8zcQ2rV+15vNZG1Z9Ucky\nsdT0zCZtM5u1z87r1KBRq5odwJ4jPSen8xlndD7jjCiKVn3wwZLp05e+/vqyd97ZvH791guv\n/fLLeaNGzXvggY59+x5/550tDz+8BkeSmtEwLatJafHaKIpK1nwj7PYIq1atuuSSS6ZPn37w\nwQf/5S9/OXQPuzqd+i4rK+uiiy666KKLFi1aNG7cuBEjRlx88cW9e/eePn16XQ9tD+KexgRm\nvxNOqMG1xctL1yx6s+DruVu/2JqWldugYYv0hnkNGjZv0KhVesMWe9rLrLUt77DD8g477Kgb\nb4yXla3++OMV8+ev/vjj1R999P1HH/3HdbXx+JLp07965ZVuV111/F13pdfcjeKzmrUrXLY2\niqKS/K9rap27aK8Ou5kzZ/785z9fvnz5RRdd9Oijj+bk7BGvjhOkLl263H333Xfccce0adPG\njh1b18Op37Z5F7HtcVoeu1/7rd5Ttdo2F61eufCFTYWrklNiKWk5rQ7MbtUls2m7PeemuHUu\nlpra4tBDK947sHj16m9nzVr0wguLnn1284YNURTFy8r+Pnr0V6+8cub//V9N3T46s1n7wmUf\nRFG0qXBVaUlhWmajGlntrqibsHv//fcfeuihd955Z8WKFfF4vHXr1sccc8yIESOSd+evbaWl\npXfcccftt9+ek5MzefLkgQMH7p7tspdLS0vr379///7963og9dv06dO3dxexbXJaHpWo+f1R\nLNahb98aGduGlYtWfTi1vPRfF2TEUlIbt+uR27GnnquKrObNu5x9dpezzy556KG599///oMP\nlpaURFGU/+mnT/Xq1ffxxxNn7O3qVlp0jGKxxO36Nqz6ovF+3XZ9nbuoDsJuypQp55xzTrdu\n3c4777y8vLxYLLZy5crXXnutV69ezz333DavIa9Z33zzzaBBg956663u3bv/+c9/3n8PuIck\nUHWJ0+yqcmZe8rQ8B/nYptrYH7Xq1q3Rvvvu+tjWLZmTv2hW8ga/Gbn75B16RnqO+6rutMxm\nzY6/886ul146ffDgf77zThRFm4uKpl5wQf6nnx59881RLLbDNVQitUF2Zm7bkrXfRlG04btP\n99Kwu+mmm+69995rrrlmi+kPPPDAb37zm9oOuylTplx22WX5+flXX331fffd16BB/b5WCPZa\nO3VmnoN8bFNt7I8OOPfcXRxVPF6++uNXCr9dkJzSuP2RzQ48aW87f65mNe3S5WezZr31P//z\n3n33RfF4FI+/feuta7/88pQ//jF110ogp/WBibArXrO0tKQgLbOOL4+rg7BbtGjR4MGDt55+\n6aWX/qYKdzKsto0bN95www0PP/xw8+bNp0yZ4n9t2Hs4yMc21fj+KB5FBw8atCtDKt9csnLh\nC4nb3kZRFEtJbXFI34ZtXNhXA1LS0n5yzz0tu3WbcdllpcXFURR9NGFCwVdfnfnMM1kttvsu\nGjuU0/rg/M9mxuPlUTxe+M38pl1q8tKZaqiDsGvXrt3UqVMvvvjiLaZPnTq1ffuq3PSgOr76\n6quBAwfOmTPnJz/5yeTJk9u2bbvjxwBhqe2DfKeddtrOtmAURfKxDtX4/ujbnJzGu7Aj21S4\ncuWC55P3qEtJz2rV7ezMprV4i9290EE/+1nj9u1fGDBgw8qVURR9M2vWpCOPPPPZZ1sdcUT1\nVpia0TC7ZZeiFZ9FUVSwdH5uh54p6Zk7fFTtqYOwu+WWW4YMGfL888+fdNJJeXl5URStWrXq\njTfemDp16rhx42pji88888zll1++bt26q6+++v77709PT6+NrQAhqcZBvmq0YBRFuyEfteD2\n1Pj+aGGzZtUcSjxesPT9/EVvxMtKExPSs5u2OuK89JzqrpDta3P00T//29+e+6//Wv3xx1EU\nrfvqq8nHHHPcHXf0uOaa6r3Db27HnomwKy8tyV80q8WPTq3hEe+MOgi7iy++uGXLlvfff/9N\nN91UVFQURVFOTk6vXr2mTp3at4auJEoqLi7+9a9/PXr06JYtW86YMeOUU06p2fUDYdupg3zV\naMHEp7WdjzvVgtHelIM1uz/aGEXLq/VGpSX5X+d//kbF9xvNat6h5Y8H1O2Bn7Dlduo06J13\npg0atPill6IoKtu4cdb1138yefJP7r67w86nQkZum+y8/RO3jy78Zn5mk7YN29TM7VSqoW5u\nd9K3b9++ffvG4/HCwsIoiho1ahTbtctStumTTz654IILPvzww5NPPvnJJ59s3bp1jW8CYAvV\nuN9ybefjzrZgtDddPlKD+6P4Ti6/uSi/+PvF6//5j40F3/17aizWpOPRTfc/fhev1mSHMnJz\nz5o69W+33/6322+Pl5VFUbRy/vxnTj0178c/PuTiizv169fsoIOqvrbmB59csmZp4t40q/4x\nbdP675t07FUnaV6XNyiOxWK1995KMz744IH779+0adPIkSNvvfVW78IOhKSWWjDaW9+6rZb2\nR+WlJRtWLCov3RgvL42iqLx0U3nZpvJNxaXF6zYVfV++ectjqOnZTVscclpms3Y1PhK2KZaS\ncszIkR1++tMZQ4Yk32F21cKFb1x77RvXXpvZtGmzgw9u3L59dosWDRo3btCoURRFqRkZGbm5\n+/fvn/mfL7unZTVp0bXfyoUvJi65XbdkTsHS91sdcW5Ws9q6eGB79qB3nmjSpEkURWvXrt3m\n3G1eofa3v/1t6yUL16+fHEXzX3ihXbt2kydPPvbYY2tjtAD1i7duq7qa2h+t+PszJWu+rcoW\nUxtk5Xbs1bhd91jKHrRf3ku0OeaYSxYuXPCHP7x7112JKyoSStas+ec77yRufbeF1j16XDh3\n7hYTc1odlNe17PuPXoqXl0VRFC/bvH7Zh3t12I0YMaKSuTNnztzeSwkV/7KcN2/ez84//8so\n6t2t2zOvvda0adMaHiXsMer8HVwgVNXbH7Vo0aJVq1aJl3QTCtcXxWOVvlllLKVB41bZLTpm\ntegUS0lbX7R3HSjdoxwwZEinQYO+fO65RX/5y/K33y7fvLmShb//6KPCgoJtvFzeqF3jwy4o\n+HrexrXLolgs3rhD8vehpKSkxS7cVKXq9qCwu+222yqZe9JJJ02ZMmWLv5DKy8t/8YtfJO5d\nEo/HR48efcMNN6SkpDxw333XXHddrY4W6ladv4MLBKza+6PNmzc3avTvdwuNHXTsmi/ejJeV\nxlLToyhKSWuQkpo+udeWd1cJWNufHLps9oc7XCyWkhIvL6/2AqkZ6WUbN2fl5RavWreNJX94\ny6+tH9V/yv9uMbF5p6j5b06NolOj6N9nTf7tf6duLiraVFgR5mVmAAAgAElEQVQYRVHphg2p\nDRocfeutjbb32n2jRs1atSstKYiiqOLNitevX//9999X8jXWlD0o7CqXmpq6zX3V9ddfH4vF\nvv/++8GDB0+bNu3AAw/885//fPjhh+/+EcLuVL075lfyElL5tv7T/LoKI/m60k+r8qhqPKSK\nj/KQnX1I1Rfbm1W+P6o4pWGbrltfHRmP9qKwK/hqRVWuKam86na4QOmm0iiKStYWxbe55Laq\n7l+PqtoFL4PefrtKy1VQh+8/UTdhV7MvIRUUFBx++OHLli276KKL/vCHPzRs2LDGBwx7murd\nMb+SUxoWLVpU8dOsrKwoimZXeTxZP9zloeoPiaIocWxjpx5SjQ15yM4+pOKjgueUBgJTB2FX\nsy8hFRYWfvPNN+np6SeddFJWVta1115bXl6+YMGC3Nzc2riFSlI8Hs/Pz2/WrFl930owX0hi\nK+vWrTv88MOTF0Fv2LCh9jZXt6p3x/ztvYT02Wef3XDDDRUnnnbaaVsvuT2ZmZmnnXZaFEVV\nf0jiUaeeemqPHj126iE7uyEPqd6PJvGo4NX4KQ2LFy/+xS9+UckC5eXlB+7CgOudnb0FzG5W\nxeFdfvnlu35vjd22P4rFt3OIsvZ07dp1yJAh23wJafz48f/4xz92am1Nmzbd3oVLkPDQQw8N\nHz68rkdRwyZOnDhkyJAzzjhjm3fM3zr4gK3V7P7ohBNOmD17xwdG76va2sK4i13b4w9d9ubu\nOseuRW7x9zt5jt2LW55jt02d+tbYG9nvhv1RHYRdRkbGd999t/X1qmvWrGnduvXGjRt3am1l\nZWUFBQUVpzz//PNDhgy58sorjzrqqF0d6/a99957jz76aABbCeYLSW5l3LhxZ511VnJiRkZG\ndnZ27W20Ds2YMeP++++fM2dOxTvmX3fddTX+Di4QqtreH22tlvZQtfR/bG2sth4NNdrObqXa\ndtP+KL7b7b///hMmTNh6+oQJE7p06bLr63/66aejKHr66ad3fVV7w1aC+UJ221b2NOXl5evW\nrVu3bl15eXldjwXqmdreH22tlv6bqkerrUdDrb3V1qo6OMeuxt90GfZmtfoOLhA2+yPCUwdh\nV7NvugwA1WN/RHjq5nYnNfimywBQbfZHBKYub1DsJSQA9gT2RwRjV+/LAgDAHiLAsEvcML22\nb5sezFaC+UJ221YAqq2W/puqR6utR0OtvdXWqjq4j11tKysre+211/r06ZOammore8ImAtsK\nQLXV0n9T9Wi19WiotbfaWhVg2AEA7J0CfCkWAGDvJOwAAAIh7AAAAiHsAAACIewAAAIh7AAA\nAiHsAAACIewAAAIh7AAAAlG/w27ixIkHHHBARkZG165dp06duouL1aGdGuHo0aNjsdi55567\ne8a2U6ryhRQXF19zzTXt2rXLzMzs1KnTLbfcUlZWtpvHyc4qKioaM2bMEUccEYvFJk2aVHsb\nWr58+fDhwzt06NCwYcMjjjjiqaeeqo2t3HHHHbEKmjRpUhtbOeigg2L/6eyzz67xrRQUFAwf\nPrxdu3ZZWVm9evV6++23a3wTVE892kPVr32QHc0OxOut6dOnp6WlTZgwIT8/f9SoUWlpafPm\nzav2YnVop0Y4f/78du3aHXXUUeecc87uHGRVVPELufrqq9u2bTtv3rzi4uKZM2c2btz4rrvu\n2v2jZac8/PDDQ4YMmTdvXhRFTz75ZO1t6JZbbhk7duy3335bUFDwxz/+MSUlZcaMGTW+ldtv\nv71nz541vtpKfPbZZ1EUPfXUUzW+5rPOOuvggw/+4IMPCgsLH3nkkZycnC+++KLGt8LOqkd7\nqPq1D7Kj2aF6HHZ9+vQ566yzkp/26NHjwgsvrPZidajqIywsLDzwwAOnTZt2+umn74FhV8Uv\n5LjjjhsyZEjy0379+p177rm7Y3zUhNoOuy3st99+t912W42vdveH3Q033NCsWbPi4uKaXW1R\nUVFKSsqkSZOSU3r06DF8+PCa3QrVUI/2UPVrH2RHs0P19aXYeDw+Z86cE088MTmlT58+77zz\nTvUWq0M7NcKrrrrq5JNP7tev324a3M6o+hfys5/97OWXX54/f/7GjRtnz549Z86cgQMH7r6B\nUk8UFRUl/ig/44wzamP9CxcubNSoUV5e3umnn/7hhx/WxiaSSktLJ06ceNFFF2VmZtbsmhP/\nj8disYoT33rrrZrdCjurHu2h6tc+yI6mKtLqegDVVFhYWFRUlJeXl5zSsmXL7777rnqL1aGq\nj3DSpElz5859//33d+PodkLVv5Crrrrqyy+/POKII6IoSklJufPOO2vjxCPqr3/84x+HHnpo\nFEWZmZljx47t3r17jW+idevW48eP79u379q1a//nf/7nuOOO+8c//rHffvvV+IYSpk2b9t13\n311++eU1vuacnJzTTjvtzjvvPOywwzp27Pjkk0/+/e9/b926dY1viJ1Sj/ZQ9WsfZEdTFfX1\niN3Wtv6zdVcWq0PbHOGSJUtGjBjx1FNPZWVl1cmoqmF73+obb7zx2WefnTNnTlFR0auvvnrv\nvfeOHj169w+PPVbXrl3j8fiaNWt+97vfXXrppVOmTKnxTQwdOnTgwIFNmzbt2LHjE0880bBh\nwzFjxtT4VpLGjRt39NFHH3LIIbWx8gkTJvTs2fOnP/1pXl7eK6+8csUVV6SmptbGhtgV9WgP\nVb/2QXY0W6uvR+waNWqUk5OzatWq5JRVq1a1atWqeovVoSqOcOHChatXr0788ZEUi8WWLFnS\noUOH3TDOHariF1JeXv7www/fddddPXv2jKKod+/ew4YNe/DBB6+++urdOlz2eE2aNBk2bNhL\nL7302GOPnXnmmbW3oQYNGhxwwAGLFi2qpfUvX758+vTpf/zjH2tp/S1atBg3blzy07PPPrtT\np061tC2qqB7toerXPsiOpirq6xG7WCzWq1evmTNnJqe8/vrrxxxzTPUWq0NVHOGAAQMqnhqZ\nPHF1D6m6aGd+IqmpqRX/wIrH4w4wsD2bN2+u7QMYmzZt+vzzz9u0aVNL658wYUJ2dvb5559f\nS+uvaPXq1a+88sqAAQN2w7aoRD3aQ9WvfZAdTZXUyiUZu0XFa54feOCBitc8jxw5Mjc3d4eL\n7SGq+IVUtGdeFVvFL+TCCy9s167dnDlzNmzY8Prrrzdr1uz666+vu1Gzc6Javir23HPPffPN\nNwsKClasWPHAAw+kpKQ8/fTTtbGVWbNmFRQULF68eODAgdnZ2Z9++mmNbyWhS5cuV1xxRS2t\nPB6Pjx07dvLkyQUFBZ9++umJJ57YrVu3kpKS2tscVVSP9lD1ax9kR7ND9Tjs4vH4hAkT9t9/\n/wYNGhxyyCEvvvhicvoWv4vbW2zPUcUvJGnPDLt41b6QgoKCESNGtG/fPjMzs3PnzjfffLP9\n0J7v1Vdf3eJvwoq3EqhBs2fPPuWUU3Jzc1u0aHHCCSdMnTq1Nrby1ltvJbayzz779O/f/8MP\nP6yNrcTj8VmzZkVR9P7779fS+uPx+Pfff3/JJZfk5ua2bNnyiiuuyM/Pr71tsVPq0R6qfu2D\n7GgqF4vH43VwnBAAgJpWX8+xAwBgC8IOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwm6vM2DAgF/+8peJj8vLy4cOHdqsWbNYLDZv3ryKs6rycNirVPzl90SA7bnw\nwguHDh1axYUreSpVsp6TTz7517/+dTXHFzphVzOKiorGjBlzxBFHxGKxSZMmVWMN69at+9Wv\nftWxY8fs7OyuXbvefvvt69atq/FxbmHKlCnPPffchx9+GI/He/TosbMPP+OMM0aMGFEbA4Nd\nNHjw4FgsFovF0tPTW7Zs2bt378cee6y0tLSux8UeKvELc9tttyWnvPXWW7FY7LvvvqupTYwe\nPToWi5177rnJKXfccUesgiZNmlRcfuLEiQcccEBGRkbXrl2nTp1axVk7lHxqxGKxZs2anXzy\nyXPnzt2Vr2v32G27myp+b3e42NY/7uXLlw8fPrxDhw4NGzY84ogjnnrqqeSs4uLia665pl27\ndpmZmZ06dbrlllvKysoSs6pRF8KuZjz++OPvvvvumDFjqr2Giy666LXXXnvmmWdWr179zDPP\nlJeXP/744zU4wqQXXnjhkUceSXz8xRdfdOzYsW3btlvPqsrDYU92wgknxOPxjRs3fvDBB0OG\nDLnzzjt79+5dUlJS7RX65Q9bZmbmqFGjVqxYURsrX7BgwahRo4466qgtpvfs2TP+g7Vr1yan\nz5gxY8iQITfffPN333132WWXnX322e+///4OZ1VR4qkRj8c/+eSTVq1a9e3bd9OmTbv4BVbb\nHvW0quL3doeLbfPH/eijjx522GFvv/328uXLr7zyyosvvvjll19OzPr1r3/9f//3f88///za\ntWvHjx8/evTo++67LzGrOnURp0ZFUfTkk0/u7KNKSkrS0tImTJiwzbl9+vQZMmTI+eefn5eX\n16xZsxtuuKGsrCwxq7y8fNSoUZ07d87IyDj44IPHjBmTfFR5efkDDzzQpUuXzMzMI4888s03\n30xM79+//1VXXRWPx88555zkr0Hnzp0rzqrKwy+55JKKv0jXX399Xl7epk2bkgM4//zzzzrr\nrJ39VkCNuOSSS5J7r4Qvv/wyIyPjnnvuSXy6K8+d+FZPlu2tivrikksuOeWUUw4//PArr7wy\nMeXNN9+Momj58uW7vvLCwsIDDzxw2rRpp59++jnnnJOcfvvtt1cMu4r69OlT8f/PHj16XHjh\nhTucVRVbPDVmzpwZRdHnn3+e+PQXv/hF4r/0Zs2a9evXLzk9sd2hQ4deeOGFrVq1atGixX//\n93+XlpYmZhUXFw8dOrRRo0Zt2rS5/PLL+/fvP2TIkHg8/tJLLzVs2HDz5s3xePzzzz+PouiK\nK65IPOSmm246+eST4//5VNreerbY3XzyySeVDGZXVPF7W/li2/txb2G//fa77bbbEh8fd9xx\nia80oV+/fueee+4Wy1e9Lhyx2yM0aNAgJydn5syZmzdv3uYC48aN6969++eff/7cc8+NHz/+\noYceSky//fbbx40bN3ny5Pz8/EcfffSmm27685//nJh166233nnnnffdd9+KFSt+//vfVzzq\nm/DMM8/cdddd3bt3j8fjX3zxxRZzd/jwJ5544vTTTx8+fHjiN2nkyJElJSXJI9L5+fkvvvji\nZZddtivfFqhBnTp1Ou2005599tnEp7vy3NlCJauiHonFYnffffeYMWMSCbI9N998c2w73njj\njW0+5Kqrrjr55JP79eu39ayFCxc2atQoLy/v9NNP//DDDxMT4/H4nDlzTjzxxORiffr0eeed\ndyqfVQ0rV64cP358586dO3TokJjy2GOPJf5L//jjj/fdd98BAwZUPIFh/Pjxffr0WbRo0bRp\n0yZMmDBhwoTE9N/85jczZ86cNWvWBx98kJ2d/eKLLyamH3/88SUlJfPmzYui6I033mjRokWi\nIxOfVvwqKl/PFrubgw46qJLBVLRTP6wqfm93uFglP+6EoqKiCRMm5Ofnn3HGGYkpP/vZz15+\n+eX58+dv3Lhx9uzZc+bMGThw4PYevmNVqT+qLqrWEbt4PP7UU0/l5OQ0b978zDPPvOeeez77\n7LPkrD59+hx55JHJT++77762bdvG4/Hi4uKcnJxXX301Oeu3v/1t4m+goqKirKys5FO0oop/\nHiXDbotZVXx4xWdaPB4fNmzY6aefnvh49OjR++yzT438CQXVsPURu3g8fuONN+bl5cVr4rmT\n/LiSVVGPXHLJJaeeemo8Hu/du3fiKEtNHbF78sknDz744A0bNsTj8S0O4YwZMybx98DixYsH\nDhzYuHHjpUuXxuPxxAnWkydPTi45atSo7OzsymdV/Sut2ACtW7eeM2fONpcsKSlJTU1duHBh\n4tMtDlMNGjRo8ODB8Xh8w4YNmZmZf/nLXxLTN2/e3LZt2+Txp6OOOurOO+9MLH/bbbdlZmb+\n85//LCoqSk9Pf+utt+IVnkqVr2eL3c32BrMrqvi9rXyxSn7c8Xg82e6ZmZmTJk2qOOuaa65J\nzEpJSbn77ru3Hl7V68IRuz3FoEGDvv7669GjR++3335jx4495JBDHn300eTcilc2HHnkkcuW\nLSsoKPjkk0+Kior69u2blpaWmpqakpIycuTIxYsXR1H06aefFhcX/+QnP6neYKr38KFDh86Y\nMWP58uVRFI0fP/7iiy9OTU2t3gCglsRisSiKavC5U8mqqI/uueee55577t13362RtS1ZsmTE\niBFPPfVUVlbW1nOHDh06cODApk2bduzY8YknnmjYsOH2TqWKx+OJX92dmrU9yb958vPzr7ji\nilNPPfXLL79MzProo4/OPPPMli1bpqSkZGZmlpWVLV26NPnALl26JD9u2rTpmjVroihavHhx\nSUlJcieVlpbWrVu35GInnnhi4tjYrFmzTjvttKOOOuqNN954++2309PTtzgFrfL1bG2bg6lZ\nVfzeJher/McdRVHXrl3j8fiaNWt+97vfXXrppVOmTElMv/HGG5999tk5c+YUFRW9+uqr9957\n7+jRo6s9bGG3+7zwwgvJg8BPPPHE1gs0b9580KBBjzzyyKeffvrzn//8uuuuS14Xs83frfLy\n8iiKPvjgg9LS0rKysvLy8ng8nnh+Jup+Z5/tSdV7+JFHHtm1a9cJEyYsWLBgwYIFXodlT/PZ\nZ5917NgxqtHnTiWroj7q0aPH+eeff8MNN2xvgZ16dW/hwoWrV69OXNIYi8WmTZv27LPPxmKx\nr776aoslGzRocMABByxatCiKokaNGuXk5KxatSo5d9WqVa1atap8VjU0bdp05MiR6enpiV1S\nPB7v169f27Zt586du3HjxrKysvT09IovxVbyvNjerBNPPPHtt9/++OOPCwsLu3fvfuKJJ86c\nOfONN9445phj0tPTq76e6i25Uz+sKn5vK1msij/uJk2aDBs2rF+/fo899lgUReXl5Q8//PCv\nfvWrnj17Zmdn9+7de9iwYQ8++GAVvw9bE3a7z4ABA5JHSgcPHlzJkikpKccdd1xxcXFxcXFi\nSsXL0efOndumTZvGjRsffPDBWVlZ06dP33oNiVmzZ8+u3lCr+PD09PTEXi1p6NChjz/++Lhx\n44477rgDDjigeluH2rBkyZLp06efffbZ0Q+/4TXy3KlkVdRT/+///b+//e1vf/3rX7c59447\n7tjeS2BbnzRW8b/9iq/NJc9pS9q0adPnn3/epk2bKIpisVivXr2Sp6NFUfT6668fc8wxlc+q\ntng8nji9e9myZUuXLr322mvbt2+fnp6+YMGC7Z32XVGnTp0yMjKSO6nS0tL58+cn5x5//PEb\nN2689957jzvuuNTU1GTYbf29qnw9W+9uqmKnflhV/N5WsljVf9xRFG3evDnRprFYLDU1tWKn\nxuPxXXm9S9jtETZu3HjCCSc899xz3377bXFx8Zw5cx544IE+ffo0bNgwscDcuXPvvffedevW\nzZo165577km8GJ+dnX3DDTf87//+75/+9KeCgoKvv/760UcfveOOOxKzrrnmmptvvnnq1KmF\nhYXz5s278sorqz6eKj68ffv2CxYsWL9+fXLKhRdeuHTp0j/+8Y8O17GHKC8vX7FixZ/+9KeT\nTjqpe/fu//3f/x3V6HOnklVRT3Xu3HnYsGG/+93vantD55133uzZswsLC5csWTJ48OC1a9cO\nGzYsMeu6667761//OnHixDVr1jz44IPz589P3sWtklk7a82aNb/97W/Xrl175plnRlHUqlWr\npk2bjh8/vqio6MMPPxwyZEhVVpKVlXXFFVfcdNNN8+fPz8/Pv+6665YtW5acm7hn26RJk046\n6aQoio4++uhvvvnm3Xff3bqrKl/P1rub2lDJ9/a2225L3miwej+C884776233iosLFy5cuWD\nDz44Y8aMxCGeWCw2YMCAUaNGvfvuu8XFxTNnzhwzZkziT9BqqsqJeOzQq6++usU3tuKly1Ux\ne/bs8847b999983KyurUqdPw4cNXr16dmNWnT5/LLrvsvPPOy8vLa9q06XXXXVfxooTf//73\nP/rRjxo0aNChQ4df/vKXK1asSEwvLy+/9957O3XqlJmZ2bNnz23esmF7F09U8eGLFy8+9thj\ns7Ozoyj65JNPEhN//vOfN2zYcP369Tv15UPNSp4hnpqa2qJFixNPPPGRRx6peDue+K49dyp+\nXMmqqC+SF08krFixolGjRlEN3e4kaYuz6d96661TTjklNzd3n3326d+/f+Je8UkTJkzYf//9\nGzRocMghh7z44otVnLVDFS+eaNy4cc+ePSuu4dVXX038Jrdv3/6BBx7Iycl5/vnnE7P69Olz\n4403Jpe86qqr+vfvn/h4w4YNl112WcOGDffZZ5+hQ4cmb1OScOONN0ZRNHfu3MSnJ5xwQnZ2\ndvLJWPGpVMl6ttjdVDKYXbS97+3IkSNzc3N3uFhFW/y4Z8+enfhxt2jR4oQTTpg6dWpyVkFB\nwYgRI9q3b5+Zmdm5c+ebb765pKQkMasadRGLx+PVr0J2i5NPPrlHjx533313XQ+kSk455ZR2\n7dqNHTu2rgcCAHudtLoeAEF5/fXXX3vttQULFtT1QABgbyTsqDH77rtvYWHhXXfddeihh9b1\nWABgb+SlWACAQLgqFgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEEivKrIAAATZSURBVMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4A\nIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIO\nACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDC\nDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ\nwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAg\nEMIOACAQwg4AIBDCDgAgEMIOACAQwg4AIBDCDgAgEMIOACAQ/x/jJ7R+ynWlRgAAAABJRU5E\nrkJggg=="
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-1889974104",
+      "id": "20220727-210734_1296023178",
+      "dateCreated": "2022-07-27T19:53:58+0000",
+      "dateStarted": "2022-07-29T16:51:12+0000",
+      "dateFinished": "2022-07-29T16:51:12+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "title": "Create table for use in SQL query",
+      "text": "%r\n\nore.drop(table = \"RF_TEST_TABLE\")\nore.create(DEMO_DF, table =\"RF_TEST_TABLE\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-888396580",
+      "id": "20220727-210734_324027048",
+      "dateCreated": "2022-06-14T17:02:42+0000",
+      "dateStarted": "2022-07-29T16:51:13+0000",
+      "dateFinished": "2022-07-29T16:51:13+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "title": "Demonstrate using the SQL interface so score data and display prediction details",
+      "text": "%sql\n\nSELECT CUST_ID,\n    round(PREDICTION_YRS_RES,3) PRED_YRS_RES,\n    RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),'rank=\"1\"/>') FIRST_ATTRIBUTE,\n    RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),'rank=\"2\"/>') SECOND_ATTRIBUTE,\n    RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),'rank=\"3\"/>') THIRD_ATTRIBUTE\nFROM (SELECT CUST_ID,\n             PREDICTION(RF_CLASSIFICATION_MODEL USING *) PREDICTION_YRS_RES,\n             PREDICTION_DETAILS(RF_CLASSIFICATION_MODEL USING *) PD\n      FROM RF_TEST_TABLE\n      WHERE CUST_ID < 100015\n      ORDER BY CUST_ID) OUT,\n               XMLTABLE('/Details'\n                        PASSING OUT.PD\n                        COLUMNS \n                        \"Attribute1\" XMLType PATH 'Attribute[1]',\n                        \"Attribute2\" XMLType PATH 'Attribute[2]',\n                        \"Attribute3\" XMLType PATH 'Attribute[3]')  OUTPRED\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PRED_YRS_RES": "number",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RES\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\n100001\t0\t\"YRS_RESIDENCE\" actualValue=\"3\" weight=\"6.454\" \t\"BULK_PACK_DISKETTES\" actualValue=\"0\" weight=\".719\" \t\"FLAT_PANEL_MONITOR\" actualValue=\"0\" weight=\".203\" \n100002\t0\t\"HOUSEHOLD_SIZE\" actualValue=\"2\" weight=\".19\" \t\"CUST_ID\" actualValue=\"100002\" weight=\".171\" \t\"EDUCATION\" actualValue=\"Bach.\" weight=\"-.049\" \n100003\t0\t\"HOME_THEATER_PACKAGE\" actualValue=\"0\" weight=\"2.914\" \t\"HOUSEHOLD_SIZE\" actualValue=\"2\" weight=\".127\" \t\"EDUCATION\" actualValue=\"&lt; Bach.\" weight=\".041\" \n100004\t0\t\"FLAT_PANEL_MONITOR\" actualValue=\"1\" weight=\".587\" \t\"HOUSEHOLD_SIZE\" actualValue=\"2\" weight=\".146\" \t\"EDUCATION\" actualValue=\"&lt; Bach.\" weight=\".045\" \n100005\t1\t\"YRS_RESIDENCE\" actualValue=\"5\" weight=\"5.729\" \t\"HOME_THEATER_PACKAGE\" actualValue=\"1\" weight=\"2.946\" \t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\"2.316\" \n100006\t0\t\"YRS_RESIDENCE\" actualValue=\"2\" weight=\"5.806\" \t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\"5.108\" \t\"HOME_THEATER_PACKAGE\" actualValue=\"0\" weight=\"2.835\" \n100007\t0\t\"FLAT_PANEL_MONITOR\" actualValue=\"1\" weight=\".646\" \t\"HOUSEHOLD_SIZE\" actualValue=\"2\" weight=\".138\" \t\"OCCUPATION\" actualValue=\"Other\" weight=\".065\" \n100008\t0\t\"FLAT_PANEL_MONITOR\" actualValue=\"1\" weight=\".587\" \t\"HOUSEHOLD_SIZE\" actualValue=\"2\" weight=\".146\" \t\"EDUCATION\" actualValue=\"&lt; Bach.\" weight=\".045\" \n100009\t0\t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\"11.693\" \t\"YRS_RESIDENCE\" actualValue=\"3\" weight=\"4.595\" \t\"HOME_THEATER_PACKAGE\" actualValue=\"0\" weight=\"4.166\" \n100010\t0\t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\"9.117\" \t\"YRS_RESIDENCE\" actualValue=\"3\" weight=\"4.66\" \t\"HOME_THEATER_PACKAGE\" actualValue=\"0\" weight=\"2.781\" \n100011\t0\t\"YRS_RESIDENCE\" actualValue=\"3\" weight=\"5.311\" \t\"HOME_THEATER_PACKAGE\" actualValue=\"0\" weight=\"3.07\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"0\" weight=\"1.362\" \n100012\t1\t\"HOME_THEATER_PACKAGE\" actualValue=\"1\" weight=\"2.488\" \t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\"2.383\" \t\"CUST_ID\" actualValue=\"100012\" weight=\"1.907\" \n100013\t0\t\"EDUCATION\" actualValue=\"HS-grad\" weight=\".06\" \t\"OCCUPATION\" actualValue=\"Transp.\" weight=\".016\" \t\"HOUSEHOLD_SIZE\" actualValue=\"3\" weight=\"-.142\" \n100014\t0\t\"BULK_PACK_DISKETTES\" actualValue=\"0\" weight=\".253\" \t\"HOUSEHOLD_SIZE\" actualValue=\"2\" weight=\".153\" \t\"EDUCATION\" actualValue=\"HS-grad\" weight=\".043\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_1791505963",
+      "id": "20220727-210734_2107939795",
+      "dateCreated": "2022-06-14T17:03:10+0000",
+      "dateStarted": "2022-07-29T16:51:13+0000",
+      "dateFinished": "2022-07-29T16:51:16+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%script\r\rBEGIN\rDBMS_DATA_MINING.DROP_MODEL(model_name => 'RF_CLASSIFICATION_MODEL');\rEXCEPTION WHEN others THEN null;\rEND;\r/",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-1623941117",
+      "id": "20220727-210734_324185715",
+      "dateCreated": "2022-07-27T19:56:52+0000",
+      "dateStarted": "2022-07-29T16:51:17+0000",
+      "dateFinished": "2022-07-29T16:51:18+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "%md\n## End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:51:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>End of Script</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658956054629_-1994631220",
+      "id": "20220727-210734_589928829",
+      "dateCreated": "2022-06-14T17:04:02+0000",
+      "dateStarted": "2022-07-29T16:51:18+0000",
+      "dateFinished": "2022-07-29T16:51:18+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    }
+  ],
+  "name": "OML4R Classification RF",
+  "id": "19901",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:OMLUSER-19901": [],
+    "MDWD9201D2221:OMLUSER-19901": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4R Classification RF"
+}

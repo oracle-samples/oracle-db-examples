@@ -10,8 +10,8 @@ Key Features:
 * Collaborative UI for data scientists
 * Enables sharing of notebooks and templates with permissions and execution scheduling 
 * Access to 30+ parallel, scalable in-Database implementations of machine learning algorithms
-* SQL, PL/SQL scripts and Python language supported
-* Enables and supports deployments of enterprise machine learning methodologies in both Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP)
+* SQL, PL/SQL scripts, R and Python language supported
+* Enables and supports deployments of enterprise machine learning methodologies in all versions of Autonomous Database
 
 The examples here cover a range of functionality and methods, from data preparation and data cleansing to machine learning algorithms and scoring.
 
