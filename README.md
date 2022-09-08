@@ -3,6 +3,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 
 | Repo/Folder name  | Description |
 | ------------- | ------------- |
+| [C](./C) | C based examples |
 | [apex](./apex) | APEX examples |
 | [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
 | [dotnet](https://github.com/oracle/dotnet-db-samples) | .NET based examples |
