@@ -3,7 +3,7 @@
 /* drcp.c */
 
 /* Oracle OCI Database Resident Connection Pooling (DRCP) Example */
-/* Christopher Jones, 2014 */
+/* Christopher Jones, 2022 */
 
 #include <stdio.h>
 #include <stdlib.h>
