@@ -1,3 +1,7 @@
+# Copyright (c) 2022, Oracle. All rights reserved.
+# Makefile for Oracle OCI Database Resident Connection Pooling (DRCP) Example
+# Christopher Jones, 2022
+
 IC=$(HOME)/instantclient_19_11
 OLIB=$(IC)
 OINC=$(IC)/sdk/include
