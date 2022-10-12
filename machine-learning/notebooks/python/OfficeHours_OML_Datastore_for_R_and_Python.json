@@ -1,0 +1,2021 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n# Oracle Machine Learning Datastore in Autonomous Database\n\nOracle Machine Learning provides datastores to save your native R or Python objects such as ML models and lists, as well as OML4R or OML4Py proxy objects in your Oracle Database or Autonomous Database instance for use in embedded execution and access across database sessions.\n\n---\n\nCopyright (c) 2022 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n\n---\n\n## Initialize interpreters for R and Python and create native model objects\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:08:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Oracle Machine Learning Datastore in Autonomous Database</h1>\n<p>Oracle Machine Learning provides datastores to save your native R or Python objects such as ML models and lists, as well as OML4R or OML4Py proxy objects in your Oracle Database or Autonomous Database instance for use in embedded execution and access across database sessions.</p>\n<hr />\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n<h2>Initialize interpreters for R and Python and create native model objects</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-1957419806",
+      "id": "20221011-180410_326909485",
+      "dateCreated": "2022-10-07T19:33:33+0000",
+      "dateStarted": "2022-10-11T18:08:35+0000",
+      "dateFinished": "2022-10-11T18:08:36+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "Import OML4R 'ORE' package and create an in-database machine learning model",
+      "text": "%r\n\nlibrary(ORE) \nore.sync(table = 'IRIS_R') \n\nglm.mod <- ore.odmGLM(Petal.Length~., IRIS_R) \nsummary(glm.mod)\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:08:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmGLM(formula = Petal.Length ~ ., data = IRIS_R)\n\nResiduals:\n     Min       1Q   Median       3Q      Max \n-0.78396 -0.15708  0.00193  0.14730  0.65418 \n\nCoefficients:\n                  Estimate Std. Error t value Pr(>|t|)    \n(Intercept)       -1.11099    0.26987  -4.117 6.45e-05 ***\nSepal.Length       0.60801    0.05024  12.101  < 2e-16 ***\nSepal.Width       -0.18052    0.08036  -2.246   0.0262 *  \nPetal.Width        0.60222    0.12144   4.959 1.97e-06 ***\nSpeciesversicolor  1.46337    0.17345   8.437 3.14e-14 ***\nSpeciesvirginica   1.97422    0.24480   8.065 2.60e-13 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\nResidual standard error: 0.2627 on 144 degrees of freedom\nMultiple R-squared:  0.9786,\tAdjusted R-squared:  0.9778 \nF-statistic:  1317 on 5 and 144 DF,  p-value: < 2.2e-16\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_800081049",
+      "id": "20221011-180410_347481396",
+      "dateCreated": "2022-10-03T02:53:48+0000",
+      "dateStarted": "2022-10-11T18:08:37+0000",
+      "dateFinished": "2022-10-11T18:08:55+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import OML4Py 'oml' package and create an in-database machine learning model",
+      "text": "%python\n\nimport oml\n\nIRIS_PY = oml.sync(table = \"IRIS_PY\")\n\ntrain_x = IRIS_PY.drop('PETAL_LENGTH')\ntrain_y = IRIS_PY['PETAL_LENGTH']\n\nglm_mod = oml.glm(\"regression\")\nglm_mod = glm_mod.fit(train_x, train_y)\nglm_mod",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:08:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Generalized Linear Model\n\nMining Function: REGRESSION\n\nTarget: PETAL_LENGTH\n\nSettings: \n                   setting name                  setting value\n0                     ALGO_NAME  ALGO_GENERALIZED_LINEAR_MODEL\n1               GLMS_CONF_LEVEL                            .95\n2           GLMS_FTR_GENERATION    GLMS_FTR_GENERATION_DISABLE\n3            GLMS_FTR_SELECTION     GLMS_FTR_SELECTION_DISABLE\n4                  ODMS_DETAILS                    ODMS_ENABLE\n5  ODMS_MISSING_VALUE_TREATMENT        ODMS_MISSING_VALUE_AUTO\n6                 ODMS_SAMPLING          ODMS_SAMPLING_DISABLE\n7                     PREP_AUTO                             ON\n\nComputed Settings: \n            setting name            setting value\n0    GLMS_CONV_TOLERANCE  .0000050000000000000004\n1    GLMS_NUM_ITERATIONS                       30\n2  GLMS_RIDGE_REGRESSION   GLMS_RIDGE_REG_DISABLE\n3            GLMS_SOLVER         GLMS_SOLVER_CHOL\n\nGlobal Statistics: \n             attribute name attribute value\n0         ADJUSTED_R_SQUARE         0.97785\n1                       AIC        -395.115\n2                 COEFF_VAR         6.99114\n3                 CONVERGED             YES\n4        CORRECTED_TOTAL_DF             149\n5          CORRECTED_TOT_SS         464.325\n6            DEPENDENT_MEAN           3.758\n7                  ERROR_DF             144\n8         ERROR_MEAN_SQUARE       0.0690256\n9         ERROR_SUM_SQUARES         9.93968\n10                  F_VALUE         1316.57\n11                    GMSEP       0.0719153\n12               HOCKING_SP     0.000482696\n13                      J_P       0.0717866\n14                 MODEL_DF               5\n15          MODEL_F_P_VALUE               0\n16        MODEL_MEAN_SQUARE         90.8771\n17        MODEL_SUM_SQUARES         454.386\n18               NUM_PARAMS               6\n19                 NUM_ROWS             150\n20          RANK_DEFICIENCY               0\n21             ROOT_MEAN_SQ        0.262727\n22                     R_SQ        0.978593\n23                     SBIC        -377.051\n24  VALID_COVARIANCE_MATRIX             YES\n\nAttributes: \nPETAL_WIDTH\nSEPAL_LENGTH\nSEPAL_WIDTH\nSPECIES\n\nPartition: NO\n\nCoefficients: \n\n  attribute name attribute value  ...       p value  significance code\n0    (Intercept)            None  ...  6.445916e-05                ***\n1    PETAL_WIDTH            None  ...  1.968679e-06                ***\n2   SEPAL_LENGTH            None  ...  1.073592e-23                ***\n3    SEPAL_WIDTH            None  ...  2.619373e-02                  *\n4        SPECIES      versicolor  ...  3.142686e-14                ***\n5        SPECIES       virginica  ...  2.600021e-13                ***\n\n[6 rows x 7 columns]\n\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 '\n\nFit Details: \n\n                       name          value\n0         ADJUSTED_R_SQUARE   9.778500e-01\n1                       AIC  -3.951150e+02\n2                 COEFF_VAR   6.991144e+00\n3        CORRECTED_TOTAL_DF   1.490000e+02\n4          CORRECTED_TOT_SS   4.643254e+02\n5            DEPENDENT_MEAN   3.758000e+00\n6                  ERROR_DF   1.440000e+02\n7         ERROR_MEAN_SQUARE   6.902558e-02\n8         ERROR_SUM_SQUARES   9.939683e+00\n9                   F_VALUE   1.316572e+03\n10                    GMSEP   7.191532e-02\n11               HOCKING_SP   4.826963e-04\n12                      J_P   7.178660e-02\n13          MODEL_CONVERGED   1.000000e+00\n14                 MODEL_DF   5.000000e+00\n15          MODEL_F_P_VALUE  2.879219e-118\n16        MODEL_MEAN_SQUARE   9.087714e+01\n17        MODEL_SUM_SQUARES   4.543857e+02\n18               NUM_PARAMS   6.000000e+00\n19                 NUM_ROWS   1.500000e+02\n20          RANK_DEFICIENCY   0.000000e+00\n21             ROOT_MEAN_SQ   2.627272e-01\n22                     R_SQ   9.785933e-01\n23                     SBIC  -3.770512e+02\n24  VALID_COVARIANCE_MATRIX   1.000000e+00\n\nRank: \n\n6\n\nDeviance: \n\n9.939683\n\nAIC: \n\n-395\n\nNull Deviance: \n\n464.3254\n\nDF Residual: \n\n144.0\n\nDF Null: \n\n149.0\n\nConverged: \n\nTrue\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_373381864",
+      "id": "20221011-180410_689531645",
+      "dateCreated": "2022-10-03T02:54:12+0000",
+      "dateStarted": "2022-10-11T18:08:56+0000",
+      "dateFinished": "2022-10-11T18:09:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "text": "%md\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-1754821012",
+      "id": "20221011-180410_1365052265",
+      "dateCreated": "2022-10-10T21:15:31+0000",
+      "dateStarted": "2022-10-11T18:09:01+0000",
+      "dateFinished": "2022-10-11T18:09:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "Create a native R machine learning model",
+      "text": "%r\n\nlm.mod <- lm(Petal.Length~Petal.Width, family='binomial', iris) \nsummary(lm.mod)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Warning message:\n“In lm.fit(x, y, offset = offset, singular.ok = singular.ok, ...) :\n extra argument ‘family’ will be disregarded”\n\nCall:\nlm(formula = Petal.Length ~ Petal.Width, data = iris, family = \"binomial\")\n\nResiduals:\n     Min       1Q   Median       3Q      Max \n-1.33542 -0.30347 -0.02955  0.25776  1.39453 \n\nCoefficients:\n            Estimate Std. Error t value Pr(>|t|)    \n(Intercept)  1.08356    0.07297   14.85   <2e-16 ***\nPetal.Width  2.22994    0.05140   43.39   <2e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\nResidual standard error: 0.4782 on 148 degrees of freedom\nMultiple R-squared:  0.9271,\tAdjusted R-squared:  0.9266 \nF-statistic:  1882 on 1 and 148 DF,  p-value: < 2.2e-16\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_711262739",
+      "id": "20221011-180410_597875257",
+      "dateCreated": "2022-10-10T21:15:13+0000",
+      "dateStarted": "2022-10-11T18:09:01+0000",
+      "dateFinished": "2022-10-11T18:09:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Create a native Python machine learning model",
+      "text": "%python\n\nfrom sklearn import linear_model\n\niris = IRIS_PY.pull()\n\nX = iris[['PETAL_WIDTH']]\ny = iris[['PETAL_LENGTH']]\n\nlm = linear_model.LinearRegression()\n\nlm_mod = lm.fit(X, y)\n\nprint(lm_mod.intercept_, lm_mod.coef_, lm_mod.score(X, y))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[1.08355803] [[2.2299405]] 0.9271098389904927\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1236589925",
+      "id": "20221011-180410_110675196",
+      "dateCreated": "2022-10-10T21:20:24+0000",
+      "dateStarted": "2022-10-11T18:09:02+0000",
+      "dateFinished": "2022-10-11T18:09:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "text": "%md\n\n## Save model objects in a datastore\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Save model objects in a datastore</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-491186633",
+      "id": "20221011-180410_1681135696",
+      "dateCreated": "2022-10-07T19:33:11+0000",
+      "dateStarted": "2022-10-11T18:09:02+0000",
+      "dateFinished": "2022-10-11T18:09:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "title": "Save Model and Objects into datastore in R",
+      "text": "%r\n\nore.save(glm.mod, lm.mod, name = \"ds-r-1\", overwrite = TRUE)\n\nlist <- list(a = 1, b = TRUE, c = \"hoopsa\")\n\nore.save(list, name = \"ds-r-1\", append = TRUE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1509679628",
+      "id": "20221011-180410_1569411580",
+      "dateCreated": "2022-10-03T02:54:21+0000",
+      "dateStarted": "2022-10-11T18:09:02+0000",
+      "dateFinished": "2022-10-11T18:09:05+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "title": "Save Model and Objects into datastore in Python",
+      "text": "%python\n\noml.ds.save(objs={'glm_mod': glm_mod, 'lm_mod': lm_mod}, name=\"ds-py-1\", overwrite=True)\n\ndict ={'a':1, 'b': True, 'c': \"hoopsa\"}\n\noml.ds.save(objs={'list': dict}, name=\"ds-py-1\", append=True)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1135521586",
+      "id": "20221011-180410_1758276454",
+      "dateCreated": "2022-10-03T02:54:36+0000",
+      "dateStarted": "2022-10-11T18:09:05+0000",
+      "dateFinished": "2022-10-11T18:09:08+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "text": "%md\n\n## List and view contents of datastores",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>List and view contents of datastores</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-2048060312",
+      "id": "20221011-180410_674409895",
+      "dateCreated": "2022-10-07T19:35:27+0000",
+      "dateStarted": "2022-10-11T18:09:08+0000",
+      "dateFinished": "2022-10-11T18:09:08+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "List datastore details using R",
+      "text": "%r\n\nore.datastore(\"ds-r-1\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 5</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>object.count</th><th scope=col>size</th><th scope=col>creation.date</th><th scope=col>description</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dttm&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds-r-1</td><td>3</td><td>29168</td><td>2022-10-11 18:09:02</td><td>NA</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_216894037",
+      "id": "20221011-180410_1811994217",
+      "dateCreated": "2022-10-03T02:57:22+0000",
+      "dateStarted": "2022-10-11T18:09:08+0000",
+      "dateFinished": "2022-10-11T18:09:08+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "title": "List datastore details using Python",
+      "text": "%python\n\noml.ds.dir(name=\"ds-py-1\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 134.534,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  datastore_name  object_count  size                date description\n0        ds-py-1             3  4367 2022-10-11 18:09:05        None\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1020999520",
+      "id": "20221011-180410_1803775652",
+      "dateCreated": "2022-10-03T02:58:04+0000",
+      "dateStarted": "2022-10-11T18:09:08+0000",
+      "dateFinished": "2022-10-11T18:09:08+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "text": "%md\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_874032002",
+      "id": "20221011-180410_1788149417",
+      "dateCreated": "2022-10-07T19:36:28+0000",
+      "dateStarted": "2022-10-11T18:09:09+0000",
+      "dateFinished": "2022-10-11T18:09:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "title": "View datastore contents using R",
+      "text": "%r\n\nore.datastoreSummary(\"ds-r-1\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 3 x 6</caption>\n<thead>\n\t<tr><th scope=col>object.name</th><th scope=col>class</th><th scope=col>size</th><th scope=col>length</th><th scope=col>row.count</th><th scope=col>col.count</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>glm.mod</td><td>ore.odmGLM</td><td>12377</td><td>26</td><td>NA</td><td>NA</td></tr>\n\t<tr><td>list   </td><td>list      </td><td>  132</td><td> 3</td><td>NA</td><td>NA</td></tr>\n\t<tr><td>lm.mod </td><td>lm        </td><td>16659</td><td>12</td><td>NA</td><td>NA</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-494439058",
+      "id": "20221011-180410_1475754441",
+      "dateCreated": "2022-10-03T02:58:17+0000",
+      "dateStarted": "2022-10-11T18:09:09+0000",
+      "dateFinished": "2022-10-11T18:09:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "View datastore contents using Python",
+      "text": "%python\n\noml.ds.describe(name = \"ds-py-1\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  object_name             class  size  length  row_count  col_count\n0     glm_mod           oml.glm  3723       1          1          1\n1        list              dict    40       3          1          3\n2      lm_mod  LinearRegression   604       1          1          1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-420363252",
+      "id": "20221011-180410_1026498240",
+      "dateCreated": "2022-10-03T02:58:29+0000",
+      "dateStarted": "2022-10-11T18:09:10+0000",
+      "dateFinished": "2022-10-11T18:09:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "text": "%md\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_907849927",
+      "id": "20221011-180410_1294573967",
+      "dateCreated": "2022-10-07T19:36:53+0000",
+      "dateStarted": "2022-10-11T18:09:10+0000",
+      "dateFinished": "2022-10-11T18:09:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "View R datastore contents using SQL",
+      "text": "%sql\n\nselect OBJNAME, CLASS from ALL_RQ_DATASTORE_CONTENTS where DSNAME = 'ds-r-1';",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "OBJNAME": "string",
+                      "CLASS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "OBJNAME\tCLASS\nglm.mod\tore.odmGLM\nlist\tlist\nlm.mod\tlm\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1256967390",
+      "id": "20221011-180410_8744757",
+      "dateCreated": "2022-10-03T02:58:40+0000",
+      "dateStarted": "2022-10-11T18:09:10+0000",
+      "dateFinished": "2022-10-11T18:09:13+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "title": "View Python datastore contents using SQL",
+      "text": "%sql\n\nselect OBJNAME, CLASS from ALL_PYQ_DATASTORE_CONTENTS where DSNAME = 'ds-py-1';",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "OBJNAME": "string",
+                      "CLASS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "OBJNAME\tCLASS\nglm_mod\toml.glm\nlist\tdict\nlm_mod\tLinearRegression\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-2134998665",
+      "id": "20221011-180410_1717249693",
+      "dateCreated": "2022-10-03T02:58:59+0000",
+      "dateStarted": "2022-10-11T18:09:14+0000",
+      "dateFinished": "2022-10-11T18:09:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md\n\n## Load datastore objects into memory",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Load datastore objects into memory</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-675123454",
+      "id": "20221011-180410_600309128",
+      "dateCreated": "2022-10-07T19:37:22+0000",
+      "dateStarted": "2022-10-11T18:09:14+0000",
+      "dateFinished": "2022-10-11T18:09:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "Load datastore objects in R",
+      "text": "%r\n\nore.load('ds-r-1', list=c('glm.mod'))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'glm.mod'"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1652881011",
+      "id": "20221011-180410_593630630",
+      "dateCreated": "2022-10-03T02:59:15+0000",
+      "dateStarted": "2022-10-11T18:09:15+0000",
+      "dateFinished": "2022-10-11T18:09:17+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "title": "Load datastore objects in Python",
+      "text": "%python\n\noml.ds.load(name='ds-py-1', objs=['glm_mod'])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:17+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "['glm_mod']\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1308317238",
+      "id": "20221011-180410_146090552",
+      "dateCreated": "2022-10-03T02:59:41+0000",
+      "dateStarted": "2022-10-11T18:09:17+0000",
+      "dateFinished": "2022-10-11T18:09:19+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%md\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-528683112",
+      "id": "20221011-180410_937790077",
+      "dateCreated": "2022-10-10T21:34:40+0000",
+      "dateStarted": "2022-10-11T18:09:20+0000",
+      "dateFinished": "2022-10-11T18:09:20+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "title": "Summarize loaded OML4R model",
+      "text": "%r\n\nsummary(glm.mod)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:20+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmGLM(formula = Petal.Length ~ ., data = IRIS_R)\n\nResiduals:\n     Min       1Q   Median       3Q      Max \n-0.78396 -0.15708  0.00193  0.14730  0.65418 \n\nCoefficients:\n                  Estimate Std. Error t value Pr(>|t|)    \n(Intercept)       -1.11099    0.26987  -4.117 6.45e-05 ***\nSepal.Length       0.60801    0.05024  12.101  < 2e-16 ***\nSepal.Width       -0.18052    0.08036  -2.246   0.0262 *  \nPetal.Width        0.60222    0.12144   4.959 1.97e-06 ***\nSpeciesversicolor  1.46337    0.17345   8.437 3.14e-14 ***\nSpeciesvirginica   1.97422    0.24480   8.065 2.60e-13 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\nResidual standard error: 0.2627 on 144 degrees of freedom\nMultiple R-squared:  0.9786,\tAdjusted R-squared:  0.9778 \nF-statistic:  1317 on 5 and 144 DF,  p-value: < 2.2e-16\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-1230574619",
+      "id": "20221011-180410_726801076",
+      "dateCreated": "2022-10-10T21:33:43+0000",
+      "dateStarted": "2022-10-11T18:09:20+0000",
+      "dateFinished": "2022-10-11T18:09:20+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "title": "Summarize loaded OML4Py model",
+      "text": "%python\n\nglm_mod",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:20+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAlgorithm Name: Generalized Linear Model\n\nMining Function: REGRESSION\n\nTarget: PETAL_LENGTH\n\nSettings: \n                   setting name                  setting value\n0                     ALGO_NAME  ALGO_GENERALIZED_LINEAR_MODEL\n1               GLMS_CONF_LEVEL                            .95\n2           GLMS_FTR_GENERATION    GLMS_FTR_GENERATION_DISABLE\n3            GLMS_FTR_SELECTION     GLMS_FTR_SELECTION_DISABLE\n4                  ODMS_DETAILS                    ODMS_ENABLE\n5  ODMS_MISSING_VALUE_TREATMENT        ODMS_MISSING_VALUE_AUTO\n6                 ODMS_SAMPLING          ODMS_SAMPLING_DISABLE\n7                     PREP_AUTO                             ON\n\nComputed Settings: \n            setting name            setting value\n0    GLMS_CONV_TOLERANCE  .0000050000000000000004\n1    GLMS_NUM_ITERATIONS                       30\n2  GLMS_RIDGE_REGRESSION   GLMS_RIDGE_REG_DISABLE\n3            GLMS_SOLVER         GLMS_SOLVER_CHOL\n\nGlobal Statistics: \n             attribute name attribute value\n0         ADJUSTED_R_SQUARE         0.97785\n1                       AIC        -395.115\n2                 COEFF_VAR         6.99114\n3                 CONVERGED             YES\n4        CORRECTED_TOTAL_DF             149\n5          CORRECTED_TOT_SS         464.325\n6            DEPENDENT_MEAN           3.758\n7                  ERROR_DF             144\n8         ERROR_MEAN_SQUARE       0.0690256\n9         ERROR_SUM_SQUARES         9.93968\n10                  F_VALUE         1316.57\n11                    GMSEP       0.0719153\n12               HOCKING_SP     0.000482696\n13                      J_P       0.0717866\n14                 MODEL_DF               5\n15          MODEL_F_P_VALUE               0\n16        MODEL_MEAN_SQUARE         90.8771\n17        MODEL_SUM_SQUARES         454.386\n18               NUM_PARAMS               6\n19                 NUM_ROWS             150\n20          RANK_DEFICIENCY               0\n21             ROOT_MEAN_SQ        0.262727\n22                     R_SQ        0.978593\n23                     SBIC        -377.051\n24  VALID_COVARIANCE_MATRIX             YES\n\nAttributes: \nPETAL_WIDTH\nSEPAL_LENGTH\nSEPAL_WIDTH\nSPECIES\n\nPartition: NO\n\nCoefficients: \n\n  attribute name attribute value  ...       p value  significance code\n0    (Intercept)            None  ...  6.445916e-05                ***\n1    PETAL_WIDTH            None  ...  1.968679e-06                ***\n2   SEPAL_LENGTH            None  ...  1.073592e-23                ***\n3    SEPAL_WIDTH            None  ...  2.619373e-02                  *\n4        SPECIES      versicolor  ...  3.142686e-14                ***\n5        SPECIES       virginica  ...  2.600021e-13                ***\n\n[6 rows x 7 columns]\n\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 '\n\nFit Details: \n\n                       name          value\n0         ADJUSTED_R_SQUARE   9.778500e-01\n1                       AIC  -3.951150e+02\n2                 COEFF_VAR   6.991144e+00\n3        CORRECTED_TOTAL_DF   1.490000e+02\n4          CORRECTED_TOT_SS   4.643254e+02\n5            DEPENDENT_MEAN   3.758000e+00\n6                  ERROR_DF   1.440000e+02\n7         ERROR_MEAN_SQUARE   6.902558e-02\n8         ERROR_SUM_SQUARES   9.939683e+00\n9                   F_VALUE   1.316572e+03\n10                    GMSEP   7.191532e-02\n11               HOCKING_SP   4.826963e-04\n12                      J_P   7.178660e-02\n13          MODEL_CONVERGED   1.000000e+00\n14                 MODEL_DF   5.000000e+00\n15          MODEL_F_P_VALUE  2.879219e-118\n16        MODEL_MEAN_SQUARE   9.087714e+01\n17        MODEL_SUM_SQUARES   4.543857e+02\n18               NUM_PARAMS   6.000000e+00\n19                 NUM_ROWS   1.500000e+02\n20          RANK_DEFICIENCY   0.000000e+00\n21             ROOT_MEAN_SQ   2.627272e-01\n22                     R_SQ   9.785933e-01\n23                     SBIC  -3.770512e+02\n24  VALID_COVARIANCE_MATRIX   1.000000e+00\n\nRank: \n\n6\n\nDeviance: \n\n9.939683\n\nAIC: \n\n-395\n\nNull Deviance: \n\n464.3254\n\nDF Residual: \n\n144.0\n\nDF Null: \n\n149.0\n\nConverged: \n\nTrue\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-1997999501",
+      "id": "20221011-180410_414115165",
+      "dateCreated": "2022-10-10T21:34:38+0000",
+      "dateStarted": "2022-10-11T18:09:21+0000",
+      "dateFinished": "2022-10-11T18:09:21+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "%md\n\n## Delete datastores and datastore contents",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Delete datastores and datastore contents</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-1989473232",
+      "id": "20221011-180410_971765914",
+      "dateCreated": "2022-10-07T19:38:07+0000",
+      "dateStarted": "2022-10-11T18:09:21+0000",
+      "dateFinished": "2022-10-11T18:09:21+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    },
+    {
+      "title": "Delete datastore objects in R",
+      "text": "%r\n\nore.delete('ds-r-1', list = c('glm.mod'))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'glm.mod'"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1581952632",
+      "id": "20221011-180410_575024056",
+      "dateCreated": "2022-10-03T02:59:53+0000",
+      "dateStarted": "2022-10-11T18:09:21+0000",
+      "dateFinished": "2022-10-11T18:09:23+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:66"
+    },
+    {
+      "title": "Delete datastore objects in Python",
+      "text": "%python\n\noml.ds.delete(name = 'ds-py-1', objs=['glm_mod'])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "{'glm_mod'}\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-2124400828",
+      "id": "20221011-180410_435819262",
+      "dateCreated": "2022-10-03T03:00:03+0000",
+      "dateStarted": "2022-10-11T18:09:23+0000",
+      "dateFinished": "2022-10-11T18:09:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%md\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1277431802",
+      "id": "20221011-180410_1989253265",
+      "dateCreated": "2022-10-07T19:38:49+0000",
+      "dateStarted": "2022-10-11T18:09:24+0000",
+      "dateFinished": "2022-10-11T18:09:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    },
+    {
+      "title": "View updated datastore contents using R",
+      "text": "%r\n\nore.datastoreSummary(\"ds-r-1\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 2 x 6</caption>\n<thead>\n\t<tr><th scope=col>object.name</th><th scope=col>class</th><th scope=col>size</th><th scope=col>length</th><th scope=col>row.count</th><th scope=col>col.count</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>list  </td><td>list</td><td>  132</td><td> 3</td><td>NA</td><td>NA</td></tr>\n\t<tr><td>lm.mod</td><td>lm  </td><td>16659</td><td>12</td><td>NA</td><td>NA</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_468840831",
+      "id": "20221011-180410_282624497",
+      "dateCreated": "2022-10-10T21:36:11+0000",
+      "dateStarted": "2022-10-11T18:09:24+0000",
+      "dateFinished": "2022-10-11T18:09:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:69"
+    },
+    {
+      "title": "View updated datastore contents using Python",
+      "text": "%python\n\noml.ds.describe(name = \"ds-py-1\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  object_name             class  size  length  row_count  col_count\n0        list              dict    40       3          1          3\n1      lm_mod  LinearRegression   604       1          1          1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_771763831",
+      "id": "20221011-180410_63988665",
+      "dateCreated": "2022-10-10T21:36:54+0000",
+      "dateStarted": "2022-10-11T18:09:25+0000",
+      "dateFinished": "2022-10-11T18:09:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%md\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-630137495",
+      "id": "20221011-180410_1249180895",
+      "dateCreated": "2022-10-10T21:36:08+0000",
+      "dateStarted": "2022-10-11T18:09:26+0000",
+      "dateFinished": "2022-10-11T18:09:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:71"
+    },
+    {
+      "title": "Delete datastore in R",
+      "text": "%r\n\nore.delete('ds-r-1')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ds-r-1'"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-566581153",
+      "id": "20221011-180410_811315216",
+      "dateCreated": "2022-10-03T03:00:31+0000",
+      "dateStarted": "2022-10-11T18:09:26+0000",
+      "dateFinished": "2022-10-11T18:09:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:72"
+    },
+    {
+      "title": "Delete datastore in Python",
+      "text": "%python\n\noml.ds.delete(name='ds-py-1')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "'ds-py-1'\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-1759378045",
+      "id": "20221011-180410_1691904227",
+      "dateCreated": "2022-10-03T03:01:02+0000",
+      "dateStarted": "2022-10-11T18:09:26+0000",
+      "dateFinished": "2022-10-11T18:09:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_45582957",
+      "id": "20221011-180410_1679098474",
+      "dateCreated": "2022-10-07T19:51:29+0000",
+      "dateStarted": "2022-10-11T18:09:27+0000",
+      "dateFinished": "2022-10-11T18:09:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:74"
+    },
+    {
+      "title": "Create new datastore for next example",
+      "text": "%r\n\nore.save(glm.mod, \n         name = \"ds-r-2\", \n         overwrite = TRUE)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1371390703",
+      "id": "20221011-180410_157980723",
+      "dateCreated": "2022-10-07T19:51:45+0000",
+      "dateStarted": "2022-10-11T18:09:27+0000",
+      "dateFinished": "2022-10-11T18:09:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:75"
+    },
+    {
+      "title": "Create new datastore for next example",
+      "text": "%python\n\noml.ds.save(objs={'glm_mod': glm_mod}, \n                  name=\"ds-py-2\", \n                  grantable = True, \n                  overwrite=True)\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_2112018123",
+      "id": "20221011-180410_1683776062",
+      "dateCreated": "2022-10-07T19:51:59+0000",
+      "dateStarted": "2022-10-11T18:09:27+0000",
+      "dateFinished": "2022-10-11T18:09:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:76"
+    },
+    {
+      "text": "%md\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1961328874",
+      "id": "20221011-180410_1130660134",
+      "dateCreated": "2022-10-07T19:52:02+0000",
+      "dateStarted": "2022-10-11T18:09:28+0000",
+      "dateFinished": "2022-10-11T18:09:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:77"
+    },
+    {
+      "title": "Delete datastore in R using SQL",
+      "text": "%script\n\nBEGIN \n   rqDropDataStore('ds-r-2'); \nEND; \n/",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-1502377923",
+      "id": "20221011-180410_263114098",
+      "dateCreated": "2022-10-03T03:01:18+0000",
+      "dateStarted": "2022-10-11T18:09:28+0000",
+      "dateFinished": "2022-10-11T18:09:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:78"
+    },
+    {
+      "title": "Delete datastore in Python using SQL",
+      "text": "%script\n\nBEGIN \n   pyqDropDataStore('ds-py-2');\nEND;\n/",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-992545126",
+      "id": "20221011-180410_1389914036",
+      "dateCreated": "2022-10-03T03:01:50+0000",
+      "dateStarted": "2022-10-11T18:09:29+0000",
+      "dateFinished": "2022-10-11T18:09:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "%md\n\n## Grant and revoke access privileges on datastores",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Grant and revoke access privileges on datastores</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_379100453",
+      "id": "20221011-180410_1427284547",
+      "dateCreated": "2022-10-07T19:39:23+0000",
+      "dateStarted": "2022-10-11T18:09:29+0000",
+      "dateFinished": "2022-10-11T18:09:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:80"
+    },
+    {
+      "title": "Grant datastore access to a user in R",
+      "text": "%r\n\nore.save(glm.mod, \n         name = 'ds-r-glm-mod', \n         grantable = TRUE, \n         overwrite = TRUE)\n\nore.grant('ds-r-glm-mod', type = 'datastore', user = 'OMLUSER2')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-317606835",
+      "id": "20221011-180410_848852086",
+      "dateCreated": "2022-10-03T03:02:03+0000",
+      "dateStarted": "2022-10-11T18:09:29+0000",
+      "dateFinished": "2022-10-11T18:09:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:81"
+    },
+    {
+      "title": "Grant datastore access to a user in Python",
+      "text": "%python\n\noml.ds.save(objs={'glm_mod': glm_mod}, \n           name= 'ds-py-glm-mod', \n           grantable = True, \n           overwrite = True)\n\noml.grant(name='ds-py-glm-mod', typ='datastore', user='OMLUSER2')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1713023437",
+      "id": "20221011-180410_1260714506",
+      "dateCreated": "2022-10-03T03:02:14+0000",
+      "dateStarted": "2022-10-11T18:09:30+0000",
+      "dateFinished": "2022-10-11T18:09:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:82"
+    },
+    {
+      "text": "%md\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1302635853",
+      "id": "20221011-180410_1523630365",
+      "dateCreated": "2022-10-07T19:40:38+0000",
+      "dateStarted": "2022-10-11T18:09:31+0000",
+      "dateFinished": "2022-10-11T18:09:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:83"
+    },
+    {
+      "title": "Revoke datastore access to a user in R",
+      "text": "%r\n\nore.revoke('ds-r-glm-mod', type = 'datastore', user = 'OMLUSER2')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_195848255",
+      "id": "20221011-180410_437280958",
+      "dateCreated": "2022-10-03T03:02:24+0000",
+      "dateStarted": "2022-10-11T18:09:31+0000",
+      "dateFinished": "2022-10-11T18:09:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:84"
+    },
+    {
+      "title": "Revoke datastore access to a user in Python",
+      "text": "%python\n\noml.revoke(name = 'ds-py-glm-mod', typ='datastore', user='OMLUSER2')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_1916066867",
+      "id": "20221011-180410_1801100366",
+      "dateCreated": "2022-10-03T03:02:33+0000",
+      "dateStarted": "2022-10-11T18:09:32+0000",
+      "dateFinished": "2022-10-11T18:09:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:85"
+    },
+    {
+      "text": "%md\n\n# End of script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-10-11T18:09:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1665511450265_-203265381",
+      "id": "20221011-180410_121819013",
+      "dateCreated": "2022-10-07T19:41:04+0000",
+      "dateStarted": "2022-10-11T18:09:32+0000",
+      "dateFinished": "2022-10-11T18:09:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:86"
+    }
+  ],
+  "name": "OML Datastore for R and Python",
+  "id": "124372",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA7A60DC9B32:OMLUSER-124372": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML Datastore Notebook"
+}
