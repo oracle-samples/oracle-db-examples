@@ -1,4 +1,4 @@
-# RSI Demo
+# Design High-Speed Data Ingestion Services Using MQTT, AMQP, and STOMP
 
 This directory contains the code samples for Reactive Streams Ingestion (RSI) integrated with ActiveMQ.
 To view the details, visit [Design High-Speed Data Ingestion Services Using MQTT, AMQP, and STOMP](https://blogs.oracle.com/...).
