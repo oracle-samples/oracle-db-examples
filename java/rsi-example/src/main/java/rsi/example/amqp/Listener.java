@@ -1,3 +1,19 @@
+/*
+  Copyright (c) 2021, 2022, Oracle and/or its affiliates.
+  This software is dual-licensed to you under the Universal Permissive License
+  (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl or Apache License
+  2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+  either license.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+     https://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
 package rsi.example.amqp;
 
 import oracle.rsi.PushPublisher;
@@ -11,6 +27,11 @@ import rsi.example.common.RSIService;
 import javax.jms.*;
 import java.io.ByteArrayInputStream;
 
+/**
+ * A listener class that listens to inputs from the topic in ActiveMQ using AMQP
+ * protocol. RSI service starts at the time when the listener is up. Once the data
+ * is received, RSI streams the records into the database.
+ */
 public class Listener {
   private static final String ACTIVEMQ_USER = "admin";
   private static final String ACTIVEMQ_PASSWORD = "password";
@@ -18,10 +39,12 @@ public class Listener {
   private static final int ACTIVEMQ_PORT = 5672;
   private static final String TOPIC_NAME = "event";
 
-  private static final String DB_URL = "jdbc:oracle:thin:@" +
-      "(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gebqqvpozhjbqbs_azuretestdb_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))";
-  private static final String DB_USERNAME = "admin";
-  private static final String DB_PASSWORD = "Example01*manager";
+  // TODO: replace the DB_URL with yours.
+  private static final String DB_URL = "jdbc:oracle:thin:@<your-connection-string>";
+  // TODO: replace the DB_USERNAME with your username.
+  private static final String DB_USERNAME = "<your-username>";
+  // TODO: replace the DB_PASSWORD with your password.
+  private static final String DB_PASSWORD = "<your-password>";
 
   private static final OracleJsonFactory JSON_FACTORY = new OracleJsonFactory();
   private static final RSIService RSI_SERVICE = new RSIService();
@@ -48,7 +71,7 @@ public class Listener {
     RSI_SERVICE.setUrl(DB_URL);
     RSI_SERVICE.setUsername(DB_USERNAME);
     RSI_SERVICE.setPassword(DB_PASSWORD);
-    RSI_SERVICE.setScheme(DB_USERNAME);
+    RSI_SERVICE.setSchema(DB_USERNAME);
     RSI_SERVICE.setEntity(Retailer.class);
     ReactiveStreamsIngestion rsi = RSI_SERVICE.start();
     PushPublisher<Retailer> pushPublisher = ReactiveStreamsIngestion.pushPublisher();
@@ -84,11 +107,11 @@ public class Listener {
               .asJsonObject();
 
           // Push the data
-//          pushPublisher.accept(new Retailer(jsonObject));
+          pushPublisher.accept(new Retailer(jsonObject));
 
           if (count == 1) {
             start = System.currentTimeMillis();
-          } else if (count % 100 == 0) {
+          } else if (count % 1000 == 0) {
             System.out.println(String.format("Received %d messages.", count));
           }
           count++;
