@@ -483,7 +483,7 @@ In the HTTP Header Manager, add a parameter "content-type" parameter with
 
 ![jmeter8](images/jmeter8.jpg)
 
-**Step 3**: Add a Post-Test Thread Group
+**Step 4**: Add a Post-Test Thread Group
 
 We will need another Thread Group to close the listener after finishing the test.
 
@@ -504,7 +504,7 @@ Configure the HTTP request as follows:
 
 ![jmeter10](images/jmeter10.jpg)
 
-**Step 4**: Add HTTP Authorization Manager
+**Step 5**: Add HTTP Authorization Manager
 
 We need to add HTTP Authorization Manager to this Test Plan so that we can send the HTTP Request with authentication.
 
@@ -521,7 +521,7 @@ Add the following line to the table:
 
 ![jmeter12](images/jmeter12.jpg)
 
-**Step 5**: Add Listener and run the test
+**Step 6**: Add Listener and run the test
 
 So far, everything looks good and we can run the test. As an optional step, we can
 add a Listener to view the samplers that we send. If you would like to do so, let's
