@@ -1,0 +1,2115 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n---\n## Regression Modeling to Predict Numerical Values using XGBoost\nThis notebook shows how to predict numerical values using a multiple regression. Given demographic, purchase, and affinity card data for a set of customers, predict the number of years a customer remains at the same residence, as found in column YRS_RESIDENCE. Since YRS_RESIDENCE is a continuous variable, we will use the XGBoost algorithm. All processing occurs inside Oracle Autonomous Database.\n\nCopyright (c) 2023 Oracle Corporation                             \n###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 9.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 153.5,
+              "optionOpen": false
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch2\u003eRegression Modeling to Predict Numerical Values using XGBoost\u003c/h2\u003e\n\u003cp\u003eThis notebook shows how to predict numerical values using a multiple regression. Given demographic, purchase, and affinity card data for a set of customers, predict the number of years a customer remains at the same residence, as found in column YRS_RESIDENCE. Since YRS_RESIDENCE is a continuous variable, we will use the XGBoost algorithm. All processing occurs inside Oracle Autonomous Database.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1270420344",
+      "id": "20230217-230239_1916790717",
+      "dateCreated": "2018-02-06T15:02:34+0000",
+      "dateStarted": "2023-02-17T22:58:28+0000",
+      "dateFinished": "2023-02-17T22:58:28+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md \n\u003cdl\u003e\n\u003cimg src\u003d\"https://www.oracle.com/technetwork/database/options/advanced-analytics/regression-5663170.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"250\"/\u003e\n\u003c/dl\u003e\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:28+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 3.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 217.016,
+              "optionOpen": false
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdl\u003e\n\u003cimg src\u003d\"https://www.oracle.com/technetwork/database/options/advanced-analytics/regression-5663170.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"250\"/\u003e\n\u003c/dl\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_98478453",
+      "id": "20230217-230239_41065546",
+      "dateCreated": "2018-02-06T15:07:11+0000",
+      "dateStarted": "2023-02-17T22:58:28+0000",
+      "dateFinished": "2023-02-17T22:58:28+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nOML Regression: \u003ca href\u003d\"https://www.oracle.com/goto/ml-regression\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-regression\u0027);\"\u003ehttps://www.oracle.com/goto/ml-regression\u003c/a\u003e\nOML XGBoost: \u003ca href\u003d\"http://www.oracle.com/goto/ml-xgboost\" onclick\u003d\"return ! window.open(\u0027http://www.oracle.com/goto/ml-xgboost\u0027);\"\u003ehttp://www.oracle.com/goto/ml-xgboost\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Regression: \u003ca href\u003d\"https: //www.oracle.com/goto/ml-regression\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-regression\u0027);\"\u003ehttps://www.oracle.com/goto/ml-regression\u003c/a\u003e\n\u003cbr  /\u003eOML XGBoost: \u003ca href\u003d\"http: //www.oracle.com/goto/ml-xgboost\" onclick\u003d\"return ! window.open(\u0027http://www.oracle.com/goto/ml-xgboost\u0027);\"\u003ehttp://www.oracle.com/goto/ml-xgboost\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1577581398",
+      "id": "20230217-230239_981682324",
+      "dateCreated": "2018-02-06T16:11:59+0000",
+      "dateStarted": "2023-02-17T22:58:28+0000",
+      "dateFinished": "2023-02-17T22:58:28+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create table CUSTOMERS360 joining tables from SH schema",
+      "text": "%script\n\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE CUSTOMERS360\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nCREATE TABLE CUSTOMERS360 AS \nSELECT A.CUST_ID, A.CUST_GENDER, A.CUST_MARITAL_STATUS, A.CUST_YEAR_OF_BIRTH, \n       A.CUST_INCOME_LEVEL, A.CUST_CREDIT_LIMIT, \n       B.EDUCATION, B.AFFINITY_CARD, B.HOUSEHOLD_SIZE, B.OCCUPATION, \n       B.YRS_RESIDENCE, B.Y_BOX_GAMES\nFROM   SH.CUSTOMERS A, SH.SUPPLEMENTARY_DEMOGRAPHICS B\nWHERE  A.CUST_ID \u003d B.CUST_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 102.9,
+              "optionOpen": false
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable CUSTOMERS360 created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-892421306",
+      "id": "20230217-230239_918554073",
+      "dateCreated": "2018-02-06T15:33:37+0000",
+      "dateStarted": "2023-02-17T22:58:29+0000",
+      "dateFinished": "2023-02-17T22:58:29+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Split data into randomly selected 60% sample for train and 40% test",
+      "text": "%script\n\nCREATE OR REPLACE VIEW TRAIN_DATA_V \nAS SELECT * FROM CUSTOMERS360 SAMPLE (60) SEED (1);\n\nCREATE OR REPLACE VIEW TEST_DATA_V \nAS SELECT * FROM CUSTOMERS360 MINUS SELECT * FROM TRAIN_DATA_V;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 286.8,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nView TRAIN_DATA_V created.\n\n\n---------------------------\n\nView TEST_DATA_V created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1859146713",
+      "id": "20230217-230239_1003425459",
+      "dateCreated": "2020-02-05T21:46:22+0000",
+      "dateStarted": "2023-02-17T22:58:29+0000",
+      "dateFinished": "2023-02-17T22:58:29+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### Build a XGBoost regression model for predicting YRS_RESIDENCE\n\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eBuild a XGBoost regression model for predicting YRS_RESIDENCE\u003c/h3\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1383245268",
+      "id": "20230217-230239_768169292",
+      "dateCreated": "2021-07-15T14:13:49+0000",
+      "dateStarted": "2023-02-17T22:58:29+0000",
+      "dateFinished": "2023-02-17T22:58:29+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": " Using the default options",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\nBEGIN\n    v_setlst(\u0027ALGO_NAME\u0027)  :\u003d \u0027ALGO_XGBOOST\u0027;\n    v_setlst(\u0027PREP_AUTO\u0027)  :\u003d \u0027ON\u0027;\n   \n    dbms_data_mining.create_model2(\n        MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n        SET_LIST            \u003d\u003e v_setlst);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1838882382",
+      "id": "20230217-230239_229535625",
+      "dateCreated": "2020-05-18T23:39:50+0000",
+      "dateStarted": "2023-02-17T22:58:30+0000",
+      "dateFinished": "2023-02-17T22:58:31+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### Examples of possible setting overrides for XGBoost \n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm\n\nA complete list of settings can be found in the Documentation link:\n\n-- Algorithm Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-443B3D58-8B74-422E-8E51-C8F609249B2C\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-443B3D58-8B74-422E-8E51-C8F609249B2C\u0027);\"\u003eXGBoost\u003c/a\u003e\n\n   \n-- Switch between booster - gblinear, gbtree, dart\n     By default the system uses the gbtree. The parameters are similar for gbtree and dart, but has more difference comparing to gblinear\n\n    v_setlst(\u0027booster\u0027) :\u003d \u0027gblinear\u0027;\n    v_setlst(\u0027booster\u0027) :\u003d \u0027gbtree\u0027;\n    v_setlst(\u0027booster\u0027) :\u003d \u0027dart\u0027;\n\n   \n-- regularization parameters for all boosters\n    v_setlst(\u0027alpha\u0027)     :\u003d \u00270.1\u0027;\n    v_setlst(\u0027eta\u0027)       :\u003d \u00270.3\u0027;\n    v_setlst(\u0027lambda\u0027)    :\u003d \u00270.3\u0027;\n    \n-- regularization parameters for tree based boosters: gbtree, dart\n    v_setlst(\u0027gamma\u0027)           :\u003d \u00270.1\u0027;\n    v_setlst(\u0027max_delta_step\u0027)  :\u003d \u00270.1\u0027;\n    v_setlst(\u0027max_depth\u0027)       :\u003d \u00276\u0027;\n    v_setlst(\u0027max_leaves\u0027)      :\u003d \u002710\u0027;\n    v_setlst(\u0027min_child_weight\u0027):\u003d \u00271\u0027;\n    \n-- subsampling methods for tree based boosters: gbtree, dart \n    v_setlst(\u0027colsample_bylevel\u0027) :\u003d \u00271\u0027;\n    v_setlst(\u0027colsample_bynode\u0027)  :\u003d \u00271\u0027;\n    v_setlst(\u0027colsample_bytree\u0027)  :\u003d \u00271\u0027;\n    \n-- Num of iteration rounds \n    v_setlst(\u0027num_round\u0027) :\u003d \u0027100\u0027;\n    \n-- For regression tasks, the default objective is reg:linear\n    v_setlst(\u0027objective\u0027) :\u003d \u0027reg:linear\u0027\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eExamples of possible setting overrides for XGBoost\u003c/h3\u003e\n\u003cp\u003eIf the user does not override the default settings, then relevant settings are determined by the algorithm\u003c/p\u003e\n\u003cp\u003eA complete list of settings can be found in the Documentation link:\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Algorithm Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-443B3D58-8B74-422E-8E51-C8F609249B2C\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-443B3D58-8B74-422E-8E51-C8F609249B2C\u0027);\"\u003eXGBoost\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Switch between booster - gblinear, gbtree, dart\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e By default the system uses the gbtree. The parameters are similar for gbtree and dart, but has more difference comparing to gblinear\n\nv_setlst(\u0027booster\u0027) :\u003d \u0027gblinear\u0027;\nv_setlst(\u0027booster\u0027) :\u003d \u0027gbtree\u0027;\nv_setlst(\u0027booster\u0027) :\u003d \u0027dart\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; regularization parameters for all boosters\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027alpha\u0027)     :\u003d \u00270.1\u0027;\nv_setlst(\u0027eta\u0027)       :\u003d \u00270.3\u0027;\nv_setlst(\u0027lambda\u0027)    :\u003d \u00270.3\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; regularization parameters for tree based boosters: gbtree, dart\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027gamma\u0027)           :\u003d \u00270.1\u0027;\nv_setlst(\u0027max_delta_step\u0027)  :\u003d \u00270.1\u0027;\nv_setlst(\u0027max_depth\u0027)       :\u003d \u00276\u0027;\nv_setlst(\u0027max_leaves\u0027)      :\u003d \u002710\u0027;\nv_setlst(\u0027min_child_weight\u0027):\u003d \u00271\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; subsampling methods for tree based boosters: gbtree, dart\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027colsample_bylevel\u0027) :\u003d \u00271\u0027;\nv_setlst(\u0027colsample_bynode\u0027)  :\u003d \u00271\u0027;\nv_setlst(\u0027colsample_bytree\u0027)  :\u003d \u00271\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Num of iteration rounds\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027num_round\u0027) :\u003d \u0027100\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; For regression tasks, the default objective is reg:linear\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027objective\u0027) :\u003d \u0027reg:linear\u0027\n\u003c/code\u003e\u003c/pre\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-264146391",
+      "id": "20230217-230239_997608744",
+      "dateCreated": "2021-07-15T19:21:53+0000",
+      "dateStarted": "2023-02-17T22:58:31+0000",
+      "dateFinished": "2023-02-17T22:58:31+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n### Build a XGBoost model using gblinear booster for predicting YRS_RESIDENCE\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eBuild a XGBoost model using gblinear booster for predicting YRS_RESIDENCE\u003c/h3\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-885845382",
+      "id": "20230217-230239_2022663779",
+      "dateCreated": "2021-07-15T19:48:14+0000",
+      "dateStarted": "2023-02-17T22:58:31+0000",
+      "dateFinished": "2023-02-17T22:58:31+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": " Using the default options",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027)   :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027)   :\u003d \u0027ALGO_XGBOOST\u0027;\n    v_setlst(\u0027booster\u0027)     :\u003d \u0027gblinear\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n        SET_LIST            \u003d\u003e v_setlst);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1990967413",
+      "id": "20230217-230239_520830731",
+      "dateCreated": "2021-07-15T21:14:40+0000",
+      "dateStarted": "2023-02-17T22:58:31+0000",
+      "dateFinished": "2023-02-17T22:58:32+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": " Using specific settings",
+      "text": "%script\n\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027) :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027) :\u003d \u0027ALGO_XGBOOST\u0027;\n    v_setlst(\u0027booster\u0027)   :\u003d \u0027gblinear\u0027;\n    v_setlst(\u0027objective\u0027) :\u003d \u0027reg:linear\u0027;\n    v_setlst(\u0027num_round\u0027) :\u003d \u002720\u0027;\n    v_setlst(\u0027alpha\u0027)     :\u003d \u00270.1\u0027;\n    v_setlst(\u0027eta\u0027)       :\u003d \u00270.3\u0027;\n    v_setlst(\u0027lambda\u0027)    :\u003d \u00270.2\u0027;\n    \n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n        SET_LIST            \u003d\u003e v_setlst);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1264562240",
+      "id": "20230217-230239_1638390084",
+      "dateCreated": "2021-07-15T21:14:18+0000",
+      "dateStarted": "2023-02-17T22:58:32+0000",
+      "dateFinished": "2023-02-17T22:58:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n### Build a XGBoost model using gbtree booster for predicting YRS_RESIDENCE\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eBuild a XGBoost model using gbtree booster for predicting YRS_RESIDENCE\u003c/h3\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1025897406",
+      "id": "20230217-230239_1748096853",
+      "dateCreated": "2021-08-13T18:04:03+0000",
+      "dateStarted": "2023-02-17T22:58:33+0000",
+      "dateFinished": "2023-02-17T22:58:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Use the default options",
+      "text": "%script\n\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027)   :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027)   :\u003d \u0027ALGO_XGBOOST\u0027;\n    v_setlst(\u0027booster\u0027)     :\u003d \u0027gbtree\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n        SET_LIST            \u003d\u003e v_setlst);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1285641209",
+      "id": "20230217-230239_1804474446",
+      "dateCreated": "2021-08-13T18:03:16+0000",
+      "dateStarted": "2023-02-17T22:58:33+0000",
+      "dateFinished": "2023-02-17T22:58:34+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Use specific settings",
+      "text": "%script\n\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027)       :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027)       :\u003d \u0027ALGO_XGBOOST\u0027;\n    v_setlst(\u0027booster\u0027)         :\u003d \u0027gbtree\u0027;\n    v_setlst(\u0027num_round\u0027)       :\u003d \u002720\u0027;\n    v_setlst(\u0027alpha\u0027)           :\u003d \u00270.1\u0027;\n    v_setlst(\u0027eta\u0027)             :\u003d \u00270.3\u0027;\n    v_setlst(\u0027lambda\u0027)          :\u003d \u00271\u0027;\n    v_setlst(\u0027gamma\u0027)           :\u003d \u00270\u0027;\n    v_setlst(\u0027max_delta_step\u0027)  :\u003d \u00270\u0027;\n    v_setlst(\u0027max_depth\u0027)       :\u003d \u00276\u0027;\n    v_setlst(\u0027min_child_weight\u0027):\u003d \u00271\u0027;\n    \n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n        SET_LIST            \u003d\u003e v_setlst);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_143066635",
+      "id": "20230217-230239_767263059",
+      "dateCreated": "2021-08-13T18:03:33+0000",
+      "dateStarted": "2023-02-17T22:58:34+0000",
+      "dateFinished": "2023-02-17T22:58:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n### Build a XGBoost model using dart booster for predicting YRS_RESIDENCE\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eBuild a XGBoost model using dart booster for predicting YRS_RESIDENCE\u003c/h3\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_736503948",
+      "id": "20230217-230239_1913192537",
+      "dateCreated": "2021-08-13T18:53:58+0000",
+      "dateStarted": "2023-02-17T22:58:35+0000",
+      "dateFinished": "2023-02-17T22:58:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027)   :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027)   :\u003d \u0027ALGO_XGBOOST\u0027;\n    v_setlst(\u0027booster\u0027)     :\u003d \u0027dart\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n        SET_LIST            \u003d\u003e v_setlst);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1245346973",
+      "id": "20230217-230239_342161970",
+      "dateCreated": "2021-08-13T18:58:20+0000",
+      "dateStarted": "2023-02-17T22:58:36+0000",
+      "dateFinished": "2023-02-17T22:58:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027)       :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027)       :\u003d \u0027ALGO_XGBOOST\u0027;\n    v_setlst(\u0027booster\u0027)         :\u003d \u0027dart\u0027;\n    v_setlst(\u0027num_round\u0027)       :\u003d \u002720\u0027;\n    v_setlst(\u0027alpha\u0027)           :\u003d \u00270.1\u0027;\n    v_setlst(\u0027eta\u0027)             :\u003d \u00270.3\u0027;\n    v_setlst(\u0027lambda\u0027)          :\u003d \u00271\u0027;\n    v_setlst(\u0027gamma\u0027)           :\u003d \u00270\u0027;\n    v_setlst(\u0027max_delta_step\u0027)  :\u003d \u00270\u0027;\n    v_setlst(\u0027max_depth\u0027)       :\u003d \u00276\u0027;\n    v_setlst(\u0027min_child_weight\u0027):\u003d \u00271\u0027;\n    \n    v_setlst(\u0027one_drop\u0027)        :\u003d \u00270\u0027;\n    v_setlst(\u0027normalize_type\u0027)  :\u003d \u0027tree\u0027;\n    v_setlst(\u0027rate_drop\u0027)       :\u003d \u00270\u0027;\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n        SET_LIST            \u003d\u003e v_setlst);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-360223264",
+      "id": "20230217-230239_255052952",
+      "dateCreated": "2021-08-13T19:17:47+0000",
+      "dateStarted": "2023-02-17T22:58:37+0000",
+      "dateFinished": "2023-02-17T22:58:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display XGBoost model settings",
+      "text": "%sql\n\nSELECT SETTING_NAME, SETTING_VALUE\nFROM   USER_MINING_MODEL_SETTINGS\nWHERE  MODEL_NAME \u003d \u0027XGBOOST_REGRESSION_MODEL\u0027\nORDER BY SETTING_NAME;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 328.7,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "SETTING_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "SETTING_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "SETTING_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "SETTING_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\nALGO_NAME\tALGO_XGBOOST\nODMS_DETAILS\tODMS_ENABLE\nODMS_MISSING_VALUE_TREATMENT\tODMS_MISSING_VALUE_AUTO\nODMS_SAMPLING\tODMS_SAMPLING_DISABLE\nPREP_AUTO\tON\nalpha\t0.1\nbooster\tdart\neta\t0.3\ngamma\t0\nlambda\t1\nmax_delta_step\t0\nmax_depth\t6\nmin_child_weight\t1\nnormalize_type\ttree\nntree_limit\t20\nnum_round\t20\none_drop\t0\nrate_drop\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_807127409",
+      "id": "20230217-230239_2129884468",
+      "dateCreated": "2018-02-06T15:41:25+0000",
+      "dateStarted": "2023-02-17T22:58:38+0000",
+      "dateFinished": "2023-02-17T22:58:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display XGBoost model signature",
+      "text": "%sql\n\nSELECT ATTRIBUTE_NAME, ATTRIBUTE_TYPE\nFROM   USER_MINING_MODEL_ATTRIBUTES\nWHERE  MODEL_NAME \u003d \u0027XGBOOST_REGRESSION_MODEL\u0027\nORDER BY ATTRIBUTE_NAME;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 329.4,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "ATTRIBUTE_NAME",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "ATTRIBUTE_TYPE",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "ATTRIBUTE_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "ATTRIBUTE_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "ATTRIBUTE_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "ATTRIBUTE_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ATTRIBUTE_NAME\tATTRIBUTE_TYPE\nAFFINITY_CARD\tNUMERICAL\nCUST_CREDIT_LIMIT\tNUMERICAL\nCUST_GENDER\tCATEGORICAL\nCUST_INCOME_LEVEL\tCATEGORICAL\nCUST_MARITAL_STATUS\tCATEGORICAL\nCUST_YEAR_OF_BIRTH\tNUMERICAL\nEDUCATION\tCATEGORICAL\nHOUSEHOLD_SIZE\tCATEGORICAL\nOCCUPATION\tCATEGORICAL\nYRS_RESIDENCE\tNUMERICAL\nY_BOX_GAMES\tNUMERICAL\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1924020219",
+      "id": "20230217-230239_1153608059",
+      "dateCreated": "2018-02-06T15:41:25+0000",
+      "dateStarted": "2023-02-17T22:58:38+0000",
+      "dateFinished": "2023-02-17T22:58:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display list of different model views available",
+      "text": "%sql \n\nSELECT VIEW_NAME, VIEW_TYPE \nFROM   USER_MINING_MODEL_VIEWS\nWHERE  MODEL_NAME\u003d\u0027XGBOOST_REGRESSION_MODEL\u0027\nORDER BY VIEW_NAME;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 226.5,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "VIEW_NAME": "string",
+                      "VIEW_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "VIEW_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "VIEW_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "VIEW_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "VIEW_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 209.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "VIEW_NAME\tVIEW_TYPE\nDM$VGXGBOOST_REGRESSION_MODEL\tGlobal Name-Value Pairs\nDM$VIXGBOOST_REGRESSION_MODEL\tXGBoost Attribute Importance\nDM$VSXGBOOST_REGRESSION_MODEL\tComputed Settings\nDM$VWXGBOOST_REGRESSION_MODEL\tModel Build Alerts\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_923824084",
+      "id": "20230217-230239_2009362107",
+      "dateCreated": "2018-02-07T02:11:17+0000",
+      "dateStarted": "2023-02-17T22:58:38+0000",
+      "dateFinished": "2023-02-17T22:58:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View SVM model summary statistics",
+      "text": "%sql \n\nSELECT NAME, NUMERIC_VALUE, STRING_VALUE \nFROM   DM$VGXGBOOST_REGRESSION_MODEL\nORDER BY NAME;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 296.1,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "NAME": "string",
+                      "NUMERIC_VALUE": "string",
+                      "STRING_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "NUMERIC_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "NUMERIC_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "NAME\tNUMERIC_VALUE\tSTRING_VALUE\nNUM_ROWS\t2661\t\nrmse\t0.79431600000000002\t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1785526414",
+      "id": "20230217-230239_1719811031",
+      "dateCreated": "2018-02-07T02:13:04+0000",
+      "dateStarted": "2023-02-17T22:58:39+0000",
+      "dateFinished": "2023-02-17T22:58:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View XGBoost attribute importance",
+      "text": "%sql \n\nSELECT *\nFROM DM$VIXGBOOST_REGRESSION_MODEL\nORDER BY 1;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "PNAME": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_SUBNAME": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "GAIN": "string",
+                      "COVER": "string",
+                      "FREQUENCY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "FEATURE_EXPRESSION",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "COEFFICIENT",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "COEFFICIENT",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "FEATURE_EXPRESSION",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "PNAME\tATTRIBUTE_NAME\tATTRIBUTE_SUBNAME\tATTRIBUTE_VALUE\tGAIN\tCOVER\tFREQUENCY\n\tOCCUPATION\t\t?\t0.005972660987928691\t0.01239565691262031\t0.016908212560386472\n\tHOUSEHOLD_SIZE\t\t4-5\t0.005800975708278101\t0.0021448521958520148\t0.00966183574879227\n\tCUST_INCOME_LEVEL\t\tA: Below 30,000\t0.003996638350101698\t0.008455483989869943\t0.008454106280193236\n\tOCCUPATION\t\tTechSup\t0.003094512241660247\t0.02095917790198502\t0.013285024154589372\n\tEDUCATION\t\tPresch.\t0.0011779968193532866\t8.007448197847522E-4\t0.0012077294685990338\n\tEDUCATION\t\t5th-6th\t3.114277515463131E-4\t5.973810560298945E-4\t0.0024154589371980675\n\tAFFINITY_CARD\t\t\t0.006548384464964802\t0.02125151331238263\t0.033816425120772944\n\tEDUCATION\t\tAssoc-A\t0.0018435035632960468\t0.011820518768251104\t0.012077294685990338\n\tEDUCATION\t\tMasters\t0.004336248060678705\t0.023866644211917754\t0.018115942028985508\n\tCUST_INCOME_LEVEL\t\tK: 250,000 - 299,999\t0.007221890190707791\t0.012205003384100131\t0.024154589371980676\n\tCUST_MARITAL_STATUS\t\tSepar.\t0.001817684845620064\t0.008763707194310898\t0.008454106280193236\n\tHOUSEHOLD_SIZE\t\t1\t9.060422356471684E-4\t0.003345969425529143\t0.008454106280193236\n\tOCCUPATION\t\tOther\t0.0036221066580352066\t0.02195375380909862\t0.013285024154589372\n\tCUST_MARITAL_STATUS\t\tMabsent\t0.005089926787855541\t0.01021267401106426\t0.014492753623188406\n\tOCCUPATION\t\tTransp.\t0.0022875830059722047\t0.024406829209391592\t0.008454106280193236\n\tHOUSEHOLD_SIZE\t\t9+\t0.0038742048391980487\t0.007356048642070243\t0.012077294685990338\n\tOCCUPATION\t\tCrafts\t5.992640029714159E-4\t0.004257928803617333\t0.007246376811594203\n\tEDUCATION\t\tPhD\t0.0015205207701370874\t0.03227446481965765\t0.006038647342995169\n\tCUST_CREDIT_LIMIT\t\t\t0.015388610423459561\t0.03452099889738709\t0.10265700483091787\n\tOCCUPATION\t\tHandler\t0.002280586577085671\t0.021553381399206244\t0.006038647342995169\n\tOCCUPATION\t\tHouse-s\t5.17923542503577E-4\t0.0010422392892436457\t0.0012077294685990338\n\tCUST_INCOME_LEVEL\t\tE: 90,000 - 109,999\t7.94101157209614E-4\t0.013876399317460368\t0.010869565217391304\n\tOCCUPATION\t\tExec.\t0.007376561510871933\t0.03543931339309262\t0.018115942028985508\n\tCUST_GENDER\t\tF\t0.018808876893849715\t0.037237811678799644\t0.03260869565217391\n\tCUST_INCOME_LEVEL\t\tH: 150,000 - 169,999\t0.0049927746451710695\t0.015840130661218213\t0.016908212560386472\n\tCUST_YEAR_OF_BIRTH\t\t\t0.8117898744616394\t0.3877892770100443\t0.27294685990338163\n\tCUST_INCOME_LEVEL\t\tI: 170,000 - 189,999\t0.003938330973995526\t0.002688214752134525\t0.013285024154589372\n\tOCCUPATION\t\tCleric.\t0.004182599830710744\t0.0034349410721718934\t0.008454106280193236\n\tOCCUPATION\t\tMachine\t0.0025438816925774338\t0.005840353090334819\t0.010869565217391304\n\tEDUCATION\t\t7th-8th\t0.005218333571743351\t0.013193224173596392\t0.013285024154589372\n\tEDUCATION\t\tBach.\t0.004756412450494303\t0.004880730330116585\t0.01570048309178744\n\tEDUCATION\t\t\u003c Bach.\t0.0018842118408510097\t0.019332267791946158\t0.016908212560386472\n\tOCCUPATION\t\tFarming\t0.0050638631940495915\t0.028502702513766773\t0.016908212560386472\n\tCUST_INCOME_LEVEL\t\tL: 300,000 and above\t0.003968659247879749\t0.004931571271055299\t0.021739130434782608\n\tEDUCATION\t\t10th\t0.0030493006420069893\t0.0036128843654573937\t0.008454106280193236\n\tCUST_MARITAL_STATUS\t\tNeverM\t0.0023797488294762343\t0.007664271846511199\t0.012077294685990338\n\tHOUSEHOLD_SIZE\t\t6-8\t0.001338136164624228\t0.00474091774253512\t0.012077294685990338\n\tCUST_INCOME_LEVEL\t\tF: 110,000 - 129,999\t0.004397118471903666\t0.019891518142272017\t0.026570048309178744\n\tCUST_INCOME_LEVEL\t\tD: 70,000 - 89,999\t0.004226929507615794\t0.013294906055473822\t0.016908212560386472\n\tEDUCATION\t\t9th\t0.0014410739514434923\t0.0028756907218460345\t0.007246376811594203\n\tEDUCATION\t\tAssoc-V\t4.7752412850743674E-4\t2.0018620494618804E-4\t0.0012077294685990338\n\tEDUCATION\t\tProfsc\t0.004418372462615677\t0.02964026856727051\t0.014492753623188406\n\tEDUCATION\t\t1st-4th\t2.43775380640976E-4\t0.0021130766077653183\t0.006038647342995169\n\tHOUSEHOLD_SIZE\t\t2\t0.004873826636529085\t0.016278633776814624\t0.018115942028985508\n\tCUST_INCOME_LEVEL\t\tB: 30,000 - 49,999\t0.007085795311527471\t0.007893056080735414\t0.01570048309178744\n\tCUST_INCOME_LEVEL\t\tG: 130,000 - 149,999\t0.005343409761230785\t0.008639782400772782\t0.022946859903381644\n\tCUST_MARITAL_STATUS\t\tDivorc.\t0.002267148388150765\t0.006828573879831081\t0.01570048309178744\n\tOCCUPATION\t\tSales\t0.0017982143553880062\t0.014613592961071727\t0.010869565217391304\n\tEDUCATION\t\t11th\t6.703373915565492E-4\t0.0014743872872227182\t0.006038647342995169\n\tCUST_MARITAL_STATUS\t\tWidowed\t8.839375961226249E-4\t7.085956143333323E-4\t0.0024154589371980675\n\tCUST_INCOME_LEVEL\t\tC: 50,000 - 69,999\t0.0015781777226151416\t0.0023577486360328815\t0.006038647342995169\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1249469250",
+      "id": "20230217-230239_62765286",
+      "dateCreated": "2018-02-07T02:14:43+0000",
+      "dateStarted": "2023-02-17T22:58:39+0000",
+      "dateFinished": "2023-02-17T22:58:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Apply XGBoost model to predict YRS_RESIDENCE with Prediction_Details",
+      "text": "%sql\n\n-- Make predictions with upper and lower bounds and include explanatory prediction details\nSELECT CUST_ID,\n       round(PREDICTION_YRS_RES,3) PRED_YRS_RES,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),\u0027rank\u003d\"1\"/\u003e\u0027) FIRST_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),\u0027rank\u003d\"2\"/\u003e\u0027) SECOND_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),\u0027rank\u003d\"3\"/\u003e\u0027) THIRD_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute4\",17,100)),\u0027rank\u003d\"4\"/\u003e\u0027) FOURTH_ATTRIBUTE\nFROM (SELECT CUST_ID,\n                    PREDICTION(XGBOOST_REGRESSION_MODEL USING *) PREDICTION_YRS_RES,\n                    PREDICTION_DETAILS(XGBOOST_REGRESSION_MODEL USING *) PD\n      FROM  TEST_DATA_V\n      ORDER BY CUST_ID) OUT,\n     XMLTABLE(\u0027/Details\u0027\n              PASSING OUT.PD\n              COLUMNS \n              \"Attribute1\" XMLType PATH \u0027Attribute[1]\u0027,\n              \"Attribute2\" XMLType PATH \u0027Attribute[2]\u0027,\n              \"Attribute3\" XMLType PATH \u0027Attribute[3]\u0027,\n              \"Attribute4\" XMLType PATH \u0027Attribute[4]\u0027) OUTPRED;\nFETCH FIRST 10 ROWS ONLY;\n       ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PRED_YRS_RES": "string",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string",
+                      "FOURTH_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "CUST_ID",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "PRED_YRS_RES",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "PR",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "PR",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RES\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\tFOURTH_ATTRIBUTE\n100001\t4.98\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1941\" weight\u003d\".671\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".042\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"1500\" weight\u003d\".006\" \t\"OCCUPATION\" actualValue\u003d\"Exec.\" weight\u003d\"-.003\" \n100003\t3.342\t\"OCCUPATION\" actualValue\u003d\"Sales\" weight\u003d\".069\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".029\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"NeverM\" weight\u003d\".001\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"7000\" weight\u003d\"-.029\" \n100004\t5.626\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1953\" weight\u003d\".694\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".062\" \t\"OCCUPATION\" actualValue\u003d\"Sales\" weight\u003d\".039\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".031\" \n100008\t4.184\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1962\" weight\u003d\".508\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".082\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"NeverM\" weight\u003d\".016\" \t\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.069\" \n100012\t4.744\t\"EDUCATION\" actualValue\u003d\"PhD\" weight\u003d\".522\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"H: 150,000 - 169,999\" weight\u003d\".154\" \t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1968\" weight\u003d\".153\" \t\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".122\" \n100014\t5.655\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1954\" weight\u003d\".794\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".05\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".045\" \t\"OCCUPATION\" actualValue\u003d\"Cleric.\" weight\u003d\".004\" \n100015\t5.022\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1959\" weight\u003d\".603\" \t\"OCCUPATION\" actualValue\u003d\"Exec.\" weight\u003d\".161\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".08\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"L: 300,000 and above\" weight\u003d\".002\" \n100016\t2.915\t\"OCCUPATION\" actualValue\u003d\"Exec.\" weight\u003d\".03\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"7000\" weight\u003d\"-.012\" \t\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.038\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"K: 250,000 - 299,999\" weight\u003d\"-.043\" \n100017\t2.838\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1935\" weight\u003d\".213\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Mabsent\" weight\u003d\".011\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"I: 170,000 - 189,999\" weight\u003d\".01\" \t\"EDUCATION\" actualValue\u003d\"\u0026lt; Bach.\" weight\u003d\"-.019\" \n100020\t5.695\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1946\" weight\u003d\".682\" \t\"EDUCATION\" actualValue\u003d\"Masters\" weight\u003d\".039\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".027\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"9000\" weight\u003d\".003\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1743718261",
+      "id": "20230217-230239_1390755995",
+      "dateCreated": "2018-02-06T15:44:16+0000",
+      "dateStarted": "2023-02-17T22:58:39+0000",
+      "dateFinished": "2023-02-17T22:58:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show XGBoost model predictions vs actuals",
+      "text": "%sql\n\n-- Show predictions vs. actuals.\n\nSELECT CUST_ID,\n    round(PREDICTION(XGBOOST_REGRESSION_MODEL USING *), 1) PRED_YRS_RESIDENCE,\n    YRS_RESIDENCE ACTUAL_YRS_RESIDENCE\nFROM  TEST_DATA_V\nWHERE CUST_ID \u003c\u003d 100030\nORDER BY CUST_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "stacked": false
+                },
+                "scatterChart": {
+                  "xAxis": {
+                    "name": "PRED_YRS_RESIDENCE",
+                    "index": 1.0,
+                    "aggr": "sum"
+                  },
+                  "yAxis": {
+                    "name": "ACTUAL_YRS_RESIDENCE",
+                    "index": 2.0,
+                    "aggr": "sum"
+                  }
+                },
+                "lineChart": {},
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PRED_YRS_RESIDENCE",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "ACTUAL_YRS_RESIDENCE",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PRED_YRS_RESIDENCE": "string",
+                      "ACTUAL_YRS_RESIDENCE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "keys": [],
+              "groups": [],
+              "values": []
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RESIDENCE\tACTUAL_YRS_RESIDENCE\n100001\t5\t3\n100003\t3.3\t6\n100004\t5.6\t5\n100008\t4.2\t5\n100012\t4.7\t4\n100014\t5.7\t5\n100015\t5\t6\n100016\t2.9\t4\n100017\t2.8\t5\n100020\t5.7\t6\n100023\t6.4\t8\n100027\t3.4\t3\n100028\t3.2\t4\n100030\t2.2\t2\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_906514529",
+      "id": "20230217-230239_100687306",
+      "dateCreated": "2019-07-26T14:56:47+0000",
+      "dateStarted": "2023-02-17T22:58:40+0000",
+      "dateFinished": "2023-02-17T22:58:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Model quality statistics on the TEST data",
+      "text": "%sql\n\nselect ROUND(R2,6) COEF_OF_DETERMINATION_R2, \n       ROUND(MAE,6) MEAN_ABSOLUTE_ERROR, \n       ROUND(MSE,6) MEAN_SQUARED_ERROR, \n       ROUND(SQRT(MSE),6) ROOT_MEAN_SQUARED_ERROR\n       FROM \n       (SELECT AVG(ABS(PRED_YRS_RESIDENCE - ACTUAL_YRS_RESIDENCE)) MAE,\n               AVG(POWER(PRED_YRS_RESIDENCE - ACTUAL_YRS_RESIDENCE,2)) MSE,\n               1-(SUM(POWER(ACTUAL_YRS_RESIDENCE - PRED_YRS_RESIDENCE,2)))/(SUM(POWER(ACTUAL_YRS_RESIDENCE - \n                 (SELECT AVG(ROUND(PREDICTION(XGBOOST_REGRESSION_MODEL USING *), 1)) FROM TEST_DATA_V),2))) R2              \n                 FROM (SELECT CUST_ID,\n                            ROUND(PREDICTION(XGBOOST_REGRESSION_MODEL USING *), 1) PRED_YRS_RESIDENCE,\n                            YRS_RESIDENCE ACTUAL_YRS_RESIDENCE\n                       FROM TEST_DATA_V))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 114.633,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COEF_OF_DETERMINATION_R2": "string",
+                      "MEAN_ABSOLUTE_ERROR": "string",
+                      "MEAN_SQUARED_ERROR": "string",
+                      "ROOT_MEAN_SQUARED_ERROR": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COEF_OF_DETERMINATION_R2\tMEAN_ABSOLUTE_ERROR\tMEAN_SQUARED_ERROR\tROOT_MEAN_SQUARED_ERROR\n0.642523\t0.747689\t1.264307\t1.124414\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1169435670",
+      "id": "20230217-230239_1898680926",
+      "dateCreated": "2021-07-15T14:42:27+0000",
+      "dateStarted": "2023-02-17T22:58:40+0000",
+      "dateFinished": "2023-02-17T22:58:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Plot XGBoost model predictions vs actuals grouped by HOUSE_HOLD_SIZE",
+      "text": "%sql\n\n-- Show predictions vs. actuals in a scatter plot grouped by HOUSE_HOLD_SIZE.  \n-- Click the scatter plot icon and drag PRED_YRS_RESIDENCE to xAxis, \n--   ACTUAL_YRS_RESIDENCE to yAxis and HOUSEHOLD_SIZE to group.\n-- Clicking on the labels of each Household size, we can evaluate the model prediction \n--   quality for each different set\n\nSELECT CUST_ID,\n    round(PREDICTION(XGBOOST_REGRESSION_MODEL USING *), 1) PRED_YRS_RESIDENCE,\n    YRS_RESIDENCE ACTUAL_YRS_RESIDENCE, CUST_GENDER, HOUSEHOLD_SIZE\nFROM TEST_DATA_V\nORDER BY CUST_ID;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "scatterChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "stacked": false
+                },
+                "scatterChart": {
+                  "xAxis": {
+                    "name": "ACTUAL_YRS_RESIDENCE",
+                    "index": 2.0,
+                    "aggr": "sum"
+                  },
+                  "yAxis": {
+                    "name": "PRED_YRS_RESIDENCE",
+                    "index": 1.0,
+                    "aggr": "sum"
+                  },
+                  "group": {
+                    "name": "HOUSEHOLD_SIZE",
+                    "index": 4.0,
+                    "aggr": "sum"
+                  }
+                },
+                "lineChart": {}
+              },
+              "keys": [],
+              "groups": [],
+              "values": []
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RESIDENCE\tACTUAL_YRS_RESIDENCE\tCUST_GENDER\tHOUSEHOLD_SIZE\n100001\t5\t3\tF\t2\n100003\t3.3\t6\tM\t2\n100004\t5.6\t5\tF\t2\n100008\t4.2\t5\tM\t2\n100012\t4.7\t4\tM\t3\n100014\t5.7\t5\tF\t2\n100015\t5\t6\tM\t2\n100016\t2.9\t4\tF\t9+\n100017\t2.8\t5\tF\t9+\n100020\t5.7\t6\tF\t9+\n100023\t6.4\t8\tM\t3\n100027\t3.4\t3\tM\t3\n100028\t3.2\t4\tF\t2\n100030\t2.2\t2\tF\t2\n100032\t4.3\t4\tM\t2\n100033\t4.9\t5\tM\t9+\n100039\t3.4\t3\tM\t3\n100041\t1.7\t2\tF\t1\n100045\t3.4\t5\tM\t3\n100046\t4.5\t5\tM\t3\n100050\t2.4\t2\tM\t9+\n100051\t4.8\t6\tF\t2\n100058\t5.6\t6\tM\t3\n100059\t6.3\t6\tM\t2\n100060\t4.2\t6\tF\t9+\n100061\t3.9\t4\tM\t9+\n100065\t7.3\t5\tM\t2\n100066\t5.6\t6\tM\t3\n100068\t6.5\t6\tM\t3\n100069\t5.5\t5\tF\t9+\n100073\t5\t4\tM\t3\n100077\t4.2\t4\tF\t4-5\n100079\t2.5\t3\tF\t6-8\n100091\t4.4\t4\tM\t3\n100095\t4.3\t4\tM\t3\n100098\t2.9\t3\tM\t1\n100101\t3.7\t3\tM\t3\n100103\t3\t3\tM\t1\n100108\t5.5\t5\tM\t3\n100109\t5.7\t7\tM\t3\n100111\t3.1\t2\tM\t2\n100112\t5.4\t6\tM\t3\n100116\t3.9\t4\tF\t4-5\n100122\t5.4\t4\tF\t4-5\n100123\t5\t3\tF\t9+\n100128\t3.9\t3\tF\t4-5\n100130\t5.1\t5\tM\t3\n100132\t2.5\t4\tF\t2\n100134\t4\t2\tF\t2\n100136\t3.4\t4\tM\t2\n100139\t5.9\t6\tM\t3\n100141\t3\t3\tM\t3\n100144\t4.4\t4\tM\t2\n100145\t2.8\t3\tM\t1\n100147\t6.7\t6\tM\t3\n100148\t4.1\t3\tF\t2\n100152\t3\t3\tF\t4-5\n100153\t2.9\t3\tM\t1\n100155\t3.1\t3\tM\t3\n100158\t2.2\t2\tM\t2\n100159\t2\t3\tM\t6-8\n100162\t5.5\t5\tM\t2\n100166\t4.1\t4\tF\t4-5\n100167\t1.5\t1\tF\t2\n100168\t2.7\t3\tF\t9+\n100169\t2.8\t3\tF\t4-5\n100173\t5.5\t4\tM\t3\n100178\t5.7\t5\tM\t3\n100179\t5.8\t7\tM\t3\n100185\t6.2\t8\tM\t3\n100188\t1.3\t1\tF\t1\n100189\t1.5\t1\tM\t1\n100191\t3.3\t3\tM\t3\n100193\t3.5\t1\tM\t1\n100194\t1.9\t2\tF\t1\n100200\t1.7\t2\tM\t1\n100201\t1.9\t5\tM\t1\n100202\t3\t3\tF\t2\n100203\t3.1\t3\tM\t3\n100207\t3.8\t4\tF\t1\n100213\t2.5\t3\tF\t9+\n100216\t6.4\t6\tM\t2\n100217\t5.5\t8\tM\t2\n100223\t2.7\t3\tF\t2\n100227\t3\t3\tM\t1\n100230\t5.3\t6\tM\t3\n100231\t1.9\t2\tM\t6-8\n100233\t6\t6\tM\t3\n100239\t4.6\t4\tM\t3\n100240\t2\t2\tM\t1\n100241\t4.3\t4\tM\t3\n100242\t1.8\t1\tF\t2\n100244\t6.1\t6\tM\t3\n100247\t3.9\t4\tF\t4-5\n100251\t3.6\t2\tM\t2\n100252\t4\t2\tF\t9+\n100256\t5.7\t9\tM\t3\n100259\t3.4\t3\tM\t3\n100261\t3.7\t3\tM\t3\n100263\t3.6\t4\tM\t3\n100264\t2.4\t2\tM\t9+\n100266\t6.9\t7\tM\t3\n100267\t5.6\t6\tM\t3\n100268\t4.8\t5\tM\t3\n100271\t4.4\t5\tM\t3\n100272\t4.4\t4\tM\t3\n100274\t4.6\t5\tM\t3\n100275\t4.3\t4\tM\t2\n100276\t7.1\t7\tM\t3\n100277\t6.1\t6\tF\t9+\n100279\t4.3\t5\tM\t3\n100280\t4.2\t4\tM\t2\n100282\t4.1\t4\tM\t3\n100283\t5.9\t6\tM\t3\n100284\t1.8\t2\tF\t1\n100286\t4.3\t4\tM\t3\n100288\t2\t1\tM\t1\n100292\t1.5\t2\tM\t6-8\n100293\t4.8\t5\tM\t3\n100297\t1.2\t1\tM\t1\n100306\t2.4\t3\tF\t2\n100308\t4.3\t4\tF\t2\n100309\t7.3\t8\tM\t3\n100310\t5.5\t6\tM\t3\n100312\t3.3\t3\tM\t1\n100314\t4.4\t4\tM\t3\n100315\t5.6\t5\tF\t9+\n100317\t4.9\t7\tM\t6-8\n100323\t5.9\t5\tM\t2\n100325\t3.1\t4\tF\t9+\n100328\t6\t5\tM\t2\n100331\t3.1\t3\tF\t1\n100332\t6\t6\tM\t3\n100333\t5.3\t5\tM\t3\n100336\t3.3\t3\tM\t9+\n100338\t5.9\t6\tF\t2\n100340\t3\t4\tM\t2\n100346\t3\t3\tM\t1\n100353\t2.9\t1\tM\t2\n100355\t4.3\t6\tM\t3\n100358\t2.7\t3\tF\t9+\n100359\t4.2\t5\tM\t2\n100360\t2.3\t2\tM\t9+\n100362\t1.6\t2\tF\t1\n100363\t5.9\t10\tM\t3\n100364\t3\t4\tF\t9+\n100366\t5.4\t3\tF\t2\n100367\t3.9\t5\tF\t2\n100369\t3.2\t3\tF\t2\n100371\t4.1\t4\tF\t4-5\n100372\t7.6\t10\tM\t3\n100373\t5.5\t6\tF\t2\n100379\t3.9\t4\tF\t9+\n100380\t4.1\t4\tM\t1\n100381\t1.7\t2\tM\t1\n100382\t5.3\t4\tM\t2\n100385\t2.1\t2\tM\t6-8\n100390\t6.4\t5\tM\t3\n100391\t1.5\t1\tM\t2\n100392\t2.7\t3\tF\t1\n100393\t5.6\t5\tF\t2\n100395\t5.3\t6\tF\t4-5\n100396\t5.7\t7\tF\t2\n100397\t3.6\t3\tM\t3\n100403\t3.1\t3\tM\t3\n100404\t6.1\t5\tM\t3\n100407\t3.2\t3\tM\t3\n100410\t3.1\t4\tM\t2\n100411\t4.4\t4\tM\t2\n100418\t6.3\t8\tM\t3\n100419\t1.4\t1\tM\t1\n100420\t5.3\t5\tM\t3\n100422\t5.1\t3\tF\t4-5\n100423\t5.2\t5\tF\t6-8\n100426\t3.4\t3\tF\t2\n100427\t2.9\t3\tM\t1\n100429\t4.2\t4\tM\t2\n100432\t2.8\t3\tM\t1\n100434\t4.4\t4\tM\t2\n100437\t7.5\t7\tM\t3\n100438\t3.7\t3\tF\t4-5\n100443\t6.1\t7\tM\t3\n100444\t2\t2\tM\t3\n100445\t6\t4\tM\t3\n100446\t6\t5\tM\t3\n100447\t1.9\t3\tM\t1\n100448\t3\t3\tM\t3\n100449\t3.7\t4\tF\t9+\n100454\t1.3\t2\tF\t1\n100456\t5\t6\tM\t2\n100458\t2\t2\tM\t1\n100459\t3.3\t4\tM\t3\n100461\t2.1\t1\tM\t1\n100463\t2.8\t3\tF\t1\n100464\t4.6\t4\tM\t3\n100465\t2.9\t3\tM\t3\n100468\t3.1\t3\tM\t2\n100475\t2\t3\tF\t1\n100477\t3.3\t3\tM\t3\n100479\t4.6\t4\tM\t3\n100480\t3.3\t3\tM\t3\n100481\t5.5\t5\tM\t9+\n100482\t4.9\t4\tM\t3\n100484\t2\t2\tF\t1\n100485\t1.5\t1\tM\t1\n100486\t4\t4\tF\t4-5\n100487\t1.9\t2\tM\t1\n100488\t6.6\t6\tM\t2\n100490\t4.3\t5\tM\t3\n100495\t3.1\t3\tF\t9+\n100497\t5.9\t7\tM\t3\n100498\t3.9\t4\tM\t2\n100501\t2.1\t3\tM\t6-8\n100502\t4.2\t4\tM\t3\n100503\t3.2\t3\tM\t2\n100504\t1.2\t2\tF\t1\n100505\t1.6\t2\tF\t2\n100506\t3.8\t4\tM\t2\n100508\t4.9\t5\tM\t3\n100511\t5.5\t6\tM\t1\n100512\t6.2\t6\tM\t2\n100514\t1.6\t2\tF\t1\n100515\t4\t4\tF\t2\n100516\t5.2\t6\tM\t3\n100519\t3.7\t4\tM\t2\n100522\t6\t4\tM\t3\n100524\t3.3\t5\tM\t3\n100527\t4.6\t5\tM\t3\n100528\t6.8\t6\tM\t3\n100540\t6.5\t5\tM\t2\n100541\t4.5\t5\tM\t3\n100546\t5.8\t6\tF\t2\n100548\t2.6\t3\tF\t1\n100552\t2.6\t5\tF\t1\n100553\t3.4\t3\tM\t3\n100555\t2\t2\tM\t6-8\n100556\t3.1\t4\tM\t3\n100557\t3.2\t3\tF\t2\n100562\t5.2\t5\tF\t2\n100563\t5.4\t6\tM\t2\n100564\t7.7\t8\tF\t2\n100568\t1.5\t1\tF\t1\n100569\t4.3\t6\tM\t3\n100570\t5.3\t6\tM\t9+\n100571\t3.1\t2\tF\t4-5\n100572\t2.6\t1\tF\t9+\n100573\t7\t9\tM\t3\n100575\t5.4\t5\tF\t2\n100576\t4.3\t4\tM\t1\n100579\t4.6\t4\tF\t4-5\n100581\t2.8\t3\tF\t2\n100583\t1.4\t2\tM\t3\n100584\t3.4\t5\tM\t1\n100585\t1.9\t3\tM\t3\n100587\t5.7\t5\tF\t9+\n100589\t2\t2\tM\t1\n100590\t2.3\t3\tM\t2\n100591\t3.8\t4\tF\t2\n100593\t4.5\t4\tM\t3\n100595\t5.4\t5\tM\t3\n100596\t3.4\t4\tM\t9+\n100597\t3.1\t4\tM\t3\n100599\t4.3\t4\tM\t6-8\n100602\t5.9\t6\tM\t2\n100608\t1.6\t2\tM\t1\n100612\t3.6\t4\tM\t3\n100614\t0.7\t0\tM\t1\n100615\t4.5\t4\tF\t9+\n100620\t5.9\t5\tM\t3\n100621\t6.3\t5\tM\t3\n100623\t1.9\t2\tF\t1\n100625\t2.9\t5\tM\t2\n100630\t1.3\t2\tM\t1\n100632\t5.1\t5\tM\t3\n100635\t4.9\t7\tM\t3\n100638\t5.3\t5\tF\t2\n100640\t3.1\t3\tF\t9+\n100641\t4.3\t4\tM\t3\n100644\t6.3\t6\tM\t3\n100647\t4.1\t3\tF\t4-5\n100657\t0.5\t0\tF\t1\n100659\t2.2\t1\tF\t9+\n100662\t5\t6\tM\t3\n100663\t2.8\t2\tF\t1\n100668\t4.7\t5\tM\t3\n100669\t5.3\t4\tM\t3\n100671\t2\t2\tM\t2\n100673\t5.1\t6\tM\t3\n100676\t5\t8\tF\t4-5\n100677\t4.3\t4\tM\t3\n100678\t1.9\t2\tF\t1\n100679\t2.1\t8\tM\t3\n100682\t2\t2\tM\t1\n100684\t1.9\t1\tM\t1\n100686\t5.2\t5\tM\t3\n100691\t4.3\t4\tM\t3\n100693\t4.3\t5\tM\t3\n100697\t4.2\t4\tM\t3\n100698\t4.7\t5\tM\t3\n100703\t2.7\t3\tF\t9+\n100707\t3.4\t3\tM\t3\n100708\t5.6\t6\tF\t2\n100715\t2.8\t3\tF\t2\n100719\t5.4\t4\tF\t4-5\n100722\t5.3\t4\tM\t2\n100724\t3.3\t4\tM\t2\n100728\t1.2\t2\tF\t1\n100729\t4.3\t4\tM\t3\n100730\t0.9\t2\tM\t1\n100733\t6.5\t7\tM\t3\n100735\t5.1\t5\tF\t9+\n100736\t3.4\t3\tM\t1\n100737\t1.9\t2\tF\t2\n100739\t4.1\t4\tM\t3\n100740\t5.1\t7\tM\t3\n100742\t1.1\t1\tF\t1\n100744\t3.5\t4\tF\t9+\n100748\t3.1\t3\tM\t6-8\n100752\t6.1\t6\tM\t3\n100757\t3\t3\tM\t2\n100758\t4.2\t4\tM\t3\n100760\t4.6\t4\tM\t3\n100762\t5.6\t4\tM\t3\n100767\t6\t6\tM\t3\n100768\t2.1\t2\tM\t2\n100769\t3.4\t3\tF\t4-5\n100771\t5.1\t6\tF\t2\n100772\t3.2\t2\tF\t4-5\n100773\t1.7\t2\tF\t1\n100775\t4.4\t4\tM\t3\n100776\t3.9\t2\tM\t3\n100780\t5.9\t7\tM\t3\n100783\t3.3\t3\tM\t3\n100784\t3.1\t3\tM\t6-8\n100785\t1.9\t2\tF\t1\n100789\t4.3\t4\tM\t9+\n100790\t5.9\t5\tM\t3\n100791\t3.6\t3\tF\t4-5\n100794\t2.1\t2\tF\t1\n100796\t5.3\t4\tM\t3\n100797\t3.4\t2\tM\t2\n100800\t4.5\t5\tM\t3\n100802\t2.8\t3\tF\t9+\n100807\t3.8\t4\tF\t9+\n100811\t4.4\t3\tF\t2\n100812\t4.6\t5\tM\t3\n100813\t4.5\t6\tF\t6-8\n100816\t4.3\t4\tF\t4-5\n100819\t1.5\t1\tM\t1\n100824\t2.3\t3\tF\t9+\n100825\t2\t2\tF\t2\n100826\t1.6\t2\tF\t1\n100828\t5.3\t5\tF\t2\n100829\t3.8\t4\tF\t9+\n100830\t0.4\t1\tF\t1\n100833\t1.5\t2\tF\t6-8\n100835\t3.5\t4\tM\t3\n100836\t2.7\t2\tM\t3\n100837\t1.6\t1\tF\t1\n100847\t3.2\t3\tM\t2\n100850\t4.2\t4\tM\t3\n100853\t5.9\t4\tM\t3\n100856\t5.6\t5\tF\t9+\n100858\t3.2\t3\tM\t1\n100859\t1.7\t1\tM\t1\n100864\t0.7\t0\tF\t1\n100868\t4.2\t4\tM\t3\n100870\t3.1\t3\tF\t2\n100872\t3.4\t4\tM\t3\n100874\t5\t5\tF\t4-5\n100875\t5.6\t5\tM\t3\n100878\t5.5\t6\tM\t3\n100881\t4.1\t4\tM\t2\n100882\t2.1\t3\tM\t2\n100884\t3.6\t2\tM\t3\n100885\t1.3\t1\tM\t6-8\n100890\t7.1\t6\tF\t9+\n100891\t6.2\t7\tM\t3\n100892\t3.8\t3\tM\t2\n100893\t3.9\t4\tF\t2\n100894\t3.8\t1\tM\t2\n100896\t1.9\t2\tF\t1\n100897\t5.5\t7\tM\t3\n100899\t5.9\t4\tM\t2\n100901\t5.5\t6\tF\t2\n100907\t3.3\t3\tM\t3\n100908\t3.3\t5\tM\t3\n100912\t3.9\t4\tF\t4-5\n100914\t4.3\t4\tM\t1\n100920\t4.2\t4\tM\t3\n100921\t3.5\t6\tM\t3\n100922\t3.6\t4\tM\t2\n100923\t4.2\t4\tM\t3\n100925\t1.8\t2\tM\t1\n100928\t4.3\t4\tM\t3\n100929\t2.1\t2\tF\t1\n100930\t0.9\t0\tF\t2\n100931\t5.5\t6\tM\t3\n100933\t5.8\t7\tM\t3\n100935\t2\t2\tF\t2\n100936\t5.4\t3\tM\t3\n100937\t2.4\t4\tM\t2\n100938\t3.6\t1\tM\t1\n100939\t4.3\t4\tM\t3\n100945\t3.1\t3\tM\t6-8\n100951\t5.1\t5\tM\t9+\n100954\t3.9\t4\tF\t4-5\n100955\t5.7\t3\tM\t3\n100956\t5.6\t6\tM\t3\n100957\t2\t2\tM\t2\n100964\t2.6\t2\tF\t2\n100966\t3.2\t4\tF\t4-5\n100969\t2.9\t2\tF\t9+\n100971\t4.3\t3\tM\t3\n100972\t6.8\t6\tM\t3\n100974\t3.9\t4\tF\t9+\n100978\t4.2\t5\tM\t3\n100980\t5.6\t5\tM\t3\n100982\t7.3\t10\tM\t3\n100985\t5.8\t6\tM\t3\n100986\t4.3\t5\tM\t3\n100988\t5.7\t7\tM\t3\n100996\t3.9\t4\tM\t2\n100998\t4.2\t4\tM\t3\n101000\t5.6\t7\tM\t3\n101004\t1.7\t2\tM\t1\n101010\t4.5\t6\tM\t3\n101011\t5.1\t6\tM\t3\n101012\t4.4\t4\tM\t3\n101021\t2.9\t3\tF\t9+\n101022\t3.7\t5\tM\t3\n101028\t2\t2\tM\t3\n101034\t3.7\t4\tM\t9+\n101037\t1.8\t2\tM\t2\n101039\t7.5\t10\tM\t3\n101042\t3.9\t7\tM\t3\n101043\t3.1\t3\tF\t9+\n101046\t3.5\t3\tF\t2\n101048\t3\t3\tF\t4-5\n101052\t2\t2\tF\t1\n101053\t2.7\t3\tF\t1\n101054\t4.2\t5\tM\t3\n101056\t3.2\t3\tM\t6-8\n101057\t5.1\t3\tF\t4-5\n101058\t5.8\t5\tF\t9+\n101060\t1.8\t2\tM\t1\n101061\t2\t2\tF\t9+\n101062\t1\t0\tM\t1\n101064\t1.4\t1\tM\t2\n101065\t4.2\t4\tM\t2\n101069\t3\t3\tF\t9+\n101070\t2.6\t3\tF\t2\n101071\t4.6\t5\tM\t2\n101073\t4.3\t4\tM\t3\n101075\t4.6\t4\tM\t3\n101078\t8.2\t6\tM\t3\n101083\t4.4\t8\tM\t9+\n101086\t6.6\t7\tM\t3\n101092\t4.3\t4\tF\t9+\n101094\t1.5\t1\tF\t9+\n101095\t1.3\t2\tF\t1\n101097\t6.1\t6\tF\t6-8\n101102\t5.5\t5\tF\t2\n101103\t4.9\t7\tM\t3\n101113\t3.6\t3\tM\t3\n101114\t4.2\t4\tM\t3\n101117\t3.6\t3\tM\t3\n101121\t2.5\t3\tF\t9+\n101123\t5.7\t7\tM\t3\n101125\t3.9\t3\tF\t4-5\n101129\t3.1\t3\tM\t3\n101133\t3.2\t3\tM\t3\n101134\t6.8\t6\tM\t9+\n101138\t1.5\t1\tF\t1\n101141\t3.4\t3\tM\t1\n101142\t4.3\t4\tM\t3\n101143\t3.9\t4\tF\t2\n101153\t1.5\t1\tM\t1\n101156\t3.7\t4\tM\t3\n101162\t3.1\t3\tF\t9+\n101167\t4.2\t4\tM\t3\n101168\t6.3\t6\tM\t3\n101173\t4.2\t3\tM\t2\n101175\t2.6\t3\tF\t9+\n101176\t5.7\t5\tM\t3\n101177\t5.7\t6\tM\t2\n101181\t4\t3\tM\t3\n101182\t3.3\t3\tM\t3\n101188\t2.9\t2\tF\t9+\n101190\t2.2\t2\tF\t2\n101191\t6.1\t6\tM\t3\n101195\t2\t2\tF\t1\n101197\t1.7\t2\tM\t1\n101198\t1.9\t3\tF\t2\n101204\t1.4\t1\tM\t1\n101209\t4.8\t5\tF\t9+\n101210\t3.4\t4\tM\t2\n101213\t4\t5\tM\t9+\n101216\t1.5\t1\tF\t1\n101224\t3.6\t4\tM\t3\n101225\t1.6\t2\tF\t1\n101228\t1.5\t2\tF\t2\n101233\t5\t6\tM\t3\n101235\t4.7\t6\tM\t3\n101239\t3.7\t4\tM\t3\n101241\t1.9\t2\tF\t2\n101242\t5.9\t5\tF\t2\n101243\t1.2\t1\tF\t9+\n101245\t3\t3\tF\t2\n101247\t2.8\t3\tF\t2\n101249\t4.3\t6\tM\t3\n101252\t1.5\t1\tF\t1\n101253\t2.8\t3\tM\t2\n101255\t4\t5\tF\t9+\n101257\t3.6\t3\tM\t3\n101260\t5.8\t5\tM\t3\n101261\t2.1\t2\tF\t2\n101264\t3.3\t4\tF\t2\n101265\t6\t5\tM\t9+\n101267\t1.9\t2\tM\t1\n101269\t2.3\t2\tM\t3\n101272\t3.3\t3\tM\t2\n101274\t3.3\t3\tM\t3\n101275\t6.2\t6\tM\t3\n101277\t3.7\t4\tM\t2\n101278\t2.9\t3\tF\t9+\n101281\t1.7\t2\tM\t1\n101285\t4\t2\tM\t2\n101291\t6.3\t6\tM\t2\n101295\t3.7\t4\tF\t2\n101298\t4.9\t5\tF\t9+\n101299\t3.3\t3\tM\t2\n101300\t3.8\t4\tM\t3\n101301\t6.6\t5\tM\t3\n101303\t3.1\t4\tF\t2\n101304\t3.3\t5\tF\t9+\n101308\t4.9\t5\tM\t6-8\n101309\t5.4\t6\tM\t9+\n101310\t3.2\t3\tM\t3\n101312\t4.8\t3\tF\t2\n101314\t4.3\t4\tM\t2\n101318\t3.5\t4\tM\t3\n101322\t5.6\t5\tF\t2\n101325\t5.9\t5\tM\t3\n101330\t4\t9\tM\t3\n101331\t2.8\t3\tF\t1\n101332\t6\t5\tF\t9+\n101334\t3.1\t3\tF\t2\n101341\t5.8\t8\tM\t3\n101345\t5.9\t6\tM\t3\n101348\t4.6\t4\tM\t3\n101351\t4.6\t6\tM\t3\n101352\t6.3\t0\tM\t3\n101353\t2\t1\tF\t2\n101354\t6.8\t6\tM\t3\n101362\t2.4\t3\tF\t9+\n101365\t6.3\t5\tF\t2\n101367\t3.7\t5\tM\t3\n101370\t1.6\t2\tF\t1\n101372\t3.7\t5\tM\t3\n101374\t6.5\t6\tM\t3\n101375\t4.6\t6\tM\t3\n101380\t3.3\t3\tF\t2\n101381\t1.4\t2\tF\t1\n101383\t1.8\t2\tF\t1\n101385\t2.8\t3\tF\t4-5\n101389\t3.6\t3\tF\t6-8\n101390\t3.1\t3\tF\t1\n101392\t6.3\t6\tF\t9+\n101394\t3.1\t3\tM\t1\n101397\t4.7\t7\tF\t4-5\n101398\t6.4\t7\tM\t2\n101409\t3.5\t5\tM\t3\n101410\t4.1\t4\tF\t4-5\n101411\t3\t3\tM\t9+\n101412\t4.3\t4\tM\t2\n101413\t5.5\t5\tF\t2\n101414\t3.4\t3\tM\t2\n101415\t5.9\t6\tM\t3\n101419\t6.1\t5\tM\t3\n101420\t5.4\t7\tM\t3\n101423\t1.6\t2\tM\t1\n101425\t5.1\t5\tF\t6-8\n101426\t4.7\t5\tM\t3\n101427\t4\t6\tM\t9+\n101430\t3.9\t5\tF\t2\n101434\t1.1\t6\tF\t2\n101437\t5.9\t5\tM\t3\n101440\t2.1\t2\tF\t2\n101442\t5.4\t7\tM\t3\n101445\t4.6\t8\tF\t4-5\n101446\t4.9\t5\tF\t9+\n101449\t4.6\t6\tM\t3\n101452\t4.5\t5\tM\t3\n101454\t6.5\t9\tM\t3\n101455\t5.4\t5\tF\t1\n101456\t3.9\t2\tF\t4-5\n101457\t4.7\t4\tM\t2\n101458\t1.8\t2\tF\t4-5\n101459\t4.3\t7\tM\t3\n101460\t4.4\t6\tM\t3\n101462\t2.2\t2\tM\t1\n101463\t2.1\t2\tF\t6-8\n101465\t2.6\t2\tF\t9+\n101468\t4.2\t4\tM\t3\n101471\t2.1\t2\tM\t1\n101474\t6.5\t5\tM\t3\n101480\t2.2\t1\tM\t2\n101482\t6.2\t6\tF\t2\n101483\t1.2\t0\tF\t1\n101485\t4.3\t4\tM\t3\n101486\t2.1\t2\tM\t2\n101487\t3.2\t3\tM\t3\n101488\t6.9\t3\tM\t3\n101489\t6.2\t7\tM\t3\n101490\t1.9\t2\tM\t1\n101491\t2.6\t2\tF\t2\n101493\t6\t8\tM\t3\n101495\t3.5\t4\tM\t3\n101496\t5.3\t6\tM\t2\n101497\t3.1\t4\tF\t9+\n101499\t7.7\t10\tM\t3\n101504\t5.5\t5\tM\t3\n101508\t1.7\t2\tM\t2\n101515\t2.7\t2\tF\t9+\n101517\t3.5\t4\tF\t9+\n101521\t5.9\t6\tM\t3\n101523\t2.4\t2\tM\t2\n101532\t4.3\t4\tM\t2\n101534\t4.3\t4\tM\t3\n101538\t4.3\t6\tM\t3\n101540\t2.8\t4\tF\t9+\n101541\t5.8\t8\tM\t3\n101549\t4.8\t6\tM\t3\n101551\t7.8\t7\tM\t3\n101554\t5.9\t6\tM\t3\n101557\t5.9\t6\tM\t3\n101559\t4.9\t7\tM\t3\n101562\t6.3\t5\tM\t3\n101571\t2.5\t1\tF\t1\n101572\t5.1\t5\tF\t9+\n101574\t5.6\t9\tM\t3\n101576\t1.7\t2\tF\t1\n101577\t3.1\t3\tF\t4-5\n101578\t6.5\t5\tM\t3\n101581\t4.7\t4\tM\t3\n101583\t6.7\t6\tM\t9+\n101586\t3.1\t4\tF\t2\n101587\t3.6\t4\tF\t9+\n101588\t1.9\t1\tM\t1\n101594\t0.5\t1\tF\t1\n101595\t3.1\t3\tM\t3\n101598\t3.1\t4\tF\t2\n101601\t6.3\t6\tM\t3\n101602\t1.4\t1\tF\t1\n101604\t4.2\t5\tM\t3\n101608\t3.7\t5\tM\t2\n101611\t1.8\t2\tF\t1\n101614\t5.7\t6\tM\t3\n101621\t5.5\t5\tM\t3\n101624\t4.2\t4\tM\t1\n101626\t5.9\t7\tF\t1\n101627\t3.8\t4\tM\t2\n101628\t1.8\t2\tM\t1\n101629\t4.5\t6\tM\t3\n101630\t4.6\t5\tM\t3\n101633\t3.7\t5\tM\t3\n101634\t2.1\t2\tM\t3\n101639\t2.3\t3\tF\t2\n101640\t3.2\t4\tM\t2\n101641\t7.5\t6\tM\t3\n101642\t2.9\t3\tF\t4-5\n101645\t5.3\t5\tM\t3\n101647\t5.8\t5\tM\t3\n101649\t4.9\t5\tF\t1\n101650\t1.7\t1\tM\t1\n101653\t3\t3\tM\t3\n101656\t4\t2\tM\t3\n101659\t1.8\t2\tF\t1\n101662\t5.7\t7\tM\t3\n101664\t6.1\t9\tM\t3\n101665\t1.2\t0\tM\t1\n101668\t3.2\t4\tM\t2\n101670\t4.1\t4\tM\t3\n101672\t3\t4\tF\t2\n101675\t2.2\t3\tM\t2\n101676\t4.7\t7\tM\t3\n101678\t4.3\t4\tM\t3\n101679\t5.3\t7\tM\t3\n101681\t6.3\t7\tM\t3\n101683\t3\t3\tM\t2\n101685\t6.3\t7\tM\t3\n101693\t0.7\t0\tF\t4-5\n101694\t5.4\t5\tF\t4-5\n101695\t6.2\t6\tM\t3\n101698\t3.3\t3\tM\t1\n101699\t6.2\t7\tM\t3\n101701\t1.5\t2\tF\t1\n101702\t6.4\t6\tM\t3\n101703\t2.8\t3\tF\t9+\n101704\t1.3\t1\tF\t1\n101705\t1.6\t2\tF\t1\n101708\t8\t7\tM\t3\n101709\t3.3\t3\tM\t9+\n101714\t3\t3\tM\t1\n101715\t5.6\t6\tF\t1\n101716\t3.1\t3\tF\t9+\n101717\t3.1\t3\tM\t3\n101719\t3.4\t3\tM\t2\n101721\t7.5\t7\tM\t3\n101722\t6.7\t6\tM\t3\n101724\t3.1\t4\tM\t1\n101731\t6.3\t7\tM\t3\n101736\t2.6\t2\tF\t9+\n101742\t3.4\t3\tM\t2\n101743\t6.1\t6\tM\t3\n101746\t7.4\t9\tM\t3\n101748\t4.4\t4\tM\t3\n101752\t1.7\t1\tF\t1\n101755\t5\t4\tM\t3\n101756\t3.2\t3\tF\t2\n101757\t6.3\t7\tM\t2\n101761\t2.1\t2\tM\t1\n101762\t0.6\t2\tF\t1\n101763\t5.9\t5\tM\t3\n101770\t3.7\t4\tF\t9+\n101774\t6\t6\tF\t2\n101777\t6.8\t8\tM\t2\n101779\t3.4\t5\tM\t1\n101781\t4.6\t5\tM\t3\n101785\t2\t2\tM\t1\n101786\t2.7\t3\tF\t9+\n101787\t4\t4\tF\t2\n101790\t3.9\t5\tF\t4-5\n101792\t4.6\t2\tF\t4-5\n101793\t4.4\t5\tM\t3\n101794\t3.8\t4\tF\t2\n101795\t2.9\t3\tM\t2\n101796\t3.3\t3\tM\t2\n101799\t6.4\t3\tM\t2\n101806\t3.8\t4\tF\t2\n101807\t3.7\t3\tF\t4-5\n101808\t5\t5\tM\t3\n101810\t2.8\t3\tM\t1\n101811\t4.4\t4\tM\t3\n101813\t6.2\t7\tM\t3\n101814\t3.3\t3\tM\t2\n101820\t6.4\t5\tM\t2\n101822\t5.8\t5\tM\t3\n101826\t4.7\t5\tM\t3\n101830\t3.3\t3\tM\t1\n101831\t5.8\t7\tM\t3\n101832\t4.3\t4\tM\t3\n101836\t4.2\t6\tF\t2\n101837\t3.3\t3\tM\t3\n101838\t7.1\t5\tM\t2\n101841\t3.3\t4\tM\t3\n101844\t5.9\t6\tM\t3\n101847\t4.3\t3\tF\t9+\n101849\t3.5\t3\tM\t3\n101851\t7.3\t5\tF\t2\n101853\t2\t2\tF\t2\n101854\t3.5\t3\tM\t3\n101856\t3.8\t5\tF\t2\n101857\t3.8\t4\tF\t9+\n101858\t6.1\t5\tM\t3\n101860\t6.2\t1\tM\t3\n101861\t4.9\t7\tM\t3\n101862\t5.2\t7\tF\t4-5\n101863\t6.3\t9\tM\t3\n101864\t2.1\t2\tF\t2\n101866\t2.2\t2\tF\t9+\n101867\t3.3\t3\tM\t9+\n101869\t1.9\t1\tF\t1\n101872\t7.6\t7\tM\t3\n101879\t4.1\t4\tF\t9+\n101881\t2.8\t3\tF\t2\n101883\t5.4\t5\tF\t9+\n101885\t4.6\t5\tF\t4-5\n101887\t2.8\t7\tF\t2\n101888\t1.8\t2\tF\t4-5\n101889\t3.6\t3\tM\t3\n101891\t5.5\t5\tM\t3\n101892\t5.6\t6\tM\t3\n101893\t3\t3\tM\t1\n101895\t5.3\t6\tF\t2\n101899\t6\t9\tM\t3\n101900\t5.8\t5\tM\t3\n101902\t2.3\t2\tM\t3\n101904\t4.1\t4\tM\t3\n101905\t1.2\t1\tF\t1\n101906\t3.2\t3\tF\t4-5\n101907\t7.5\t7\tM\t2\n101910\t5.6\t5\tM\t3\n101915\t1.8\t2\tF\t4-5\n101916\t4.6\t5\tM\t3\n101919\t4.3\t4\tM\t6-8\n101921\t2.6\t1\tF\t2\n101923\t1.9\t2\tM\t6-8\n101924\t3.2\t3\tF\t1\n101925\t2.1\t2\tF\t2\n101927\t2.7\t4\tF\t2\n101930\t3.9\t4\tF\t2\n101931\t5.5\t5\tF\t2\n101937\t7\t3\tM\t3\n101945\t1.6\t3\tF\t9+\n101949\t5.9\t9\tF\t9+\n101951\t4.4\t4\tM\t2\n101952\t7.4\t6\tM\t3\n101956\t0.7\t1\tF\t1\n101961\t2\t1\tM\t3\n101962\t5.3\t7\tF\t2\n101965\t4.4\t4\tM\t2\n101966\t3.8\t3\tM\t3\n101971\t5.4\t5\tM\t3\n101974\t5.4\t7\tM\t3\n101976\t4.1\t4\tM\t2\n101978\t5.5\t6\tM\t3\n101982\t5\t6\tF\t2\n101986\t5.8\t5\tM\t3\n101987\t1.2\t1\tF\t1\n101993\t4.7\t5\tM\t2\n101996\t3.1\t3\tM\t3\n102001\t3.9\t4\tF\t2\n102005\t3.2\t3\tM\t3\n102007\t6.1\t6\tF\t2\n102010\t3.1\t3\tF\t9+\n102012\t3.1\t3\tF\t2\n102013\t4.7\t5\tM\t3\n102014\t4.1\t4\tM\t3\n102015\t6\t6\tM\t3\n102016\t3.2\t3\tM\t2\n102017\t5.4\t6\tM\t6-8\n102018\t3.4\t3\tM\t2\n102019\t4.5\t5\tF\t4-5\n102021\t3\t4\tM\t3\n102022\t4.5\t7\tM\t3\n102025\t4.8\t5\tM\t3\n102034\t6.2\t6\tM\t3\n102036\t3.8\t4\tF\t9+\n102037\t6\t5\tM\t3\n102038\t1.8\t2\tF\t1\n102039\t5.3\t3\tM\t2\n102040\t4.7\t5\tM\t3\n102041\t5.9\t8\tF\t9+\n102050\t3.1\t2\tF\t9+\n102053\t6.5\t7\tM\t3\n102054\t2\t2\tF\t1\n102058\t4.9\t6\tF\t9+\n102059\t4.3\t5\tM\t3\n102062\t7.4\t6\tM\t3\n102064\t4.5\t4\tM\t2\n102066\t5.1\t5\tF\t2\n102078\t3.8\t6\tF\t2\n102079\t5.9\t5\tM\t3\n102081\t3.5\t3\tM\t2\n102082\t5.8\t7\tM\t3\n102083\t5.6\t6\tM\t3\n102085\t5.4\t5\tM\t9+\n102086\t5.7\t6\tM\t3\n102087\t4.6\t10\tM\t3\n102088\t5\t6\tF\t9+\n102089\t1.5\t2\tM\t2\n102090\t6.4\t5\tM\t2\n102091\t3.5\t3\tM\t3\n102098\t5.8\t5\tM\t3\n102102\t4.3\t4\tM\t2\n102105\t5.7\t3\tM\t3\n102108\t1.8\t2\tM\t1\n102113\t6.1\t0\tM\t3\n102114\t3.7\t2\tF\t9+\n102116\t6.5\t7\tM\t2\n102117\t1.8\t0\tM\t1\n102118\t4.9\t5\tF\t9+\n102120\t5.4\t5\tM\t3\n102122\t3.8\t4\tF\t9+\n102123\t4.4\t5\tM\t3\n102124\t3.5\t4\tM\t3\n102125\t4.2\t4\tM\t2\n102126\t1.1\t0\tM\t6-8\n102127\t6.5\t10\tM\t3\n102128\t5.4\t4\tF\t9+\n102131\t5.8\t6\tM\t3\n102135\t3.1\t3\tM\t1\n102136\t1.8\t2\tF\t2\n102137\t1.9\t1\tM\t1\n102143\t3.5\t4\tF\t2\n102144\t5.7\t6\tM\t2\n102147\t5.3\t6\tM\t2\n102148\t3.5\t5\tM\t3\n102149\t3.7\t3\tM\t1\n102150\t6.1\t5\tM\t3\n102152\t3.6\t7\tM\t3\n102153\t2.4\t3\tF\t6-8\n102154\t2.9\t1\tM\t2\n102157\t3\t3\tM\t6-8\n102159\t3\t4\tM\t3\n102162\t3.5\t2\tF\t4-5\n102164\t3.1\t3\tF\t9+\n102166\t2.8\t3\tF\t9+\n102168\t3.2\t3\tM\t1\n102169\t6.7\t4\tM\t3\n102170\t4.9\t6\tM\t3\n102171\t2.6\t2\tF\t1\n102174\t1.8\t2\tM\t1\n102178\t2.9\t1\tF\t1\n102179\t3.9\t4\tM\t3\n102181\t2\t2\tM\t1\n102182\t5.6\t5\tM\t3\n102184\t5.7\t5\tM\t3\n102186\t3.1\t3\tM\t3\n102188\t4.3\t4\tF\t4-5\n102195\t4.2\t3\tM\t3\n102196\t4.8\t5\tM\t3\n102197\t3\t3\tM\t3\n102198\t3.1\t2\tF\t4-5\n102204\t3.7\t3\tM\t3\n102206\t1.9\t2\tM\t3\n102210\t5.2\t5\tF\t4-5\n102212\t4.1\t4\tM\t3\n102214\t6.6\t9\tM\t3\n102215\t3.4\t3\tM\t3\n102216\t2.2\t2\tM\t3\n102222\t5.9\t7\tM\t3\n102229\t2\t2\tF\t4-5\n102231\t3.6\t2\tM\t2\n102234\t3.9\t5\tF\t2\n102236\t2.1\t2\tF\t4-5\n102241\t1.9\t2\tF\t4-5\n102242\t3.7\t3\tM\t3\n102244\t2\t2\tF\t4-5\n102246\t4.5\t4\tM\t2\n102248\t4.3\t4\tM\t3\n102256\t2.2\t1\tM\t2\n102258\t7.8\t9\tF\t2\n102259\t3.9\t4\tM\t2\n102261\t4.3\t4\tM\t3\n102265\t2.3\t2\tM\t1\n102266\t4.3\t4\tM\t3\n102267\t6.7\t6\tM\t3\n102269\t3.1\t3\tF\t4-5\n102270\t3.2\t3\tM\t2\n102277\t6.1\t12\tM\t3\n102281\t4.5\t4\tM\t2\n102288\t3.5\t3\tM\t3\n102289\t6.3\t6\tM\t3\n102290\t3.2\t6\tM\t3\n102291\t3\t3\tM\t3\n102292\t2.9\t3\tM\t2\n102294\t4.3\t4\tM\t3\n102295\t6.4\t8\tM\t3\n102296\t3.1\t3\tM\t2\n102299\t5.9\t5\tF\t9+\n102302\t4.1\t5\tF\t9+\n102309\t4.5\t5\tM\t3\n102320\t4.2\t5\tM\t3\n102325\t3.5\t5\tM\t3\n102329\t4.6\t4\tF\t2\n102331\t5.2\t5\tF\t4-5\n102333\t5.4\t5\tM\t3\n102334\t3.2\t3\tM\t3\n102335\t3.2\t3\tM\t3\n102336\t3.4\t3\tM\t3\n102339\t1.2\t1\tM\t2\n102341\t4.3\t4\tM\t2\n102346\t4.6\t6\tM\t3\n102347\t5.7\t5\tF\t2\n102349\t4.2\t4\tM\t1\n102350\t2.9\t3\tF\t9+\n102352\t2.5\t3\tM\t2\n102353\t6.9\t4\tM\t3\n102354\t2.5\t3\tF\t6-8\n102355\t2.8\t3\tM\t1\n102357\t3.9\t4\tF\t9+\n102363\t3.1\t3\tF\t1\n102364\t3.5\t4\tF\t2\n102366\t2.9\t4\tF\t9+\n102369\t6.1\t6\tF\t2\n102370\t5.3\t2\tM\t3\n102372\t1.8\t2\tF\t4-5\n102375\t1.2\t1\tF\t1\n102376\t6.9\t6\tM\t3\n102377\t0.6\t0\tF\t1\n102378\t6.7\t6\tM\t3\n102380\t4.6\t4\tM\t3\n102381\t5\t5\tM\t2\n102384\t5.6\t5\tM\t3\n102388\t6.9\t6\tM\t3\n102389\t4.3\t5\tM\t2\n102390\t6.3\t7\tM\t2\n102392\t0.5\t1\tM\t1\n102401\t4.8\t7\tM\t3\n102407\t4.2\t4\tM\t3\n102408\t2\t2\tM\t1\n102409\t2.1\t2\tF\t1\n102410\t1.2\t1\tF\t1\n102413\t4.2\t4\tF\t1\n102420\t5\t3\tM\t9+\n102421\t4.1\t9\tM\t2\n102422\t6\t8\tM\t2\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_819523227",
+      "id": "20230217-230239_532643349",
+      "dateCreated": "2019-08-13T15:16:52+0000",
+      "dateStarted": "2023-02-17T22:58:40+0000",
+      "dateFinished": "2023-02-17T22:58:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Plot XGBoost model predictions vs residuals",
+      "text": "%sql\n\n-- Show predictions vs. residuals in a scatter plot grouped by HOUSE_HOLD_SIZE.  \n-- Click the scatter plot icon and drag PRED_YRS_RESIDENCE to xAxis, \n--   ACTUAL_YRS_RESIDENCE to yAxis and HOUSEHOLD_SIZE to group.\n\nSELECT CUST_ID,\n    round(PREDICTION(XGBOOST_REGRESSION_MODEL USING *), 1) PRED_YRS_RESIDENCE,\n    round(round(PREDICTION(XGBOOST_REGRESSION_MODEL USING *), 1) - YRS_RESIDENCE,2) RESIDUALS\nFROM TEST_DATA_V;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "scatterChart",
+              "height": 334.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "stacked": false
+                },
+                "scatterChart": {
+                  "xAxis": {
+                    "name": "PRED_YRS_RESIDENCE",
+                    "index": 1.0,
+                    "aggr": "sum"
+                  },
+                  "yAxis": {
+                    "name": "RESIDUALS",
+                    "index": 2.0,
+                    "aggr": "sum"
+                  }
+                },
+                "lineChart": {}
+              },
+              "keys": [],
+              "groups": [],
+              "values": []
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RESIDENCE\tRESIDUALS\n104300\t5.9\t2.9\n100015\t5\t-1\n100017\t2.8\t-2.2\n100033\t4.9\t-0.1\n100061\t3.9\t-0.1\n100077\t4.2\t0.2\n100112\t5.4\t-0.6\n100134\t4\t2\n100169\t2.8\t-0.2\n100179\t5.8\t-1.2\n100194\t1.9\t-0.1\n100201\t1.9\t-3.1\n100230\t5.3\t-0.7\n100241\t4.3\t0.3\n100244\t6.1\t0.1\n100252\t4\t2\n100263\t3.6\t-0.4\n100264\t2.4\t0.4\n100268\t4.8\t-0.2\n100276\t7.1\t0.1\n100286\t4.3\t0.3\n100314\t4.4\t0.4\n100317\t4.9\t-2.1\n100336\t3.3\t0.3\n100385\t2.1\t0.1\n100419\t1.4\t0.4\n100445\t6\t2\n100447\t1.9\t-1.1\n100456\t5\t-1\n100458\t2\t0\n100465\t2.9\t-0.1\n100497\t5.9\t-1.1\n100505\t1.6\t-0.4\n100557\t3.2\t0.2\n100597\t3.1\t-0.9\n100630\t1.3\t-0.7\n100671\t2\t0\n100676\t5\t-3\n100707\t3.4\t0.4\n100715\t2.8\t-0.2\n100719\t5.4\t1.4\n100724\t3.3\t-0.7\n100762\t5.6\t1.6\n100771\t5.1\t-0.9\n100783\t3.3\t0.3\n100785\t1.9\t-0.1\n100850\t4.2\t0.2\n100870\t3.1\t0.1\n100929\t2.1\t0.1\n100937\t2.4\t-1.6\n100957\t2\t0\n100986\t4.3\t-0.7\n100996\t3.9\t-0.1\n101046\t3.5\t0.5\n101048\t3\t0\n101064\t1.4\t0.4\n101071\t4.6\t-0.4\n101078\t8.2\t2.2\n101173\t4.2\t1.2\n101204\t1.4\t0.4\n101233\t5\t-1\n101235\t4.7\t-1.3\n101239\t3.7\t-0.3\n101245\t3\t0\n101253\t2.8\t-0.2\n101372\t3.7\t-1.3\n101375\t4.6\t-1.4\n101380\t3.3\t0.3\n101414\t3.4\t0.4\n101426\t4.7\t-0.3\n101430\t3.9\t-1.1\n101459\t4.3\t-2.7\n101486\t2.1\t0.1\n101495\t3.5\t-0.5\n101499\t7.7\t-2.3\n101534\t4.3\t0.3\n101557\t5.9\t-0.1\n101559\t4.9\t-2.1\n101586\t3.1\t-0.9\n101588\t1.9\t0.9\n101624\t4.2\t0.2\n101627\t3.8\t-0.2\n101649\t4.9\t-0.1\n101662\t5.7\t-1.3\n101681\t6.3\t-0.7\n101731\t6.3\t-0.7\n101736\t2.6\t0.6\n101743\t6.1\t0.1\n101822\t5.8\t0.8\n101831\t5.8\t-1.2\n101836\t4.2\t-1.8\n101838\t7.1\t2.1\n101862\t5.2\t-1.8\n101869\t1.9\t0.9\n101883\t5.4\t0.4\n101885\t4.6\t-0.4\n101888\t1.8\t-0.2\n101893\t3\t0\n101904\t4.1\t0.1\n101923\t1.9\t-0.1\n102005\t3.2\t0.2\n102015\t6\t0\n102034\t6.2\t0.2\n102041\t5.9\t-2.1\n102079\t5.9\t0.9\n102118\t4.9\t-0.1\n102147\t5.3\t-0.7\n102152\t3.6\t-3.4\n102162\t3.5\t1.5\n102184\t5.7\t0.7\n102198\t3.1\t1.1\n102222\t5.9\t-1.1\n102261\t4.3\t0.3\n102289\t6.3\t0.3\n102295\t6.4\t-1.6\n102325\t3.5\t-1.5\n102333\t5.4\t0.4\n102349\t4.2\t0.2\n102350\t2.9\t-0.1\n102353\t6.9\t2.9\n102355\t2.8\t-0.2\n102372\t1.8\t-0.2\n102375\t1.2\t0.2\n102376\t6.9\t0.9\n102425\t3.1\t0.1\n102432\t3\t0\n102440\t2\t0\n102458\t2.9\t-2.1\n102465\t3.1\t-0.9\n102513\t4.5\t0.5\n102524\t3.4\t0.4\n102530\t2.3\t0.3\n102542\t4.5\t0.5\n102554\t2\t0\n102620\t3.9\t-0.1\n102664\t2.8\t0.8\n102738\t4.1\t0.1\n102741\t3.7\t1.7\n102774\t5.7\t1.7\n102791\t6\t1\n102829\t2.2\t-0.8\n102836\t3.2\t1.2\n102842\t4.3\t0.3\n102849\t4.7\t-0.3\n102854\t7.1\t1.1\n102857\t3.1\t-0.9\n102863\t3.9\t-0.1\n102881\t4.7\t0.7\n102897\t4.4\t0.4\n102912\t4.3\t-0.7\n102936\t3.4\t0.4\n102975\t3.3\t0.3\n103025\t4.4\t0.4\n103027\t4\t2\n103040\t4.9\t0.9\n103063\t6.3\t-0.7\n103094\t3.7\t0.7\n103095\t3.6\t-0.4\n103120\t5.1\t0.1\n103190\t6.6\t-0.4\n103201\t8.3\t-1.7\n103202\t5.9\t0.9\n103216\t4.2\t0.2\n103223\t6.8\t0.8\n103241\t2.1\t1.1\n103259\t4.4\t0.4\n103281\t2.1\t-0.9\n103315\t6.3\t2.3\n103319\t3.3\t-1.7\n103351\t3.7\t-0.3\n103403\t5\t2\n103414\t4\t2\n103447\t5.5\t-1.5\n103467\t6.3\t-1.7\n103484\t3\t0\n103564\t6.6\t0.6\n103577\t3.1\t1.1\n103591\t1.9\t-1.1\n103609\t3.2\t-0.8\n103641\t4.9\t-0.1\n103661\t4.2\t-0.8\n103668\t5.3\t2.3\n103681\t3.8\t-0.2\n103707\t4\t0\n103758\t4.2\t0.2\n103776\t3.3\t0.3\n103789\t3.2\t0.2\n103851\t0.4\t-0.6\n103860\t3.7\t-0.3\n103865\t4.3\t0.3\n103905\t4.2\t0.2\n103914\t4.4\t-1.6\n103925\t5.8\t0.8\n103960\t5.1\t1.1\n103991\t5.6\t0.6\n103993\t3.2\t0.2\n104076\t7.3\t-0.7\n104135\t6.3\t-1.7\n104141\t5.9\t-0.1\n104206\t6.8\t-0.2\n104207\t5.2\t1.2\n104219\t0.9\t-0.1\n104247\t5.2\t0.2\n104271\t3.1\t0.1\n104279\t3.4\t-0.6\n104307\t8.1\t-2.9\n104335\t4.2\t0.2\n104370\t4.6\t-3.4\n104426\t1.9\t-0.1\n104441\t2\t1\n104465\t4.3\t0.3\n104493\t4.7\t-4.3\n100800\t4.5\t-0.5\n102700\t4.7\t-1.3\n103600\t2.5\t1.5\n100028\t3.2\t-0.8\n100050\t2.4\t0.4\n100058\t5.6\t-0.4\n100101\t3.7\t0.7\n100103\t3\t0\n100122\t5.4\t1.4\n100130\t5.1\t0.1\n100153\t2.9\t-0.1\n100168\t2.7\t-0.3\n100217\t5.5\t-2.5\n100256\t5.7\t-3.3\n100309\t7.3\t-0.7\n100312\t3.3\t0.3\n100328\t6\t1\n100332\t6\t0\n100353\t2.9\t1.9\n100380\t4.1\t0.1\n100382\t5.3\t1.3\n100418\t6.3\t-1.7\n100438\t3.7\t0.7\n100463\t2.8\t-0.2\n100464\t4.6\t0.6\n100475\t2\t-1\n100490\t4.3\t-0.7\n100495\t3.1\t0.1\n100498\t3.9\t-0.1\n100503\t3.2\t0.2\n100515\t4\t0\n100527\t4.6\t-0.4\n100562\t5.2\t0.2\n100581\t2.8\t-0.2\n100583\t1.4\t-0.6\n100584\t3.4\t-1.6\n100596\t3.4\t-0.6\n100623\t1.9\t-0.1\n100625\t2.9\t-2.1\n100678\t1.9\t-0.1\n100730\t0.9\t-1.1\n100773\t1.7\t-0.3\n100812\t4.6\t-0.4\n100824\t2.3\t-0.7\n100825\t2\t0\n100826\t1.6\t-0.4\n100828\t5.3\t0.3\n100829\t3.8\t-0.2\n100836\t2.7\t0.7\n100837\t1.6\t0.6\n100864\t0.7\t0.7\n100868\t4.2\t0.2\n100875\t5.6\t0.6\n100907\t3.3\t0.3\n100920\t4.2\t0.2\n100925\t1.8\t-0.2\n100939\t4.3\t0.3\n100955\t5.7\t2.7\n100966\t3.2\t-0.8\n100985\t5.8\t-0.2\n101028\t2\t0\n101043\t3.1\t0.1\n101052\t2\t0\n101057\t5.1\t2.1\n101070\t2.6\t-0.4\n101086\t6.6\t-0.4\n101125\t3.9\t0.9\n101138\t1.5\t0.5\n101141\t3.4\t0.4\n101153\t1.5\t0.5\n101168\t6.3\t0.3\n101197\t1.7\t-0.3\n101265\t6\t1\n101274\t3.3\t0.3\n101275\t6.2\t0.2\n101277\t3.7\t-0.3\n101332\t6\t1\n101374\t6.5\t0.5\n101411\t3\t0\n101419\t6.1\t1.1\n101434\t1.1\t-4.9\n101440\t2.1\t0.1\n101455\t5.4\t0.4\n101462\t2.2\t0.2\n101471\t2.1\t0.1\n101485\t4.3\t0.3\n101493\t6\t-2\n101508\t1.7\t-0.3\n101523\t2.4\t0.4\n101532\t4.3\t0.3\n101576\t1.7\t-0.3\n101626\t5.9\t-1.1\n101647\t5.8\t0.8\n101659\t1.8\t-0.2\n101665\t1.2\t1.2\n101679\t5.3\t-1.7\n101693\t0.7\t0.7\n101699\t6.2\t-0.8\n101701\t1.5\t-0.5\n101708\t8\t1\n101709\t3.3\t0.3\n101748\t4.4\t0.4\n101808\t5\t0\n101837\t3.3\t0.3\n101854\t3.5\t0.5\n101858\t6.1\t1.1\n101895\t5.3\t-0.7\n101945\t1.6\t-1.4\n101982\t5\t-1\n101987\t1.2\t0.2\n102091\t3.5\t0.5\n102114\t3.7\t1.7\n102120\t5.4\t0.4\n102124\t3.5\t-0.5\n102128\t5.4\t1.4\n102131\t5.8\t-0.2\n102170\t4.9\t-1.1\n102178\t2.9\t1.9\n102216\t2.2\t0.2\n102241\t1.9\t-0.1\n102244\t2\t0\n102302\t4.1\t-0.9\n102352\t2.5\t-0.5\n102354\t2.5\t-0.5\n102401\t4.8\t-2.2\n102410\t1.2\t0.2\n102437\t6\t1\n102441\t5.8\t-0.2\n102455\t1.8\t0.8\n102457\t4.9\t-3.1\n102461\t5.2\t-0.8\n102472\t6.2\t3.2\n102492\t4.3\t-1.7\n102535\t2.8\t-0.2\n102537\t2.9\t-0.1\n102543\t2.8\t0.8\n102560\t5.3\t0.3\n102562\t4.5\t2.5\n102575\t3.5\t0.5\n102578\t5.6\t0.6\n102579\t4.2\t0.2\n102607\t5.2\t0.2\n102640\t1.8\t-0.2\n102662\t3.1\t0.1\n102673\t5.7\t0.7\n102714\t4.9\t2.9\n102788\t3.5\t0.5\n102822\t1.8\t-0.2\n102837\t4.7\t2.7\n102840\t3\t0\n102860\t2.9\t-0.1\n102874\t2\t0\n102875\t3.9\t-0.1\n102915\t4.3\t-0.7\n102920\t3.2\t0.2\n102923\t6.4\t-0.6\n102927\t4.8\t-0.2\n102950\t4.3\t-0.7\n102963\t5\t0\n102976\t4.1\t-0.9\n103019\t6.1\t0.1\n103042\t5.5\t-0.5\n103051\t1.8\t-0.2\n103061\t4.4\t-0.6\n103082\t1.5\t-0.5\n103086\t6.4\t2.4\n103131\t2.9\t-1.1\n103133\t2.6\t-0.4\n103173\t3.2\t0.2\n103181\t3\t0\n103206\t4\t0\n103219\t5.8\t-1.2\n103239\t3.3\t-0.7\n103242\t3.9\t-0.1\n103248\t3.1\t0.1\n103346\t5.6\t-0.4\n103386\t4.2\t0.2\n103404\t5.1\t2.1\n103407\t1.7\t-0.3\n103415\t5\t0\n103429\t1.5\t-0.5\n103483\t4.5\t1.5\n103496\t5.6\t1.6\n103509\t4.4\t0.4\n103517\t3.4\t0.4\n103524\t4.3\t0.3\n103543\t6.7\t-0.3\n103546\t3.4\t0.4\n103548\t6.1\t1.1\n103583\t5.1\t0.1\n103592\t2\t1\n103612\t1.9\t0.9\n103670\t3.7\t0.7\n103672\t3.4\t0.4\n103682\t4.2\t0.2\n103702\t6.6\t0.6\n103756\t1.8\t-0.2\n103791\t5.7\t0.7\n103853\t3.2\t0.2\n103862\t5.8\t-0.2\n103950\t7.4\t1.4\n104014\t6.6\t0.6\n104051\t5.6\t0.6\n104081\t3.9\t-0.1\n104088\t1.8\t0.8\n104108\t6.3\t-0.7\n104127\t3.6\t-1.4\n104137\t4.3\t0.3\n104175\t2.6\t-0.4\n104188\t4.9\t-0.1\n104190\t3.2\t0.2\n104194\t4.3\t0.3\n104196\t3.9\t-0.1\n104201\t6\t1\n104256\t5.4\t0.4\n104339\t3.4\t0.4\n104355\t3.9\t-1.1\n104399\t6.5\t1.5\n104440\t6\t6\n104445\t3\t1\n104462\t6.4\t0.4\n101900\t5.8\t0.8\n102500\t6.5\t0.5\n104200\t3.1\t0.1\n100023\t6.4\t-1.6\n100039\t3.4\t0.4\n100069\t5.5\t0.5\n100095\t4.3\t0.3\n100108\t5.5\t0.5\n100136\t3.4\t-0.6\n100147\t6.7\t0.7\n100166\t4.1\t0.1\n100173\t5.5\t1.5\n100178\t5.7\t0.7\n100189\t1.5\t0.5\n100191\t3.3\t0.3\n100193\t3.5\t2.5\n100233\t6\t0\n100259\t3.4\t0.4\n100279\t4.3\t-0.7\n100283\t5.9\t-0.1\n100323\t5.9\t0.9\n100325\t3.1\t-0.9\n100340\t3\t-1\n100355\t4.3\t-1.7\n100358\t2.7\t-0.3\n100367\t3.9\t-1.1\n100373\t5.5\t-0.5\n100393\t5.6\t0.6\n100468\t3.1\t0.1\n100482\t4.9\t0.9\n100487\t1.9\t-0.1\n100528\t6.8\t0.8\n100553\t3.4\t0.4\n100579\t4.6\t0.6\n100612\t3.6\t-0.4\n100620\t5.9\t0.9\n100647\t4.1\t1.1\n100659\t2.2\t1.2\n100733\t6.5\t-0.5\n100742\t1.1\t0.1\n100768\t2.1\t0.1\n100775\t4.4\t0.4\n100794\t2.1\t0.1\n100796\t5.3\t1.3\n100833\t1.5\t-0.5\n100881\t4.1\t0.1\n100899\t5.9\t1.9\n100922\t3.6\t-0.4\n100928\t4.3\t0.3\n100956\t5.6\t-0.4\n100969\t2.9\t0.9\n100980\t5.6\t0.6\n100988\t5.7\t-1.3\n101010\t4.5\t-1.5\n101042\t3.9\t-3.1\n101058\t5.8\t0.8\n101061\t2\t0\n101075\t4.6\t0.6\n101092\t4.3\t0.3\n101094\t1.5\t0.5\n101102\t5.5\t0.5\n101121\t2.5\t-0.5\n101133\t3.2\t0.2\n101143\t3.9\t-0.1\n101176\t5.7\t0.7\n101190\t2.2\t0.2\n101191\t6.1\t0.1\n101210\t3.4\t-0.6\n101241\t1.9\t-0.1\n101269\t2.3\t0.3\n101303\t3.1\t-0.9\n101308\t4.9\t-0.1\n101309\t5.4\t-0.6\n101322\t5.6\t0.6\n101348\t4.6\t0.6\n101353\t2\t1\n101362\t2.4\t-0.6\n101383\t1.8\t-0.2\n101390\t3.1\t0.1\n101392\t6.3\t0.3\n101409\t3.5\t-1.5\n101410\t4.1\t0.1\n101415\t5.9\t-0.1\n101420\t5.4\t-1.6\n101446\t4.9\t-0.1\n101454\t6.5\t-2.5\n101504\t5.5\t0.5\n101517\t3.5\t-0.5\n101540\t2.8\t-1.2\n101551\t7.8\t0.8\n101598\t3.1\t-0.9\n101601\t6.3\t0.3\n101633\t3.7\t-1.3\n101653\t3\t0\n101670\t4.1\t0.1\n101683\t3\t0\n101719\t3.4\t0.4\n101762\t0.6\t-1.4\n101763\t5.9\t0.9\n101779\t3.4\t-1.6\n101781\t4.6\t-0.4\n101795\t2.9\t-0.1\n101796\t3.3\t0.3\n101811\t4.4\t0.4\n101814\t3.3\t0.3\n101826\t4.7\t-0.3\n101844\t5.9\t-0.1\n101849\t3.5\t0.5\n101856\t3.8\t-1.2\n101864\t2.1\t0.1\n101879\t4.1\t0.1\n101961\t2\t1\n101976\t4.1\t0.1\n101986\t5.8\t0.8\n102001\t3.9\t-0.1\n102021\t3\t-1\n102050\t3.1\t1.1\n102059\t4.3\t-0.7\n102082\t5.8\t-1.2\n102108\t1.8\t-0.2\n102116\t6.5\t-0.5\n102123\t4.4\t-0.6\n102153\t2.4\t-0.6\n102195\t4.2\t1.2\n102210\t5.2\t0.2\n102212\t4.1\t0.1\n102215\t3.4\t0.4\n102246\t4.5\t0.5\n102259\t3.9\t-0.1\n102281\t4.5\t0.5\n102299\t5.9\t0.9\n102309\t4.5\t-0.5\n102339\t1.2\t0.2\n102384\t5.6\t0.6\n102435\t5.4\t-0.6\n102464\t5.7\t-0.3\n102480\t4.5\t0.5\n102496\t4.4\t0.4\n102497\t1.9\t-0.1\n102521\t6.1\t1.1\n102614\t4.1\t0.1\n102674\t2.7\t-0.3\n102684\t2.1\t0.1\n102731\t5.4\t-0.6\n102744\t5.4\t1.4\n102803\t2.6\t-0.4\n102810\t3\t0\n102855\t4.3\t0.3\n102864\t2.7\t-1.3\n102868\t5.1\t1.1\n102872\t3.8\t-0.2\n102919\t3.3\t0.3\n102928\t3.3\t-0.7\n102955\t4.4\t-3.6\n102972\t4.2\t0.2\n102974\t1.3\t0.3\n103010\t5.8\t-1.2\n103069\t4.3\t-0.7\n103079\t5.8\t0.8\n103085\t6.2\t0.2\n103092\t3.1\t-0.9\n103126\t3.2\t0.2\n103141\t3.5\t0.5\n103142\t3.4\t0.4\n103156\t1.9\t-3.1\n103182\t6.1\t0.1\n103204\t7.9\t-1.1\n103224\t4.1\t0.1\n103227\t2.9\t-0.1\n103262\t5.1\t1.1\n103285\t1.6\t-0.4\n103298\t2.6\t-0.4\n103307\t6.3\t0.3\n103308\t3.8\t-0.2\n103331\t4.8\t-1.2\n103356\t1.9\t-0.1\n103367\t3.6\t-1.4\n103371\t4.4\t0.4\n103379\t3.1\t0.1\n103406\t4.2\t0.2\n103442\t4.1\t1.1\n103468\t5\t-1\n103490\t3.3\t0.3\n103492\t4.3\t0.3\n103493\t4.6\t-0.4\n103530\t2.9\t-0.1\n103639\t2.6\t0.6\n103644\t2.1\t0.1\n103650\t3.1\t0.1\n103696\t5.2\t0.2\n103710\t4.4\t-1.6\n103719\t1\t0\n103728\t3.4\t0.4\n103734\t2.8\t-0.2\n103740\t4.6\t-0.4\n103741\t2.5\t-0.5\n103743\t5.7\t-1.3\n103770\t0.4\t-0.6\n103813\t4.3\t-0.7\n103867\t1.8\t-0.2\n103886\t5.9\t-1.1\n103901\t2.2\t-0.8\n103926\t2.2\t0.2\n103952\t4.1\t1.1\n103987\t5.3\t1.3\n103992\t2.8\t-0.2\n104023\t4.6\t-1.4\n104028\t1.5\t0.5\n104040\t4.4\t0.4\n104080\t5.9\t-0.1\n104102\t5.8\t0.8\n104199\t1.3\t0.3\n104202\t5.5\t0.5\n104223\t4.9\t-2.1\n104232\t3.2\t0.2\n104245\t6.8\t-0.2\n104255\t4.2\t0.2\n104295\t5.7\t-0.3\n104308\t4.1\t0.1\n104322\t5\t-2\n104331\t4.2\t-0.8\n104348\t1.6\t-0.4\n104356\t6.3\t0.3\n104371\t4.9\t-0.1\n104395\t2.1\t0.1\n104398\t4.9\t-0.1\n104410\t4.5\t0.5\n104412\t3.2\t0.2\n104423\t6.3\t-0.7\n104429\t6.1\t-1.9\n104436\t4.4\t0.4\n104454\t7.6\t-0.4\n104457\t6\t1\n104470\t3.8\t0.8\n104472\t1.9\t-0.1\n100200\t1.7\t-0.3\n104500\t4.1\t-0.9\n100004\t5.6\t0.6\n100016\t2.9\t-1.1\n100027\t3.4\t0.4\n100041\t1.7\t-0.3\n100065\t7.3\t2.3\n100109\t5.7\t-1.3\n100148\t4.1\t1.1\n100152\t3\t0\n100155\t3.1\t0.1\n100159\t2\t-1\n100185\t6.2\t-1.8\n100203\t3.1\t0.1\n100207\t3.8\t-0.2\n100223\t2.7\t-0.3\n100240\t2\t0\n100242\t1.8\t0.8\n100247\t3.9\t-0.1\n100267\t5.6\t-0.4\n100274\t4.6\t-0.4\n100282\t4.1\t0.1\n100284\t1.8\t-0.2\n100292\t1.5\t-0.5\n100333\t5.3\t0.3\n100362\t1.6\t-0.4\n100369\t3.2\t0.2\n100381\t1.7\t-0.3\n100390\t6.4\t1.4\n100392\t2.7\t-0.3\n100395\t5.3\t-0.7\n100420\t5.3\t0.3\n100427\t2.9\t-0.1\n100444\t2\t0\n100480\t3.3\t0.3\n100481\t5.5\t0.5\n100485\t1.5\t0.5\n100508\t4.9\t-0.1\n100541\t4.5\t-0.5\n100573\t7\t-2\n100591\t3.8\t-0.2\n100632\t5.1\t0.1\n100644\t6.3\t0.3\n100668\t4.7\t-0.3\n100673\t5.1\t-0.9\n100686\t5.2\t0.2\n100691\t4.3\t0.3\n100697\t4.2\t0.2\n100739\t4.1\t0.1\n100748\t3.1\t0.1\n100752\t6.1\t0.1\n100757\t3\t0\n100780\t5.9\t-1.1\n100807\t3.8\t-0.2\n100811\t4.4\t1.4\n100813\t4.5\t-1.5\n100835\t3.5\t-0.5\n100878\t5.5\t-0.5\n100884\t3.6\t1.6\n100892\t3.8\t0.8\n100951\t5.1\t0.1\n100974\t3.9\t-0.1\n101004\t1.7\t-0.3\n101022\t3.7\t-1.3\n101039\t7.5\t-2.5\n101065\t4.2\t0.2\n101182\t3.3\t0.3\n101242\t5.9\t0.9\n101264\t3.3\t-0.7\n101291\t6.3\t0.3\n101299\t3.3\t0.3\n101325\t5.9\t0.9\n101334\t3.1\t0.1\n101370\t1.6\t-0.4\n101397\t4.7\t-2.3\n101412\t4.3\t0.3\n101449\t4.6\t-1.4\n101456\t3.9\t1.9\n101483\t1.2\t1.2\n101487\t3.2\t0.2\n101488\t6.9\t3.9\n101577\t3.1\t0.1\n101578\t6.5\t1.5\n101581\t4.7\t0.7\n101587\t3.6\t-0.4\n101594\t0.5\t-0.5\n101602\t1.4\t0.4\n101608\t3.7\t-1.3\n101621\t5.5\t0.5\n101642\t2.9\t-0.1\n101645\t5.3\t0.3\n101656\t4\t2\n101698\t3.3\t0.3\n101755\t5\t1\n101756\t3.2\t0.2\n101770\t3.7\t-0.3\n101793\t4.4\t-0.6\n101799\t6.4\t3.4\n101832\t4.3\t0.3\n101841\t3.3\t-0.7\n101851\t7.3\t2.3\n101853\t2\t0\n101867\t3.3\t0.3\n101892\t5.6\t-0.4\n101910\t5.6\t0.6\n101924\t3.2\t0.2\n101930\t3.9\t-0.1\n101974\t5.4\t-1.6\n101996\t3.1\t0.1\n102007\t6.1\t0.1\n102012\t3.1\t0.1\n102016\t3.2\t0.2\n102017\t5.4\t-0.6\n102036\t3.8\t-0.2\n102037\t6\t1\n102054\t2\t0\n102058\t4.9\t-1.1\n102062\t7.4\t1.4\n102081\t3.5\t0.5\n102089\t1.5\t-0.5\n102125\t4.2\t0.2\n102137\t1.9\t0.9\n102149\t3.7\t0.7\n102150\t6.1\t1.1\n102168\t3.2\t0.2\n102171\t2.6\t0.6\n102181\t2\t0\n102188\t4.3\t0.3\n102214\t6.6\t-2.4\n102269\t3.1\t0.1\n102288\t3.5\t0.5\n102364\t3.5\t-0.5\n102369\t6.1\t0.1\n102413\t4.2\t0.2\n102539\t7\t-2\n102549\t3.4\t0.4\n102565\t4.5\t1.5\n102598\t1\t-1\n102623\t3.3\t0.3\n102636\t6\t0\n102736\t1.8\t-0.2\n102759\t4.6\t0.6\n102763\t6.1\t-4.9\n102772\t3.5\t0.5\n102778\t3\t0\n102780\t6\t0\n102785\t8\t1\n102795\t3.8\t-0.2\n102818\t3.9\t-0.1\n102820\t2.8\t-0.2\n102853\t4.2\t1.2\n102856\t4.3\t1.3\n102862\t5.2\t0.2\n102865\t2.2\t0.2\n102905\t3.9\t0.9\n102913\t4.3\t0.3\n102958\t4.3\t0.3\n102984\t2.4\t-0.6\n102998\t6.3\t-1.7\n103012\t5.2\t0.2\n103015\t1.9\t-0.1\n103033\t3.1\t0.1\n103039\t2.4\t0.4\n103043\t4.7\t-0.3\n103044\t5.2\t0.2\n103093\t3.8\t-0.2\n103111\t1.2\t0.2\n103168\t2.5\t-0.5\n103177\t3.2\t-0.8\n103179\t6\t-2\n103220\t1.9\t-1.1\n103247\t3.2\t0.2\n103268\t6.6\t0.6\n103275\t3.1\t0.1\n103290\t6.5\t1.5\n103293\t1.8\t-0.2\n103330\t1.9\t0.9\n103334\t4.1\t0.1\n103373\t6.6\t-0.4\n103384\t2\t0\n103430\t4.9\t-2.1\n103436\t4.2\t0.2\n103439\t6.2\t0.2\n103451\t4.3\t2.3\n103456\t5.2\t-1.8\n103459\t1.9\t-0.1\n103469\t2.2\t-0.8\n103471\t5\t-3\n103475\t6.2\t-2.8\n103549\t4.1\t0.1\n103588\t3.3\t0.3\n103618\t3.5\t-0.5\n103635\t5.4\t0.4\n103655\t2.9\t1.9\n103692\t6.2\t1.2\n103720\t6.3\t-1.7\n103742\t6.1\t-0.9\n103761\t2\t0\n103762\t5.6\t1.6\n103775\t4.3\t2.3\n103781\t3.9\t-0.1\n103785\t3.4\t0.4\n103807\t3.1\t0.1\n103815\t2.1\t0.1\n103816\t5.5\t0.5\n103837\t4.3\t0.3\n103841\t1.8\t-0.2\n103846\t2\t0\n103863\t5.5\t0.5\n103880\t4.9\t-1.1\n103906\t1.9\t-0.1\n103907\t5.9\t0.9\n103911\t3.8\t-0.2\n103951\t6.2\t-0.8\n103965\t3.6\t1.6\n103970\t4.8\t0.8\n103980\t3.8\t-0.2\n103995\t2.9\t-2.1\n104005\t3.1\t0.1\n104027\t4.6\t0.6\n104031\t3.7\t-0.3\n104062\t2.9\t-0.1\n104079\t1.5\t0.5\n104099\t4.3\t-0.7\n104101\t3.9\t-0.1\n104122\t4.1\t0.1\n104126\t2.9\t-0.1\n104152\t6.5\t3.5\n104160\t5.6\t-3.4\n104183\t8\t2\n104191\t1.3\t0.3\n104197\t5.1\t2.1\n104229\t3.4\t-1.6\n104230\t3.4\t-1.6\n104234\t6.8\t0.8\n104253\t3.3\t-1.7\n104260\t1.5\t-0.5\n104281\t5.6\t2.6\n104290\t3.1\t0.1\n104305\t3.6\t-0.4\n104327\t1.6\t-0.4\n104344\t6.1\t1.1\n104411\t2.1\t0.1\n104415\t2\t0\n104494\t2.8\t-0.2\n101300\t3.8\t-0.2\n100045\t3.4\t-1.6\n100091\t4.4\t0.4\n100098\t2.9\t-0.1\n100111\t3.1\t1.1\n100144\t4.4\t0.4\n100216\t6.4\t0.4\n100227\t3\t0\n100272\t4.4\t0.4\n100308\t4.3\t0.3\n100331\t3.1\t0.1\n100359\t4.2\t-0.8\n100379\t3.9\t-0.1\n100391\t1.5\t0.5\n100396\t5.7\t-1.3\n100410\t3.1\t-0.9\n100411\t4.4\t0.4\n100422\t5.1\t2.1\n100423\t5.2\t0.2\n100426\t3.4\t0.4\n100432\t2.8\t-0.2\n100434\t4.4\t0.4\n100437\t7.5\t0.5\n100448\t3\t0\n100486\t4\t0\n100501\t2.1\t-0.9\n100511\t5.5\t-0.5\n100519\t3.7\t-0.3\n100524\t3.3\t-1.7\n100546\t5.8\t-0.2\n100555\t2\t0\n100575\t5.4\t0.4\n100585\t1.9\t-1.1\n100590\t2.3\t-0.7\n100595\t5.4\t0.4\n100602\t5.9\t-0.1\n100615\t4.5\t0.5\n100621\t6.3\t1.3\n100635\t4.9\t-2.1\n100641\t4.3\t0.3\n100669\t5.3\t1.3\n100693\t4.3\t-0.7\n100698\t4.7\t-0.3\n100708\t5.6\t-0.4\n100722\t5.3\t1.3\n100740\t5.1\t-1.9\n100769\t3.4\t0.4\n100772\t3.2\t1.2\n100797\t3.4\t1.4\n100802\t2.8\t-0.2\n100858\t3.2\t0.2\n100885\t1.3\t0.3\n100896\t1.9\t-0.1\n100897\t5.5\t-1.5\n100912\t3.9\t-0.1\n100921\t3.5\t-2.5\n100936\t5.4\t2.4\n100972\t6.8\t0.8\n100982\t7.3\t-2.7\n101012\t4.4\t0.4\n101021\t2.9\t-0.1\n101034\t3.7\t-0.3\n101037\t1.8\t-0.2\n101054\t4.2\t-0.8\n101056\t3.2\t0.2\n101060\t1.8\t-0.2\n101129\t3.1\t0.1\n101134\t6.8\t0.8\n101177\t5.7\t-0.3\n101181\t4\t1\n101188\t2.9\t0.9\n101247\t2.8\t-0.2\n101352\t6.3\t6.3\n101365\t6.3\t1.3\n101367\t3.7\t-1.3\n101427\t4\t-2\n101445\t4.6\t-3.4\n101452\t4.5\t-0.5\n101458\t1.8\t-0.2\n101460\t4.4\t-1.6\n101496\t5.3\t-0.7\n101515\t2.7\t0.7\n101554\t5.9\t-0.1\n101562\t6.3\t1.3\n101572\t5.1\t0.1\n101574\t5.6\t-3.4\n101604\t4.2\t-0.8\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_1742159907",
+      "id": "20230217-230239_1738933473",
+      "dateCreated": "2021-07-15T19:10:19+0000",
+      "dateStarted": "2023-02-17T22:58:41+0000",
+      "dateFinished": "2023-02-17T22:58:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Another option: create XGBoost Regression Model using Settings Table\nThe settings table is an alternative way to specify algorithm settings to build the model. We first drop the settings table, create it, and then populate it with settings before building the model.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAnother option: create XGBoost Regression Model using Settings Table\u003c/h2\u003e\n\u003cp\u003eThe settings table is an alternative way to specify algorithm settings to build the model. We first drop the settings table, create it, and then populate it with settings before building the model.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_378985276",
+      "id": "20230217-230239_1674378194",
+      "dateCreated": "2020-05-18T23:44:23+0000",
+      "dateStarted": "2023-02-17T22:58:41+0000",
+      "dateFinished": "2023-02-17T22:58:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop previous settings and output tables",
+      "text": "%script \n\n-- Drop any previous XGBoost Model Settings table for notebook repeatability\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE XGBOOST_REGRESSION_SETTINGS\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_351815593",
+      "id": "20230217-230239_1322790039",
+      "dateCreated": "2018-02-06T19:32:52+0000",
+      "dateStarted": "2023-02-17T22:58:41+0000",
+      "dateFinished": "2023-02-17T22:58:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create XGBoost model settings table",
+      "text": "%sql\n\n--Create Model Settings Table\nCREATE TABLE XGBOOST_REGRESSION_SETTINGS (\n    SETTING_NAME  VARCHAR2(30),\n    SETTING_VALUE VARCHAR2(4000));\n    ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:42+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_-1905596823",
+      "id": "20230217-230239_712223887",
+      "dateCreated": "2018-02-06T15:27:45+0000",
+      "dateStarted": "2023-02-17T22:58:42+0000",
+      "dateFinished": "2023-02-17T22:58:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Define model settings for automated data preparation and feature selection",
+      "text": "%script \n\nBEGIN \n    INSERT INTO XGBOOST_REGRESSION_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.ALGO_NAME, DBMS_DATA_MINING.ALGO_XGBOOST);\n    INSERT INTO XGBOOST_REGRESSION_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.PREP_AUTO, DBMS_DATA_MINING.PREP_AUTO_ON);  \n\n-- Specify a missing value treatment method:\n    INSERT INTO XGBOOST_REGRESSION_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.ODMS_MISSING_VALUE_TREATMENT, DBMS_DATA_MINING.ODMS_MISSING_VALUE_DELETE_ROW);\n   \n-- Specify the booster\n    INSERT INTO XGBOOST_REGRESSION_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.XGBOOST_BOOSTER, \u0027gbtree\u0027);\n\n\n-- Specify the number of iterations\n    INSERT INTO XGBOOST_REGRESSION_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.XGBOOST_NUM_ROUND, \u0027100\u0027);\n   \nEND;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_622559668",
+      "id": "20230217-230239_2099586092",
+      "dateCreated": "2018-02-06T15:27:49+0000",
+      "dateStarted": "2023-02-17T22:58:42+0000",
+      "dateFinished": "2023-02-17T22:58:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build a XGBoost Linear regression model for predicting YRS_RESIDENCE",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027XGBOOST_REGRESSION_MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\n\nDECLARE\n    V_XLST DBMS_DATA_MINING_TRANSFORM.TRANSFORM_LIST;\n \nBEGIN\n    DBMS_DATA_MINING.CREATE_MODEL(\n    MODEL_NAME          \u003d\u003e \u0027XGBOOST_REGRESSION_MODEL\u0027,\n    MINING_FUNCTION     \u003d\u003e DBMS_DATA_MINING.REGRESSION,\n    DATA_TABLE_NAME     \u003d\u003e \u0027TRAIN_DATA_V\u0027,\n    CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n    TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n    SETTINGS_TABLE_NAME \u003d\u003e \u0027XGBOOST_REGRESSION_SETTINGS\u0027,\n    XFORM_LIST          \u003d\u003e V_XLST);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_294698749",
+      "id": "20230217-230239_2033402417",
+      "dateCreated": "2018-02-06T15:30:56+0000",
+      "dateStarted": "2023-02-17T22:58:43+0000",
+      "dateFinished": "2023-02-17T22:58:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eEnd of Script\u003c/h2\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1676674959450_832641465",
+      "id": "20230217-230239_1988130068",
+      "dateCreated": "2020-05-18T23:45:47+0000",
+      "dateStarted": "2023-02-17T22:58:44+0000",
+      "dateFinished": "2023-02-17T22:58:44+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Regression XGBoost",
+  "id": "128767",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA16BD3AF782:shared_process": [],
+    "ORA338394C82B:shared_process": [],
+    "ORA7355AD9663:shared_process": [],
+    "MDWFB92257A73:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4SQL Regression XGBoost"
+}

@@ -18,6 +18,8 @@ Main - Runner class calling multiple methods demonstrating data types: JSON, XML
 */
 
 import database.DatabaseService;
+import database.DatabaseServiceWithPooling;
+import moreexamples.BlogExamples;
 import oracle.jdbc.OracleType;
 import oracle.jdbc.OracleTypes;
 import oracle.jdbc.internal.OracleClob;
@@ -34,6 +36,7 @@ import java.util.stream.IntStream;
 public class Main {
 
     private static DatabaseService ods;
+    private static DatabaseServiceWithPooling pds;
 
     /**
      * Runner method
@@ -41,13 +44,15 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            ods = new DatabaseService(); // initialize ods
-            Scanner scanner = new Scanner(System.in);
+            ods = new DatabaseService();
+            pds = new DatabaseServiceWithPooling();
+
+            Scanner runFunctionChallenge = new Scanner(System.in);
             boolean keepGoing = true;
 
             while(keepGoing) {
                 System.out.print("Run Function: ");
-                String functionName = scanner.next();
+                String functionName = runFunctionChallenge.next();
                 System.out.println("Output: ==========================================");
                 switch (functionName) {
                     case "readJSONExampleA" -> readJSONExampleA();
@@ -75,6 +80,11 @@ public class Main {
                     case "readWithRefCursorA" -> readWithRefCursorA();
                     case "readWithRefCursorB" -> readWithRefCursorB();
                     case "readWithRefCursorC" -> readWithRefCursorC();
+                    case "blogExampleA" -> BlogExamples.blogExampleA(pds);
+                    case "blogExampleB" -> BlogExamples.blogExampleB(pds);
+                    case "blogExampleC" -> BlogExamples.blogExampleC(pds);
+                    case "blogExampleD" -> BlogExamples.blogExampleD(pds);
+                    case "blogExampleE" -> BlogExamples.blogExampleE(pds);
                     case "end" -> keepGoing = false;
                     default -> System.out.printf("Error: function %s not found.\n", functionName);
                 }
