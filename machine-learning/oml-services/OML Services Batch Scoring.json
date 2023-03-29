@@ -1,0 +1,2651 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## **OML Services - Batch Scoring**\n\nOn Oracle Autonomous Database, data scientists can build machine learning models that reside in the database where, for example, they can be used immediately from SQL queries for scoring data, both in batch and for real-time applications. Oracle Machine Learning Services (OML Services) enables deploying those same models through REST endpoints hosted through Oracle Autonomous Database to enable both real-time, and now batch, scoring.\n\nThe batch scoring capability complements OML Services scoring functionality for singleton and small batch scoring using synchronous REST APIs, where input data is provided as part of the payload and the output was returned in the response. Using asynchronous requests and specified as tables or views through Autonomous data, user can score large volume data. Both the data source and scoring results remain in the user's schema and scoring occurs directly in the database for optimal efficiency. \n\nOML Services supports batch scoring for regression, classification, clustering, and feature extraction.\n\n### **Batch Scoring workflow**\n\nIn this notebook we highlight the following features of batch scoring through the REST interface:\n\n* Authenticate the database user and obtain a token\n* Create a batch scoring job\n* View the details and output of the batch scoring job\n* Update, disable, and delete a batch scoring job\n\nCopyright (c) 2023 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2><strong>OML Services - Batch Scoring</strong></h2>\n<p>On Oracle Autonomous Database, data scientists can build machine learning models that reside in the database where, for example, they can be used immediately from SQL queries for scoring data, both in batch and for real-time applications. Oracle Machine Learning Services (OML Services) enables deploying those same models through REST endpoints hosted through Oracle Autonomous Database to enable both real-time, and now batch, scoring.</p>\n<p>The batch scoring capability complements OML Services scoring functionality for singleton and small batch scoring using synchronous REST APIs, where input data is provided as part of the payload and the output was returned in the response. Using asynchronous requests and specified as tables or views through Autonomous data, user can score large volume data. Both the data source and scoring results remain in the user's schema and scoring occurs directly in the database for optimal efficiency.</p>\n<p>OML Services supports batch scoring for regression, classification, clustering, and feature extraction.</p>\n<h3><strong>Batch Scoring workflow</strong></h3>\n<p>In this notebook we highlight the following features of batch scoring through the REST interface:</p>\n<ul>\n<li>Authenticate the database user and obtain a token</li>\n<li>Create a batch scoring job</li>\n<li>View the details and output of the batch scoring job</li>\n<li>Update, disable, and delete a batch scoring job</li>\n</ul>\n<p>Copyright (c) 2023 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-251750537",
+      "id": "20230323-190932_974862331",
+      "dateCreated": "2023-01-06T20:36:02+0000",
+      "dateStarted": "2023-03-27T22:49:34+0000",
+      "dateFinished": "2023-03-27T22:49:35+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:38"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md\n---\nOML batch scoring documentation: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-batch-scoring.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-batch-scoring.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-batch-scoring.html</a>\nOML Services REST API Documentation: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html</a>\nOracle ADW Documentation: <a href=\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\nOML folder on Oracle Github : <a href=\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning');\">https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning</a>\nOML web page: <a href=\"https://www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\nOML Services Demonstration: <a href=\"https://asktom.oracle.com/pls/apex/asktom.search?oh=13662\" onclick=\"return ! window.open('https://asktom.oracle.com/pls/apex/asktom.search?oh=13662');\">https://asktom.oracle.com/pls/apex/asktom.search?oh=13662</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>OML batch scoring documentation: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-batch-scoring.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-batch-scoring.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-batch-scoring.html</a>\n<br  />OML Services REST API Documentation: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html</a>\n<br  />Oracle ADW Documentation: <a href=\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\n<br  />OML folder on Oracle Github : <a href=\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning');\">https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning</a>\n<br  />OML web page: <a href=\"https: //www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\n<br  />OML Services Demonstration: <a href=\"https: //asktom.oracle.com/pls/apex/asktom.search?oh=13662\" onclick=\"return ! window.open('https://asktom.oracle.com/pls/apex/asktom.search?oh=13662');\">https://asktom.oracle.com/pls/apex/asktom.search?oh=13662</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1967721741",
+      "id": "20230323-190932_870188819",
+      "dateCreated": "2023-01-06T20:51:53+0000",
+      "dateStarted": "2023-03-27T22:49:35+0000",
+      "dateFinished": "2023-03-27T22:49:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:39"
+    },
+    {
+      "title": "Before you begin",
+      "text": "%md\n---\nThis notebook walks through the steps to run batch scoring jobs through a REST interface via OML Services.\n\nIf you are unfamiliar with OML Services and its REST interface, the links above as well as the following guided lab are a great way to become aquainted: <a href=\"https://asktom.oracle.com/pls/apex/asktom.search?oh=13662\" onclick=\"return ! window.open('https://asktom.oracle.com/pls/apex/asktom.search?oh=13662');\">https://asktom.oracle.com/pls/apex/asktom.search?oh=13662</a>\n\nThe **cURL** commands provided in this notebook are for illustrative purposes only. To run REST calls, use **cURL** in a Linux or Mac terminal or another REST client such as Postman.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>This notebook walks through the steps to run batch scoring jobs through a REST interface via OML Services.</p>\n<p>If you are unfamiliar with OML Services and its REST interface, the links above as well as the following guided lab are a great way to become aquainted: <a href=\"https: //asktom.oracle.com/pls/apex/asktom.search?oh=13662\" onclick=\"return ! window.open('https://asktom.oracle.com/pls/apex/asktom.search?oh=13662');\">https://asktom.oracle.com/pls/apex/asktom.search?oh=13662</a></p>\n<p>The <strong>cURL</strong> commands provided in this notebook are for illustrative purposes only. To run REST calls, use <strong>cURL</strong> in a Linux or Mac terminal or another REST client such as Postman.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_678519150",
+      "id": "20230323-190932_70235085",
+      "dateCreated": "2023-01-09T16:25:21+0000",
+      "dateStarted": "2023-03-27T22:49:36+0000",
+      "dateFinished": "2023-03-27T22:49:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:40"
+    },
+    {
+      "title": "Get an access token",
+      "text": "%md\n---\nTo send requests to OML Services, you must obtain an authentication token by using your Oracle Machine Learning account credentials. To authenticate and obtain a token, use **cURL** with the **-d** option to pass the credentials for your Oracle Machine Learning account against the Oracle Machine Learning user management cloud service REST endpoint */oauth2/v1/token*. \n\n    $ curl -X POST --header 'Content-Type: application/json' \\\n           --header 'Accept: application/json' \\\n           -d '{\"grant_type\":\"password\", \"username\":\"'<yourusername>'\",\"password\":\"'<yourpassword>'\"}' \n            \"<OML service URL>/omlusers/api/oauth2/v1/token\"\n    \nwhere   \n\n* _-X POST_ specifies to use a POST request when communicating with the HTTP server\n* _--header_ defines the headers required for the request (application/json)\n* _-d <data>_ sends the username and password authentication credentials as data in a POST request to the HTTP server\n* _Content-Type_ and _Accept_ define the response format (JSON)\n* _yourusername_ is the user name of a Oracle Machine Learning user with the default OML_DEVELOPER role\n* _yourpassword_ is the password for the user name\n* _OML service URL_ is the REST server portion of the Oracle Machine Learning user management cloud service instance",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>To send requests to OML Services, you must obtain an authentication token by using your Oracle Machine Learning account credentials. To authenticate and obtain a token, use <strong>cURL</strong> with the <strong>-d</strong> option to pass the credentials for your Oracle Machine Learning account against the Oracle Machine Learning user management cloud service REST endpoint <em>/oauth2/v1/token</em>.</p>\n<pre><code>$ curl -X POST --header 'Content-Type: application/json' \\\n       --header 'Accept: application/json' \\\n       -d '{\"grant_type\":\"password\", \"username\":\"'&lt;yourusername&gt;'\",\"password\":\"'&lt;yourpassword&gt;'\"}' \n        \"&lt;OML service URL&gt;/omlusers/api/oauth2/v1/token\"\n</code></pre>\n<p>where</p>\n<ul>\n<li><em>-X POST</em> specifies to use a POST request when communicating with the HTTP server</li>\n<li><em>&ndash;header</em> defines the headers required for the request (application/json)</li>\n<li><em>-d <data></em> sends the username and password authentication credentials as data in a POST request to the HTTP server</li>\n<li><em>Content-Type</em> and <em>Accept</em> define the response format (JSON)</li>\n<li><em>yourusername</em> is the user name of a Oracle Machine Learning user with the default OML_DEVELOPER role</li>\n<li><em>yourpassword</em> is the password for the user name</li>\n<li><em>OML service URL</em> is the REST server portion of the Oracle Machine Learning user management cloud service instance</li>\n</ul>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1790401818",
+      "id": "20230323-190932_1100313179",
+      "dateCreated": "2023-01-09T16:38:34+0000",
+      "dateStarted": "2023-03-27T22:49:36+0000",
+      "dateFinished": "2023-03-27T22:49:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "Create a batch scoring job ",
+      "text": "%md\n---\nNow that you have an access token, you can send a request to OML Services to create a batch scoring job. This request is sent to the */omlmod/v1/jobs* endpoint as a **POST** request. Below is a listing of the parameters that can be specified for a batch scoring job, divided into those that are required and those that are optional. \n\n**Required**:\n* _jobName_ specifies the name of the submitted job.\n* _jobType_ specifies the type of job to be run, which is MODEL_SCORING for batch scoring jobs. \n* _inputData_ is the name of the table or view to read input for the batch scoring job.\n* _outputData_ is the results table in the format {jobID}_{outputData} storing the batch scoring results.\n* _modelId_ is the ID for the model used for scoring.\n* _supplementalColumnNames_ is an array of columns from the input table or view that is used to identify rows in the output table.\n\n**Optional**:\n* _jobStartDate_ is the start date and time for the job run. If not specified, the job runs immediately.\n* _jobEndDate_ is the end date and time for the job run.\n* _disableJob_ is a flag to disable the job at submission. If not set, the the job is enabled at submission.\n* _maxRuns_ is the number of times the job will run according to the schedule.\n* _inputSchemaName_ is the database schema that owns the input table or view. If not specified, the input schema will be the same as the user that obtained the token.\n* _outputSchemaName_ is the database schema that owns the output table. If not specified the output schema will be the same as the input schema.\n* _jobDescription_ is a description of the job provided by the user.\n* _jobServiceLevel_ is the database service level for the job, which can be LOW, MEDIUM, or HIGH. \n* _recompute_ is a flag whether to update already computed periods. The default is False, meaning only time periods not present in the output result table will be computed. \n* _topN_ filters the results for classification by returning the highest N probabilities, or for clustering, returning the N most probable cluster assignments.\n* _topNDetails_ provide prediction details contributing to the probability scores.\n* _recompute_ is a flag to replace the results table specified by outputData.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Now that you have an access token, you can send a request to OML Services to create a batch scoring job. This request is sent to the <em>/omlmod/v1/jobs</em> endpoint as a <strong>POST</strong> request. Below is a listing of the parameters that can be specified for a batch scoring job, divided into those that are required and those that are optional.</p>\n<p><strong>Required</strong>:</p>\n<ul>\n<li><em>jobName</em> specifies the name of the submitted job.</li>\n<li><em>jobType</em> specifies the type of job to be run, which is MODEL_SCORING for batch scoring jobs.</li>\n<li><em>inputData</em> is the name of the table or view to read input for the batch scoring job.</li>\n<li><em>outputData</em> is the results table in the format {jobID}_{outputData} storing the batch scoring results.</li>\n<li><em>modelId</em> is the ID for the model used for scoring.</li>\n<li><em>supplementalColumnNames</em> is an array of columns from the input table or view that is used to identify rows in the output table.</li>\n</ul>\n<p><strong>Optional</strong>:</p>\n<ul>\n<li><em>jobStartDate</em> is the start date and time for the job run. If not specified, the job runs immediately.</li>\n<li><em>jobEndDate</em> is the end date and time for the job run.</li>\n<li><em>disableJob</em> is a flag to disable the job at submission. If not set, the the job is enabled at submission.</li>\n<li><em>maxRuns</em> is the number of times the job will run according to the schedule.</li>\n<li><em>inputSchemaName</em> is the database schema that owns the input table or view. If not specified, the input schema will be the same as the user that obtained the token.</li>\n<li><em>outputSchemaName</em> is the database schema that owns the output table. If not specified the output schema will be the same as the input schema.</li>\n<li><em>jobDescription</em> is a description of the job provided by the user.</li>\n<li><em>jobServiceLevel</em> is the database service level for the job, which can be LOW, MEDIUM, or HIGH.</li>\n<li><em>recompute</em> is a flag whether to update already computed periods. The default is False, meaning only time periods not present in the output result table will be computed.</li>\n<li><em>topN</em> filters the results for classification by returning the highest N probabilities, or for clustering, returning the N most probable cluster assignments.</li>\n<li><em>topNDetails</em> provide prediction details contributing to the probability scores.</li>\n<li><em>recompute</em> is a flag to replace the results table specified by outputData.</li>\n</ul>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-175627296",
+      "id": "20230323-190932_575811965",
+      "dateCreated": "2023-01-09T16:39:13+0000",
+      "dateStarted": "2023-03-27T22:49:36+0000",
+      "dateFinished": "2023-03-27T22:49:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "text": "%md\n---\nBatch scoring jobs are initiated by sending a **POST** request to the */omlmod/v1/jobs* endpoint. The details for batch scoring are specified in **jobProperties**, including:\n* batch scoring job name and type\n* ID of the model used for scoring\n* table name for storing the batch scoring job results\n* supplemental column names to return with the scoring results to identify rows\n* whether to replace the results table with each job run\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Batch scoring jobs are initiated by sending a <strong>POST</strong> request to the <em>/omlmod/v1/jobs</em> endpoint. The details for batch scoring are specified in <strong>jobProperties</strong>, including:</p>\n<ul>\n<li>batch scoring job name and type</li>\n<li>ID of the model used for scoring</li>\n<li>table name for storing the batch scoring job results</li>\n<li>supplemental column names to return with the scoring results to identify rows</li>\n<li>whether to replace the results table with each job run</li>\n</ul>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-177170144",
+      "id": "20230323-190932_1635208379",
+      "dateCreated": "2023-01-25T21:04:00+0000",
+      "dateStarted": "2023-03-27T22:49:37+0000",
+      "dateFinished": "2023-03-27T22:49:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "text": "%md\n---\n## Regression\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h2>Regression</h2>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1636162040",
+      "id": "20230323-190932_406796931",
+      "dateCreated": "2023-03-14T19:24:56+0000",
+      "dateStarted": "2023-03-27T22:49:38+0000",
+      "dateFinished": "2023-03-27T22:49:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "text": "%md\n---\n\nHere is an example of a batch scoring job submission using a regression model. To start, you will need the model ID for the model used for scoring. You can get the model ID by sending a **GET** request to the deployment endpoint and specifying the model URI. The model URI is provided by the user when deploying the model using the AutoML UI or when deploying the model through a REST client. \n\nThis model was trained on the CUSTOMERS360 dataset to predict `YRS_RESIDENCE`, the model URI is `REGR_MOD`, and the model ID is `074f5554-fc75-4647-9392-a376056c1f03`.\n\nIn addition to the job name and type, we specify an hourly job schedule with 50 maximum runs, the model ID and input data for scoring, and an output table to store the job results. We also return the target column *YRS_RESIDENCE* and the customer ID column *CUST_ID* with the predictions to identify rows, and set recompute to *true* to replace the results table with each run.\n\nNote that we are using *jq*, a command-line JSON processor available on Linux and Mac OS systems, to extract relevant components from the response.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Here is an example of a batch scoring job submission using a regression model. To start, you will need the model ID for the model used for scoring. You can get the model ID by sending a <strong>GET</strong> request to the deployment endpoint and specifying the model URI. The model URI is provided by the user when deploying the model using the AutoML UI or when deploying the model through a REST client.</p>\n<p>This model was trained on the CUSTOMERS360 dataset to predict <code>YRS_RESIDENCE</code>, the model URI is <code>REGR_MOD</code>, and the model ID is <code>074f5554-fc75-4647-9392-a376056c1f03</code>.</p>\n<p>In addition to the job name and type, we specify an hourly job schedule with 50 maximum runs, the model ID and input data for scoring, and an output table to store the job results. We also return the target column <em>YRS_RESIDENCE</em> and the customer ID column <em>CUST_ID</em> with the predictions to identify rows, and set recompute to <em>true</em> to replace the results table with each run.</p>\n<p>Note that we are using <em>jq</em>, a command-line JSON processor available on Linux and Mac OS systems, to extract relevant components from the response.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1165166927",
+      "id": "20230323-190932_1926403189",
+      "dateCreated": "2023-03-14T18:14:19+0000",
+      "dateStarted": "2023-03-27T22:49:38+0000",
+      "dateFinished": "2023-03-27T22:49:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Get model ID",
+      "text": "\n$ curl -X GET \"${omlservice}/omlmod/v1/deployment/REGR_MOD\" \\\n       --header \"Authorization: Bearer ${token}\" | jq '.modelId'\n\n returns: \"074f5554-fc75-4647-9392-a376056c1f03\"\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-740445077",
+      "id": "20230323-190932_1102613131",
+      "dateCreated": "2023-03-09T01:47:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Submit batch scoring job ",
+      "text": "\r\n$ curl -i -X POST \"${omlservice}/omlmod/v1/jobs\" \\\r\n     --header \"Authorization: Bearer ${token}\" \\\r\n     --header 'Content-Type: application/json' \\\r\n     --data '{\r\n         \"jobSchedule\": {  \r\n\t\t     \"jobStartDate\": \"2023-03-23T20:05:22Z\",                   # job start date and time \r\n\t\t\t \"jobEndDate\":   \"2023-03-25T20:05:22Z\"                    # job end date and time\r\n             \"repeatInterval\": \"FREQ=HOURLY\",                          # job frequency         \r\n             \"maxRuns\": \"50\"                                           # max runs within the schedule                       \r\n         },\r\n         \"jobProperties\": {\r\n             \"jobName\": \"REG_PRED1\",                                   # job name\r\n             \"jobType\": \"MODEL_SCORING\",                               # job type; MODEL_SCORING\r\n             \"modelId\": \"074f5554-fc75-4647-9392-a376056c1f03\",\t\t   # ID of the model used for scoring\t \r\n             \"inputData\": \"CUSTOMERS360\",                              # table or view to read input for the batch scoring job\r\n             \"outputData\": \"REG_PRED_OUT1\",                            # output table to store the scoring results in the format {jobID}_{outputData}\r\n             \"supplementalColumnNames\": [\"CUST_ID\",\"YRS_RESIDENCE\"],   # array of columns from the input data used to identify rows in the output\r\n             \"topNDetails\": 2,                                         # flag to return the top N most important predictors and their weight\r\n\t\t\t \"recompute\": \"true\"                                       # flag to determine whether to overwrite the results table\r\n\t\t}\r\n     }' | jq\r\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-29T00:35:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1876649658",
+      "id": "20230323-190932_452002963",
+      "dateCreated": "2023-01-25T21:02:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "text": "%md\n---\nWhen your job is successfully submitted, you will receive a response. Note the job ID, as you will use it to submit requests such as retrieving job details or performing an action on the job.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>When your job is successfully submitted, you will receive a response. Note the job ID, as you will use it to submit requests such as retrieving job details or performing an action on the job.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1910546566",
+      "id": "20230323-190932_2080099948",
+      "dateCreated": "2023-01-25T21:05:05+0000",
+      "dateStarted": "2023-03-27T22:49:39+0000",
+      "dateFinished": "2023-03-27T22:49:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "text": "\n{\n  \"jobId\": \"OML$21FACAC2_B345_4485_B287_DBDADC3A1BC0\",\n  \"links\": [\n    {\n      \"rel\": \"self\",\n      \"href\": \"<OML Service URL>/omlmod/v1/jobs/OML%2421FACAC2_B345_4485_B287_DBDADC3A1BC0\"\n    }\n  ]\n}\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-54526121",
+      "id": "20230323-190932_502045786",
+      "dateCreated": "2023-01-25T21:06:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "View the details of the submitted job",
+      "text": "%md\n---\nYou can view the details of your submitted regression batch scoring job with a GET request to the */omlmod/v1/jobs/{jobID}* endpoint, where **jobid** is the ID provided in response to the successful submission of your batch scoring job in the previous step. The returned details include the parameters provided when the job was submitted  and the default values for the optional parameters not specified upon submission.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>You can view the details of your submitted regression batch scoring job with a GET request to the <em>/omlmod/v1/jobs/{jobID}</em> endpoint, where <strong>jobid</strong> is the ID provided in response to the successful submission of your batch scoring job in the previous step. The returned details include the parameters provided when the job was submitted  and the default values for the optional parameters not specified upon submission.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1679198851",
+      "id": "20230323-190932_411414974",
+      "dateCreated": "2023-01-09T16:40:13+0000",
+      "dateStarted": "2023-03-27T22:49:40+0000",
+      "dateFinished": "2023-03-27T22:49:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "",
+      "text": "\n$ export jobid='OML$21FACAC2_B345_4485_B287_DBDADC3A1BC0'  # save job ID to variable\n\n$ curl -X GET \"${omlservice}/omlmod/v1/jobs/${jobid}\"  \\\n       --header 'Accept: application/json' \\\n       --header 'Content-Type: application/json' \\\n       --header \"Authorization: Bearer ${token}\" | jq\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:39:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": false,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1266412130",
+      "id": "20230323-190932_180550561",
+      "dateCreated": "2023-01-26T01:27:54+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "title": "",
+      "text": "\r\n\r\n{\r\n  \"jobId\": \"OML$21FACAC2_B345_4485_B287_DBDADC3A1BC0\",\r\n  \"jobRequest\": {\r\n    \"jobSchedule\": {\r\n      \"jobStartDate\": \"2023-03-23T20:05:22Z\",\r\n      \"repeatInterval\": \"FREQ=HOURLY\",\r\n      \"jobEndDate\": \"2023-03-25T20:05:22Z\",\r\n      \"maxRuns\": 50\r\n    },\r\n    \"jobProperties\": {\r\n      \"jobType\": \"MODEL_SCORING\",\r\n      \"inputSchemaName\": null,\r\n      \"outputSchemaName\": null,\r\n      \"outputData\": \"REG_PRED_OUT1\",\r\n      \"jobDescription\": null,\r\n      \"jobName\": \"REG_PRED1\",\r\n      \"disableJob\": false,\r\n      \"jobServiceLevel\": null,\r\n      \"inputData\": \"CUSTOMERS360\",\r\n      \"supplementalColumnNames\": [\r\n        \"CUST_ID\",\r\n        \"YRS_RESIDENCE\"\r\n      ],\r\n      \"topN\": null,\r\n      \"recompute\": true,\r\n      \"modelId\": \"074f5554-fc75-4647-9392-a376056c1f03\",\r\n      \"topNDetails\": 2\r\n    }\r\n  },\r\n  \"jobStatus\": \"CREATED\",\r\n  \"dateSubmitted\": \"2023-03-23T20:04:06.157516Z\",\r\n  \"links\": [\r\n    {\r\n      \"rel\": \"self\",\r\n      \"href\": \"<OML Service URL>/omlmod/v1/jobs/OML%2421FACAC2_B345_4485_B287_DBDADC3A1BC0\"\r\n    }\r\n  ],\r\n  \"jobFlags\": [],\r\n  \"state\": \"SCHEDULED\",\r\n  \"enabled\": true,\r\n  \"runCount\": 0,\r\n  \"nextRunDate\": \"2023-03-23T20:05:22Z\"\r\n}\r\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": false,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1937914485",
+      "id": "20230323-190932_795855931",
+      "dateCreated": "2023-01-26T01:30:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "View the batch scoring job output",
+      "text": "%md\n---\nOnce your job has run, you can view the results in the table you specified in your job request with the **outputData** parameter. The full name of the table is *{jobID}\\_{outputData}*. You can check if your job is finished by sending a request to view its details. The paragraph below queries the output table associated with this example. \n\nThe regression predictions are returned in the *OML$PREDICTION* column along with the supplemental column names provided by the user. OML$DETAIL1 contains the most important column in prediction details, and OML$DETAILWEIGHT1 contains weight of the most important column in prediction details. OML$DETAIL2 contains the second most important column in prediction details, and OML$DETAILWEIGHT2 contains weight of the second most important column in prediction details. \n\n\nFor help understanding the regression batch scoring output table, refer to the documentation: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-regr-output-table-rel.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-regr-output-table-rel.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-regr-output-table-rel.html</a>",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Once your job has run, you can view the results in the table you specified in your job request with the <strong>outputData</strong> parameter. The full name of the table is <em>{jobID}_{outputData}</em>. You can check if your job is finished by sending a request to view its details. The paragraph below queries the output table associated with this example.</p>\n<p>The regression predictions are returned in the <em>OML$PREDICTION</em> column along with the supplemental column names provided by the user. OML$DETAIL1 contains the most important column in prediction details, and OML$DETAILWEIGHT1 contains weight of the most important column in prediction details. OML$DETAIL2 contains the second most important column in prediction details, and OML$DETAILWEIGHT2 contains weight of the second most important column in prediction details.</p>\n<p>For help understanding the regression batch scoring output table, refer to the documentation: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-regr-output-table-rel.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-regr-output-table-rel.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-regr-output-table-rel.html</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-876365134",
+      "id": "20230323-190932_1452841920",
+      "dateCreated": "2023-01-09T16:54:58+0000",
+      "dateStarted": "2023-03-27T22:49:41+0000",
+      "dateFinished": "2023-03-27T22:49:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "text": "%sql\n\nSELECT * FROM OML$21FACAC2_B345_4485_B287_DBDADC3A1BC0_REG_PRED_OUT1\nORDER BY CUST_ID\nFETCH FIRST 5 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "optionOpen": false,
+              "commonSetting": {},
+              "height": 300,
+              "setting": {
+                "table": {
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "showAggregationFooter": false,
+                    "showPagination": false,
+                    "useFilter": false
+                  },
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "YRS_RESIDENCE1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OML$PREDICTION2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OML$DETAIL13",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OML$DETAIL_WEIGHT14",
+                        "visible": true,
+                        "width": 198,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OML$DETAIL25",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OML$DETAIL_WEIGHT26",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "YRS_RESIDENCE": "number",
+                      "OML$PREDICTION": "number",
+                      "OML$DETAIL1": "string",
+                      "OML$DETAIL_WEIGHT1": "number",
+                      "OML$DETAIL2": "string",
+                      "OML$DETAIL_WEIGHT2": "number"
+                    },
+                    "updated": false
+                  },
+                  "updated": false
+                }
+              }
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tYRS_RESIDENCE\tOML$PREDICTION\tOML$DETAIL1\tOML$DETAIL_WEIGHT1\tOML$DETAIL2\tOML$DETAIL_WEIGHT2\n100001\t3\t4.930804799893024\tCUST_YEAR_OF_BIR\t0.533\tCUST_MARITAL_STA\t-0.362\n100002\t4\t4.3754994279267967\tCUST_YEAR_OF_BIR\t0.268\tY_BOX_GAMES\t0.265\n100003\t6\t3.8567326223829066\tCUST_YEAR_OF_BIR\t-0.379\tY_BOX_GAMES\t0.225\n100004\t5\t5.2131634961573061\tCUST_YEAR_OF_BIR\t0.705\tY_BOX_GAMES\t0.157\n100005\t5\t5.403778627157152\tCUST_YEAR_OF_BIR\t0.496\tAFFINITY_CARD\t0.336\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1354943705",
+      "id": "20230323-190932_1671813356",
+      "dateCreated": "2023-01-09T16:54:57+0000",
+      "dateStarted": "2023-03-27T22:49:42+0000",
+      "dateFinished": "2023-03-27T22:49:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "text": "%md\n---\n## Classification\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h2>Classification</h2>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1411045376",
+      "id": "20230323-190932_2116499658",
+      "dateCreated": "2023-03-14T19:26:05+0000",
+      "dateStarted": "2023-03-27T22:49:42+0000",
+      "dateFinished": "2023-03-27T22:49:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "text": "%md\n---\n\nHere is an example of a classification batch scoring job submission using a neural network model with model URI `NN_MOD` and ID `35a97c7b-0ff4-4940-96f5-bfb29f64d223`. The model was trained on the CUSTOMERS360 dataset to predict the customers most likely to respond positively to an affinity card loyalty program. \n\nIn addition to the job name and type, we specify a daily job schedule with 4 maximum runs, the model ID and input data for scoring, an output table to store the job results, and set recompute to *true* to replace the output table with each run. We return the target column *AFFINITY_CARD* and the customer ID column *CUST_ID* with the predictions to identify rows, and the top 2 predictions wiith details contributing to those predictions. \n\nWe also set the database service level to *MEDIUM*. Oracle Autonomous Database supports three service levels: HIGH, MEDIUM, and LOW. LOW is the default, which results in no parallelism, but you can change your database service level to MEDIUM or HIGH. The HIGH service levels gives the greatest parallelism but significantly limits the number of concurrent jobs, while the MEDIUM level enables some parallelism but allows greater concurrency for job processing. \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Here is an example of a classification batch scoring job submission using a neural network model with model URI <code>NN_MOD</code> and ID <code>35a97c7b-0ff4-4940-96f5-bfb29f64d223</code>. The model was trained on the CUSTOMERS360 dataset to predict the customers most likely to respond positively to an affinity card loyalty program.</p>\n<p>In addition to the job name and type, we specify a daily job schedule with 4 maximum runs, the model ID and input data for scoring, an output table to store the job results, and set recompute to <em>true</em> to replace the output table with each run. We return the target column <em>AFFINITY_CARD</em> and the customer ID column <em>CUST_ID</em> with the predictions to identify rows, and the top 2 predictions wiith details contributing to those predictions.</p>\n<p>We also set the database service level to <em>MEDIUM</em>. Oracle Autonomous Database supports three service levels: HIGH, MEDIUM, and LOW. LOW is the default, which results in no parallelism, but you can change your database service level to MEDIUM or HIGH. The HIGH service levels gives the greatest parallelism but significantly limits the number of concurrent jobs, while the MEDIUM level enables some parallelism but allows greater concurrency for job processing.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1353711555",
+      "id": "20230323-190932_804797729",
+      "dateCreated": "2023-03-14T18:17:40+0000",
+      "dateStarted": "2023-03-27T22:49:42+0000",
+      "dateFinished": "2023-03-27T22:49:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "Get model ID",
+      "text": "\n$ curl -X GET \"${omlservice}/omlmod/v1/deployment/NN_MOD\" \\\n       --header \"Authorization: Bearer ${token}\" | jq '.modelId'\n\n returns: \"35a97c7b-0ff4-4940-96f5-bfb29f64d223\"\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:37:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-415624864",
+      "id": "20230323-190932_1026352517",
+      "dateCreated": "2023-03-14T21:30:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "title": "Submit batch scoring job",
+      "text": "\n$ curl -X POST \"${omlservice}/omlmod/v1/jobs\" \\\n     --header \"Authorization: Bearer ${token}\" \\\n     --header 'Content-Type: application/json' \\\n     --data '{\n         \"jobSchedule\": {  \n\t\t     \"jobStartDate\": \"2023-03-13T21:10:23Z\",                  # job start date and time\n\t\t\t \"jobEndDate\":   \"2023-03-17T21:10:23Z\",                  # job end date and time\n             \"repeatInterval\": \"FREQ=DAILY\",                          # job frequency\n             \"maxRuns\": \"4\"                                           # max runs within the schedule                     \n         },\n         \"jobProperties\": {\n             \"jobName\": \"NN_MOD1\",                                    # job name\n             \"jobType\": \"MODEL_SCORING\",                              # job type; MODEL_SCORING\n             \"modelId\": \"35a97c7b-0ff4-4940-96f5-bfb29f64d223\",\t\t  # ID of the model used for scoring\t \n             \"inputData\": \"CUSTOMERS360\",                             # table or view to read input for the batch scoring job\n             \"outputData\": \"CLASS_PRED1\",                             # output table to store the scoring results in the format {jobID}_{outputData}\n             \"supplementalColumnNames\": [\"CUST_ID\", \"AFFINITY_CARD\"], # array of columns from the input data used to identify rows in the output\n             \"jobServiceLevel\": \"MEDIUM\",                             # The database service level for the job. The default is LOW.\n\t\t\t \"topN\": 2,                                               # filters the results by returning the highest N probabilities\n\t\t\t \"topNDetails\": 2,                                        # provides prediction details contributing to the probability scores\n\t\t\t \"recompute\": \"true\"                                      # flag to determine whether to overwrite the result table \n\t\t}\n ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-29T00:36:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1524226769",
+      "id": "20230323-190932_1879255156",
+      "dateCreated": "2023-03-14T18:22:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "\nreturns:\n\n{\n  \"jobId\": \"OML$385E413C_7219_41A4_B5A2_DC6B91B3DD8E\",\n  \"links\": [\n    {\n      \"rel\": \"self\",\n      \"href\": \"<OML Service URL>/omlmod/v1/jobs/OML%24385E413C_7219_41A4_B5A2_DC6B91B3DD8E\"\n    }\n  ]\n}\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-2037564772",
+      "id": "20230323-190932_925220822",
+      "dateCreated": "2023-03-14T19:13:18+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "View the details of the submitted job",
+      "text": "%md\n---\nYou can view the details of your submitted batch scoring job with a GET request to the */omlmod/v1/jobs/{jobID}* endpoint, where **jobId** is the ID provided in response to the successful submission of your batch scoring job in the previous step. The returned details include the parameters provided when the job was submitted  and the default values for the optional parameters not specified upon submission.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>You can view the details of your submitted batch scoring job with a GET request to the <em>/omlmod/v1/jobs/{jobID}</em> endpoint, where <strong>jobId</strong> is the ID provided in response to the successful submission of your batch scoring job in the previous step. The returned details include the parameters provided when the job was submitted  and the default values for the optional parameters not specified upon submission.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-77475242",
+      "id": "20230323-190932_1507499302",
+      "dateCreated": "2023-03-15T17:32:34+0000",
+      "dateStarted": "2023-03-27T22:49:44+0000",
+      "dateFinished": "2023-03-27T22:49:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "title": "View the batch scoring job details",
+      "text": "\n$ export jobid='OML$385E413C_7219_41A4_B5A2_DC6B91B3DD8E'   # save job ID to variable\n\n$ curl -X GET \"${omlservice}/omlmod/v1/jobs/${jobid}\"  \\\n       --header 'Accept: application/json' \\\n       --header 'Content-Type: application/json' \\\n       --header \"Authorization: Bearer ${token}\" | jq\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-799735871",
+      "id": "20230323-190932_50350933",
+      "dateCreated": "2023-03-14T21:28:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "\n{\n  \"jobId\": \"OML$385E413C_7219_41A4_B5A2_DC6B91B3DD8E\",\n  \"jobRequest\": {\n    \"jobSchedule\": {\n      \"jobStartDate\": \"2023-03-23T20:32:35Z\",\n      \"repeatInterval\": \"FREQ=DAILY\",\n      \"jobEndDate\": \"2023-03-27T20:32:35Z\",\n      \"maxRuns\": 4\n    },\n    \"jobProperties\": {\n      \"jobType\": \"MODEL_SCORING\",\n      \"inputSchemaName\": null,\n      \"outputSchemaName\": null,\n      \"outputData\": \"CLASS_PRED1\",\n      \"jobDescription\": null,\n      \"jobName\": \"NN_MOD1\",\n      \"disableJob\": false,\n      \"jobServiceLevel\": \"MEDIUM\",\n      \"inputData\": \"CUSTOMERS360\",\n      \"supplementalColumnNames\": [\n        \"CUST_ID\",\n        \"AFFINITY_CARD\"\n      ],\n      \"topN\": 2,\n      \"recompute\": true,\n      \"modelId\": \"35a97c7b-0ff4-4940-96f5-bfb29f64d223\",\n      \"topNDetails\": 2\n    }\n  },\n  \"jobStatus\": \"CREATED\",\n  \"dateSubmitted\": \"2023-03-23T20:28:55.233217Z\",\n  \"links\": [\n    {\n      \"rel\": \"self\",\n      \"href\": \"<OML Service URL>/omlmod/v1/jobs/OML%24385E413C_7219_41A4_B5A2_DC6B91B3DD8E\"\n    }\n  ],\n  \"jobFlags\": [],\n  \"state\": \"SCHEDULED\",\n  \"enabled\": true,\n  \"runCount\": 0,\n  \"nextRunDate\": \"2023-03-23T20:32:35Z\"\n}\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1826459765",
+      "id": "20230323-190932_1789494217",
+      "dateCreated": "2023-03-14T19:28:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "title": "View the batch scoring job output",
+      "text": "%md\n---\nOnce your job has run, you can view the results in the table you specified in your job request with the **outputData** parameter. The full name of the table is {jobID}_{outputData}. You can check if your job is finished by sending a request to view its details. \n\nThe paragraph below queries the output table associated with this example.  The supplemental column names provided by the user are returned, along with the classification predictions. The *OML$PREDICTION1* column contains the class with highest probability and the *OML$PROBABILITY1* column contains the probability for the top class. *OML$DETAIL1* contains the most important column in the prediction details, while the *OML$PROBABILITY2* column contains the probability for the second class, and *OML$DETAIL2* contains the second most import column in the prediction details. \n\nFor help understanding the classification batch scoring output table, refer to the documentation:\n\n<a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-class-output-table-rel.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-class-output-table-rel.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-class-output-table-rel.html</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Once your job has run, you can view the results in the table you specified in your job request with the <strong>outputData</strong> parameter. The full name of the table is {jobID}_{outputData}. You can check if your job is finished by sending a request to view its details.</p>\n<p>The paragraph below queries the output table associated with this example.  The supplemental column names provided by the user are returned, along with the classification predictions. The <em>OML$PREDICTION1</em> column contains the class with highest probability and the <em>OML$PROBABILITY1</em> column contains the probability for the top class. <em>OML$DETAIL1</em> contains the most important column in the prediction details, while the <em>OML$PROBABILITY2</em> column contains the probability for the second class, and <em>OML$DETAIL2</em> contains the second most import column in the prediction details.</p>\n<p>For help understanding the classification batch scoring output table, refer to the documentation:</p>\n<p><a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-class-output-table-rel.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-class-output-table-rel.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-class-output-table-rel.html</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1547961049",
+      "id": "20230323-190932_1885882949",
+      "dateCreated": "2023-03-15T17:34:00+0000",
+      "dateStarted": "2023-03-27T22:49:45+0000",
+      "dateFinished": "2023-03-27T22:49:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "title": "",
+      "text": "%sql\n\nSELECT * FROM OML$385E413C_7219_41A4_B5A2_DC6B91B3DD8E_CLASS_PRED1\nORDER BY CUST_ID\nFETCH FIRST 5 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": false,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "optionOpen": false,
+              "commonSetting": {},
+              "height": 300,
+              "setting": {
+                "table": {
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "showAggregationFooter": false,
+                    "showPagination": false,
+                    "useFilter": false
+                  },
+                  "tableGridState": {
+                    "scrollFocus": {},
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    },
+                    "selection": [],
+                    "columns": [
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "CUST_ID0",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "AFFINITY_CARD1",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$PREDICTION12",
+                        "width": 214,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$PROBABILITY13",
+                        "width": 204,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$PREDICTION24",
+                        "width": 201,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$PROBABILITY25",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL16",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL_WEIGHT17",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL28",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL_WEIGHT29",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      }
+                    ],
+                    "grouping": {
+                      "rowExpandedStates": {},
+                      "grouping": [],
+                      "aggregations": []
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "AFFINITY_CARD": "number",
+                      "OML$DETAIL2": "string",
+                      "OML$DETAIL1": "string",
+                      "OML$PREDICTION1": "number",
+                      "OML$PROBABILITY2": "number",
+                      "OML$PROBABILITY1": "number",
+                      "OML$PREDICTION2": "number",
+                      "OML$DETAIL_WEIGHT2": "number",
+                      "OML$DETAIL_WEIGHT1": "number"
+                    },
+                    "updated": false
+                  },
+                  "updated": false
+                }
+              }
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tAFFINITY_CARD\tOML$PREDICTION1\tOML$PROBABILITY1\tOML$PREDICTION2\tOML$PROBABILITY2\tOML$DETAIL1\tOML$DETAIL_WEIGHT1\tOML$DETAIL2\tOML$DETAIL_WEIGHT2\n100001\t0\t0\t0.9088646340109852\t1\t0.09113536598901482\tHOUSEHOLD_SIZE\t0.446\tOCCUPATION\t-0.068\n100002\t0\t0\t0.867137598094808\t1\t0.132862401905192\tHOUSEHOLD_SIZE\t0.551\tOCCUPATION\t-0.092\n100003\t0\t0\t0.739040870075492\t1\t0.260959129924508\tHOUSEHOLD_SIZE\t0.355\tOCCUPATION\t-0.163\n100004\t0\t0\t0.8009699375453181\t1\t0.19903006245468186\tHOUSEHOLD_SIZE\t0.414\tOCCUPATION\t-0.136\n100005\t1\t0\t0.6504011372085875\t1\t0.3495988627914125\tY_BOX_GAMES\t-0.073\tYRS_RESIDENCE\t-0.07\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1488732930",
+      "id": "20230323-190932_2102840003",
+      "dateCreated": "2023-03-14T19:14:00+0000",
+      "dateStarted": "2023-03-27T22:49:46+0000",
+      "dateFinished": "2023-03-27T22:49:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "%md\n---\n## Clustering\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h2>Clustering</h2>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_942327132",
+      "id": "20230323-190932_2081254623",
+      "dateCreated": "2023-03-14T23:05:58+0000",
+      "dateStarted": "2023-03-27T22:49:46+0000",
+      "dateFinished": "2023-03-27T22:49:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "%md\n---\n\nHere is an example of a K-Means clustering batch scoring job submission with model URI `KM_CLUS_MOD` and ID `4632a963-4340-4ca5-ba30-aff77a4b857a`. The model uses the CUSTOMERS360 dataset to predict the cluster membership by customer. \n\nIn addition to the job name and type, we specify a daily job schedule with 4 maximum runs, the model ID and input data for scoring, an output table to store the job results, and set recompute to *true* to replace the results table with each run. We also return the customer ID column *CUST_ID* with the predictions to identify cluster membership, request the top 2 most probable cluster assignments and details contributing to the cluster assignment predictions.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Here is an example of a K-Means clustering batch scoring job submission with model URI <code>KM_CLUS_MOD</code> and ID <code>4632a963-4340-4ca5-ba30-aff77a4b857a</code>. The model uses the CUSTOMERS360 dataset to predict the cluster membership by customer.</p>\n<p>In addition to the job name and type, we specify a daily job schedule with 4 maximum runs, the model ID and input data for scoring, an output table to store the job results, and set recompute to <em>true</em> to replace the results table with each run. We also return the customer ID column <em>CUST_ID</em> with the predictions to identify cluster membership, request the top 2 most probable cluster assignments and details contributing to the cluster assignment predictions.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_613745831",
+      "id": "20230323-190932_1511788380",
+      "dateCreated": "2023-03-15T17:41:44+0000",
+      "dateStarted": "2023-03-27T22:49:46+0000",
+      "dateFinished": "2023-03-27T22:49:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:66"
+    },
+    {
+      "title": "Get model ID",
+      "text": "\n$ curl -X GET \"${omlservice}/omlmod/v1/deployment/KM_CLUS_MOD\" \\\n       --header \"Authorization: Bearer ${token}\" | jq '.modelId'\n\n returns: \"4632a963-4340-4ca5-ba30-aff77a4b857a\"\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T23:05:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-679469486",
+      "id": "20230323-190932_1754553400",
+      "dateCreated": "2023-03-14T23:06:18+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "title": "Submit batch scoring job",
+      "text": "\n$ curl -X POST \"${omlservice}/omlmod/v1/jobs\" \\\n     --header \"Authorization: Bearer ${token}\" \\\n     --header 'Content-Type: application/json' \\\n     --data '{\n         \"jobSchedule\": {  \n\t\t     \"jobStartDate\": \"2023-03-23T20:58:46Z\",                  # job start date and time\n\t\t\t \"jobEndDate\":   \"2023-03-28T20:58:46Z\",                  # job end date and time\n             \"repeatInterval\": \"FREQ=DAILY\",                          # job frequency          \n             \"maxRuns\": \"4\"                                           # max runs within the schedule                 \n         },\n         \"jobProperties\": {\n             \"jobName\": \"KM_CLUS_MOD1\",                               # job name\n             \"jobType\": \"MODEL_SCORING\",                              # job type; MODEL_SCORING\n             \"modelId\": \"4632a963-4340-4ca5-ba30-aff77a4b857a\",\t\t  # ID of the model used for scoring\t \n             \"inputData\": \"CUSTOMERS360\",                             # table or view to read input for the batch scoring job\n             \"outputData\": \"KM_CLUS_PRED1\",                           # output table to store the scoring results in the format {jobID}_{outputData}\n             \"supplementalColumnNames\": [\"CUST_ID\"],                  # array of columns from the input data used to identify rows in the output\n\t\t\t \"topN\": 2,                                               # filters the results by returning the N most probable cluster assignments\n\t\t\t \"topNDetails\": 2,                                        # provides prediction details contributing to the probability scores\n\t\t\t \"recompute\": \"true\"                                      # flag to determine whether to overwrite the result table \n\t\t}\n     }' | jq\t   \n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-29T00:36:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_190180170",
+      "id": "20230323-190932_601854779",
+      "dateCreated": "2023-03-14T23:09:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "\nreturns:\n\n{\n  \"jobId\": \"OML$65977733_A951_42CD_9E3D_5E800604EBDB\",\n  \"links\": [\n    {\n      \"rel\": \"self\",\n      \"href\": \"<OML Service URL>/jobs/OML%2465977733_A951_42CD_9E3D_5E800604EBDB\"\n    }\n  ]\n}\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_282081346",
+      "id": "20230323-190932_874739723",
+      "dateCreated": "2023-03-14T23:11:23+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:69"
+    },
+    {
+      "title": "View the batch scoring job details",
+      "text": "\n$ export jobid='OML$65977733_A951_42CD_9E3D_5E800604EBDB'    # save job ID to variable\n\n$ curl -X GET \"${omlservice}/omlmod/v1/jobs/${jobid}\"  \\\n       --header 'Accept: application/json' \\\n       --header 'Content-Type: application/json' \\\n       --header \"Authorization: Bearer ${token}\" | jq\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_593966508",
+      "id": "20230323-190932_251655996",
+      "dateCreated": "2023-03-14T23:12:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "\n{\n  \"jobId\": \"OML$65977733_A951_42CD_9E3D_5E800604EBDB\",\n  \"jobRequest\": {\n    \"jobSchedule\": {\n      \"jobStartDate\": \"2023-03-23T20:58:46Z\",\n      \"repeatInterval\": \"FREQ=DAILY\",\n      \"jobEndDate\": \"2023-03-28T20:58:46Z\",\n      \"maxRuns\": 4\n    },\n    \"jobProperties\": {\n      \"jobType\": \"MODEL_SCORING\",\n      \"inputSchemaName\": null,\n      \"outputSchemaName\": null,\n      \"outputData\": \"KM_CLUS_PRED1\",\n      \"jobDescription\": null,\n      \"jobName\": \"KM_CLUS_MOD1\",\n      \"disableJob\": false,\n      \"jobServiceLevel\": null,\n      \"inputData\": \"CUSTOMERS360\",\n      \"supplementalColumnNames\": [\n        \"CUST_ID\"\n      ],\n      \"topN\": 2,\n      \"recompute\": true,\n      \"modelId\": \"4632a963-4340-4ca5-ba30-aff77a4b857a\",\n      \"topNDetails\": 2\n    }\n  },\n  \"jobStatus\": \"CREATED\",\n  \"dateSubmitted\": \"2023-03-23T20:54:53.248736Z\",\n  \"links\": [\n    {\n      \"rel\": \"self\",\n      \"href\": \"<OML Service URL>/omlmod/v1/jobs/OML%2465977733_A951_42CD_9E3D_5E800604EBDB\"\n    }\n  ],\n  \"jobFlags\": [],\n  \"state\": \"SCHEDULED\",\n  \"enabled\": true,\n  \"runCount\": 0,\n  \"nextRunDate\": \"2023-03-23T20:58:46Z\"\n}\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1265632521",
+      "id": "20230323-190932_1153437511",
+      "dateCreated": "2023-03-14T23:14:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:71"
+    },
+    {
+      "title": "View the batch scoring job output",
+      "text": "%md\n---\nOnce your job has run, you can view the results in the table you specified in your job request with the **outputData** parameter. The full name of the table is {jobID}_{outputData}. You can check if your job is finished by sending a request to view its details. The paragraph below queries the output table associated with this example.\n\nThe paragraph below queries the output table associated with this example. The supplemental column names provided by the user are returned, along with the cluster ID predictions. The *OML$CLUSTER_ID1* column contains the cluster with highest probability, and the *OML$DETAIL1* column contains the most important column in the prediction details. *OML$CLUSTER_ID2* contains the cluster with 2nd highest probability, and the *OML$DETAIL2* column contains the 2nd most important column in the prediction details.\n\n\nFor help understanding the clustering batch scoring output table, refer to the documentation:\n\n<a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-clustering-output-table.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-clustering-output-table.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-clustering-output-table.html</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Once your job has run, you can view the results in the table you specified in your job request with the <strong>outputData</strong> parameter. The full name of the table is {jobID}_{outputData}. You can check if your job is finished by sending a request to view its details. The paragraph below queries the output table associated with this example.</p>\n<p>The paragraph below queries the output table associated with this example. The supplemental column names provided by the user are returned, along with the cluster ID predictions. The <em>OML$CLUSTER_ID1</em> column contains the cluster with highest probability, and the <em>OML$DETAIL1</em> column contains the most important column in the prediction details. <em>OML$CLUSTER_ID2</em> contains the cluster with 2nd highest probability, and the <em>OML$DETAIL2</em> column contains the 2nd most important column in the prediction details.</p>\n<p>For help understanding the clustering batch scoring output table, refer to the documentation:</p>\n<p><a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-clustering-output-table.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-clustering-output-table.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-clustering-output-table.html</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1211978303",
+      "id": "20230323-190932_467212975",
+      "dateCreated": "2023-03-15T18:15:17+0000",
+      "dateStarted": "2023-03-27T22:49:49+0000",
+      "dateFinished": "2023-03-27T22:49:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "%sql\n\nSELECT * FROM OML$65977733_A951_42CD_9E3D_5E800604EBDB_KM_CLUS_PRED1\nORDER BY CUST_ID\nFETCH FIRST 5 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "optionOpen": false,
+              "commonSetting": {},
+              "height": 300,
+              "setting": {
+                "table": {
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "showAggregationFooter": false,
+                    "showPagination": false,
+                    "useFilter": false
+                  },
+                  "tableGridState": {
+                    "scrollFocus": {},
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    },
+                    "selection": [],
+                    "columns": [
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "CUST_ID0",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$CLUSTER_ID11",
+                        "width": 188,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$PROBABILITY12",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$CLUSTER_ID23",
+                        "width": 174,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$PROBABILITY24",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL15",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL_WEIGHT16",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL27",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      },
+                      {
+                        "pinned": "",
+                        "visible": true,
+                        "name": "OML$DETAIL_WEIGHT28",
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ]
+                      }
+                    ],
+                    "grouping": {
+                      "rowExpandedStates": {},
+                      "grouping": [],
+                      "aggregations": []
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "OML$CLUSTER_ID1": "number",
+                      "OML$DETAIL2": "string",
+                      "OML$DETAIL1": "string",
+                      "OML$CLUSTER_ID2": "number",
+                      "OML$PROBABILITY2": "number",
+                      "OML$PROBABILITY1": "number",
+                      "OML$DETAIL_WEIGHT2": "number",
+                      "OML$DETAIL_WEIGHT1": "number"
+                    },
+                    "updated": false
+                  },
+                  "updated": false
+                }
+              }
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tOML$CLUSTER_ID1\tOML$PROBABILITY1\tOML$CLUSTER_ID2\tOML$PROBABILITY2\tOML$DETAIL1\tOML$DETAIL_WEIGHT1\tOML$DETAIL2\tOML$DETAIL_WEIGHT2\n100001\t15\t0.16734694012549353\t11\t0.16525919647145393\tCUST_CREDIT_LIMI\t0.049\tCUST_YEAR_OF_BIR\t-0.028\n100002\t18\t0.15519095749076137\t19\t0.14180422625125744\tCUST_GENDER\t0.022\tCUST_MARITAL_STA\t0.011\n100003\t19\t0.15413366656912914\t15\t0.13157601797635252\tHOUSEHOLD_SIZE\t0.023\tYRS_RESIDENCE\t0.018\n100004\t19\t0.20011172321438017\t18\t0.16865378437063355\tCUST_CREDIT_LIMI\t0.039\tHOUSEHOLD_SIZE\t0.028\n100005\t6\t0.2079735351543077\t7\t0.1712684652761019\tAFFINITY_CARD\t0.092\tCUST_YEAR_OF_BIR\t-0.009\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_64276849",
+      "id": "20230323-190932_873843455",
+      "dateCreated": "2023-03-15T18:17:01+0000",
+      "dateStarted": "2023-03-27T22:49:49+0000",
+      "dateFinished": "2023-03-27T22:49:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\n---\n## Feature Extraction\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h2>Feature Extraction</h2>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1641994911",
+      "id": "20230323-190932_1159892310",
+      "dateCreated": "2023-03-14T23:57:17+0000",
+      "dateStarted": "2023-03-27T22:49:50+0000",
+      "dateFinished": "2023-03-27T22:49:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "%md\n---\n\nHere is an example of a feature extraction batch scoring job submission with model URI `NMF_MOD` and ID `555c4718-853b-4d56-8ef9-268fd87ac25b`.\n\nIn addition to the job name and type, we specify a monthly job schedule with 2 maximum runs, the model ID and input data for scoring, an output table to store the job results, and set recompute to *true* to replace the results table with each run. We also specify the *HIGH* database service level, a set of supplemental columns from the input data to return with the results for row identification and request the top 2 predictions wiith details contributing to those predictions.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Here is an example of a feature extraction batch scoring job submission with model URI <code>NMF_MOD</code> and ID <code>555c4718-853b-4d56-8ef9-268fd87ac25b</code>.</p>\n<p>In addition to the job name and type, we specify a monthly job schedule with 2 maximum runs, the model ID and input data for scoring, an output table to store the job results, and set recompute to <em>true</em> to replace the results table with each run. We also specify the <em>HIGH</em> database service level, a set of supplemental columns from the input data to return with the results for row identification and request the top 2 predictions wiith details contributing to those predictions.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1744697021",
+      "id": "20230323-190932_22812802",
+      "dateCreated": "2023-03-15T18:24:58+0000",
+      "dateStarted": "2023-03-27T22:49:50+0000",
+      "dateFinished": "2023-03-27T22:49:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:75"
+    },
+    {
+      "title": "Get model ID",
+      "text": "\n$ curl -X GET \"${omlservice}/omlmod/v1/deployment/NMF_MOD\" \\\n       --header \"Authorization: Bearer ${token}\" | jq '.modelId'\n\n returns: \"555c4718-853b-4d56-8ef9-268fd87ac25b\"\n ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_632100562",
+      "id": "20230323-190932_1375958628",
+      "dateCreated": "2023-03-15T18:30:03+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:76"
+    },
+    {
+      "title": "Submit batch scoring job",
+      "text": "\n$ curl -X POST \"${omlservice}/omlmod/v1/jobs\" \\\n     --header \"Authorization: Bearer ${token}\" \\\n     --header 'Content-Type: application/json' \\\n     --data '{\n         \"jobSchedule\": {  \n\t\t     \"jobStartDate\": \"2023-03-23T21:10:40Z\",                  # job start date and time\n\t\t\t \"jobEndDate\":   \"2023-05-23T21:10:40Z\",                  # job end date and time\n             \"repeatInterval\": \"FREQ=MONTHLY\",                        # job frequency         \n             \"maxRuns\": \"2\"                                           # max runs within the schedule                        \n         },\n         \"jobProperties\": {\n             \"jobName\": \"FE_MOD1\",                                    # job name\n             \"jobType\": \"MODEL_SCORING\",                              # job type; MODEL_SCORING\n             \"modelId\": \"555c4718-853b-4d56-8ef9-268fd87ac25b\",\t      # ID of the model used for scoring\n             \"jobServiceLevel\": \"HIGH\",\t\t                          # database service level\t \n             \"inputData\": \"CUSTOMERS360\",                             # table or view to read input for the batch scoring job\n             \"outputData\": \"FE_PRED1\",                                # output table to store the scoring results in the format {jobID}_{outputData}\n             \"supplementalColumnNames\": [\"CUST_ID\",                   # array of columns from the input data used to identify rows in the output\n                                        \"AFFINITY_CARD\", \n                                        \"CUST_CREDIT_LIMIT\",\n                                        \"CUST_GENDER\"],\n\t\t\t \"topN\": 2,                                               # filters the results by returning the top N features with the highest probability\n\t\t\t \"topNDetails\": 2,                                        # provides prediction details contributing to the probability scores\n\t\t\t \"recompute\": \"true\"                                      # flag to determine whether to overwrite the results table\n\t\t}\n     }' | jq\t  \n     ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-29T00:36:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-657391686",
+      "id": "20230323-190932_1213926633",
+      "dateCreated": "2023-03-14T23:57:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "\nreturns:\n\n{\n  \"jobId\": \"OML$D66F5559_CA57_4B85_B832_A21A26660725\",\n  \"links\": [\n    {\n      \"rel\": \"self\",\n      \"href\": \"<OML Service URL>/omlmod/v1/jobs/OML%24D66F5559_CA57_4B85_B832_A21A26660725\"\n    }\n  ]\n}\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_2035115778",
+      "id": "20230323-190932_432173193",
+      "dateCreated": "2023-03-15T00:00:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:78"
+    },
+    {
+      "title": "View batch scoring job details",
+      "text": "\n$ export jobid='OML$D66F5559_CA57_4B85_B832_A21A26660725'  # save job ID to variable\n\n$ curl -X GET \"${omlservice}/omlmod/v1/jobs/${jobid}\"  \\\n       --header 'Accept: application/json' \\\n       --header 'Content-Type: application/json' \\\n       --header \"Authorization: Bearer ${token}\" | jq\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1875946219",
+      "id": "20230323-190932_2025583419",
+      "dateCreated": "2023-03-15T00:02:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "\n{\n  \"jobId\": \"OML$D66F5559_CA57_4B85_B832_A21A26660725\",\n  \"jobRequest\": {\n    \"jobSchedule\": {\n      \"jobStartDate\": \"2023-03-23T21:10:40Z\",\n      \"repeatInterval\": \"FREQ=MONTHLY\",\n      \"jobEndDate\": \"2023-05-23T21:10:40Z\",\n      \"maxRuns\": 2\n    },\n    \"jobProperties\": {\n      \"jobType\": \"MODEL_SCORING\",\n      \"inputSchemaName\": null,\n      \"outputSchemaName\": null,\n      \"outputData\": \"FE_PRED1\",\n      \"jobDescription\": null,\n      \"jobName\": \"FE_MOD1\",\n      \"disableJob\": false,\n      \"jobServiceLevel\": \"HIGH\",\n      \"inputData\": \"CUSTOMERS360\",\n      \"supplementalColumnNames\": [\n        \"CUST_ID\",\n        \"AFFINITY_CARD\",\n        \"CUST_CREDIT_LIMIT\",\n        \"CUST_GENDER\"\n      ],\n      \"topN\": 2,\n      \"recompute\": true,\n      \"modelId\": \"555c4718-853b-4d56-8ef9-268fd87ac25b\",\n      \"topNDetails\": 2\n    }\n  },\n  \"jobStatus\": \"CREATED\",\n  \"dateSubmitted\": \"2023-03-23T21:05:24.644571Z\",\n  \"links\": [\n    {\n      \"rel\": \"self\",\n      \"href\": \"<OML Service URL>/omlmod/v1/jobs/OML%24D66F5559_CA57_4B85_B832_A21A26660725\"\n    }\n  ],\n  \"jobFlags\": [],\n  \"state\": \"SCHEDULED\",\n  \"enabled\": true,\n  \"runCount\": 0,\n  \"nextRunDate\": \"2023-03-23T21:10:40Z\"\n}\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1053990546",
+      "id": "20230323-190932_826415646",
+      "dateCreated": "2023-03-15T00:05:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:80"
+    },
+    {
+      "title": "View the batch scoring job output",
+      "text": "%md\n---\nOnce your job has run, you can view the results in the table you specified in your job request with the **outputData** parameter. The full name of the table is {jobID}_{outputData}. You can check if your job is finished by sending a request to view its details. The paragraph below queries the output table associated with this example.\n\nThe paragraph below queries the output table associated with this example. The supplemental column names provided by the user are returned, along with the predicted features. The *OML$FEATURE_ID1* column contains the features with highest probability and the *OML$WEIGHT1* column contains the the probability for the top weighted feature. *OML$FEATURE_ID2* contains the feature with 2nd highest probability, and the *OML$WEIGHT2* column contains the probability for the 2nd highest feature.\n\nFor help understanding the feature extraction batch scoring output table, refer to the documentation: \n\n<a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-feature-extraction-output-table.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-feature-extraction-output-table.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-feature-extraction-output-table.html</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Once your job has run, you can view the results in the table you specified in your job request with the <strong>outputData</strong> parameter. The full name of the table is {jobID}_{outputData}. You can check if your job is finished by sending a request to view its details. The paragraph below queries the output table associated with this example.</p>\n<p>The paragraph below queries the output table associated with this example. The supplemental column names provided by the user are returned, along with the predicted features. The <em>OML$FEATURE_ID1</em> column contains the features with highest probability and the <em>OML$WEIGHT1</em> column contains the the probability for the top weighted feature. <em>OML$FEATURE_ID2</em> contains the feature with 2nd highest probability, and the <em>OML$WEIGHT2</em> column contains the probability for the 2nd highest feature.</p>\n<p>For help understanding the feature extraction batch scoring output table, refer to the documentation:</p>\n<p><a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-feature-extraction-output-table.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-feature-extraction-output-table.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/omls-feature-extraction-output-table.html</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1092983346",
+      "id": "20230323-190932_569271451",
+      "dateCreated": "2023-03-15T18:33:51+0000",
+      "dateStarted": "2023-03-27T22:49:52+0000",
+      "dateFinished": "2023-03-27T22:49:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "%sql\n\nSELECT * FROM OML$D66F5559_CA57_4B85_B832_A21A26660725_FE_PRED1\nORDER BY CUST_ID\nFETCH FIRST 5 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "optionOpen": false,
+              "commonSetting": {},
+              "height": 300,
+              "setting": {
+                "table": {
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "showAggregationFooter": false,
+                    "showPagination": false,
+                    "useFilter": false
+                  },
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "AFFINITY_CARD": "number",
+                      "OML$DETAIL2": "string",
+                      "OML$FEATURE_ID2": "number",
+                      "OML$DETAIL1": "string",
+                      "CUST_CREDIT_LIMIT": "number",
+                      "CUST_GENDER": "string",
+                      "OML$WEIGHT1": "number",
+                      "OML$FEATURE_ID1": "number",
+                      "OML$WEIGHT2": "number",
+                      "OML$DETAIL_WEIGHT2": "number",
+                      "OML$DETAIL_WEIGHT1": "number"
+                    },
+                    "updated": false
+                  },
+                  "updated": false
+                }
+              }
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tAFFINITY_CARD\tCUST_CREDIT_LIMIT\tCUST_GENDER\tOML$FEATURE_ID1\tOML$WEIGHT1\tOML$FEATURE_ID2\tOML$WEIGHT2\tOML$DETAIL1\tOML$DETAIL_WEIGHT1\tOML$DETAIL2\tOML$DETAIL_WEIGHT2\n100001\t0\t1500\tF\t3\t3.632805629695677\t2\t1.975348078091797\tCUST_INCOME_LEVE\t0.318\tEDUCATION\t0.188\n100002\t0\t7000\tF\t3\t4.326716977445857\t2\t1.4146392660334737\tCUST_INCOME_LEVE\t0.464\tCUST_GENDER\t0.174\n100003\t0\t7000\tM\t3\t3.442543462110666\t2\t2.2258998846239497\tCUST_INCOME_LEVE\t0.43\tEDUCATION\t0.247\n100004\t0\t15000\tF\t3\t2.620843337976386\t2\t1.4854787819690576\tCUST_INCOME_LEVE\t0.351\tEDUCATION\t0.202\n100005\t1\t1500\tM\t3\t1.33397435576925\t1\t1.2262105676405466\tCUST_INCOME_LEVE\t0.623\tEDUCATION\t0.134\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_1453790782",
+      "id": "20230323-190932_723652119",
+      "dateCreated": "2023-03-15T18:41:08+0000",
+      "dateStarted": "2023-03-27T22:49:53+0000",
+      "dateFinished": "2023-03-27T22:49:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:82"
+    },
+    {
+      "text": "%md\n---\n\n## Peform actions, update, and delete batch scoring jobs\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h2>Peform actions, update, and delete batch scoring jobs</h2>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1964668334",
+      "id": "20230323-190932_212271715",
+      "dateCreated": "2023-03-14T23:50:53+0000",
+      "dateStarted": "2023-03-27T22:49:53+0000",
+      "dateFinished": "2023-03-27T22:49:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:83"
+    },
+    {
+      "title": "Perform an action on a batch scoring job",
+      "text": "%md\n---\n\nOML Services interacts with the DBMS_SCHEDULER to perform actions on jobs. There are four options for actions, **DISABLE**, **RUN**, **ENABLE**, and **STOP**:\n\nFor example, when your job has been successfuly submitted, its state is set to **ENABLED** by default. This means that it will run on the schedule you specified when submitting the job unless its updated to another state such as **DISABLED**. You can do this by sending a request to the */omlmod/v1/jobs/{jobid}/action* endpoint. \n\n* _DISABLE_ disables the job. After an enabled job is disabled, it no longer runs according to its schedule.\n* _ENABLE_ enables a job. After a disabled job is enabled, the scheduler runs the job according to its schedule. \n* _RUN_ will immediately run the job as a way to test a job or run it outside of its schedule.\n* _STOP_ stops a currently running job.\n\nNote that jobs can be set to **DISABLED** at submission by setting the *disableJob* flag to *true*.\n\nBelow is an example action that updates the job status to **DISABLED**. A successfully submitted job receives a 204 response with no body. \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>OML Services interacts with the DBMS_SCHEDULER to perform actions on jobs. There are four options for actions, <strong>DISABLE</strong>, <strong>RUN</strong>, <strong>ENABLE</strong>, and <strong>STOP</strong>:</p>\n<p>For example, when your job has been successfuly submitted, its state is set to <strong>ENABLED</strong> by default. This means that it will run on the schedule you specified when submitting the job unless its updated to another state such as <strong>DISABLED</strong>. You can do this by sending a request to the <em>/omlmod/v1/jobs/{jobid}/action</em> endpoint.</p>\n<ul>\n<li><em>DISABLE</em> disables the job. After an enabled job is disabled, it no longer runs according to its schedule.</li>\n<li><em>ENABLE</em> enables a job. After a disabled job is enabled, the scheduler runs the job according to its schedule.</li>\n<li><em>RUN</em> will immediately run the job as a way to test a job or run it outside of its schedule.</li>\n<li><em>STOP</em> stops a currently running job.</li>\n</ul>\n<p>Note that jobs can be set to <strong>DISABLED</strong> at submission by setting the <em>disableJob</em> flag to <em>true</em>.</p>\n<p>Below is an example action that updates the job status to <strong>DISABLED</strong>. A successfully submitted job receives a 204 response with no body.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_47562028",
+      "id": "20230323-190932_756312835",
+      "dateCreated": "2023-01-09T16:54:59+0000",
+      "dateStarted": "2023-03-27T22:49:54+0000",
+      "dateFinished": "2023-03-27T22:49:54+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:84"
+    },
+    {
+      "text": "\n$ curl -i -X POST \"${omlservice}/omlmod/v1/jobs/${jobid}/action\" \\\n       --header \"Authorization: Bearer ${token}\" \\\n       --header 'Content-Type: application/json' \\\n       --data '{\n            \"action\": \"DISABLE\"\n         }'\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:43:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-1787394584",
+      "id": "20230323-190932_2131495046",
+      "dateCreated": "2023-01-27T00:20:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:85"
+    },
+    {
+      "title": "Update a batch scoring job",
+      "text": "%md\n---\nAfter a batch scoring job is submitted, you have the option to update the job schedule. You can do this by sending a POST request with the updated options to the */omlmod/v1/jobs/{jobid}* endpoint. The following parameters can updated for a batch scoring job:\n\n* _jobStartDate_\n* _jobEndDate_\n* _repeatInterval_\n* _maxRuns_\n\nIn the example request below, we update these fields to differ from the original parameters we set with our initial request. When you successfully submit your job you will receive a 204 response with no body.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>After a batch scoring job is submitted, you have the option to update the job schedule. You can do this by sending a POST request with the updated options to the <em>/omlmod/v1/jobs/{jobid}</em> endpoint. The following parameters can updated for a batch scoring job:</p>\n<ul>\n<li><em>jobStartDate</em></li>\n<li><em>jobEndDate</em></li>\n<li><em>repeatInterval</em></li>\n<li><em>maxRuns</em></li>\n</ul>\n<p>In the example request below, we update these fields to differ from the original parameters we set with our initial request. When you successfully submit your job you will receive a 204 response with no body.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_846142206",
+      "id": "20230323-190932_1147528134",
+      "dateCreated": "2023-01-09T16:40:14+0000",
+      "dateStarted": "2023-03-27T22:49:54+0000",
+      "dateFinished": "2023-03-27T22:49:54+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:86"
+    },
+    {
+      "text": "\n$ curl -i -X POST \"${omlservice}/omlmod/v1/jobs/${jobid}\" \\\n     --header \"Authorization: Bearer ${token}\" \\\n     --header 'Content-Type: application/json' \\\n     --data '{\n         \"jobSchedule\": {  \n\t\t     \"jobStartDate\": \"2023-03-28T21:00:00Z\",\n\t\t\t \"jobEndDate\":   \"2023-03-30T21:00:00Z\",\n             \"repeatInterval\": \"FREQ=DAILY\",                  \n             \"maxRuns\": \"2\"                                \n         }\n\t   }' | jq",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T23:08:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-598543187",
+      "id": "20230323-190932_1885685043",
+      "dateCreated": "2023-01-27T00:14:15+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:87"
+    },
+    {
+      "title": "Delete a batch scoring job",
+      "text": "%md\n---\nTo delete a previously submitted job, send a DELETE request along with the Job ID to the */omlmod/v1/jobs* endpoint.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>To delete a previously submitted job, send a DELETE request along with the Job ID to the <em>/omlmod/v1/jobs</em> endpoint.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-2142917723",
+      "id": "20230323-190932_2116510799",
+      "dateCreated": "2023-02-22T23:37:34+0000",
+      "dateStarted": "2023-03-27T22:49:55+0000",
+      "dateFinished": "2023-03-27T22:49:55+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:88"
+    },
+    {
+      "text": "\n$ curl -X DELETE \"${omlservice}/omlmod/v1/jobs/${jobid}\"  \\\n       --header 'Accept: application/json' \\\n       --header 'Content-Type: application/json' \\\n       --header \"Authorization: Bearer ${token}\" | jq\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_137483141",
+      "id": "20230323-190932_1634732853",
+      "dateCreated": "2023-02-22T23:46:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:89"
+    },
+    {
+      "title": "",
+      "text": "%md\n---\n## Reproducing these examples\n---\nIf you would like to reproduce the examples in this notebook, the paragraph below creates the required database table, *CUSTOMERS360*.  This table is created by selecting columns from the *CUSTOMERS* and *SUPPLEMENTARY_DEMOGRAPHICS* tables which reside in the SH schema.\n\nThe models used in this notebook were deployed using the OML Services REST API. You can download these models in serialized format here:\n\n[Regression model](https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/REGR_MOD.mod)\n[Classification model](https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/NN_MOD.mod)\n[K-Means clustering model](https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/KM_CLUS_MOD.mod)\n[Feature Extraction (NMF) model](https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/NMF_MOD.mod)\n\nRefer to the OML Services REST API documentation for detailed instructions on deploying models: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html</a>.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h2>Reproducing these examples</h2>\n<hr />\n<p>If you would like to reproduce the examples in this notebook, the paragraph below creates the required database table, <em>CUSTOMERS360</em>.  This table is created by selecting columns from the <em>CUSTOMERS</em> and <em>SUPPLEMENTARY_DEMOGRAPHICS</em> tables which reside in the SH schema.</p>\n<p>The models used in this notebook were deployed using the OML Services REST API. You can download these models in serialized format here:</p>\n<p><a href=\"https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/REGR_MOD.mod\">Regression model</a>\n<br  /><a href=\"https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/NN_MOD.mod\">Classification model</a>\n<br  /><a href=\"https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/KM_CLUS_MOD.mod\">K-Means clustering model</a>\n<br  /><a href=\"https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML-Resources/o/NMF_MOD.mod\">Feature Extraction (NMF) model</a></p>\n<p>Refer to the OML Services REST API documentation for detailed instructions on deploying models: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/omlss/omlss/index.html</a>.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-2019304414",
+      "id": "20230323-190932_174112526",
+      "dateCreated": "2023-01-09T16:59:46+0000",
+      "dateStarted": "2023-03-27T22:49:56+0000",
+      "dateFinished": "2023-03-27T22:49:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:90"
+    },
+    {
+      "title": "Create the customers 360 table",
+      "text": "%script\n\nBEGIN EXECUTE IMMEDIATE 'DROP TABLE CUSTOMERS360';\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\n\nCREATE TABLE CUSTOMERS360 AS \n  SELECT A.CUST_ID, A.CUST_GENDER, A.CUST_MARITAL_STATUS, A.CUST_YEAR_OF_BIRTH, \n         A.CUST_INCOME_LEVEL, A.CUST_CREDIT_LIMIT, \n         B.EDUCATION, B.AFFINITY_CARD, B.HOUSEHOLD_SIZE, B.OCCUPATION, B.YRS_RESIDENCE, B.Y_BOX_GAMES\n  FROM SH.CUSTOMERS A, SH.SUPPLEMENTARY_DEMOGRAPHICS B\n  WHERE A.CUST_ID = B.CUST_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable CUSTOMERS360 created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-902293067",
+      "id": "20230323-190932_1358315436",
+      "dateCreated": "2023-01-11T20:09:10+0000",
+      "dateStarted": "2023-03-27T22:49:56+0000",
+      "dateFinished": "2023-03-27T22:49:57+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:91"
+    },
+    {
+      "title": "View the CUSTOMERS360 table",
+      "text": "%sql\n\nSELECT * FROM CUSTOMERS360 \nFETCH FIRST 5 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-28T18:36:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "optionOpen": false,
+              "commonSetting": {},
+              "height": 300,
+              "setting": {
+                "table": {
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "showAggregationFooter": false,
+                    "showPagination": false,
+                    "useFilter": false
+                  },
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "AFFINITY_CARD": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_CREDIT_LIMIT": "number",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "OCCUPATION": "string",
+                      "EDUCATION": "string",
+                      "Y_BOX_GAMES": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "YRS_RESIDENCE": "number"
+                    },
+                    "updated": false
+                  },
+                  "updated": false
+                }
+              }
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\n100100\tF\tMarried\t1959\tJ: 190,000 - 249,999\t10000\tMasters\t1\t4-5\tProf.\t4\t0\n100200\tM\tNeverM\t1983\tL: 300,000 and above\t9000\t< Bach.\t0\t1\tOther\t2\t1\n100300\tM\tMarried\t1961\tG: 130,000 - 149,999\t10000\tBach.\t1\t3\tProf.\t4\t0\n100400\tM\tDivorc.\t1944\tC: 50,000 - 69,999\t9000\t12th\t0\t6-8\tTransp.\t6\t0\n100500\tM\tNeverM\t1983\tH: 150,000 - 169,999\t15000\tHS-grad\t0\t1\tCrafts\t2\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_13989816",
+      "id": "20230323-190932_355871969",
+      "dateCreated": "2023-01-13T00:32:25+0000",
+      "dateStarted": "2023-03-27T22:49:58+0000",
+      "dateFinished": "2023-03-27T22:49:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:92"
+    },
+    {
+      "text": "%md\n\n##End of script",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-29T00:36:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>End of script</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1679598572814_-605274769",
+      "id": "20230323-190932_1954460881",
+      "dateCreated": "2023-01-10T21:44:12+0000",
+      "dateStarted": "2023-03-27T22:49:58+0000",
+      "dateFinished": "2023-03-27T22:49:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:93"
+    }
+  ],
+  "name": "OML Services Batch Scoring",
+  "id": "129522",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "personalizedMode": "false",
+    "looknfeel": "default"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML Services Batch Scoring"
+}

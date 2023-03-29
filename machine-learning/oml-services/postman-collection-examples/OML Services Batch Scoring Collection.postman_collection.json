@@ -1,0 +1,803 @@
+{
+	"info": {
+		"_postman_id": "eb666f31-c7b1-4a9c-924d-bad9ac344acd",
+		"name": "OML Services Batch Scoring Collection",
+		"description": "Collection for Oracle Machine Learning Model Management and Deployment:\n* Manage and Deploy OAA Models\n* Manage and Deploy ONNX Models\n* Manage and Deploy Cognitive Text Models\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11705967"
+	},
+	"item": [
+		{
+			"name": "OML Token Acquisition",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);",
+							"pm.environment.set(\"token\", res.accessToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"maxRedirects": 150
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"grant_type\":\"password\",\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlusers/api/oauth2/v1/token",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlusers",
+						"api",
+						"oauth2",
+						"v1",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Available models",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/models/",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Submitted Jobs",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Regression Model ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/deployment/{{regModURI}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{regModURI}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Regression Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"regjobID\", res.jobId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jobSchedule\": {\n        \"repeatInterval\": \"FREQ=HOURLY\",\n        \"maxRuns\": \"50\"\n    },\n    \"jobProperties\": {\n        \"jobName\": \"REG_PRED\",\n        \"jobType\": \"MODEL_SCORING\",\n        \"modelId\": \"{{regModID}}\",\n        \"inputData\": \"CUSTOMERS360\",\n        \"outputData\": \"REG_PRED_OUT\",\n        \"jobDescription\": \"Batch Scoring Regression Job\",\n        \"supplementalColumnNames\": [\"CUST_ID\",\"YRS_RESIDENCE\"],\n        \"topNDetails\": 2,                                         \n\t\t\"recompute\": \"true\" \n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Regression Job Details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{regjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{regjobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Classification Model ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/deployment/{{classModURI}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{classModURI}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Classification Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"classjobId\", res.jobId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jobSchedule\": {\n        \"repeatInterval\": \"FREQ=DAILY\",\n        \"maxRuns\": \"4\"\n    },\n    \"jobProperties\": {\n        \"jobName\": \"CLASS_PRED\",\n        \"jobType\": \"MODEL_SCORING\",\n        \"modelId\": \"{{classModID}}\",\n        \"inputData\": \"CUSTOMERS360\",\n        \"outputData\": \"CLASS_PRED_OUT\",\n        \"jobDescription\": \"Batch Scoring Classification Job\",\n        \"supplementalColumnNames\": [\"CUST_ID\",\"AFFINITY_CARD\"],\n        \"topN\":2,\n        \"topNDetails\": 2,                                         \n\t\t\"recompute\": \"true\" \n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Classification Job Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{classjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{classjobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Clustering Model ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/deployment/{{clusModURI}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{clusModURI}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Clustering Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"clusjobID\", res.jobId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jobSchedule\": {\n        \"repeatInterval\": \"FREQ=DAILY\",\n        \"maxRuns\": \"4\"\n    },\n    \"jobProperties\": {\n        \"jobName\": \"CLUS_PRED\",\n        \"jobType\": \"MODEL_SCORING\",\n        \"modelId\": \"{{clusModID}}\",\n        \"inputData\": \"CUSTOMERS360\",\n        \"outputData\": \"CLUS_PRED_OUT\",\n        \"jobDescription\": \"Batch Scoring Clustering Job\",\n        \"supplementalColumnNames\": [\"CUST_ID\"],\n        \"topN\":2,\n        \"topNDetails\": 2,                                         \n\t\t\"recompute\": \"true\" \n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Feature Extraction Model ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/deployment/{{feModURI}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{feModURI}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Score OML Feature Extraction Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"fejobID\", res.jobId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jobSchedule\": {\n        \"repeatInterval\": \"FREQ=MONTHLY\",\n        \"maxRuns\": \"2\"\n    },\n    \"jobProperties\": {\n        \"jobName\": \"FE_PRED\",\n        \"jobType\": \"MODEL_SCORING\",\n        \"modelId\": \"{{feModID}}\",\n        \"inputData\": \"CUSTOMERS360\",\n        \"outputData\": \"FE_PRED_OUT\",\n        \"jobDescription\": \"Batch Scoring Feature Extraction Job\",\n        \"supplementalColumnNames\": [\"CUST_ID\",                  \n                                    \"AFFINITY_CARD\", \n                                    \"CUST_CREDIT_LIMIT\",\n                                    \"CUST_GENDER\"],\n        \"topN\":2,\n        \"topNDetails\": 2,                                         \n\t\t\"recompute\": \"true\" \n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View  Feature Extraction Job Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{fejobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{fejobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Batch Scoring Job",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"jobSchedule\": {  \r\n         \"repeatInterval\": \"FREQ=MONTHLY\",                  \r\n         \"maxRuns\": \"2\"                                \r\n         }\r\n}"
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{regjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{regjobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Perform an Action on a Batch Scoring Job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"action\": \"RUN\",\r\n    \"force\": \"false\"\r\n}"
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{regjobID}}/action",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{regjobID}}",
+						"action"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Batch Scoring Job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{regjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{regjobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "regModURI",
+			"value": "REGR_MOD",
+			"type": "string"
+		},
+		{
+			"key": "classModURI",
+			"value": "NN_MOD",
+			"type": "string"
+		},
+		{
+			"key": "clusModURI",
+			"value": "KM_CLUS_MOD",
+			"type": "string"
+		},
+		{
+			"key": "feModURI",
+			"value": "NMF_MOD",
+			"type": "string"
+		},
+		{
+			"key": "regModID",
+			"value": "074f5554-fc75-4647-9392-a376056c1f03",
+			"type": "string"
+		},
+		{
+			"key": "classModID",
+			"value": "35a97c7b-0ff4-4940-96f5-bfb29f64d223",
+			"type": "string"
+		},
+		{
+			"key": "clusModID",
+			"value": "4632a963-4340-4ca5-ba30-aff77a4b857a",
+			"type": "string"
+		},
+		{
+			"key": "feModID",
+			"value": "555c4718-853b-4d56-8ef9-268fd87ac25b",
+			"type": "string"
+		},
+		{
+			"key": "regjobID",
+			"value": "OML$639C4BBB_013D_41EB_8CB0_1BC42B441993",
+			"type": "string"
+		},
+		{
+			"key": "classjobID",
+			"value": "OML$37841A19_DF08_4D4D_A39E_DADF08D9B79C",
+			"type": "string"
+		},
+		{
+			"key": "clusjobID",
+			"value": "OML$65729458_9D9A_40B7_96C2_3427EC811FA8",
+			"type": "string"
+		},
+		{
+			"key": "fejobID",
+			"value": "OML$FF503395_5E0C_4FF6_A833_96F8807C1B7C",
+			"type": "string"
+		}
+	]
+}
