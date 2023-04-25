@@ -6,6 +6,9 @@ Rem the different database artifacts required for the demo
 
 -----------------------------------
 accept syspwd char prompt 'Enter sys password: ' 
+accept dba_user char prompt 'Enter a DBA username who will be able to administer SQL Firewall and Audit: '
+accept userpwd char prompt 'Enter random password that will be assigned to users created in the script: '
+
 conn sys/&syspwd as sysdba
 noaudit policy ORA_ALL_TOPLEVEL_ACTIONS;
 
@@ -24,20 +27,13 @@ END;
 exec DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL(audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_ALL, use_last_arch_timestamp=>FALSE);
 
 
-drop user dba_tom cascade;
-drop user app_data cascade;
-drop user app_runtime cascade;
-drop public synonym get_balance;
-drop public synonym update_customer_addr;
-drop public synonym customer_balances;
-
--- dba_tom is administrator user for SQL Firewall and Audit
-create user dba_tom identified by pwd;
-grant create session, sql_firewall_admin, audit_admin to dba_tom;
+-- &dba_user is administrator user for SQL Firewall and Audit
+create user &dba_user identified by &userpwd;
+grant create session, sql_firewall_admin, audit_admin to &dba_user;
 
 -- create the application users
-create user app_data identified by pwd;
-create user app_runtime identified by pwd;
+create user app_data identified by &userpwd;
+create user app_runtime identified by &userpwd;
 
 grant create session to app_runtime;
 grant create session, create table, unlimited tablespace to app_data;
@@ -45,7 +41,7 @@ grant create procedure, create public synonym, create view to app_data;
 
 commit;
 
-conn app_data/pwd
+conn app_data/&userpwd
 -- create tables
 create table CUSTOMER_INFO (
   cid              VARCHAR2(128),
@@ -129,7 +125,7 @@ Rem Enable SQL Firewall
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.enable;
 select status from dba_sql_firewall_status;
 --select * from dba_sql_firewall_status;
@@ -139,7 +135,7 @@ Rem Create and start the capture
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.create_capture('APP_RUNTIME');
 select username, top_level_only, status from dba_sql_firewall_captures where username='APP_RUNTIME';
 --select * from dba_sql_firewall_captures where username='APP_RUNTIME';
@@ -149,7 +145,7 @@ Rem Run the application workload SQL from known trusted database connection path
 
 pause;
 
-conn app_runtime/pwd
+conn app_runtime/&userpwd
 
 execute update_customer_addr('1', '335 market street');
 execute get_balance('2', 'online');
@@ -177,7 +173,7 @@ Rem Stop capture and check capture log
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.stop_capture('APP_RUNTIME');
 
 Rem View the session logs
@@ -211,7 +207,7 @@ Rem Generate allow list
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.generate_allow_list('APP_RUNTIME');
 
 Rem view allow list
@@ -260,8 +256,8 @@ Rem Set up audit policy
 
 pause;
 
-conn dba_tom/pwd
-create audit policy APPLICATION_AUDIT_POLICY actions component = SQL_Firewall ALL on APP_RUNTIME;
+conn &dba_user/&userpwd
+create audit policy APPLICATION_AUDIT_POLICY actions component = SQL_Firewall ALL on app_runtime;
 audit policy APPLICATION_AUDIT_POLICY;
 exec DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL(audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_ALL, use_last_arch_timestamp=>FALSE);
 
@@ -271,7 +267,7 @@ Rem Enable allow list
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.enable_allow_list('APP_RUNTIME');
 
 select username, status, top_level_only, enforce, block from dba_sql_firewall_allow_lists where username='APP_RUNTIME';
@@ -283,7 +279,7 @@ Rem Run the exact same workload (matched, no violation log)
 pause;
 
 
-conn app_runtime/pwd
+conn app_runtime/&userpwd
 
 execute update_customer_addr('1', '335 market street');
 execute get_balance('2', 'online');
@@ -314,7 +310,7 @@ Rem Unmatched SQL and context will have violation log
 
 Rem unknown traffic not in original whitelist
 pause;
-conn app_runtime/pwd
+conn app_runtime/&userpwd
 -- unknown traffic: not in application workload.
 select * from app_data.customer_info order by cid;
 
@@ -326,7 +322,7 @@ Rem Check violation logs and audit records
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.flush_logs;
 
 Rem Check violation logs
@@ -352,7 +348,7 @@ Rem Purge violation logs and audit records
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.purge_log('APP_RUNTIME', NULL, dbms_sql_firewall.VIOLATION_LOG);
 exec DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL(audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_ALL, use_last_arch_timestamp=>FALSE);
 
@@ -362,7 +358,7 @@ Rem update the allow list enforcement to block mode
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.update_allow_list_enforcement('APP_RUNTIME', block=>TRUE);
 select username, status, top_level_only, enforce, block
 from dba_sql_firewall_allow_lists where username='APP_RUNTIME';
@@ -376,7 +372,7 @@ Rem will be blocked and have violation logs
 
 Rem unknown traffic not in original whitelist
 pause;
-conn app_runtime/pwd
+conn app_runtime/&userpwd
 -- unknown traffic: not in application workload.
 select * from app_data.customer_info order by cid;
 
@@ -388,7 +384,7 @@ Rem Check violation logs and audit records
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.flush_logs;
 
 Rem Check violation logs
@@ -414,7 +410,7 @@ Rem Purge violation logs and audit records
 
 pause;
 
-conn dba_tom/pwd
+conn &dba_user/&userpwd
 exec dbms_sql_firewall.purge_log('APP_RUNTIME', NULL, dbms_sql_firewall.VIOLATION_LOG);
 exec DBMS_AUDIT_MGMT.CLEAN_AUDIT_TRAIL(audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_ALL, use_last_arch_timestamp=>FALSE);
 
@@ -430,7 +426,7 @@ conn sys/&syspwd as sysdba
 exec dbms_sql_firewall.disable;
 drop user app_data cascade;
 drop user app_runtime cascade;
-drop user dba_tom cascade;
+drop user &dba_user cascade;
 drop public synonym get_balance;
 drop public synonym update_customer_addr;
 drop public synonym customer_balances;
