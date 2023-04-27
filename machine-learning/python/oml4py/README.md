@@ -10,3 +10,5 @@ For current examples for Oracle Machine Learning Notebooks with Autonomous Datab
 These Jupyter notebooks are compatible with the current OML4Py client
 
 #### Copyright (c) 2022 Oracle Corporation and/or its affilitiates.
+
+##### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
