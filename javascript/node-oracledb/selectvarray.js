@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -29,8 +29,24 @@
 
 'use strict';
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 async function run() {
   let connection;
@@ -41,8 +57,8 @@ async function run() {
 
     // Setup
 
-    let stmts = [
-      `DROP TABLE sports`,
+    const stmts = [
+      `DROP TABLE no_sports`,
 
       `DROP TYPE teamtype`,
 
@@ -54,13 +70,13 @@ async function run() {
 
       `CREATE TYPE teamtype AS VARRAY(10) OF playertype;`,
 
-      `CREATE TABLE sports (sportname VARCHAR2(20), team teamtype)`,
+      `CREATE TABLE no_sports (sportname VARCHAR2(20), team teamtype)`,
     ];
 
     for (const s of stmts) {
       try {
         await connection.execute(s);
-      } catch(e) {
+      } catch (e) {
         if (e.errorNum != 942 && e.errorNum != 4043)
           console.error(e);
       }
@@ -81,7 +97,7 @@ async function run() {
     );
 
     await connection.execute(
-      `INSERT INTO sports (sportname, team) VALUES (:sn, :t)`,
+      `INSERT INTO no_sports (sportname, team) VALUES (:sn, :t)`,
       {
         sn: "Hockey",
         t: hockeyTeam
@@ -90,7 +106,7 @@ async function run() {
     // Insert with direct bind
 
     await connection.execute(
-      `INSERT INTO sports (sportname, team) VALUES (:sn, :t)`,
+      `INSERT INTO no_sports (sportname, team) VALUES (:sn, :t)`,
       {
         sn: "Badminton",
         t: {
@@ -108,7 +124,7 @@ async function run() {
     // Query the new data back
 
     let result = await connection.execute(
-      `SELECT sportname, team FROM sports`,
+      `SELECT sportname, team FROM no_sports`,
       [],
       {
         outFormat: oracledb.OUT_FORMAT_OBJECT

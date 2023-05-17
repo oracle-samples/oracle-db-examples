@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -31,8 +31,24 @@
  *
  *****************************************************************************/
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 async function run() {
 
@@ -44,30 +60,40 @@ async function run() {
 
     let result;
 
-    await connection1.execute(
-      `BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE test';
-         EXCEPTION WHEN OTHERS THEN
-         IF SQLCODE <> -942 THEN
-           RAISE;
-         END IF;
-       END;`);
-    console.log("Table dropped");
+    //
+    // Create a table
+    //
 
-    await connection1.execute(
-      `CREATE TABLE test (id NUMBER, name VARCHAR2(20))`);
-    console.log("Table created");
+    const stmts = [
+      `DROP TABLE no_tab2`,
+
+      `CREATE TABLE no_tab2 (id NUMBER, name VARCHAR2(20))`
+    ];
+
+    for (const s of stmts) {
+      try {
+        await connection1.execute(s);
+      } catch (e) {
+        if (e.errorNum != 942)
+          console.error(e);
+      }
+    }
+
+    //
+    // Show several examples of inserting
+    //
 
     // Insert with autoCommit enabled
     result = await connection1.execute(
-      `INSERT INTO test VALUES (:id, :nm)`,
+      `INSERT INTO no_tab2 VALUES (:id, :nm)`,
       [1, 'Chris'],  // Bind values
-      { autoCommit: true});  // Override the default, non-autocommit behavior
+      { autoCommit: true}  // Override the default, non-autocommit behavior
+    );
     console.log("Rows inserted: " + result.rowsAffected);  // 1
 
     // Insert without committing
     result = await connection1.execute(
-      `INSERT INTO test VALUES (:id, :nm)`,
+      `INSERT INTO no_tab2 VALUES (:id, :nm)`,
       [2, 'Alison'],  // Bind values
       // { autoCommit: true},  // Since this isn't set, operations using a second connection won't see this row
     );
@@ -77,7 +103,8 @@ async function run() {
     // inserting 'Alison' is not commited by default.  Uncomment the
     // autoCommit option above and you will see both rows
     result = await connection2.execute(
-      `SELECT * FROM test`);
+      `SELECT * FROM no_tab2`
+    );
     console.log(result.rows);
 
   } catch (err) {

@@ -1,0 +1,3554 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n# Oracle Machine Learning for Python - Data Selection and Manipulation\n\n***Oracle Machine Learning for Python*** (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automatic machine learning capabilities.\n\nIn this notebook, we highlight features of the transparency layer involving data selection and manipulation.\n\nCopyright (c) 2022 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:23+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eOracle Machine Learning for Python - Data Selection and Manipulation\u003c/h1\u003e\n\u003cp\u003e\u003cstrong\u003e\u003cem\u003eOracle Machine Learning for Python\u003c/em\u003e\u003c/strong\u003e (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automatic machine learning capabilities.\u003c/p\u003e\n\u003cp\u003eIn this notebook, we highlight features of the transparency layer involving data selection and manipulation.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2022 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1508312168",
+      "id": "20220124-201437_1122066247",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:24+0000",
+      "dateFinished": "2022-03-10T15:46:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n## Import libraries supporting OML4Py and create data table\n\nTo use OML4Py, first import the package ***oml***. \n\nUsers can get online help using Python\u0027s help function and specifying the function of interest.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eImport libraries supporting OML4Py and create data table\u003c/h2\u003e\n\u003cp\u003eTo use OML4Py, first import the package \u003cstrong\u003e\u003cem\u003eoml\u003c/em\u003e\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003eUsers can get online help using Python\u0027s help function and specifying the function of interest.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1682154110",
+      "id": "20220124-201437_1555172052",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:26+0000",
+      "dateFinished": "2022-03-10T15:46:26+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Import libraries and set display options",
+      "text": "%python\n\nimport warnings\nwarnings.filterwarnings(\u0027ignore\u0027)\n\nimport pandas as pd\nimport oml\n\npd.set_option(\u0027display.max_rows\u0027, 500)\npd.set_option(\u0027display.max_columns\u0027, 500)\npd.set_option(\u0027display.width\u0027, 1000)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-981252028",
+      "id": "20220124-201437_867062202",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:27+0000",
+      "dateFinished": "2022-03-10T15:46:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create a temporary table for the IRIS data",
+      "text": "%python\n\nfrom sklearn.datasets import load_iris\nimport pandas as pd\n\niris \u003d load_iris()\n\nx \u003d pd.DataFrame(iris.data, columns \u003d [\u0027SEPAL_LENGTH\u0027,\u0027SEPAL_WIDTH\u0027, \u0027PETAL_LENGTH\u0027,\u0027PETAL_WIDTH\u0027])\ny \u003d pd.DataFrame(list(map(lambda x: {0: \u0027setosa\u0027, 1: \u0027versicolor\u0027, 2:\u0027virginica\u0027}[x], iris.target)), \n                 columns \u003d [\u0027SPECIES\u0027])\nz \u003d pd.concat([x, y], axis\u003d1)\n\nIRIS_TMP \u003d oml.push(z)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_674289789",
+      "id": "20220124-201437_1036765897",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:37+0000",
+      "dateFinished": "2022-03-10T15:46:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Select table columns using proxy object IRIS_TMP",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:37+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eSelect table columns using proxy object IRIS_TMP\u003c/h2\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-100112691",
+      "id": "20220124-201437_1964548432",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:38+0000",
+      "dateFinished": "2022-03-10T15:46:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Select specific columns by name",
+      "text": "%python\n\nIRIS_projected1 \u003d IRIS_TMP[:, [\"SEPAL_LENGTH\", \"PETAL_LENGTH\"]]\nIRIS_projected1.head(3)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   SEPAL_LENGTH  PETAL_LENGTH\n0           4.6             1\n1           5.1             3\n2           6.0             4\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1392692627",
+      "id": "20220124-201437_959504781",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:39+0000",
+      "dateFinished": "2022-03-10T15:46:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Select specific columns by index range",
+      "text": "%python\n\nIRIS_projected2 \u003d IRIS_TMP[:, 1:4]\nIRIS_projected2.head(3)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   SEPAL_WIDTH  PETAL_LENGTH  PETAL_WIDTH\n0          3.6             1          0.2\n1          2.5             3          1.1\n2          2.2             4          1.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_397875452",
+      "id": "20220124-201437_2018661520",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:40+0000",
+      "dateFinished": "2022-03-10T15:46:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Select specific columns by data type",
+      "text": "%python\n\nIRIS_projected3 \u003d IRIS_TMP.select_types(include\u003d[oml.String])\nIRIS_projected3.head(3)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "      SPECIES\n0      setosa\n1  versicolor\n2  versicolor\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1096797145",
+      "id": "20220124-201437_455890129",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:41+0000",
+      "dateFinished": "2022-03-10T15:46:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n## Select table rows using proxy object IRIS_TMP\n\n* select sepal length and petal length where petal length is less than 1.5\n* select all rows in which petal length is less than 1.5 or sepal length is 5.0, using the AND and OR conditions in filtering\n* select all rows in which petal length is less than 1.5 and sepal length is larger than 5.0\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:41+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eSelect table rows using proxy object IRIS_TMP\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003eselect sepal length and petal length where petal length is less than 1.5\u003c/li\u003e\n\u003cli\u003eselect all rows in which petal length is less than 1.5 or sepal length is 5.0, using the AND and OR conditions in filtering\u003c/li\u003e\n\u003cli\u003eselect all rows in which petal length is less than 1.5 and sepal length is larger than 5.0\u003c/li\u003e\n\u003c/ul\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_2108227943",
+      "id": "20220124-201437_730752197",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:42+0000",
+      "dateFinished": "2022-03-10T15:46:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Simple row selection",
+      "text": "%python\n\nIRIS_filtered1 \u003d IRIS_TMP[IRIS_TMP[\"PETAL_LENGTH\"] \u003c 1.5, \n                                  [\"SEPAL_LENGTH\", \"PETAL_LENGTH\"]]\nprint(\"Length: \", len(IRIS_filtered1))\nIRIS_filtered1.head(3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Length:  24\n   SEPAL_LENGTH  PETAL_LENGTH\n0           4.6           1.0\n1           4.3           1.1\n2           5.8           1.2\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1379723804",
+      "id": "20220124-201437_361546928",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:42+0000",
+      "dateFinished": "2022-03-10T15:46:43+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compound row selection with \u0027or\u0027",
+      "text": "%python\n\nIRIS_filtered2 \u003d IRIS_TMP[(IRIS_TMP[\"PETAL_LENGTH\"] \u003c 1.5) | \n                          (IRIS_TMP[\"SEPAL_LENGTH\"] \u003d\u003d 5.0), :]\nprint(\"Length: \", len(IRIS_filtered2))\nIRIS_filtered2.head(3)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Length:  30\n   SEPAL_LENGTH  SEPAL_WIDTH  PETAL_LENGTH  PETAL_WIDTH SPECIES\n0           4.6          3.6           1.0          0.2  setosa\n1           4.3          3.0           1.1          0.1  setosa\n2           5.8          4.0           1.2          0.2  setosa\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-997258867",
+      "id": "20220124-201437_2131817541",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:43+0000",
+      "dateFinished": "2022-03-10T15:46:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compound row selection with \u0027and\u0027",
+      "text": "%python\n\nIRIS_filtered3 \u003d IRIS_TMP[(IRIS_TMP[\"PETAL_LENGTH\"] \u003c 1.5) \u0026 \n                          (IRIS_TMP[\"SEPAL_LENGTH\"] \u003e 5.0), :]\nprint(\"Length: \", len(IRIS_filtered3))\nIRIS_filtered3.head(4)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Length:  7\n   SEPAL_LENGTH  SEPAL_WIDTH  PETAL_LENGTH  PETAL_WIDTH SPECIES\n0           5.8          4.0           1.2          0.2  setosa\n1           5.5          3.5           1.3          0.2  setosa\n2           5.4          3.9           1.3          0.4  setosa\n3           5.2          3.4           1.4          0.2  setosa\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1298427576",
+      "id": "20220124-201437_115588522",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:44+0000",
+      "dateFinished": "2022-03-10T15:46:45+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Use Pandas DataFrame objects\n\nLet\u0027s explore operations involving Pandas DataFrames.\n\nWe\u0027ll start by creating a temporary table from a Pandas DataFrame and use the ***append*** function. First, append an oml.Float series object to another, then append an oml.DataFrame object to another.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:45+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eUse Pandas DataFrame objects\u003c/h1\u003e\n\u003cp\u003eLet\u0027s explore operations involving Pandas DataFrames.\u003c/p\u003e\n\u003cp\u003eWe\u0027ll start by creating a temporary table from a Pandas DataFrame and use the \u003cstrong\u003e\u003cem\u003eappend\u003c/em\u003e\u003c/strong\u003e function. First, append an oml.Float series object to another, then append an oml.DataFrame object to another.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1329566678",
+      "id": "20220124-201437_1586711039",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:45+0000",
+      "dateFinished": "2022-03-10T15:46:45+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create demo data in temporary table",
+      "text": "%python\n\nmy_df \u003d pd.DataFrame({\"id\" : [1, 2, 3, 4, 5],\n                      \"val\" : [\"a\", \"b\", \"c\", \"d\", \"e\"],\n                      \"ch\" : [\"p\", \"q\", \"r\", \"a\", \"b\"],\n                      \"num\" : [4, 3, 6.7, 7.2, 5]})\nMY_DF \u003d oml.push(my_df)\n\nprint (my_df.dtypes)\n\nnum1 \u003d MY_DF[\u0027id\u0027]\nnum2 \u003d MY_DF[\u0027num\u0027]\nnum1.append(num2)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "id       int64\nval     object\nch      object\nnum    float64\ndtype: object\n[1, 2, 3, 4, 5, 4, 3, 6.7, 7.2, 5]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-387277022",
+      "id": "20220124-201437_768192473",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:46+0000",
+      "dateFinished": "2022-03-10T15:46:46+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using append( )",
+      "text": "%python\n\nx \u003d MY_DF[[\u0027id\u0027, \u0027val\u0027]] \ny \u003d MY_DF[[\u0027num\u0027, \u0027ch\u0027]] \n\nprint(\"Types x:\\n\", x.dtypes)\nprint(\"Types y:\\n\", y.dtypes)\n\nx.append(y)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Types x:\n id       \u003cclass \u0027oml.core.float.Float\u0027\u003e\nval    \u003cclass \u0027oml.core.string.String\u0027\u003e\ndtype: object\nTypes y:\n num      \u003cclass \u0027oml.core.float.Float\u0027\u003e\nch     \u003cclass \u0027oml.core.string.String\u0027\u003e\ndtype: object\n    id val\n0  1.0   a\n1  2.0   b\n2  3.0   c\n3  4.0   d\n4  5.0   e\n5  4.0   p\n6  3.0   q\n7  6.7   r\n8  7.2   a\n9  5.0   b\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_41441092",
+      "id": "20220124-201437_1426314489",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:47+0000",
+      "dateFinished": "2022-03-10T15:46:47+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, try a few examples using the ***concat*** function.\n\n* create two oml.DataFrame objects and combine the objects column-wise\n* create an oml.Float object with the rounded exponential of two times the values in the num column of the oml_frame object, then concatenate it with the oml.DataFrame object y using a new column name\n* concatenate object x with multiple objects and turn on automatic name conflict resolution\n* concatenate multiple OML data objects and perform customized renaming",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:47+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, try a few examples using the \u003cstrong\u003e\u003cem\u003econcat\u003c/em\u003e\u003c/strong\u003e function.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003ecreate two oml.DataFrame objects and combine the objects column-wise\u003c/li\u003e\n\u003cli\u003ecreate an oml.Float object with the rounded exponential of two times the values in the num column of the oml_frame object, then concatenate it with the oml.DataFrame object y using a new column name\u003c/li\u003e\n\u003cli\u003econcatenate object x with multiple objects and turn on automatic name conflict resolution\u003c/li\u003e\n\u003cli\u003econcatenate multiple OML data objects and perform customized renaming\u003c/li\u003e\n\u003c/ul\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1170921442",
+      "id": "20220124-201437_1318464798",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:48+0000",
+      "dateFinished": "2022-03-10T15:46:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Column-wise concatentation",
+      "text": "%python\n\nfrom collections import OrderedDict\n\nx \u003d MY_DF[[\u0027id\u0027, \u0027val\u0027]]\ny \u003d MY_DF[[\u0027num\u0027, \u0027ch\u0027]]\nx.concat(y)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id val  num ch\n0   1   a  4.0  p\n1   2   b  3.0  q\n2   3   c  6.7  r\n3   4   d  7.2  a\n4   5   e  5.0  b\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1083840818",
+      "id": "20220124-201437_177097090",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:49+0000",
+      "dateFinished": "2022-03-10T15:46:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Concatenate new column",
+      "text": "%python\n\nw \u003d (MY_DF[\u0027num\u0027]*2).exp().round(decimals\u003d2)\ny.concat({\u0027round(exp(2*num))\u0027:w})",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   num ch  round(exp(2*num))\n0  4.0  p            2980.96\n1  3.0  q             403.43\n2  6.7  r          660003.22\n3  7.2  a         1794074.77\n4  5.0  b           22026.47\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-496884308",
+      "id": "20220124-201437_1792641133",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:50+0000",
+      "dateFinished": "2022-03-10T15:46:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Concatenate columns with name resolution",
+      "text": "%python\n\nz \u003d MY_DF[:,\u0027id\u0027]\nx.concat([z, w, y], auto_name\u003dTrue)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id val  id3         num  num5 ch\n0   1   a    1     2980.96   4.0  p\n1   2   b    2      403.43   3.0  q\n2   3   c    3   660003.22   6.7  r\n3   4   d    4  1794074.77   7.2  a\n4   5   e    5    22026.47   5.0  b\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_639641520",
+      "id": "20220124-201437_565591507",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:51+0000",
+      "dateFinished": "2022-03-10T15:46:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Concatename with renaming",
+      "text": "%python\n\nx.concat(OrderedDict([(\u0027ID\u0027,z), (\u0027round(exp(2*num))\u0027,w), (\u0027New_\u0027,y)]))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id val  ID  round(exp(2*num))  New_num New_ch\n0   1   a   1            2980.96      4.0      p\n1   2   b   2             403.43      3.0      q\n2   3   c   3          660003.22      6.7      r\n3   4   d   4         1794074.77      7.2      a\n4   5   e   5           22026.47      5.0      b\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1856351966",
+      "id": "20220124-201437_1589053990",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:52+0000",
+      "dateFinished": "2022-03-10T15:46:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, explore merging data using ***merge***. Perform:\n\n* cross join\n* left outer join\n* right outer join\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:52+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, explore merging data using \u003cstrong\u003e\u003cem\u003emerge\u003c/em\u003e\u003c/strong\u003e. Perform:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003ecross join\u003c/li\u003e\n\u003cli\u003eleft outer join\u003c/li\u003e\n\u003cli\u003eright outer join\u003c/li\u003e\n\u003c/ul\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1823384456",
+      "id": "20220124-201437_646814251",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:53+0000",
+      "dateFinished": "2022-03-10T15:46:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Cross join",
+      "text": "%python\n\nx \u003d MY_DF[[\u0027id\u0027, \u0027val\u0027]]\ny \u003d MY_DF[[\u0027num\u0027, \u0027ch\u0027]]\n\nz \u003d x.merge(y)\nz\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "    id_l val_l  num_r ch_r\n0      1     a    4.0    p\n1      1     a    3.0    q\n2      1     a    6.7    r\n3      1     a    7.2    a\n4      1     a    5.0    b\n5      2     b    4.0    p\n6      2     b    3.0    q\n7      2     b    6.7    r\n8      2     b    7.2    a\n9      2     b    5.0    b\n10     3     c    4.0    p\n11     3     c    3.0    q\n12     3     c    6.7    r\n13     3     c    7.2    a\n14     3     c    5.0    b\n15     4     d    4.0    p\n16     4     d    3.0    q\n17     4     d    6.7    r\n18     4     d    7.2    a\n19     4     d    5.0    b\n20     5     e    4.0    p\n21     5     e    3.0    q\n22     5     e    6.7    r\n23     5     e    7.2    a\n24     5     e    5.0    b\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_889400273",
+      "id": "20220124-201437_11662455",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:54+0000",
+      "dateFinished": "2022-03-10T15:46:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Left outer join",
+      "text": "%python\n\nx.head(4).merge(other\u003dMY_DF[[\u0027id\u0027, \u0027num\u0027]], on\u003d\"id\", suffixes\u003d[\u0027.l\u0027,\u0027.r\u0027])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id val.l  num.r\n0   4     d    7.2\n1   2     b    3.0\n2   3     c    6.7\n3   1     a    4.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_543939195",
+      "id": "20220124-201437_284756247",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:54+0000",
+      "dateFinished": "2022-03-10T15:46:55+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Right outer join",
+      "text": "%python\n\nx.merge(other\u003dy, left_on\u003d\"id\", right_on\u003d\"num\", how\u003d\"right\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id_l val_l  num_r ch_r\n0   4.0     d    4.0    p\n1   NaN  None    6.7    r\n2   3.0     c    3.0    q\n3   5.0     e    5.0    b\n4   NaN  None    7.2    a\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1029525140",
+      "id": "20220124-201437_1996085012",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:55+0000",
+      "dateFinished": "2022-03-10T15:46:55+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, try the drop functonality with ***dropna***, ***drop_duplicates***, and ***drop***:\n\n* drop rows with any missing values\n* drop rows in which all column values are missing\n* drop rows in which any numeric column values are missing\n* drop duplicate rows\n* drop rows that have the same value in column \u0027string1\u0027 and \u0027string2\u0027\n* drop column \u0027string2\u0027\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:56+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, try the drop functonality with \u003cstrong\u003e\u003cem\u003edropna\u003c/em\u003e\u003c/strong\u003e, \u003cstrong\u003e\u003cem\u003edrop_duplicates\u003c/em\u003e\u003c/strong\u003e, and \u003cstrong\u003e\u003cem\u003edrop\u003c/em\u003e\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003edrop rows with any missing values\u003c/li\u003e\n\u003cli\u003edrop rows in which all column values are missing\u003c/li\u003e\n\u003cli\u003edrop rows in which any numeric column values are missing\u003c/li\u003e\n\u003cli\u003edrop duplicate rows\u003c/li\u003e\n\u003cli\u003edrop rows that have the same value in column \u0027string1\u0027 and \u0027string2\u0027\u003c/li\u003e\n\u003cli\u003edrop column \u0027string2\u0027\u003c/li\u003e\n\u003c/ul\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1587691881",
+      "id": "20220124-201437_1013929762",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:56+0000",
+      "dateFinished": "2022-03-10T15:46:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create demo data",
+      "text": "%python\n\nmy_df2 \u003d pd.DataFrame({\u0027numeric\u0027: [1, 1.4, -4, -4, 5.432, None, None],\n                   \u0027string1\u0027 : [None, None, \u0027a\u0027, \u0027a\u0027, \u0027a\u0027, \u0027b\u0027, None],\n                   \u0027string2\u0027: [\u0027x\u0027, None, \u0027z\u0027, \u0027z\u0027, \u0027z\u0027, \u0027x\u0027, None]})\nMY_DF2 \u003d oml.push(my_df2, dbtypes \u003d {\u0027numeric\u0027: \u0027BINARY_DOUBLE\u0027,\n                                     \u0027string1\u0027:\u0027CHAR(1)\u0027, \n                                     \u0027string2\u0027:\u0027CHAR(1)\u0027})\nMY_DF2  \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric string1 string2\n0    1.400    None    None\n1      NaN    None    None\n2    1.000    None       x\n3      NaN       b       x\n4   -4.000       a       z\n5   -4.000       a       z\n6    5.432       a       z\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1881501688",
+      "id": "20220124-201437_871501460",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:57+0000",
+      "dateFinished": "2022-03-10T15:46:57+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop rows with any missing values ",
+      "text": "%python\n\nMY_DF2.dropna(how\u003d\u0027any\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric string1 string2\n0   -4.000       a       z\n1   -4.000       a       z\n2    5.432       a       z\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1345104590",
+      "id": "20220124-201437_1805326412",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:58+0000",
+      "dateFinished": "2022-03-10T15:46:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop rows where all column values missing",
+      "text": "%python\n\nMY_DF2.dropna(how\u003d\u0027all\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric string1 string2\n0    1.400    None    None\n1    1.000    None       x\n2      NaN       b       x\n3   -4.000       a       z\n4   -4.000       a       z\n5    5.432       a       z\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_116466240",
+      "id": "20220124-201437_1407329116",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:59+0000",
+      "dateFinished": "2022-03-10T15:46:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop rows with any missing numeric values",
+      "text": "%python\n\nMY_DF2.dropna(how\u003d\u0027any\u0027, subset\u003d[\u0027numeric\u0027])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric string1 string2\n0    1.400    None    None\n1    1.000    None       x\n2   -4.000       a       z\n3   -4.000       a       z\n4    5.432       a       z\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-880870816",
+      "id": "20220124-201437_359839813",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:46:59+0000",
+      "dateFinished": "2022-03-10T15:46:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop duplicate rows",
+      "text": "%python\n\nMY_DF2.drop_duplicates()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:46:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric string1 string2\n0    1.400    None    None\n1    5.432       a       z\n2      NaN       b       x\n3   -4.000       a       z\n4    1.000    None       x\n5      NaN    None    None\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1817004910",
+      "id": "20220124-201437_920097489",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:00+0000",
+      "dateFinished": "2022-03-10T15:47:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop rows with same value in named columns",
+      "text": "%python\n\nMY_DF2.drop_duplicates(subset\u003d[\u0027string1\u0027, \u0027string2\u0027])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric string1 string2\n0      1.4    None    None\n1      1.0    None       x\n2     -4.0       a       z\n3      NaN       b       x\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-782714758",
+      "id": "20220124-201437_87930175",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:01+0000",
+      "dateFinished": "2022-03-10T15:47:01+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop specific column",
+      "text": "%python\n\nMY_DF2.drop(\u0027string2\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric string1\n0    1.400    None\n1      NaN    None\n2    1.000    None\n3      NaN       b\n4   -4.000       a\n5   -4.000       a\n6    5.432       a\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1096045224",
+      "id": "20220124-201437_1200070151",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:02+0000",
+      "dateFinished": "2022-03-10T15:47:02+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, explore the ***split*** and ***KFold*** function using the *digits* data set. After creating an OML DataFrame proxy object for the *digits* data set,\n\n* split the data into 20% and 80% samples\n* split the data into four sets of 25% each\n* perform stratification on the target column\n* verify that the stratified sampling generates splits in which all of the different categories of digits (digits 0~9) are present in each split\n* hash on the target column\n* verify that the different categories of digits (digits 0~9) are present in only one of the splits generated by hashing on the category column\n* split the data randomly into 4 consecutive folds\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:02+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, explore the \u003cstrong\u003e\u003cem\u003esplit\u003c/em\u003e\u003c/strong\u003e and \u003cstrong\u003e\u003cem\u003eKFold\u003c/em\u003e\u003c/strong\u003e function using the \u003cem\u003edigits\u003c/em\u003e data set. After creating an OML DataFrame proxy object for the \u003cem\u003edigits\u003c/em\u003e data set,\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003esplit the data into 20% and 80% samples\u003c/li\u003e\n\u003cli\u003esplit the data into four sets of 25% each\u003c/li\u003e\n\u003cli\u003eperform stratification on the target column\u003c/li\u003e\n\u003cli\u003everify that the stratified sampling generates splits in which all of the different categories of digits (digits 0~9) are present in each split\u003c/li\u003e\n\u003cli\u003ehash on the target column\u003c/li\u003e\n\u003cli\u003everify that the different categories of digits (digits 0~9) are present in only one of the splits generated by hashing on the category column\u003c/li\u003e\n\u003cli\u003esplit the data randomly into 4 consecutive folds\u003c/li\u003e\n\u003c/ul\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1901267414",
+      "id": "20220124-201437_1203217954",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:03+0000",
+      "dateFinished": "2022-03-10T15:47:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create demo data as temporary table",
+      "text": "%python\n\nimport pandas as pd\nfrom sklearn.datasets import load_digits\n\ndigits \u003d load_digits()\npd_digits \u003d pd.DataFrame(digits.data,\n                         columns\u003d[\u0027IMG\u0027+str(i) for i in\n                         range(digits[\u0027data\u0027].shape[1])])\npd_digits \u003d pd.concat([pd_digits,\n                       pd.Series(digits.target,\n                                  name \u003d \u0027target\u0027)],\n                                  axis \u003d 1)\nDIGITS \u003d oml.push(pd_digits)\nprint(\"Shape: \", DIGITS.shape)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:03+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Shape:  (1797, 65)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-278268395",
+      "id": "20220124-201437_1300034847",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:03+0000",
+      "dateFinished": "2022-03-10T15:47:04+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Split data 80/20",
+      "text": "%python\n\nsplits \u003d DIGITS.split(ratio\u003d(.2, .8), use_hash \u003d False)\nprint(\"Split lengths: \", [len(split) for split in splits])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Split lengths:  [361, 1436]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1126348889",
+      "id": "20220124-201437_629159362",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:05+0000",
+      "dateFinished": "2022-03-10T15:47:05+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Split data into 4 even samples",
+      "text": "%python\n\nsplits \u003d DIGITS.split(ratio \u003d (.25, .25, .25, .25), use_hash \u003d False)\nprint(\"Split lengths: \", [len(split) for split in splits])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Split lengths:  [464, 470, 425, 465]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1213415565",
+      "id": "20220124-201437_1577906387",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:06+0000",
+      "dateFinished": "2022-03-10T15:47:07+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Stratified sampling",
+      "text": "%python\n\nsplits \u003d DIGITS.split(strata_cols\u003d[\u0027target\u0027])\nprint(\"Split lengths: \", [split.shape for split in splits])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Split lengths:  [(1285, 65), (512, 65)]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1129072212",
+      "id": "20220124-201437_611371910",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:07+0000",
+      "dateFinished": "2022-03-10T15:47:08+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Veryify stratified samples",
+      "text": "%python\n\nprint(\"Verify values: \", [split[\u0027target\u0027].drop_duplicates().sort_values().pull()\nfor split in splits])\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Verify values:  [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1634003281",
+      "id": "20220124-201437_244188698",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:09+0000",
+      "dateFinished": "2022-03-10T15:47:09+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Hash on target column",
+      "text": "%python\n\nsplits \u003d DIGITS.split(hash_cols\u003d[\u0027target\u0027])\nprint(\"Split lengths: \", [split.shape for split in splits])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Split lengths:  [(899, 65), (898, 65)]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_607709496",
+      "id": "20220124-201437_704912428",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:10+0000",
+      "dateFinished": "2022-03-10T15:47:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Verify hashing",
+      "text": "%python\n\nprint(\"Verify values: \", [split[\u0027target\u0027].drop_duplicates().sort_values().pull()\nfor split in splits])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Verify values:  [[0, 1, 3, 5, 8], [2, 4, 6, 7, 9]]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1284076937",
+      "id": "20220124-201437_330824663",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:12+0000",
+      "dateFinished": "2022-03-10T15:47:12+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Randomly split into 4 folds",
+      "text": "%python\n\nfolds \u003d DIGITS.KFold(n_splits\u003d4)\n\nprint(\"Split lengths: \", [(len(fold[0]), len(fold[1])) for fold in folds])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Split lengths:  [(1352, 445), (1336, 461), (1379, 418), (1325, 472)]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1603712737",
+      "id": "20220124-201437_834219740",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:13+0000",
+      "dateFinished": "2022-03-10T15:47:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, we explore the ***corr*** function. We construct a trivial, highly correlated DataFrame. First, verify that the correlation between column A and B is 1.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:15+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, we explore the \u003cstrong\u003e\u003cem\u003ecorr\u003c/em\u003e\u003c/strong\u003e function. We construct a trivial, highly correlated DataFrame. First, verify that the correlation between column A and B is 1.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-909654419",
+      "id": "20220124-201437_1341734951",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:15+0000",
+      "dateFinished": "2022-03-10T15:47:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nimport pandas as pd\n\nmy_df2 \u003d pd.DataFrame({\u0027A\u0027: range(4), \u0027B\u0027: [2*i for i in range(4)]})\nMY_DF2 \u003d oml.push(my_df2)\nMY_DF2",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   A  B\n0  0  0\n1  1  2\n2  2  4\n3  3  6\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_680478459",
+      "id": "20220124-201437_1159118984",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:16+0000",
+      "dateFinished": "2022-03-10T15:47:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nMY_DF2.corr()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   A  B\nA  1  1\nB  1  1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1279798428",
+      "id": "20220124-201437_1775497918",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:17+0000",
+      "dateFinished": "2022-03-10T15:47:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nWhen using ***corr***, by default, \u0027skipna\u0027 is True.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:17+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eWhen using \u003cstrong\u003e\u003cem\u003ecorr\u003c/em\u003e\u003c/strong\u003e, by default, \u0027skipna\u0027 is True.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1036715982",
+      "id": "20220124-201437_300220054",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:18+0000",
+      "dateFinished": "2022-03-10T15:47:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Modify data to alter correlation results",
+      "text": "%python\n\nmy_df3 \u003d my_df2\n\nmy_df3.loc[2, \u0027A\u0027] \u003d 1.5\n\n# Change an entry to NaN (not a number) to test the \u0027skipna\u0027 parameter in corr\nmy_df3.loc[1, \u0027B\u0027] \u003d None\n\n# Push my_df3 to Oracle Database using the floating point column type \n# because NaNs cannot be used in Oracle numbers\nMY_DF3 \u003d oml.push(my_df3, oranumber\u003dFalse)\nMY_DF3",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "     A    B\n0  0.0  0.0\n1  1.0  NaN\n2  1.5  4.0\n3  3.0  6.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1488890105",
+      "id": "20220124-201437_337210613",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:18+0000",
+      "dateFinished": "2022-03-10T15:47:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Default corr skipping missing values",
+      "text": "%python\n\nMY_DF3.corr()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "          A         B\nA  1.000000  0.981981\nB  0.981981  1.000000\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_942155639",
+      "id": "20220124-201437_1735978110",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:19+0000",
+      "dateFinished": "2022-03-10T15:47:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Not skipping missing values produces NaNs",
+      "text": "%python\n\n\n\nMY_DF3.corr(skipna\u003dFalse)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:20+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "     A    B\nA  1.0  NaN\nB  NaN  1.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_178896695",
+      "id": "20220124-201437_298365997",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:20+0000",
+      "dateFinished": "2022-03-10T15:47:20+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, explore the ***crosstab*** and ***pivot*** functions on a DataFrame relating gender, \nleft or right handedness, and speed and accuracy on some task.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:20+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, explore the \u003cstrong\u003e\u003cem\u003ecrosstab\u003c/em\u003e\u003c/strong\u003e and \u003cstrong\u003e\u003cem\u003epivot\u003c/em\u003e\u003c/strong\u003e functions on a DataFrame relating gender,\n\u003cbr  /\u003eleft or right handedness, and speed and accuracy on some task.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_869183275",
+      "id": "20220124-201437_661579980",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:21+0000",
+      "dateFinished": "2022-03-10T15:47:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create demo data as temporary table",
+      "text": "%python\n\nmy_df4 \u003d pd.DataFrame({\n     \u0027GENDER\u0027: [\u0027M\u0027, \u0027M\u0027, \u0027F\u0027, \u0027M\u0027, \u0027F\u0027, \u0027M\u0027, \u0027F\u0027, \u0027F\u0027, None, \u0027F\u0027, \u0027M\u0027, \u0027F\u0027],\n     \u0027HAND\u0027: [\u0027L\u0027, \u0027R\u0027, \u0027R\u0027, \u0027L\u0027, \u0027R\u0027, None, \u0027L\u0027, \u0027R\u0027, \u0027R\u0027, \u0027R\u0027, \u0027R\u0027, \u0027R\u0027],\n     \u0027SPEED\u0027: [40.5, 30.4, 60.8, 51.2, 54, 29.3, 34.1, 39.6, 46.4, 12, 25.3, 37.5],\n     \u0027ACCURACY\u0027: [.92, .94, .87, .9, .85, .97, .96, .93, .89, .84, .91, .95]\n    })\n    \nMY_DF4 \u003d oml.push(my_df4)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_2005191291",
+      "id": "20220124-201437_2018461200",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:22+0000",
+      "dateFinished": "2022-03-10T15:47:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Find the categories that the most entries belonged to",
+      "text": "%python\n\nMY_DF4.crosstab(\u0027GENDER\u0027, \u0027HAND\u0027).sort_values(\u0027count\u0027, ascending\u003dFalse)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  GENDER  HAND  count\n0      F     R      5\n1      M     R      2\n2      M     L      2\n3   None     R      1\n4      M  None      1\n5      F     L      1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1026242959",
+      "id": "20220124-201437_1484021371",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:23+0000",
+      "dateFinished": "2022-03-10T15:47:24+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For each gender and across entries, find ratio of entries with different hand values",
+      "text": "%python\n\nMY_DF4.crosstab(\u0027GENDER\u0027, \u0027HAND\u0027, pivot \u003d True, margins \u003d True, normalize \u003d 0)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  GENDER  count_(L)  count_(R)  count_(None)\n0      F   0.166667   0.833333      0.000000\n1   None   0.000000   1.000000      0.000000\n2      M   0.400000   0.400000      0.200000\n3    All   0.250000   0.666667      0.083333\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_71814282",
+      "id": "20220124-201437_206172292",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:24+0000",
+      "dateFinished": "2022-03-10T15:47:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Find the mean speed across all gender and hand combinations",
+      "text": "%python\n\nMY_DF4.pivot_table(\u0027GENDER\u0027, \u0027HAND\u0027, \u0027SPEED\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  GENDER  mean(SPEED)_(L)  mean(SPEED)_(R)  mean(SPEED)_(None)\n0      F            34.10            40.78                 NaN\n1   None              NaN            46.40                 NaN\n2      M            45.85            27.85                29.3\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_62643223",
+      "id": "20220124-201437_1555120457",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:26+0000",
+      "dateFinished": "2022-03-10T15:47:28+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Find the median vlaues for accuracy and speed by gender and hand",
+      "text": "%python\n\nMY_DF4.pivot_table(\u0027GENDER\u0027, \u0027HAND\u0027, aggfunc \u003d oml.DataFrame.median)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  GENDER  median(ACCURACY)_(L)  median(ACCURACY)_(R)  median(ACCURACY)_(None)  median(SPEED)_(L)  median(SPEED)_(R)  median(SPEED)_(None)\n0      F                  0.96                 0.870                      NaN              34.10              39.60                   NaN\n1   None                   NaN                 0.890                      NaN                NaN              46.40                   NaN\n2      M                  0.91                 0.925                     0.97              45.85              27.85                  29.3\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1164353958",
+      "id": "20220124-201437_1582101257",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:28+0000",
+      "dateFinished": "2022-03-10T15:47:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Find the max and min speeds for every gender and hand combination and across all combinations",
+      "text": "%python\n\nMY_DF4.pivot_table(\u0027GENDER\u0027, \u0027HAND\u0027, \u0027SPEED\u0027, \n               aggfunc \u003d [oml.DataFrame.max, oml.DataFrame.min],\n               margins \u003d True)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  GENDER  max(SPEED)_(L)  max(SPEED)_(R)  max(SPEED)_(None)  max(SPEED)_(All)  min(SPEED)_(L)  min(SPEED)_(R)  min(SPEED)_(None)  min(SPEED)_(All)\n0      F            34.1            60.8                NaN              60.8            34.1            12.0                NaN              12.0\n1   None             NaN            46.4                NaN              46.4             NaN            46.4                NaN              46.4\n2    All            51.2            60.8               29.3              60.8            34.1            12.0               29.3              12.0\n3      M            51.2            30.4               29.3              51.2            40.5            25.3               29.3              25.3\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1442321765",
+      "id": "20220124-201437_615639357",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:31+0000",
+      "dateFinished": "2022-03-10T15:47:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Create new columns\n\nNext, explore creating new columns using a simple shopping cart data set. Note, that using the transparency layer, all these computations occur in-database. Neither the input nor the result needs to be brought to the client Python engine.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:33+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eCreate new columns\u003c/h2\u003e\n\u003cp\u003eNext, explore creating new columns using a simple shopping cart data set. Note, that using the transparency layer, all these computations occur in-database. Neither the input nor the result needs to be brought to the client Python engine.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_726077059",
+      "id": "20220124-201437_1740628223",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:33+0000",
+      "dateFinished": "2022-03-10T15:47:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create demo data as temporary table",
+      "text": "%python\n\nshopping_cart \u003d pd.DataFrame({\n  \u0027Item_name\u0027: [\u0027paper_towel\u0027, \u0027ground_pork\u0027, \u0027tofu\u0027, \u0027eggs\u0027,\n                \u0027pork_loin\u0027, \u0027whole_milk\u0027, \u0027egg_custard\u0027],\n  \u0027Item_type\u0027: [\u0027grocery\u0027, \u0027meat\u0027, \u0027grocery\u0027, \u0027dairy\u0027, \u0027meat\u0027,\n                \u0027dairy\u0027, \u0027bakery\u0027],\n  \u0027Quantity\u0027: [1, 2.6, 4, 1, 1.9, 1, 1],\n  \u0027Unit_price\u0027: [1.19, 2.79, 0.99, 2.49, 3.19, 2.5, 3.99]\n  })\nCART \u003d oml.push(shopping_cart)\nCART",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "     Item_name Item_type  Quantity  Unit_price\n0  paper_towel   grocery       1.0        1.19\n1  ground_pork      meat       2.6        2.79\n2         tofu   grocery       4.0        0.99\n3         eggs     dairy       1.0        2.49\n4    pork_loin      meat       1.9        3.19\n5   whole_milk     dairy       1.0        2.50\n6  egg_custard    bakery       1.0        3.99\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1431836256",
+      "id": "20220124-201437_835870280",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:34+0000",
+      "dateFinished": "2022-03-10T15:47:34+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create a column Price \u003d Quantity * Unit_price",
+      "text": "%python\n\n\nprice \u003d CART[\u0027Quantity\u0027]*(CART[\u0027Unit_price\u0027])\nprint(\"Type: \", type(price))\n\nCART \u003d CART.concat({\u0027Price\u0027: price.round(2)})\n\nCART\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type:  \u003cclass \u0027oml.core.float.Float\u0027\u003e\n     Item_name Item_type  Quantity  Unit_price  Price\n0  paper_towel   grocery       1.0        1.19   1.19\n1  ground_pork      meat       2.6        2.79   7.25\n2         tofu   grocery       4.0        0.99   3.96\n3         eggs     dairy       1.0        2.49   2.49\n4    pork_loin      meat       1.9        3.19   6.06\n5   whole_milk     dairy       1.0        2.50   2.50\n6  egg_custard    bakery       1.0        3.99   3.99\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1372771866",
+      "id": "20220124-201437_146745280",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:35+0000",
+      "dateFinished": "2022-03-10T15:47:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Count the pattern \u0027egg\u0027 in the Item_name column",
+      "text": "%python\n\negg_pattern \u003d CART[\u0027Item_name\u0027].count_pattern(\u0027egg\u0027)\nprint(\"Type: \", type(egg_pattern))\nCART.concat({\u0027Egg_pattern\u0027: egg_pattern})",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type:  \u003cclass \u0027oml.core.float.Float\u0027\u003e\n     Item_name Item_type  Quantity  Unit_price  Price  Egg_pattern\n0  paper_towel   grocery       1.0        1.19   1.19            0\n1  ground_pork      meat       2.6        2.79   7.25            0\n2         tofu   grocery       4.0        0.99   3.96            0\n3         eggs     dairy       1.0        2.49   2.49            1\n4    pork_loin      meat       1.9        3.19   6.06            0\n5   whole_milk     dairy       1.0        2.50   2.50            0\n6  egg_custard    bakery       1.0        3.99   3.99            1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1340796213",
+      "id": "20220124-201437_594337771",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:36+0000",
+      "dateFinished": "2022-03-10T15:47:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Find the start index of substring \u0027pork\u0027 in the Item_name column",
+      "text": "%python\n\npork_startInd \u003d CART[\u0027Item_name\u0027].find(\u0027pork\u0027)\nprint(\"Type: \", type(pork_startInd))\nCART.concat({\u0027Pork_startInd\u0027: pork_startInd})\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type:  \u003cclass \u0027oml.core.float.Float\u0027\u003e\n     Item_name Item_type  Quantity  Unit_price  Price  Pork_startInd\n0  paper_towel   grocery       1.0        1.19   1.19             -1\n1  ground_pork      meat       2.6        2.79   7.25              7\n2         tofu   grocery       4.0        0.99   3.96             -1\n3         eggs     dairy       1.0        2.49   2.49             -1\n4    pork_loin      meat       1.9        3.19   6.06              0\n5   whole_milk     dairy       1.0        2.50   2.50             -1\n6  egg_custard    bakery       1.0        3.99   3.99             -1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_2043523453",
+      "id": "20220124-201437_994868065",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:37+0000",
+      "dateFinished": "2022-03-10T15:47:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check whether items are of grocery category",
+      "text": "%python\n\nis_grocery\u003dCART[\u0027Item_type\u0027]\u003d\u003d\u0027grocery\u0027\nprint(\"Type: \", type(is_grocery))\nCART.concat({\u0027Is_grocery\u0027: is_grocery})\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type:  \u003cclass \u0027oml.core.boolean.Boolean\u0027\u003e\n     Item_name Item_type  Quantity  Unit_price  Price  Is_grocery\n0  paper_towel   grocery       1.0        1.19   1.19        True\n1  ground_pork      meat       2.6        2.79   7.25       False\n2         tofu   grocery       4.0        0.99   3.96        True\n3         eggs     dairy       1.0        2.49   2.49       False\n4    pork_loin      meat       1.9        3.19   6.06       False\n5   whole_milk     dairy       1.0        2.50   2.50       False\n6  egg_custard    bakery       1.0        3.99   3.99       False\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-446314448",
+      "id": "20220124-201437_407851614",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:38+0000",
+      "dateFinished": "2022-03-10T15:47:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Calculate the length of item names",
+      "text": "%python\n\nname_length\u003dCART[\u0027Item_name\u0027].len()\nprint(\"Type: \", type(name_length))\nCART.concat({\u0027Name_length\u0027: name_length})\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type:  \u003cclass \u0027oml.core.float.Float\u0027\u003e\n     Item_name Item_type  Quantity  Unit_price  Price  Name_length\n0  paper_towel   grocery       1.0        1.19   1.19           11\n1  ground_pork      meat       2.6        2.79   7.25           11\n2         tofu   grocery       4.0        0.99   3.96            4\n3         eggs     dairy       1.0        2.49   2.49            4\n4    pork_loin      meat       1.9        3.19   6.06            9\n5   whole_milk     dairy       1.0        2.50   2.50           10\n6  egg_custard    bakery       1.0        3.99   3.99           11\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-884640189",
+      "id": "20220124-201437_1765795760",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:38+0000",
+      "dateFinished": "2022-03-10T15:47:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Use a few other function to modify the Price column",
+      "text": "%python\n\nprint(\"Ceiling: \", CART[\u0027Price\u0027].ceil())\nprint(\"Floor: \", CART[\u0027Price\u0027].floor())\nprint(\"Exponential: \", CART[\u0027Price\u0027].exp().round(3))\nprint(\"logarithm: \", CART[\u0027Price\u0027].log().round(3))\nprint(\"Square Root: \", CART[\u0027Price\u0027].sqrt().round(3))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Ceiling:  [2, 8, 4, 3, 7, 3, 4]\nFloor:  [1, 7, 3, 2, 6, 2, 3]\nExponential:  [3.287, 1408.105, 52.457, 12.061, 428.375, 12.182, 54.055]\nlogarithm:  [0.174, 1.981, 1.376, 0.912, 1.802, 0.916, 1.384]\nSquare Root:  [1.091, 2.693, 1.99, 1.578, 2.462, 1.581, 1.997]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1793757712",
+      "id": "20220124-201437_753532667",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:39+0000",
+      "dateFinished": "2022-03-10T15:47:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, using a modified version of the *iris* data set, explore ***sort_values*** and ***tail*** functions.\n\nWe modify the dataset by replacing a few entries with NaNs to test how the ***na_position*** parameter works in the ***sort_values*** method.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:40+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, using a modified version of the \u003cem\u003eiris\u003c/em\u003e data set, explore \u003cstrong\u003e\u003cem\u003esort_values\u003c/em\u003e\u003c/strong\u003e and \u003cstrong\u003e\u003cem\u003etail\u003c/em\u003e\u003c/strong\u003e functions.\u003c/p\u003e\n\u003cp\u003eWe modify the dataset by replacing a few entries with NaNs to test how the \u003cstrong\u003e\u003cem\u003ena_position\u003c/em\u003e\u003c/strong\u003e parameter works in the \u003cstrong\u003e\u003cem\u003esort_values\u003c/em\u003e\u003c/strong\u003e method.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-832417006",
+      "id": "20220124-201437_1957044084",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:40+0000",
+      "dateFinished": "2022-03-10T15:47:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create demo data as temporary table",
+      "text": "%python\n\nfrom sklearn.datasets import load_iris\nimport pandas as pd\n\niris \u003d load_iris()\n\nx \u003d pd.DataFrame(iris.data, columns \u003d [\u0027Sepal_Length\u0027, \u0027Sepal_Width\u0027,\n                                       \u0027Petal_Length\u0027, \u0027Petal_Width\u0027])\ny \u003d pd.DataFrame(list(map(lambda x: {0: \u0027setosa\u0027, 1: \u0027versicolor\u0027,\n                                     2:\u0027virginica\u0027}[x], iris.target)), \n                 columns \u003d [\u0027SPECIES\u0027])\n                   \nx[\u0027Sepal_Width\u0027].replace({3.5: None}, inplace\u003dTrue)\nx[\u0027Petal_Length\u0027].replace({1.5: None}, inplace\u003dTrue)\nx[\u0027Petal_Width\u0027].replace({2.3: None}, inplace\u003dTrue)\n\niris_df \u003d pd.concat([x, y], axis\u003d1)\nIRIS2 \u003d oml.push(iris_df)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-843620356",
+      "id": "20220124-201437_379158044",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:41+0000",
+      "dateFinished": "2022-03-10T15:47:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Sort data set first by Sepal_Length then by Sepal_Width in descending order",
+      "text": "%python\n\nIRIS2.sort_values(by \u003d [\u0027Sepal_Length\u0027, \u0027Sepal_Width\u0027], ascending\u003dFalse).head(8)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   Sepal_Length  Sepal_Width  Petal_Length  Petal_Width    SPECIES\n0           7.9          3.8           6.4          2.0  virginica\n1           7.7          3.8           6.7          2.2  virginica\n2           7.7          3.0           6.1          NaN  virginica\n3           7.7          2.8           6.7          2.0  virginica\n4           7.7          2.6           6.9          NaN  virginica\n5           7.6          3.0           6.6          2.1  virginica\n6           7.4          2.8           6.1          1.9  virginica\n7           7.3          2.9           6.3          1.8  virginica\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_953073057",
+      "id": "20220124-201437_858392",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:42+0000",
+      "dateFinished": "2022-03-10T15:47:43+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display last 5 rows of the data set",
+      "text": "%python\n\nIRIS2.tail()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   Sepal_Length  Sepal_Width  Petal_Length  Petal_Width    SPECIES\n0           7.9          3.8           6.4          2.0  virginica\n1           7.6          3.0           6.6          2.1  virginica\n2           7.7          2.8           6.7          2.0  virginica\n3           7.7          3.8           6.7          2.2  virginica\n4           7.7          2.6           6.9          NaN  virginica\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-296447915",
+      "id": "20220124-201437_1668297156",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:43+0000",
+      "dateFinished": "2022-03-10T15:47:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Sort last 5 rows of the iris data set by Petal_Length then by Petal_Width",
+      "text": "%python\n\nIRIS2.tail().sort_values(by \u003d [\u0027Petal_Length\u0027, \u0027Petal_Width\u0027], na_position \u003d \u0027last\u0027)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   Sepal_Length  Sepal_Width  Petal_Length  Petal_Width    SPECIES\n0           7.9          3.8           6.4          2.0  virginica\n1           7.6          3.0           6.6          2.1  virginica\n2           7.7          2.8           6.7          2.0  virginica\n3           7.7          3.8           6.7          2.2  virginica\n4           7.7          2.6           6.9          NaN  virginica\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_565691585",
+      "id": "20220124-201437_669634401",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:44+0000",
+      "dateFinished": "2022-03-10T15:47:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, we explore column creation/renaming, describing data statistics, and computing a variety of statistics.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:44+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, we explore column creation/renaming, describing data statistics, and computing a variety of statistics.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1113491481",
+      "id": "20220124-201437_2052930590",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:45+0000",
+      "dateFinished": "2022-03-10T15:47:45+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create demo data as temporary table",
+      "text": "%python\n\nmy_df4 \u003d pd.DataFrame({\u0027numeric_col\u0027: [1, 1.4, -4, 3.145, 5, None],\n                       \u0027string_col\u0027 : [None, None, \u0027a\u0027, \u0027a\u0027, \u0027a\u0027, \u0027b\u0027],\n                       \u0027bytes_col\u0027  : [b\u0027a\u0027, b\u0027b\u0027, b\u0027c\u0027, b\u0027c\u0027, b\u0027d\u0027, b\u0027e\u0027]})\n\nMY_DF4 \u003d oml.push(my_df4, dbtypes \u003d {\u0027numeric_col\u0027: \u0027BINARY_DOUBLE\u0027,\n                                     \u0027string_col\u0027:\u0027CHAR(1)\u0027, \n                                     \u0027bytes_col\u0027:\u0027RAW(1)\u0027})\nMY_DF4",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric_col string_col bytes_col\n0        1.000       None      b\u0027a\u0027\n1        1.400       None      b\u0027b\u0027\n2       -4.000          a      b\u0027c\u0027\n3        3.145          a      b\u0027c\u0027\n4        5.000          a      b\u0027d\u0027\n5          NaN          b      b\u0027e\u0027\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-1588238799",
+      "id": "20220124-201437_309346196",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:46+0000",
+      "dateFinished": "2022-03-10T15:47:46+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Combine a Boolean column with MY_DF4",
+      "text": "%python\n\noml_bool \u003d MY_DF4[\u0027numeric_col\u0027] \u003e 3\n\nMY_DF4 \u003d MY_DF4.concat(oml_bool)\nMY_DF4.rename({\u0027COL4\u0027:\u0027boolean_col\u0027})\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric_col string_col bytes_col  boolean_col\n0        1.000       None      b\u0027a\u0027        False\n1        1.400       None      b\u0027b\u0027        False\n2       -4.000          a      b\u0027c\u0027        False\n3        3.145          a      b\u0027c\u0027         True\n4        5.000          a      b\u0027d\u0027         True\n5          NaN          b      b\u0027e\u0027         True\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_973947254",
+      "id": "20220124-201437_1894568463",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:47+0000",
+      "dateFinished": "2022-03-10T15:47:47+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nUse the describe function to compute a variety of statistics on all columns. Then, exclude the Float columns.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:47+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eUse the describe function to compute a variety of statistics on all columns. Then, exclude the Float columns.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-313673584",
+      "id": "20220124-201437_420972980",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:48+0000",
+      "dateFinished": "2022-03-10T15:47:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nMY_DF4.describe(include\u003d\u0027all\u0027)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "        numeric_col string_col bytes_col boolean_col\ncount      5.000000          4         6           6\nunique          NaN          2         5           2\ntop             NaN          a      b\u0027c\u0027       False\nfreq            NaN          3         2           3\nmean       1.309000        NaN       NaN         NaN\nstd        3.364655        NaN       NaN         NaN\nmin       -4.000000        NaN       NaN         NaN\n25%        1.000000        NaN       NaN         NaN\n50%        1.400000        NaN       NaN         NaN\n75%        3.145000        NaN       NaN         NaN\nmax        5.000000        NaN       NaN         NaN\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_868524732",
+      "id": "20220124-201437_179960644",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:48+0000",
+      "dateFinished": "2022-03-10T15:47:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nMY_DF4.describe(exclude\u003d[oml.Float])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "       string_col bytes_col boolean_col\ncount           4         6           6\nunique          2         5           2\ntop             a      b\u0027c\u0027       False\nfreq            3         2           3\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_333474647",
+      "id": "20220124-201437_430369048",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:50+0000",
+      "dateFinished": "2022-03-10T15:47:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compute the sum of values in each Float or Boolean column",
+      "text": "%python\n\nMY_DF4.sum()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "numeric_col    6.545\nboolean_col    3.000\ndtype: float64\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_275108958",
+      "id": "20220124-201437_265038985",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:51+0000",
+      "dateFinished": "2022-03-10T15:47:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nFind the cumulative sum of values in each Float or Boolean column after MY_DF4 is sorted by the bytes column in descending order. Then, compute skew, median, and kurtosis for float columns.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:51+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eFind the cumulative sum of values in each Float or Boolean column after MY_DF4 is sorted by the bytes column in descending order. Then, compute skew, median, and kurtosis for float columns.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_842040684",
+      "id": "20220124-201437_708005613",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:52+0000",
+      "dateFinished": "2022-03-10T15:47:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compute cummulate sum",
+      "text": "%python\n\nMY_DF4.cumsum(by \u003d \u0027bytes_col\u0027, ascending \u003d False)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   numeric_col  boolean_col\n0          NaN            1\n1        5.000            2\n2        8.145            3\n3        4.145            3\n4        5.545            3\n5        6.545            3\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_1594807931",
+      "id": "20220124-201437_1872098100",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:53+0000",
+      "dateFinished": "2022-03-10T15:47:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compute select statistics",
+      "text": "%python\n\nprint(MY_DF4.skew())\nprint(MY_DF4.median())\nprint(MY_DF4.kurtosis())",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:47:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "numeric_col   -0.683838\ndtype: float64\nnumeric_col    1.4\ndtype: float64\nnumeric_col   -0.582684\ndtype: float64\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-523925383",
+      "id": "20220124-201437_1104488951",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:47:54+0000",
+      "dateFinished": "2022-03-10T15:48:01+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, use the overloaded ***boxplot*** and ***hist*** functions using the *wine* data set. The statistics supporting these plots are computed in-database, so transfer of data or client side memory limitations are avoided.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:48:01+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, use the overloaded \u003cstrong\u003e\u003cem\u003eboxplot\u003c/em\u003e\u003c/strong\u003e and \u003cstrong\u003e\u003cem\u003ehist\u003c/em\u003e\u003c/strong\u003e functions using the \u003cem\u003ewine\u003c/em\u003e data set. The statistics supporting these plots are computed in-database, so transfer of data or client side memory limitations are avoided.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277117_-395262861",
+      "id": "20220124-201437_798223648",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:48:01+0000",
+      "dateFinished": "2022-03-10T15:48:01+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Boxplot of select columns",
+      "text": "%python\n\nimport matplotlib.pyplot as plt\nfrom sklearn.datasets import load_wine\n\nwine \u003d load_wine()\nwine_data \u003d pd.DataFrame(wine.data, columns \u003d wine.feature_names)\nWINE \u003d oml.push(wine_data)\n\noml.graphics.boxplot(WINE[:,8:12], showmeans\u003dTrue, \n                     meanline\u003dTrue, patch_artist\u003dTrue, \n                     labels\u003dWINE.columns[8:12])\nplt.title(\u0027Distribution of Wine Attributes\u0027)\nplt.show()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:48:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv style\u003d\u0027width:auto;height:auto\u0027\u003e\u003cimg src\u003ddata:image/png;base64,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g3bhwoX6+uuvtXDhQu3atUu7d+/WpEmTtHLlSuXk5Gj9+vX64IMPVFxcrN/85jd67733tGnTJi1atEh16tTRiBEjXAeD5cuXKyIiQs2aNVNMTIzWrl2rjRs3atiwYXr++edd9X3zzTf6v//7P61bt05PPvmkSktLK22bjRs3asaMGdq2bZt27NihNWvWaP/+/Xr//fe1detWbd68WX/+858vz46x0FtvvaXw8HBFRERo5MiRKigoUN++fRUeHq6+fftq586dleapLlTHxsbq8ccfV58+ffTyyy9Xub7TewRiY2M1adIkde/eXR06dNDq1at1/PhxPfHEE1q4cKEiIyO1cOFCHTlyRGPGjFG3bt3UpUsXffjhh5JOnq0OHjy4UggvKyvT6NGjFRoaqrCwMFdgHz16tBYvXqyZM2dq9+7diouLU1xcnFJSUlyvOenkycEjjzxi3UZ2Y9u3b9dDDz2krVu3qnHjxnrvvfeqnTYlJUWNGjXS+vXrtX79er355pvKy8urwWor++tf/6rQ0FCFhoZqxowZkqTk5GRdd911uvnmm/Xtt9+6pu3Xr5+8vU/+atsNN9ygwsJCSZLD4dCRI0d04sQJHT16VHXr1pW/v7/WrVundu3aqW3btqpbt66GDRvmeu0aY5STk6OuXbtq//79uvPOOxUeHq4bbrhBmzdvliTt27dP/fr1U5cuXfTAAw+4TuIcDofrZK+0tFSlpaVyOBySpC5duljyKx5VbZcHH3xQO3bs0MCBA13vqTNVV7P03xPU053Z4zRgwAB9/vnnmjx5so4eParIyEhXb9k777yj7t27KzIyUg888IDrCsrcuXPVoUMH9enTR2vWrKn2OZWVlalt27YyxujAgQOqU6eOMjMzJZ0Mn999912FeqrrDJCkF154wXWicKoH8ciRI+rfv78iIiIUGhqqhQsXnntDXyEIWDZo3bq1evbsKUkaMWKEsrKyJElDhw6VJB08eFAHDhxQnz59JEmjRo1yvWC3bNmiXr16KSwsTKmpqdq6datruXfeeafq1KmjTp06uXqOqtK3b181atRI9erVU6dOnVRQUKD169crNjZWAQEB8vb21vDhw5WZmam1a9eqd+/euvbaayVJTZs2lSSNGTPGdUlqzpw5uv/++yVJhYWFuuWWWxQWFqYXXnihQn39+/fXVVddpWbNmql58+ZV1ti9e3cFBQWpTp06ioyMVH5+vvz9/VWvXj2NHTtW//znP9WgQYOL2Oo1Z+vWrUpOTnadDb/88ssaP3687rvvPm3evFnDhw/Xww8/XGm+6kK1JB04cECrVq3SH//4x/Oq4cSJE1q3bp1mzJihJ598UnXr1tVTTz2loUOHKicnR0OHDlVycrJuuukmrV+/XhkZGZo4caKOHDkiqeoQnpOTo6KiIm3ZskVff/21a5+f8vDDDyswMFAZGRnKyMjQsGHD9NFHH7mC9Ny5cyvNg6pde+21ioyMlHTy6/v5+fnVTrts2TK99dZbioyMVHR0tPbt26ft27fXUKWVbdiwQXPnztVXX32ltWvX6s0339SGDRu0YMECbdy4Uf/85z+1fv36KuedM2eObrvtNknSkCFD5Ovrq5YtWyo4OFiPPvqomjZtqqKiIrVu3do1T1BQkIqKiiSdPEGLiIiQw+HQlClT1KVLF23evFnPPvusq4f3ySefVExMjDZu3KiBAwdWONkpKytTZGSkmjdvrvj4eEVHR5/z+X755ZeKiIjQbbfdVuF4dz7bZePGjXr99ddd75vTT0hOd7aaL8T06dNVv3595eTkKDU1Vbm5uVq4cKHWrFmjnJwceXl5KTU1VXv27NGUKVO0Zs0affbZZxV6CM/k5eWlDh06aNu2bcrKytL111+v1atX65dfflFhYaHatWtXaZ6qOgOWLVum7du3a926dcrJydGGDRuUmZmp9PR0BQYGatOmTdqyZctF9U7ahYBlg1NnRWf+7evre855R48erVdeeUVff/21pkyZomPHjrkeu+qqq1z/P9vdN06fzsvLSydOnKh2emNMpXqlkyHxmmuu0cqVK/XVV1+5DooTJkzQ+PHj9fXXX+uNN96otr5T6z2f2ry9vbVu3Trddddd+uCDD674N9jKlSs1ZMgQNWvWTNLJUPrll1/q3nvvlSSNHDnSFapPOVuolv4bvs/X4MGDJZ39w3nZsmWaPn26IiMjFRsbq2PHjrkO3FWF8LZt22rHjh2aMGGC0tPT5e/vf9YafH19ddNNN2nJkiX65ptvVFpaqrCwsAt6Hp6quvdBeXm5JFV4XxljNGvWLNdlqry8PPXr16/Gaz4lKytLgwYNkq+vr/z8/DR48GB98sknGjRokBo0aCB/f38NHDiw0nzJycmukztJWrdunby8vLR7927l5eXpxRdf1I4dO6o8Vp06RqWnp7uORVlZWRo5cqQk6aabbtK+fft08OBBZWZmasSIEZJOnvQ1adLEtRwvLy/l5OSosLBQ69at05YtW876XLt27aqCggJt2rRJEyZM0J133nlB22X16tVnXf4pZ6v5UqxYsUIbNmxQt27dFBkZqRUrVmjHjh366quvXCfcdevWPefxp1evXsrMzFRmZqYee+wxZWVlaf369erWrVuV01fVGbBs2TItW7ZMXbp0UdeuXfXNN99o+/btCgsL0/LlyzVp0iStXr1ajRo1suS51wQClg127typL7/8UtLJcU8xMTEVHm/UqJGaNGnievO9/fbbrg/eQ4cOqWXLliotLT2v6/UNGzbUoUOHzjlddHS0Vq1apb1796qsrExpaWnq06ePbrzxRq1atcp1yWH//v2uecaOHasRI0bonnvukZeXl6STQaFVq1aSpPnz559zvefj8OHDOnjwoG6//XbNmDFDOTk5liz3cqkulJ7uXI+f6XzC9+lOfUBXF2Slk3W+9957rg/mnTt3yul0Vpj/9GU0adJEmzZtUmxsrP72t79p7Nix56xj7NixmjdvHr1XFggJCdGGDRskqcJllVtuuUWvvfaaq6fw3//+t6sn0g7Vnayd7TU/f/58LVmyRKmpqa7p/vGPf+jWW2+Vj4+Pmjdvrp49eyo7O1tBQUHatWuXa97CwkIFBgZKOvkhfSpcni2Inev917hxY8XGxio9Pf2s0/n7+7su0d1+++0qLS2t9seML/WWkxdyzDg9jEsVA/mZNY0aNcp1DPj222916t7jF7K+Xr16afXq1Vq3bp1uv/12HThwQJ9//rl69+5d5fRVdQYYY/TYY4+5avnuu++UmJioDh06aMOGDQoLC9Njjz120V8ksAMBywZOp1Pz589XeHi49u/fr9/+9reVppk/f74mTpyo8PDwCoMnn376aUVHRys+Pl4dO3Y857rCw8Pl7e2tiIiIaq/vS1LLli01bdo0xcXFKSIiQl27dtUdd9yhgIAAzZ49W4MHD1ZERESFM5mBAwfq8OHDFT44p06dqrvvvlu9evVy9eBcqkOHDmnAgAEKDw9Xnz59zvo8rgR9+/bVu+++q3379kk6GUp79OihBQsWSJJSU1MvKFRb5cywfcstt2jWrFmuA9zGjRvPOv/evXtVXl6uu+66S08//bT+9a9/nXMd0dHR2rVrl/7xj38oISHBomfimR599FG99tpr6tGjR4UP8bFjx6pTp07q2rWrQkND9cADD1QbqmtC79699cEHH6ikpERHjhzR+++/r/79++v999/X0aNHdejQIX388ceu6dPT0/Xcc8/po48+qnD5Pzg4WCtXrpQxRkeOHNHatWvVsWNHdevWTdu3b1deXp6OHz+uBQsWaODAgTp48KBOnDihq6++2lXHqZPQzz//XM2aNZO/v3+F9k8//dQ11rG4uNj1DcajR49q+fLl5zzGfv/99673z7p161ReXu5a//lsl169ep33Nq2q5uqEhIQoJydH5eXl2rVrl9atW+d6zMfHxxXG+/btq8WLF+vHH3+UdPJYVVBQoOjoaH3++efat2+fSktLtWjRorOuLzo6Wl988YXq1KmjevXqKTIyUm+88cZ5Pz/p5PFozpw5Onz4sCSpqKhIP/74o3bv3q0GDRpoxIgRevTRR6s87lyxDGpUXl6e6dy5s91lWGL9+vUmJibG7jKuSPPmzTOdO3c24eHhZtSoUSYvL8/ExcWZsLAwc9NNN5mCggJjjDFTpkwxL7zwgjHGmI0bN5ro6GgTFhZm7rjjDrN//35jjDF9+vQx69evP+v6Tl/O6dMXFxebNm3aGGOM2bdvn4mKijIRERFmwYIFpqSkxIwbN86Ehoaazp07m/79+xtjjJk7d6556KGHXMvu37+/ycjIMDk5OaZLly4mIiLCREREmKVLlxpjjBk1apRZtGiRMcaYmTNnmuuuu87Exsa65p82bZoZOnToJW1P1C4vvvii6dy5s+ncubN56aWXjDHGPPPMM6ZDhw4mPj7e3H///a7X669+9SsTFBTkel098MADxhhjDh06ZIYMGWI6depknE6nef75513L/+STT0z79u1N27ZtzTPPPGOMMWbRokVmypQprmn27dtnBg4caMLCwkx0dLTZtGmTMcaYvXv3mvj4eNOlSxfz+9//3gQHB5vi4mKzadMmExkZacLCwkznzp3Nk08+6VrWyy+/bFq1amW8vLxMy5YtTWJiojHGmFmzZplOnTqZ8PBwEx0dbdasWXPB28UYY9q0aWOKi4urna+6mo0xxtfX1xhT8bOlvLzc3HvvvaZTp07mnnvuMX369DEZGRnGGGP+9Kc/mY4dO5p7773XGGPMggULTEREhAkLCzNdu3Y1X375pTHGmDlz5pj27dub3r17m4cffrjCMaEqMTEx5rHHHjPGGJOammoaNWpkysrKjDEVjymnHy9Or98YY2bMmGFCQ0NNaGioueGGG8x3331n0tPTTVhYmImIiDBRUVHnPBZeSfipnBqWn5+vAQMGnPPa/pVu+vTpeu2116rsjQFON2DAAP3hD39Q37597S4Fbmzs2LEaO3asbrjhBrtLASTxW4QALpMDBw64btx4rksMAOBuCFhALZKcnFwprNx9991KSkqyqSIAp9u3b1+VvbUrVqyodnzWKXPnzq10r7uePXvqb3/7m6U1XiyOPxeGgAUAAGAxvkUIAABgMQIWAACAxQhYAAAAFiNgAQAAWIyABQAAYDECFgAAgMUIWAAAABYjYAEAAFiMgAUAAGAxAhYAAIDFCFgAAAAWI2ABAABYjIAFAABgMQIWAACAxQhYAAAAFiNgAQAAWIyABQAAYDECFgAAgMUIWAAAABYjYAEAAFiMgAUAAGAxAhYAAIDFCFgAAAAWI2ABAABY7P8BQmgY22Cv9ZYAAAAASUVORK5CYII\u003d style\u003d\u0027width\u003dauto;height:auto\u0027\u003e\u003cdiv\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277118_1469979607",
+      "id": "20220124-201437_526883353",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:48:02+0000",
+      "dateFinished": "2022-03-10T15:48:09+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Histogram of \u0027proline content\u0027",
+      "text": "%python\n\noml.graphics.hist(WINE[\u0027proline\u0027], bins\u003d10, color\u003d\u0027red\u0027,\n                  linestyle\u003d\u0027solid\u0027, edgecolor\u003d\u0027black\u0027)\nplt.title(\u0027Proline content in Wine\u0027)\nplt.xlabel(\u0027proline content\u0027)\nplt.ylabel(\u0027# of wine instances\u0027)\nplt.show()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:48:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv style\u003d\u0027width:auto;height:auto\u0027\u003e\u003cimg src\u003ddata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGQCAYAAAByNR6YAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjIsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy8li6FKAAAgAElEQVR4nO3de1hVdaLG8XcLjnkXFRBFRBQVuSooeQkvHbTSdLzkJW3wFumZprIynax0Zkozp+nuGKVGNy09k2mpmZJmXo5xkuYpT46jgKKEiJhXkMvv/OHTPhmoqEsXe+/v53l8ns3aa639/vZKeVtXhzHGCAAAAJapYXcAAAAAd0PBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAmj17tsaOHStJOnDggOrVq6eysjKbU1VPN/L7ee+999SvX7/r/jkArEfBAlxUcHCwateurXr16snf31/jx4/XqVOnrnm9QUFBOnXqlLy8vCxIef39shxaoXfv3nrzzTcv+v61fD/t27fXhx9+6Px569atcjgcFabVq1dPpaWlGjNmjNavX3/FnwPAfhQswIWtXr1ap06d0jfffKOvv/5aTz/9dIV5jDEqLy+3IR1+LSEhQZs3b3b+/OWXX6pDhw4VpnXv3l3e3t52RARgEQoW4AZatGih22+/Xd99952k83thZs6cqR49eqhOnTrav3+/Dh8+rEGDBqlx48Zq27at3njjjUrXlZWVJYfDodLSUue6nnzySfXo0UP169dXv379dPToUef8O3bsUPfu3dWoUSNFR0dr06ZNF8158OBBDR06VL6+vmrSpInuv/9+SVJ5ebmefvpptWrVSn5+fvrd736nn3766YI8qampCgoKUtOmTfXMM89IktatW6c5c+bogw8+UL169RQdHS1J+umnnzRx4kQFBASoRYsWeuKJJ5yH9N566y317NlTjz76qHx8fNS6dWutXbtWkjRz5kxt2bJF999/v+rVq+fMdy3fzy8lJCToyy+/dP68ZcsWTZ8+vcK0hISEC7L+zOFwaOHChQoNDZWPj49+//vfyxjjfH/x4sUKCwuTj4+P+vfvr+zs7ItuCwDXmQHgklq1amU+//xzY4wxBw4cMB07djRPPPGEMcaYXr16mZYtW5rvvvvOlJSUmHPnzpmEhAQzZcoUc/bsWbNr1y7TtGlTs2HDBmOMMbNmzTJjxowxxhiTmZlpJJmSkhLnukJCQsyePXvMmTNnTK9evcz06dONMcbk5OSYxo0bm08//dSUlZWZ9evXm8aNG5sjR45UyFtaWmqioqLMQw89ZE6dOmXOnj1rtmzZYowxZtGiRaZNmzZm37595uTJk2bIkCFm7NixF+SZNGmSOXPmjMnIyDC/+c1vzO7duytk/9ngwYNNcnKyOXXqlMnLyzNdunQxCxcuNMYYs2TJEuPt7W1SUlJMaWmpWbBggQkICDDl5eXO8b7xxhsX/d6v5Pv5tezsbONwOExBQYEpKyszvr6+5syZMyYwMNA5rWHDhmbz5s3OrD169HAuL8kMGDDAFBYWmuzsbNO0aVOzdu1aY4wxH330kWnTpo3ZvXu3KSkpMX/5y19Mt27dLjoOANcXe7AAF/bb3/5WjRo1Us+ePdWrVy89/vjjzvfGjRun8PBweXt768cff9RXX32lefPm6aabblJMTIwmTZqkd955p0qfM378eLVr1061a9fWiBEjlJGRIUl69913dccdd+iOO+5QjRo1lJiYqLi4OK1Zs6bCOnbu3KnDhw9r/vz5qlu3rm666Sbn3pn33ntPDz/8sEJCQlSvXj3NnTtXy5Ytc+4lkqRZs2apdu3aio6OVnR0tL799ttKs+bl5Wnt2rV68cUXVbduXfn5+Wnq1KlatmyZc55WrVrp3nvvlZeXl5KSkpSbm6u8vLwqfRdX8v38WlBQkIKCgrRlyxZ9++23Cg0NVe3atdWjRw/ntKKiIsXHx1/0s2bMmKFGjRopKChIffr0cX7W66+/rj/+8Y8KCwuTt7e3Hn/8cWVkZLAXC7AJB/kBF7Zy5Ur9x3/8R6XvtWzZ0vn68OHDaty4serXr++c1qpVK6Wnp1fpc5o1a+Z8XadOHefJ9NnZ2Vq+fLlWr17tfL+kpER9+vSpsI6DBw+qVatWlZ5bdPjwYbVq1eqCbKWlpReUnotl+LXs7GyVlJQoICDAOa28vPyC7+PX65J0TRcIVDWb9P+HCYOCgnTLLbdIknr27OmcFh8fr1q1al3xZ2VnZ+vBBx/UI4884nzfGKNDhw5d8N0CuDEoWICbcjgcztfNmzfXsWPHdPLkSWfJOnDggFq0aHFNn9GyZUvdc889Fz2f69fzHjhwQKWlpRVKVvPmzS/Y03LgwAF5e3vL399fOTk5l1zvL8f58+fUqlVLR48evaoTxX+9PqslJCTo9ddfV6tWrTR+/HhJ0i233KLU1FS1atXKef7VlWrZsqVmzpypMWPGWBkXwFXiECHgAVq2bKnu3bvrj3/8o4qKivTPf/5TixYtuuZfxmPHjtXq1av12WefqaysTEVFRdq0aVOlpahr164KCAjQjBkzdPr0aRUVFWnr1q2SpNGjR+uFF15QZmamTp06pccff1wjR46sUkHy9/dXVlaW80rJgIAA9evXT4888ohOnDih8vJy7du374Ir9S63vv3791/Bt3BlEhIStGvXLm3evFk9evSQJEVGRiozM1NffPHFVResyZMna+7cufr+++8lnT/Rf/ny5ZblBnBlKFiAh1i6dKmysrLUvHlzDRkyRH/605+UmJh4Tets2bKlPv74Y82ZM0e+vr5q2bKl5s+fX+ltIby8vLR69Wr9+9//VlBQkAIDA/XBBx9IkiZMmKB77rlHCQkJat26tW666Sa98sorVcpw1113SZKaNGmizp07S5LefvttnTt3Th07dpSPj4+GDx+u3NzcKq3vwQcf1IoVK+Tj46MHHnigSstciXbt2snPz08BAQFq1KiRJKlGjRrq2rWrTpw4oe7du1/VeocMGaLp06dr1KhRatCggSIiIpxXRwK48RzG/OIaXwAAAFwz9mABAABYjIIFAABgMQoWAACAxShYAAAAFqNgAQAAWIwbjV6Bpk2bKjg42O4YAAC4nKysrIs+CN0dUbCuQHBwcJUfLQIAAP5fXFyc3RFuKA4RAgAAWIyCBQAAYDEKFgAAgMUoWAAAABajYAEAAFiMggUAAGAxChYAAIDFKFgAAAAWo2ABAABYjIIFAABgMQoWAACAxShYAAAAFqNgAQAAWIyCBbcT3KyZHA5Htf8T3KyZ3V8VAOA68bY7AGC17Lw8GbtDVIEjL8/uCACA64Q9WAAAABbzmIJVVlamTp06aeDAgZKkzMxMxcfHKzQ0VCNHjtS5c+dsTggAANyFxxSsl156SWFhYc6fp0+frqlTp2rv3r3y8fHRokWLbEwHAADciUcUrJycHH366aeaNGmSJMkYo7S0NA0fPlySlJSUpJUrV9oZEQAAuBGPKFgPPfSQnnvuOdWocX64BQUFatSokby9z5/jHxgYqEOHDtkZEQAAuBG3L1iffPKJ/Pz8FBsb65xmTMVrzBwOR6XLp6SkKC4uTnFxccrPz79uOQEAgPtw+9s0bN26VatWrdKaNWtUVFSkEydO6KGHHtLx48dVWloqb29v5eTkqHnz5pUun5ycrOTkZElSXFzcjYwOAABclNvvwZo7d65ycnKUlZWlZcuWqW/fvnrvvffUp08frVixQpKUmpqqwYMH25wUAAC4C7cvWBczb948/e1vf1Pbtm1VUFCgiRMn2h0JAAC4CYep7IQkVCouLk7p6el2x8BlOBwO17iTuyo/HxAA3JGn/Q712D1YAAAA1wsFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACzmbXcAuIbgZs2UnZdndwwAAFwCBQtVkp2XJ2N3iCpy2B0AAODxOEQIAABgMQoWAACAxShYAAAAFqNgAQAAWIyCBQAAYDEKFgAAgMUoWAAAABajYAEAAFiMggUAAGAxty9YRUVF6tq1q6KjoxUeHq5Zs2ZJksaNG6fWrVsrJiZGMTExysjIsDkpAABwF27/qJxatWopLS1N9erVU0lJiXr27Knbb79dkjR//nwNHz7c5oQAAMDduP0eLIfDoXr16kmSSkpKVFJSIoeDp9UBAIDrx+0LliSVlZUpJiZGfn5+SkxMVHx8vCRp5syZioqK0tSpU1VcXGxzSgAA4C48omB5eXkpIyNDOTk52rlzp7777jvNnTtXP/zwg77++msdO3ZM8+bNq3TZlJQUxcXFKS4uTvn5+Tc4OQAAcEUeUbB+1qhRI/Xu3Vvr1q1TQECAHA6HatWqpfHjx2vnzp2VLpOcnKz09HSlp6fL19f3BicGAACuyO0LVn5+vo4fPy5JOnv2rDZs2KAOHTooNzdXkmSM0cqVKxUREWFnTAAA4Ebc/irC3NxcJSUlqaysTOXl5RoxYoQGDhyovn37Kj8/X8YYxcTEaOHChXZHBQAAbsLtC1ZUVJR27dpVYXpaWpoNaQAAgCdw+0OEAAAANxoFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALEbBAgAAsBgFCwAAwGJuX7CKiorUtWtXRUdHKzw8XLNmzZIkZWZmKj4+XqGhoRo5cqTOnTtnc1IAAOAu3L5g1apVS2lpafr222+VkZGhdevWaceOHZo+fbqmTp2qvXv3ysfHR4sWLbI7KgAAcBNuX7AcDofq1asnSSopKVFJSYkcDofS0tI0fPhwSVJSUpJWrlxpZ0wAAOBG3L5gSVJZWZliYmLk5+enxMREtWnTRo0aNZK3t7ckKTAwUIcOHbI5JQAAcBceUbC8vLyUkZGhnJwc7dy5U//7v/9bYR6Hw1HpsikpKYqLi1NcXJzy8/Ovd1QAAOAGPKJg/axRo0bq3bu3duzYoePHj6u0tFSSlJOTo+bNm1e6THJystLT05Weni5fX98bGRcAALgoty9Y+fn5On78uCTp7Nmz2rBhg8LCwtSnTx+tWLFCkpSamqrBgwfbGRMAALgRb7sDXG+5ublKSkpSWVmZysvLNWLECA0cOFAdO3bUqFGj9MQTT6hTp06aOHGi3VEBAICbcPuCFRUVpV27dlWYHhISop07d9qQCAAAuDu3P0QIAABwo1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALCYSxas8vJynThxwu4YAAAAlXKZgnX33XfrxIkTOn36tDp27Kj27dtr/vz5dscCAACowGUK1u7du9WgQQOtXLlSd9xxhw4cOKB33nnH7lgAAAAVuEzBKikpUUlJiVauXKnBgwerZs2acjgcdscCAACowGUK1n333afg4GCdPn1aCQkJys7OVoMGDeyOBQAAUIHDGGPsDnG1SktL5e19455XHRcXp/T09Bv2edWJw+GQq/yH4pBcIqtDkgv/9QOAK+Jpv0NdZg9WXl6eJk6cqNtvv13S+XOyUlNTbU4FAABQkcsUrHHjxql///46fPiwJKldu3Z68cUXbU4FAABQkcsUrKNHj2rEiBGqUeN8ZG9vb3l5edmcCgAAoCKXKVh169ZVQUGB88rBHTt2qGHDhjanAgAAqOjGnSF+jf72t79p0KBB2rdvn3r06KH8/HytWLHC7lgAAAAVuEzB6ty5szZv3qw9e/bIGKP27durZs2adscCAACowGUOEb722ms6deqUwsPDFRERoVOnTmnBggV2xwIAAKjAZQrWG2+8oUaNGjl/9vHx0RtvvGFjIgAAgMq5TMEqLy+/4KaMZWVlOnfunI2JAAAAKucy52D1799fI0aM0OTJk+VwOLRw4ULddtttdscCAACowGUK1rx58/T666/r73//u4wx6tevnyZNmmR3LAAAgApcpmDVqFFDU6ZM0ZQpU+yOAgAAcEkuU7C2bt2q2bNnKzs7W6WlpTLGyOFwaP/+/XZHAwAAuIDLFKyJEyfqhRdeUGxsLI/IAQAA1ZrLXEXYsGFD3X777fLz81OTJk2cfy7n4MGD6tOnj8LCwhQeHq6XXnpJkjR79my1aNFCMTExiomJ0Zo1a673EAAAgIdwmT1Yffr00bRp0zR06FDVqlXLOb1z586XXM7b21vPP/+8OnfurJMnTyo2NlaJiYmSpKlTp+rRRx+9rrkBAIDncZmC9d///d+SpPT0dOc0h8OhtLS0Sy4XEBCggIAASVL9+vUVFhamQ4cOXb+gAADA47lMwfriiy+ueR1ZWVnatWuX4uPjtXXrVr366qt6++23FRcXp+eff14+Pj4WJAUAAJ7OYX55e/Rq7tNPP9X333+voqIi57SnnnqqSsueOnVKvXr10syZMzV06FDl5eWpadOmcjgcevLJJ5Wbm6vFixdXWC4lJUUpKSmSpPz8fGVnZ1szGBfjcDjkKv+hOCSXyOqQ5EJ//QDgmsTFxV1wFMrducxJ7pMnT9YHH3ygV155RcYYLV++vMplp6SkRMOGDdOYMWM0dOhQSZK/v7+8vLxUo0YN3Xvvvdq5c2elyyYnJys9PV3p6eny9fW1bDwAAMB9uUzB2rZtm95++235+Pho1qxZ2r59uw4ePHjZ5YwxmjhxosLCwvTwww87p+fm5jpff/TRR4qIiLguuQEAgOdxmXOwateuLUmqU6eODh8+rCZNmigzM/Oyy23dulXvvPOOIiMjFRMTI0maM2eOli5dqoyMDDkcDgUHB+v111+/rvkBAIDncJmCNXDgQB0/flzTpk1T586d5XA4qvQswp49e1Z6nssdd9xxPWICAAC4zknuxcXFzvtfFRcXq6ioSDfddNMF98S63jztBL1f4iR363GSOwBP4mm/Q13mHKxu3bo5X9eqVUsNGza8YBoAAEB1Ue0PEf744486dOiQzp49q127djn/j//EiRM6c+aMzekAAAAqqvYF67PPPtNbb72lnJwcPfLII86CVb9+fc2ZM8fmdAAAABVV+4KVlJSkpKQk/dd//ZeGDRtmdxwAAIDLcplzsHJycnTixAkZYzRp0iR17txZ69evtzsWAABABS5TsBYvXqwGDRpo/fr1OnLkiJYsWaIZM2bYHQsAAKAClylYP597tWbNGo0fP17R0dFc4g4AAKollylYsbGx6tevn9asWaP+/fvr5MmTqlHDZeIDAAAPUu1Pcv/ZokWLlJGRoZCQENWpU0cFBQVasmSJ3bEAAAAqcJmCVaNGDfn7+2v37t0qLS21Ow4AAMBFuUzBmj59uj744AN17NhRXl5eks4/viUhIcHmZAAAABdymYK1cuVK7dmz54Y+exAAAOBquMxZ4iEhISopKbE7BgAAwGW5zB6sOnXqKCYmRrfeeusFe7FefvllG1MBAABU5DIFa9CgQRo0aJDdMQAAAC7LZQpWUlKS3REAAACqpNoXrBEjRujDDz9UZGSkHA5Hhff/+c9/2pDKOsHNmik7L8/uGAAAwELVvmC99NJLkqRPPvnE5iTXR3ZenlzhgT8Vqy0AALiYal+wAgICJEmtWrWyOQkAAEDVuMxtGgAAAFwFBQsAAMBiLlWwzp49qz179tgdAwAA4JJcpmCtXr1aMTExuu222yRJGRkZ3BcLAABUSy5TsGbPnq2dO3eqUaNGkqSYmBhlZWXZGwoAAKASLlOwvL291bBhQ7tjAAAAXJbLFKyIiAi9//77Kisr0969e/WHP/xB3bt3tzsWAABABS5TsF555RV9//33qlWrlkaPHq0GDRroxRdfvOxyBw8eVJ8+fRQWFqbw8HDnjUuPHTumxMREhYaGKjExUYWFhdd7CAAAwEM4jDGucCPxq5abm6vc3Fx17txZJ0+eVGxsrFauXKm33npLjRs31owZM/Tss8+qsLBQ8+bNu+S64uLilJ6ebmk+h8PhMndyd4WckutkdUhy879+AOB0PX6HVmfV/k7uP/vXv/6lv/71r8rKylJpaalzelpa2iWXCwgIcN4Nvn79+goLC9OhQ4f08ccfa9OmTZLOP0i6d+/ely1YAAAAVeEyBeuuu+7S5MmTNWnSJHl5eV3VOrKysrRr1y7Fx8crLy/PWbwCAgJ05MgRK+MCAAAP5jIFy9vbW1OmTLnq5U+dOqVhw4bpxRdfVIMGDaq8XEpKilJSUiRJ+fn5V/35AADAc7jMSe533nmnFixYoNzcXB07dsz5pypKSko0bNgwjRkzRkOHDpUk+fv7Kzc3V9L587T8/PwqXTY5OVnp6elKT0+Xr6+vNYMBAABuzWX2YKWmpkqS5s+f75zmcDi0f//+Sy5njNHEiRMVFhamhx9+2Dl90KBBSk1N1YwZM5SamqrBgwdfn+AAAMDjuP1VhF999ZVuueUWRUZGqkaN8zvs5syZo/j4eI0YMUIHDhxQUFCQli9frsaNG19yXVxF6BpcJStXEQLwJFxFWM2kpaWpb9+++sc//lHp+z8f8ruYnj17XvSX2MaNG685HwAAwK9V+4K1efNm9e3bV6tXr67wnsPhuGzBAgAAuNHc/hChlThE6BpcJSuHCAF4Eg4RVlNt2rTRzTffrFtuuUUJCQnq2LGj3ZGAa1JL5wt2ddfK319ZP/5od4wqCW7WTNl5eXbHuCxX+k4BXB2XuU3D7t27dd9996mgoECPPvqoQkJCNGTIELtjAVetWOf3tFX3P65QWH6WnZdn+/flbt8pgKvjMgXLy8tLNWvWlJeXl2rUqCF/f/+L3rsKAADATi5ziLBBgwaKjIzUww8/rHvvvVdNmjSxOxIAAEClXGYP1tKlS5WQkKAFCxZo1KhRmjVrFrdZAAAA1ZLLXUX4ww8/aO3atXrxxRd15MgRnT179oZ9NlcRugZXyepSOV3knwmX+vvkIt8pYBVPu4rQZfZgDRs2TG3atNGDDz6o06dP6+2331ZhYaHdsQAAACpwmXOwZsyYoc6dO8vLy8vuKAAAAJfkMgWrS5cudkcAAACoEpc5RAgAAOAqqn3B2rp1qySpuLjY5iQAAABVU+0L1gMPPCBJ6tatm81JAAAAqqban4NVs2ZNjR8/XocOHXKWrV96+eWXbUgFAABwcdW+YH3yySfasGGD0tLSFBsba3ccAACAy6r2Batp06YaNWqUwsLCFB0dbXccAACAy6r252D9rEmTJhoyZIj8/Pzk7++vYcOGKScnx+5YAAAAFbhMwRo/frwGDRqkw4cP69ChQ7rzzjs1fvx4u2MBAABU4DIF68iRIxo/fry8vb3l7e2tcePGKT8/3+5YAAAAFbhMwfL19dW7776rsrIylZWV6d1331WTJk3sjgUAAFCByxSsxYsX68MPP1SzZs0UEBCgFStWaPHixXbHAgAAqKDaX0X4s6CgIK1atcruGAAAAJflMnuwAAAAXAUFCwAAwGIULAAAAIu5TMF6+umnna+Li4ttTAIAAHBp1b5gPffcc9q+fbtWrFjhnNatW7cqLz9hwgT5+fkpIiLCOW327Nlq0aKFYmJiFBMTozVr1liaGQAAeLZqX7Dat2+v5cuXa//+/brllluUnJysgoIC7dmzp0rLjxs3TuvWraswferUqcrIyFBGRobuuOMOq2MDAAAPVu0Llo+Pj+bMmaO2bdtq06ZNeuCBByRJzz77rLp3737Z5RMSEtS4cePrHRMAAMCp2hesdevWacCAAdq3b58efvhh7dy5U3Xr1tWSJUu0bdu2q17vq6++qqioKE2YMEGFhYUWJgYAAJ6u2hesOXPmaOPGjQoODtbYsWNVWlqq/Px89ezZU3feeedVrXPKlCnat2+fMjIyFBAQoEceeeSi86akpCguLk5xcXE8+xAAAFSJy9zJvX///urSpYu6dOmiv//97/rqq6909OjRq1qXv7+/8/W9996rgQMHXnTe5ORkJScnS5Li4uKu6vMAAIBnqfZ7sH723HPPOV+/9dZbkqSmTZte1bpyc3Odrz/66KMLrjAEAAC4Vi6zB+uXoqOjqzzv6NGjtWnTJh09elSBgYH605/+pE2bNikjI0MOh0PBwcF6/fXXr2NaAADgaVyyYF2JpUuXVpg2ceJEG5IAAABP4TKHCAEAAFwFBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALEbBAgAAsJjb38kdwLWpJcnhcNgdAzYIbtZM2Xl5dse4rFb+/sr68Ue7YwAXoGABuKRiScbuEFVEDbRWdl6eS2x7hwuUQHgeDhECAABYjIIFAABgMQoWAACAxShYAAAAFqNgAQAAWIyCBQAAYDEKFgAAgMUoWAAAABajYAEAAFiMggUAAGAxChYAAIDFKFgAAAAWo2ABAABYjIIFAABgMQoWAACAxdy+YE2YMEF+fn6KiIhwTjt27JgSExMVGhqqxMREFRYW2pgQAAC4G7cvWOPGjdO6desumPbss8/q1ltv1d69e3Xrrbfq2WeftSkdAABwR25fsBISEtS4ceMLpn388cdKSkqSJCUlJWnlypV2RAMAAG7K7QtWZfLy8hQQECBJCggI0JEjR2xOBAAA3Im33QGqu5SUFKWkpEiS8vPzbU4DAABcgUfuwfL391dubq4kKTc3V35+fhedNzk5Wenp6UpPT5evr++NiggAAFyYRxasQYMGKTU1VZKUmpqqwYMH25wIAAC4E7cvWO3nyNMAABAiSURBVKNHj1a3bt20Z88eBQYGatGiRZoxY4Y+//xzhYaG6vPPP9eMGTPsjgkAANyI25+DtXTp0kqnb9y48QYnAQAAnsLt92ABAADcaBQsAAAAi1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLuf2jcgCguqklyeFw2B0DwHVEwQKAG6xYkrE7RBVQAYGrxyFCAAAAi1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALEbBAgAAsJi33QHsFBwcrPr168vLy0ve3t5KT0+3OxIAAHADHl2wJOmLL75Q06ZN7Y4BAADcCIcIAQAALObRBcvhcKhfv36KjY1VSkqK3XEAAICb8OhDhFu3blXz5s115MgRJSYmqkOHDkpISLhgnpSUFGf5ys/PtyMmAABwMR69B6t58+aSJD8/Pw0ZMkQ7d+6sME9ycrLS09OVnp4uX1/fGx0RAAC4II8tWKdPn9bJkyedr9evX6+IiAibUwEAAHfgsYcI8/LyNGTIEElSaWmp7r77bt122202pwIAAO7AYwtWSEiIvv32W7tjAAAAN+SxhwgBAACuFwoWAACAxTz2ECEAwD3U0vn7GrqCVv7+yvrxR7tj4AagYAEAXFqxJGN3iCpy5OXZHQE3CIcIAQAALEbBAgAAsBgFCwAAwGIULAAAAItRsAAAACxGwQIAALAYBQsAAMBiFCwAAACLUbAAAAAsRsECAACwGAULAADAYhQsAAAAi1GwAAAALOZtdwAAADxFLUkOh8PuGJfVyt9fWT/+aHcMl0bBAgDgBimWZOwOUQWOvDy7I7g8DhECAABYjIIFAABgMQoWAACAxShYAAAAFqNgAQAAWIyCBQAAYDEKFgAAgMUoWAAAABbz6IK1bt06tW/fXm3bttWzzz5rdxwAAOAmPLZglZWV6fe//73Wrl2r3bt3a+nSpdq9e7fdsQAAgBvw2IK1c+dOtW3bViEhIfrNb36jUaNG6eOPP7Y7FgAAcAMeW7AOHTqkli1bOn8ODAzUoUOHbEwEAADchcc+7NmYio/brOwJ5ykpKUpJSZEk/fDDD4qLi7M0R2xsrKxd47XLz8+Xr6/vBdNipWqX82KuNGtl470R7PxOr2TM7rDt7drGF3O9v1Orxusq2z4oP19x1Wj7XopV3+n1/m86VrL8911WVpal66vuPLZgBQYG6uDBg86fc3Jy1Lx58wrzJScnKzk5+UZGs11cXJzS09PtjnHDeNp4Jc8bM+N1b542Xskzx+xqPPYQYZcuXbR3715lZmbq3LlzWrZsmQYNGmR3LAAA4AY8dg+Wt7e3Xn31VfXv319lZWWaMGGCwsPD7Y4FAADcgNfs2bNn2x3CLqGhofrDH/6gBx98UAkJCXbHqVZiY2PtjnBDedp4Jc8bM+N1b542Xskzx+xKHKays70BAABw1Tz2HCwAAIDrhYLlocrKytSpUycNHDhQkpSZman4+HiFhoZq5MiROnfunCSpuLhYI0eOVNu2bRUfH++yl9keP35cw4cPV4cOHRQWFqbt27fr2LFjSkxMVGhoqBITE1VYWCjp/C08HnjgAbVt21ZRUVH65ptvbE5/5V544QWFh4crIiJCo0ePVlFRkVtt4wkTJsjPz08RERHOaVezPVNTUxUaGqrQ0FClpqbe8HFcicrGPG3aNHXo0EFRUVEaMmSIjh8/7nxv7ty5atu2rdq3b6/PPvvMOd1VHhFW2Xh/9te//lUOh0NHjx6V5B7b+GLjfeWVV9S+fXuFh4frsccec0539e3rEQw80vPPP29Gjx5tBgwYYIwx5q677jJLly41xhhz3333mQULFhhjjHnttdfMfffdZ4wxZunSpWbEiBH2BL5Gv/vd78wbb7xhjDGmuLjYFBYWmmnTppm5c+caY4yZO3eueeyxx4wxxnz66afmtttuM+Xl5Wb79u2ma9eutuW+Gjk5OSY4ONicOXPGGHN+2y5ZssSttvHmzZvN//zP/5jw8HDntCvdngUFBaZ169amoKDAHDt2zLRu3docO3bsxg+miiob82effWZKSkqMMcY89thjzjF///33JioqyhQVFZn9+/ebkJAQU1paakpLS01ISIjZt2+fKS4uNlFRUeb777+3ZTyXU9l4jTHmwIEDpl+/fiYoKMjk5+cbY9xjG1c23rS0NHPrrbeaoqIiY4wxeXl5xhj32L6egILlgQ4ePGj69u1rNm7caAYMGGDKy8tNkyZNnP9Qb9u2zfTr188YY0y/fv3Mtm3bjDHGlJSUmCZNmpjy8nLbsl+Nn376yQQHB1fI3a5dO3P48GFjjDGHDx827dq1M8YYk5ycbN5///1K53MFOTk5JjAw0BQUFJiSkhIzYMAAs27dOrfbxpmZmRf8MrrS7fn++++b5ORk5/Rfz1cd/XrMv/SPf/zD3H333cYYY+bMmWPmzJnjfO/nbfzL7V7ZfNVNZeMdNmyYycjIMK1atXIWLHfZxr8e71133WU+//zzCvO5y/Z1dxwi9EAPPfSQnnvuOdWocX7zFxQUqFGjRvL2Pn/Xjl8+NuiXjxTy9vZWw4YNVVBQYE/wq7R//375+vpq/Pjx6tSpkyZNmqTTp08rLy9PAQEBkqSAgAAdOXJEkus/RqlFixZ69NFHFRQUpICAADVs2FCxsbFuvY0lXfH2dPXt/GuLFy/W7bffLsl9x7xq1Sq1aNFC0dHRF0x31/H+61//0pYtWxQfH69evXrp66+/luS+43U3FCwP88knn8jPz++Cy3vNJR4bdKn3XEVpaam++eYbTZkyRbt27VLdunUveW6Cq4+5sLBQH3/8sTIzM3X48GGdPn1aa9eurTCfO23jS7nY+Nxp3M8884y8vb01ZswYSe455jNnzuiZZ57Rn//85wrvueN4pfP/dhUWFmrHjh2aP3++RowYIXP+yFOFed1hvO6GguVhtm7dqlWrVik4OFijRo1SWlqaHnroIR0/flylpaWSLnxs0C8fKVRaWqqffvpJjRs3ti3/1QgMDFRgYKDi4+MlScOHD9c333wjf39/5ebmSpJyc3Pl5+fnnL8qj1GqrjZs2KDWrVvL19dXNWvW1NChQ7Vt2za33saSrnh7uvp2/llqaqo++eQTvffee85fpu445n379ikzM1PR0dEKDg5WTk6OOnfurB9//NEtxyud345Dhw6Vw+FQ165dVaNGDR09etRtx+tuKFgeZu7cucrJyVFWVpaWLVumvn376r333lOfPn20YsUKSef/wR48eLAkadCgQc4rb1asWKG+ffu63P8RNWvWTC1bttSePXskSRs3blTHjh0vGNuvx/z222/LGKMdO3aoYcOGzkNPriAoKEg7duzQmTNnZIxxjtedt7GkK96e/fv31/r161VYWKjCwkKtX79e/fv3t3MIV2zdunWaN2+eVq1apTp16jinDxo0SMuWLVNxcbEyMzO1d+9ede3a1aUfERYZGakjR44oKytLWVlZCgwM1DfffKNmzZq57Tb+7W9/q7S0NEnnDxeeO3dOTZs2dcvt65Zu+FlfqDa++OIL51WE+/btM126dDFt2rQxw4cPd161cvbsWTN8+HDTpk0b06VLF7Nv3z47I1+1Xbt2mdjYWBMZGWkGDx5sjh07Zo4ePWr69u1r2rZta/r27WsKCgqMMcaUl5eb//zP/zQhISEmIiLCfP311zanv3JPPfWUad++vQkPDzdjx441RUVFbrWNR40aZZo1a2a8vb1NixYtzJtvvnlV23PRokWmTZs2pk2bNmbx4sV2DadKKhtzmzZtTGBgoImOjjbR0dHOq0GNMebpp582ISEhpl27dmbNmjXO6Z9++qkJDQ01ISEh5umnn7ZjKFVS2Xh/6ZcnubvDNq5svMXFxWbMmDEmPDzcdOrUyWzcuNE5v6tvX0/AndwBAAAsxiFCAAAAi1GwAAAALEbBAgAAsBgFCwAAwGIULAAAAItRsADYYty4cc77ck2aNEm7d++2OdH/27Rpk7Zt23bVyx8/flwLFiywMBEAV0PBAnDdlJWVVWm+N998Ux07drzOaaqOggXgWlGwAFyxrKwsdejQQUlJSYqKitLw4cN15swZSVJwcLD+/Oc/q2fPnlq+fLkyMjJ08803KyoqSkOGDFFhYWGF9fXu3Vvp6emSpHr16mnmzJmKjo7WzTffrLy8PElSfn6+hg0bpi5duqhLly7aunVrhfWUlZXp0UcfVWRkpKKiovTKK69IOn/3/k6dOikyMlITJkxQcXGxM+usWbPUuXNnRUZG6ocfflBWVpYWLlyoF154QTExMdqyZctFP3v27NmaMGGCevfurZCQEL388suSpBkzZmjfvn2KiYnRtGnTLP72AbgEu+90CsD1ZGZmGknmq6++MsYYM378eDN//nxjzPk7bM+bN885b2RkpNm0aZMxxpgnn3zSPPjgg8YYY5KSkszy5cuNMcb06tXLefdtSWbVqlXGGGOmTZtm/vKXvxhjjBk9erTZsmWLMcaY7Oxs06FDhwq5FixYYIYOHWpKSkqMMcYUFBSYs2fPmsDAQLNnzx5jjDH33HOPeeGFF5xZX375ZWOMMa+99pqZOHGiMcaYWbNmOcdzqc+eNWuW6datmykqKjL5+fmmcePG5ty5cyYzM9OEh4df1XcLwD2wBwvAVWnZsqV69OghSRo7dqy++uor53sjR46UJP300086fvy4evXqJUlKSkrSl19+ecn1/uY3v9HAgQMlSbGxscrKypJ0/iHW999/v2JiYjRo0CCdOHFCJ0+evGDZDRs2aPLkyfL29pYkNW7cWHv27FHr1q3Vrl27SjMMHTq0wmf92qU+e8CAAapVq5aaNm0qPz8/5x43AJ7N2+4AAFzTrx8I/cuf69ate9XrrVmzpnNdXl5eKi0tlSSVl5dr+/btql279kWXNcZUyGUu8zSwWrVqVfisX7vUZ/+8/OXWAcCzsAcLwFU5cOCAtm/fLklaunSpevbsWWGehg0bysfHR1u2bJEkvfPOO869WVeqX79+evXVV50/Z2RkVDrPwoULnSXn2LFj6tChg7KysvTvf/+7yhnq169/wd6xqnz2pZYH4HkoWACuSlhYmFJTUxUVFaVjx45pypQplc6XmpqqadOmKSoqShkZGXrqqaeu6vNefvllpaenKyoqSh07dtTChQsrzDNp0iQFBQUpKipK0dHRev/993XTTTdpyZIluuuuuxQZGakaNWpo8uTJl/ysO++8Ux999JHzJPeqfPYvNWnSRD169FBERAQnuQMeymEut/8cAH4lKytLAwcO1HfffWd3FAColtiDBQAAYDH2YAEAAFiMPVgAAAAWo2ABAABYjIIFAABgMQoWAACAxShYAAAAFqNgAQAAWIyCBQAAYDEKFgAAgMUoWAAAABajYAEAAFiMggUAAGAxChYAAIDF/g/XzE5lZuLNrwAAAABJRU5ErkJggg\u003d\u003d style\u003d\u0027width\u003dauto;height:auto\u0027\u003e\u003cdiv\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277118_1565516375",
+      "id": "20220124-201437_1596704402",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:48:10+0000",
+      "dateFinished": "2022-03-10T15:48:12+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:48:12+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277118_145090592",
+      "id": "20220124-201437_928630289",
+      "dateCreated": "2020-02-19T23:52:13+0000",
+      "dateStarted": "2022-03-10T15:48:13+0000",
+      "dateFinished": "2022-03-10T15:48:13+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T15:48:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055277118_804331027",
+      "id": "20220124-201437_127125303",
+      "dateCreated": "2020-04-16T16:40:09+0000",
+      "dateStarted": "2022-03-10T15:48:14+0000",
+      "dateFinished": "2022-03-10T15:48:14+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py -2- Data Selection and Manipulation",
+  "id": "101148",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:OMLUSER-101148": []
+  },
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

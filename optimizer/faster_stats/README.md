@@ -1,10 +1,13 @@
 
 
-First, create a user called STEST by adapting the the user.sql script to use an appropriate tablespace (which needs to have about 1.5GB free).
+First, create a user called STEST.
+
+EDIT user.sql script to use an appropriate tablespace and password (which needs to have about 1.5GB free).
+EDIT cusr.sql to set the password/connect string 
 
 Two 'connect' scripts are available:
 cadm.sql      <-- Connects to SYSDBA account
-cusr.sql      <-- Connects to the STEST user account
+cusr.sql      <-- Connects to the STEST user account - EDIT THIS TO SET YOUR PASSWORD
 You can edit these to suit you system, particularly if you are using a multitenant environment.
 
 Create tables: 

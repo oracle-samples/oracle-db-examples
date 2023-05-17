@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -20,10 +20,6 @@
  *
  * DESCRIPTION
  *   Shows default and extended query column metadata
- *   Uses Oracle's sample HR schema.
- *
- *   Scripts to create the HR schema can be found at:
- *   https://github.com/oracle/db-sample-schemas
  *
  *   This example requires node-oracledb 1.10 or later.
  *
@@ -31,8 +27,25 @@
  *
  *****************************************************************************/
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 async function run() {
 
@@ -41,19 +54,21 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupBf(connection);  // create the demo table
+
     console.log('Default query metadata');
     let result = await connection.execute(
-      `SELECT location_id, city
-       FROM locations`);
-    console.log(result.metaData);
+      `SELECT id, farmer, picked
+       FROM no_banana_farmer`);
+    console.dir(result.metaData, { depth: null });
 
     console.log('Extended query metadata');
     result = await connection.execute(
-      `SELECT location_id, city
-       FROM locations`,
-      {},  // no binds
+      `SELECT id, farmer, picked
+       FROM no_banana_farmer`,
+      {},                           // no binds
       { extendedMetaData: true });  // enable the extra metadata
-    console.log(result.metaData);
+    console.dir(result.metaData, { depth: null });
 
   } catch (err) {
     console.error(err);

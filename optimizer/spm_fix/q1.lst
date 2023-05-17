@@ -1,0 +1,61 @@
+SQL> @q1
+SQL> set timing on
+SQL> --
+SQL> -- The adaptive plan feature can potentially avoid performance regressions
+SQL> -- associate with the wrong join type being chosen, so we are going to disable it because
+SQL> -- we WANT to induce a performance regression for SPM to fix.
+SQL> --
+SQL> 
+SQL> select /*+ NO_ADAPTIVE_PLAN */ sum(t1.c), sum(t2.c)
+  2  from   t1, t2
+  3  where  t1.a = t2.a
+  4  and    t1.d = 10;
+
+ SUM(T1.C)  SUM(T2.C)
+---------- ----------
+    500001     500001
+
+Elapsed: 00:00:00.22
+SQL> 
+SQL> @plan
+SQL> set linesize 250
+SQL> set trims on
+SQL> set tab off
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  0ptw8zskuh9r4, child number 2
+-------------------------------------
+select /*+ NO_ADAPTIVE_PLAN */ sum(t1.c), sum(t2.c) from   t1, t2 where
+ t1.a = t2.a and    t1.d = 10
+
+Plan hash value: 906334482
+
+------------------------------------------------------------------------------------
+| Id  | Operation           | Name | Rows  | Bytes |TempSpc| Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |      |       |       |       |  3778 (100)|          |
+|   1 |  SORT AGGREGATE     |      |     1 |    22 |       |            |          |
+|*  2 |   HASH JOIN         |      |   495K|    10M|    11M|  3778   (1)| 00:00:01 |
+|*  3 |    TABLE ACCESS FULL| T1   |   493K|  6264K|       |  1099   (1)| 00:00:01 |
+|   4 |    TABLE ACCESS FULL| T2   |  1000K|  8789K|       |  1095   (1)| 00:00:01 |
+------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("T1"."A"="T2"."A")
+   3 - filter("T1"."D"=10)
+
+
+23 rows selected.
+
+Elapsed: 00:00:00.46
+SQL> 
+SQL> spool off

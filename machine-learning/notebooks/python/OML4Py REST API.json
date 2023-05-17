@@ -1,0 +1,1538 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n# OMP4Py REST API for invoking embedded Python execution\n\nOML4Py contains a REST API to run user-defined Python functions saved in the script repository. The REST API is used when separation between the client and the Database server is beneficial. For example, REST APIs can be called from a web development application, improving the portability of the interface to other types of platforms, increasing project scalability, and allowing components to evolve independently. Use the OML4Py REST API to build, train, deploy, and manage scripts.\n\nTo run a script, it must reside in the OML4Py script repository. An Oracle Machine Learning cloud service account ***username*** and ***password*** must be provided for authentication.\n\n### **REST API Workflow**\n\nIn this workflow, we highlight a few of the features of the REST API:\n\n- authenticating the Database user and obtaining a token\n- loading a database table into the Database\n- saving scripts in the Database Python script repository\n- executing the saved Python scripts from the REST API using both synchronous and asynchronous modes\n\n\nCopyright (c) 2022 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eOMP4Py REST API for invoking embedded Python execution\u003c/h1\u003e\n\u003cp\u003eOML4Py contains a REST API to run user-defined Python functions saved in the script repository. The REST API is used when separation between the client and the Database server is beneficial. For example, REST APIs can be called from a web development application, improving the portability of the interface to other types of platforms, increasing project scalability, and allowing components to evolve independently. Use the OML4Py REST API to build, train, deploy, and manage scripts.\u003c/p\u003e\n\u003cp\u003eTo run a script, it must reside in the OML4Py script repository. An Oracle Machine Learning cloud service account \u003cstrong\u003e\u003cem\u003eusername\u003c/em\u003e\u003c/strong\u003e and \u003cstrong\u003e\u003cem\u003epassword\u003c/em\u003e\u003c/strong\u003e must be provided for authentication.\u003c/p\u003e\n\u003ch3\u003e\u003cstrong\u003eREST API Workflow\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eIn this workflow, we highlight a few of the features of the REST API:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eauthenticating the Database user and obtaining a token\u003c/li\u003e\n\u003cli\u003eloading a database table into the Database\u003c/li\u003e\n\u003cli\u003esaving scripts in the Database Python script repository\u003c/li\u003e\n\u003cli\u003eexecuting the saved Python scripts from the REST API using both synchronous and asynchronous modes\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eCopyright (c) 2022 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1711407566",
+      "id": "20220309-220907_1328127913",
+      "dateCreated": "2020-06-10T19:04:55+0000",
+      "dateStarted": "2022-03-10T00:31:15+0000",
+      "dateFinished": "2022-03-10T00:31:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### **REST API Authentication**\n\nTo authenticate and obtain a token, use ***cURL*** with the ***-d*** option to pass the credentials for your Oracle Machine Learning account against the Oracle Machine Learning user management cloud service REST endpoint */oauth2/v1/token*. \n\n    $ curl -X POST --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"grant_type\":\"password\", \"username\":\"\u0027\u003cyourusername\u003e\u0027\", \n    \"password\":\"\u0027 \u003cyourpassword\u003e\u0027\"}\u0027 \"\u003coml-cloud-service-url\u003e/omlusers/api/oauth2/v1/token\"\n    \nwhere   \n\n* _-X POST_ specifies to use a POST request when communicating with the HTTP server\n* _--header_ defines the headers required for the request (application/json)\n* _-d \u003cdata\u003e_ sends the username and password authentication credentials as data in a POST request to the HTTP server\n* _Content-Type_ and _Accept_ define the response format (JSON)\n* _yourusername_ is the user name of a Oracle Machine Learning user with the default OML_DEVELOPER role\n* _yourpassword_ is the password for the user name\n* _oml-cloud-service-url_ is the REST server portion of the Oracle Machine Learning user management cloud service instance\n\nFor example, Oracle Machine Learning user ***OMLUSER*** with password ***OMLPASSWD*** and cloud service url ***https://qtraya2braestch-omldb.adb.us-sanjose-1.oraclecloudapps.com*** authenticates and obtain a REST token using the following approach:\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {
+          "oml_server": ""
+        },
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eREST API Authentication\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eTo authenticate and obtain a token, use \u003cstrong\u003e\u003cem\u003ecURL\u003c/em\u003e\u003c/strong\u003e with the \u003cstrong\u003e\u003cem\u003e-d\u003c/em\u003e\u003c/strong\u003e option to pass the credentials for your Oracle Machine Learning account against the Oracle Machine Learning user management cloud service REST endpoint \u003cem\u003e/oauth2/v1/token\u003c/em\u003e.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e$ curl -X POST --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"grant_type\":\"password\", \"username\":\"\u0027\u0026lt;yourusername\u0026gt;\u0027\", \n\"password\":\"\u0027 \u0026lt;yourpassword\u0026gt;\u0027\"}\u0027 \"\u0026lt;oml-cloud-service-url\u0026gt;/omlusers/api/oauth2/v1/token\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003ewhere\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cem\u003e-X POST\u003c/em\u003e specifies to use a POST request when communicating with the HTTP server\u003c/li\u003e\n\u003cli\u003e\u003cem\u003e\u0026ndash;header\u003c/em\u003e defines the headers required for the request (application/json)\u003c/li\u003e\n\u003cli\u003e\u003cem\u003e-d \u003cdata\u003e\u003c/em\u003e sends the username and password authentication credentials as data in a POST request to the HTTP server\u003c/li\u003e\n\u003cli\u003e\u003cem\u003eContent-Type\u003c/em\u003e and \u003cem\u003eAccept\u003c/em\u003e define the response format (JSON)\u003c/li\u003e\n\u003cli\u003e\u003cem\u003eyourusername\u003c/em\u003e is the user name of a Oracle Machine Learning user with the default OML_DEVELOPER role\u003c/li\u003e\n\u003cli\u003e\u003cem\u003eyourpassword\u003c/em\u003e is the password for the user name\u003c/li\u003e\n\u003cli\u003e\u003cem\u003eoml-cloud-service-url\u003c/em\u003e is the REST server portion of the Oracle Machine Learning user management cloud service instance\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eFor example, Oracle Machine Learning user \u003cstrong\u003e\u003cem\u003eOMLUSER\u003c/em\u003e\u003c/strong\u003e with password \u003cstrong\u003e\u003cem\u003eOMLPASSWD\u003c/em\u003e\u003c/strong\u003e and cloud service url \u003cstrong\u003e\u003cem\u003ehttps://qtraya2braestch-omldb.adb.us-sanjose-1.oraclecloudapps.com\u003c/em\u003e\u003c/strong\u003e authenticates and obtain a REST token using the following approach:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-902616476",
+      "id": "20220309-220907_2080149192",
+      "dateCreated": "2020-06-14T18:38:33+0000",
+      "dateStarted": "2022-03-10T00:31:17+0000",
+      "dateFinished": "2022-03-10T00:31:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nExport the OML cloud service URL to environment variable *omlserver* and exchange Database credentials for an access token.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:17+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eExport the OML cloud service URL to environment variable \u003cem\u003eomlserver\u003c/em\u003e and exchange Database credentials for an access token.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1553402633",
+      "id": "20220309-220907_1255262971",
+      "dateCreated": "2020-08-11T23:07:01+0000",
+      "dateStarted": "2022-03-10T00:31:18+0000",
+      "dateFinished": "2022-03-10T00:31:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n$ export omlserver\u003dhttps://qtraya2braestch-omldb.adb.us-sanjose-1.oraclecloudapps.com\n$ export username\u003dOMLUSER\n$ export password\u003dOMLPASSWD\n\ncurl -i -X POST --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"grant_type\":\"password\", \"username\":\"\u0027${username}\u0027\", \"password\":\"\u0027${password}\u0027\"}\u0027 \"${omlserver}/omlusers/api/oauth2/v1/token\"\n\n  HTTP/1.1 200 OK\n  Date: Wed, 09 Mar 2022 21:59:16 GMT\n  Content-Type: application/json\n  Content-Length: 1027\n  Connection: keep-alive\n  Cache-Control: no-cache, no-store, private\n  X-Frame-Options: SAMEORIGIN\n  X-XSS-Protection: 1;mode\u003dblock\n  Strict-Transport-Security: max-age\u003d31536000; includeSubDomains\n  X-Content-Type-Options: nosniff\n\n  {\"accessToken\":\"eyJhbGciOiJ...\",\"expiresIn\":3600,\"tokenType\":\"Bearer\"}\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_440921499",
+      "id": "20220309-220907_1059134828",
+      "dateCreated": "2020-08-11T23:04:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md \n\nCopy the \"accessToken\" field from the response and assign it to variable token, surrounded by single quotes.\nA token has a lifecycle of 3600 seconds, or 1 hour, and it can be refreshed for up to 8 hours.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eCopy the \u0026ldquo;accessToken\u0026rdquo; field from the response and assign it to variable token, surrounded by single quotes.\n\u003cbr  /\u003eA token has a lifecycle of 3600 seconds, or 1 hour, and it can be refreshed for up to 8 hours.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_461367611",
+      "id": "20220309-220907_1022757366",
+      "dateCreated": "2020-08-11T23:07:51+0000",
+      "dateStarted": "2022-03-10T00:31:19+0000",
+      "dateFinished": "2022-03-10T00:31:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "$ export token\u003d\u0027eyJhbGciOiJ...\u0027",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1271675161",
+      "id": "20220309-220907_593713774",
+      "dateCreated": "2020-08-11T23:08:13+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### **Create an OML Dataframe and load it to an Oracle Database Table**\n\nIn this example, we load the **iris** data in Python and load the Dataframe into Oracle Database using the ***create*** function. \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:20+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eCreate an OML Dataframe and load it to an Oracle Database Table\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eIn this example, we load the \u003cstrong\u003eiris\u003c/strong\u003e data in Python and load the Dataframe into Oracle Database using the \u003cstrong\u003e\u003cem\u003ecreate\u003c/em\u003e\u003c/strong\u003e function.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-2134747098",
+      "id": "20220309-220907_1738660587",
+      "dateCreated": "2020-06-14T19:55:10+0000",
+      "dateStarted": "2022-03-10T00:31:20+0000",
+      "dateFinished": "2022-03-10T00:31:20+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nimport oml\nimport pandas as pd\n\nfrom sklearn import datasets\nfrom sklearn.datasets import load_iris\n\niris \u003d datasets.load_iris()\nx \u003d pd.DataFrame(iris.data, columns \u003d [\u0027SEPAL_LENGTH\u0027,\u0027SEPAL_WIDTH\u0027,\u0027PETAL_LENGTH\u0027,\u0027PETAL_WIDTH\u0027])\ny \u003d pd.DataFrame(list(map(lambda x: {0: \u0027setosa\u0027, 1: \u0027versicolor\u0027, 2:\u0027virginica\u0027}[x], iris.target)), columns \u003d [\u0027SPECIES\u0027])\n\ntry:\n    oml.drop(table\u003d\"IRIS\")\nexcept:\n    pass\n    \noml_iris \u003d oml.create(pd.concat([x, y], axis\u003d1), table \u003d \u0027IRIS\u0027)\nindex \u003d oml.DataFrame(oml_iris[\u0027SPECIES\u0027])\nz.show(oml_iris)\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:20+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SEPAL_LENGTH": "string",
+                      "SEPAL_WIDTH": "string",
+                      "PETAL_LENGTH": "string",
+                      "PETAL_WIDTH": "string",
+                      "SPECIES": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SEPAL_LENGTH\tSEPAL_WIDTH\tPETAL_LENGTH\tPETAL_WIDTH\tSPECIES\n4.6\t3.6\t1.0\t0.2\tsetosa\n5.1\t2.5\t3.0\t1.1\tversicolor\n6.0\t2.2\t4.0\t1.0\tversicolor\n5.8\t2.6\t4.0\t1.2\tversicolor\n5.5\t2.3\t4.0\t1.3\tversicolor\n5.5\t2.5\t4.0\t1.3\tversicolor\n6.1\t2.8\t4.0\t1.3\tversicolor\n5.7\t2.5\t5.0\t2.0\tvirginica\n6.0\t2.2\t5.0\t1.5\tvirginica\n6.3\t2.5\t5.0\t1.9\tvirginica\n6.7\t3.0\t5.0\t1.7\tversicolor\n7.2\t3.2\t6.0\t1.8\tvirginica\n6.3\t3.3\t6.0\t2.5\tvirginica\n4.3\t3.0\t1.1\t0.1\tsetosa\n5.8\t4.0\t1.2\t0.2\tsetosa\n5.0\t3.2\t1.2\t0.2\tsetosa\n4.4\t3.0\t1.3\t0.2\tsetosa\n4.4\t3.2\t1.3\t0.2\tsetosa\n4.7\t3.2\t1.3\t0.2\tsetosa\n5.5\t3.5\t1.3\t0.2\tsetosa\n4.5\t2.3\t1.3\t0.3\tsetosa\n5.0\t3.5\t1.3\t0.3\tsetosa\n5.4\t3.9\t1.3\t0.4\tsetosa\n4.8\t3.0\t1.4\t0.1\tsetosa\n4.9\t3.6\t1.4\t0.1\tsetosa\n4.9\t3.0\t1.4\t0.2\tsetosa\n4.4\t2.9\t1.4\t0.2\tsetosa\n4.6\t3.2\t1.4\t0.2\tsetosa\n5.0\t3.3\t1.4\t0.2\tsetosa\n5.2\t3.4\t1.4\t0.2\tsetosa\n5.1\t3.5\t1.4\t0.2\tsetosa\n5.0\t3.6\t1.4\t0.2\tsetosa\n5.5\t4.2\t1.4\t0.2\tsetosa\n4.8\t3.0\t1.4\t0.3\tsetosa\n4.6\t3.4\t1.4\t0.3\tsetosa\n5.1\t3.5\t1.4\t0.3\tsetosa\n4.9\t3.1\t1.5\t0.1\tsetosa\n5.2\t4.1\t1.5\t0.1\tsetosa\n4.6\t3.1\t1.5\t0.2\tsetosa\n4.9\t3.1\t1.5\t0.2\tsetosa\n5.0\t3.4\t1.5\t0.2\tsetosa\n5.1\t3.4\t1.5\t0.2\tsetosa\n5.2\t3.5\t1.5\t0.2\tsetosa\n5.3\t3.7\t1.5\t0.2\tsetosa\n5.4\t3.7\t1.5\t0.2\tsetosa\n5.1\t3.8\t1.5\t0.3\tsetosa\n5.4\t3.4\t1.5\t0.4\tsetosa\n5.1\t3.7\t1.5\t0.4\tsetosa\n5.7\t4.4\t1.5\t0.4\tsetosa\n5.0\t3.0\t1.6\t0.2\tsetosa\n4.8\t3.1\t1.6\t0.2\tsetosa\n4.7\t3.2\t1.6\t0.2\tsetosa\n4.8\t3.4\t1.6\t0.2\tsetosa\n5.1\t3.8\t1.6\t0.2\tsetosa\n5.0\t3.4\t1.6\t0.4\tsetosa\n5.0\t3.5\t1.6\t0.6\tsetosa\n5.4\t3.4\t1.7\t0.2\tsetosa\n5.7\t3.8\t1.7\t0.3\tsetosa\n5.4\t3.9\t1.7\t0.4\tsetosa\n5.1\t3.3\t1.7\t0.5\tsetosa\n4.8\t3.4\t1.9\t0.2\tsetosa\n5.1\t3.8\t1.9\t0.4\tsetosa\n5.0\t2.3\t3.3\t1.0\tversicolor\n4.9\t2.4\t3.3\t1.0\tversicolor\n5.0\t2.0\t3.5\t1.0\tversicolor\n5.7\t2.6\t3.5\t1.0\tversicolor\n5.6\t2.9\t3.6\t1.3\tversicolor\n5.5\t2.4\t3.7\t1.0\tversicolor\n5.5\t2.4\t3.8\t1.1\tversicolor\n5.6\t2.5\t3.9\t1.1\tversicolor\n5.8\t2.7\t3.9\t1.2\tversicolor\n5.2\t2.7\t3.9\t1.4\tversicolor\n5.8\t2.7\t4.1\t1.0\tversicolor\n5.6\t3.0\t4.1\t1.3\tversicolor\n5.7\t2.8\t4.1\t1.3\tversicolor\n5.7\t3.0\t4.2\t1.2\tversicolor\n5.6\t2.7\t4.2\t1.3\tversicolor\n5.7\t2.9\t4.2\t1.3\tversicolor\n5.9\t3.0\t4.2\t1.5\tversicolor\n6.2\t2.9\t4.3\t1.3\tversicolor\n6.4\t2.9\t4.3\t1.3\tversicolor\n5.5\t2.6\t4.4\t1.2\tversicolor\n6.3\t2.3\t4.4\t1.3\tversicolor\n6.6\t3.0\t4.4\t1.4\tversicolor\n6.7\t3.1\t4.4\t1.4\tversicolor\n4.9\t2.5\t4.5\t1.7\tvirginica\n5.7\t2.8\t4.5\t1.3\tversicolor\n5.4\t3.0\t4.5\t1.5\tversicolor\n5.6\t3.0\t4.5\t1.5\tversicolor\n6.2\t2.2\t4.5\t1.5\tversicolor\n6.0\t2.9\t4.5\t1.5\tversicolor\n6.4\t3.2\t4.5\t1.5\tversicolor\n6.0\t3.4\t4.5\t1.6\tversicolor\n6.6\t2.9\t4.6\t1.3\tversicolor\n6.1\t3.0\t4.6\t1.4\tversicolor\n6.5\t2.8\t4.6\t1.5\tversicolor\n6.1\t2.8\t4.7\t1.2\tversicolor\n6.1\t2.9\t4.7\t1.4\tversicolor\n7.0\t3.2\t4.7\t1.4\tversicolor\n6.7\t3.1\t4.7\t1.5\tversicolor\n6.3\t3.3\t4.7\t1.6\tversicolor\n6.0\t3.0\t4.8\t1.8\tvirginica\n6.2\t2.8\t4.8\t1.8\tvirginica\n6.8\t2.8\t4.8\t1.4\tversicolor\n5.9\t3.2\t4.8\t1.8\tversicolor\n5.6\t2.8\t4.9\t2.0\tvirginica\n6.1\t3.0\t4.9\t1.8\tvirginica\n6.3\t2.7\t4.9\t1.8\tvirginica\n6.3\t2.5\t4.9\t1.5\tversicolor\n6.9\t3.1\t4.9\t1.5\tversicolor\n6.5\t3.2\t5.1\t2.0\tvirginica\n6.3\t2.8\t5.1\t1.5\tvirginica\n5.9\t3.0\t5.1\t1.8\tvirginica\n5.8\t2.7\t5.1\t1.9\tvirginica\n5.8\t2.7\t5.1\t1.9\tvirginica\n6.9\t3.1\t5.1\t2.3\tvirginica\n5.8\t2.8\t5.1\t2.4\tvirginica\n6.0\t2.7\t5.1\t1.6\tversicolor\n6.5\t3.0\t5.2\t2.0\tvirginica\n6.7\t3.0\t5.2\t2.3\tvirginica\n6.4\t2.7\t5.3\t1.9\tvirginica\n6.4\t3.2\t5.3\t2.3\tvirginica\n6.9\t3.1\t5.4\t2.1\tvirginica\n6.2\t3.4\t5.4\t2.3\tvirginica\n6.5\t3.0\t5.5\t1.8\tvirginica\n6.4\t3.1\t5.5\t1.8\tvirginica\n6.8\t3.0\t5.5\t2.1\tvirginica\n6.1\t2.6\t5.6\t1.4\tvirginica\n6.3\t2.9\t5.6\t1.8\tvirginica\n6.4\t2.8\t5.6\t2.1\tvirginica\n6.4\t2.8\t5.6\t2.2\tvirginica\n6.7\t3.1\t5.6\t2.4\tvirginica\n6.3\t3.4\t5.6\t2.4\tvirginica\n6.7\t3.3\t5.7\t2.1\tvirginica\n6.9\t3.2\t5.7\t2.3\tvirginica\n6.7\t3.3\t5.7\t2.5\tvirginica\n7.2\t3.0\t5.8\t1.6\tvirginica\n6.7\t2.5\t5.8\t1.8\tvirginica\n6.5\t3.0\t5.8\t2.2\tvirginica\n7.1\t3.0\t5.9\t2.1\tvirginica\n6.8\t3.2\t5.9\t2.3\tvirginica\n7.4\t2.8\t6.1\t1.9\tvirginica\n7.7\t3.0\t6.1\t2.3\tvirginica\n7.2\t3.6\t6.1\t2.5\tvirginica\n7.3\t2.9\t6.3\t1.8\tvirginica\n7.9\t3.8\t6.4\t2.0\tvirginica\n7.6\t3.0\t6.6\t2.1\tvirginica\n7.7\t2.8\t6.7\t2.0\tvirginica\n7.7\t3.8\t6.7\t2.2\tvirginica\n7.7\t2.6\t6.9\t2.3\tvirginica\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-308310107",
+      "id": "20220309-220907_1356624142",
+      "dateCreated": "2020-06-14T19:56:19+0000",
+      "dateStarted": "2022-03-10T00:31:21+0000",
+      "dateFinished": "2022-03-10T00:31:32+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### **Create a Python script and save it to the OML4Py Script Repository**\n\nIn this script, we return the counts for each category in the **SPECIES** column and return the results sorted by the **SEPAL_LENGTH** column using ***oml.group_apply***.\nNotice the value for ***group_count*** is a string, not a Python function object, however, the results are the same. The script is invoked from the Python interface, followed by the REST API.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eCreate a Python script and save it to the OML4Py Script Repository\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eIn this script, we return the counts for each category in the \u003cstrong\u003eSPECIES\u003c/strong\u003e column and return the results sorted by the \u003cstrong\u003eSEPAL_LENGTH\u003c/strong\u003e column using \u003cstrong\u003e\u003cem\u003eoml.group_apply\u003c/em\u003e\u003c/strong\u003e.\n\u003cbr  /\u003eNotice the value for \u003cstrong\u003e\u003cem\u003egroup_count\u003c/em\u003e\u003c/strong\u003e is a string, not a Python function object, however, the results are the same. The script is invoked from the Python interface, followed by the REST API.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1340910185",
+      "id": "20220309-220907_1550416730",
+      "dateCreated": "2020-06-14T18:31:13+0000",
+      "dateStarted": "2022-03-10T00:31:32+0000",
+      "dateFinished": "2022-03-10T00:31:32+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ngroup_count \u003d \"\"\"def group_count(dat):\n  import oml\n  import pandas as pd\n  return pd.DataFrame([(dat[\"SPECIES\"][0], dat[\"SEPAL_LENGTH\"][0], dat.shape[0])], \\\n  columns \u003d [\"SPECIES\",\"SEPAL_LENGTH\", \"COUNT\"])\"\"\"\n\ntry:\n    oml.script.drop(\"group_count\")\nexcept: \n    pass\noml.script.create(\"group_count\", func\u003dgroup_count, overwrite\u003dTrue) \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_2015361486",
+      "id": "20220309-220907_1700850323",
+      "dateCreated": "2020-06-14T20:17:35+0000",
+      "dateStarted": "2022-03-10T00:31:33+0000",
+      "dateFinished": "2022-03-10T00:31:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nres \u003d oml.group_apply(oml_iris, index, func\u003dgroup_count, oml_input_type\u003d\"pandas.DataFrame\",\\\n         func_value\u003dpd.DataFrame([(\u0027a\u0027, 1, 1)], columns\u003d[\"SPECIES\", \"SEPAL_LENGTH\",\"COUNT\"]),\\\n             orderby\u003doml_iris[\"SEPAL_LENGTH\"])\n\nz.show(res)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SPECIES": "string",
+                      "SEPAL_LENGTH": "string",
+                      "COUNT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SPECIES\tSEPAL_LENGTH\tCOUNT\nsetosa\t4.3\t16\nsetosa\t4.9\t1\nsetosa\t4.9\t1\nversicolor\t4.9\t1\nsetosa\t4.9\t3\nsetosa\t5.0\t1\nsetosa\t5.0\t4\nsetosa\t5.0\t1\nsetosa\t5.0\t7\nsetosa\t5.1\t1\nsetosa\t5.1\t8\nsetosa\t5.2\t1\nsetosa\t5.3\t5\nsetosa\t5.4\t1\nversicolor\t5.4\t1\nversicolor\t5.5\t5\nversicolor\t5.5\t2\nversicolor\t5.6\t1\nversicolor\t5.6\t1\nversicolor\t5.6\t5\nsetosa\t5.7\t1\nsetosa\t5.7\t2\nversicolor\t5.7\t1\nversicolor\t5.7\t1\nversicolor\t5.7\t2\nvirginica\t5.8\t1\nvirginica\t5.8\t1\nversicolor\t5.8\t1\nversicolor\t5.8\t1\nvirginica\t5.8\t2\nsetosa\t5.8\t1\nvirginica\t5.9\t2\nversicolor\t5.9\t2\nvirginica\t6.0\t2\nversicolor\t6.0\t1\nvirginica\t6.0\t3\nvirginica\t6.1\t2\nversicolor\t6.1\t5\nvirginica\t6.2\t2\nvirginica\t6.3\t1\nversicolor\t6.3\t2\nvirginica\t6.3\t2\nvirginica\t6.3\t9\nvirginica\t6.4\t2\nvirginica\t6.5\t4\nvirginica\t6.5\t3\nvirginica\t6.7\t4\nversicolor\t6.7\t3\nvirginica\t6.7\t2\nvirginica\t6.8\t1\nversicolor\t6.8\t1\nvirginica\t6.9\t1\nvirginica\t6.9\t3\nversicolor\t7.0\t1\nvirginica\t7.1\t12\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_879969298",
+      "id": "20220309-220907_218038870",
+      "dateCreated": "2020-06-14T21:10:59+0000",
+      "dateStarted": "2022-03-10T00:31:34+0000",
+      "dateFinished": "2022-03-10T00:31:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### **View the Python script in the OML4Py Script Repository**\n\nWe can check for the existence of the saved ***group_count*** script from the Python and REST interfaces.  From Python, run the OML4Py function ***oml.script.dir***.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eView the Python script in the OML4Py Script Repository\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eWe can check for the existence of the saved \u003cstrong\u003e\u003cem\u003egroup_count\u003c/em\u003e\u003c/strong\u003e script from the Python and REST interfaces.  From Python, run the OML4Py function \u003cstrong\u003e\u003cem\u003eoml.script.dir\u003c/em\u003e\u003c/strong\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1644477958",
+      "id": "20220309-220907_1058559686",
+      "dateCreated": "2020-06-15T21:48:12+0000",
+      "dateStarted": "2022-03-10T00:31:41+0000",
+      "dateFinished": "2022-03-10T00:31:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\noml.script.dir(sctype\u003d\u0027all\u0027)[[\u0027name\u0027, \u0027owner\u0027]]\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                       name    owner\n0           MyTEST_function  OMLUSER\n1             RandomRedDots  OMLUSER\n2                build_lm_1  OMLUSER\n3             build_lm_rest  OMLUSER\n4               group_count  OMLUSER\n5   myLinearRegressionModel  OMLUSER\n6                sk_svc_fit  OMLUSER\n7           test_noinp_rest  OMLUSER\n8                     GLBLM   PYQSYS\n9             RandomRedDots   PYQSYS\n10           RandomRedDots2   PYQSYS\n11           RandomRedDots3   PYQSYS\n12                     TEST   PYQSYS\n13                    TEST4   PYQSYS\n14                 TEST_FUN   PYQSYS\n15               alg_select   PYQSYS\n16              algo_select   PYQSYS\n17             build_automl   PYQSYS\n18      compute_random_mean   PYQSYS\n19              group_count   PYQSYS\n20                  my_pred   PYQSYS\n21               my_predict   PYQSYS\n22                  pred_lm   PYQSYS\n23              pred_oml_rf   PYQSYS\n24          pred_rf_species   PYQSYS\n25        pred_rf_species_2   PYQSYS\n26        pred_rf_species_3   PYQSYS\n27           thread_process   PYQSYS\n28                train_AML   PYQSYS\n29               train_AML2   PYQSYS\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1104876170",
+      "id": "20220309-220907_683432404",
+      "dateCreated": "2020-06-15T21:50:56+0000",
+      "dateStarted": "2022-03-10T00:31:42+0000",
+      "dateFinished": "2022-03-10T00:31:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### **Synchronous REST API calls**\n\nNow verify the existence of the ***group_count*** function in the script repository from the REST API with the ***cURL*** command. The default REST API execution mode is *synchronous*, so code execution will wait for the REST API call to return before additional calls may be initiated. \n\nThe Linux command line JSON parser ***jq*** is used to return the script name and owner.  To install jq on your Linux REST client, run the command ***sudo yum install jq***.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {
+          "oml_server": "",
+          "token": ""
+        },
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eSynchronous REST API calls\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eNow verify the existence of the \u003cstrong\u003e\u003cem\u003egroup_count\u003c/em\u003e\u003c/strong\u003e function in the script repository from the REST API with the \u003cstrong\u003e\u003cem\u003ecURL\u003c/em\u003e\u003c/strong\u003e command. The default REST API execution mode is \u003cem\u003esynchronous\u003c/em\u003e, so code execution will wait for the REST API call to return before additional calls may be initiated.\u003c/p\u003e\n\u003cp\u003eThe Linux command line JSON parser \u003cstrong\u003e\u003cem\u003ejq\u003c/em\u003e\u003c/strong\u003e is used to return the script name and owner.  To install jq on your Linux REST client, run the command \u003cstrong\u003e\u003cem\u003esudo yum install jq\u003c/em\u003e\u003c/strong\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-365640557",
+      "id": "20220309-220907_1248463394",
+      "dateCreated": "2020-06-10T19:08:58+0000",
+      "dateStarted": "2022-03-10T00:31:43+0000",
+      "dateFinished": "2022-03-10T00:31:43+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\r\n\r\n$ curl -X GET --header \"Authorization: Bearer ${token}\" --header \u0027Accept: application/json\u0027 \"${omlserver}/oml/api/py-scripts/v1/scripts\" | jq \u0027.result[] | .name + \" \" + .owner\u0027\r\n\r\n  HTTP/1.1 200 OK\r\n  Date: Wed, 09 Mar 2022 21:44:39 GMT\r\n  Content-Type: application/json\r\n  Transfer-Encoding: chunked\r\n  Connection: keep-alive\r\n  Cache-Control: no-cache, no-store, private\r\n  X-Frame-Options: SAMEORIGIN\r\n  X-XSS-Protection: 1;mode\u003dblock\r\n  Strict-Transport-Security: max-age\u003d31536000; includeSubDomains\r\n  X-Content-Type-Options: nosniff\r\n\r\n  \"group_count OWNER\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1662587267",
+      "id": "20220309-220907_1047747723",
+      "dateCreated": "2020-08-11T23:42:57+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nInvoke the ***group_count*** function in the script repository from the REST API. Set ***parallelFlag*** to true to leverage Database parallelism.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eInvoke the \u003cstrong\u003e\u003cem\u003egroup_count\u003c/em\u003e\u003c/strong\u003e function in the script repository from the REST API. Set \u003cstrong\u003e\u003cem\u003eparallelFlag\u003c/em\u003e\u003c/strong\u003e to true to leverage Database parallelism.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-260791430",
+      "id": "20220309-220907_1134592997",
+      "dateCreated": "2020-06-15T22:12:33+0000",
+      "dateStarted": "2022-03-10T00:31:44+0000",
+      "dateFinished": "2022-03-10T00:31:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -i -X POST --header \"Authorization: Bearer ${token}\" --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"input\":\"select * from IRIS\", \"parameters\":\"{\\\"oml_input_type\\\":\\\"pandas.DataFrame\\\"}\", \"groupBy\":\"SPECIES\", \"orderBy\":\"SEPAL_LENGTH\", \"parallelFlag\":true}\u0027 \"${omlserver}/oml/api/py-scripts/v1/group-apply/group_count\"\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1772081",
+      "id": "20220309-220907_160960700",
+      "dateCreated": "2020-08-07T16:40:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe result of the REST execution is a JSON representation of the value returned from the Python script. Dataframes, lists, and dictionaries and \nPNG images are supported. The first portion of the returned value is:\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe result of the REST execution is a JSON representation of the value returned from the Python script. Dataframes, lists, and dictionaries and\n\u003cbr  /\u003ePNG images are supported. The first portion of the returned value is:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_216968139",
+      "id": "20220309-220907_330899639",
+      "dateCreated": "2020-08-11T23:46:39+0000",
+      "dateStarted": "2022-03-10T00:31:46+0000",
+      "dateFinished": "2022-03-10T00:31:46+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n{\"result\":{\"versicolor_8\":{\"SEPAL_LENGTH\":{\"0\":5.7},\"SPECIES\":{\"0\":\"versicolor\"},\"CNT\":{\"0\":5}},\"versicolor_7\":{\"SEPAL_LENGTH\":{\"0\":5.6},\"SPECIES\":{\"0\":\"versicolor\"},\"CNT\":{\"0\":2}},\"virginica_20\":{\"SEPAL_LENGTH\":{\"0\":6.7},\"SPECIES\":{\"0\":\"virginica\"},.....\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1068647520",
+      "id": "20220309-220907_923443535",
+      "dateCreated": "2020-08-11T23:46:57+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### **Asynchronous REST API calls**\n\n*Asynchronous* calls do not wait for the REST API call to return from the server. If the Python script is performing long running computations, results will not be immediate and the user may continue development on the client. The Asynchronous call\u0027s returned results are included in the response header. Display the response header by passing the ***-i*** flag to the ***cURL*** command. Asynchronous calls have a default timeout of 1800 seconds, or 30 minutes, and can be extended up to 12 hours. Set the ***asyncFlag*** to ***true*** to run asynchronous calls from the REST API.\n\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {
+          "token": "",
+          "oml_server": ""
+        },
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eAsynchronous REST API calls\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003e\u003cem\u003eAsynchronous\u003c/em\u003e calls do not wait for the REST API call to return from the server. If the Python script is performing long running computations, results will not be immediate and the user may continue development on the client. The Asynchronous call\u0027s returned results are included in the response header. Display the response header by passing the \u003cstrong\u003e\u003cem\u003e-i\u003c/em\u003e\u003c/strong\u003e flag to the \u003cstrong\u003e\u003cem\u003ecURL\u003c/em\u003e\u003c/strong\u003e command. Asynchronous calls have a default timeout of 1800 seconds, or 30 minutes, and can be extended up to 12 hours. Set the \u003cstrong\u003e\u003cem\u003easyncFlag\u003c/em\u003e\u003c/strong\u003e to \u003cstrong\u003e\u003cem\u003etrue\u003c/em\u003e\u003c/strong\u003e to run asynchronous calls from the REST API.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_48508001",
+      "id": "20220309-220907_1886561248",
+      "dateCreated": "2020-06-10T19:10:49+0000",
+      "dateStarted": "2022-03-10T00:31:47+0000",
+      "dateFinished": "2022-03-10T00:31:47+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -i -X POST --header \"Authorization: Bearer ${token}\" --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"asyncFlag\":true, \"input\":\"select * from IRIS\", \"parameter\":\"{\\\"oml_input_type\\\":\\“pandas.DataFrame\\\"}\", \"groupBy\":\"SPECIES\", \"orderBy\":\"SEPAL_LENGTH\", \"parallelFlag\":true}\u0027 \"${omlserver}/oml/api/py-scripts/v1/group-apply/group_count\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_347650965",
+      "id": "20220309-220907_958808226",
+      "dateCreated": "2020-08-11T23:48:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe ***timeout*** flag is used to change the default timeout setting. \n\nBelow is the equivalent asynchronous REST call with a timeout of 300 seconds, or 5 minutes. The output includes the HTTP 201 status code indicating the job was created and a job id location that can be polled for status and results.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe \u003cstrong\u003e\u003cem\u003etimeout\u003c/em\u003e\u003c/strong\u003e flag is used to change the default timeout setting.\u003c/p\u003e\n\u003cp\u003eBelow is the equivalent asynchronous REST call with a timeout of 300 seconds, or 5 minutes. The output includes the HTTP 201 status code indicating the job was created and a job id location that can be polled for status and results.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1637101776",
+      "id": "20220309-220907_1673552809",
+      "dateCreated": "2020-08-11T23:49:32+0000",
+      "dateStarted": "2022-03-10T00:31:48+0000",
+      "dateFinished": "2022-03-10T00:31:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -i -X POST --header \"Authorization: Bearer ${token}\" --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"asyncFlag\":true,\"timeout\":300, \"input\":\"select * from IRIS\", \"parameter\":\"{\\\"oml_input_type\\\":\\\"pandas.DataFrame\\\"}\", \"groupBy\":\"SPECIES\", \"orderBy\":\"SEPAL_LENGTH\", \"parallelFlag\":true}\u0027 \"${omlserver}/oml/api/py-scripts/v1/group-apply/group_count\"\n\n  HTTP/1.1 201 Created\n  Location: $ {oml_server}/oml/tenants/MYTENANT/databases/MYADW/api/py-scripts/v1/\u003cjob id location\u003e\n  Cache-Control: no-cache, no-store, private\n  Content-Length: 0\n  X-Frame-Options: SAMEORIGIN\n  Proxy-Connection: Keep-Alive\n  X-XSS-Protection: 1;mode\u003dblock\n  X-Content-Type-Options: nosniff\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_311896420",
+      "id": "20220309-220907_19052103",
+      "dateCreated": "2020-08-11T23:49:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nTo poll the job status, pass the job location to ***cURL*** using the GET method. The HTTP response status 302 indicates the currently executing job is found \nand includes a job id location for future results.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eTo poll the job status, pass the job location to \u003cstrong\u003e\u003cem\u003ecURL\u003c/em\u003e\u003c/strong\u003e using the GET method. The HTTP response status 302 indicates the currently executing job is found\n\u003cbr  /\u003eand includes a job id location for future results.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-40709943",
+      "id": "20220309-220907_1688889376",
+      "dateCreated": "2020-06-15T22:41:51+0000",
+      "dateStarted": "2022-03-10T00:31:50+0000",
+      "dateFinished": "2022-03-10T00:31:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -i -X GET --header \"Authorization: Bearer ${token}\" --header \u0027Accept: application/json\u0027 ${omlserver}/oml/api/py-scripts/v1/jobs/\u003cjob id location\u003e\n\n  HTTP/1.1 302 Found\n  Date: Wed, 09 Mar 2022 13:04:04 GMT\n  Server: nginx/1.18.0\n  Cache-Control: no-cache, no-store, private\n  Content-Length: 0\n  X-Frame-Options: SAMEORIGIN\n  Content-Location: http://\u003coml-cloud-service-instance-url\u003e/oml/tenants/TENANT1/databases/ADWP/api/py-scripts/v1/\u003cjob id location\u003e/result\n  Proxy-Connection: Keep-Alive\n  X-XSS-Protection: 1;mode\u003dblock\n  X-Content-Type-Options: nosniff",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1044364029",
+      "id": "20220309-220907_1870796615",
+      "dateCreated": "2020-08-11T23:55:20+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nPoll the job at the results location.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003ePoll the job at the results location.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-715675213",
+      "id": "20220309-220907_255847477",
+      "dateCreated": "2020-06-15T22:43:19+0000",
+      "dateStarted": "2022-03-10T00:31:51+0000",
+      "dateFinished": "2022-03-10T00:31:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\r\n\r\n$ curl -i -X GET --header \"Authorization: Bearer ${token}\" --header \u0027Accept: application/json\u0027 ${omlserver}/oml/api/py-scripts/v1/jobs/\u003cjob id location\u003e/result\r\n\r\n\r\n  HTTP/1.1 200 OK\r\n  Date: Wed, 09 Mar 2022 13:06:05 GMT\r\n  Server: nginx/1.18.0\r\n  Content-Type: application/json\r\n  Cache-Control: no-cache, no-store, private\r\n  Content-Length: 1038\r\n  X-Frame-Options: SAMEORIGIN\r\n  Proxy-Connection: Keep-Alive\r\n  X-XSS-Protection: 1;mode\u003dblock\r\n  X-Content-Type-Options: nosniff",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1417304178",
+      "id": "20220309-220907_456913691",
+      "dateCreated": "2020-08-11T23:57:32+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nA portion of the returned value is:\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eA portion of the returned value is:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1010568424",
+      "id": "20220309-220907_753361716",
+      "dateCreated": "2020-08-11T23:58:58+0000",
+      "dateStarted": "2022-03-10T00:31:52+0000",
+      "dateFinished": "2022-03-10T00:31:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n{\"result\":{\"versicolor_8\":{\"SEPAL_LENGTH\":{\"0\":5.7},\"SPECIES\":{\"0\":\"versicolor\"},\"CNT\":{\"0\":5}},\"versicolor_7\":{\"SEPAL_LENGTH\":{\"0\":5.6},\"SPECIES\":{\"0\":\"versicolor\"},\"CNT\":{\"0\":2}},\"virginica_20\":{\"SEPAL_LENGTH\":{\"0\":6.7},\"SPECIES\":{\"0\":\"virginica\"},.....\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1166681459",
+      "id": "20220309-220907_1403019712",
+      "dateCreated": "2020-08-11T23:59:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### **Returning Model Details from the REST API**\n\nLet\u0027s create a linear model script and run it from the REST API. First, we\u0027ll define our function, ***build_lm_rest***, that returns a dict mapping of the model attributes. Note that the model itself cannot be returned directly from REST because LinearRegression models are not JSON-serializable. \n\n\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eReturning Model Details from the REST API\u003c/strong\u003e\u003c/h3\u003e\n\u003cp\u003eLet\u0027s create a linear model script and run it from the REST API. First, we\u0027ll define our function, \u003cstrong\u003e\u003cem\u003ebuild_lm_rest\u003c/em\u003e\u003c/strong\u003e, that returns a dict mapping of the model attributes. Note that the model itself cannot be returned directly from REST because LinearRegression models are not JSON-serializable.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1448172230",
+      "id": "20220309-220907_588145093",
+      "dateCreated": "2020-08-18T21:01:09+0000",
+      "dateStarted": "2022-03-10T00:31:53+0000",
+      "dateFinished": "2022-03-10T00:31:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nbuild_lm_rest \u003d \"\"\"def build_rest(dat):\n            from sklearn import linear_model\n            import oml\n            regr \u003d linear_model.LinearRegression()\n            import pandas as pd\n            dat \u003d pd.get_dummies(dat, drop_first\u003dTrue)\n            X \u003d dat[[\"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\", \"SPECIES_versicolor\", \"SPECIES_virginica\"]]\n            y \u003d dat[[\"SEPAL_LENGTH\"]]\n            regr.fit(X, y)\n            data \u003d {}\n            data[\"init_params\"] \u003d regr.get_params()\n            data[\"model_params\"] \u003d mp \u003d {}\n            for p in (\"coef_\", \"intercept_\", \"_residues\", \"singular_\"):\n                mp[p] \u003d getattr(regr, p).tolist()\n            return data\"\"\"\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1015067155",
+      "id": "20220309-220907_1743383956",
+      "dateCreated": "2020-08-18T21:26:57+0000",
+      "dateStarted": "2022-03-10T00:31:54+0000",
+      "dateFinished": "2022-03-10T00:31:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nSave the ***buld_lm_rest*** script to the Python script repository",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eSave the \u003cstrong\u003e\u003cem\u003ebuld_lm_rest\u003c/em\u003e\u003c/strong\u003e script to the Python script repository\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1029390702",
+      "id": "20220309-220907_1887493278",
+      "dateCreated": "2020-08-18T21:34:25+0000",
+      "dateStarted": "2022-03-10T00:31:55+0000",
+      "dateFinished": "2022-03-10T00:31:55+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ntry:\n    oml.script.drop(\"build_lm_rest\")\nexcept: \n    pass\noml.script.create(\"build_lm_rest\", func\u003dbuild_lm_rest, overwrite\u003dTrue) ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-42368533",
+      "id": "20220309-220907_553520431",
+      "dateCreated": "2020-08-18T20:16:08+0000",
+      "dateStarted": "2022-03-10T00:31:56+0000",
+      "dateFinished": "2022-03-10T00:31:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nWe invoke the ***build_lm_rest*** function in the script repository from the REST API in asynchronous mode. \n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eWe invoke the \u003cstrong\u003e\u003cem\u003ebuild_lm_rest\u003c/em\u003e\u003c/strong\u003e function in the script repository from the REST API in asynchronous mode.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-724188738",
+      "id": "20220309-220907_1890468028",
+      "dateCreated": "2020-08-18T21:35:47+0000",
+      "dateStarted": "2022-03-10T00:31:56+0000",
+      "dateFinished": "2022-03-10T00:31:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -i -X POST --header \"Authorization: Bearer ${token}\" --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"input\":\"select * from IRIS\", \"parameters\":\"{\\\"oml_input_type\\\":\\\"pandas.DataFrame\\\"}\"}\u0027 \"${omlserver}/oml/api/py-scripts/v1/table-apply/build_lm_rest\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1072737195",
+      "id": "20220309-220907_1476626032",
+      "dateCreated": "2020-08-20T20:39:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe returned value is a dict containing model attributes.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe returned value is a dict containing model attributes.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-407657481",
+      "id": "20220309-220907_781305282",
+      "dateCreated": "2020-08-18T21:38:20+0000",
+      "dateStarted": "2022-03-10T00:31:58+0000",
+      "dateFinished": "2022-03-10T00:31:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n{\"result\":{\"init_params\":{\"fit_intercept\":true,\"n_jobs\":null,\"normalize\":false,\"copy_X\":true},\"model_params\":{\"intercept_\":[2.1712662921550736],\"_residues\":[13.556485081974792],\"coef_\":[[0.4958889383885511,0.8292439122348054,-0.315155173326473,-0.7235619577807288,-1.0234978144908309]],\"singular_\":[23.873627650888057,7.279716799977891,4.192696791126727,2.194192042042924,0.7289542732694926]}}}",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_-1651639640",
+      "id": "20220309-220907_2127966794",
+      "dateCreated": "2020-08-18T20:56:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_414870306",
+      "id": "20220309-220907_2088711820",
+      "dateCreated": "2020-06-10T19:13:37+0000",
+      "dateStarted": "2022-03-10T00:31:59+0000",
+      "dateFinished": "2022-03-10T00:31:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T00:31:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747809_1143939717",
+      "id": "20220309-220907_940248949",
+      "dateCreated": "2020-09-01T16:58:08+0000",
+      "dateStarted": "2022-03-10T00:32:00+0000",
+      "dateFinished": "2022-03-10T00:32:00+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py REST API",
+  "id": "107975",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {
+    "oml_server": {
+      "name": "oml_server",
+      "defaultValue": "",
+      "hidden": false
+    }
+  },
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:OMLUSER-107975": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4Py REST API"
+}

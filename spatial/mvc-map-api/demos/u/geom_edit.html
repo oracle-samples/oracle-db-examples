@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map API Demo: Geometry Editing</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <script type="text/javascript" src="../../oraclemapsv2_orig.js"></script>
+    <style>
+        .btn-group button {
+          background-color: #878c90; 
+          border: 1px solid white; 
+          color: white;
+          padding: 5px 24px;
+          cursor: pointer; /* Pointer/hand icon */
+          width: 200px; /*Set a width*/  
+          display: block; /* Make the buttons appear below each other */
+        }
+
+        /* Add a background color on hover */
+        .btn-group button:hover {
+          background-color: #027bc7;
+        }
+    </style>
+    <script type="text/javascript" src="js/geom_edit.js"></script>    
+    <script type="text/javascript">
+        $(document).ready( function(){    
+            showMap();
+        });        
+    </script>    
+</head>
+<body>
+  <div id="map_table" style="position:absolute; width:80%; height:60%">
+       <div id="map" style="left:0px; top:0px; width:100%; height:100%"></div>
+  </div>
+  <!--<div id="map" style=" position: absolute; left:0px; top:0px; width:600px; height:400px; overflow:hidden;"></div>-->
+<div id="Undos" style="position:absolute; left:81%; top:10px; width:100%; height:150px">
+  <div class="btn-group">
+  <button onclick="redo()">Redo</button>
+  <button onclick="undo()">Undo</button>
+  <button onclick="deleteFeature()">Delete</button>
+  <button onclick="duplicate()">Duplicate</button>
+  <button onclick="breakline()">Break Line String</button>
+  </div>
+</div>
+<div id="updateAttr" style="position:absolute; left:81%; top:200px; width:100%; height:170px">
+  <div class="btn-group">
+    <button type="button" onclick="updateFeatureAttributes()">Update feature's attributes</button>
+  </div>
+</div>
+<div id="table" style="position:absolute; left:81%; top:250px; width:100%; height:60%">
+    <TABLE id="attrTable" style="left:65%;  width:250px">
+      <tr>
+        <th></th>
+        <th></th>
+      </tr>
+    </TABLE>
+</div>
+<div id="controls" style="position:absolute; left:1%; top:62%; width:60%">
+  <table>
+    <br/>
+    <tr>
+      <td>
+          <label><strong>Layer:</strong></label>
+      </td>
+      <td align="right">
+          <label>Choose a layer to work on</label>
+      </td>
+      <td>
+          <input type="radio" name="group0" id="pointlayer" onclick="selectLayerPoint()" checked="checked"/><label>Point layer</label>
+          <input type="radio" name="group0" id="linelayer" onclick="selectLayerLine()"/><label>Line layer</label>
+          <input type="radio" name="group0" id="polygonlayer" onclick="selectLayerPolygon()"/><label>Polygon layer</label>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label><strong>Mode:</strong></label>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td align="right"><label>Regular feature display</label></td>
+      <td>
+              <input type="radio" name="group2" id="display" onclick="modeSelect()" checked="checked"/> 
+              <label>Display (<strong>hover</strong> and <strong>select</strong>, but editing is disabled)</label>
+      </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td align="right"><label>Edit layer features</label></td>
+        <td><input type="radio" name="group2" id="edit" onclick="modeEdit()"/><label>Edit (edit existing feature/vertex locations)</label></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td align="right"><label>Draw new features to layer</label></td>
+        <td>
+          <input type="radio" name="group2" id="draw" onclick="modeDraw()"/><label>Draw (create new features)</label>
+        </td>
+    </tr>
+    <tr id="sub_polygonTypes">
+        <td></td>
+        <td></td>
+        <td>
+          <select id="subTypes" onchange="onSubTypeChange()">
+            <option value="polygon">Polygon</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="circle">Circle</option>
+            <option value="cutout">Cutout</option>
+            <!--<option value="circle">Circle (not implemented yet)</option>-->
+          </select>
+        </td>
+    </tr>
+    <tr>
+      <td>
+          <label><strong>Snap-to layer:</strong></label>
+      </td>
+      <td>
+          <label>Points/vertices of this layer will be snapped on to</label>
+      </td>
+      <td id="snapToLayer">
+        <input type="radio" name="group1" id="snapToPoint"/><label>Point layer</label>
+        <input type="radio" name="group1" id="snapToLine" checked="checked"/><label>Line layer</label>
+        <input type="radio" name="group1" id="snapToPolyggon"/><label>Polygon layer</label>
+      </td>
+    </tr>
+    <tr>
+      <td>
+          <label><strong>Shared boundary:</strong></label>
+      </td>
+      <td  align="right">
+          <label>Move shared vertices when editing</label>
+      </td>
+      <td>
+        <INPUT TYPE="checkbox" onclick="javascript:setLayerSharedBoundary()"
+          id="sharedCheckBox"/> 
+        <label>Shared boundary</label>
+        </td>
+    </tr>
+    <tr>
+      <td>
+          <label><strong>Persist changes:</strong></label>
+      </td>
+      <td align="right">
+          <label>Save current layer's changes</label>
+      </td>
+      <td>
+          <button type="button" onclick="save()">Save to database</button>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td id="SaveResponse">          
+      </td>
+    </tr>
+    <tr>
+      <td id="z"></td>
+      <td id="x" align="right">          
+      </td>
+      <td id="y">          
+      </td>
+  </table>
+</div>
+<div id='textArea'>
+
+</div>
+</body>
+</html>

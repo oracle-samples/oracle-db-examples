@@ -62,7 +62,7 @@ public class Workers
 
    	DriverManager.registerDriver(new oracle.jdbc.OracleDriver());  
    	conn = DriverManager.getConnection("jdbc:oracle:thin:", 
-         				         "scott", "tiger");
+         				         "testuser", "<your_db_password>");
         System.out.println ("Running in JDK VM, outside the database!");
         }
      

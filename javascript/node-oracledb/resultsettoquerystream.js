@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -22,15 +22,29 @@
  *   Converts a ResultSet returned from execute() into a Readable Stream.
  *   This is an alternative to using resultset.getRows().
  *
- *   Scripts to create the HR schema can be found at:
- *   https://github.com/oracle/db-sample-schemas
- *
  *   This example uses Node 8's async/await syntax.
  *
  *****************************************************************************/
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 async function run() {
   let connection;
@@ -38,10 +52,12 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
+    await demoSetup.setupBf(connection);  // create the demo table
+
     const result = await connection.execute(
-      `SELECT employee_id, last_name
-       FROM employees WHERE ROWNUM < 25
-       ORDER BY employee_id`,
+      `SELECT id, farmer
+       FROM no_banana_farmer
+       ORDER BY id`,
       [],
       {
         resultSet: true
@@ -55,10 +71,14 @@ async function run() {
         console.log(row);
       });
       queryStream.on('error', reject);
+      queryStream.on('end', function() {
+        queryStream.destroy();  // free up resources
+      });
       queryStream.on('close', resolve);
     });
 
     await consumeStream;
+
   } catch (err) {
     console.error(err);
   } finally {

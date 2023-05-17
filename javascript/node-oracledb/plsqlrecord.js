@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -29,8 +29,24 @@
 
 'use strict';
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 async function run() {
   let connection, binds, options, result, obj;
@@ -42,25 +58,37 @@ async function run() {
 
     connection = await oracledb.getConnection(dbConfig);
 
+    //
     // Create a PL/SQL package that uses a RECORD
+    //
 
-    await connection.execute(
+    const stmts = [
       `CREATE OR REPLACE PACKAGE rectest AS
          TYPE rectype IS RECORD (name VARCHAR2(40), pos NUMBER);
          PROCEDURE myproc (p_in IN rectype, p_out OUT rectype);
-       END rectest;`);
+       END rectest;`,
 
-    await connection.execute(
       `CREATE OR REPLACE PACKAGE BODY rectest AS
          PROCEDURE myproc (p_in IN rectype, p_out OUT rectype) AS
          BEGIN
            p_out := p_in;
            p_out.pos := p_out.pos * 2;
          END;
-       END rectest;`);
+       END rectest;`
+    ];
+
+    for (const s of stmts) {
+      try {
+        await connection.execute(s);
+      } catch (e) {
+        console.error(e);
+      }
+    }
 
 
+    //
     // Get the RECORD prototype object
+    //
 
     const RecTypeClass = await connection.getDbObjectClass("RECTEST.RECTYPE");
     // console.log(RecTypeClass.prototype);

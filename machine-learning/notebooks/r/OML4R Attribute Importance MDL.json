@@ -1,0 +1,956 @@
+﻿{
+  "paragraphs": [
+    {
+      "title": "Identify Key Factors",
+      "text": "%md\n# Identify Key Factors\n\nOracle Machine Learning supports Attribute Importance to identify key factors (a.k.a. attributes, predictors, variables) that have the most influence on a target attribute. In this example, we compute Attribute Importance, which uses the Minimum Description Length algorithm, on the SH schema data. All functionality executes inside Oracle Autonomous Database.\n\nCopyright (c) 2022 Oracle Corporation\n\n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Identify Key Factors</h1>\n<p>Oracle Machine Learning supports Attribute Importance to identify key factors (a.k.a. attributes, predictors, variables) that have the most influence on a target attribute. In this example, we compute Attribute Importance, which uses the Minimum Description Length algorithm, on the SH schema data. All functionality executes inside Oracle Autonomous Database.</p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_2070226467",
+      "id": "20220621-201839_1668033684",
+      "dateCreated": "2022-05-16T16:42:27+0000",
+      "dateStarted": "2022-07-29T16:36:06+0000",
+      "dateFinished": "2022-07-29T16:36:08+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md\nOracle ADW Documentation: [https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html](https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html)\nOML folder on Oracle Github: [https://github.com/oracle/oracle-db-examples/tree/master/machine-learning](https://github.com/oracle/oracle-db-examples/tree/master/machine-learning)\nOML web page: [https://www.oracle.com/machine-learning](https://www.oracle.com/machine-learning)\nOML Attribute Importance: [https://www.oracle.com/goto/ml-feature-selection](https://www.oracle.com/goto/ml-feature-selection)\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Oracle ADW Documentation: <a href=\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\n<br  />OML folder on Oracle Github: <a href=\"https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\n<br  />OML web page: <a href=\"https://www.oracle.com/machine-learning\">https://www.oracle.com/machine-learning</a>\n<br  />OML Attribute Importance: <a href=\"https://www.oracle.com/goto/ml-feature-selection\">https://www.oracle.com/goto/ml-feature-selection</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_2034102630",
+      "id": "20220621-201839_2119409879",
+      "dateCreated": "2022-05-16T16:42:34+0000",
+      "dateStarted": "2022-07-29T16:36:08+0000",
+      "dateFinished": "2022-07-29T16:36:08+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import libraries and set display options",
+      "text": "%r\n\nlibrary(ORE)\nlibrary(lattice)\noptions(ore.warn.order=FALSE)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_157590460",
+      "id": "20220621-201839_599736041",
+      "dateCreated": "2022-05-16T16:52:51+0000",
+      "dateStarted": "2022-07-29T16:36:09+0000",
+      "dateFinished": "2022-07-29T16:36:23+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Obtain proxy object for SUPPLEMENTARY_DEMOGRAPHICS",
+      "text": "%r\n\nore.sync(schema=\"SH\",table=\"SUPPLEMENTARY_DEMOGRAPHICS\")\nore.attach(\"SH\")\n\nSUPP_DF <- SUPPLEMENTARY_DEMOGRAPHICS",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_-981245978",
+      "id": "20220621-201839_2094492413",
+      "dateCreated": "2022-05-16T16:59:18+0000",
+      "dateStarted": "2022-07-29T16:36:23+0000",
+      "dateFinished": "2022-07-29T16:36:23+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "View first few rows of SUPP_DF",
+      "text": "%r\nz.show(head(SUPP_DF))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "EDUCATION": "string",
+                      "OCCUPATION": "string",
+                      "HOUSEHOLD_SIZE": "number",
+                      "YRS_RESIDENCE": "number",
+                      "AFFINITY_CARD": "number",
+                      "BULK_PACK_DISKETTES": "number",
+                      "FLAT_PANEL_MONITOR": "number",
+                      "HOME_THEATER_PACKAGE": "number",
+                      "BOOKKEEPING_APPLICATION": "number",
+                      "PRINTER_SUPPLIES": "number",
+                      "Y_BOX_GAMES": "number",
+                      "OS_DOC_SET_KANJI": "number",
+                      "COMMENTS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tEDUCATION\tOCCUPATION\tHOUSEHOLD_SIZE\tYRS_RESIDENCE\tAFFINITY_CARD\tBULK_PACK_DISKETTES\tFLAT_PANEL_MONITOR\tHOME_THEATER_PACKAGE\tBOOKKEEPING_APPLICATION\tPRINTER_SUPPLIES\tY_BOX_GAMES\tOS_DOC_SET_KANJI\tCOMMENTS\n100001\t< Bach.\tExec.\t2\t3\t0\t0\t0\t1\t1\t1\t0\t0\tThanks a lot for my new affinity card. I love the discounts and have since started shopping at your store for everything.\n100002\tBach.\tProf.\t2\t4\t0\t1\t1\t1\t1\t1\t0\t0\tThe more times that I shop at your store, the more times I am impressed.  Don't change anything\n100003\t< Bach.\tSales\t2\t6\t0\t1\t1\t0\t1\t1\t0\t0\tIt is a good way to attract new shoppers. After shopping at your store for more than a month, I am ready to move on though. Not enough variety\n100004\t< Bach.\tSales\t2\t5\t0\t1\t1\t1\t1\t1\t0\t0\tThanks but even with your discounts, your products are too expensive. Sorry.\n100005\tAssoc-A\tCrafts\t3\t5\t1\t0\t0\t1\t1\t1\t0\t0\tAffinity card is a great idea. But your store is still too expensive. I am tired of your lousy junk mail.\n100006\t< Bach.\tProf.\t9+\t2\t0\t0\t0\t0\t1\t1\t1\t0\tI am not going to waste my time filling up this three page form. Lousy idea.\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_-665051231",
+      "id": "20220621-201839_2120081791",
+      "dateCreated": "2022-05-16T17:00:10+0000",
+      "dateStarted": "2022-07-29T16:36:24+0000",
+      "dateFinished": "2022-07-29T16:36:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Display a pie chart for education levels",
+      "text": "%r\n\nz.show(ore.crosstab(~EDUCATION, SUPP_DF))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "EDUCATION": "string",
+                      "ORE$FREQ": "number",
+                      "ORE$STRATA": "number",
+                      "ORE$GROUP": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "EDUCATION\tORE.FREQ\tORE.STRATA\tORE.GROUP\n10th\t122\t1\t1\n11th\t121\t1\t1\n12th\t52\t1\t1\n1st-4th\t17\t1\t1\n5th-6th\t39\t1\t1\n7th-8th\t87\t1\t1\n9th\t76\t1\t1\n< Bach.\t1041\t1\t1\nAssoc-A\t172\t1\t1\nAssoc-V\t196\t1\t1\nBach.\t779\t1\t1\nHS-grad\t1462\t1\t1\nMasters\t190\t1\t1\nPhD\t49\t1\t1\nPresch.\t3\t1\t1\nProfsc\t94\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_2125399956",
+      "id": "20220621-201839_493597563",
+      "dateCreated": "2022-05-16T17:00:37+0000",
+      "dateStarted": "2022-07-29T16:36:24+0000",
+      "dateFinished": "2022-07-29T16:36:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Display the number of rows and columns",
+      "text": "%r\n\ndim(SUPP_DF)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>4500</li><li>14</li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_-150629161",
+      "id": "20220621-201839_1199152713",
+      "dateCreated": "2022-05-16T17:02:54+0000",
+      "dateStarted": "2022-07-29T16:36:25+0000",
+      "dateFinished": "2022-07-29T16:36:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "title": "Subset the columns to consider for attribute importance analysis",
+      "text": "%r \n\nDATA_DF <- SUPP_DF[, c(\"AFFINITY_CARD\", \"BOOKKEEPING_APPLICATION\", \"BULK_PACK_DISKETTES\", \"CUST_ID\", \"EDUCATION\", \"FLAT_PANEL_MONITOR\", \n                       \"HOME_THEATER_PACKAGE\", \"HOUSEHOLD_SIZE\", \"OCCUPATION\",   \"OS_DOC_SET_KANJI\", \"PRINTER_SUPPLIES\", \"YRS_RESIDENCE\", \"Y_BOX_GAMES\")]\nz.show(head(DATA_DF))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "AFFINITY_CARD0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "BOOKKEEPING_APPLICATION1",
+                        "visible": true,
+                        "width": 332,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "BULK_PACK_DISKETTES2",
+                        "visible": true,
+                        "width": 190,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "CUST_ID3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "EDUCATION4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "FLAT_PANEL_MONITOR5",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "HOME_THEATER_PACKAGE6",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "HOUSEHOLD_SIZE7",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OCCUPATION8",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OS_DOC_SET_KANJI9",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PRINTER_SUPPLIES10",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "YRS_RESIDENCE11",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Y_BOX_GAMES12",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "AFFINITY_CARD": "number",
+                      "BOOKKEEPING_APPLICATION": "number",
+                      "BULK_PACK_DISKETTES": "number",
+                      "CUST_ID": "number",
+                      "EDUCATION": "string",
+                      "FLAT_PANEL_MONITOR": "number",
+                      "HOME_THEATER_PACKAGE": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "OCCUPATION": "string",
+                      "OS_DOC_SET_KANJI": "number",
+                      "PRINTER_SUPPLIES": "number",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "AFFINITY_CARD\tBOOKKEEPING_APPLICATION\tBULK_PACK_DISKETTES\tCUST_ID\tEDUCATION\tFLAT_PANEL_MONITOR\tHOME_THEATER_PACKAGE\tHOUSEHOLD_SIZE\tOCCUPATION\tOS_DOC_SET_KANJI\tPRINTER_SUPPLIES\tYRS_RESIDENCE\tY_BOX_GAMES\n0\t1\t0\t100001\t< Bach.\t0\t1\t2\tExec.\t0\t1\t3\t0\n0\t1\t1\t100002\tBach.\t1\t1\t2\tProf.\t0\t1\t4\t0\n0\t1\t1\t100003\t< Bach.\t1\t0\t2\tSales\t0\t1\t6\t0\n0\t1\t1\t100004\t< Bach.\t1\t1\t2\tSales\t0\t1\t5\t0\n1\t1\t0\t100005\tAssoc-A\t0\t1\t3\tCrafts\t0\t1\t5\t0\n0\t1\t0\t100006\t< Bach.\t0\t0\t9+\tProf.\t0\t1\t2\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_645520017",
+      "id": "20220621-201839_4097241",
+      "dateCreated": "2022-05-16T17:03:50+0000",
+      "dateStarted": "2022-07-29T16:36:26+0000",
+      "dateFinished": "2022-07-29T16:36:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "title": "",
+      "text": "%md\n# Examples of possible setting overrides for Attribute Importance\n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm\n\nA complete list of shared settings can be found in the Documentation link:\n\n* Shared Settings: [All Algorithms](https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html) \n* Specifies whether Oracle Data Mining should invoke automatic data preparation for the build\n    ```\n    auto.data.prep = FALSE\n    ```\n* Specify a missing value treatment method for the training data. This setting does not affect the scoring data. To handle missing values, either `na.pass` to allow missing values or `na.omit` to remove rows with missing values. The default value is `na.pass`\n    ``` \n    na.action = na.pass or na.omit\n    ```\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Examples of possible setting overrides for Attribute Importance</h1>\n<p>If the user does not override the default settings, then relevant settings are determined by the algorithm</p>\n<p>A complete list of shared settings can be found in the Documentation link:</p>\n<ul>\n<li>Shared Settings: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html\">All Algorithms</a></li>\n<li>Specifies whether Oracle Data Mining should invoke automatic data preparation for the build<pre><code>auto.data.prep = FALSE\n</code></pre>\n</li>\n<li>Specify a missing value treatment method for the training data. This setting does not affect the scoring data. To handle missing values, either <code>na.pass</code> to allow missing values or <code>na.omit</code> to remove rows with missing values. The default value is <code>na.pass</code><pre><code>na.action = na.pass or na.omit\n</code></pre>\n</li>\n</ul>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_1771514358",
+      "id": "20220621-201839_293194680",
+      "dateCreated": "2022-05-16T17:05:13+0000",
+      "dateStarted": "2022-07-29T16:36:26+0000",
+      "dateFinished": "2022-07-29T16:36:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "Compute Attribute Importance to rank variables most predictive of AFFINITY_CARD",
+      "text": "%r\n\nAI_MOD <- ore.odmAI(AFFINITY_CARD ~., SUPP_DF)\n\nclass(AI_MOD)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>'ore.odmAI'</li><li>'ore.model'</li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_1402050424",
+      "id": "20220621-201839_1363759751",
+      "dateCreated": "2022-05-16T17:35:46+0000",
+      "dateStarted": "2022-07-29T16:36:27+0000",
+      "dateFinished": "2022-07-29T16:36:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "Display model object",
+      "text": "%r\nAI_MOD",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmAI(formula = AFFINITY_CARD ~ ., data = SUPP_DF)\n\nImportance: \n                        importance rank\nCOMMENTS                0.34022157    1\nHOUSEHOLD_SIZE          0.17020901    2\nYRS_RESIDENCE           0.09263171    3\nY_BOX_GAMES             0.08047519    4\nOCCUPATION              0.07326430    5\nHOME_THEATER_PACKAGE    0.05947446    6\nEDUCATION               0.05524484    7\nBOOKKEEPING_APPLICATION 0.01579748    8\nFLAT_PANEL_MONITOR      0.00000000    9\nCUST_ID                 0.00000000    9\nBULK_PACK_DISKETTES     0.00000000    9\nOS_DOC_SET_KANJI        0.00000000    9\nPRINTER_SUPPLIES        0.00000000    9\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_-439360264",
+      "id": "20220621-201839_774200061",
+      "dateCreated": "2022-06-21T18:25:30+0000",
+      "dateStarted": "2022-07-29T16:36:28+0000",
+      "dateFinished": "2022-07-29T16:36:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "title": "Display attributes that most highly influence AFFINITY_CARD high responders",
+      "text": "%r\n\nAI_MOD$importance$attribute <- row.names(AI_MOD$importance)\nz.show(AI_MOD$importance)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "importance": "number",
+                      "rank": "number",
+                      "attribute": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "importance\trank\tattribute\n0.340221572217487\t1\tCOMMENTS\n0.170209014224814\t2\tHOUSEHOLD_SIZE\n0.0926317122260526\t3\tYRS_RESIDENCE\n0.0804751905273532\t4\tY_BOX_GAMES\n0.0732643019481289\t5\tOCCUPATION\n0.0594744616913272\t6\tHOME_THEATER_PACKAGE\n0.0552448356309264\t7\tEDUCATION\n0.0157974797190234\t8\tBOOKKEEPING_APPLICATION\n0\t9\tFLAT_PANEL_MONITOR\n0\t9\tCUST_ID\n0\t9\tBULK_PACK_DISKETTES\n0\t9\tOS_DOC_SET_KANJI\n0\t9\tPRINTER_SUPPLIES\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_427315426",
+      "id": "20220621-201839_1910403210",
+      "dateCreated": "2022-05-16T17:37:27+0000",
+      "dateStarted": "2022-07-29T16:36:29+0000",
+      "dateFinished": "2022-07-29T16:36:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "Graph the attributes that most highly influence AFFINITY_CARD high responders",
+      "text": "%r\nz.show(AI_MOD$importance)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "importance": "number",
+                      "rank": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "attribute",
+                  "index": 2,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "importance",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "importance\trank\tattribute\n0.340221572217487\t1\tCOMMENTS\n0.170209014224814\t2\tHOUSEHOLD_SIZE\n0.0926317122260526\t3\tYRS_RESIDENCE\n0.0804751905273532\t4\tY_BOX_GAMES\n0.0732643019481289\t5\tOCCUPATION\n0.0594744616913272\t6\tHOME_THEATER_PACKAGE\n0.0552448356309264\t7\tEDUCATION\n0.0157974797190234\t8\tBOOKKEEPING_APPLICATION\n0\t9\tFLAT_PANEL_MONITOR\n0\t9\tCUST_ID\n0\t9\tBULK_PACK_DISKETTES\n0\t9\tOS_DOC_SET_KANJI\n0\t9\tPRINTER_SUPPLIES\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_1870670183",
+      "id": "20220621-201839_1788402012",
+      "dateCreated": "2022-05-16T17:37:36+0000",
+      "dateStarted": "2022-07-29T16:36:29+0000",
+      "dateFinished": "2022-07-29T16:36:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "text": "%md\n#End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:36:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of Script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655842719544_569545156",
+      "id": "20220621-201839_2020223395",
+      "dateCreated": "2022-05-16T17:38:53+0000",
+      "dateStarted": "2022-07-29T16:36:30+0000",
+      "dateFinished": "2022-07-29T16:36:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    }
+  ],
+  "name": "OML4R Attribute Importance MDL",
+  "id": "18779",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:MARK-18779": [],
+    "MDWD9201D2221:MARK-18779": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4R Attribute Importance MDL"
+}

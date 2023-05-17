@@ -1,0 +1,2703 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OML Services APIs",
+    "description": "APIs for the Oracle Machine Learning Services.",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "Simeon Greene",
+      "url": "http://www.oracle.com",
+      "email": "simeon.m.greene@oracle.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/omlmod"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "I Generic"
+        ],
+        "summary": "Get Metadata for all Versions",
+        "description": "Returns metadata describing all available versions of the OML Services APIs.",
+        "operationId": "getAllVersions",
+        "responses": {
+          "200": {
+            "description": "A list of all available versions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiVersionCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1": {
+      "get": {
+        "tags": [
+          "I Generic"
+        ],
+        "summary": "Get Version 1 Metadata",
+        "description": "Returns metadata describing version 1 of the OML Services APIs.",
+        "operationId": "getOMLV1",
+        "responses": {
+          "200": {
+            "description": "Metadata describing version 1 of the APIs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiVersion"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/api": {
+      "get": {
+        "tags": [
+          "I Generic"
+        ],
+        "summary": "Get Open API Specification",
+        "description": "Returns the Open API specification for the Oracle Machine Learning Services. The specification is returned in JSON format.",
+        "operationId": "getAllSwagger",
+        "responses": {
+          "200": {
+            "description": "The swagger.json file for the Oracle Machine Learning Services APIs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "OML Services APIs."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "tags": [
+          "II Repository"
+        ],
+        "summary": "Get Models List",
+        "description": "Get the list of models that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared models and models created by the caller are visible to the caller. This method does NOT return the model content or metadata.",
+        "operationId": "getAllModels",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "modelName",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model name."
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model version."
+          },
+          {
+            "in": "query",
+            "name": "namespace",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model namespace."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of models.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelResponseCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a query, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "II Repository"
+        ],
+        "summary": "Store Model",
+        "description": "Store a model in the repository. A unique modelId will be assigned to the stored model, and the model's creator will be assigned from the access token used to authorize the request. This method takes the binary data for the model, model name, description, model version, model type, shared, and model namespace as inputs.",
+        "operationId": "storeModel",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelInputForm"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful creation of a model.",
+            "headers": {
+              "Location": {
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateModelResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Model already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing an update, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models/{modelId}": {
+      "get": {
+        "tags": [
+          "II Repository"
+        ],
+        "summary": "Get Model Information",
+        "description": "Get information about the model identified by the modelId. Only shared models, and models created by the caller will be found by this method. This method does NOT return the model content or metaData.",
+        "operationId": "getModelById",
+        "parameters": [
+          {
+            "name": "modelId",
+            "in": "path",
+            "description": "Model identifier.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model information for a model identified by a modelId.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to repository, executing a query, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "II Repository"
+        ],
+        "summary": "Update Model Namespace",
+        "description": "Update the namespace of the model identified by the modelId. Only the creator of a model is allowed to update the namespace of a model.",
+        "operationId": "updateNamespace",
+        "parameters": [
+          {
+            "name": "modelId",
+            "in": "path",
+            "description": "Model identifier.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNamespaceParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successfully updated model namespace for model with specified modelId."
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized to update model",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing an update, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "II Repository"
+        ],
+        "summary": "Delete Model",
+        "description": "Delete the model identified by the modelId. Only models created by the caller may be deleted by a caller of this method. Also, a deployed model must be undeployed before it may be deleted.",
+        "operationId": "deleteModelByID",
+        "parameters": [
+          {
+            "name": "modelId",
+            "in": "path",
+            "description": "Model identifier.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Model successfully deleted."
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized to delete model",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Unable to delete model because an endpoint exists or there are other conflicts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a delete, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models/{modelId}/metadata": {
+      "get": {
+        "tags": [
+          "II Repository"
+        ],
+        "summary": "Get Model Metadata",
+        "description": "Get the metadata for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method.",
+        "operationId": "getMetadata",
+        "parameters": [
+          {
+            "name": "modelId",
+            "in": "path",
+            "description": "Model identifier.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelMetadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a query, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models/{modelId}/content": {
+      "get": {
+        "tags": [
+          "II Repository"
+        ],
+        "summary": "Get Model Content",
+        "description": "Get the model content for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method.",
+        "operationId": "getModelContent",
+        "parameters": [
+          {
+            "name": "modelId",
+            "in": "path",
+            "description": "Model identifier.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Content of the model.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a query, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployment": {
+      "get": {
+        "tags": [
+          "III Deployment"
+        ],
+        "summary": "Get Endpoints",
+        "description": "Get the list of endpoints that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared endpoints, and endpoints created by the caller are visible to the caller.",
+        "operationId": "getDeploymentEndpoints",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "modelName",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model name."
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model version."
+          },
+          {
+            "in": "query",
+            "name": "namespace",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model namespace."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of endpoints that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentEndpointCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a query, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "III Deployment"
+        ],
+        "summary": "Create Model Endpoint",
+        "description": "Create the scoring endpoint for the model identified by the modelId. The provided uri must be unique and will be assigned to the endpoint. Only the creator of the model may create its scoring endpoint.",
+        "operationId": "createEndpoint",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created an endpoint.",
+            "headers": {
+              "Location": {
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedEndpoint"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized to create endpoint for model",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Model is already deployed, uri is in use, or there are other conflicts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing update, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployment/{uri}": {
+      "get": {
+        "tags": [
+          "III Deployment"
+        ],
+        "summary": "Get Endpoint Details",
+        "description": "Gets the details of the endpoint identified by the uri. Only shared endpoints and endpoints created by the caller are visible to the caller. The details include the model metadata along with other descriptive information.",
+        "operationId": "getEndpointByUri",
+        "parameters": [
+          {
+            "name": "uri",
+            "in": "path",
+            "description": "The unique uri of the endpoint.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model endpoint details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointWithDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a query, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "III Deployment"
+        ],
+        "summary": "Delete Endpoint",
+        "description": "Removes the scoring endpoint identified by the uri. Only the creator of the corresponding model may delete its scoring endpoint.",
+        "operationId": "deleteEndpointByUri",
+        "parameters": [
+          {
+            "name": "uri",
+            "in": "path",
+            "description": "The unique uri of the endpoint.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Model endpoint successfully deleted."
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized to delete endpoint from model",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a delete, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployment/{uri}/score": {
+      "post": {
+        "tags": [
+          "III Deployment"
+        ],
+        "summary": "Score Model Using Endpoint",
+        "description": "Scores a model using the endpoint identified by the uri. Only shared models or models created by the caller may be scored using this method.",
+        "operationId": "scoreModel",
+        "parameters": [
+          {
+            "name": "uri",
+            "in": "path",
+            "description": "The unique uri of the endpoint.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The input records to score.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "imageData"
+                ],
+                "properties": {
+                  "imageData": {
+                    "description": "The image file to be scored.",
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScoreParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully scored. Different response schemas for different types of data mining functions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoringOutputResultSet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem connecting to the repository, executing a query, or other unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployment/{uri}/api": {
+      "get": {
+        "tags": [
+          "III Deployment"
+        ],
+        "summary": "Get Open API Specification for Endpoint",
+        "description": "Gets the Open API specification (swagger) for the endpoint identfied by the uri. Each created endpoint has its own API for scoring. This API defines the format of the inputs and outputs and is based on the metadata extracted from the model when it was deployed to the model repository. The Open API specification is only visible for shared endpoints and endpoints created by the caller.",
+        "operationId": "getModelAPI",
+        "parameters": [
+          {
+            "name": "uri",
+            "in": "path",
+            "description": "The unique uri of the endpoint.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The swagger document describing this endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cognitive-text": {
+      "get": {
+        "tags": [
+          "IV Cognitive Text"
+        ],
+        "summary": "Get Endpoints",
+        "description": "Returns all cognitive text endpoints provided by OML Services. Users cannot create new cognitive text endpoints, but may browse and score against endpoints depending on access.",
+        "operationId": "getCognitiveTextEndpoints",
+        "responses": {
+          "200": {
+            "description": "Cognitive text endpoints.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceEndpointCollection"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cognitive-text/topics": {
+      "post": {
+        "tags": [
+          "IV Cognitive Text"
+        ],
+        "summary": "Get Most Relevant Topics",
+        "description": "A cognitive text endpoint that returns the most relevant topics for the provided list of text strings. A parameter of topN can be passed as part of input to determine how many topics to return. By default, 2 topics will be returned. Callers can also pass a language parameter. The topics will be sorted by weight.",
+        "operationId": "getTopics",
+        "requestBody": {
+          "description": "A list of text strings for topic identification, topN (optional, default 2) and language (optional, default AMERICAN).",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopicBatchParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A list of topics with weights and the associated text strings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopicResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cognitive-text/keywords": {
+      "post": {
+        "tags": [
+          "IV Cognitive Text"
+        ],
+        "summary": "Get Most Relevant Keywords",
+        "description": "A cognitive text endpoint that returns the most relevant keywords for the provided list of text strings. A parameter of topN can be passed as part of the input to determine how many keywords to return per document. By default, 5 keywords will be returned. Callers can also pass a language parameter. The keywords will be sorted by weight.",
+        "operationId": "getKeywords",
+        "requestBody": {
+          "description": "A list of text strings for keyword detection, topN (optional, default 5) and language (optional, default AMERICAN).",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KeywordBatchParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A list of keywords with weights and the associated text strings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KeywordResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cognitive-text/summary": {
+      "post": {
+        "tags": [
+          "IV Cognitive Text"
+        ],
+        "summary": "Get Summaries",
+        "description": "A cognitive text endpoint that returns summaries for the provided list of text strings. A parameter of topN can be passed as part of the input to determine how many sentences to return per document. By default, topN is set to be 3. Callers can also pass a language parameter. The sentences in the summaries are returned in order of occurrence in the provided text strings.",
+        "operationId": "getSummaries",
+        "requestBody": {
+          "description": "A list of text strings to summarize, topN (optional, default 3) and language (optional, default AMERICAN).",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummaryBatchParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A list of summaries with weights and the associated text strings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SummaryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cognitive-text/sentiment": {
+      "post": {
+        "tags": [
+          "IV Cognitive Text"
+        ],
+        "summary": "Get Sentiments",
+        "description": "A cognitive-text endpoint that returns the sentiment for the given list of text strings. A sentiment is an enumerated type with values (positive, neutral, negative).",
+        "operationId": "getSentiments",
+        "requestBody": {
+          "description": "A list of text strings for sentiment analysis.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SentimentBatchParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sentiment predictions and the associated text strings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SentimentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cognitive-text/similarity": {
+      "post": {
+        "tags": [
+          "IV Cognitive Text"
+        ],
+        "summary": "Get Semantic Similarities",
+        "description": "A cognitive-text endpoint that returns the semantic similarity between a probe text and a list of text strings. Callers can pass sort direction and a language parameter.",
+        "operationId": "getSimilarity",
+        "requestBody": {
+          "description": "Probe text string and a list of text strings for similarity analysis, sort direction (optional) and language (optional, default AMERICAN).",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimilarityBatchParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of similarity scores and the associated text strings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SimilarityResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cognitive-text/features": {
+      "post": {
+        "tags": [
+          "IV Cognitive Text"
+        ],
+        "summary": "Get Numeric Features",
+        "description": "A cognitive text endpoint that returns numeric features for a provided list of text strings. Callers can also pass a language parameter.",
+        "operationId": "getTextFeatures",
+        "requestBody": {
+          "description": "A list of text strings for feature extraction and language (optional, default AMERICAN).",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeatureBatchParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Numeric features and the associated text strings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FeatureResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiVersion": {
+        "required": [
+          "version",
+          "isLatest",
+          "lifecycle",
+          "links"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Version of this API."
+          },
+          "isLatest": {
+            "type": "boolean",
+            "description": "True if this is the latest version of the API."
+          },
+          "lifecycle": {
+            "type": "string",
+            "enum": [
+              "active",
+              "deprecated"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "ApiVersionCollection": {
+        "required": [
+          "items",
+          "links"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiVersion"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "UpdateNamespaceParam": {
+        "required": [
+          "namespace"
+        ],
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Model namespace."
+          }
+        }
+      },
+      "ScoreParam": {
+        "required": [
+          "inputRecords"
+        ],
+        "properties": {
+          "inputRecords": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "a list of input records in form of a (String, Object) map with (attribute name, attribute value) pairs. For ONNX_IMG models, the attribute value can either be a multidimensional array storing the image pixel values or base64-encoded file contents."
+          },
+          "topN": {
+            "type": "number",
+            "format": "integer",
+            "minimum": 1
+          },
+          "topNdetails": {
+            "type": "number",
+            "format": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ScoringOutputResultSet": {
+        "required": [
+          "scoringResults"
+        ],
+        "properties": {
+          "scoringResults": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ClassificationOutput"
+                },
+                {
+                  "$ref": "#/components/schemas/RegressionOutput"
+                },
+                {
+                  "$ref": "#/components/schemas/ClusteringOutput"
+                },
+                {
+                  "$ref": "#/components/schemas/FeatureExtractionOutput"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ModelMetadata": {
+        "required": [
+          "modelName",
+          "miningFunction",
+          "algorithm",
+          "attributes"
+        ],
+        "properties": {
+          "modelName": {
+            "type": "string"
+          },
+          "miningFunction": {
+            "type": "string",
+            "enum": [
+              "CLASSIFICATION",
+              "REGRESSION",
+              "CLUSTERING",
+              "FEATURE_EXTRACTION"
+            ]
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "NAIVE_BAYES",
+              "DECISION_TREE",
+              "SUPPORT_VECTOR_MACHINES",
+              "K_MEANS",
+              "NON_NEGATIVE_MATRIX_FACTORIZATION",
+              "GENERALIZED_LINEAR_MODEL",
+              "SINGULAR_VALUE_DECOMPOSITION",
+              "EXPECTATION_MAXIMIZATION",
+              "EXPLICIT_SEMANTIC_ANALYSIS",
+              "RANDOM_FOREST",
+              "NEURAL_NETWORK",
+              "XGBOOST",
+              "ONNX"
+            ]
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetadataAttribute"
+            }
+          },
+          "output": {
+            "$ref": "#/components/schemas/MetadataAttribute",
+            "description": "Only for OML models. The single output for OML models."
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetadataAttribute"
+            },
+            "description": "Only for ONNX/ONNX_IMG models. List of outputs for ONNX/ONNX_IMG models."
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MetadataAttribute": {
+        "required": [
+          "name",
+          "attributeType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "attributeType": {
+            "type": "string",
+            "enum": [
+              "CATEGORICAL",
+              "NUMERICAL",
+              "TEXT",
+              "BINARY",
+              "NESTED_NUMERICAL",
+              "NESTED_CATEGORICAL",
+              "FLOAT",
+              "DOUBLE",
+              "INT8",
+              "INT16",
+              "INT32",
+              "INT64",
+              "BOOL",
+              "STRING",
+              "UNKNOWN"
+            ]
+          },
+          "shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Only for ONNX/ONNX_IMG models. It shows the attribute shape for ONNX/ONNX_IMG models."
+          }
+        }
+      },
+      "ModelResponse": {
+        "required": [
+          "modelId",
+          "modelName",
+          "version",
+          "modelType",
+          "shared",
+          "createdBy",
+          "storedOn",
+          "links"
+        ],
+        "properties": {
+          "modelId": {
+            "pattern": "[a-z0-9-]{32,36}",
+            "type": "string"
+          },
+          "modelName": {
+            "pattern": "[a-zA-Z0-9_]{1,50}",
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^[1-9]?[0-9](\\\\.[0-9][0-9]?$)?",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "namespace": {
+            "pattern": "[a-zA-Z0-9_]{0,50}",
+            "type": "string"
+          },
+          "modelType": {
+            "type": "string",
+            "enum": [
+              "OML",
+              "ONNX",
+              "ONNX_IMG"
+            ]
+          },
+          "shared": {
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ]
+          },
+          "createdBy": {
+            "pattern": "[a-zA-Z][a-zA-Z0-9_$#]{1,127}",
+            "type": "string"
+          },
+          "storedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "ModelResponseCollection": {
+        "required": [
+          "items",
+          "links"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelResponse"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "CreateModelResponse": {
+        "required": [
+          "modelId",
+          "links"
+        ],
+        "properties": {
+          "modelId": {
+            "pattern": "[a-z0-9-]{32,36}",
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "OMLResourceLink": {
+        "required": [
+          "href",
+          "rel"
+        ],
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "rel": {
+            "type": "string"
+          }
+        }
+      },
+      "EndpointParam": {
+        "required": [
+          "uri",
+          "modelId"
+        ],
+        "properties": {
+          "uri": {
+            "pattern": "[a-zA-Z0-9_]{1,200}",
+            "type": "string"
+          },
+          "modelId": {
+            "pattern": "[a-z0-9-]{32,36}",
+            "type": "string"
+          }
+        }
+      },
+      "ServiceEndpoint": {
+        "required": [
+          "name",
+          "description",
+          "links"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "ServiceEndpointCollection": {
+        "required": [
+          "items",
+          "links"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceEndpoint"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "CreatedEndpoint": {
+        "required": [
+          "modelId",
+          "deployedOn",
+          "uri",
+          "links"
+        ],
+        "properties": {
+          "modelId": {
+            "pattern": "[a-z0-9-]{32,36}",
+            "type": "string"
+          },
+          "deployedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "uri": {
+            "pattern": "[a-zA-Z0-9_]{1,200}",
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "DeploymentEndpoint": {
+        "required": [
+          "modelName",
+          "version",
+          "modelType",
+          "createdBy",
+          "shared"
+        ],
+        "properties": {
+          "modelName": {
+            "pattern": "[a-zA-Z0-9_]{1,50}",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^[1-9]?[0-9](\\\\.[0-9][0-9]?$)?",
+            "type": "string"
+          },
+          "modelType": {
+            "type": "string",
+            "enum": [
+              "OML",
+              "ONNX",
+              "ONNX_IMG"
+            ]
+          },
+          "createdBy": {
+            "pattern": "[a-zA-Z][a-zA-Z0-9_$#]{1,127}",
+            "type": "string"
+          },
+          "namespace": {
+            "pattern": "[a-zA-Z0-9_]{0,50}",
+            "type": "string"
+          },
+          "shared": {
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CreatedEndpoint"
+          }
+        ]
+      },
+      "DeploymentEndpointCollection": {
+        "required": [
+          "items",
+          "links"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeploymentEndpoint"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OMLResourceLink"
+            }
+          }
+        }
+      },
+      "EndpointWithDetails": {
+        "required": [
+          "metadata"
+        ],
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/ModelMetadata"
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DeploymentEndpoint"
+          }
+        ]
+      },
+      "Classification": {
+        "required": [
+          "label",
+          "probability"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "Detail": {
+        "required": [
+          "columnName",
+          "weight"
+        ],
+        "properties": {
+          "columnName": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "Cluster": {
+        "required": [
+          "clusterId",
+          "probability"
+        ],
+        "properties": {
+          "clusterId": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ClassificationOutput": {
+        "required": [
+          "classifications"
+        ],
+        "properties": {
+          "classifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Classification"
+            }
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Detail"
+            }
+          }
+        }
+      },
+      "RegressionOutput": {
+        "required": [
+          "regression"
+        ],
+        "properties": {
+          "regression": {
+            "type": "number",
+            "format": "double"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Detail"
+            }
+          }
+        }
+      },
+      "ClusteringOutput": {
+        "required": [
+          "clusters"
+        ],
+        "properties": {
+          "clusters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cluster"
+            }
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Detail"
+            }
+          }
+        }
+      },
+      "FeatureExtractionOutput": {
+        "required": [
+          "doubleWeights"
+        ],
+        "properties": {
+          "floatWeights": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "doubleWeights": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "featureIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "featureNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Detail"
+            }
+          }
+        }
+      },
+      "TopicResult": {
+        "required": [
+          "topic",
+          "weight"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "TopicResponse": {
+        "required": [
+          "text",
+          "topicResults"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "topicResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopicResult"
+            }
+          }
+        }
+      },
+      "KeywordResult": {
+        "required": [
+          "keyword",
+          "weight"
+        ],
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "KeywordResponse": {
+        "required": [
+          "text",
+          "keywordResults"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "keywordResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeywordResult"
+            }
+          }
+        }
+      },
+      "SummaryResult": {
+        "required": [
+          "sentence",
+          "weight"
+        ],
+        "properties": {
+          "sentence": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "SummaryResponse": {
+        "required": [
+          "text",
+          "summaryResults"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "summaryResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SummaryResult"
+            }
+          }
+        }
+      },
+      "SentimentBatchParam": {
+        "required": [
+          "textList"
+        ],
+        "properties": {
+          "textList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TopicBatchParam": {
+        "required": [
+          "textList"
+        ],
+        "properties": {
+          "textList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "topN": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 2
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "AMERICAN",
+              "SPANISH",
+              "FRENCH"
+            ]
+          }
+        }
+      },
+      "KeywordBatchParam": {
+        "required": [
+          "textList"
+        ],
+        "properties": {
+          "textList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "topN": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 5
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "AMERICAN",
+              "SPANISH",
+              "FRENCH"
+            ]
+          }
+        }
+      },
+      "SummaryBatchParam": {
+        "required": [
+          "textList"
+        ],
+        "properties": {
+          "textList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "topN": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 3
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "AMERICAN",
+              "SPANISH",
+              "FRENCH"
+            ]
+          }
+        }
+      },
+      "FeatureBatchParam": {
+        "required": [
+          "textList"
+        ],
+        "properties": {
+          "textList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "AMERICAN",
+              "SPANISH",
+              "FRENCH"
+            ]
+          }
+        }
+      },
+      "FeatureResult": {
+        "required": [
+          "weights"
+        ],
+        "properties": {
+          "weights": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      },
+      "FeatureResponse": {
+        "required": [
+          "text",
+          "scoringResults"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "scoringResults": {
+            "$ref": "#/components/schemas/FeatureResult"
+          }
+        }
+      },
+      "SimilarityBatchParam": {
+        "required": [
+          "probe",
+          "textList"
+        ],
+        "properties": {
+          "textList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "probe": {
+            "type": "string"
+          },
+          "sortDirection": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "AMERICAN",
+              "SPANISH",
+              "FRENCH"
+            ]
+          }
+        }
+      },
+      "SimilarityResponse": {
+        "required": [
+          "text",
+          "similarity"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "similarity": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "SentimentResult": {
+        "required": [
+          "sentiment",
+          "confidence"
+        ],
+        "properties": {
+          "sentiment": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "neutral",
+              "negative"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "SentimentResponse": {
+        "required": [
+          "text",
+          "sentimentResults"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "sentimentResults": {
+            "type": "array",
+            "minimum": 3,
+            "maximum": 3,
+            "items": {
+              "$ref": "#/components/schemas/SentimentResult"
+            }
+          }
+        }
+      },
+      "Error": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ModelInputForm": {
+        "required": [
+          "modelData",
+          "modelName",
+          "version",
+          "modelType"
+        ],
+        "type": "object",
+        "properties": {
+          "modelData": {
+            "type": "string",
+            "description": "The model file to upload",
+            "format": "binary"
+          },
+          "modelName": {
+            "pattern": "^[a-zA-Z0-9_#$]\\d{1,50}$",
+            "type": "string",
+            "description": "Model name."
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000,
+            "description": "Description of the model."
+          },
+          "modelType": {
+            "type": "string",
+            "description": "The type of the model being uploaded.",
+            "enum": [
+              "OML",
+              "ONNX",
+              "ONNX_IMG"
+            ]
+          },
+          "version": {
+            "pattern": "^[1-9]?[0-9](\\\\.[0-9][0-9]?$)?",
+            "type": "string",
+            "description": "The version of the model being uploaded."
+          },
+          "shared": {
+            "type": "boolean",
+            "description": "If the model is shared or not. The Boolean value is false if the input (form data) string argument is null or is equal, ignoring case, to the string \"false\", otherwise true.",
+            "enum": [
+              true,
+              false
+            ]
+          },
+          "namespace": {
+            "pattern": "[a-zA-Z0-9_]{0,50}",
+            "type": "string",
+            "description": "Model namespace."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

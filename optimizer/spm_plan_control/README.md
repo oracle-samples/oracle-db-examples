@@ -1,5 +1,11 @@
 <h2>Using SQL Plan Management to Control SQL Execution Plans</h2>
 
+Note that some scripts will DROP AND CREATE a new user called SPM_TESTU.
+
+EDIT the following scripts to set the SPM_TESTU password and connect strings:
+
+- example.sql, example2.sql, connect_user.sql ./SE/example_outln.sql ./SE/example_se.sql ./SE/connect_user.sql
+
 Based on <a href="https://blogs.oracle.com/optimizer/using-sql-plan-management-to-control-sql-execution-plans">this blog article.</a>
 
 The example.sql script demonstrates how to control SQL execution plans using SQL plan management. 
@@ -11,8 +17,6 @@ Edit connect_admin.sql, connect_user.sql to suit you environment (e.g. MT or non
 Scripts create utility procedures called "set_my_plan" and "add_my_plan" (see proc.sql and proc2.sql) that allows you to take a SQL execution plan from a test query and apply it to an application query.
 
 Example output is shown in example.lst and example2.lst. 
-
-Note that example.sql example2.sql scripts will DROP AND CREATE a new user called SPM_TESTU.
 
 Scripts tested in Oracle Database 11g Release 2, Oracle Database 12c Release 2 and Oracle Database 18c. The only caveat is that in Oracle Database 11g DBMS_XPLAN sometimes returns ORA-01403, but the example still works.
 

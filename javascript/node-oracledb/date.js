@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -32,8 +32,24 @@
 // Using a fixed Oracle time zone helps avoid machine and deployment differences
 process.env.ORA_SDTZ = 'UTC';
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
@@ -47,41 +63,41 @@ async function run() {
     connection = await oracledb.getConnection(dbConfig);
 
     console.log('Creating table');
-    await connection.execute(
-      `BEGIN
-         DECLARE
-           e_table_exists EXCEPTION;
-           PRAGMA EXCEPTION_INIT(e_table_exists, -00942);
-         BEGIN
-           EXECUTE IMMEDIATE ('DROP TABLE datetest');
-         EXCEPTION
-           WHEN e_table_exists
-           THEN NULL;
-         END;
-       END;`);
 
-    await connection.execute(
-      `CREATE TABLE datetest(
+    const stmts = [
+      `DROP TABLE no_datetab`,
+
+      `CREATE TABLE no_datetab(
          id NUMBER,
          timestampcol TIMESTAMP,
          timestamptz  TIMESTAMP WITH TIME ZONE,
          timestampltz TIMESTAMP WITH LOCAL TIME ZONE,
-         datecol DATE)`);
+         datecol DATE)`
+    ];
+
+    for (const s of stmts) {
+      try {
+        await connection.execute(s);
+      } catch (e) {
+        if (e.errorNum != 942)
+          console.error(e);
+      }
+    }
 
     // When bound, JavaScript Dates are inserted using TIMESTAMP WITH LOCAL TIMEZONE
     date = new Date();
     console.log('Inserting JavaScript date: ' + date);
     result = await connection.execute(
-      `INSERT INTO datetest (id, timestampcol, timestamptz, timestampltz, datecol)
+      `INSERT INTO no_datetab (id, timestampcol, timestamptz, timestampltz, datecol)
        VALUES (1, :ts, :tstz, :tsltz, :td)`,
       { ts: date, tstz: date, tsltz: date, td: date });
-    console.log('Rows inserted: ' + result.rowsAffected );
+    console.log('Rows inserted: ' + result.rowsAffected);
 
     console.log('Query Results:');
     result = await connection.execute(
       `SELECT id, timestampcol, timestamptz, timestampltz, datecol,
               TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') AS CD
-       FROM datetest
+       FROM no_datetab
        ORDER BY id`);
     console.log(result.rows);
 
@@ -91,16 +107,16 @@ async function run() {
     date = new Date();
     console.log('Inserting JavaScript date: ' + date);
     result = await connection.execute(
-      `INSERT INTO datetest (id, timestampcol, timestamptz, timestampltz, datecol)
+      `INSERT INTO no_datetab (id, timestampcol, timestamptz, timestampltz, datecol)
        VALUES (2, :ts, :tstz, :tsltz, :td)`,
       { ts: date, tstz: date, tsltz: date, td: date });
-    console.log('Rows inserted: ' + result.rowsAffected );
+    console.log('Rows inserted: ' + result.rowsAffected);
 
     console.log('Query Results:');
     result = await connection.execute(
       `SELECT id, timestampcol, timestamptz, timestampltz, datecol,
               TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') AS CD
-       FROM datetest
+       FROM no_datetab
        ORDER BY id`);
     console.log(result.rows);
 

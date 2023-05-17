@@ -38,7 +38,7 @@ public class SessionPropertyTest {
     assertEquals("USER", USER.name());
     assertEquals(String.class, USER.range());
     assertFalse(USER.validate(1234));
-    assertTrue(USER.validate("SCOTT"));
+    assertTrue(USER.validate("testuser"));
     assertNull(USER.defaultValue());
     assertFalse(USER.isSensitive());
   }

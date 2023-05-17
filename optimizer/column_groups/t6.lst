@@ -1,0 +1,93 @@
+SQL> set feedback on
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'tab_corr1',no_invalidate=>false)
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'tab_corr2',no_invalidate=>false)
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select /* MY_TEST_QUERY */ sum(b.n0),count(*)
+  2  from  tab_corr1 a, tab_corr2 b
+  3  where a.n1 = 1
+  4  and   a.n2 = 1
+  5  and   a.n1 = b.n1
+  6  and   a.n2 = b.n2;
+
+ SUM(B.N0)   COUNT(*)
+---------- ----------
+      1000       1000
+
+1 row selected.
+
+SQL> 
+SQL> exec dbms_stats.gather_table_stats(user,'tab_corr1',no_invalidate=>false)
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'tab_corr2',no_invalidate=>false)
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- Now we have column groups, the estimate should be 1000
+SQL> --
+SQL> select /* MY_TEST_QUERY */ sum(b.n0),count(*)
+  2  from  tab_corr1 a, tab_corr2 b
+  3  where a.n1 = 1
+  4  and   a.n2 = 1
+  5  and   a.n1 = b.n1
+  6  and   a.n2 = b.n2;
+
+ SUM(B.N0)   COUNT(*)
+---------- ----------
+      1000       1000
+
+1 row selected.
+
+SQL> 
+SQL> @@plan
+SQL> set linesize 200
+SQL> set trims on
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a100
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+----------------------------------------------------------------------------------------------------
+SQL_ID  7kjpawwbyh1bz, child number 3
+-------------------------------------
+select /* MY_TEST_QUERY */ sum(b.n0),count(*) from  tab_corr1 a,
+tab_corr2 b where a.n1 = 1 and   a.n2 = 1 and   a.n1 = b.n1 and   a.n2
+= b.n2
+
+Plan hash value: 3486445757
+
+---------------------------------------------------------------------------------
+| Id  | Operation           | Name      | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT    |           |       |       |    18 (100)|          |
+|   1 |  SORT AGGREGATE     |           |     1 |    18 |            |          |
+|*  2 |   HASH JOIN         |           |  1000 | 18000 |    18   (0)| 00:00:01 |
+|*  3 |    TABLE ACCESS FULL| TAB_CORR2 |     1 |    12 |     9   (0)| 00:00:01 |
+|*  4 |    TABLE ACCESS FULL| TAB_CORR1 |  1000 |  6000 |     9   (0)| 00:00:01 |
+---------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("A"."N1"="B"."N1" AND "A"."N2"="B"."N2")
+   3 - filter(("B"."N1"=1 AND "B"."N2"=1))
+   4 - filter(("A"."N1"=1 AND "A"."N2"=1))
+
+
+25 rows selected.
+
+SQL> 
+SQL> spool off

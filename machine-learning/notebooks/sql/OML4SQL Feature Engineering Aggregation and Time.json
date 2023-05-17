@@ -1,0 +1,584 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## OML4SQL Feature Engineering: aggregation and time\nIn this notebook, we demonstrate how to generate aggregated features and also extract date and time features using Oracle SQL.\n\nWe are using the SALES table from the SH schema. This dataset contains transaction records for each cusotmer and products sold to each customer and product pair. To create features for each customer and product, we create features by aggregating the amount sold.\n\nWe also show how to extract date and time features from the field TIME_ID.\n\nCopyright (c) 2023 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eOML4SQL Feature Engineering: aggregation and time\u003c/h2\u003e\n\u003cp\u003eIn this notebook, we demonstrate how to generate aggregated features and also extract date and time features using Oracle SQL.\u003c/p\u003e\n\u003cp\u003eWe are using the SALES table from the SH schema. This dataset contains transaction records for each cusotmer and products sold to each customer and product pair. To create features for each customer and product, we create features by aggregating the amount sold.\u003c/p\u003e\n\u003cp\u003eWe also show how to extract date and time features from the field TIME_ID.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264986_-469613561",
+      "id": "20220124-201424_2056920735",
+      "dateCreated": "2020-12-15T00:16:15+0000",
+      "dateStarted": "2023-02-09T20:34:25+0000",
+      "dateFinished": "2023-02-09T20:34:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display data from the SH.SALES table",
+      "text": "%sql\n\nSELECT * FROM SH.SALES FETCH FIRST 10 ROWS ONLY\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "PROD_ID": "string",
+                      "CUST_ID": "string",
+                      "TIME_ID": "string",
+                      "CHANNEL_ID": "string",
+                      "PROMO_ID": "string",
+                      "QUANTITY_SOLD": "string",
+                      "AMOUNT_SOLD": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "PROD_ID\tCUST_ID\tTIME_ID\tCHANNEL_ID\tPROMO_ID\tQUANTITY_SOLD\tAMOUNT_SOLD\n25\t2809\t1999-02-17 00:00:00\t4\t999\t1\t105.74\n25\t4157\t1999-02-17 00:00:00\t4\t999\t1\t105.74\n25\t4202\t1999-02-17 00:00:00\t4\t999\t1\t105.74\n25\t5419\t1999-02-17 00:00:00\t4\t999\t1\t105.74\n25\t11719\t1999-02-17 00:00:00\t4\t999\t1\t105.74\n25\t32\t1999-02-19 00:00:00\t2\t999\t1\t114.8\n25\t427\t1999-02-19 00:00:00\t2\t999\t1\t114.8\n25\t468\t1999-02-19 00:00:00\t2\t999\t1\t114.8\n25\t490\t1999-02-19 00:00:00\t2\t999\t1\t114.8\n25\t519\t1999-02-19 00:00:00\t2\t999\t1\t114.8\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_1610890371",
+      "id": "20220124-201424_1938624928",
+      "dateCreated": "2020-12-11T17:58:59+0000",
+      "dateStarted": "2023-02-09T20:34:25+0000",
+      "dateFinished": "2023-02-09T20:34:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Multiple items purchased by each customer and product pair",
+      "text": "%sql\n\nSELECT CUST_ID, PROD_ID, COUNT(1)\nFROM SH.SALES\nGROUP BY CUST_ID, PROD_ID\nFETCH FIRST 10 ROWS ONLY\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PROD_ID": "string",
+                      "COUNT(1)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPROD_ID\tCOUNT(1)\n3576\t121\t1\n8514\t121\t7\n739\t121\t5\n7810\t121\t2\n9145\t121\t1\n3841\t121\t4\n31979\t121\t5\n2607\t121\t3\n6219\t121\t3\n8093\t121\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_-1200380526",
+      "id": "20220124-201424_385944662",
+      "dateCreated": "2020-12-13T00:28:57+0000",
+      "dateStarted": "2023-02-09T20:34:25+0000",
+      "dateFinished": "2023-02-09T20:34:25+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create features that summarize the amount sold ",
+      "text": "%sql\n\nSELECT CUST_ID, PROD_ID, MIN(AMOUNT_SOLD) MIN_AMOUNT, MAX(AMOUNT_SOLD) MAX_AMOUNT, ROUND(AVG(AMOUNT_SOLD), 2) AVG_AMOUNT, MEDIAN(AMOUNT_SOLD) MEDIAN_AMOUNT\nFROM SH.SALES\nGROUP BY CUST_ID, PROD_ID\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PROD_ID": "string",
+                      "MIN_AMOUNT": "string",
+                      "MAX_AMOUNT": "string",
+                      "AVG_AMOUNT": "string",
+                      "MEDIAN_AMOUNT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPROD_ID\tMIN_AMOUNT\tMAX_AMOUNT\tAVG_AMOUNT\tMEDIAN_AMOUNT\n2\t14\t1239.99\t1259.99\t1253.32\t1259.99\n2\t18\t1204.26\t1702.99\t1498.16\t1499.345\n2\t26\t167.24\t167.99\t167.62\t167.615\n2\t31\t9.71\t9.71\t9.71\t9.71\n2\t32\t73.43\t73.43\t73.43\t73.43\n2\t123\t63.49\t64.99\t64.49\t64.99\n2\t126\t30.12\t30.15\t30.14\t30.135\n2\t127\t50.68\t51.79\t51.12\t50.68\n2\t131\t26.02\t26.02\t26.02\t26.02\n3\t27\t45.71\t50.55\t48.13\t48.13\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_194145872",
+      "id": "20220124-201424_1197517334",
+      "dateCreated": "2020-12-11T19:53:52+0000",
+      "dateStarted": "2023-02-09T20:34:26+0000",
+      "dateFinished": "2023-02-09T20:34:26+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Augment original TIME_ID with random values to artificially create demo timestamp column",
+      "text": "%sql\n\nCREATE OR REPLACE VIEW SALES_TS AS \nSELECT CUST_ID,  CAST(TIME_ID + DBMS_RANDOM.VALUE(0, 10) AS TIMESTAMP) AS  TIME_STAMP\nFROM SH.SALES",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "TIME_ID+DBMS_RANDOM.VALUE(0,10)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_-1378561043",
+      "id": "20220124-201424_1831090819",
+      "dateCreated": "2020-12-15T00:24:07+0000",
+      "dateStarted": "2023-02-09T20:34:26+0000",
+      "dateFinished": "2023-02-09T20:34:26+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check the view",
+      "text": "%sql\n\nSELECT * \nFROM SALES_TS\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "TIME_STAMP": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tTIME_STAMP\n5020\t2001-04-24 08:09:25\n5330\t2001-04-22 06:06:53\n5649\t2001-04-18 16:34:18\n5981\t2001-04-25 11:56:45\n6730\t2001-04-24 17:19:39\n8076\t2001-04-23 06:13:31\n9768\t2001-04-25 08:34:40\n12006\t2001-04-19 10:27:06\n12111\t2001-04-20 19:08:51\n15489\t2001-04-16 01:33:00\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_563046406",
+      "id": "20220124-201424_1992242838",
+      "dateCreated": "2020-12-15T00:28:44+0000",
+      "dateStarted": "2023-02-09T20:34:26+0000",
+      "dateFinished": "2023-02-09T20:34:26+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Generate time related features: year, month, day of month, week of year, day of week, hour, minute, second",
+      "text": "%sql\n\nSELECT CUST_ID, TIME_STAMP, \n    EXTRACT(YEAR FROM TIME_STAMP) YEAR, \n    EXTRACT(MONTH FROM TIME_STAMP) MONTH, \n    EXTRACT(DAY FROM TIME_STAMP) DAY_OF_MONTH, \n    TO_CHAR(TIME_STAMP,\u0027WW\u0027) WEEK_OF_YEAR, \n    TO_CHAR(TIME_STAMP,\u0027D\u0027) DAY_OF_WEEK, \n    EXTRACT(HOUR FROM TIME_STAMP) HOUR, \n    EXTRACT(MINUTE FROM TIME_STAMP) MINUTE, \n    EXTRACT(SECOND FROM TIME_STAMP) SECOND\nFROM SALES_TS\nFETCH FIRST 10 ROWS ONLY\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "TIME_STAMP": "string",
+                      "YEAR": "string",
+                      "MONTH": "string",
+                      "DAY_OF_MONTH": "string",
+                      "WEEK_OF_YEAR": "string",
+                      "DAY_OF_WEEK": "string",
+                      "HOUR": "string",
+                      "MINUTE": "string",
+                      "SECOND": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tTIME_STAMP\tYEAR\tMONTH\tDAY_OF_MONTH\tWEEK_OF_YEAR\tDAY_OF_WEEK\tHOUR\tMINUTE\tSECOND\n2761\t1998-06-27 08:39:04\t1998\t6\t27\t26\t7\t8\t39\t4\n2857\t1998-06-23 23:20:16\t1998\t6\t23\t25\t3\t23\t20\t16\n3026\t1998-06-22 17:04:06\t1998\t6\t22\t25\t2\t17\t4\t6\n3087\t1998-06-28 06:27:02\t1998\t6\t28\t26\t1\t6\t27\t2\n3088\t1998-06-19 04:22:56\t1998\t6\t19\t25\t6\t4\t22\t56\n3317\t1998-06-20 16:32:28\t1998\t6\t20\t25\t7\t16\t32\t28\n3403\t1998-06-21 07:18:00\t1998\t6\t21\t25\t1\t7\t18\t0\n3643\t1998-06-25 16:45:12\t1998\t6\t25\t26\t5\t16\t45\t12\n3720\t1998-06-24 06:26:08\t1998\t6\t24\t25\t4\t6\t26\t8\n3966\t1998-06-24 07:16:46\t1998\t6\t24\t25\t4\t7\t16\t46\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_1493346457",
+      "id": "20220124-201424_1774446507",
+      "dateCreated": "2020-12-11T19:54:53+0000",
+      "dateStarted": "2023-02-09T20:34:26+0000",
+      "dateFinished": "2023-02-09T20:34:27+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_1084623267",
+      "id": "20220124-201424_724680863",
+      "dateCreated": "2020-12-13T00:37:44+0000",
+      "dateStarted": "2023-02-09T20:34:27+0000",
+      "dateFinished": "2023-02-09T20:34:27+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-09T20:34:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264987_351425692",
+      "id": "20220124-201424_1728907096",
+      "dateCreated": "2020-12-16T19:39:49+0000",
+      "dateStarted": "2023-02-09T20:34:27+0000",
+      "dateFinished": "2023-02-09T20:34:27+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Feature Engineering Aggregation and Time",
+  "id": "101056",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

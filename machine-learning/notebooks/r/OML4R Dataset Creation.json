@@ -1,0 +1,274 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n\n# OML4R Dataset Creation\n\nThis script loads the sample datasets `MTCARS` and `IRIS` and imports them into your Oracle Autonomous Database instnace using the ore.create() function.\n\nCopyright (c) 2022 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:31:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>OML4R Dataset Creation</h1>\n<p>This script loads the sample datasets <code>MTCARS</code> and <code>IRIS</code> and imports them into your Oracle Autonomous Database instnace using the ore.create() function.</p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655933126566_-747771673",
+      "id": "20220622-212526_1612340293",
+      "dateCreated": "2022-05-11T14:18:33+0000",
+      "dateStarted": "2022-08-02T14:31:50+0000",
+      "dateFinished": "2022-08-02T14:31:52+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%r\n\nlibrary(ORE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:31:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655933126566_-1752546895",
+      "id": "20220622-212526_68690810",
+      "dateCreated": "2022-05-11T14:19:31+0000",
+      "dateStarted": "2022-08-02T14:31:52+0000",
+      "dateFinished": "2022-08-02T14:32:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Use mtcars dataset to create table",
+      "text": "%r\n\nore.sync(use.keys=FALSE)\nore.attach()\n\nif (ore.exists(\"MTCARS\")) ore.drop(table=\"MTCARS\")\n\nore.create(mtcars, table=\"MTCARS\")\n\nore.exec(\"ANALYZE TABLE MTCARS COMPUTE STATISTICS\")\n\nz.show(cat(\"Shape:\", dim(MTCARS)))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:32:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Shape: 32 11"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655933126566_-1965983468",
+      "id": "20220622-212526_1282334308",
+      "dateCreated": "2022-05-11T14:19:33+0000",
+      "dateStarted": "2022-08-02T14:32:06+0000",
+      "dateFinished": "2022-08-02T14:32:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Use iris dataset to create table.",
+      "text": "%r\n\nif (ore.exists(\"IRIS_R\")) ore.drop(table=\"IRIS_R\")\n\nore.create(iris, table = \"IRIS_R\")\n\nore.exec(\"ANALYZE TABLE IRIS_R COMPUTE STATISTICS\")\n\nz.show(cat(\"Shape:\", dim(IRIS_R)))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:32:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Shape: 150 5"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655933126566_539341137",
+      "id": "20220622-212526_345556691",
+      "dateCreated": "2022-05-11T14:19:35+0000",
+      "dateStarted": "2022-08-02T14:32:09+0000",
+      "dateFinished": "2022-08-02T14:32:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "text": "%md\n\n# End of script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:32:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655933126566_214910446",
+      "id": "20220622-212526_651319409",
+      "dateCreated": "2022-05-11T14:22:45+0000",
+      "dateStarted": "2022-08-02T14:32:10+0000",
+      "dateFinished": "2022-08-02T14:32:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:34:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655933126566_1394537899",
+      "id": "20220622-212526_1662299170",
+      "dateCreated": "2022-05-17T21:48:46+0000",
+      "dateStarted": "2022-08-02T14:32:10+0000",
+      "dateFinished": "2022-08-02T14:32:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    }
+  ],
+  "name": "OML4R Dataset Creation",
+  "id": "18849",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:MARK-18849": [],
+    "MDWD9201D2221:MARK-18849": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

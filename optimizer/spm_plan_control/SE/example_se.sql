@@ -8,7 +8,8 @@ set echo on
 pause p...
 drop user spm_testu cascade;
 
-create user spm_testu identified by spm_testu;
+--##### EDIT HERE TO SET PASSWORD #####
+create user spm_testu identified by <your_password_here>;
 grant connect,resource to spm_testu;
 grant unlimited tablespace to spm_testu;
 grant select on v_$sqlarea to spm_testu;

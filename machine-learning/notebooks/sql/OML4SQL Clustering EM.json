@@ -1,0 +1,2180 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## Identifying Customer Segments using Expectation Maximization Clustering\n\nOracle Machine Learning supports clustering using several algorithms, including k-Means, O-Cluster, and Expectation Maximization. In this notebook, we illustrate how to identify natural clusters of customers using the CUSTOMERS dataset from the SH schema using the unsupervised learning Expectation Maximization algorithm. The data exploration, preparation, and machine learning runs inside Oracle Autonomous Database.\n\nSee the documentation link below for details on the Expectation Maximization in-database algortihm.\n\nCopyright (c) 2023 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 9.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eIdentifying Customer Segments using Expectation Maximization Clustering\u003c/h2\u003e\n\u003cp\u003eOracle Machine Learning supports clustering using several algorithms, including k-Means, O-Cluster, and Expectation Maximization. In this notebook, we illustrate how to identify natural clusters of customers using the CUSTOMERS dataset from the SH schema using the unsupervised learning Expectation Maximization algorithm. The data exploration, preparation, and machine learning runs inside Oracle Autonomous Database.\u003c/p\u003e\n\u003cp\u003eSee the documentation link below for details on the Expectation Maximization in-database algortihm.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1246588621",
+      "id": "20220124-201427_1421157631",
+      "dateCreated": "2018-02-06T14:13:35+0000",
+      "dateStarted": "2023-02-16T18:18:09+0000",
+      "dateFinished": "2023-02-16T18:18:09+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n![tiny arrow](http://www.oracle.com/technetwork/database/options/advanced-analytics/clustering-5663171.jpg \"tiny arrow\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:09+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 3.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003e\u003cimg src\u003d\"http://www.oracle.com/technetwork/database/options/advanced-analytics/clustering-5663171.jpg\" alt\u003d\"tiny arrow\" title\u003d\"tiny arrow\" /\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1364523503",
+      "id": "20220124-201427_266884510",
+      "dateCreated": "2018-02-06T14:18:06+0000",
+      "dateStarted": "2023-02-16T18:18:10+0000",
+      "dateFinished": "2023-02-16T18:18:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nOML Clustering: \u003ca href\u003d\"https://www.oracle.com/goto/ml-clustering\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-clustering\u0027);\"\u003ehttps://www.oracle.com/goto/ml-clustering\u003c/a\u003e\nOML Expectation Maximization: \u003ca href\u003d\"https://oracle.com/goto/ml-expectation-maximization\" onclick\u003d\"return ! window.open(\u0027https://oracle.com/goto/ml-expectation-maximization\u0027);\"\u003ehttps://oracle.com/goto/ml-expectation-maximization\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T01:14:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Clustering: \u003ca href\u003d\"https: //www.oracle.com/goto/ml-clustering\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-clustering\u0027);\"\u003ehttps://www.oracle.com/goto/ml-clustering\u003c/a\u003e\n\u003cbr  /\u003eOML Expectation Maximization: \u003ca href\u003d\"https: //oracle.com/goto/ml-expectation-maximization\" onclick\u003d\"return ! window.open(\u0027https://oracle.com/goto/ml-expectation-maximization\u0027);\"\u003ehttps://oracle.com/goto/ml-expectation-maximization\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_133405946",
+      "id": "20220124-201427_1195638167",
+      "dateCreated": "2018-02-06T14:15:16+0000",
+      "dateStarted": "2023-02-16T18:18:10+0000",
+      "dateFinished": "2023-02-16T18:18:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create view joining CUSTOMERS and DEMOGRAPHICS",
+      "text": "%script\n\nCREATE OR REPLACE VIEW CUSTOMERS360_V AS\n   SELECT a.CUST_ID, a.CUST_GENDER, a.CUST_MARITAL_STATUS, \n          a.CUST_YEAR_OF_BIRTH, a.CUST_INCOME_LEVEL, a.CUST_CREDIT_LIMIT, \n          b.EDUCATION, b.AFFINITY_CARD, \n          b.HOUSEHOLD_SIZE, b.OCCUPATION, b.YRS_RESIDENCE, b.Y_BOX_GAMES\n   FROM SH.CUSTOMERS a, SH.SUPPLEMENTARY_DEMOGRAPHICS b\n   WHERE a.CUST_ID \u003d b.CUST_ID;\n   ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nView CUSTOMERS360_V created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_306775783",
+      "id": "20220124-201427_1504271662",
+      "dateCreated": "2018-02-06T14:25:56+0000",
+      "dateStarted": "2023-02-16T18:18:10+0000",
+      "dateFinished": "2023-02-16T18:18:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Count number of records in CUSTOMERS360_V",
+      "text": "%sql\n\nSELECT COUNT(*) FROM CUSTOMERS360_V;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 94.0278,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COUNT(*)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNT(*)\n4500\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1861977388",
+      "id": "20220124-201427_608573496",
+      "dateCreated": "2018-02-06T14:52:53+0000",
+      "dateStarted": "2023-02-16T18:18:16+0000",
+      "dateFinished": "2023-02-16T18:18:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display data in view CUSTOMERS360_V",
+      "text": "%sql\n\nSELECT * \nFROM CUSTOMERS360_V\nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 214.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "string",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "string",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "string",
+                      "HOUSEHOLD_SIZE": "string",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "string",
+                      "Y_BOX_GAMES": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\n100134\tF\tDivorc.\t1965\tL: 300,000 and above\t9000\tAssoc-A\t0\t2\tCleric.\t2\t0\n102828\tF\tNeverM\t1967\tE: 90,000 - 109,999\t10000\tHS-grad\t0\t1\tMachine\t4\t0\n101232\tM\tNeverM\t1979\tJ: 190,000 - 249,999\t9000\t\u003c Bach.\t0\t1\tOther\t2\t1\n100696\tM\tMarried\t1971\tF: 110,000 - 129,999\t7000\tProfsc\t1\t3\tProf.\t3\t0\n103948\tM\tNeverM\t1966\tJ: 190,000 - 249,999\t9000\t\u003c Bach.\t0\t1\tCleric.\t4\t0\n103791\tM\tDivorc.\t1952\tB: 30,000 - 49,999\t3000\tHS-grad\t0\t2\tProf.\t5\t0\n100804\tF\tDivorc.\t1943\tA: Below 30,000\t1500\t\u003c Bach.\t0\t2\tProf.\t6\t0\n101610\tM\tNeverM\t1985\tI: 170,000 - 189,999\t3000\t11th\t0\t1\tHandler\t0\t1\n102308\tM\tNeverM\t1980\tJ: 190,000 - 249,999\t11000\t\u003c Bach.\t0\t2\tProf.\t2\t1\n100593\tM\tMarried\t1963\tG: 130,000 - 149,999\t1500\tHS-grad\t1\t3\tProf.\t4\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1777039100",
+      "id": "20220124-201427_1766849931",
+      "dateCreated": "2019-08-01T19:44:43+0000",
+      "dateStarted": "2023-02-16T18:18:17+0000",
+      "dateFinished": "2023-02-16T18:18:23+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### Build an Expectation Maximization model using the CUSTOMERS360_V view",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eBuild an Expectation Maximization model using the CUSTOMERS360_V view\u003c/h3\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_1297742159",
+      "id": "20220124-201427_834148976",
+      "dateCreated": "2021-07-18T16:15:00+0000",
+      "dateStarted": "2023-02-16T18:18:23+0000",
+      "dateFinished": "2023-02-16T18:18:23+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build the EM Clustering model with default settings",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027EM_SH_CLUS_SAMPLE_1\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\nBEGIN\n    v_setlst(\u0027ALGO_NAME\u0027)        :\u003d \u0027ALGO_EXPECTATION_MAXIMIZATION\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027EM_SH_CLUS_SAMPLE_1\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027CLUSTERING\u0027,\n        DATA_QUERY          \u003d\u003e \u0027select * from CUSTOMERS360_V\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_2084783235",
+      "id": "20220124-201427_585855300",
+      "dateCreated": "2018-02-06T14:32:12+0000",
+      "dateStarted": "2023-02-16T18:18:24+0000",
+      "dateFinished": "2023-02-16T18:18:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### Examples of possible setting overrides for Expectation-Maximization clustering\n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm.\n\nA complete list of settings can be found in the Documentation link:\n\n-- Algorithm Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-1796B451-BE1B-43BC-9839-05F5F73031C8\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-1796B451-BE1B-43BC-9839-05F5F73031C8\u0027);\"\u003e Expectation-Maximization clustering\u003c/a\u003e\n\n-- Shared Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\u0027);\"\u003eAll algorithms\u003c/a\u003e\n\n-- Machine Learning Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-CE514371-EC80-41EA-AB07-7F6501687D12\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-CE514371-EC80-41EA-AB07-7F6501687D12\u0027);\"\u003e ML settings \u003c/a\u003e\n\n-- Specify a missing value treatment method for the training data. This setting does not affect the scoring data. The default value is `ODMS_MISSING_VALUE_AUTO`.  The option `ODMS_MISSING_VALUE_MEAN_MODE` replaces missing values with the mean (numeric attributes) or the mode (categorical attributes) both at build time and apply time where appropriate. The option `ODMS_MISSING_VALUE_AUTO` performs different strategies for different algorithms.  When `ODMS_MISSING_VALUE_TREATMENT` is set to `ODMS_MISSING_VALUE_DELETE_ROW`, the rows in the training data that contain missing values are deleted. However, if you want to replicate this missing value treatment in the scoring data, then you must perform the transformation explicitly.\n    v_setlst(\u0027ODMS_MISSING_VALUE_TREATMENT\u0027) :\u003d \u0027ODMS_MISSING_VALUE_AUTO\u0027;\n    \n--  Specify the maximum number of leaf clusters generated by a clustering algorithm. \n  The algorithm may return fewer clusters, depending on the data. Expectation maximization (EM) may return fewer clusters than the number specified by CLUS_NUM_CLUSTERS depending on the data. The number of clusters returned by EM cannot be greater than the number of components, which is governed by algorithm-specific settings (see Expectation Maximization Settings for Learning table).  Depending on these settings, there may be fewer clusters than components. If component clustering is disabled, the number of clusters equals the number of components.  \n  For EM, the default value of CLUS_NUM_CLUSTERS is system-determined. For k-Means and O-Cluster, the default is 10. \n     v_setlst(\u0027CLUS_NUM_CLUSTERS\u0027)       :\u003d \u00275\u0027;\n\n#### Expectation Maximization Settings for Learning     \n-- Specify this setting to enable model search in EM where different model sizes are explored and a best size is selected.\n  It requires `EMCS_MODEL_SEARCH_ENABLE` or `EMCS_MODEL_SEARCH_DISABLE`.  The default is `EMCS_MODEL_SEARCH_DISABLE`.      \n     v_setlst(\u0027EMCS_MODEL_SEARCH\u0027)       :\u003d \u0027EMCS_MODEL_SEARCH_ENABLE\u0027;\n\n-- Specify the maximum number of iterations in the EM algorithm.\n  It requires a number larger than 1.  The default is 100. \n    v_setlst(\u0027EMCS_NUM_ITERATIONS\u0027)     :\u003d \u002720\u0027;\n\n     \n#### Expectation Maximization Settings for Cluster Statistics\n--  Specify whether to enable or disable the gathering of descriptive statistics for clusters (centroids, histograms, and rules).  When statistics are disabled, model size is reduced, and `GET_MODEL_DETAILS_EM` only returns taxonomy (hierarchy) and cluster counts.\n  It requires either `EMCS_CLUS_STATS_ENABLE` or `EMCS_CLUS_STATS_DISABLE`.  Default is `EMCS_CLUS_STATS_ENABLE`.     \n     v_setlst(\u0027EMCS_CLUSTER_STATISTICS\u0027) :\u003d \u0027EMCS_CLUS_STATS_ENABLE\u0027;\n     \n#### Expectation Maximization Settings for Data Preparation and Analysis\n-- Specify the number of quantile bins that will be used for modeling numeric columns with multivalued Bernoulli distributions.\n  It requires a number larger than 1 and up to 255 (inclusive).  The default is system-determined.\n     v_setlst(\u0027EMCS_NUM_QUANTILE_BINS\u0027)  :\u003d \u002710\u0027;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T01:15:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eExamples of possible setting overrides for Expectation-Maximization clustering\u003c/h3\u003e\n\u003cp\u003eIf the user does not override the default settings, then relevant settings are determined by the algorithm.\u003c/p\u003e\n\u003cp\u003eA complete list of settings can be found in the Documentation link:\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Algorithm Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-1796B451-BE1B-43BC-9839-05F5F73031C8\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-1796B451-BE1B-43BC-9839-05F5F73031C8\u0027);\"\u003e Expectation-Maximization clustering\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Shared Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\u0027);\"\u003eAll algorithms\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Machine Learning Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-CE514371-EC80-41EA-AB07-7F6501687D12\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-CE514371-EC80-41EA-AB07-7F6501687D12\u0027);\"\u003e ML settings \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Specify a missing value treatment method for the training data. This setting does not affect the scoring data. The default value is \u003ccode\u003eODMS_MISSING_VALUE_AUTO\u003c/code\u003e.  The option \u003ccode\u003eODMS_MISSING_VALUE_MEAN_MODE\u003c/code\u003e replaces missing values with the mean (numeric attributes) or the mode (categorical attributes) both at build time and apply time where appropriate. The option \u003ccode\u003eODMS_MISSING_VALUE_AUTO\u003c/code\u003e performs different strategies for different algorithms.  When \u003ccode\u003eODMS_MISSING_VALUE_TREATMENT\u003c/code\u003e is set to \u003ccode\u003eODMS_MISSING_VALUE_DELETE_ROW\u003c/code\u003e, the rows in the training data that contain missing values are deleted. However, if you want to replicate this missing value treatment in the scoring data, then you must perform the transformation explicitly.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027ODMS_MISSING_VALUE_TREATMENT\u0027) :\u003d \u0027ODMS_MISSING_VALUE_AUTO\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash;  Specify the maximum number of leaf clusters generated by a clustering algorithm.\n\u003cbr  /\u003eThe algorithm may return fewer clusters, depending on the data. Expectation maximization (EM) may return fewer clusters than the number specified by CLUS_NUM_CLUSTERS depending on the data. The number of clusters returned by EM cannot be greater than the number of components, which is governed by algorithm-specific settings (see Expectation Maximization Settings for Learning table).  Depending on these settings, there may be fewer clusters than components. If component clustering is disabled, the number of clusters equals the number of components.\n\u003cbr  /\u003eFor EM, the default value of CLUS_NUM_CLUSTERS is system-determined. For k-Means and O-Cluster, the default is 10.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e v_setlst(\u0027CLUS_NUM_CLUSTERS\u0027)       :\u003d \u00275\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eExpectation Maximization Settings for Learning\u003c/h4\u003e\n\u003cp\u003e\u0026ndash; Specify this setting to enable model search in EM where different model sizes are explored and a best size is selected.\n\u003cbr  /\u003eIt requires \u003ccode\u003eEMCS_MODEL_SEARCH_ENABLE\u003c/code\u003e or \u003ccode\u003eEMCS_MODEL_SEARCH_DISABLE\u003c/code\u003e.  The default is \u003ccode\u003eEMCS_MODEL_SEARCH_DISABLE\u003c/code\u003e.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e v_setlst(\u0027EMCS_MODEL_SEARCH\u0027)       :\u003d \u0027EMCS_MODEL_SEARCH_ENABLE\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Specify the maximum number of iterations in the EM algorithm.\n\u003cbr  /\u003eIt requires a number larger than 1.  The default is 100.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027EMCS_NUM_ITERATIONS\u0027)     :\u003d \u002720\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eExpectation Maximization Settings for Cluster Statistics\u003c/h4\u003e\n\u003cp\u003e\u0026ndash;  Specify whether to enable or disable the gathering of descriptive statistics for clusters (centroids, histograms, and rules).  When statistics are disabled, model size is reduced, and \u003ccode\u003eGET_MODEL_DETAILS_EM\u003c/code\u003e only returns taxonomy (hierarchy) and cluster counts.\n\u003cbr  /\u003eIt requires either \u003ccode\u003eEMCS_CLUS_STATS_ENABLE\u003c/code\u003e or \u003ccode\u003eEMCS_CLUS_STATS_DISABLE\u003c/code\u003e.  Default is \u003ccode\u003eEMCS_CLUS_STATS_ENABLE\u003c/code\u003e.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e v_setlst(\u0027EMCS_CLUSTER_STATISTICS\u0027) :\u003d \u0027EMCS_CLUS_STATS_ENABLE\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eExpectation Maximization Settings for Data Preparation and Analysis\u003c/h4\u003e\n\u003cp\u003e\u0026ndash; Specify the number of quantile bins that will be used for modeling numeric columns with multivalued Bernoulli distributions.\n\u003cbr  /\u003eIt requires a number larger than 1 and up to 255 (inclusive).  The default is system-determined.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e v_setlst(\u0027EMCS_NUM_QUANTILE_BINS\u0027)  :\u003d \u002710\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1348373473",
+      "id": "20220124-201427_913844985",
+      "dateCreated": "2021-08-24T02:37:50+0000",
+      "dateStarted": "2023-02-16T18:18:30+0000",
+      "dateFinished": "2023-02-16T18:18:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build the EM Clustering model with explicit settings",
+      "text": "%script\n\n-- Note that additional settings are available in the documentation\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027EM_SH_CLUS_SAMPLE_2\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\nBEGIN\n    v_setlst(\u0027ALGO_NAME\u0027)               :\u003d \u0027ALGO_EXPECTATION_MAXIMIZATION\u0027;\n    v_setlst(\u0027PREP_AUTO\u0027)               :\u003d \u0027ON\u0027;\n    v_setlst(\u0027CLUS_NUM_CLUSTERS\u0027)       :\u003d \u00275\u0027;\n    v_setlst(\u0027EMCS_MODEL_SEARCH\u0027)       :\u003d \u0027EMCS_MODEL_SEARCH_ENABLE\u0027;\n    v_setlst(\u0027EMCS_CLUSTER_STATISTICS\u0027) :\u003d \u0027EMCS_CLUS_STATS_ENABLE\u0027;\n    v_setlst(\u0027EMCS_NUM_ITERATIONS\u0027)     :\u003d \u002720\u0027;\n    v_setlst(\u0027EMCS_NUM_QUANTILE_BINS\u0027)  :\u003d \u002710\u0027;\n    v_setlst(\u0027EMCS_RANDOM_SEED\u0027)        :\u003d \u0027123456\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027EM_SH_CLUS_SAMPLE_2\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027CLUSTERING\u0027,\n        DATA_QUERY          \u003d\u003e \u0027select * from CUSTOMERS360_V\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T01:16:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_2030533880",
+      "id": "20220124-201427_550316568",
+      "dateCreated": "2021-07-15T14:50:20+0000",
+      "dateStarted": "2023-02-16T18:18:30+0000",
+      "dateFinished": "2023-02-16T18:18:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the model metadata",
+      "text": "%sql \n\nSELECT MODEL_NAME, MINING_FUNCTION, ALGORITHM, CREATION_DATE, PARTITIONED\nFROM   USER_MINING_MODELS\nWHERE  MODEL_NAME LIKE \u0027EM_SH_CLUS_SAMPLE_%\u0027;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 228.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MODEL_NAME": "string",
+                      "MINING_FUNCTION": "string",
+                      "ALGORITHM": "string",
+                      "CREATION_DATE": "string",
+                      "PARTITIONED": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 119.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MODEL_NAME\tMINING_FUNCTION\tALGORITHM\tCREATION_DATE\tPARTITIONED\nEM_SH_CLUS_SAMPLE_3\tCLUSTERING\tEXPECTATION_MAXIMIZATION\t2023-02-06 23:57:04\tNO\nEM_SH_CLUS_SAMPLE_1\tCLUSTERING\tEXPECTATION_MAXIMIZATION\t2023-02-16 18:18:25\tNO\nEM_SH_CLUS_SAMPLE_2\tCLUSTERING\tEXPECTATION_MAXIMIZATION\t2023-02-16 18:18:31\tNO\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_1276215977",
+      "id": "20220124-201427_1364713451",
+      "dateCreated": "2018-02-06T14:58:19+0000",
+      "dateStarted": "2023-02-16T18:18:36+0000",
+      "dateFinished": "2023-02-16T18:18:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the model signature",
+      "text": "%sql \n\n-- The model signature includes the attributes used in the model training data,\n-- and also corresponds to the attributes expected to apply the model to new data. \n\nSELECT ATTRIBUTE_NAME, ATTRIBUTE_TYPE\nFROM   USER_MINING_MODEL_ATTRIBUTES\nWHERE  MODEL_NAME \u003d \u0027EM_SH_CLUS_SAMPLE_2\u0027\nORDER BY ATTRIBUTE_NAME;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ATTRIBUTE_NAME\tATTRIBUTE_TYPE\nAFFINITY_CARD\tNUMERICAL\nCUST_CREDIT_LIMIT\tNUMERICAL\nCUST_GENDER\tCATEGORICAL\nCUST_INCOME_LEVEL\tCATEGORICAL\nCUST_MARITAL_STATUS\tCATEGORICAL\nCUST_YEAR_OF_BIRTH\tNUMERICAL\nEDUCATION\tCATEGORICAL\nHOUSEHOLD_SIZE\tCATEGORICAL\nOCCUPATION\tCATEGORICAL\nYRS_RESIDENCE\tNUMERICAL\nY_BOX_GAMES\tNUMERICAL\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1984005033",
+      "id": "20220124-201427_676328916",
+      "dateCreated": "2018-02-06T14:57:25+0000",
+      "dateStarted": "2023-02-16T18:18:36+0000",
+      "dateFinished": "2023-02-16T18:18:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the actual settings used by the algorithm",
+      "text": "%sql\n\nSELECT SETTING_NAME, SETTING_VALUE\nFROM USER_MINING_MODEL_SETTINGS\nWHERE MODEL_NAME \u003d \u0027EM_SH_CLUS_SAMPLE_2\u0027\nORDER BY SETTING_NAME;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\nALGO_NAME\tALGO_EXPECTATION_MAXIMIZATION\nCLUS_NUM_CLUSTERS\t5\nEMCS_CLUSTER_COMPONENTS\tEMCS_CLUSTER_COMP_ENABLE\nEMCS_CLUSTER_STATISTICS\tEMCS_CLUS_STATS_ENABLE\nEMCS_CLUSTER_THRESH\t2\nEMCS_LINKAGE_FUNCTION\tEMCS_LINKAGE_SINGLE\nEMCS_LOGLIKE_IMPROVEMENT\t.001\nEMCS_MAX_NUM_ATTR_2D\t50\nEMCS_MIN_PCT_ATTR_SUPPORT\t.1\nEMCS_MODEL_SEARCH\tEMCS_MODEL_SEARCH_ENABLE\nEMCS_NUM_COMPONENTS\t20\nEMCS_NUM_DISTRIBUTION\tEMCS_NUM_DISTR_SYSTEM\nEMCS_NUM_EQUIWIDTH_BINS\t11\nEMCS_NUM_ITERATIONS\t20\nEMCS_NUM_PROJECTIONS\t50\nEMCS_NUM_QUANTILE_BINS\t10\nEMCS_RANDOM_SEED\t123456\nEMCS_REMOVE_COMPONENTS\tEMCS_REMOVE_COMPS_ENABLE\nODMS_DETAILS\tODMS_ENABLE\nODMS_MISSING_VALUE_TREATMENT\tODMS_MISSING_VALUE_AUTO\nODMS_SAMPLING\tODMS_SAMPLING_DISABLE\nPREP_AUTO\tON\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-331473766",
+      "id": "20220124-201427_1603743174",
+      "dateCreated": "2020-02-05T01:51:59+0000",
+      "dateStarted": "2023-02-16T18:18:36+0000",
+      "dateFinished": "2023-02-16T18:18:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the EM model detail views",
+      "text": "%sql \n\n-- Display the list of available cluster model detail views as indicated in VIEW_TYPE\n-- Cluster details are presented as separate views depending on the desired information.\n\nSELECT VIEW_NAME, VIEW_TYPE \nFROM USER_MINING_MODEL_VIEWS\nWHERE MODEL_NAME\u003d\u0027EM_SH_CLUS_SAMPLE_2\u0027\nORDER BY VIEW_NAME;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "VIEW_NAME": "string",
+                      "VIEW_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "VIEW_NAME\tVIEW_TYPE\nDM$VAEM_SH_CLUS_SAMPLE_2\tClustering Attribute Statistics\nDM$VBEM_SH_CLUS_SAMPLE_2\tAttribute Pair Kullback-Leibler Divergence\nDM$VDEM_SH_CLUS_SAMPLE_2\tClustering Description\nDM$VFEM_SH_CLUS_SAMPLE_2\tExpectation Maximization Bernoulli parameters\nDM$VGEM_SH_CLUS_SAMPLE_2\tGlobal Name-Value Pairs\nDM$VHEM_SH_CLUS_SAMPLE_2\tClustering Histograms\nDM$VIEM_SH_CLUS_SAMPLE_2\tUnsupervised Attribute Importance\nDM$VMEM_SH_CLUS_SAMPLE_2\tExpectation Maximization Gaussian parameters\nDM$VNEM_SH_CLUS_SAMPLE_2\tNormalization and Missing Value Handling\nDM$VOEM_SH_CLUS_SAMPLE_2\tExpectation Maximization Components\nDM$VPEM_SH_CLUS_SAMPLE_2\tExpectation Maximization Projections\nDM$VREM_SH_CLUS_SAMPLE_2\tClustering Rules\nDM$VSEM_SH_CLUS_SAMPLE_2\tComputed Settings\nDM$VWEM_SH_CLUS_SAMPLE_2\tModel Build Alerts\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-332128449",
+      "id": "20220124-201427_373510598",
+      "dateCreated": "2018-02-06T14:59:00+0000",
+      "dateStarted": "2023-02-16T18:18:36+0000",
+      "dateFinished": "2023-02-16T18:18:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show Cluster details",
+      "text": "%sql\n\n-- For each cluster_id, this DM$VD* view for cluster details provides the number of records \n--   in the cluster, the parent cluster id, the level in the hierarchy. \n\nSELECT CLUSTER_ID, RECORD_COUNT, PARENT, TREE_LEVEL\nFROM   DM$VDEM_SH_CLUS_SAMPLE_2\nORDER BY CLUSTER_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 324.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CLUSTER_ID": "string",
+                      "RECORD_COUNT": "string",
+                      "PARENT": "string",
+                      "TREE_LEVEL": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUSTER_ID\tRECORD_COUNT\tPARENT\tTREE_LEVEL\n1\t4500\t\t1\n2\t4310\t1\t2\n3\t190\t1\t2\n4\t2725\t2\t3\n5\t1585\t2\t3\n6\t1322\t4\t4\n7\t1403\t4\t4\n8\t1170\t7\t5\n9\t233\t7\t5\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-12542438",
+      "id": "20220124-201427_2038725730",
+      "dateCreated": "2019-07-18T18:13:35+0000",
+      "dateStarted": "2023-02-16T18:18:36+0000",
+      "dateFinished": "2023-02-16T18:18:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show leaf clusters IDs",
+      "text": "%sql\n\n-- Show leaf IDs to know for which clusters to show detail\n\nSELECT CLUSTER_ID\nFROM   DM$VDEM_SH_CLUS_SAMPLE_2\nWHERE  LEFT_CHILD_ID IS NULL AND RIGHT_CHILD_ID IS NULL\nORDER BY CLUSTER_ID\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 268.133,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CLUSTER_ID": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUSTER_ID\n3\n5\n6\n8\n9\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1086351759",
+      "id": "20220124-201427_783468499",
+      "dateCreated": "2019-08-07T21:18:22+0000",
+      "dateStarted": "2023-02-16T18:18:37+0000",
+      "dateFinished": "2023-02-16T18:18:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show Cluster details for cluster 9",
+      "text": "%sql\n\n-- For cluster_id 9, this output lists all the attributes statistics that constitute the centroid, with the mean and variance (for numericals) \n-- or mode (for categoricals).\n\nSELECT CLUSTER_ID, ATTRIBUTE_NAME, ATTRIBUTE_SUBNAME, MEAN, VARIANCE, MODE_VALUE\nFROM  DM$VAEM_SH_CLUS_SAMPLE_2\nWHERE CLUSTER_ID \u003d 9\nORDER BY ATTRIBUTE_NAME, ATTRIBUTE_SUBNAME;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 306.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CLUSTER_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_SUBNAME": "string",
+                      "MEAN": "string",
+                      "VARIANCE": "string",
+                      "MODE_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUSTER_ID\tATTRIBUTE_NAME\tATTRIBUTE_SUBNAME\tMEAN\tVARIANCE\tMODE_VALUE\n9\tAFFINITY_CARD\t\t0.16738197424892703\t0.13996596122539595\t\n9\tCUST_CREDIT_LIMIT\t\t8291.845493562234\t1.6218338389817964E7\t\n9\tCUST_GENDER\t\t\t\tM\n9\tCUST_INCOME_LEVEL\t\t\t\tJ: 190,000 - 249,999\n9\tCUST_MARITAL_STATUS\t\t\t\tMarried\n9\tCUST_YEAR_OF_BIRTH\t\t1976.5064377682404\t4.940691135119124\t\n9\tEDUCATION\t\t\t\tHS-grad\n9\tHOUSEHOLD_SIZE\t\t\t\t3\n9\tOCCUPATION\t\t\t\tCrafts\n9\tYRS_RESIDENCE\t\t2.9871244635193146\t0.6593162646144737\t\n9\tY_BOX_GAMES\t\t1.0\t0.0\t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1887794876",
+      "id": "20220124-201427_1219311326",
+      "dateCreated": "2019-07-18T18:16:20+0000",
+      "dateStarted": "2023-02-16T18:18:37+0000",
+      "dateFinished": "2023-02-16T18:18:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show histogram for attribute YRS_RESIDENCE of cluster 6",
+      "text": "%sql\n\n-- Use the DM$VH view for cluster histogram data. \n-- Click the bar plot icon and expand settings. Drag BIN_ID to Keys and COUNT to Values.\n\nSELECT CLUSTER_ID, ATTRIBUTE_NAME, ATTRIBUTE_SUBNAME,\n       BIN_ID, LOWER_BIN_BOUNDARY, UPPER_BIN_BOUNDARY, ATTRIBUTE_VALUE, COUNT \nFROM DM$VHEM_SH_CLUS_SAMPLE_2\nWHERE CLUSTER_ID \u003d 6 AND ATTRIBUTE_NAME \u003d \u0027YRS_RESIDENCE\u0027\nORDER BY BIN_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "BIN_ID",
+                  "index": 3.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "COUNT",
+                  "index": 7.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUSTER_ID\tATTRIBUTE_NAME\tATTRIBUTE_SUBNAME\tBIN_ID\tLOWER_BIN_BOUNDARY\tUPPER_BIN_BOUNDARY\tATTRIBUTE_VALUE\tCOUNT\n6\tYRS_RESIDENCE\t\t1\t0.0\t1.0\t\t17\n6\tYRS_RESIDENCE\t\t2\t1.0\t2.0\t\t71\n6\tYRS_RESIDENCE\t\t3\t2.0\t3.0\t\t235\n6\tYRS_RESIDENCE\t\t4\t3.0\t4.0\t\t383\n6\tYRS_RESIDENCE\t\t5\t4.0\t5.0\t\t308\n6\tYRS_RESIDENCE\t\t6\t5.0\t6.0\t\t176\n6\tYRS_RESIDENCE\t\t7\t6.0\t7.0\t\t72\n6\tYRS_RESIDENCE\t\t8\t7.0\t8.0\t\t30\n6\tYRS_RESIDENCE\t\t9\t8.0\t14.0\t\t30\n6\tYRS_RESIDENCE\t\t10\t\t\t\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_230534527",
+      "id": "20220124-201427_1147966316",
+      "dateCreated": "2019-07-18T18:39:21+0000",
+      "dateStarted": "2023-02-16T18:18:38+0000",
+      "dateFinished": "2023-02-16T18:18:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show histogram for attribute YRS_RESIDENCE of cluster 9",
+      "text": "%sql\n\n-- Use the DM$VH view for cluster histogram data. \n-- Click the bar plot icon and expand settings. Drag BIN_ID to Keys and COUNT to Values.\n\nSELECT CLUSTER_ID, ATTRIBUTE_NAME, ATTRIBUTE_SUBNAME,\n       BIN_ID, LOWER_BIN_BOUNDARY, UPPER_BIN_BOUNDARY, ATTRIBUTE_VALUE, COUNT \nFROM DM$VHEM_SH_CLUS_SAMPLE_2\nWHERE CLUSTER_ID \u003d 9 AND ATTRIBUTE_NAME \u003d \u0027YRS_RESIDENCE\u0027\nORDER BY BIN_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CLUSTER_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_SUBNAME": "string",
+                      "BIN_ID": "string",
+                      "LOWER_BIN_BOUNDARY": "string",
+                      "UPPER_BIN_BOUNDARY": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "COUNT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "BIN_ID",
+                  "index": 3.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "COUNT",
+                  "index": 7.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUSTER_ID\tATTRIBUTE_NAME\tATTRIBUTE_SUBNAME\tBIN_ID\tLOWER_BIN_BOUNDARY\tUPPER_BIN_BOUNDARY\tATTRIBUTE_VALUE\tCOUNT\n9\tYRS_RESIDENCE\t\t1\t0.0\t1.0\t\t7\n9\tYRS_RESIDENCE\t\t2\t1.0\t2.0\t\t41\n9\tYRS_RESIDENCE\t\t3\t2.0\t3.0\t\t145\n9\tYRS_RESIDENCE\t\t4\t3.0\t4.0\t\t32\n9\tYRS_RESIDENCE\t\t5\t4.0\t5.0\t\t4\n9\tYRS_RESIDENCE\t\t6\t5.0\t6.0\t\t4\n9\tYRS_RESIDENCE\t\t7\t6.0\t7.0\t\t0\n9\tYRS_RESIDENCE\t\t8\t7.0\t8.0\t\t0\n9\tYRS_RESIDENCE\t\t9\t8.0\t14.0\t\t0\n9\tYRS_RESIDENCE\t\t10\t\t\t\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1704846586",
+      "id": "20220124-201427_508661999",
+      "dateCreated": "2020-02-05T01:18:12+0000",
+      "dateStarted": "2023-02-16T18:18:38+0000",
+      "dateFinished": "2023-02-16T18:18:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View bin boundaries for YRS_RESIDENCE",
+      "text": "%sql\n\nSELECT CLUSTER_ID, ATTRIBUTE_NAME, \n       BIN_ID, LOWER_BIN_BOUNDARY, UPPER_BIN_BOUNDARY, COUNT \nFROM DM$VHEM_SH_CLUS_SAMPLE_2\nWHERE ATTRIBUTE_NAME \u003d \u0027YRS_RESIDENCE\u0027\nORDER BY CLUSTER_ID DESC, BIN_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CLUSTER_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "BIN_ID": "string",
+                      "LOWER_BIN_BOUNDARY": "string",
+                      "UPPER_BIN_BOUNDARY": "string",
+                      "COUNT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUSTER_ID\tATTRIBUTE_NAME\tBIN_ID\tLOWER_BIN_BOUNDARY\tUPPER_BIN_BOUNDARY\tCOUNT\n9\tYRS_RESIDENCE\t1\t0.0\t1.0\t7\n9\tYRS_RESIDENCE\t2\t1.0\t2.0\t41\n9\tYRS_RESIDENCE\t3\t2.0\t3.0\t145\n9\tYRS_RESIDENCE\t4\t3.0\t4.0\t32\n9\tYRS_RESIDENCE\t5\t4.0\t5.0\t4\n9\tYRS_RESIDENCE\t6\t5.0\t6.0\t4\n9\tYRS_RESIDENCE\t7\t6.0\t7.0\t0\n9\tYRS_RESIDENCE\t8\t7.0\t8.0\t0\n9\tYRS_RESIDENCE\t9\t8.0\t14.0\t0\n9\tYRS_RESIDENCE\t10\t\t\t0\n8\tYRS_RESIDENCE\t1\t0.0\t1.0\t282\n8\tYRS_RESIDENCE\t2\t1.0\t2.0\t468\n8\tYRS_RESIDENCE\t3\t2.0\t3.0\t363\n8\tYRS_RESIDENCE\t4\t3.0\t4.0\t46\n8\tYRS_RESIDENCE\t5\t4.0\t5.0\t10\n8\tYRS_RESIDENCE\t6\t5.0\t6.0\t1\n8\tYRS_RESIDENCE\t7\t6.0\t7.0\t0\n8\tYRS_RESIDENCE\t8\t7.0\t8.0\t0\n8\tYRS_RESIDENCE\t9\t8.0\t14.0\t0\n8\tYRS_RESIDENCE\t10\t\t\t0\n7\tYRS_RESIDENCE\t1\t0.0\t1.0\t289\n7\tYRS_RESIDENCE\t2\t1.0\t2.0\t509\n7\tYRS_RESIDENCE\t3\t2.0\t3.0\t508\n7\tYRS_RESIDENCE\t4\t3.0\t4.0\t78\n7\tYRS_RESIDENCE\t5\t4.0\t5.0\t14\n7\tYRS_RESIDENCE\t6\t5.0\t6.0\t5\n7\tYRS_RESIDENCE\t7\t6.0\t7.0\t0\n7\tYRS_RESIDENCE\t8\t7.0\t8.0\t0\n7\tYRS_RESIDENCE\t9\t8.0\t14.0\t0\n7\tYRS_RESIDENCE\t10\t\t\t0\n6\tYRS_RESIDENCE\t1\t0.0\t1.0\t17\n6\tYRS_RESIDENCE\t2\t1.0\t2.0\t71\n6\tYRS_RESIDENCE\t3\t2.0\t3.0\t235\n6\tYRS_RESIDENCE\t4\t3.0\t4.0\t383\n6\tYRS_RESIDENCE\t5\t4.0\t5.0\t308\n6\tYRS_RESIDENCE\t6\t5.0\t6.0\t176\n6\tYRS_RESIDENCE\t7\t6.0\t7.0\t72\n6\tYRS_RESIDENCE\t8\t7.0\t8.0\t30\n6\tYRS_RESIDENCE\t9\t8.0\t14.0\t30\n6\tYRS_RESIDENCE\t10\t\t\t0\n5\tYRS_RESIDENCE\t1\t0.0\t1.0\t11\n5\tYRS_RESIDENCE\t2\t1.0\t2.0\t28\n5\tYRS_RESIDENCE\t3\t2.0\t3.0\t170\n5\tYRS_RESIDENCE\t4\t3.0\t4.0\t418\n5\tYRS_RESIDENCE\t5\t4.0\t5.0\t396\n5\tYRS_RESIDENCE\t6\t5.0\t6.0\t284\n5\tYRS_RESIDENCE\t7\t6.0\t7.0\t151\n5\tYRS_RESIDENCE\t8\t7.0\t8.0\t67\n5\tYRS_RESIDENCE\t9\t8.0\t14.0\t60\n5\tYRS_RESIDENCE\t10\t\t\t0\n4\tYRS_RESIDENCE\t1\t0.0\t1.0\t306\n4\tYRS_RESIDENCE\t2\t1.0\t2.0\t580\n4\tYRS_RESIDENCE\t3\t2.0\t3.0\t743\n4\tYRS_RESIDENCE\t4\t3.0\t4.0\t461\n4\tYRS_RESIDENCE\t5\t4.0\t5.0\t322\n4\tYRS_RESIDENCE\t6\t5.0\t6.0\t181\n4\tYRS_RESIDENCE\t7\t6.0\t7.0\t72\n4\tYRS_RESIDENCE\t8\t7.0\t8.0\t30\n4\tYRS_RESIDENCE\t9\t8.0\t14.0\t30\n4\tYRS_RESIDENCE\t10\t\t\t0\n3\tYRS_RESIDENCE\t1\t0.0\t1.0\t7\n3\tYRS_RESIDENCE\t2\t1.0\t2.0\t17\n3\tYRS_RESIDENCE\t3\t2.0\t3.0\t48\n3\tYRS_RESIDENCE\t4\t3.0\t4.0\t58\n3\tYRS_RESIDENCE\t5\t4.0\t5.0\t39\n3\tYRS_RESIDENCE\t6\t5.0\t6.0\t8\n3\tYRS_RESIDENCE\t7\t6.0\t7.0\t8\n3\tYRS_RESIDENCE\t8\t7.0\t8.0\t4\n3\tYRS_RESIDENCE\t9\t8.0\t14.0\t1\n3\tYRS_RESIDENCE\t10\t\t\t0\n2\tYRS_RESIDENCE\t1\t0.0\t1.0\t317\n2\tYRS_RESIDENCE\t2\t1.0\t2.0\t608\n2\tYRS_RESIDENCE\t3\t2.0\t3.0\t913\n2\tYRS_RESIDENCE\t4\t3.0\t4.0\t879\n2\tYRS_RESIDENCE\t5\t4.0\t5.0\t718\n2\tYRS_RESIDENCE\t6\t5.0\t6.0\t465\n2\tYRS_RESIDENCE\t7\t6.0\t7.0\t223\n2\tYRS_RESIDENCE\t8\t7.0\t8.0\t97\n2\tYRS_RESIDENCE\t9\t8.0\t14.0\t90\n2\tYRS_RESIDENCE\t10\t\t\t0\n1\tYRS_RESIDENCE\t1\t0.0\t1.0\t324\n1\tYRS_RESIDENCE\t2\t1.0\t2.0\t625\n1\tYRS_RESIDENCE\t3\t2.0\t3.0\t961\n1\tYRS_RESIDENCE\t4\t3.0\t4.0\t937\n1\tYRS_RESIDENCE\t5\t4.0\t5.0\t757\n1\tYRS_RESIDENCE\t6\t5.0\t6.0\t473\n1\tYRS_RESIDENCE\t7\t6.0\t7.0\t231\n1\tYRS_RESIDENCE\t8\t7.0\t8.0\t101\n1\tYRS_RESIDENCE\t9\t8.0\t14.0\t91\n1\tYRS_RESIDENCE\t10\t\t\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-276362160",
+      "id": "20220124-201427_652558505",
+      "dateCreated": "2020-06-25T22:46:55+0000",
+      "dateStarted": "2023-02-16T18:18:38+0000",
+      "dateFinished": "2023-02-16T18:18:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\nIn the following example, the view shows attribute level details for the rule associated with each cluster id. \nFor an attribute, support indicates the number of records that fall within the attribute range specified in the rule antecedent where the given attribute is not null. \nConfidence is a number between 0 and 1 that indicates how relevant this attribute is in distinguishing the records in the cluster from all the records in the whole data.\nThe larger the number, the more relevant the attribute.\n \nThe query below reverse-transforms the data to its original values, since the data used for building the model was normalized.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eIn the following example, the view shows attribute level details for the rule associated with each cluster id.\n\u003cbr  /\u003eFor an attribute, support indicates the number of records that fall within the attribute range specified in the rule antecedent where the given attribute is not null.\n\u003cbr  /\u003eConfidence is a number between 0 and 1 that indicates how relevant this attribute is in distinguishing the records in the cluster from all the records in the whole data.\n\u003cbr  /\u003eThe larger the number, the more relevant the attribute.\u003c/p\u003e\n\u003cp\u003eThe query below reverse-transforms the data to its original values, since the data used for building the model was normalized.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_1831195619",
+      "id": "20220124-201427_132094317",
+      "dateCreated": "2020-04-29T01:57:04+0000",
+      "dateStarted": "2023-02-16T18:18:38+0000",
+      "dateFinished": "2023-02-16T18:18:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display rule details for leaf clusters",
+      "text": "%sql\n\nSELECT CLUSTER_ID, ATTRIBUTE_NAME, ATTRIBUTE_SUBNAME, OPERATOR,\n       NUMERIC_VALUE, ATTRIBUTE_VALUE, SUPPORT, ROUND(CONFIDENCE,3) CONFIDENCE\nFROM DM$VREM_SH_CLUS_SAMPLE_2\nWHERE cluster_id IN (SELECT cluster_id\n                     FROM DM$VDEM_SH_CLUS_SAMPLE_2\n                     WHERE LEFT_CHILD_ID is NULL and RIGHT_CHILD_ID is NULL)\nORDER BY CLUSTER_ID, ATTRIBUTE_NAME, ATTRIBUTE_SUBNAME, OPERATOR, NUMERIC_VALUE, ATTRIBUTE_VALUE;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CLUSTER_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_SUBNAME": "string",
+                      "OPERATOR": "string",
+                      "NUMERIC_VALUE": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "SUPPORT": "string",
+                      "CONFIDENCE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUSTER_ID\tATTRIBUTE_NAME\tATTRIBUTE_SUBNAME\tOPERATOR\tNUMERIC_VALUE\tATTRIBUTE_VALUE\tSUPPORT\tCONFIDENCE\n3\tAFFINITY_CARD\t\t\u003c\u003d\t1.0\t\t190\t0.079\n3\tAFFINITY_CARD\t\t\u003e\u003d\t0.0\t\t190\t0.079\n3\tCUST_CREDIT_LIMIT\t\t\u003c\u003d\t15000.0\t\t190\t0.001\n3\tCUST_CREDIT_LIMIT\t\t\u003e\u003d\t1500.0\t\t190\t0.001\n3\tCUST_GENDER\t\t\u003d\t\tF\t190\t0.457\n3\tCUST_INCOME_LEVEL\t\tIN\t\tE: 90,000 - 109,999\t173\t0.006\n3\tCUST_INCOME_LEVEL\t\tIN\t\tF: 110,000 - 129,999\t173\t0.006\n3\tCUST_INCOME_LEVEL\t\tIN\t\tG: 130,000 - 149,999\t173\t0.006\n3\tCUST_INCOME_LEVEL\t\tIN\t\tH: 150,000 - 169,999\t173\t0.006\n3\tCUST_INCOME_LEVEL\t\tIN\t\tI: 170,000 - 189,999\t173\t0.006\n3\tCUST_INCOME_LEVEL\t\tIN\t\tJ: 190,000 - 249,999\t173\t0.006\n3\tCUST_INCOME_LEVEL\t\tIN\t\tK: 250,000 - 299,999\t173\t0.006\n3\tCUST_INCOME_LEVEL\t\tIN\t\tL: 300,000 and above\t173\t0.006\n3\tCUST_MARITAL_STATUS\t\t\u003d\t\tMarried\t188\t0.125\n3\tCUST_YEAR_OF_BIRTH\t\t\u003c\u003d\t1978.7\t\t181\t0.045\n3\tCUST_YEAR_OF_BIRTH\t\t\u003e\t1942.2\t\t181\t0.045\n3\tEDUCATION\t\tIN\t\t\u003c Bach.\t167\t0.004\n3\tEDUCATION\t\tIN\t\tAssoc-A\t167\t0.004\n3\tEDUCATION\t\tIN\t\tAssoc-V\t167\t0.004\n3\tEDUCATION\t\tIN\t\tBach.\t167\t0.004\n3\tEDUCATION\t\tIN\t\tHS-grad\t167\t0.004\n3\tEDUCATION\t\tIN\t\tMasters\t167\t0.004\n3\tHOUSEHOLD_SIZE\t\t\u003d\t\t4-5\t188\t0.321\n3\tOCCUPATION\t\tIN\t\t?\t174\t0.019\n3\tOCCUPATION\t\tIN\t\tCleric.\t174\t0.019\n3\tOCCUPATION\t\tIN\t\tExec.\t174\t0.019\n3\tOCCUPATION\t\tIN\t\tMachine\t174\t0.019\n3\tOCCUPATION\t\tIN\t\tOther\t174\t0.019\n3\tOCCUPATION\t\tIN\t\tProf.\t174\t0.019\n3\tOCCUPATION\t\tIN\t\tSales\t174\t0.019\n3\tOCCUPATION\t\tIN\t\tTechSup\t174\t0.019\n3\tYRS_RESIDENCE\t\t\u003c\u003d\t5.0\t\t162\t0.01\n3\tYRS_RESIDENCE\t\t\u003e\t1.0\t\t162\t0.01\n3\tY_BOX_GAMES\t\t\u003c\u003d\t0.0\t\t186\t0.129\n3\tY_BOX_GAMES\t\t\u003e\u003d\t0.0\t\t186\t0.129\n5\tAFFINITY_CARD\t\t\u003c\u003d\t1.0\t\t1585\t0.051\n5\tAFFINITY_CARD\t\t\u003e\u003d\t0.0\t\t1585\t0.051\n5\tCUST_CREDIT_LIMIT\t\t\u003c\u003d\t15000.0\t\t1585\t0\n5\tCUST_CREDIT_LIMIT\t\t\u003e\u003d\t1500.0\t\t1585\t0\n5\tCUST_GENDER\t\t\u003d\t\tM\t1585\t0.192\n5\tCUST_INCOME_LEVEL\t\tIN\t\tB: 30,000 - 49,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tE: 90,000 - 109,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tF: 110,000 - 129,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tG: 130,000 - 149,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tH: 150,000 - 169,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tI: 170,000 - 189,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tJ: 190,000 - 249,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tK: 250,000 - 299,999\t1432\t0.001\n5\tCUST_INCOME_LEVEL\t\tIN\t\tL: 300,000 and above\t1432\t0.001\n5\tCUST_MARITAL_STATUS\t\t\u003d\t\tMarried\t1583\t0.123\n5\tCUST_YEAR_OF_BIRTH\t\t\u003c\u003d\t1978.7\t\t1522\t0.041\n5\tCUST_YEAR_OF_BIRTH\t\t\u003e\t1934.9\t\t1522\t0.041\n5\tEDUCATION\t\tIN\t\t\u003c Bach.\t1405\t0.003\n5\tEDUCATION\t\tIN\t\tAssoc-A\t1405\t0.003\n5\tEDUCATION\t\tIN\t\tAssoc-V\t1405\t0.003\n5\tEDUCATION\t\tIN\t\tBach.\t1405\t0.003\n5\tEDUCATION\t\tIN\t\tHS-grad\t1405\t0.003\n5\tEDUCATION\t\tIN\t\tMasters\t1405\t0.003\n5\tEDUCATION\t\tIN\t\tProfsc\t1405\t0.003\n5\tHOUSEHOLD_SIZE\t\t\u003d\t\t3\t1573\t0.147\n5\tOCCUPATION\t\tIN\t\t?\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tCleric.\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tCrafts\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tExec.\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tFarming\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tMachine\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tOther\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tProf.\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tSales\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tTechSup\t1514\t0.009\n5\tOCCUPATION\t\tIN\t\tTransp.\t1514\t0.009\n5\tYRS_RESIDENCE\t\t\u003c\u003d\t7.0\t\t1419\t0.031\n5\tYRS_RESIDENCE\t\t\u003e\t2.0\t\t1419\t0.031\n5\tY_BOX_GAMES\t\t\u003c\u003d\t0.0\t\t1585\t0.177\n5\tY_BOX_GAMES\t\t\u003e\u003d\t0.0\t\t1585\t0.177\n6\tAFFINITY_CARD\t\t\u003c\u003d\t0.0\t\t1195\t0.027\n6\tAFFINITY_CARD\t\t\u003e\u003d\t0.0\t\t1195\t0.027\n6\tCUST_CREDIT_LIMIT\t\t\u003c\u003d\t15000.0\t\t1322\t0\n6\tCUST_CREDIT_LIMIT\t\t\u003e\u003d\t1500.0\t\t1322\t0\n6\tCUST_GENDER\t\tIN\t\tF\t1322\t0.039\n6\tCUST_GENDER\t\tIN\t\tM\t1322\t0.039\n6\tCUST_INCOME_LEVEL\t\tIN\t\tB: 30,000 - 49,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tE: 90,000 - 109,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tF: 110,000 - 129,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tG: 130,000 - 149,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tH: 150,000 - 169,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tI: 170,000 - 189,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tJ: 190,000 - 249,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tK: 250,000 - 299,999\t1201\t0\n6\tCUST_INCOME_LEVEL\t\tIN\t\tL: 300,000 and above\t1201\t0\n6\tCUST_MARITAL_STATUS\t\tIN\t\tDivorc.\t1255\t0.11\n6\tCUST_MARITAL_STATUS\t\tIN\t\tNeverM\t1255\t0.11\n6\tCUST_MARITAL_STATUS\t\tIN\t\tSepar.\t1255\t0.11\n6\tCUST_MARITAL_STATUS\t\tIN\t\tWidowed\t1255\t0.11\n6\tCUST_YEAR_OF_BIRTH\t\t\u003c\u003d\t1978.7\t\t1270\t0.038\n6\tCUST_YEAR_OF_BIRTH\t\t\u003e\t1934.9\t\t1270\t0.038\n6\tEDUCATION\t\tIN\t\t\u003c Bach.\t1143\t0.001\n6\tEDUCATION\t\tIN\t\tAssoc-A\t1143\t0.001\n6\tEDUCATION\t\tIN\t\tAssoc-V\t1143\t0.001\n6\tEDUCATION\t\tIN\t\tBach.\t1143\t0.001\n6\tEDUCATION\t\tIN\t\tHS-grad\t1143\t0.001\n6\tEDUCATION\t\tIN\t\tMasters\t1143\t0.001\n6\tHOUSEHOLD_SIZE\t\tIN\t\t2\t1169\t0.12\n6\tHOUSEHOLD_SIZE\t\tIN\t\t9+\t1169\t0.12\n6\tOCCUPATION\t\tIN\t\t?\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tCleric.\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tCrafts\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tExec.\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tHandler\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tMachine\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tOther\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tProf.\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tSales\t1213\t0.002\n6\tOCCUPATION\t\tIN\t\tTechSup\t1213\t0.002\n6\tYRS_RESIDENCE\t\t\u003c\u003d\t6.0\t\t1102\t0.013\n6\tYRS_RESIDENCE\t\t\u003e\t2.0\t\t1102\t0.013\n6\tY_BOX_GAMES\t\t\u003c\u003d\t0.0\t\t1322\t0.177\n6\tY_BOX_GAMES\t\t\u003e\u003d\t0.0\t\t1322\t0.177\n8\tAFFINITY_CARD\t\t\u003c\u003d\t0.0\t\t1149\t0.091\n8\tAFFINITY_CARD\t\t\u003e\u003d\t0.0\t\t1149\t0.091\n8\tCUST_CREDIT_LIMIT\t\t\u003c\u003d\t15000.0\t\t1170\t0.001\n8\tCUST_CREDIT_LIMIT\t\t\u003e\u003d\t1500.0\t\t1170\t0.001\n8\tCUST_GENDER\t\tIN\t\tF\t1170\t0.015\n8\tCUST_GENDER\t\tIN\t\tM\t1170\t0.015\n8\tCUST_INCOME_LEVEL\t\tIN\t\tB: 30,000 - 49,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tE: 90,000 - 109,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tF: 110,000 - 129,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tG: 130,000 - 149,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tH: 150,000 - 169,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tI: 170,000 - 189,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tJ: 190,000 - 249,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tK: 250,000 - 299,999\t1084\t0.002\n8\tCUST_INCOME_LEVEL\t\tIN\t\tL: 300,000 and above\t1084\t0.002\n8\tCUST_MARITAL_STATUS\t\t\u003d\t\tNeverM\t1041\t0.104\n8\tCUST_YEAR_OF_BIRTH\t\t\u003c\u003d\t1986.0\t\t1170\t0.135\n8\tCUST_YEAR_OF_BIRTH\t\t\u003e\t1971.4\t\t1170\t0.135\n8\tEDUCATION\t\tIN\t\t10th\t1050\t0.008\n8\tEDUCATION\t\tIN\t\t11th\t1050\t0.008\n8\tEDUCATION\t\tIN\t\t\u003c Bach.\t1050\t0.008\n8\tEDUCATION\t\tIN\t\tAssoc-V\t1050\t0.008\n8\tEDUCATION\t\tIN\t\tBach.\t1050\t0.008\n8\tEDUCATION\t\tIN\t\tHS-grad\t1050\t0.008\n8\tHOUSEHOLD_SIZE\t\tIN\t\t1\t1065\t0.11\n8\tHOUSEHOLD_SIZE\t\tIN\t\t2\t1065\t0.11\n8\tHOUSEHOLD_SIZE\t\tIN\t\t9+\t1065\t0.11\n8\tOCCUPATION\t\tIN\t\t?\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tCleric.\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tCrafts\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tExec.\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tHandler\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tMachine\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tOther\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tProf.\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tSales\t1103\t0.011\n8\tOCCUPATION\t\tIN\t\tTechSup\t1103\t0.011\n8\tYRS_RESIDENCE\t\t\u003c\u003d\t3.0\t\t1113\t0.093\n8\tYRS_RESIDENCE\t\t\u003e\u003d\t0.0\t\t1113\t0.093\n8\tY_BOX_GAMES\t\t\u003c\u003d\t1.0\t\t1169\t0.476\n8\tY_BOX_GAMES\t\t\u003e\t0.0\t\t1169\t0.476\n9\tAFFINITY_CARD\t\t\u003c\u003d\t0.0\t\t194\t0.006\n9\tAFFINITY_CARD\t\t\u003e\u003d\t0.0\t\t194\t0.006\n9\tCUST_CREDIT_LIMIT\t\t\u003c\u003d\t15000.0\t\t233\t0.004\n9\tCUST_CREDIT_LIMIT\t\t\u003e\u003d\t1500.0\t\t233\t0.004\n9\tCUST_GENDER\t\t\u003d\t\tM\t220\t0.098\n9\tCUST_INCOME_LEVEL\t\tIN\t\tB: 30,000 - 49,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tC: 50,000 - 69,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tE: 90,000 - 109,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tF: 110,000 - 129,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tG: 130,000 - 149,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tH: 150,000 - 169,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tI: 170,000 - 189,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tJ: 190,000 - 249,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tK: 250,000 - 299,999\t225\t0.005\n9\tCUST_INCOME_LEVEL\t\tIN\t\tL: 300,000 and above\t225\t0.005\n9\tCUST_MARITAL_STATUS\t\t\u003d\t\tMarried\t232\t0.123\n9\tCUST_YEAR_OF_BIRTH\t\t\u003c\u003d\t1986.0\t\t233\t0.145\n9\tCUST_YEAR_OF_BIRTH\t\t\u003e\t1971.4\t\t233\t0.145\n9\tEDUCATION\t\tIN\t\t11th\t201\t0.006\n9\tEDUCATION\t\tIN\t\t\u003c Bach.\t201\t0.006\n9\tEDUCATION\t\tIN\t\tAssoc-V\t201\t0.006\n9\tEDUCATION\t\tIN\t\tBach.\t201\t0.006\n9\tEDUCATION\t\tIN\t\tHS-grad\t201\t0.006\n9\tHOUSEHOLD_SIZE\t\t\u003d\t\t3\t214\t0.12\n9\tOCCUPATION\t\tIN\t\tCleric.\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tCrafts\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tExec.\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tHandler\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tMachine\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tProf.\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tProtec.\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tSales\t211\t0.016\n9\tOCCUPATION\t\tIN\t\tTransp.\t211\t0.016\n9\tYRS_RESIDENCE\t\t\u003c\u003d\t4.0\t\t218\t0.067\n9\tYRS_RESIDENCE\t\t\u003e\t1.0\t\t218\t0.067\n9\tY_BOX_GAMES\t\t\u003c\u003d\t1.0\t\t233\t0.48\n9\tY_BOX_GAMES\t\t\u003e\t0.0\t\t233\t0.48\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-950131600",
+      "id": "20220124-201427_654875913",
+      "dateCreated": "2019-07-18T19:01:50+0000",
+      "dateStarted": "2023-02-16T18:18:39+0000",
+      "dateFinished": "2023-02-16T18:18:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Apply model to CUSTOMERS360_V and display customer count per cluster",
+      "text": "%sql\n\n-- For a descriptive machine learning technique like Clustering, \"scoring\" involves assigning each record to a cluster, with a certain probability. \n-- However, one can also obtain the probability of a record belonging to each cluster.\n-- Hover over bars in the bar chart to view the size of each cluster. \n\nSELECT CLUSTER_ID(EM_SH_CLUS_SAMPLE_2 USING *) AS CLUS, COUNT(*) AS CNT \nFROM   CUSTOMERS360_V\nGROUP BY CLUSTER_ID(EM_SH_CLUS_SAMPLE_2 USING *)\nORDER BY CNT DESC;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "CLUS",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "CNT",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CLUS\tCNT\n5\t1585\n6\t1322\n8\t1170\n9\t233\n3\t190\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1094457462",
+      "id": "20220124-201427_894216175",
+      "dateCreated": "2019-07-18T19:03:42+0000",
+      "dateStarted": "2023-02-16T18:18:39+0000",
+      "dateFinished": "2023-02-16T18:18:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "List ten customers most likely in cluster 6",
+      "text": "%sql\n\nSELECT * \nFROM (SELECT CUST_ID, \n            ROUND(CLUSTER_PROBABILITY(EM_SH_CLUS_SAMPLE_2, 6 USING *),4) PROB\n     FROM CUSTOMERS360_V\n     ORDER BY PROB DESC)\nWHERE ROWNUM \u003c\u003d 10\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/text",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 201.966,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PROB": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPROB\n101850\t1\n101152\t1\n103638\t1\n103740\t1\n100375\t1\n103412\t1\n104237\t1\n100199\t1\n102412\t1\n102636\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-111449572",
+      "id": "20220124-201427_966810087",
+      "dateCreated": "2019-08-07T21:37:33+0000",
+      "dateStarted": "2023-02-16T18:18:39+0000",
+      "dateFinished": "2023-02-16T18:18:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "List three most relevant attributes for specific customers and likely cluster assignments",
+      "text": "%sql\n\n-- For customer id, pick among 101362, 102087 or 100456. These represent customers \n--    with \u003e 20% likelihood of assignment to their cluster.\n-- HINT: Pick the cust_id to see the most likely cluster_id assignment and the \n--    prediction_details for the top 5 attributes that help to assign that customer to that cluster.\n\nSELECT CUST_ID,\n       CLUSTER_ID,\n       ROUND(PROB*100,2) PROB_PCT,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),\u0027rank\u003d\"1\"/\u003e\u0027) FIRST_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),\u0027rank\u003d\"2\"/\u003e\u0027) SECOND_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),\u0027rank\u003d\"3\"/\u003e\u0027) THIRD_ATTRIBUTE\nFROM (SELECT CUST_ID, S.CLUSTER_ID, PROBABILITY PROB, \n             CLUSTER_DETAILS(EM_SH_CLUS_SAMPLE_2 USING T.*) DETAIL\n      FROM (SELECT V.*, CLUSTER_SET(EM_SH_CLUS_SAMPLE_2, NULL, 0.2 USING *) PSET\n            FROM CUSTOMERS360_V V\n            WHERE cust_id \u003d ${CUST_ID \u003d\u0027101362\u0027,\u0027101362\u0027|\u0027102087\u0027| \u0027100456\u0027}) T,\n                  TABLE(T.PSET) S\n            ORDER BY 2 DESC) OUT,\n            XMLTABLE(\u0027/Details\u0027\n                      PASSING OUT.DETAIL\n                      COLUMNS \n                      \"Attribute1\" XMLType PATH \u0027Attribute[1]\u0027,\n                      \"Attribute2\" XMLType PATH \u0027Attribute[2]\u0027,\n                      \"Attribute3\" XMLType PATH \u0027Attribute[3]\u0027) OUTPRED;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "runOnSelectionChange": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 172.05,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CLUSTER_ID": "string",
+                      "PROB_PCT": "string",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {
+          "s.cluster_id": "\u00275\u0027",
+          "cust_id": "\u0027100456\u0027",
+          "cluster_id": "\u00275\u0027",
+          "CUST_ID": "\u0027101362\u0027"
+        },
+        "forms": {
+          "CUST_ID": {
+            "name": "CUST_ID",
+            "displayName": "CUST_ID",
+            "defaultValue": "\u0027101362\u0027",
+            "hidden": false
+          }
+        }
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCLUSTER_ID\tPROB_PCT\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\n101362\t8\t100\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1978\" weight\u003d\"1\" \t\"Y_BOX_GAMES\" actualValue\u003d\"1\" weight\u003d\".015\" \t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1811337622",
+      "id": "20220124-201427_1112517455",
+      "dateCreated": "2019-07-18T19:06:42+0000",
+      "dateStarted": "2023-02-16T18:18:39+0000",
+      "dateFinished": "2023-02-16T18:18:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Alternative approach for building clustering model using an analytic function\nIn addition to creating a persistent model that is stored as a schema object, models can be built and scored on data dynamically using Oracle\u0027s analytic function syntax.\n\nIn the following example, we segment customers into 4 groups based on common characteristics and provide the segment assignments. Note that this query does not reference a pre-build clustering model, but rather it segments the input data on the fly.  Rerunning the same query with different input will result in a different segmentation. It also provides the main reasons (attributes) why a given customer is placed into a specific cluster.\n\nNote that the where clause has to be placed outside of the inline view so that the analytic function will build the clustering model on all the data, and not just the selected customers.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAlternative approach for building clustering model using an analytic function\u003c/h2\u003e\n\u003cp\u003eIn addition to creating a persistent model that is stored as a schema object, models can be built and scored on data dynamically using Oracle\u0027s analytic function syntax.\u003c/p\u003e\n\u003cp\u003eIn the following example, we segment customers into 4 groups based on common characteristics and provide the segment assignments. Note that this query does not reference a pre-build clustering model, but rather it segments the input data on the fly.  Rerunning the same query with different input will result in a different segmentation. It also provides the main reasons (attributes) why a given customer is placed into a specific cluster.\u003c/p\u003e\n\u003cp\u003eNote that the where clause has to be placed outside of the inline view so that the analytic function will build the clustering model on all the data, and not just the selected customers.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1891727906",
+      "id": "20220124-201427_567056090",
+      "dateCreated": "2020-02-05T01:41:20+0000",
+      "dateStarted": "2023-02-16T18:18:40+0000",
+      "dateFinished": "2023-02-16T18:18:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build and apply a transient model using analytic functions",
+      "text": "%sql\n\nSELECT CUST_ID,\n       CLUSTER_ID,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),\u0027rank\u003d\"1\"/\u003e\u0027) FIRST_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),\u0027rank\u003d\"2\"/\u003e\u0027) SECOND_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),\u0027rank\u003d\"3\"/\u003e\u0027) THIRD_ATTRIBUTE\nFROM (SELECT * \n      FROM (SELECT CUST_ID,\n                   CLUSTER_ID(INTO 4 USING CUST_GENDER, CUST_MARITAL_STATUS, CUST_YEAR_OF_BIRTH, CUST_INCOME_LEVEL, \n                                              CUST_CREDIT_LIMIT, EDUCATION, AFFINITY_CARD, HOUSEHOLD_SIZE, OCCUPATION,\n                                              YRS_RESIDENCE, Y_BOX_GAMES) OVER () CLUSTER_ID,\n                   CLUSTER_DETAILS(INTO 4 USING CUST_GENDER, CUST_MARITAL_STATUS, CUST_YEAR_OF_BIRTH, CUST_INCOME_LEVEL, \n                                              CUST_CREDIT_LIMIT, EDUCATION, AFFINITY_CARD, HOUSEHOLD_SIZE, OCCUPATION,\n                                              YRS_RESIDENCE, Y_BOX_GAMES) OVER () CLUSTER_DET\n            FROM CUSTOMERS360_V)\n            ORDER By 1) OUT,\n            XMLTABLE(\u0027/Details\u0027\n                      PASSING OUT.CLUSTER_DET\n                      COLUMNS \n                      \"Attribute1\" XMLType PATH \u0027Attribute[1]\u0027,\n                      \"Attribute2\" XMLType PATH \u0027Attribute[2]\u0027,\n                      \"Attribute3\" XMLType PATH \u0027Attribute[3]\u0027) OUTPRED\nFETCH FIRST 10 ROWS ONLY;\n                      ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CLUSTER_ID": "string",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCLUSTER_ID\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\n100004\t1\t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"15000\" weight\u003d\".079\" \t\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\".019\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".018\" \n100010\t4\t\"Y_BOX_GAMES\" actualValue\u003d\"1\" weight\u003d\".116\" \t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1975\" weight\u003d\".046\" \t\"YRS_RESIDENCE\" actualValue\u003d\"3\" weight\u003d\".028\" \n100016\t1\t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".017\" \t\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\".013\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".004\" \n100022\t2\t\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".159\" \t\"YRS_RESIDENCE\" actualValue\u003d\"5\" weight\u003d\".012\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".011\" \n100028\t3\t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"1500\" weight\u003d\".082\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".022\" \t\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\".015\" \n100034\t2\t\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".157\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".013\" \t\"OCCUPATION\" actualValue\u003d\"Prof.\" weight\u003d\".007\" \n100040\t4\t\"Y_BOX_GAMES\" actualValue\u003d\"1\" weight\u003d\".133\" \t\"YRS_RESIDENCE\" actualValue\u003d\"0\" weight\u003d\".115\" \t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1986\" weight\u003d\".102\" \n100046\t2\t\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".158\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".011\" \t\"YRS_RESIDENCE\" actualValue\u003d\"5\" weight\u003d\".011\" \n100052\t2\t\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".163\" \t\"YRS_RESIDENCE\" actualValue\u003d\"6\" weight\u003d\".022\" \t\"EDUCATION\" actualValue\u003d\"Masters\" weight\u003d\".01\" \n100058\t3\t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"3000\" weight\u003d\".063\" \t\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\".02\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".013\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-2117967537",
+      "id": "20220124-201427_1903115987",
+      "dateCreated": "2019-07-18T18:53:54+0000",
+      "dateStarted": "2023-02-16T18:18:40+0000",
+      "dateFinished": "2023-02-16T18:18:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Alternative approach to creating clustering model using a settings table\n\nThe settings table is an alternative way to specify algorithm settings to build the model. We first drop the table, create it, and then populate it with settings before building the model. \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T01:25:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAlternative approach to creating clustering model using a settings table\u003c/h2\u003e\n\u003cp\u003eThe settings table is an alternative way to specify algorithm settings to build the model. We first drop the table, create it, and then populate it with settings before building the model.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_1980344539",
+      "id": "20220124-201427_1253781112",
+      "dateCreated": "2020-02-05T01:38:35+0000",
+      "dateStarted": "2023-02-16T18:18:41+0000",
+      "dateFinished": "2023-02-16T18:18:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create and populate model settings table",
+      "text": "%script \n\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE EM_SH_SAMPLE_SETTINGS PURGE\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nCREATE TABLE EM_SH_SAMPLE_SETTINGS (SETTING_NAME  VARCHAR2(30),\n                                    SETTING_VALUE VARCHAR2(4000));\n\n-- See documentation for additional settings\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027EM_SH_CLUS_SAMPLE_3\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nBEGIN       \n   INSERT INTO EM_SH_SAMPLE_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.ALGO_NAME,               DBMS_DATA_MINING.ALGO_EXPECTATION_MAXIMIZATION);\n   INSERT INTO EM_SH_SAMPLE_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.EMCS_MODEL_SEARCH,       DBMS_DATA_MINING.EMCS_MODEL_SEARCH_ENABLE);\n   INSERT INTO EM_SH_SAMPLE_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.PREP_AUTO,               DBMS_DATA_MINING.PREP_AUTO_ON);\n   INSERT INTO EM_SH_SAMPLE_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.EMCS_CLUSTER_STATISTICS, DBMS_DATA_MINING.EMCS_CLUS_STATS_ENABLE);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable EM_SH_SAMPLE_SETTINGS created.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-671929717",
+      "id": "20220124-201427_1972494771",
+      "dateCreated": "2020-02-05T01:31:38+0000",
+      "dateStarted": "2023-02-16T18:18:41+0000",
+      "dateFinished": "2023-02-16T18:18:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View the contents of the model settings table",
+      "text": "%sql\n-- NOTE: The settings table can be reused or modified in multiple model builds. \n\nSELECT * FROM EM_SH_SAMPLE_SETTINGS;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 205.2,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\nALGO_NAME\tALGO_EXPECTATION_MAXIMIZATION\nEMCS_MODEL_SEARCH\tEMCS_MODEL_SEARCH_ENABLE\nPREP_AUTO\tON\nEMCS_CLUSTER_STATISTICS\tEMCS_CLUS_STATS_ENABLE\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_900549401",
+      "id": "20220124-201427_816763805",
+      "dateCreated": "2020-02-05T01:32:12+0000",
+      "dateStarted": "2023-02-16T18:18:42+0000",
+      "dateFinished": "2023-02-16T18:18:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop, then build the EM Clustering model",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027EM_SH_CLUS_SAMPLE_3\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\n\nBEGIN\nDBMS_DATA_MINING.CREATE_MODEL(\n    MODEL_NAME          \u003d\u003e \u0027EM_SH_CLUS_SAMPLE_3\u0027,\n    MINING_FUNCTION     \u003d\u003e DBMS_DATA_MINING.CLUSTERING,\n    DATA_TABLE_NAME     \u003d\u003e \u0027CUSTOMERS360_V\u0027,\n    CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n    SETTINGS_TABLE_NAME \u003d\u003e \u0027EM_SH_SAMPLE_SETTINGS\u0027);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 207.375,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-732923637",
+      "id": "20220124-201427_952101629",
+      "dateCreated": "2020-02-05T01:32:52+0000",
+      "dateStarted": "2023-02-16T18:18:43+0000",
+      "dateFinished": "2023-02-16T18:18:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the actual settings used by the algorithm",
+      "text": "%sql\n\nSELECT SETTING_NAME, SETTING_VALUE\nFROM   USER_MINING_MODEL_SETTINGS\nWHERE  MODEL_NAME \u003d \u0027EM_SH_CLUS_SAMPLE_3\u0027\nORDER BY SETTING_NAME;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            },
+            "helium": {}
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\nALGO_NAME\tALGO_EXPECTATION_MAXIMIZATION\nCLUS_NUM_CLUSTERS\t10\nEMCS_CLUSTER_COMPONENTS\tEMCS_CLUSTER_COMP_ENABLE\nEMCS_CLUSTER_STATISTICS\tEMCS_CLUS_STATS_ENABLE\nEMCS_CLUSTER_THRESH\t2\nEMCS_LINKAGE_FUNCTION\tEMCS_LINKAGE_SINGLE\nEMCS_LOGLIKE_IMPROVEMENT\t.001\nEMCS_MAX_NUM_ATTR_2D\t50\nEMCS_MIN_PCT_ATTR_SUPPORT\t.1\nEMCS_MODEL_SEARCH\tEMCS_MODEL_SEARCH_ENABLE\nEMCS_NUM_COMPONENTS\t20\nEMCS_NUM_DISTRIBUTION\tEMCS_NUM_DISTR_SYSTEM\nEMCS_NUM_EQUIWIDTH_BINS\t11\nEMCS_NUM_ITERATIONS\t100\nEMCS_NUM_PROJECTIONS\t50\nEMCS_RANDOM_SEED\t0\nEMCS_REMOVE_COMPONENTS\tEMCS_REMOVE_COMPS_ENABLE\nODMS_DETAILS\tODMS_ENABLE\nODMS_MISSING_VALUE_TREATMENT\tODMS_MISSING_VALUE_AUTO\nODMS_SAMPLING\tODMS_SAMPLING_DISABLE\nPREP_AUTO\tON\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_1880341846",
+      "id": "20220124-201427_736418684",
+      "dateCreated": "2018-02-06T14:32:18+0000",
+      "dateStarted": "2023-02-16T18:18:50+0000",
+      "dateFinished": "2023-02-16T18:18:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_324095133",
+      "id": "20220124-201427_1367489482",
+      "dateCreated": "2019-07-31T18:25:35+0000",
+      "dateStarted": "2023-02-16T18:18:50+0000",
+      "dateFinished": "2023-02-16T18:18:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:18:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055267546_-1393641356",
+      "id": "20220124-201427_402008156",
+      "dateCreated": "2020-06-10T20:31:44+0000",
+      "dateStarted": "2023-02-16T18:18:51+0000",
+      "dateFinished": "2023-02-16T18:18:51+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Clustering EM",
+  "id": "101080",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:OMLDEMOUSER02-101080": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

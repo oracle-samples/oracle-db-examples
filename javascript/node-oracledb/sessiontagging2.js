@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -38,48 +38,63 @@
  *   send 20 requests with a concurrency of 4:
  *     ab -n 20 -c 4 http://127.0.0.1:7000/
  *
- *   This file uses Node 8's async/await syntax but could be rewritten
- *   to use callbacks.
- *
  *   This example requires node-oracledb 3.1 or later.
  *
  *   This example uses Node 8's async/await syntax.
  *
- *   Also see sessionfixup.js and sessiontagging1.js
- *
  *****************************************************************************/
 
+const fs = require('fs');
 const http = require('http');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 const httpPort = 7000;
 
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
+
 // initSession() will be invoked internally when each brand new pooled
 // connection is first used, or when a getConnection() call requests a
-// connection tag and a connection without an identical tag is
-// returned.  Its callback function 'cb' should be invoked only when
-// all desired session state has been set.
+// connection tag and a connection without an identical tag is returned.
+// Its callback function 'callbackFn' should be invoked only when all desired
+// session state has been set.
 //
 // This implementation assumes the tag has name-value pairs like
 // "k1=v1;k2=v2" where the pairs can be used in an ALTER SESSION
-// statement.  Specifically it white lists TIME_ZONE=UTC and
-// TIME_ZONE=Australia/Melbourne.  The white list could be enhanced to
+// statement.  Specifically it allows TIME_ZONE=UTC and
+// TIME_ZONE=Australia/Melbourne.  The Allow List could be enhanced to
 // support more settings.  Another potential improvement would be to
 // identify properties in connection.tag that were not specifically
 // asked for in requestedTag.  These can be reset, as needed.
 //
 // See sessiontagging1.js for a simpler implementation.
-function initSession(connection, requestedTag, cb) {
+function initSession(connection, requestedTag, callbackFn) {
   console.log(`In initSession. requested tag: ${requestedTag}, actual tag: ${connection.tag}`);
 
   // Split the requested and actual tags into property components
   let requestedProperties = [];
   let actualProperties = [];
   if (requestedTag) {
-    requestedTag.split(";").map(y => y.split("=")).forEach(e => {if (e[0]) requestedProperties[e[0]] = e[1];});
+    requestedTag.split(";").map(y => y.split("=")).forEach(e => {
+      if (e[0]) requestedProperties[e[0]] = e[1];
+    });
   }
   if (connection.tag) {
-    connection.tag.split(";").map(y => y.split("=")).forEach(e => {if (e[0]) actualProperties[e[0]] = e[1];});
+    connection.tag.split(";").map(y => y.split("=")).forEach(e => {
+      if (e[0]) actualProperties[e[0]] = e[1];
+    });
   }
 
   // Find properties we want that are not already set, or not set
@@ -94,7 +109,7 @@ function initSession(connection, requestedTag, cb) {
     }
   }
 
-  // Check allowed values against a white list to avoid any SQL
+  // Check allowed values against an Allow List to avoid any SQL
   // injection issues.  Construct a string of valid options usable by
   // ALTER SESSION.
   let s = "";
@@ -105,12 +120,12 @@ function initSession(connection, requestedTag, cb) {
         case 'UTC':
           break;
         default:
-          cb(new Error(`Error: Invalid time zone value ${requestedProperties[k]}`));
+          callbackFn(new Error(`Error: Invalid time zone value ${requestedProperties[k]}`));
           return;
       }
-      // add white listing code to check other properties and values here
+      // add Allow Listing code to check other properties and values here
     } else {
-      cb(new Error(`Error: Invalid connection tag property ${k}`));
+      callbackFn(new Error(`Error: Invalid connection tag property ${k}`));
       return;
     }
     s += `${k}='${requestedProperties[k]}' `;
@@ -128,7 +143,7 @@ function initSession(connection, requestedTag, cb) {
         for (let k in actualProperties) {
           connection.tag += `${k}=${actualProperties[k]};`;
         }
-        cb(err);
+        callbackFn(err);
       }
     );
   } else {
@@ -136,7 +151,7 @@ function initSession(connection, requestedTag, cb) {
     // why initSession was called), but the properties that this
     // function validates are already set, so there is no need to call
     // ALTER SESSION
-    cb();
+    callbackFn();
   }
 }
 
@@ -192,7 +207,7 @@ async function handleRequest(request, response) {
     //   the desired session state be set.
     connection = await oracledb.getConnection({poolAlias: 'default', tag: sessionTagNeeded /*, matchAnyTag: true */});
     const result = await connection.execute(`SELECT TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') FROM DUAL`);
-    console.log( `getConnection() tag needed was ${sessionTagNeeded}\n  ${result.rows[0][0]}`);
+    console.log(`getConnection() tag needed was ${sessionTagNeeded}\n  ${result.rows[0][0]}`);
   } catch (err) {
     console.error(err.message);
   } finally {
@@ -213,10 +228,12 @@ async function closePoolAndExit() {
   try {
     // Get the 'default' pool from the pool cache and close it (force
     // closed after 3 seconds).
-    // If this hangs, you may need DISABLE_OOB=ON in a sqlnet.ora file
+    // If this hangs, you may need DISABLE_OOB=ON in a sqlnet.ora file.
+    // This setting should not be needed if both Oracle Client and Oracle
+    // Database are 19c (or later).
     await oracledb.getPool().close(3);
     process.exit(0);
-  } catch(err) {
+  } catch (err) {
     console.error(err.message);
     process.exit(1);
   }

@@ -1,0 +1,1419 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n## Explicit Semantic Analysis (ESA) for Text Analytics\n\nExplicit Semantic Analysis (ESA) is an unsupervised algorithm for feature extraction of explicit features based on an existing knowledge base. ESA assists in understanding the meaning of a section of text as a combination of concepts found in the text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA improves text document categorization by calculating `semantic relatedness` (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.\n\nThe Oracle Machine Learning for R function *ore.odmESA* extracts text-based features from a corpus of documents and performs document similarity comparisons. All processing occurs inside Oracle Autonomous Database.\n\nIn this notebook, we cover the basic usage of ESA, where we extract topics from the comments provided. \n\n - Create a small sample dataset\n - Use the ESA Model to predict a feature vector on test data\n - Identify top features\n - Document similarity\n - Change model settings\n\nCopyright (c) 2022 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Explicit Semantic Analysis (ESA) for Text Analytics</h2>\n<p>Explicit Semantic Analysis (ESA) is an unsupervised algorithm for feature extraction of explicit features based on an existing knowledge base. ESA assists in understanding the meaning of a section of text as a combination of concepts found in the text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA improves text document categorization by calculating <code>semantic relatedness</code> (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.</p>\n<p>The Oracle Machine Learning for R function <em>ore.odmESA</em> extracts text-based features from a corpus of documents and performs document similarity comparisons. All processing occurs inside Oracle Autonomous Database.</p>\n<p>In this notebook, we cover the basic usage of ESA, where we extract topics from the comments provided.</p>\n<ul>\n<li>Create a small sample dataset</li>\n<li>Use the ESA Model to predict a feature vector on test data</li>\n<li>Identify top features</li>\n<li>Document similarity</li>\n<li>Change model settings</li>\n</ul>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-364766534",
+      "id": "20220623-201551_940873242",
+      "dateCreated": "2021-07-14T19:09:02+0000",
+      "dateStarted": "2022-08-02T14:26:07+0000",
+      "dateFinished": "2022-08-02T14:26:09+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md\n\nOracle ADW Documentation: <a href=\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\nOML folder on Oracle Github: <a href=\"https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle/oracle-db-examples/tree/master/machine-learning');\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\nOML web page: <a href=\"https://www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\nOML Explicit Semantic Analysis: <a href=\"https://www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-explicit-semantic-analysis');\">https://www.oracle.com/goto/ml-explicit-semantic-analysis</a>",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Oracle ADW Documentation: <a href=\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\n<br  />OML folder on Oracle Github: <a href=\"https: //github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle/oracle-db-examples/tree/master/machine-learning');\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\n<br  />OML web page: <a href=\"https: //www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\n<br  />OML Explicit Semantic Analysis: <a href=\"https: //www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-explicit-semantic-analysis');\">https://www.oracle.com/goto/ml-explicit-semantic-analysis</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-1473988382",
+      "id": "20220623-201551_1321493005",
+      "dateCreated": "2021-07-14T19:49:58+0000",
+      "dateStarted": "2022-08-02T14:26:09+0000",
+      "dateFinished": "2022-08-02T14:26:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import libraries and set display options",
+      "text": "%r\n\nlibrary(ORE)\noptions(ore.warn.order=FALSE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-313303996",
+      "id": "20220623-201551_771017590",
+      "dateCreated": "2022-06-23T19:49:07+0000",
+      "dateStarted": "2022-08-02T14:26:09+0000",
+      "dateFinished": "2022-08-02T14:26:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Create and view data",
+      "text": "%r\n\nTITLE <- c('Aids in Africa: Planning for a long war',\n                'Mars rover maneuvers for rim shot',\n                'Mars express confirms presence of water at Mars south pole',\n                'NASA announces major Mars rover finding',\n                'Drug access, Asia threat in focus at AIDS summit',\n                'NASA Mars Odyssey THEMIS image: typical crater',\n                'Road blocks for Aids')\n\nID <- 1:length(TITLE)\n\ndf <- data.frame(ID, TITLE)\nESA_TXT <- ore.push(df)\n\nz.show(ESA_TXT)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ID": "number",
+                      "TITLE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ID\tTITLE\n1\tAids in Africa: Planning for a long war\n2\tMars rover maneuvers for rim shot\n3\tMars express confirms presence of water at Mars south pole\n4\tNASA announces major Mars rover finding\n5\tDrug access, Asia threat in focus at AIDS summit\n6\tNASA Mars Odyssey THEMIS image: typical crater\n7\tRoad blocks for Aids\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_1517021640",
+      "id": "20220623-201551_1270773793",
+      "dateCreated": "2021-07-14T19:56:36+0000",
+      "dateStarted": "2022-08-02T14:26:24+0000",
+      "dateFinished": "2022-08-02T14:26:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "Create a policy for text indexing",
+      "text": "%r\n\n# Drop the text policy if it exists\nore.exec(paste(\"Begin ctx_ddl.drop_policy('ESA_TXT_POLICY'); \n                EXCEPTION WHEN others THEN null; END;\",sep=\"\"))\n\n# Create text policy\nore.exec(\"Begin ctx_ddl.create_policy('ESA_TXT_POLICY'); End;\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_1756380633",
+      "id": "20220623-201551_1468433162",
+      "dateCreated": "2021-07-14T20:00:24+0000",
+      "dateStarted": "2022-08-02T14:26:25+0000",
+      "dateFinished": "2022-08-02T14:26:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Specify model settings",
+      "text": "%r\n\nodm <- list(case_id_column_name     = \"ID\", \n            ODMS_TEXT_POLICY_NAME   = \"ESA_TXT_POLICY\", \n            ODMS_TEXT_MIN_DOCUMENTS = 1, \n            ESAS_MIN_ITEMS          = 1, \n            model_name              = 'ESA_MOD')\n\nctx <- list(TITLE = \"TEXT(POLICY_NAME:ESA_TXT_POLICY)(TOKEN_TYPE:STEM)\")\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-327437673",
+      "id": "20220623-201551_985618429",
+      "dateCreated": "2021-07-14T20:02:51+0000",
+      "dateStarted": "2022-08-02T14:26:28+0000",
+      "dateFinished": "2022-08-02T14:26:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Create an ESA model object ",
+      "text": "%r\n\n# Delete model if it exists\nore.exec(paste(\"BEGIN DBMS_DATA_MINING.DROP_MODEL(model_name=> '\", 'ESA_MOD', \"'); \nEXCEPTION WHEN others THEN null; END;\",sep=\"\"))\n\n# Create model\nesa_mod <- ore.odmESA(~TITLE, ESA_TXT, odm.settings = odm, ctx.settings = ctx)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Warning message:\n“The created mining model ESA_MOD is explicitly named. ORE does not manage this mining model's life cycle.”\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-240907286",
+      "id": "20220623-201551_832279719",
+      "dateCreated": "2021-07-14T20:04:40+0000",
+      "dateStarted": "2022-08-02T14:26:28+0000",
+      "dateFinished": "2022-08-02T14:26:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "title": "View the model settings",
+      "text": "%r\n\nz.show(settings(esa_mod))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "string",
+                      "SETTING_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\tSETTING_TYPE\nALGO_NAME\tALGO_EXPLICIT_SEMANTIC_ANALYS\tINPUT\nESAS_MIN_ITEMS\t1\tINPUT\nESAS_TOPN_FEATURES\t1000\tDEFAULT\nESAS_VALUE_THRESHOLD\t.00000001\tDEFAULT\nODMS_DETAILS\tODMS_ENABLE\tDEFAULT\nODMS_MISSING_VALUE_TREATMENT\tODMS_MISSING_VALUE_AUTO\tDEFAULT\nODMS_SAMPLING\tODMS_SAMPLING_DISABLE\tDEFAULT\nODMS_TEXT_MAX_FEATURES\t300000\tDEFAULT\nODMS_TEXT_MIN_DOCUMENTS\t1\tINPUT\nODMS_TEXT_POLICY_NAME\tESA_TXT_POLICY\tINPUT\nPREP_AUTO\tON\tINPUT\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-64504620",
+      "id": "20220623-201551_165453253",
+      "dateCreated": "2021-07-14T22:26:01+0000",
+      "dateStarted": "2022-08-02T14:26:31+0000",
+      "dateFinished": "2022-08-02T14:26:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "title": "Show the model details",
+      "text": "%r\n\nsummary(esa_mod)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmESA(formula = ~TITLE, data = ESA_TXT, odm.settings = odm, \n    ctx.settings = ctx)\n\nSettings: \n                                               value\nmin.items                                          1\ntopn.features                                   1000\nvalue.threshold                            .00000001\nodms.details                             odms.enable\nodms.missing.value.treatment odms.missing.value.auto\nodms.sampling                  odms.sampling.disable\nodms.text.max.features                        300000\nodms.text.min.documents                            1\nodms.text.policy.name                 ESA_TXT_POLICY\nprep.auto                                         ON\n\nFeatures: \n   FEATURE_ID  ATTRIBUTE_NAME ATTRIBUTE_VALUE COEFFICIENT\n1           1    TITLE.AFRICA            <NA>   0.4885556\n2           1      TITLE.AIDS            <NA>   0.2127293\n3           1      TITLE.LONG            <NA>   0.4885556\n4           1  TITLE.PLANNING            <NA>   0.4885556\n5           1       TITLE.WAR            <NA>   0.4885556\n6           2 TITLE.MANEUVERS            <NA>   0.5347384\n7           2      TITLE.MARS            <NA>   0.1537831\n8           2       TITLE.RIM            <NA>   0.5347384\n9           2     TITLE.ROVER            <NA>   0.3442607\n10          2      TITLE.SHOT            <NA>   0.5347384\n11          3  TITLE.CONFIRMS            <NA>   0.4020610\n12          3   TITLE.EXPRESS            <NA>   0.4020610\n13          3      TITLE.MARS            <NA>   0.1734405\n14          3      TITLE.POLE            <NA>   0.4020610\n15          3  TITLE.PRESENCE            <NA>   0.4020610\n16          3     TITLE.SOUTH            <NA>   0.4020610\n17          3     TITLE.WATER            <NA>   0.4020610\n18          4 TITLE.ANNOUNCES            <NA>   0.5056155\n19          4   TITLE.FINDING            <NA>   0.5056155\n20          4     TITLE.MAJOR            <NA>   0.5056155\n21          4      TITLE.MARS            <NA>   0.1454077\n22          4      TITLE.NASA            <NA>   0.3255116\n23          4     TITLE.ROVER            <NA>   0.3255116\n24          5    TITLE.ACCESS            <NA>   0.4019471\n25          5      TITLE.AIDS            <NA>   0.1750178\n26          5      TITLE.ASIA            <NA>   0.4019471\n27          5      TITLE.DRUG            <NA>   0.4019471\n28          5     TITLE.FOCUS            <NA>   0.4019471\n29          5    TITLE.SUMMIT            <NA>   0.4019471\n30          5    TITLE.THREAT            <NA>   0.4019471\n31          6    TITLE.CRATER            <NA>   0.4265110\n32          6     TITLE.IMAGE            <NA>   0.4265110\n33          6      TITLE.MARS            <NA>   0.1226584\n34          6      TITLE.NASA            <NA>   0.2745847\n35          6   TITLE.ODYSSEY            <NA>   0.4265110\n36          6    TITLE.THEMIS            <NA>   0.4265110\n37          6   TITLE.TYPICAL            <NA>   0.4265110\n38          7      TITLE.AIDS            <NA>   0.2942601\n39          7    TITLE.BLOCKS            <NA>   0.6757999\n40          7      TITLE.ROAD            <NA>   0.6757999"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-568138409",
+      "id": "20220623-201551_1780601127",
+      "dateCreated": "2021-07-26T16:37:05+0000",
+      "dateStarted": "2022-08-02T14:26:31+0000",
+      "dateFinished": "2022-08-02T14:26:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "Show the model details for each feature",
+      "text": "%r\n\nesa_mod$features$COEFFICIENT <- round(esa_mod$features$COEFFICIENT, digits=4)\nz.show(esa_mod$features)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "COEFFICIENT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "number",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "COEFFICIENT": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tATTRIBUTE_NAME\tATTRIBUTE_VALUE\tCOEFFICIENT\n1\tTITLE.AFRICA\tNA\t0.4886\n1\tTITLE.AIDS\tNA\t0.2127\n1\tTITLE.LONG\tNA\t0.4886\n1\tTITLE.PLANNING\tNA\t0.4886\n1\tTITLE.WAR\tNA\t0.4886\n2\tTITLE.MANEUVERS\tNA\t0.5347\n2\tTITLE.MARS\tNA\t0.1538\n2\tTITLE.RIM\tNA\t0.5347\n2\tTITLE.ROVER\tNA\t0.3443\n2\tTITLE.SHOT\tNA\t0.5347\n3\tTITLE.CONFIRMS\tNA\t0.4021\n3\tTITLE.EXPRESS\tNA\t0.4021\n3\tTITLE.MARS\tNA\t0.1734\n3\tTITLE.POLE\tNA\t0.4021\n3\tTITLE.PRESENCE\tNA\t0.4021\n3\tTITLE.SOUTH\tNA\t0.4021\n3\tTITLE.WATER\tNA\t0.4021\n4\tTITLE.ANNOUNCES\tNA\t0.5056\n4\tTITLE.FINDING\tNA\t0.5056\n4\tTITLE.MAJOR\tNA\t0.5056\n4\tTITLE.MARS\tNA\t0.1454\n4\tTITLE.NASA\tNA\t0.3255\n4\tTITLE.ROVER\tNA\t0.3255\n5\tTITLE.ACCESS\tNA\t0.4019\n5\tTITLE.AIDS\tNA\t0.175\n5\tTITLE.ASIA\tNA\t0.4019\n5\tTITLE.DRUG\tNA\t0.4019\n5\tTITLE.FOCUS\tNA\t0.4019\n5\tTITLE.SUMMIT\tNA\t0.4019\n5\tTITLE.THREAT\tNA\t0.4019\n6\tTITLE.CRATER\tNA\t0.4265\n6\tTITLE.IMAGE\tNA\t0.4265\n6\tTITLE.MARS\tNA\t0.1227\n6\tTITLE.NASA\tNA\t0.2746\n6\tTITLE.ODYSSEY\tNA\t0.4265\n6\tTITLE.THEMIS\tNA\t0.4265\n6\tTITLE.TYPICAL\tNA\t0.4265\n7\tTITLE.AIDS\tNA\t0.2943\n7\tTITLE.BLOCKS\tNA\t0.6758\n7\tTITLE.ROAD\tNA\t0.6758\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_1008338586",
+      "id": "20220623-201551_711025441",
+      "dateCreated": "2021-07-14T20:07:01+0000",
+      "dateStarted": "2022-08-02T14:26:32+0000",
+      "dateFinished": "2022-08-02T14:26:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "View the model name using ALL_MINING_MODELS view",
+      "text": "%sql\n\nSELECT * from all_mining_models WHERE ALGORITHM = 'EXPLICIT_SEMANTIC_ANALYS'\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 134,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "OWNER": "string",
+                      "MODEL_NAME": "string",
+                      "MINING_FUNCTION": "string",
+                      "ALGORITHM": "string",
+                      "ALGORITHM_TYPE": "string",
+                      "CREATION_DATE": "date",
+                      "BUILD_DURATION": "number",
+                      "MODEL_SIZE": "number",
+                      "PARTITIONED": "string",
+                      "COMMENTS": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "OWNER\tMODEL_NAME\tMINING_FUNCTION\tALGORITHM\tALGORITHM_TYPE\tCREATION_DATE\tBUILD_DURATION\tMODEL_SIZE\tPARTITIONED\tCOMMENTS\nOMLUSER\tWIKI_MODEL\tFEATURE_EXTRACTION\tEXPLICIT_SEMANTIC_ANALYS\tNATIVE\t2022-07-29 16:32:50\t0\t0\tNO\t\nOMLUSER\tESA_MOD\tFEATURE_EXTRACTION\tEXPLICIT_SEMANTIC_ANALYS\tNATIVE\t2022-08-02 14:26:29\t\t0\tNO\t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-1252208961",
+      "id": "20220623-201551_1202910310",
+      "dateCreated": "2021-07-14T21:17:45+0000",
+      "dateStarted": "2022-08-02T14:26:32+0000",
+      "dateFinished": "2022-08-02T14:26:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "title": "View model name using USER_MINING_MODELS view",
+      "text": "%sql\n\nSELECT * from user_mining_models where model_name = 'ESA_MOD'\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 134,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MODEL_NAME": "string",
+                      "MINING_FUNCTION": "string",
+                      "ALGORITHM": "string",
+                      "ALGORITHM_TYPE": "string",
+                      "CREATION_DATE": "string",
+                      "BUILD_DURATION": "string",
+                      "MODEL_SIZE": "string",
+                      "PARTITIONED": "string",
+                      "COMMENTS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MODEL_NAME\tMINING_FUNCTION\tALGORITHM\tALGORITHM_TYPE\tCREATION_DATE\tBUILD_DURATION\tMODEL_SIZE\tPARTITIONED\tCOMMENTS\nESA_MOD\tFEATURE_EXTRACTION\tEXPLICIT_SEMANTIC_ANALYS\tNATIVE\t2022-08-02 14:26:29\t\t0\tNO\t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_463202445",
+      "id": "20220623-201551_711814112",
+      "dateCreated": "2021-07-14T21:34:59+0000",
+      "dateStarted": "2022-08-02T14:26:35+0000",
+      "dateFinished": "2022-08-02T14:26:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "Make predictions on data",
+      "text": "%r\n\nesa_pred <- predict(esa_mod, ESA_TXT, type = \"class\", supplemental.cols = c(\"ID\", \"TITLE\"))\nz.show(esa_pred)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ID": "number",
+                      "TITLE": "string",
+                      "FEATURE_ID": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ID\tTITLE\tFEATURE_ID\n1\tAids in Africa: Planning for a long war\t1\n2\tMars rover maneuvers for rim shot\t2\n3\tMars express confirms presence of water at Mars south pole\t3\n4\tNASA announces major Mars rover finding\t4\n5\tDrug access, Asia threat in focus at AIDS summit\t5\n6\tNASA Mars Odyssey THEMIS image: typical crater\t6\n7\tRoad blocks for Aids\t7\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-1186100201",
+      "id": "20220623-201551_1319186275",
+      "dateCreated": "2021-07-14T20:07:43+0000",
+      "dateStarted": "2022-08-02T14:26:36+0000",
+      "dateFinished": "2022-08-02T14:26:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "title": "Feature compare titles",
+      "text": "%r\n\nz.show(feature_compare(esa_mod, ESA_TXT, compare.cols = c('TITLE'), supplemental.cols = c('TITLE')))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "TITLE_A": "string",
+                      "TITLE_B": "string",
+                      "SIMILARITY": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "TITLE_A\tTITLE_B\tSIMILARITY\nAids in Africa: Planning for a long war\tMars rover maneuvers for rim shot\t0\nAids in Africa: Planning for a long war\tMars express confirms presence of water at Mars south pole\t0\nAids in Africa: Planning for a long war\tNASA announces major Mars rover finding\t0\nAids in Africa: Planning for a long war\tDrug access, Asia threat in focus at AIDS summit\t0.0312418916816983\nAids in Africa: Planning for a long war\tNASA Mars Odyssey THEMIS image: typical crater\t0\nAids in Africa: Planning for a long war\tRoad blocks for Aids\t0.0645255975774246\nMars rover maneuvers for rim shot\tMars express confirms presence of water at Mars south pole\t0.0233983356418543\nMars rover maneuvers for rim shot\tNASA announces major Mars rover finding\t0.16186140052623\nMars rover maneuvers for rim shot\tDrug access, Asia threat in focus at AIDS summit\t0\nMars rover maneuvers for rim shot\tNASA Mars Odyssey THEMIS image: typical crater\t0.0204226257202758\nMars rover maneuvers for rim shot\tRoad blocks for Aids\t0\nMars express confirms presence of water at Mars south pole\tNASA announces major Mars rover finding\t0.0215906984781613\nMars express confirms presence of water at Mars south pole\tDrug access, Asia threat in focus at AIDS summit\t0\nMars express confirms presence of water at Mars south pole\tNASA Mars Odyssey THEMIS image: typical crater\t0.0171430558490882\nMars express confirms presence of water at Mars south pole\tRoad blocks for Aids\t0\nNASA announces major Mars rover finding\tDrug access, Asia threat in focus at AIDS summit\t0\nNASA announces major Mars rover finding\tNASA Mars Odyssey THEMIS image: typical crater\t0.119051964176864\nNASA announces major Mars rover finding\tRoad blocks for Aids\t0\nDrug access, Asia threat in focus at AIDS summit\tNASA Mars Odyssey THEMIS image: typical crater\t0\nDrug access, Asia threat in focus at AIDS summit\tRoad blocks for Aids\t0.0496393530793489\nNASA Mars Odyssey THEMIS image: typical crater\tRoad blocks for Aids\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_326433566",
+      "id": "20220623-201551_1878537725",
+      "dateCreated": "2022-06-23T20:04:15+0000",
+      "dateStarted": "2022-08-02T14:26:36+0000",
+      "dateFinished": "2022-08-02T14:26:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "Change the settings and create new model",
+      "text": "%r\n\nnew_setting <- list(case_id_column_name = \"ID\", \n                    ESAS_VALUE_THRESHOLD = 0.01, \n                    ODMS_TEXT_MAX_FEATURES = 2, \n                    FEAT_NUM_FEATURES = 2, \n                    ESAS_TOPN_FEATURES = 2,\n                    model_name = 'ESA_MOD_2')\n                    ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_457195137",
+      "id": "20220623-201551_1069149600",
+      "dateCreated": "2021-07-14T20:09:33+0000",
+      "dateStarted": "2022-08-02T14:26:37+0000",
+      "dateFinished": "2022-08-02T14:26:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "title": "Create the model with new settings - 2 features maximum ",
+      "text": "%r\n\n# Delete if ESA model exists, then create it\n\n#ore.exec(paste(\"BEGIN DBMS_DATA_MINING.DROP_MODEL(model_name=> '\", 'ESA_MOD_2', \"'); \n#EXCEPTION WHEN others THEN null; END;\",sep=\"\"))\n\nesa_mod2 <- ore.odmESA(~TITLE, ESA_TXT, odm.settings = new_setting, ctx.settings = ctx)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COMMENTS_A": "string",
+                      "COMMENTS_B": "string",
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COMMENTS_A": "string",
+                      "COMMENTS_B": "string",
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Warning message:\n“The created mining model ESA_MOD_2 is explicitly named. ORE does not manage this mining model's life cycle.”\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-855609439",
+      "id": "20220623-201551_2127213532",
+      "dateCreated": "2021-07-15T21:22:17+0000",
+      "dateStarted": "2022-08-02T14:26:37+0000",
+      "dateFinished": "2022-08-02T14:26:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "List ESA model views",
+      "text": "%sql\n\nSELECT view_name, view_type FROM user_mining_model_views\nWHERE model_name='ESA_MOD_2'\nORDER BY view_name;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "VIEW_NAME": "string",
+                      "VIEW_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "VIEW_NAME\tVIEW_TYPE\nDM$VAESA_MOD_2\tExplicit Semantic Analysis Matrix\nDM$VFESA_MOD_2\tExplicit Semantic Analysis Features\nDM$VGESA_MOD_2\tGlobal Name-Value Pairs\nDM$VNESA_MOD_2\tNormalization and Missing Value Handling\nDM$VSESA_MOD_2\tComputed Settings\nDM$VWESA_MOD_2\tModel Build Alerts\nDM$VXESA_MOD_2\tText Features\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_1316869247",
+      "id": "20220623-201551_962023761",
+      "dateCreated": "2021-07-15T17:17:36+0000",
+      "dateStarted": "2022-08-02T14:26:39+0000",
+      "dateFinished": "2022-08-02T14:26:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "title": "The VA view shows associations among features (topics) and words",
+      "text": "%md\n\n*ATTRIBUTE_SUBNAME* refers to words, or tokens. The strength of the associations is measured by *COEFFICIENT*. Higher coefficient values indicate a stronger association.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p><em>ATTRIBUTE_SUBNAME</em> refers to words, or tokens. The strength of the associations is measured by <em>COEFFICIENT</em>. Higher coefficient values indicate a stronger association.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-1076325469",
+      "id": "20220623-201551_397335643",
+      "dateCreated": "2021-07-15T19:51:19+0000",
+      "dateStarted": "2022-08-02T14:26:39+0000",
+      "dateFinished": "2022-08-02T14:26:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "title": "",
+      "text": "%script\n\nSELECT * from DM$VNESA_MOD_2;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": false,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "PARTITION_NAME": "number",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_SUBNAME": "string",
+                      "NUMERIC_MISSING_VALUE": "string",
+                      "CATEGORICAL_MISSING_VALUE": "string",
+                      "NORMALIZATION_SHIFT": "string",
+                      "NORMALIZATION_SCALE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nno rows selected\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_772312456",
+      "id": "20220623-201551_1737160675",
+      "dateCreated": "2021-07-15T16:44:39+0000",
+      "dateStarted": "2022-08-02T14:26:39+0000",
+      "dateFinished": "2022-08-02T14:26:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "Show the associations for selected words",
+      "text": "%sql\n\nSELECT ATTRIBUTE_SUBNAME, count(ATTRIBUTE_SUBNAME) FROM DM$VAESA_MOD_2\nWHERE ATTRIBUTE_SUBNAME='MARS'\nGROUP BY ATTRIBUTE_SUBNAME",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:40+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ATTRIBUTE_SUBNAME": "string",
+                      "COUNT(ATTRIBUTE_SUBNAME)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ATTRIBUTE_SUBNAME\tCOUNT(ATTRIBUTE_SUBNAME)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_1977001876",
+      "id": "20220623-201551_1291189405",
+      "dateCreated": "2021-07-15T16:48:28+0000",
+      "dateStarted": "2022-08-02T14:26:41+0000",
+      "dateFinished": "2022-08-02T14:26:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "title": "View the help file for ESA",
+      "text": "%r\n\nhelp(\"ore.odmESA\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.odmESA                package:OREdm                R Documentation\n\nIn-Database Explicit Semantic Analysis Models\n\nDescription:\n\n     Creates an Explicit Semantic Analysis model for feature extraction\n     using Oracle Data Mining in Oracle Database 12.2 or later.\n\nUsage:\n\n     ore.odmESA(formula,                        \n             data, \n             auto.data.prep = TRUE,\n             na.action = na.pass,\n             odm.settings = NULL,\n             ctx.settings = NULL)\n     \n     ## S3 method for class 'ore.odmESA'\n     features(object,...)\n     \n     ## S3 method for class 'ore.odmESA'\n     feature_compare(object,\n       newdata,\n       compare.cols = NULL,\n       supplemental.cols = NULL)\n     \n     ## S3 method for class 'ore.odmESA'\n     predict(object,\n       newdata,                \n       supplemental.cols = NULL,\n       type = c(\"class\",\"raw\"),\n       na.action = na.pass,\n       topN = NULL,...)\n     \nArguments:\n\n formula: An object of class ‘formula’ (or one that can be coerced to\n          that class): a symbolic description of the model to be\n          fitted. For details of the model specification, see\n          'Details'.\n\n    data: An ‘ore.frame’ object used for model building.\n\nauto.data.prep: A logical value that specifies whether Oracle Data\n          Mining should invoke automatic data preparation for the\n          build.\n\nna.action: A function to use for handling missing values, either\n          ‘na.pass’ to allow missing values or ‘na.omit’ to remove rows\n          with missing values. The default value is ‘na.pass’.\n\nodm.settings: Same as ‘odm.settings’ in ‘ore.odmKMeans’.  In addition,\n          to perform text mining, parameter ‘CASE_ID_COLUMN_NAME’ must\n          specify the name of the column containing unique identifiers.\n          Parameters ‘ODMS_TEXT_POLICY_NAME’,\n          ‘ODMS_TEXT_MIN_DOCUMENTS’, and ‘ODMS_TEXT_MAX_FEATURES’ can\n          be used to specify the name of a valid Oracle text policy,\n          the minimal number of documents in which echo token occurs,\n          and the maximum number of distinct features for text mining,\n          respectively.\n\nctx.settings: Same as ‘ctx.settings’ in ‘ore.odmKMeans’.\n\n  object: An object of type ‘ore.odmESA’.\n\n newdata: Data used for scoring.\n\ncompare.cols: Columns used to compare the features.  All the columns\n          are used by default.\n\nsupplemental.cols: Columns to include in the output.\n\n    type: If set to ‘\"raw\"’, provides the probability for each feature\n          returned. If set to ‘\"class\"’, the feature with the maximum\n          probability is returned.\n\n    topN: A positive integer that restricts the set of features to\n          those that have one of the specified number of highest\n          probability values.\n\n     ...: Additional arguments affecting the predictions produced.\n\nDetails:\n\n     Explicit Semantic Analysis (ESA) is a feature extraction\n     algorithm.  ESA does not discover latent features but instead uses\n     explicit features based on an existing knowledge base.\n\n     Explicit knowledge often exists in text form. Multiple knowledge\n     bases are available as collections of text documents. These\n     knowledge bases can be generic, for example, Wikipedia, or\n     domain-specific. Data preparation transforms the text into vectors\n     that capture attribute-concept associations.\n\nValue:\n\n     An object of class \"ore.odmESA\" includes the following components:\n\n    name: The name of the in-database model.\n\nsettings: A ‘data.frame’ of settings used to build the model.\n\nattributes: A ‘data.frame’ of attributes used to build the model.\n\n formula: The ‘formula’ used for the model fitted.\n\n    call: The matched call.\n     The function ‘features’ returns an ‘ore.frame’ that describes each\n     feature extracted. The columns are:\n\nFEATURE_ID: The numeric identifier associated with the feature.\n\nATTRIBUTE_NAME: The name of the attribute.\n\nATTRIBUTE_VALUE: The value of the attribute.\n\nCOEFFICIENT: The coefficient associated with the attribute in a\n          particular feature.\n     The function ‘feature_compare’ returns an ‘ore.frame’ containing a\n     ‘SIMILARITY’ column that measures relatedness and supplementary\n     columns if specified.\n\nAuthor(s):\n\n     Oracle\n\n     Maintainer: Oracle <email: oracle-r-enterprise@oracle.com>\n\nReferences:\n\n     Oracle R Enterprise\n\n     Oracle Data Mining Concepts\n\n     Oracle Data Mining User's Guide\n\nSee Also:\n\n     ‘ore.odmSVD’, ‘ore.odmNMF’, ‘partitions’\n\nExamples:\n\n       title <- c('Aids in Africa: Planning for a long war',\n                  'Mars rover maneuvers for rim shot',\n                  'Mars express confirms presence of water at Mars south pole',\n                  'NASA announces major Mars rover finding',\n                  'Drug access, Asia threat in focus at AIDS summit',\n                  'NASA Mars Odyssey THEMIS image: typical crater',\n                  'Road blocks for Aids')\n     \n       # TEXT contents in character column\n       df <- data.frame(CUST_ID = seq(length(title)), TITLE = title)\n       ESA_TEXT <- ore.push(df)\n     \n       # TEXT contains in clob column\n       attr(df$TITLE, \"ora.type\") <- \"clob\"\n       ESA_TEXT_CLOB <- ore.push(df)\n     \n       # create text policy (CTXSYS.CTX_DDL privilege is required)\n       ore.exec(\"Begin ctx_ddl.create_policy('ESA_TXTPOL'); End;\")\n     \n       # specify TEXT POLICY_NAME, MIN_DOCUMENTS, MAX_FEATURES and\n       # ESA algorithm settings in odm.settings\n       esa.mod <- ore.odmESA(~ TITLE, data = ESA_TEXT_CLOB,\n         odm.settings = list(case_id_column_name = \"CUST_ID\",\n                             ODMS_TEXT_POLICY_NAME = \"ESA_TXTPOL\",\n                             ODMS_TEXT_MIN_DOCUMENTS = 1,\n                             ODMS_TEXT_MAX_FEATURES = 3,\n                             ESAS_MIN_ITEMS = 1,\n                             ESAS_VALUE_THRESHOLD = 0.0001,\n                             ESAS_TOPN_FEATURES = 3))\n       class(esa.mod)\n       summary(esa.mod)\n       settings(esa.mod)\n       features(esa.mod)\n       predict(esa.mod, ESA_TEXT, type = \"class\", supplemental.cols = \"TITLE\")\n     \n       # use ctx.settings to specify a character column as TEXT and \n       # the same above settings as well as TOKEN_TYPE \n       esa.mod2 <- ore.odmESA(~ TITLE, data = ESA_TEXT,\n         odm.settings = list(case_id_column_name = \"CUST_ID\", ESAS_MIN_ITEMS = 1),\n         ctx.settings = list(TITLE = \n           \"TEXT(POLICY_NAME:ESA_TXTPOL)(TOKEN_TYPE:STEM)(MIN_DOCUMENTS:1)(MAX_FEATURES:3)\"))\n       summary(esa.mod2)\n       settings(esa.mod2)\n       features(esa.mod2)\n       predict(esa.mod2, ESA_TEXT_CLOB, type = \"class\", supplemental.cols = \"TITLE\")\n     \n       ore.exec(\"Begin ctx_ddl.drop_policy('ESA_TXTPOL'); End;\")\n     "
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-1642188559",
+      "id": "20220623-201551_1336668555",
+      "dateCreated": "2021-07-14T22:20:35+0000",
+      "dateStarted": "2022-08-02T14:26:41+0000",
+      "dateFinished": "2022-08-02T14:26:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "title": "Clean-up",
+      "text": "%script\n\nBEGIN\n  DBMS_DATA_MINING.DROP_MODEL(model_name => 'ESA_MOD');\n  EXCEPTION WHEN others THEN null;\nEND;\n/\nBEGIN\n  DBMS_DATA_MINING.DROP_MODEL(model_name => 'ESA_MOD_2');\n  EXCEPTION WHEN others THEN null;\nEND;\n/",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_1913819476",
+      "id": "20220623-201551_772186145",
+      "dateCreated": "2021-07-15T21:41:00+0000",
+      "dateStarted": "2022-08-02T14:26:42+0000",
+      "dateFinished": "2022-08-02T14:26:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%md\n\n---\n# End of Script\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:26:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h1>End of Script</h1>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656015351281_-1687223886",
+      "id": "20220623-201551_503545837",
+      "dateCreated": "2021-07-14T21:12:29+0000",
+      "dateStarted": "2022-08-02T14:26:42+0000",
+      "dateFinished": "2022-08-02T14:26:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    }
+  ],
+  "name": "OML4R Feature Extraction ESA",
+  "id": "18905",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:OMLUSER-18905": [],
+    "MDWD9201D2221:OMLUSER-18905": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4R Feature Extraction ESA"
+}

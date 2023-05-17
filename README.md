@@ -3,9 +3,11 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 
 | Repo/Folder name  | Description |
 | ------------- | ------------- |
+| [C](./C) | C based examples |
+| [apex](./apex) | APEX examples |
 | [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
 | [dotnet](https://github.com/oracle/dotnet-db-samples) | .NET based examples |
-| [exadata-express](./exadata-express) | Exadata Express examples |
+| [exadata](./exadata) | Exadata examples |
 | [java](./java)  | Java based examples |
 | [javascript](./javascript) | JavaScript based examples |
 | [machine-learning](./machine-learning) | Oracle Machine Learning examples |
@@ -13,6 +15,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [plsql](./plsql) | PL/SQL based examples |
 | [python](./python) | Python based examples |
 | [ruby](./ruby) | Ruby based examples |
+| [spatial](./spatial) | Spatial examples |
 | [sql](./sql) | SQL based examples |
 | [sqldeveloper](./sqldeveloper) | [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) examples |
 
@@ -23,6 +26,17 @@ You can find the online documentation of the Oracle Database under [docs.oracle.
 Some of the examples that you see within this repository can be executed in the free web-based tool: [LiveSQL.oracle.com](https://livesql.oracle.com).
 
 LiveSQL is also an excellent resource for getting started with Oracle Database.
+
+## Dev Gym
+If you would like to challenge yourself, you can take quizzes, workouts and classes at [DevGym.oracle.com](https://devgym.oracle.com).
+
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
 
 ## License
 

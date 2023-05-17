@@ -1,0 +1,63 @@
+SQL> @q1
+SQL> set timing on
+SQL> --
+SQL> -- The adaptive plan feature can potentially avoid performance regressions
+SQL> -- associate with the wrong join type being chosen, so we are going to disable it because
+SQL> -- we WANT to induce a performance regression for SPM to fix.
+SQL> --
+SQL> 
+SQL> select /*+ NO_ADAPTIVE_PLAN */ sum(t1.c), sum(t2.c)
+  2  from   t1, t2
+  3  where  t1.a = t2.a
+  4  and    t1.d = 10;
+
+ SUM(T1.C)  SUM(T2.C)
+---------- ----------
+    500001     500001
+
+Elapsed: 00:00:00.34
+SQL> 
+SQL> @plan
+SQL> set linesize 250
+SQL> set trims on
+SQL> set tab off
+SQL> set tab off
+SQL> set pagesize 1000
+SQL> column plan_table_output format a180
+SQL> 
+SQL> SELECT *
+  2  FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'TYPICAL'));
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID  0ptw8zskuh9r4, child number 3
+-------------------------------------
+select /*+ NO_ADAPTIVE_PLAN */ sum(t1.c), sum(t2.c) from   t1, t2 where
+ t1.a = t2.a and    t1.d = 10
+
+Plan hash value: 3534348942
+
+--------------------------------------------------------------------------------------
+| Id  | Operation                     | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |      |       |       |  1105 (100)|          |
+|   1 |  SORT AGGREGATE               |      |     1 |    22 |            |          |
+|   2 |   NESTED LOOPS                |      |     2 |    44 |  1105   (1)| 00:00:01 |
+|   3 |    NESTED LOOPS               |      |     2 |    44 |  1105   (1)| 00:00:01 |
+|*  4 |     TABLE ACCESS FULL         | T1   |     2 |    26 |  1099   (1)| 00:00:01 |
+|*  5 |     INDEX RANGE SCAN          | T2I  |     1 |       |     2   (0)| 00:00:01 |
+|   6 |    TABLE ACCESS BY INDEX ROWID| T2   |     1 |     9 |     3   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter("T1"."D"=10)
+   5 - access("T1"."A"="T2"."A")
+
+
+25 rows selected.
+
+Elapsed: 00:00:00.12
+SQL> 
+SQL> spool off

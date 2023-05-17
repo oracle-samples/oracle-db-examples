@@ -1,0 +1,805 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n### Importing Data from Oracle Cloud Object Storage\n\nSo, you\u0027ve signed up for an Oracle Cloud account and you want to start exploring Oracle Machine Learning in Autonomous Database. The first step is to import your data, and there are a few different options to choose from. For example, Oracle Database Actions provides a friendly web-based interface to load data from local files, cloud storage, or from remote databases. Another option for loading data from local files is to use SQL*Loader. For moving data between Oracle Database and Autonomous Database, Oracle Data Pump offers very fast data movement. \n\nBut how do you import data into Oracle Autonomous Database without leaving the Oracle Machine Learning Notebooks environment?  The answer is to use the `DBMS_CLOUD` package.\n\n`DBMS_CLOUD` provides a simple way to interact with an object store from the database. It supports loading data files from Oracle Cloud Infrastructure Object Storage, Github repositories, Amazon AWS S3, Microsoft Azure Cloud Storage, and Google Cloud Storage. \n\nIn this example, we demonstrate using a custom procedure `IMPORT_DATA_OBJSTORE_DATASET`, which leverages `DBMS_CLOUD`, to import data from an Oracle Cloud Object Storage bucket to an Autonomous Database table. When using `DBMS_CLOUD.COPY_DATA` alone, the target table must be created in advance. With `IMPORT_DATA_OBJSTORE_DATASET`, you simply provide the dataset name, and the table will be created and the data inserted in a single step. This custom procedure was created to facilitate easy import of the datasets used in Oracle Machine Learning notebooks and demos.\n\nFor a one-off approach to importing specific datasets, refer to the `OML Run-me-first` notebook in the OML Notebooks template examples.\n\n### Prerequisites:\n- An Oracle Machine Learning account with grant EXECUTE privileges on DBMS_CLOUD\n\nTo run `DBMS_CLOUD` subprograms with a user other than ADMIN you need to grant EXECUTE privileges to that user. For example, run the following command as ADMIN to grant privileges to OMLUSER:\n\n    GRANT EXECUTE ON DBMS_CLOUD TO OMLUSER;\n\n- A public Oracle Cloud Object Storage bucket\n\nCopyright (c) 2023 Oracle Corporation                             \n###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:52:50+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eImporting Data from Oracle Cloud Object Storage\u003c/h3\u003e\n\u003cp\u003eSo, you\u0027ve signed up for an Oracle Cloud account and you want to start exploring Oracle Machine Learning in Autonomous Database. The first step is to import your data, and there are a few different options to choose from. For example, Oracle Database Actions provides a friendly web-based interface to load data from local files, cloud storage, or from remote databases. Another option for loading data from local files is to use SQL*Loader. For moving data between Oracle Database and Autonomous Database, Oracle Data Pump offers very fast data movement.\u003c/p\u003e\n\u003cp\u003eBut how do you import data into Oracle Autonomous Database without leaving the Oracle Machine Learning Notebooks environment?  The answer is to use the \u003ccode\u003eDBMS_CLOUD\u003c/code\u003e package.\u003c/p\u003e\n\u003cp\u003e\u003ccode\u003eDBMS_CLOUD\u003c/code\u003e provides a simple way to interact with an object store from the database. It supports loading data files from Oracle Cloud Infrastructure Object Storage, Github repositories, Amazon AWS S3, Microsoft Azure Cloud Storage, and Google Cloud Storage.\u003c/p\u003e\n\u003cp\u003eIn this example, we demonstrate using a custom procedure \u003ccode\u003eIMPORT_DATA_OBJSTORE_DATASET\u003c/code\u003e, which leverages \u003ccode\u003eDBMS_CLOUD\u003c/code\u003e, to import data from an Oracle Cloud Object Storage bucket to an Autonomous Database table. When using \u003ccode\u003eDBMS_CLOUD.COPY_DATA\u003c/code\u003e alone, the target table must be created in advance. With \u003ccode\u003eIMPORT_DATA_OBJSTORE_DATASET\u003c/code\u003e, you simply provide the dataset name, and the table will be created and the data inserted in a single step. This custom procedure was created to facilitate easy import of the datasets used in Oracle Machine Learning notebooks and demos.\u003c/p\u003e\n\u003cp\u003eFor a one-off approach to importing specific datasets, refer to the \u003ccode\u003eOML Run-me-first\u003c/code\u003e notebook in the OML Notebooks template examples.\u003c/p\u003e\n\u003ch3\u003ePrerequisites:\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003eAn Oracle Machine Learning account with grant EXECUTE privileges on DBMS_CLOUD\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eTo run \u003ccode\u003eDBMS_CLOUD\u003c/code\u003e subprograms with a user other than ADMIN you need to grant EXECUTE privileges to that user. For example, run the following command as ADMIN to grant privileges to OMLUSER:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eGRANT EXECUTE ON DBMS_CLOUD TO OMLUSER;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cul\u003e\n\u003cli\u003eA public Oracle Cloud Object Storage bucket\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_261685917",
+      "id": "20220225-173909_1646444460",
+      "dateCreated": "2020-11-25T21:53:03+0000",
+      "dateStarted": "2023-02-17T22:52:50+0000",
+      "dateFinished": "2023-02-17T22:52:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md\n\n###### [Getting Started with Oracle Machine Learning Notebooks](https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/omlug/get-started-oracle-machine-learning.html#GUID-2AEC56A4-E751-48A3-AAA0-0659EDD639BA)\n###### [Loading Data with Autonomous Database](https://docs.oracle.com/en/cloud/paas/autonomous-database/adbsa/load-data.html#GUID-1351807C-E3F7-4C6D-AF83-2AEEADE2F83E)\n###### [Object Storage Buckets](https://docs.oracle.com/en-us/iaas/Content/Object/Concepts/objectstorageoverview.htm)\n###### [DBMS_CLOUD](https://docs.oracle.com/en/cloud/paas/autonomous-database/adbdu/dbms_cloud-objects-and-files.html#GUID-12C083D6-76ED-4D35-8BD6-B277D91090F9)",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:52:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch6\u003e\u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/omlug/get-started-oracle-machine-learning.html#GUID-2AEC56A4-E751-48A3-AAA0-0659EDD639BA\"\u003eGetting Started with Oracle Machine Learning Notebooks\u003c/a\u003e\u003c/h6\u003e\n\u003ch6\u003e\u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-database/adbsa/load-data.html#GUID-1351807C-E3F7-4C6D-AF83-2AEEADE2F83E\"\u003eLoading Data with Autonomous Database\u003c/a\u003e\u003c/h6\u003e\n\u003ch6\u003e\u003ca href\u003d\"https://docs.oracle.com/en-us/iaas/Content/Object/Concepts/objectstorageoverview.htm\"\u003eObject Storage Buckets\u003c/a\u003e\u003c/h6\u003e\n\u003ch6\u003e\u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-database/adbdu/dbms_cloud-objects-and-files.html#GUID-12C083D6-76ED-4D35-8BD6-B277D91090F9\"\u003eDBMS_CLOUD\u003c/a\u003e\u003c/h6\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_1943384261",
+      "id": "20220225-173909_728035521",
+      "dateCreated": "2021-11-01T17:41:34+0000",
+      "dateStarted": "2023-02-17T22:52:50+0000",
+      "dateFinished": "2023-02-17T22:52:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Custom procedure for loading data ",
+      "text": "%md\n\nThe custom procedure `IMPORT_DATA_OBJSTORE_DATASET` imports the data from Object Storage directly to a database table using a combination of PL/SQL commands and the `DBMS_CLOUD.COPY_DATA` procedure. Simply provide the dataset name, and the table will be created and the data inserted to the target table.\n\n#### Prerequisites:\n\n- The CSV file containing the data and a text file with the table definition must be saved in the Object Storage bucket\n-- Note, the default Object Storage bucket already contains the CSV and text files needed to create the OML demo datasets\n- Both the CSV and text files must match the name of the input dataset\n-- For example, *CUSTOMER_INSURANCE_LTV2.txt* and *CUSTOMER_INSURANCE_LTV2.csv*\n- The Object Storage bucket must be public\n-- Either the default bucket or the user\u0027s public bucket may be used\n- The OML ADMIN user must grant execute on the DBMS_CLOUD procedures to the OML user \n-- Use the command *grant execute on DBMS_CLOUD to OMLUSER*, where OMLUSER is the OML username\n\n#### Input variables:\n- DATASET: The name of CSV data set residing in Object Storage\n- VERBOSE: Optional. Controls the amount of information returned from the procedure\n-- Default is FALSE, which returns the table name and number of rows in the table\n-- When TRUE, returns detailed object information, including the default return values, the file names in Object Storage, and the table definition\n- LOCATION_URI: Optional. The Object Storage URL where the files reside. The default value is the Oracle Machine Learning public bucket.\n\n#### Basic usage:\nTo run the procedure, pass the dataset name as the `DATASET` parameter:\n\n    EXEC IMPORT_DATA_OBJSTORE_DATASET(\u0027CUSTOMER_INSURANCE_LTV2\u0027)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:52:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe custom procedure \u003ccode\u003eIMPORT_DATA_OBJSTORE_DATASET\u003c/code\u003e imports the data from Object Storage directly to a database table using a combination of PL/SQL commands and the \u003ccode\u003eDBMS_CLOUD.COPY_DATA\u003c/code\u003e procedure. Simply provide the dataset name, and the table will be created and the data inserted to the target table.\u003c/p\u003e\n\u003ch4\u003ePrerequisites:\u003c/h4\u003e\n\u003cul\u003e\n\u003cli\u003eThe CSV file containing the data and a text file with the table definition must be saved in the Object Storage bucket\n\u003cbr  /\u003e\u0026ndash; Note, the default Object Storage bucket already contains the CSV and text files needed to create the OML demo datasets\u003c/li\u003e\n\u003cli\u003eBoth the CSV and text files must match the name of the input dataset\n\u003cbr  /\u003e\u0026ndash; For example, \u003cem\u003eCUSTOMER_INSURANCE_LTV2.txt\u003c/em\u003e and \u003cem\u003eCUSTOMER_INSURANCE_LTV2.csv\u003c/em\u003e\u003c/li\u003e\n\u003cli\u003eThe Object Storage bucket must be public\n\u003cbr  /\u003e\u0026ndash; Either the default bucket or the user\u0027s public bucket may be used\u003c/li\u003e\n\u003cli\u003eThe OML ADMIN user must grant execute on the DBMS_CLOUD procedures to the OML user\n\u003cbr  /\u003e\u0026ndash; Use the command \u003cem\u003egrant execute on DBMS_CLOUD to OMLUSER\u003c/em\u003e, where OMLUSER is the OML username\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch4\u003eInput variables:\u003c/h4\u003e\n\u003cul\u003e\n\u003cli\u003eDATASET: The name of CSV data set residing in Object Storage\u003c/li\u003e\n\u003cli\u003eVERBOSE: Optional. Controls the amount of information returned from the procedure\n\u003cbr  /\u003e\u0026ndash; Default is FALSE, which returns the table name and number of rows in the table\n\u003cbr  /\u003e\u0026ndash; When TRUE, returns detailed object information, including the default return values, the file names in Object Storage, and the table definition\u003c/li\u003e\n\u003cli\u003eLOCATION_URI: Optional. The Object Storage URL where the files reside. The default value is the Oracle Machine Learning public bucket.\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch4\u003eBasic usage:\u003c/h4\u003e\n\u003cp\u003eTo run the procedure, pass the dataset name as the \u003ccode\u003eDATASET\u003c/code\u003e parameter:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eEXEC IMPORT_DATA_OBJSTORE_DATASET(\u0027CUSTOMER_INSURANCE_LTV2\u0027)\n\u003c/code\u003e\u003c/pre\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_1940120566",
+      "id": "20220225-173909_1814347879",
+      "dateCreated": "2021-11-01T17:50:24+0000",
+      "dateStarted": "2023-02-17T22:52:51+0000",
+      "dateFinished": "2023-02-17T22:52:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Define the custom procedure",
+      "text": "%script\r\n\r\nCREATE OR REPLACE PROCEDURE IMPORT_DATA_OBJSTORE_DATASET(\r\n  DATASET IN VARCHAR2,\r\n  VERBOSE IN BOOLEAN DEFAULT FALSE,\r\n  LOCATION_URI IN VARCHAR2 DEFAULT \u0027https://objectstorage.us-ashburn-1.oraclecloud.com/n/adwc4pm/b/OML_Data/o/\u0027) AUTHID CURRENT_USER AS\r\ndataset_upper VARCHAR2(100);\r\nfile_name VARCHAR2(1000);\r\ntable_name varchar2(1000);\r\nobj varchar2(1000);\r\nsql_file varchar2(1000);\r\nb_data BLOB;\r\nv_data VARCHAR2(5000);\r\nv_rownum INTEGER;\r\n\r\n------------------------------------------------------\r\n-- Declare a new variable to convert the input\r\n-- dataset to upper case.  \r\n\r\n------------------------------------------------------\r\n\r\nBEGIN\r\n    dataset_upper :\u003d upper(dataset);\r\n\r\n------------------------------------------------------\r\n-- Define file name from input dataset\r\n------------------------------------------------------\r\n\r\nSELECT CONCAT(dataset_upper, \u0027.csv\u0027) INTO FILE_NAME from dual;\r\n\r\nIF VERBOSE THEN\r\n   DBMS_OUTPUT.PUT_LINE(\u0027Dataset name is: \u0027||dataset_upper);\r\n   DBMS_OUTPUT.PUT_LINE(\u0027CSV file name is: \u0027||file_name);\r\nEND IF;\r\n\r\n------------------------------------------------------\r\n-- Select file from Object Storage\r\n------------------------------------------------------\r\n\r\nSELECT object_name INTO obj FROM DBMS_CLOUD.LIST_OBJECTS(NULL, LOCATION_URI) where object_name \u003d FILE_NAME;\r\n\r\n------------------------------------------------------\r\n-- Define table name\r\n------------------------------------------------------\r\n\r\nSELECT REGEXP_SUBSTR(obj, \u0027[^.]+\u0027) INTO table_name from dual;\r\n\r\n   DBMS_OUTPUT.PUT_LINE(\u0027Table name is: \u0027||table_name);\r\n\r\n------------------------------------------------------\r\n-- Define file containing the CREATE TABLE statement,\r\n-- which is saved in a TXT file. DBMS_CLOUD does not\r\n-- support reading SQL files.\r\n------------------------------------------------------\r\n\r\nSELECT table_name||\u0027.txt\u0027 INTO sql_file from dual;\r\n\r\nIF VERBOSE THEN\r\n   DBMS_OUTPUT.PUT_LINE(\u0027Text file is: \u0027||sql_file);\r\nEND IF;\r\n\r\n------------------------------------------------------\r\n-- Read the SQL statement from the text file into\r\n-- a binary variable and execute the statement\r\n------------------------------------------------------\r\n\r\nBEGIN\r\n  b_data :\u003d DBMS_CLOUD.GET_OBJECT(\r\n      credential_name \u003d\u003e NULL,\r\n      object_uri \u003d\u003e LOCATION_URI||sql_file);\r\n  v_data :\u003d  utl_raw.cast_to_varchar2(b_data);\r\n  IF VERBOSE THEN\r\n  DBMS_OUTPUT.PUT_LINE(\u0027Table definition is: \u0027||v_data);\r\n  END IF;\r\n  EXECUTE IMMEDIATE v_data;\r\nEND;\r\n\r\n------------------------------------------------------\r\n-- Write data to the final table specified as dataset\r\n-- input. If the table already exists, an error is\r\n-- returned.\r\n------------------------------------------------------\r\n\r\nBEGIN\r\n    DBMS_CLOUD.COPY_DATA (\r\n       credential_name \u003d\u003e NULL,\r\n       table_name \u003d\u003e table_name,\r\n       file_uri_list   \u003d\u003e LOCATION_URI||file_name,\r\n  format \u003d\u003e json_object(\u0027type\u0027 value \u0027CSV\u0027, \u0027skipheaders\u0027 value 1));\r\nEND;\r\n\r\n------------------------------------------------------\r\n-- Return the number of rows in the table\r\n------------------------------------------------------\r\n\r\nEXECUTE IMMEDIATE \u0027SELECT count(*) FROM \u0027 || table_name INTO v_rownum;\r\nDBMS_OUTPUT.PUT_LINE (\u0027Table created with number of rows \u003d \u0027 || v_rownum);\r\n\r\nEND;\r\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:52:51+0000",
+      "progress": 0,
+      "config": {
+        "lineNumbers": false,
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nProcedure IMPORT_DATA_OBJSTORE_DATASET compiled\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_-873820044",
+      "id": "20220225-173909_1813067492",
+      "dateCreated": "2021-11-01T17:50:00+0000",
+      "dateStarted": "2023-02-17T22:52:51+0000",
+      "dateFinished": "2023-02-17T22:52:57+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Delete the table if it exists",
+      "text": "%script\n\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE CUSTOMER_INSURANCE_LTV2\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:52:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_1517301000",
+      "id": "20220225-173909_456735509",
+      "dateCreated": "2021-11-03T20:54:28+0000",
+      "dateStarted": "2023-02-17T22:52:58+0000",
+      "dateFinished": "2023-02-17T22:52:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Run the procedure in default mode",
+      "text": "%md\n\nIn default mode, the only required input is the dataset name, `CUSTOMER_INSURANCE_LTV2`. The table `CUSTOMER_INSURANCE_LTV2` is created and the table name and number of rows in the table is returned.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:52:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eIn default mode, the only required input is the dataset name, \u003ccode\u003eCUSTOMER_INSURANCE_LTV2\u003c/code\u003e. The table \u003ccode\u003eCUSTOMER_INSURANCE_LTV2\u003c/code\u003e is created and the table name and number of rows in the table is returned.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_1026356148",
+      "id": "20220225-173909_391590475",
+      "dateCreated": "2021-11-02T17:24:03+0000",
+      "dateStarted": "2023-02-17T22:52:58+0000",
+      "dateFinished": "2023-02-17T22:52:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "",
+      "text": "%script\n\nEXEC IMPORT_DATA_OBJSTORE_DATASET(\u0027CUSTOMER_INSURANCE_LTV2\u0027)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:52:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Table name is: CUSTOMER_INSURANCE_LTV2\nTable created with number of rows \u003d 13880\n\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_635362888",
+      "id": "20220225-173909_1572532030",
+      "dateCreated": "2020-11-25T21:53:03+0000",
+      "dateStarted": "2023-02-17T22:52:59+0000",
+      "dateFinished": "2023-02-17T22:53:08+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the first 10 rows of the table",
+      "text": "%sql\n\nSELECT * \nFROM  CUSTOMER_INSURANCE_LTV2 \nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MARITAL_STATUS": "string",
+                      "STATE": "string",
+                      "CREDIT_BALANCE": "string",
+                      "CUSTOMER_TENURE": "string",
+                      "MORTGAGE_AMOUNT": "string",
+                      "BANK_FUNDS": "string",
+                      "NUM_DEPENDENTS": "string",
+                      "HAS_CHILDREN": "string",
+                      "INCOME": "string",
+                      "CUSTOMER_ID": "string",
+                      "GENDER": "string",
+                      "PROFESSION": "string",
+                      "CREDIT_CARD_LIMITS": "string",
+                      "REGION": "string",
+                      "HOME_OWNERSHIP": "string",
+                      "NUM_ONLINE_TRANS": "string",
+                      "BUY_INSURANCE": "string",
+                      "MONTHLY_CHECKS": "string",
+                      "NUM_TRANS_KIOSK": "string",
+                      "AGE": "string",
+                      "MONEY_MONTLY_OVERDRAWN": "string",
+                      "LTV": "string",
+                      "TOTAL_AUTOM_PAYMENTS": "string",
+                      "NUM_TRANS_TELLER": "string",
+                      "CHECKING_BALANCE": "string",
+                      "NUM_TRANS_ATM": "string",
+                      "LTV_BIN": "string",
+                      "FIRST_NAME": "string",
+                      "NUM_MORTGAGES": "string",
+                      "CAR_OWNERSHIP": "string",
+                      "LAST_NAME": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MARITAL_STATUS\tSTATE\tCREDIT_BALANCE\tCUSTOMER_TENURE\tMORTGAGE_AMOUNT\tBANK_FUNDS\tNUM_DEPENDENTS\tHAS_CHILDREN\tINCOME\tCUSTOMER_ID\tGENDER\tPROFESSION\tCREDIT_CARD_LIMITS\tREGION\tHOME_OWNERSHIP\tNUM_ONLINE_TRANS\tBUY_INSURANCE\tMONTHLY_CHECKS\tNUM_TRANS_KIOSK\tAGE\tMONEY_MONTLY_OVERDRAWN\tLTV\tTOTAL_AUTOM_PAYMENTS\tNUM_TRANS_TELLER\tCHECKING_BALANCE\tNUM_TRANS_ATM\tLTV_BIN\tFIRST_NAME\tNUM_MORTGAGES\tCAR_OWNERSHIP\tLAST_NAME\nMARRIED\tNV                        \t0\t1\t1567\t0\t1\t1\t67239\tCU8912                    \tM                         \tPlumber\t1000\tSouthwest\t1\t1567\tNo\t0\t1\t40\t53.06\t24309.75\t0\t0\t25\t0\tHIGH\tMILLARD\t1\t1\tONEIL\nSINGLE\tNY                        \t0\t2\t0\t0\t0\t0\t65504\tCU8914                    \tM                         \tPROF-18\t1000\tNorthEast\t0\t0\tNo\t0\t1\t25\t53.06\t19876\t0\t0\t25\t0\tMEDIUM\tMELVIN\t0\t0\tMCCULLOUGH\nSINGLE\tNY                        \t0\t2\t0\t0\t0\t0\t70401\tCU8915                    \tM                         \tPROF-5\t1000\tNorthEast\t0\t0\tNo\t0\t1\t22\t53.06\t20800.25\t0\t0\t25\t0\tMEDIUM\tJEROMY\t0\t0\tHINDS\nDIVORCED\tDC                        \t0\t2\t4000\t0\t2\t1\t64367\tCU8916                    \tM                         \tNurse\t1000\tNorthEast\t1\t4000\tNo\t1\t1\t42\t53.07\t22291.75\t0\t0\t25\t1\tHIGH\tFRANCIS\t1\t1\tGAGNE\nSINGLE\tMI                        \t0\t3\t0\t750\t3\t0\t63651\tCU11794                   \tM                         \tProgrammer/Developer\t1000\tMidwest\t0\t0\tNo\t4\t2\t22\t53.5\t13612.75\t433\t3\t25\t4\tLOW\tVINCE\t0\t1\tHARVEY\nSINGLE\tNY                        \t0\t3\t392\t251\t3\t1\t69066\tCU11823                   \tM                         \tProgrammer/Developer\t1000\tNorthEast\t2\t392\tNo\t1\t4\t22\t53.17\t29966.5\t0\t2\t25\t2\tHIGH\tALAN\t2\t1\tWILLOUGHBY\nMARRIED\tUT                        \t0\t2\t734\t1600\t2\t1\t66069\tCU11856                   \tF                         \tVeterinarian\t900\tSouthwest\t1\t734\tNo\t13\t4\t41\t53.11\t22617.25\t1104\t1\t159\t2\tHIGH\tGEORGIE\t1\t1\tBUSBY\nSINGLE\tFL                        \t0\t3\t500\t0\t3\t0\t70760\tCU11887                   \tM                         \tNurse\t1000\tSouth\t1\t500\tNo\t0\t4\t24\t53.06\t25590\t0\t0\t25\t0\tHIGH\tKING\t1\t1\tCRUM\nSINGLE\tFL                        \t0\t3\t0\t500\t3\t0\t57815\tCU14026                   \tM                         \tProgrammer/Developer\t1000\tSouth\t0\t0\tYes\t15\t3\t19\t53.52\t11853.75\t151\t2\t32\t4\tLOW\tLESLIE\t0\t1\tHENDERSON\nMARRIED\tCA                        \t0\t1\t5500\t0\t1\t1\t94407\tCU15612                   \tF                         \tPROF-14\t5000\tWest\t1\t5500\tNo\t1\t4\t45\t-60.74\t31601.75\t0\t1\t25\t2\tVERY HIGH\tTULA\t1\t1\tMILES\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_950527380",
+      "id": "20220225-173909_955860091",
+      "dateCreated": "2021-11-03T22:02:44+0000",
+      "dateStarted": "2023-02-17T22:53:08+0000",
+      "dateFinished": "2023-02-17T22:53:08+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Run the custom procedure in verbose mode",
+      "text": "%md\n\nIn verbose mode, additional information is returned, including the dataset, CSV, and text file names, and the table definition. Verbose mode is enabled by specified by setting the `VERBOSE`parameter to `TRUE`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eIn verbose mode, additional information is returned, including the dataset, CSV, and text file names, and the table definition. Verbose mode is enabled by specified by setting the \u003ccode\u003eVERBOSE\u003c/code\u003eparameter to \u003ccode\u003eTRUE\u003c/code\u003e.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_106611943",
+      "id": "20220225-173909_1783247330",
+      "dateCreated": "2021-11-02T17:26:22+0000",
+      "dateStarted": "2023-02-17T22:53:08+0000",
+      "dateFinished": "2023-02-17T22:53:08+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Delete the previously created table",
+      "text": "%script\n\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE CUSTOMER_INSURANCE_LTV2\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_-1731778841",
+      "id": "20220225-173909_1143051146",
+      "dateCreated": "2021-11-03T21:27:27+0000",
+      "dateStarted": "2023-02-17T22:53:08+0000",
+      "dateFinished": "2023-02-17T22:53:08+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%script\n\nEXEC IMPORT_DATA_OBJSTORE_DATASET(\u0027CUSTOMER_INSURANCE_LTV2\u0027, TRUE)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Dataset name is: CUSTOMER_INSURANCE_LTV2\nCSV file name is: CUSTOMER_INSURANCE_LTV2.csv\nTable name is: CUSTOMER_INSURANCE_LTV2\nText file is: CUSTOMER_INSURANCE_LTV2.txt\nTable definition is: CREATE TABLE CUSTOMER_INSURANCE_LTV2(MARITAL_STATUS\nVARCHAR2(26 BYTE), STATE CHAR(26 BYTE), CREDIT_BALANCE NUMBER(8,0),\nCUSTOMER_TENURE NUMBER(3,0), MORTGAGE_AMOUNT NUMBER(7,0), BANK_FUNDS\nNUMBER(7,0), NUM_DEPENDENTS NUMBER(3,0), HAS_CHILDREN NUMBER(3,0), INCOME\nNUMBER(7,0), CUSTOMER_ID CHAR(26 BYTE), GENDER CHAR(26 BYTE), PROFESSION\nVARCHAR2(35 BYTE), CREDIT_CARD_LIMITS NUMBER(6,0), REGION VARCHAR2(26 BYTE),\nHOME_OWNERSHIP NUMBER(3,0), NUM_ONLINE_TRANS NUMBER(6,0), BUY_INSURANCE\nVARCHAR2(26 BYTE), MONTHLY_CHECKS NUMBER(4,0), NUM_TRANS_KIOSK NUMBER(3,0), AGE\nNUMBER(4,0), MONEY_MONTLY_OVERDRAWN NUMBER(6,2), LTV NUMBER(9,2),\nTOTAL_AUTOM_PAYMENTS NUMBER(8,0), NUM_TRANS_TELLER NUMBER(3,0), \r\nCHECKING_BALANCE NUMBER(7,0), NUM_TRANS_ATM NUMBER(3,0), LTV_BIN VARCHAR2(26\nBYTE), FIRST_NAME VARCHAR2(26 BYTE), NUM_MORTGAGES NUMBER(3,0), CAR_OWNERSHIP\nNUMBER(3,0), LAST_NAME VARCHAR2(26 BYTE)) \r\n\nTable created with number of rows \u003d 13880\n\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_-608771607",
+      "id": "20220225-173909_1323849519",
+      "dateCreated": "2021-11-03T21:25:12+0000",
+      "dateStarted": "2023-02-17T22:53:09+0000",
+      "dateFinished": "2023-02-17T22:53:14+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the first 10 rows of the table",
+      "text": "%sql\n\nSELECT * \nFROM  CUSTOMER_INSURANCE_LTV2 \nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MARITAL_STATUS": "string",
+                      "STATE": "string",
+                      "CREDIT_BALANCE": "string",
+                      "CUSTOMER_TENURE": "string",
+                      "MORTGAGE_AMOUNT": "string",
+                      "BANK_FUNDS": "string",
+                      "NUM_DEPENDENTS": "string",
+                      "HAS_CHILDREN": "string",
+                      "INCOME": "string",
+                      "CUSTOMER_ID": "string",
+                      "GENDER": "string",
+                      "PROFESSION": "string",
+                      "CREDIT_CARD_LIMITS": "string",
+                      "REGION": "string",
+                      "HOME_OWNERSHIP": "string",
+                      "NUM_ONLINE_TRANS": "string",
+                      "BUY_INSURANCE": "string",
+                      "MONTHLY_CHECKS": "string",
+                      "NUM_TRANS_KIOSK": "string",
+                      "AGE": "string",
+                      "MONEY_MONTLY_OVERDRAWN": "string",
+                      "LTV": "string",
+                      "TOTAL_AUTOM_PAYMENTS": "string",
+                      "NUM_TRANS_TELLER": "string",
+                      "CHECKING_BALANCE": "string",
+                      "NUM_TRANS_ATM": "string",
+                      "LTV_BIN": "string",
+                      "FIRST_NAME": "string",
+                      "NUM_MORTGAGES": "string",
+                      "CAR_OWNERSHIP": "string",
+                      "LAST_NAME": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MARITAL_STATUS\tSTATE\tCREDIT_BALANCE\tCUSTOMER_TENURE\tMORTGAGE_AMOUNT\tBANK_FUNDS\tNUM_DEPENDENTS\tHAS_CHILDREN\tINCOME\tCUSTOMER_ID\tGENDER\tPROFESSION\tCREDIT_CARD_LIMITS\tREGION\tHOME_OWNERSHIP\tNUM_ONLINE_TRANS\tBUY_INSURANCE\tMONTHLY_CHECKS\tNUM_TRANS_KIOSK\tAGE\tMONEY_MONTLY_OVERDRAWN\tLTV\tTOTAL_AUTOM_PAYMENTS\tNUM_TRANS_TELLER\tCHECKING_BALANCE\tNUM_TRANS_ATM\tLTV_BIN\tFIRST_NAME\tNUM_MORTGAGES\tCAR_OWNERSHIP\tLAST_NAME\nDIVORCED\tMI                        \t0\t1\t3070\t5800\t1\t0\t68738\tCU10914                   \tF                         \tNot specified\t1000\tMidwest\t1\t1000\tNo\t11\t1\t42\t53.32\t29884.5\t214\t4\t194\t3\tHIGH\tERA\t1\t1\tCLINTON\nMARRIED\tFL                        \t0\t1\t5000\t0\t1\t1\t96667\tCU10831                   \tF                         \tPROF-54\t3500\tSouth\t1\t5000\tNo\t0\t1\t26\t53.06\t30266.75\t0\t1\t25\t0\tVERY HIGH\tALBERTA\t1\t1\tDIAZ\nMARRIED\tOK                        \t0\t2\t1596\t1400\t2\t1\t70320\tCU10833                   \tM                         \tPROF-11\t1000\tMidwest\t1\t300\tYes\t12\t2\t33\t54.67\t22880\t358\t1\t25\t5\tHIGH\tSHON\t1\t1\tATWOOD\nDIVORCED\tCA                        \t0\t1\t2500\t0\t1\t1\t60223\tCU10834                   \tM                         \tPlumber\t1000\tWest\t1\t2500\tNo\t1\t1\t39\t53.08\t22455.75\t437\t1\t25\t1\tHIGH\tELLIOTT\t1\t1\tCOREY\nMARRIED\tFL                        \t0\t3\t1214\t1650\t3\t1\t59303\tCU10835                   \tM                         \tDentist\t1000\tSouth\t1\t300\tYes\t4\t1\t26\t54.22\t17925.75\t1086\t3\t25\t5\tMEDIUM\tSHIRLEY\t1\t1\tUNGER\nSINGLE\tFL                        \t0\t3\t0\t0\t3\t0\t71695\tCU11692                   \tM                         \tPROF-13\t1500\tSouth\t0\t0\tNo\t2\t4\t21\t53.05\t15523.75\t0\t0\t25\t2\tMEDIUM\tSEYMOUR\t0\t0\tGIBBONS\nSINGLE\tOH                        \t0\t3\t648\t0\t3\t0\t65468\tCU13684                   \tM                         \tPROF-30\t1000\tMidwest\t1\t648\tNo\t5\t1\t29\t53.13\t24767\t0\t0\t25\t2\tHIGH\tKENNITH\t1\t1\tOBRIEN\nSINGLE\tFL                        \t0\t3\t478\t250\t3\t0\t61033\tCU4525                    \tM                         \tFirst-line Manager\t1000\tSouth\t1\t478\tNo\t14\t1\t27\t53.72\t23458.25\t682\t2\t96\t4\tHIGH\tROBERT\t1\t1\tDUNCAN\nDIVORCED\tIL                        \t0\t1\t4500\t10390\t1\t1\t63925\tCU4526                    \tF                         \tPROF-35\t500\tMidwest\t1\t1000\tYes\t7\t3\t43\t57.04\t23781.25\t3996\t4\t25\t6\tHIGH\tMALINDA\t1\t1\tBLEDSOE\nSINGLE\tMI                        \t0\t2\t0\t0\t0\t0\t63789\tCU4527                    \tM                         \tBank Teller\t700\tMidwest\t0\t0\tNo\t0\t3\t35\t53.06\t20447.25\t506\t1\t25\t0\tMEDIUM\tCONNIE\t0\t1\tLEARY\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_-321350810",
+      "id": "20220225-173909_1019217941",
+      "dateCreated": "2021-11-03T22:03:22+0000",
+      "dateStarted": "2023-02-17T22:53:15+0000",
+      "dateFinished": "2023-02-17T22:53:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Run the procedure using your own Object Storage bucket",
+      "text": "%md\n\nTo use your own Object Storage bucket with `IMPORT_DATA_OBJSTORE_DATASET`, pass the bucket URI to the `LOCATION_URI` parameter. Recall that the CSV file containing the data and the text file with the table definition should first be uploaded to the bucket. The example below demonstrates this functionality in default mode, and replacing NULL for TRUE will enable verbose mode.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eTo use your own Object Storage bucket with \u003ccode\u003eIMPORT_DATA_OBJSTORE_DATASET\u003c/code\u003e, pass the bucket URI to the \u003ccode\u003eLOCATION_URI\u003c/code\u003e parameter. Recall that the CSV file containing the data and the text file with the table definition should first be uploaded to the bucket. The example below demonstrates this functionality in default mode, and replacing NULL for TRUE will enable verbose mode.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_396108293",
+      "id": "20220225-173909_121563982",
+      "dateCreated": "2021-11-02T17:29:02+0000",
+      "dateStarted": "2023-02-17T22:53:15+0000",
+      "dateFinished": "2023-02-17T22:53:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%script\n\nEXEC IMPORT_DATA_OBJSTORE_DATASET(\u0027CUSTOMER_INSURANCE_LTV2\u0027, NULL, \u0027\u003cyour bucket URI here\u003e\u0027)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_-2064831579",
+      "id": "20220225-173909_1133965833",
+      "dateCreated": "2021-11-02T17:32:35+0000",
+      "dateStarted": "2022-03-10T23:32:19+0000",
+      "dateFinished": "2022-03-10T23:32:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Try it with your data",
+      "text": "%md\n\nTo use the `IMPORT_DATA_OBJSTORE_DATASET` procedure with your own dataset, create the text file containing the table definition (in a single line), save the corresponding CSV data file to your public Object Storage bucket, and run the procedure with the dataset name as input. \n\nFor example, for the IRIS data, the bucket will have IRIS.csv containing the data, and IRIS.txt with table definition:\n\n    CREATE TABLE IRIS(SEPAL_LENGTH number, SEPAL_WIDTH number, PETAL_LENGTH number, PETAL_WIDTH number, SPECIES varchar2(4000))\n\nRun the procedure using your bucket:\n\n    EXEC IMPORT_DATA_OBJSTORE_DATASET(\u0027IRIS\u0027, NULL, \u0027\u003cyour bucket URI\u003e\u0027)",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eTo use the \u003ccode\u003eIMPORT_DATA_OBJSTORE_DATASET\u003c/code\u003e procedure with your own dataset, create the text file containing the table definition (in a single line), save the corresponding CSV data file to your public Object Storage bucket, and run the procedure with the dataset name as input.\u003c/p\u003e\n\u003cp\u003eFor example, for the IRIS data, the bucket will have IRIS.csv containing the data, and IRIS.txt with table definition:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eCREATE TABLE IRIS(SEPAL_LENGTH number, SEPAL_WIDTH number, PETAL_LENGTH number, PETAL_WIDTH number, SPECIES varchar2(4000))\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eRun the procedure using your bucket:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eEXEC IMPORT_DATA_OBJSTORE_DATASET(\u0027IRIS\u0027, NULL, \u0027\u0026lt;your bucket URI\u0026gt;\u0027)\n\u003c/code\u003e\u003c/pre\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_1873507928",
+      "id": "20220225-173909_264121086",
+      "dateCreated": "2021-11-02T17:48:45+0000",
+      "dateStarted": "2023-02-17T22:53:15+0000",
+      "dateFinished": "2023-02-17T22:53:15+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:53:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1645810749808_-1146486091",
+      "id": "20220225-173909_482953852",
+      "dateCreated": "2021-11-01T22:08:02+0000",
+      "dateStarted": "2023-02-17T22:53:15+0000",
+      "dateFinished": "2023-02-17T22:53:15+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Procedure for Importing Data to ADB",
+  "id": "106923",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA7A60DC9B32:OMLDEMOUSER02-106923": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4SQL Procedure for Importing Data to ADB"
+}

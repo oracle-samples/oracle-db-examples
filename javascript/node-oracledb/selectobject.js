@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -30,8 +30,28 @@
 
 'use strict';
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
+
+// If each object's attributes are accessed multiple times, it may be more
+// efficient to fetch as simple JavaScriptobjects.
+// oracledb.dbObjectAsPojo = true;
 
 async function run() {
 
@@ -45,8 +65,8 @@ async function run() {
     // Create a table with a named type
     //
 
-    let stmts = [
-      `DROP TABLE farmtab`,
+    const stmts = [
+      `DROP TABLE no_farmtab`,
 
       `DROP TYPE dbfarmtype`,
 
@@ -58,13 +78,13 @@ async function run() {
          farmername     VARCHAR2(20),
          harvest        dbharvesttype)`,
 
-      `CREATE TABLE farmtab (id NUMBER, farm dbfarmtype)`
+      `CREATE TABLE no_farmtab (id NUMBER, farm dbfarmtype)`
     ];
 
     for (const s of stmts) {
       try {
         await connection.execute(s);
-      } catch(e) {
+      } catch (e) {
         if (e.errorNum != 942 && e.errorNum != 4043)
           console.error(e);
       }
@@ -108,7 +128,7 @@ async function run() {
     console.log(farm1);
 
     await connection.execute(
-      `INSERT INTO farmtab (id, farm) VALUES (:id, :f)`,
+      `INSERT INTO no_farmtab (id, farm) VALUES (:id, :f)`,
       {id: 1, f: farm1}
     );
 
@@ -138,7 +158,7 @@ async function run() {
     console.log(farm2.HARVEST.getValues());
 
     await connection.execute(
-      `INSERT INTO farmtab (id, farm) VALUES (:id, :f)`,
+      `INSERT INTO no_farmtab (id, farm) VALUES (:id, :f)`,
       { id: 2, f: farm2 }
     );
 
@@ -149,7 +169,7 @@ async function run() {
     //
 
     await connection.execute(
-      `INSERT INTO farmtab (id, farm) VALUES (:id, :f)`,
+      `INSERT INTO no_farmtab (id, farm) VALUES (:id, :f)`,
       { id: 3,
         f: {
           type: FarmType,   // pass the prototype object
@@ -168,7 +188,7 @@ async function run() {
     //
 
     await connection.execute(
-      `INSERT INTO farmtab (id, farm) VALUES (:id, :f)`,
+      `INSERT INTO no_farmtab (id, farm) VALUES (:id, :f)`,
       { id: 4,
         f: {
           type: 'DBFARMTYPE',   // the name of the top level database type, case sensitive
@@ -187,7 +207,7 @@ async function run() {
     console.log('\nQuerying:');
 
     result = await connection.execute(
-      `SELECT id, farm FROM farmtab WHERE id = 1 `,
+      `SELECT id, farm FROM no_farmtab WHERE id = 1 `,
       [],
       // outFormat determines whether rows will be in arrays or JavaScript objects.
       // It does not affect how the FARM column itself is represented.

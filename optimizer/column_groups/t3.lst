@@ -1,0 +1,139 @@
+SQL> 
+SQL> column the_sqlid new_value sqlid
+SQL> 
+SQL> select sql_id the_sqlid
+  2  from   v$sqlarea
+  3  where  sql_text like 'select /* MY_TEST_QUERY%';
+
+THE_SQLID
+-------------
+7kjpawwbyh1bz
+
+1 row selected.
+
+SQL> 
+SQL> define sqlid
+DEFINE SQLID           = "7kjpawwbyh1bz" (CHAR)
+SQL> 
+SQL> @cg_from_sqlid &sqlid y
+SQL> --
+SQL> -- For a given SQL ID, parse and create column groups
+SQL> -- Parameters:
+SQL> --    SQL ID
+SQL> --    Y/N - where Y - create column groups immediately
+SQL> --                N - spool a reation script to verify and run later
+SQL> --
+SQL> set long 100000
+SQL> 
+SQL> --
+SQL> -- This assumes that the parse will complete within 10 seconds
+SQL> --
+SQL> exec dbms_stats.seed_col_usage(null,null,10)
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_lock.sleep(1)
+
+PL/SQL procedure successfully completed.
+
+SQL> --
+SQL> -- Parse the relevant SQL statement
+SQL> --
+SQL> @@explain &1
+SQL> --
+SQL> -- This script explains a SQL statement in the cursor cache
+SQL> -- NOTE - it will fail for very long SQL statements
+SQL> -- If you have a license to use SQL performance advisor, you
+SQL> -- can use that instead to parse SQL statements in the cursor
+SQL> -- cache.
+SQL> --
+SQL> set echo off
+-- ===========================================================
+--     Table Name  : TAB_CORR1
+/*
+LEGEND:
+.......
+
+EQ         : Used in single table EQuality predicate
+RANGE      : Used in single table RANGE predicate
+LIKE       : Used in single table LIKE predicate
+NULL       : Used in single table is (not) NULL predicate
+EQ_JOIN    : Used in
+EQuality JOIN predicate
+NONEQ_JOIN : Used in NON EQuality JOIN predicate
+FILTER     : Used in single table FILTER predicate
+JOIN       : Used in JOIN predicate
+GROUP_BY   : Used in GROUP BY
+expression
+...............................................................................
+
+###############################################################################
+
+COLUMN USAGE REPORT FOR
+TP25.TAB_CORR1
+......................................
+
+1. N1                                  : EQ EQ_JOIN                            
+2. N2                                  : EQ EQ_JOIN                            
+3. (N1, N2)
+: FILTER 
+###############################################################################
+
+
+*/
+###############################################################################
+
+EXTENSIONS FOR TP25.TAB_CORR1
+.............................
+
+1. (N1, N2)                            : SYS_STUBZH0IHA7K$KEBJVXO5LOHAS
+created
+###############################################################################
+
+
+-- ===========================================================
+--     Table Name  : TAB_CORR2
+/*
+LEGEND:
+.......
+
+EQ         : Used in single table EQuality predicate
+RANGE      : Used in single table RANGE predicate
+LIKE       : Used in single table LIKE predicate
+NULL       : Used in single table is (not) NULL predicate
+EQ_JOIN    : Used in
+EQuality JOIN predicate
+NONEQ_JOIN : Used in NON EQuality JOIN predicate
+FILTER     : Used in single table FILTER predicate
+JOIN       : Used in JOIN predicate
+GROUP_BY   : Used in GROUP BY
+expression
+...............................................................................
+
+###############################################################################
+
+COLUMN USAGE REPORT FOR
+TP25.TAB_CORR2
+......................................
+
+1. N1                                  : EQ EQ_JOIN                            
+2. N2                                  : EQ EQ_JOIN                            
+3. (N1, N2)
+: FILTER 
+###############################################################################
+
+
+*/
+###############################################################################
+
+EXTENSIONS FOR TP25.TAB_CORR2
+.............................
+
+1. (N1, N2)                            : SYS_STUBZH0IHA7K$KEBJVXO5LOHAS
+created
+###############################################################################
+
+
+-- === Stats need to be regathered on the following tables
+exec dbms_stats.gather_table_stats('TP25','TAB_CORR1')
+exec dbms_stats.gather_table_stats('TP25','TAB_CORR2')

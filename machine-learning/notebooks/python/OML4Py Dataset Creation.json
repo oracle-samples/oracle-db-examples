@@ -1,0 +1,268 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n# OML4Py Demonstration Dataset Creation\n\nThis script loads the sample datasets `BREASTCANCER` and `IRIS` provided with the SciKit-Learn Python package and imports into them into the Oracle Database by using the oml.create() function. \n\nCopyright (c) 2022 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:03:29+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eOML4Py Demonstration Dataset Creation\u003c/h1\u003e\n\u003cp\u003eThis script loads the sample datasets \u003ccode\u003eBREASTCANCER\u003c/code\u003e and \u003ccode\u003eIRIS\u003c/code\u003e provided with the SciKit-Learn Python package and imports into them into the Oracle Database by using the oml.create() function.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2022 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266356_718491167",
+      "id": "20220124-201426_1097221910",
+      "dateCreated": "2020-04-08T15:34:45+0000",
+      "dateStarted": "2022-03-10T17:03:30+0000",
+      "dateFinished": "2022-03-10T17:03:31+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%python\n\nimport oml\n\nfrom sklearn import datasets\nimport pandas as pd",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:03:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266356_2127842852",
+      "id": "20220124-201426_18842112",
+      "dateCreated": "2020-04-08T15:35:17+0000",
+      "dateStarted": "2022-03-10T17:03:32+0000",
+      "dateFinished": "2022-03-10T17:03:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Load breast cancer data and create table",
+      "text": "%python\n\nbc \u003d datasets.load_breast_cancer()\nbc_data \u003d bc.data.astype(float)\nX \u003d pd.DataFrame(bc_data, columns \u003d bc.feature_names)\ny \u003d pd.DataFrame(bc.target, columns \u003d [\u0027TARGET\u0027])\n\ntry:\n    oml.drop(table\u003d\u0027BREASTCANCER\u0027)\nexcept:\n    pass\nBREASTCANCER \u003d oml.create(pd.concat([X, y], axis\u003d1), table \u003d \u0027BREASTCANCER\u0027)\nprint(\"Shape:\",BREASTCANCER.shape)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:03:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Shape: (569, 31)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266356_2114957612",
+      "id": "20220124-201426_714877158",
+      "dateCreated": "2020-04-08T15:35:08+0000",
+      "dateStarted": "2022-03-10T17:03:42+0000",
+      "dateFinished": "2022-03-10T17:03:43+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Load IRIS dataset and create table",
+      "text": "%python\n\niris \u003d datasets.load_iris()\nX \u003d pd.DataFrame(iris.data, \n                 columns \u003d [\"SEPAL_LENGTH\", \"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\"])\ny \u003d pd.DataFrame(list(map(lambda x: {0:\u0027setosa\u0027, 1: \u0027versicolor\u0027, 2:\u0027virginica\u0027}[x], iris.target)), \n                 columns \u003d [\u0027SPECIES\u0027])\n\ntry:\n    oml.drop(table\u003d\u0027IRIS\u0027)\nexcept:\n    pass\nIRIS \u003d oml.create(pd.concat([X, y], axis\u003d1), table \u003d \u0027IRIS\u0027)\nprint(\"Shape:\",IRIS.shape)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:03:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Shape: (150, 5)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266356_-1722984582",
+      "id": "20220124-201426_472973376",
+      "dateCreated": "2020-04-08T15:54:16+0000",
+      "dateStarted": "2022-03-10T17:03:44+0000",
+      "dateFinished": "2022-03-10T17:03:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:03:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266356_1302110532",
+      "id": "20220124-201426_1864153639",
+      "dateCreated": "2020-04-08T15:55:47+0000",
+      "dateStarted": "2022-03-10T17:03:44+0000",
+      "dateFinished": "2022-03-10T17:03:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-10T17:03:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266356_-1948708755",
+      "id": "20220124-201426_309209670",
+      "dateCreated": "2020-06-10T20:22:15+0000",
+      "dateStarted": "2022-03-10T17:03:45+0000",
+      "dateFinished": "2022-03-10T17:03:45+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py Dataset Creation",
+  "id": "101068",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

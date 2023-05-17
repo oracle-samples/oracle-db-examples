@@ -25,5 +25,4 @@ The Oracle JDBC drivers allow Java applications to connect and process data in t
 
 # Other Resources 
 
-* [Connecting Java Applications to Database Cloud Services](https://blogs.oracle.com/dev2dev/connecting-java-applications-to-database-cloud-services)
-* [Using Java Containers with Exadata Express Cloud Service (EECS)](http://www.oracle.com/technetwork/database/application-development/jdbc/jdbc-eecontainers-cloud.html#tomcat)
+* [Quick Start Java Applications with Autonomus Database](https://www.oracle.com/database/technologies/getting-started-using-jdbc.html)

@@ -1,0 +1,1511 @@
+{
+	"info": {
+		"_postman_id": "ac77298b-7116-4243-bf9b-bf4060e2079b",
+		"name": "5.ONNX Image Classification",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List All Models",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "aaad4710-71cd-4bcc-90ba-f670fc6f8d50",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>version</th>",
+							"<th>modelType</th>",
+							"<th>createdBy</th>",
+							"<th>modelId</th>",
+							"<th>modelName</th>",
+							"<th>namespace</th>",
+							"<th>shared</th>",
+							"<th>storedOn</th>",
+							"<th>links.rel</th>",
+							"<th>links.href</th>",
+							"</tr>",
+							"{{#each response.items}}",
+							"<tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"<td id={{@key}}>{{version}}</td>",
+							"<td>{{modelType}}</td>",
+							"<td>{{createdBy}}</td>",
+							"<td>{{modelId}}</td>",
+							"<td>{{modelName}}</td>",
+							"<td>{{namespace}}</td>",
+							"<td>{{shared}}</td>",
+							"<td>{{storedOn}}</td>",
+							"{{#each links}}",
+							"<td>{{rel}}</td>",
+							"<td>{{href}}</td>",
+							"{{/each}}",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "List ONNX Image Models",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6f0710d2-2f06-4901-9911-4b367df26f21",
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							".tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							".tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							".tftable tr {background-color:#ffffff;}",
+							".tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							".tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"<table class=\"tftable\" border=\"1\">",
+							"<tr>",
+							"<th>version</th>",
+							"<th>modelType</th>",
+							"<th>createdBy</th>",
+							"<th>modelId</th>",
+							"<th>modelName</th>",
+							"<th>namespace</th>",
+							"<th>shared</th>",
+							"<th>storedOn</th>",
+							"<th>links.rel</th>",
+							"<th>links.href</th>",
+							"</tr>",
+							"{{#each response.items}}",
+							"<tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"<td id={{@key}}>{{version}}</td>",
+							"<td>{{modelType}}</td>",
+							"<td>{{createdBy}}</td>",
+							"<td>{{modelId}}</td>",
+							"<td>{{modelName}}</td>",
+							"<td>{{namespace}}</td>",
+							"<td>{{shared}}</td>",
+							"<td>{{storedOn}}</td>",
+							"{{#each links}}",
+							"<td>{{rel}}</td>",
+							"<td>{{href}}</td>",
+							"{{/each}}",
+							"</tr>",
+							"{{/each}}",
+							"</table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models?namespace=ONNX_IMG_MODELS",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					],
+					"query": [
+						{
+							"key": "namespace",
+							"value": "ONNX_IMG_MODELS"
+						}
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Store ONNX Image Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "06ddafed-0d25-47de-b680-0429bafacf44",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"onnxIMGModelID\",jsonData.modelId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "modelName",
+							"value": "{{onnxIMGModelName}}",
+							"description": "The name of the model",
+							"type": "text"
+						},
+						{
+							"key": "version",
+							"value": "1.4",
+							"description": "The version for this model",
+							"type": "text"
+						},
+						{
+							"key": "modelType",
+							"value": "ONNX_IMG",
+							"description": "The type of the model (OML, ONNX or ONNX_IMG)",
+							"type": "text"
+						},
+						{
+							"key": "shared",
+							"value": "True",
+							"description": "Whether this model can be deployed by other users ",
+							"type": "text"
+						},
+						{
+							"key": "namespace",
+							"value": "ONNX_IMG_MODELS",
+							"description": "A namespace for fiiling the model and filtering",
+							"type": "text"
+						},
+						{
+							"key": "modelData",
+							"description": "The model binary. NOTE: ONNX Image Classification models must be uploaded as zip files. The ONNX model is included in the zip.",
+							"type": "file",
+							"src": "/Users/marancib/Oracle Content - Accounts/Oracle Content/Advanced Analytics/2020 Planning/Machine Learning/OMLServices/onnx_models/efficientnet-lite4/efficient-lite4.zip"
+						}
+					],
+					"options": {
+						"formdata": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update ONNX Image Model Namespace Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"namespace\": \"NEW_ONNX_IMG_PROJECT\"\n}"
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxIMGModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxIMGModelID}}"
+					]
+				},
+				"description": "Update the namespace of the model identified by the modelId. Only the creator of a model is allowed to update the namespace of a model."
+			},
+			"response": [
+				{
+					"name": "Problem connecting to the repository, executing an update, or other unexpected error.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Resource not found.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Unauthorized.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Successfully updated model namespace for model with specified modelId.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"name": "Not authorized to update model",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Forbidden",
+					"code": 403,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				},
+				{
+					"name": "Bad request.",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/models/:modelId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								":modelId"
+							],
+							"variable": [
+								{
+									"key": "modelId"
+								}
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n \"code\": \"non anim\",\n \"message\": \"dolor quis adipisicing\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get ONNX Image Model details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ba8d13a4-cbc9-43a7-9315-a774b0f50f2d",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>storedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"",
+							"        <tr>",
+							"            <td>{{response.version}}</td>",
+							"            <td>{{response.modelType}}</td>",
+							"            <td>{{response.createdBy}}</td>",
+							"            <td>{{response.modelId}}</td>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.namespace}}</td>",
+							"            <td>{{response.shared}}</td>",
+							"            <td>{{response.storedOn}}</td>",
+							"            {{#each response.links}}",
+							"                <td>{{rel}}</td>",
+							"                <td>{{href}}</td>",
+							"            {{/each}}",
+							"        </tr>",
+							"",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxIMGModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxIMGModelID}}"
+					]
+				},
+				"description": "# Get the metadata for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Image Model Metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dc12d649-7787-486a-9cf9-321fa8ccacdc",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>modelName</th>",
+							"            <th>algorithm</th>",
+							"            <th>miningFunction</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.algorithm}}</td>",
+							"            <td>{{response.miningFunction}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Input Attributes </h3>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"            <th>Shape</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"        {{#each response.onnxAttributes}}",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"            <td>{{shape}}</td>",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> ONNX Output Attributes </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"       </tr>",
+							"",
+							"      {{#each response.outputs}}",
+							"        <tr>",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>            ",
+							"        </tr>",
+							"      {{/each}}",
+							"    </table>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Labels</th>",
+							"        </tr>",
+							"        <tr>",
+							"            <td>{{response.labels}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxIMGModelID}}/metadata",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxIMGModelID}}",
+						"metadata"
+					]
+				},
+				"description": "# Get the metadata for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Image Model content (RAW BLOB)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5519af51-5374-4014-a040-b64a47180ebd",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxIMGModelID}}/content",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxIMGModelID}}",
+						"content"
+					]
+				},
+				"description": "# Get the RAW content for the model identified by the modelId. Only shared models, and models created by the caller will be found by this method."
+			},
+			"response": []
+		},
+		{
+			"name": "Create ONNX Image Endpoint",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"modelId\":\"{{onnxIMGModelID}}\",\n\t\"uri\":\"{{onnxIMGModelURI}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Image Model deployment details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1b8b9b23-ffa4-4891-aea0-b17cf7f7b819",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>miningFunction</th>",
+							"            <th>algorithm</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"            <td>{{response.version}}</td>",
+							"            <td>{{response.modelType}}</td>",
+							"            <td>{{response.createdBy}}</td>",
+							"            <td>{{response.modelId}}</td>",
+							"            <td>{{response.modelName}}</td>",
+							"            <td>{{response.namespace}}</td>",
+							"            <td>{{response.metadata.miningFunction}}</td>",
+							"            <td>{{response.metadata.algorithm}}</td>",
+							"            {{#each response.links}}",
+							"                <td>{{rel}}</td>",
+							"                <td>{{href}}</td>",
+							"            {{/each}}",
+							"            <td>{{response.shared}}</td>",
+							"            <td>{{response.uri}}</td>",
+							"            <td>{{response.deployedOn}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> Input Attributes </h3>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"            <th>Shape</th>",
+							"        </tr>",
+							"        ",
+							"        <tr>",
+							"        {{#each response.metadata.onnxAttributes}}",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"            <td>{{shape}}</td>",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"<h3 style=\"color:gray\"> ONNX Output Attributes </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Name</th>",
+							"            <th>Attribute Type</th>",
+							"       </tr>",
+							"",
+							"      {{#each response.metadata.outputs}}",
+							"        <tr>",
+							"            <td>{{name}}</td>",
+							"            <td>{{attributeType}}</td>",
+							"        </tr>",
+							"      {{/each}}",
+							"    </table>",
+							"",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>Labels</th>",
+							"        </tr>",
+							"        <tr>",
+							"            <td>{{response.metadata.labels}}</td>",
+							"        </tr>",
+							"    </table>",
+							"",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxIMGModelURI}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxIMGModelURI}}"
+					]
+				},
+				"description": "# Gets the details of the endpoint identified by the URI. Only shared endpoints and endpoints created by the caller are visible to the caller. The details include the model metadata along with other descriptive information."
+			},
+			"response": []
+		},
+		{
+			"name": "Get ONNX Image Model Scoring REST API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxIMGModelURI}}/api",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxIMGModelURI}}",
+						"api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List All Model deployments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c388fd18-b97f-4b50-8278-a71531f1b5e0",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.items}}",
+							"            <tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"                <td id={{@key}}>{{version}}</td>",
+							"                <td>{{modelType}}</td>",
+							"                <td>{{createdBy}}</td>",
+							"                <td>{{modelId}}</td>",
+							"                <td>{{modelName}}</td>",
+							"                <td>{{namespace}}</td>",
+							"                <td>{{shared}}</td>",
+							"                <td>{{uri}}</td>                ",
+							"                <td>{{deployedOn}}</td>",
+							"                {{#each links}}",
+							"                   <td>{{rel}}</td>",
+							"                   <td>{{href}}</td>",
+							"                {{/each}}",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					]
+				},
+				"description": "# Get the list of models that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared models and models created by the caller are visible to the caller. This method does NOT return the model content or metadata."
+			},
+			"response": []
+		},
+		{
+			"name": "List ONNX Image Model deployments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bd23493a-12d4-4691-ba2a-793be3cb69d6",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							"    ",
+							"    <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>version</th>",
+							"            <th>modelType</th>",
+							"            <th>createdBy</th>",
+							"            <th>modelId</th>",
+							"            <th>modelName</th>",
+							"            <th>namespace</th>",
+							"            <th>shared</th>",
+							"            <th>uri</th>",
+							"            <th>deployedOn</th>",
+							"            <th>links.rel</th>",
+							"            <th>links.href</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.items}}",
+							"            <tr id=row_{{@key}} onClick=\"handleClick(this.id)\">",
+							"                <td id={{@key}}>{{version}}</td>",
+							"                <td>{{modelType}}</td>",
+							"                <td>{{createdBy}}</td>",
+							"                <td>{{modelId}}</td>",
+							"                <td>{{modelName}}</td>",
+							"                <td>{{namespace}}</td>",
+							"                <td>{{shared}}</td>",
+							"                <td>{{uri}}</td>                ",
+							"                <td>{{deployedOn}}</td>",
+							"                {{#each links}}",
+							"                   <td>{{rel}}</td>",
+							"                   <td>{{href}}</td>",
+							"                {{/each}}",
+							"            </tr>",
+							"        {{/each}}",
+							"    </table>",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment?namespace=ONNX_IMG_MODELS",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment"
+					],
+					"query": [
+						{
+							"key": "namespace",
+							"value": "ONNX_IMG_MODELS"
+						}
+					]
+				},
+				"description": "# Get the list of models that are visible to the caller and that satisfy the optional modelName, version, and namespace parameters. Only shared models and models created by the caller are visible to the caller. This method does NOT return the model content or metadata."
+			},
+			"response": []
+		},
+		{
+			"name": "Score ONNX Image Model",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1f4c0707-5e04-413c-93ec-4a20aad3666e",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							" ",
+							"<h3 style=\"color:gray\"> Scoring Results: Classifications for Image </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>label</th>",
+							"            <th>probability</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.scoringResults}}",
+							"        {{#each classifications}}",
+							"        <tr>",
+							"            <td>{{label}}</td>",
+							"            <td>{{probability}}</td>",
+							"        </tr>",
+							"        {{/each}}",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "imageData",
+							"description": "Image to be scored by the ONNX Image Model",
+							"type": "file",
+							"src": "/Users/marancib/Oracle Content - Accounts/Oracle Content/Advanced Analytics/2020 Planning/Machine Learning/OMLServices/onnx_models/efficientnet-lite4/Test Images/tiger-shark.jpg"
+						}
+					],
+					"options": {
+						"formdata": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxIMGModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxIMGModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Score ONNX Image Model (second image)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4fbec346-616c-4b80-8b2c-d1af39d4fab4",
+						"exec": [
+							"var template = `",
+							"    <style type=\"text/css\">",
+							"        .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"        .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"        .tftable tr {background-color:#ffffff;}",
+							"        .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"        .tftable tr:hover {background-color:#e0ffff;}",
+							"    </style>",
+							" ",
+							"<h3 style=\"color:gray\"> Scoring Results: Classifications for Image </h3>",
+							"",
+							"   <table class=\"tftable\" border=\"1\">",
+							"        <tr>",
+							"            <th>label</th>",
+							"            <th>probability</th>",
+							"        </tr>",
+							"        ",
+							"        {{#each response.scoringResults}}",
+							"        {{#each classifications}}",
+							"        <tr>",
+							"            <td>{{label}}</td>",
+							"            <td>{{probability}}</td>",
+							"        </tr>",
+							"        {{/each}}",
+							"        {{/each}}",
+							"    </table>",
+							"",
+							"`;",
+							"",
+							"pm.visualizer.set(template, {",
+							"    response: pm.response.json()",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "imageData",
+							"description": "Image to be scored by the ONNX Image Model",
+							"type": "file",
+							"src": "/Users/marancib/Oracle Content - Accounts/Oracle Content/Advanced Analytics/2020 Planning/Machine Learning/OMLServices/onnx_models/efficientnet-lite4/Gold-fish.jpg"
+						}
+					],
+					"options": {
+						"formdata": {}
+					}
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxIMGModelURI}}/score",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxIMGModelURI}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ONNX Image Endpoint",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/deployment/{{onnxIMGModelURI}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"deployment",
+						"{{onnxIMGModelURI}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ONNX Image Model",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/{{onnxIMGModelID}}",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						"{{onnxIMGModelID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b6aeabc3-56cd-445a-a1e1-a840641d7adb",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ace11e27-1986-47d1-821f-1b126b559f68",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "60781eef-7d75-43f4-ad28-916e9999178b",
+			"key": "omlmodserver",
+			"value": "https://138.1.39.21",
+			"type": "string"
+		},
+		{
+			"id": "edeec47c-76fc-41a1-a66e-a7276ba868ba",
+			"key": "onnxImgURI",
+			"value": "marvel",
+			"type": "string"
+		},
+		{
+			"id": "d77da6e6-0d42-4845-b8d4-72710db1e78e",
+			"key": "modelName",
+			"value": "onnxMarvelModel",
+			"type": "string"
+		},
+		{
+			"id": "1a672d79-eaa7-4b56-bea9-84107bdf781c",
+			"key": "modelVersion",
+			"value": "1.0",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

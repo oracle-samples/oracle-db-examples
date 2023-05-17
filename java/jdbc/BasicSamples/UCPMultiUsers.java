@@ -42,9 +42,9 @@ public class UCPMultiUsers {
   static String user = DEFAULT_USER;
   static String password = DEFAULT_PASSWORD;
 
-  // Modify these if user "scott" is locked in DB.
-  final static String USER2 = "scott";
-  final static String PASSWORD2 = "tiger";
+  // Modify these if user "testuser" is locked in DB.
+  final static String USER2 = "testuser";
+  final static String PASSWORD2 = "<your_db_password>";
 
   public static void main(String args[]) throws Exception {
     getRealUserPasswordUrl(args);

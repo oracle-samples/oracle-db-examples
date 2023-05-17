@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -21,10 +21,6 @@
  * DESCRIPTION
  *   Executes queries to show array and object output formats.
  *   Gets results directly without using a ResultSet.
- *   Uses Oracle's sample HR schema.
- *
- *   Scripts to create the HR schema can be found at:
- *   https://github.com/oracle/db-sample-schemas
  *
  *   This example uses Node 8's async/await syntax.
  *
@@ -32,20 +28,29 @@
 
 'use strict';
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 // Oracledb properties are applicable to all connections and SQL
 // executions.  They can also be set or overridden at the individual
 // execute() call level
-
-// fetchArraySize can be adjusted to tune the internal data transfer
-// from the Oracle Database to node-oracledb.  The value does not
-// affect how, or when, rows are returned by node-oracledb to the
-// application.  Buffering is handled internally by node-oracledb.
-// Benchmark to choose the optimal size for each application or query.
-//
-// oracledb.fetchArraySize = 100;  // default value is 100
 
 // This script sets outFormat in the execute() call but it could be set here instead:
 //
@@ -58,32 +63,34 @@ async function run() {
   try {
     // Get a non-pooled connection
 
-    connection = await oracledb.getConnection(  {
-      user         : dbConfig.user,
-      password     : dbConfig.password,
-      connectString: dbConfig.connectString
-    });
+    connection = await oracledb.getConnection(dbConfig);
+
+    await demoSetup.setupBf(connection);  // create the demo table
 
     // The statement to execute
     const sql =
-        `SELECT location_id, city
-         FROM locations
-         WHERE city LIKE 'S%'
-         ORDER BY city`;
+        `SELECT farmer, picked, ripeness
+         FROM no_banana_farmer
+         ORDER BY id`;
 
     let result;
 
     // Default Array Output Format
     result = await connection.execute(sql);
-    console.log("----- Cities beginning with 'S' (default ARRAY output format) --------");
+    console.log("----- Banana Farmers (default ARRAY output format) --------");
     console.log(result.rows);
 
     // Optional Object Output Format
     result = await connection.execute(
       sql,
-      {}, // A bind parameter is needed to disambiguate the following options parameter and avoid ORA-01036
-      { outFormat: oracledb.OUT_FORMAT_OBJECT }); // outFormat can be OBJECT or ARRAY.  The default is ARRAY
-    console.log("----- Cities beginning with 'S' (OBJECT output format) --------");
+      [], // A bind parameter is needed to disambiguate the following options parameter and avoid ORA-01036
+      {
+        outFormat: oracledb.OUT_FORMAT_OBJECT,     // outFormat can be OBJECT or ARRAY.  The default is ARRAY
+        // prefetchRows:   100,                    // internal buffer allocation size for tuning
+        // fetchArraySize: 100                     // internal buffer allocation size for tuning
+      }
+    );
+    console.log("----- Banana Farmers (default OBJECT output format) --------");
     console.log(result.rows);
 
   } catch (err) {
@@ -91,7 +98,7 @@ async function run() {
   } finally {
     if (connection) {
       try {
-        // Note: connections should always be released when not needed
+        // Connections should always be released when not needed
         await connection.close();
       } catch (err) {
         console.error(err);

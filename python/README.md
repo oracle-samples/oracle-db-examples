@@ -1,51 +1,73 @@
-These are examples for the
-[cx_Oracle driver](https://oracle.github.io/python-cx_Oracle).
+# Python-oracledb  Examples
 
-Download and install from [PyPI](https://pypi.python.org/pypi/cx_Oracle) or
-issue the command:
+This directory contains samples for python-oracledb, the Python driver for
+Oracle Database.
 
-``python -m pip install cx_Oracle --upgrade``
+1.  The schemas and SQL objects that are referenced in the samples can be
+    created by running the Python script
+    [create_schema.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/create_schema.py). The
+    script requires SYSDBA privileges and will prompt for these credentials as
+    well as the names of the schemas and edition that will be created, unless a
+    number of environment variables are set as documented in the Python script
+    [sample_env.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py). Run
+    the script using the following command:
 
-[Documentation](http://cx-oracle.readthedocs.io/en/latest/index.html)
-[Issues and questions](https://github.com/oracle/python-cx_Oracle/issues)
+        python create_schema.py
 
+2.  Run a Python script, for example:
 
-1. The schemas and SQL objects that are referenced in the samples can be
-   created by running the Python script [SetupSamples.py][1]. The script
-   requires SYSDBA privileges and will prompt for these credentials as well as
-   the names of the schemas and edition that will be created, unless a number
-   of environment variables are set as documented in the Python script
-   [SampleEnv.py][2]. Run the script using the following command:
+        python query.py
 
-       python SetupSamples.py
+3.  After running python-oracledb samples, the schemas and SQL objects can be
+    dropped by running the Python script
+    [drop_schema.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/drop_schema.py). The
+    script requires SYSDBA privileges and will prompt for these credentials as
+    well as the names of the schemas and edition that will be dropped, unless a
+    number of environment variables are set as documented in the Python script
+    [sample_env.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py). Run
+    the script using the following command:
 
-   Alternatively, the [SQL script][3] can be run directly via SQL\*Plus, which
-   will always prompt for the names of the schemas and edition that will be
-   created.
+        python drop_schema.py
 
-       sqlplus sys/syspassword@hostname/servicename @sql/SetupSamples.sql
+## About python-oracledb
 
-2. Run a Python script, for example:
+- Python-oracledb is the new name for Oracle's popular Python cx_Oracle driver
+  for Oracle Database.
 
-        python Query.py
+- Python-oracledb 1.0 is a new major release - the successor to cx_Oracle 8.3.
 
-3. After running cx_Oracle samples, the schemas and SQL objects can be
-   dropped by running the Python script [DropSamples.py][4]. The script
-   requires SYSDBA privileges and will prompt for these credentials as well as
-   the names of the schemas and edition that will be dropped, unless a number
-   of environment variables are set as documented in the Python script
-   [SampleEnv.py][2]. Run the script using the following command:
+- Python-oracledb is simple and small to install — under 15 MB (including
+  Python package dependencies): `pip install oracledb`
 
-       python DropSamples.py
+- Python-oracledb is now a Thin driver by default - it connects directly to
+  Oracle Database without always needing Oracle Client libraries.
 
-   Alternatively, the [SQL script][5] can be run directly via SQL\*Plus, which
-   will always prompt for the names of the schemas and edition that will be
-   dropped.
+- Python-oracledb has comprehensive functionality conforming to the Python
+  Database API v2.0 Specification, with many additions and just a couple of
+  exclusions.
 
-       sqlplus sys/syspassword@hostname/servicename @sql/DropSamples.sql
+- A "Thick" mode can be optionally enabled by an application call. This mode
+  has similar functionality to cx_Oracle and supports Oracle Database features
+  that extend the Python DB API. To use this mode, the widely used and tested
+  Oracle Client libraries such as from Oracle Instant Client must be installed
+  separately.
 
-[1]: https://github.com/oracle/python-cx_Oracle/blob/master/samples/SetupSamples.py
-[2]: https://github.com/oracle/python-cx_Oracle/blob/master/samples/SampleEnv.py
-[3]: https://github.com/oracle/python-cx_Oracle/blob/master/samples/sql/SetupSamples.sql
-[4]: https://github.com/oracle/python-cx_Oracle/blob/master/samples/DropSamples.py
-[5]: https://github.com/oracle/python-cx_Oracle/blob/master/samples/sql/DropSamples.sql
+- Python-oracledb runs on many platforms including favorites like Linux, macOS
+  and Windows. It can also be used on platforms where Oracle Client libraries
+  are not available (such as Apple M1, Alpine Linux, or IoT devices), or where
+  the client libraries are not easily installed (such as some cloud
+  environments).
+
+## Resources
+
+Home page: [oracle.github.io/python-oracledb/](https://oracle.github.io/python-oracledb/)
+
+Quick start: [Quick Start python-oracledb Installation](https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html#quick-start-python-oracledb-installation)
+
+Documentation: [python-oracle.readthedocs.io/en/latest/index.html](https://python-oracle.readthedocs.io/en/latest/index.html)
+
+PyPI: [pypi.org/project/oracledb/](https://pypi.org/project/oracledb/)
+
+Source: [github.com/oracle/python-oracledb](https://github.com/oracle/python-oracledb)
+
+Upgrading: [Upgrading from cx_Oracle 8.3 to python-oracledb](https://python-oracledb.readthedocs.io/en/latest/user_guide/appendix_c.html#upgrading-from-cx-oracle-8-3-to-python-oracledb)

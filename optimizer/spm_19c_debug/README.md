@@ -4,7 +4,9 @@ To execute the spm.sql script you will need certain privileges. An example is in
 
 If you don't have a database you can use yourself, take a look at the spooled output in spm.lst
 
-In particualr, look at the "Hint Report" section towards the end of the file.
+In particular, look at the "Hint Report" section towards the end of the file.
+
+Additional scripts are available in the "in_cache" directory. These scripts us SQL performance analyzer to make it east to check SQL statements in the cursor cache, without the need to run them in SQL plus.
 
 ### DISCLAIMER
 

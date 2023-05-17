@@ -1,0 +1,75 @@
+SQL> --
+SQL> -- Create two tables with a skewed dataset
+SQL> --
+SQL> drop table t1 purge;
+drop table t1 purge
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> drop table t2 purge;
+drop table t2 purge
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> 
+SQL> create table t1 (a number(10), b varchar2(1000), c number(10), d number(10));
+
+Table created.
+
+SQL> 
+SQL> 
+SQL> var str VARCHAR2(10)
+SQL> exec :str := dbms_random.string('u',10);
+
+PL/SQL procedure successfully completed.
+
+SQL> insert /*+ APPEND */ into t1
+  2  select DECODE(parity, 0,rn, 1,rn+1000000), :str, 1, DECODE(parity, 0,rn, 1,10)
+  3  from (
+  4  	 select trunc((rownum+1)/2) as rn, mod(rownum+1,2) as parity
+  5  	 from (select null from dual connect by level <= 1000)
+  6  	    , (select null from dual connect by level <= 500)
+  7  	  );
+
+500000 rows created.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create table t2 as select * from t1;
+
+Table created.
+
+SQL> 
+SQL> create index t1i on t1 (a);
+
+Index created.
+
+SQL> create index t2i on t2 (a);
+
+Index created.
+
+SQL> 
+SQL> --
+SQL> -- Gather with histograms
+SQL> --
+SQL> @@gatherh
+SQL> --
+SQL> -- Gather statistics with histograms
+SQL> --
+SQL> exec dbms_stats.gather_table_stats(user,'t1',method_opt=>'for all columns size 254',no_invalidate=>false)
+
+PL/SQL procedure successfully completed.
+
+SQL> exec dbms_stats.gather_table_stats(user,'t2',method_opt=>'for all columns size 254',no_invalidate=>false)
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off

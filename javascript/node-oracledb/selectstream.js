@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2016, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -20,10 +20,6 @@
  *
  * DESCRIPTION
  *   Executes a basic query using a Readable Stream.
- *   Uses Oracle's sample HR schema.
- *
- *   Scripts to create the HR schema can be found at:
- *   https://github.com/oracle/db-sample-schemas
  *
  *   This example requires node-oracledb 1.8 or later.
  *
@@ -31,8 +27,25 @@
  *
  *****************************************************************************/
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 async function run() {
   let connection;
@@ -40,13 +53,16 @@ async function run() {
   try {
     connection = await oracledb.getConnection(dbConfig);
 
-    const stream = await connection.queryStream(
-      `SELECT first_name, last_name
-       FROM employees
-       ORDER BY employee_id`,
+    await demoSetup.setupBf(connection);  // create the demo table
+
+    const stream = connection.queryStream(
+      `SELECT farmer, weight
+       FROM no_banana_farmer
+       ORDER BY id`,
       [],  // no binds
       {
-        fetchArraySize: 150 // internal buffer size used for performance tuning
+        prefetchRows:   150,  // internal buffer sizes can be adjusted for performance tuning
+        fetchArraySize: 150
       }
     );
 
@@ -70,7 +86,14 @@ async function run() {
       });
 
       stream.on('end', function() {
-        // console.log("stream 'end' event");
+        // console.log("stream 'end' event"); // all data has been fetched
+        stream.destroy();                     // clean up resources being used
+      });
+
+      stream.on('close', function() {
+        // console.log("stream 'close' event");
+        // The underlying ResultSet has been closed, so the connection can now
+        // be closed, if desired.  Note: do not close connections on 'end'.
         resolve(rowcount);
       });
     });

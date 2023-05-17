@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -35,32 +35,43 @@
  *   The function initSession() will be called just once per connection
  *   in the pool.
  *
- *   This file uses Node 8's async/await syntax but could be rewritten
- *   to use callbacks.
- *
  *   This example requires node-oracledb 3.1 or later.
  *
  *   This example uses Node 8's async/await syntax.
  *
- *   Also see sessiontagging1.js and sessiontagging2.js
- *
  *****************************************************************************/
 
+const fs = require('fs');
 const http = require('http');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 const httpPort = 7000;
 
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
+
 // initSession() will be invoked internally when each brand new pooled
-// connection is first used.  Its callback function 'cb' should be
+// connection is first used.  Its callback function 'callbackFn' should be
 // invoked only when all desired session state has been set.
 // In this example, the requestedTag and actualTag parameters are
 // ignored.  They would be valid if connection tagging was being used.
 // If you have multiple SQL statements to execute, put them in a
 // single, anonymous PL/SQL block for efficiency.
-function initSession(connection, requestedTag, cb) {
+function initSession(connection, requestedTag, callbackFn) {
   console.log('In initSession');
-  connection.execute(`ALTER SESSION SET TIME_ZONE = 'UTC'`, cb);
+  connection.execute(`ALTER SESSION SET TIME_ZONE = 'UTC'`, callbackFn);
 }
 
 async function init() {
@@ -116,10 +127,12 @@ async function closePoolAndExit() {
   try {
     // Get the 'default' pool from the pool cache and close it (force
     // closed after 3 seconds).
-    // If this hangs, you may need DISABLE_OOB=ON in a sqlnet.ora file
+    // If this hangs, you may need DISABLE_OOB=ON in a sqlnet.ora file.
+    // This setting should not be needed if both Oracle Client and Oracle
+    // Database are 19c (or later).
     await oracledb.getPool().close(3);
     process.exit(0);
-  } catch(err) {
+  } catch (err) {
     console.error(err.message);
     process.exit(1);
   }

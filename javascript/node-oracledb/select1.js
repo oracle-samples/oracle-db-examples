@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -20,10 +20,6 @@
  *
  * DESCRIPTION
  *   Executes a basic query without using a connection pool or ResultSet.
- *   Uses Oracle's sample HR schema.
- *
- *   Scripts to create the HR schema can be found at:
- *   https://github.com/oracle/db-sample-schemas
  *
  *   For a connection pool example see connectionpool.js
  *   For a ResultSet example see resultset2.js
@@ -35,8 +31,25 @@
 
 'use strict';
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const demoSetup = require('./demosetup.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
 
 async function run() {
 
@@ -45,20 +58,18 @@ async function run() {
   try {
     // Get a non-pooled connection
 
-    connection = await oracledb.getConnection(  {
-      user         : dbConfig.user,
-      password     : dbConfig.password,
-      connectString: dbConfig.connectString
-    });
+    connection = await oracledb.getConnection(dbConfig);
+
+    await demoSetup.setupBf(connection);  // create the demo table
 
     const result = await connection.execute(
       // The statement to execute
-      `SELECT department_id, department_name
-       FROM departments
-       WHERE department_id = :id`,
+      `SELECT farmer, picked, ripeness
+       FROM no_banana_farmer
+       where id = :idbv`,
 
-      // The "bind value" 180 for the bind variable ":id"
-      [180],
+      // The "bind value" 3 for the bind variable ":idbv"
+      [3],
 
       // Options argument.  Since the query only returns one
       // row, we can optimize memory usage by reducing the default
@@ -67,19 +78,20 @@ async function run() {
       {
         maxRows: 1
         //, outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
-        //, extendedMetaData: true      // get extra metadata
-        //, fetchArraySize: 100         // internal buffer allocation size for tuning
+        //, extendedMetaData: true                 // get extra metadata
+        //, prefetchRows:   100                    // internal buffer allocation size for tuning
+        //, fetchArraySize: 100                    // internal buffer allocation size for tuning
       });
 
-    console.log(result.metaData); // [ { name: 'DEPARTMENT_ID' }, { name: 'DEPARTMENT_NAME' } ]
-    console.log(result.rows);     // [ [ 180, 'Construction' ] ]
+    console.log(result.metaData); // [ { name: 'FARMER' }, { name: 'PICKED' }, { name: 'RIPENESS' } ]
+    console.log(result.rows);     // [ [ 'Mindy', 2019-07-16T03:30:00.000Z, 'More Yellow than Green' ] ]
 
   } catch (err) {
     console.error(err);
   } finally {
     if (connection) {
       try {
-        // Note: connections should always be released when not needed
+        // Connections should always be released when not needed
         await connection.close();
       } catch (err) {
         console.error(err);

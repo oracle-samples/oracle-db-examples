@@ -1,0 +1,1870 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## Regression Modeling to Predict Numerical Values using Support Vector Machine\nThis notebook shows how to predict numerical values using a multiple regression. Given demographic, purchase, and affinity card data for a set of customers, predict the number of years a customer remains at the same residence, as found in column YRS_RESIDENCE. Since YRS_RESIDENCE is a continuous variable, we will use the Support Vector Machine algorithm. All processing occurs inside Oracle Autonomous Database.\n\nCopyright (c) 2023 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 9.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 153.5,
+              "optionOpen": false
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eRegression Modeling to Predict Numerical Values using Support Vector Machine\u003c/h2\u003e\n\u003cp\u003eThis notebook shows how to predict numerical values using a multiple regression. Given demographic, purchase, and affinity card data for a set of customers, predict the number of years a customer remains at the same residence, as found in column YRS_RESIDENCE. Since YRS_RESIDENCE is a continuous variable, we will use the Support Vector Machine algorithm. All processing occurs inside Oracle Autonomous Database.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-396918277",
+      "id": "20220124-201426_239494387",
+      "dateCreated": "2018-02-06T15:02:34+0000",
+      "dateStarted": "2023-02-17T22:25:41+0000",
+      "dateFinished": "2023-02-17T22:25:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md \n\u003cdl\u003e\n\u003cimg src\u003d\"https://www.oracle.com/technetwork/database/options/advanced-analytics/regression-5663170.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"250\"/\u003e\n\u003c/dl\u003e\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 3.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 217.016,
+              "optionOpen": false
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdl\u003e\n\u003cimg src\u003d\"https://www.oracle.com/technetwork/database/options/advanced-analytics/regression-5663170.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"250\"/\u003e\n\u003c/dl\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_1931426208",
+      "id": "20220124-201426_861897502",
+      "dateCreated": "2018-02-06T15:07:11+0000",
+      "dateStarted": "2023-02-17T22:25:41+0000",
+      "dateFinished": "2023-02-17T22:25:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nOML Regression: \u003ca href\u003d\"https://www.oracle.com/goto/ml-regression\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-regression\u0027);\"\u003ehttps://www.oracle.com/goto/ml-regression\u003c/a\u003e\nOML Support Vector Machine: \u003ca href\u003d\"https://oracle.com/goto/ml-support-vector-machine\" onclick\u003d\"return ! window.open(\u0027https://oracle.com/goto/ml-support-vector-machine\u0027);\"\u003ehttps://oracle.com/goto/ml-support-vector-machine\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Regression: \u003ca href\u003d\"https: //www.oracle.com/goto/ml-regression\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-regression\u0027);\"\u003ehttps://www.oracle.com/goto/ml-regression\u003c/a\u003e\n\u003cbr  /\u003eOML Support Vector Machine: \u003ca href\u003d\"https: //oracle.com/goto/ml-support-vector-machine\" onclick\u003d\"return ! window.open(\u0027https://oracle.com/goto/ml-support-vector-machine\u0027);\"\u003ehttps://oracle.com/goto/ml-support-vector-machine\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_1639858026",
+      "id": "20220124-201426_1657120767",
+      "dateCreated": "2018-02-06T16:11:59+0000",
+      "dateStarted": "2023-02-17T22:25:41+0000",
+      "dateFinished": "2023-02-17T22:25:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create table CUSTOMERS360 joining tables from SH schema",
+      "text": "%script\n\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE CUSTOMERS360\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nCREATE TABLE CUSTOMERS360 AS \n  SELECT A.CUST_ID, A.CUST_GENDER, A.CUST_MARITAL_STATUS, A.CUST_YEAR_OF_BIRTH, \n         A.CUST_INCOME_LEVEL, A.CUST_CREDIT_LIMIT, \n         B.EDUCATION, B.AFFINITY_CARD, B.HOUSEHOLD_SIZE, B.OCCUPATION, B.YRS_RESIDENCE, B.Y_BOX_GAMES\n  FROM SH.CUSTOMERS A, SH.SUPPLEMENTARY_DEMOGRAPHICS B\n  WHERE A.CUST_ID \u003d B.CUST_ID;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 102.9,
+              "optionOpen": false
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable CUSTOMERS360 created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_472853888",
+      "id": "20220124-201426_1384654389",
+      "dateCreated": "2018-02-06T15:33:37+0000",
+      "dateStarted": "2023-02-17T22:25:41+0000",
+      "dateFinished": "2023-02-17T22:25:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Split data into randomly selected 60% sample for train and 40% test",
+      "text": "%script\n\nCREATE OR REPLACE VIEW TRAIN_DATA_V AS SELECT * FROM CUSTOMERS360 SAMPLE (60) SEED (1);\n\nCREATE OR REPLACE VIEW TEST_DATA_V AS SELECT * FROM CUSTOMERS360 MINUS SELECT * FROM TRAIN_DATA_V;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 286.8,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nView TRAIN_DATA_V created.\n\n\n---------------------------\n\nView TEST_DATA_V created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_684552327",
+      "id": "20220124-201426_1867821419",
+      "dateCreated": "2020-02-05T21:46:22+0000",
+      "dateStarted": "2023-02-17T22:25:49+0000",
+      "dateFinished": "2023-02-17T22:25:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### Build a SVM Linear regression model for predicting YRS_RESIDENCE\n\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eBuild a SVM Linear regression model for predicting YRS_RESIDENCE\u003c/h3\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_2133431495",
+      "id": "20220124-201426_542939372",
+      "dateCreated": "2021-07-15T14:13:49+0000",
+      "dateStarted": "2023-02-17T22:25:49+0000",
+      "dateFinished": "2023-02-17T22:25:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": " Using the default options",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027SVML_SH_REGR_SAMPLE\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027) :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027) :\u003d \u0027ALGO_SUPPORT_VECTOR_MACHINES\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027SVML_SH_REGR_SAMPLE\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027\n        );\n        \nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-1477679232",
+      "id": "20220124-201426_1877551431",
+      "dateCreated": "2020-05-18T23:39:50+0000",
+      "dateStarted": "2023-02-17T22:25:49+0000",
+      "dateFinished": "2023-02-17T22:25:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### Examples of possible setting overrides for SVM \n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm\n\nA complete list of settings can be found in the Documentation link:\n\n-- Algorithm Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\u0027);\"\u003eSupport Vector Machine\u003c/a\u003e\n\n-- Shared Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-24047A09-0542-4870-91D8-329F28B0ED75\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-24047A09-0542-4870-91D8-329F28B0ED75\u0027);\"\u003eAll algorithms\u003c/a\u003e\n\n-- Specify a row weight column \n    v_setlst(\u0027ODMS_ROW_WEIGHT_COLUMN_NAME\u0027) :\u003d \u0027\u003crow_weight_column_name\u003e\u0027;\n   \n-- Specify a missing value treatment method for the training data. This setting does not affect the scoring data. The default value is `ODMS_MISSING_VALUE_AUTO`.  The option `ODMS_MISSING_VALUE_MEAN_MODE` replaces missing values with the mean (numeric attributes) or the mode (categorical attributes) both at build time and apply time where appropriate. The option `ODMS_MISSING_VALUE_AUTO` performs different strategies for different algorithms.  When `ODMS_MISSING_VALUE_TREATMENT` is set to `ODMS_MISSING_VALUE_DELETE_ROW`, the rows in the training data that contain missing values are deleted. However, if you want to replicate this missing value treatment in the scoring data, then you must perform the transformation explicitly.\n    v_setlst(\u0027ODMS_MISSING_VALUE_TREATMENT\u0027) :\u003d \u0027ODMS_MISSING_VALUE_AUTO\u0027;\n\n-- Switch between Kernel Types - Linear or Gaussian\n   By default the system uses the Linear Kernel. The linear kernel also is able to return the coefficients, while this is not available on the Gaussian\n    v_setlst(\u0027SVMS_KERNEL_FUNCTION\u0027) :\u003d \u0027SVMS_LINEAR\u0027;\n    v_setlst(\u0027SVMS_KERNEL_FUNCTION\u0027) :\u003d \u0027SVMS_GAUSSIAN\u0027;\n   \n-- Value of complexity factor for SVM algorithm (both classification and regression).\n   Default value estimated from the data by the algorithm.\n    v_setlst(\u0027SVMS_COMPLEXITY_FACTOR\u0027) :\u003d \u00270.1\u0027;\n   \n-- Type of regularization that the SGD SVM solver uses (only available for linear SVM models). The default is system determined because it depends on the potential model size.  Also the Regularization setting for regression (Epsilon specifies the allowable residuals, or noise, in the data).     \n    v_setlst(\u0027SVMS_REGULARIZER\u0027) :\u003d \u0027SVMS_REGULARIZER_L1\u0027;\n    v_setlst(\u0027SVMS_REGULARIZER\u0027) :\u003d \u0027SVMS_REGULARIZER_L2\u0027;\n    v_setlst(\u0027SVMS_EPSILON\u0027) :\u003d \u00270.1\u0027;\n   \n-- Batch rows sets the size of the batch for the SGD solver (linear kernel only). An input of 0 triggers a data driven batch size estimate. The default is 20000. \n    v_setlst(\u0027SVMS_BATCH_ROWS\u0027) :\u003d \u002720000\u0027;\n   \n-- Solver type, which cannot be selected if the kernel is non-linear. The default value is system determined.    \n    v_setlst(\u0027SVMS_SOLVER\u0027) :\u003d \u0027SVMS_SOLVER_SGD\u0027;\n    v_setlst(\u0027SVMS_SOLVER\u0027) :\u003d \u0027SVMS_SOLVER_IPM\u0027;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eExamples of possible setting overrides for SVM\u003c/h3\u003e\n\u003cp\u003eIf the user does not override the default settings, then relevant settings are determined by the algorithm\u003c/p\u003e\n\u003cp\u003eA complete list of settings can be found in the Documentation link:\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Algorithm Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\u0027);\"\u003eSupport Vector Machine\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Shared Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-24047A09-0542-4870-91D8-329F28B0ED75\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-24047A09-0542-4870-91D8-329F28B0ED75\u0027);\"\u003eAll algorithms\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Specify a row weight column\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027ODMS_ROW_WEIGHT_COLUMN_NAME\u0027) :\u003d \u0027\u0026lt;row_weight_column_name\u0026gt;\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Specify a missing value treatment method for the training data. This setting does not affect the scoring data. The default value is \u003ccode\u003eODMS_MISSING_VALUE_AUTO\u003c/code\u003e.  The option \u003ccode\u003eODMS_MISSING_VALUE_MEAN_MODE\u003c/code\u003e replaces missing values with the mean (numeric attributes) or the mode (categorical attributes) both at build time and apply time where appropriate. The option \u003ccode\u003eODMS_MISSING_VALUE_AUTO\u003c/code\u003e performs different strategies for different algorithms.  When \u003ccode\u003eODMS_MISSING_VALUE_TREATMENT\u003c/code\u003e is set to \u003ccode\u003eODMS_MISSING_VALUE_DELETE_ROW\u003c/code\u003e, the rows in the training data that contain missing values are deleted. However, if you want to replicate this missing value treatment in the scoring data, then you must perform the transformation explicitly.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027ODMS_MISSING_VALUE_TREATMENT\u0027) :\u003d \u0027ODMS_MISSING_VALUE_AUTO\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Switch between Kernel Types - Linear or Gaussian\n\u003cbr  /\u003eBy default the system uses the Linear Kernel. The linear kernel also is able to return the coefficients, while this is not available on the Gaussian\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027SVMS_KERNEL_FUNCTION\u0027) :\u003d \u0027SVMS_LINEAR\u0027;\nv_setlst(\u0027SVMS_KERNEL_FUNCTION\u0027) :\u003d \u0027SVMS_GAUSSIAN\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Value of complexity factor for SVM algorithm (both classification and regression).\n\u003cbr  /\u003eDefault value estimated from the data by the algorithm.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027SVMS_COMPLEXITY_FACTOR\u0027) :\u003d \u00270.1\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Type of regularization that the SGD SVM solver uses (only available for linear SVM models). The default is system determined because it depends on the potential model size.  Also the Regularization setting for regression (Epsilon specifies the allowable residuals, or noise, in the data).\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027SVMS_REGULARIZER\u0027) :\u003d \u0027SVMS_REGULARIZER_L1\u0027;\nv_setlst(\u0027SVMS_REGULARIZER\u0027) :\u003d \u0027SVMS_REGULARIZER_L2\u0027;\nv_setlst(\u0027SVMS_EPSILON\u0027) :\u003d \u00270.1\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Batch rows sets the size of the batch for the SGD solver (linear kernel only). An input of 0 triggers a data driven batch size estimate. The default is 20000.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027SVMS_BATCH_ROWS\u0027) :\u003d \u002720000\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Solver type, which cannot be selected if the kernel is non-linear. The default value is system determined.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ev_setlst(\u0027SVMS_SOLVER\u0027) :\u003d \u0027SVMS_SOLVER_SGD\u0027;\nv_setlst(\u0027SVMS_SOLVER\u0027) :\u003d \u0027SVMS_SOLVER_IPM\u0027;\n\u003c/code\u003e\u003c/pre\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_1230230643",
+      "id": "20220124-201426_2084766465",
+      "dateCreated": "2021-07-15T19:21:53+0000",
+      "dateStarted": "2023-02-17T22:25:51+0000",
+      "dateFinished": "2023-02-17T22:25:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": " Using specific settings",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027SVML_SH_REGR_SAMPLE\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027) :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027) :\u003d \u0027ALGO_SUPPORT_VECTOR_MACHINES\u0027;\n    v_setlst(\u0027SVMS_COMPLEXITY_FACTOR\u0027) :\u003d \u00270.1\u0027;\n    v_setlst(\u0027SVMS_REGULARIZER\u0027) :\u003d \u0027SVMS_REGULARIZER_L1\u0027;\n    v_setlst(\u0027SVMS_EPSILON\u0027) :\u003d \u00270.1\u0027;\n    v_setlst(\u0027SVMS_BATCH_ROWS\u0027) :\u003d \u002720000\u0027;\n    v_setlst(\u0027SVMS_SOLVER\u0027) :\u003d \u0027SVMS_SOLVER_SGD\u0027;\n    v_setlst(\u0027SVMS_CONV_TOLERANCE\u0027) :\u003d \u00270.0001\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027SVML_SH_REGR_SAMPLE\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027\n        );\n        \nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-1117246090",
+      "id": "20220124-201426_920005131",
+      "dateCreated": "2021-07-15T21:11:33+0000",
+      "dateStarted": "2023-02-17T22:25:51+0000",
+      "dateFinished": "2023-02-17T22:25:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n### Build a SVM Gaussian regression model for predicting YRS_RESIDENCE\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eBuild a SVM Gaussian regression model for predicting YRS_RESIDENCE\u003c/h3\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_1068593716",
+      "id": "20220124-201426_1913216965",
+      "dateCreated": "2021-07-15T19:48:14+0000",
+      "dateStarted": "2023-02-17T22:25:53+0000",
+      "dateFinished": "2023-02-17T22:25:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": " Using the default options",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027SVML_SH_REGR_SAMPLE\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027) :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027) :\u003d \u0027ALGO_SUPPORT_VECTOR_MACHINES\u0027;\n    v_setlst(\u0027SVMS_KERNEL_FUNCTION\u0027) :\u003d \u0027SVMS_GAUSSIAN\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027SVML_SH_REGR_SAMPLE\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027\n        );\n        \nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_76850160",
+      "id": "20220124-201426_1410134994",
+      "dateCreated": "2021-07-15T21:14:40+0000",
+      "dateStarted": "2023-02-17T22:25:53+0000",
+      "dateFinished": "2023-02-17T22:25:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": " Using specific settings",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027SVML_SH_REGR_SAMPLE\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\n    \nBEGIN\n    v_setlst(\u0027PREP_AUTO\u0027) :\u003d \u0027ON\u0027;\n    v_setlst(\u0027ALGO_NAME\u0027) :\u003d \u0027ALGO_SUPPORT_VECTOR_MACHINES\u0027;\n    v_setlst(\u0027SVMS_KERNEL_FUNCTION\u0027) :\u003d \u0027SVMS_GAUSSIAN\u0027;\n    v_setlst(\u0027SVMS_COMPLEXITY_FACTOR\u0027) :\u003d \u00270.1\u0027;\n    v_setlst(\u0027SVMS_EPSILON\u0027) :\u003d \u00270.1\u0027;\n    v_setlst(\u0027SVMS_NUM_PIVOTS\u0027) :\u003d \u0027200\u0027;\n    v_setlst(\u0027SVMS_SOLVER\u0027) :\u003d \u0027SVMS_SOLVER_IPM\u0027;\n    v_setlst(\u0027SVMS_CONV_TOLERANCE\u0027) :\u003d \u00270.0001\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027SVML_SH_REGR_SAMPLE\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM TRAIN_DATA_V\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027\n        );\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_562836025",
+      "id": "20220124-201426_817080665",
+      "dateCreated": "2021-07-15T21:14:18+0000",
+      "dateStarted": "2023-02-17T22:25:56+0000",
+      "dateFinished": "2023-02-17T22:25:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display SVM model settings",
+      "text": "%sql\n\nSELECT SETTING_NAME, SETTING_VALUE\nFROM   USER_MINING_MODEL_SETTINGS\nWHERE  MODEL_NAME \u003d \u0027SVML_SH_REGR_SAMPLE\u0027\nORDER BY SETTING_NAME;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 328.7,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "SETTING_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "SETTING_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "SETTING_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "SETTING_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\nALGO_NAME\tALGO_SUPPORT_VECTOR_MACHINES\nODMS_DETAILS\tODMS_ENABLE\nODMS_MISSING_VALUE_TREATMENT\tODMS_MISSING_VALUE_AUTO\nODMS_SAMPLING\tODMS_SAMPLING_DISABLE\nPREP_AUTO\tON\nSVMS_COMPLEXITY_FACTOR\t0.1\nSVMS_CONV_TOLERANCE\t0.0001\nSVMS_EPSILON\t0.1\nSVMS_KERNEL_FUNCTION\tSVMS_GAUSSIAN\nSVMS_NUM_PIVOTS\t200\nSVMS_SOLVER\tSVMS_SOLVER_IPM\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-91417887",
+      "id": "20220124-201426_926042934",
+      "dateCreated": "2018-02-06T15:41:25+0000",
+      "dateStarted": "2023-02-17T22:25:59+0000",
+      "dateFinished": "2023-02-17T22:25:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display SVM model signature",
+      "text": "%sql\n\nSELECT ATTRIBUTE_NAME, ATTRIBUTE_TYPE\nFROM   USER_MINING_MODEL_ATTRIBUTES\nWHERE  MODEL_NAME \u003d \u0027SVML_SH_REGR_SAMPLE\u0027\nORDER BY ATTRIBUTE_NAME;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 329.4,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "ATTRIBUTE_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "ATTRIBUTE_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "ATTRIBUTE_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "ATTRIBUTE_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ATTRIBUTE_NAME\tATTRIBUTE_TYPE\nAFFINITY_CARD\tNUMERICAL\nCUST_CREDIT_LIMIT\tNUMERICAL\nCUST_GENDER\tCATEGORICAL\nCUST_INCOME_LEVEL\tCATEGORICAL\nCUST_MARITAL_STATUS\tCATEGORICAL\nCUST_YEAR_OF_BIRTH\tNUMERICAL\nEDUCATION\tCATEGORICAL\nHOUSEHOLD_SIZE\tCATEGORICAL\nOCCUPATION\tCATEGORICAL\nYRS_RESIDENCE\tNUMERICAL\nY_BOX_GAMES\tNUMERICAL\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-225235968",
+      "id": "20220124-201426_259906914",
+      "dateCreated": "2018-02-06T15:41:25+0000",
+      "dateStarted": "2023-02-17T22:25:59+0000",
+      "dateFinished": "2023-02-17T22:25:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display list of different model views available",
+      "text": "%sql \n\nSELECT VIEW_NAME, VIEW_TYPE \nFROM   USER_MINING_MODEL_VIEWS\nWHERE  MODEL_NAME\u003d\u0027SVML_SH_REGR_SAMPLE\u0027\nORDER BY VIEW_NAME;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 226.5,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "VIEW_NAME": "string",
+                      "VIEW_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "VIEW_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "VIEW_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "VIEW_TYPE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "VIEW_NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 209.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "VIEW_NAME\tVIEW_TYPE\nDM$VGSVML_SH_REGR_SAMPLE\tGlobal Name-Value Pairs\nDM$VNSVML_SH_REGR_SAMPLE\tNormalization and Missing Value Handling\nDM$VSSVML_SH_REGR_SAMPLE\tComputed Settings\nDM$VWSVML_SH_REGR_SAMPLE\tModel Build Alerts\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-521694519",
+      "id": "20220124-201426_1021062460",
+      "dateCreated": "2018-02-07T02:11:17+0000",
+      "dateStarted": "2023-02-17T22:25:59+0000",
+      "dateFinished": "2023-02-17T22:26:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View SVM model summary statistics",
+      "text": "%sql \n\nSELECT NAME, NUMERIC_VALUE, STRING_VALUE \nFROM   DM$VGSVML_SH_REGR_SAMPLE\nORDER BY NAME;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 250.094,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "NAME": "string",
+                      "NUMERIC_VALUE": "string",
+                      "STRING_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "NUMERIC_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "NUMERIC_VALUE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "NAME",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "NAME\tNUMERIC_VALUE\tSTRING_VALUE\nCONVERGED\t\tYES\nITERATIONS\t13\t\nNUM_ROWS\t2764\t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_1825872417",
+      "id": "20220124-201426_285782687",
+      "dateCreated": "2018-02-07T02:13:04+0000",
+      "dateStarted": "2023-02-17T22:26:00+0000",
+      "dateFinished": "2023-02-17T22:26:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View SVM computed settings",
+      "text": "%sql \n\nSELECT SETTING_NAME, SETTING_VALUE\nFROM   DM$VSSVML_SH_REGR_SAMPLE;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 174.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "FEATURE_EXPRESSION",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "COEFFICIENT",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "COEFFICIENT",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "FEATURE_EXPRESSION",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\nSVMS_STD_DEV\t2.2360679774997898\nSVMS_NUM_ITERATIONS\t30\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-1395021373",
+      "id": "20220124-201426_877011059",
+      "dateCreated": "2018-02-07T02:14:43+0000",
+      "dateStarted": "2023-02-17T22:26:00+0000",
+      "dateFinished": "2023-02-17T22:26:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Apply SVM model to predict YRS_RESIDENCE with Prediction_Details",
+      "text": "%sql\n\n-- Make predictions with upper and lower bounds and include explanatory prediction details\nSELECT CUST_ID,\n       round(PREDICTION_YRS_RES,3) PRED_YRS_RES,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),\u0027rank\u003d\"1\"/\u003e\u0027) FIRST_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),\u0027rank\u003d\"2\"/\u003e\u0027) SECOND_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),\u0027rank\u003d\"3\"/\u003e\u0027) THIRD_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute4\",17,100)),\u0027rank\u003d\"4\"/\u003e\u0027) FOURTH_ATTRIBUTE\n       FROM (SELECT CUST_ID,\n               PREDICTION(SVML_SH_REGR_SAMPLE USING *) PREDICTION_YRS_RES,\n               PREDICTION_DETAILS(SVML_SH_REGR_SAMPLE USING *) PD\n             FROM TEST_DATA_V\n             ORDER BY CUST_ID) OUT,\n             XMLTABLE(\u0027/Details\u0027\n                      PASSING OUT.PD\n                      COLUMNS \n                      \"Attribute1\" XMLType PATH \u0027Attribute[1]\u0027,\n                      \"Attribute2\" XMLType PATH \u0027Attribute[2]\u0027,\n                      \"Attribute3\" XMLType PATH \u0027Attribute[3]\u0027,\n                      \"Attribute4\" XMLType PATH \u0027Attribute[4]\u0027) OUTPRED\nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PRED_YRS_RES": "string",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string",
+                      "FOURTH_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "CUST_ID",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "PRED_YRS_RES",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "PR",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "PR",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RES\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\tFOURTH_ATTRIBUTE\n100002\t4.478\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1962\" weight\u003d\".291\" \t\"EDUCATION\" actualValue\u003d\"Bach.\" weight\u003d\".139\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".137\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".086\" \n100004\t4.903\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1953\" weight\u003d\".443\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".055\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".048\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".033\" \n100005\t5.018\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1957\" weight\u003d\".524\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".079\" \t\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".047\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"B: 30,000 - 49,999\" weight\u003d\".011\" \n100014\t5.059\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1954\" weight\u003d\".534\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".056\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".046\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".044\" \n100015\t5.051\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1959\" weight\u003d\".493\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".117\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".091\" \t\"OCCUPATION\" actualValue\u003d\"Exec.\" weight\u003d\".086\" \n100017\t5.646\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1935\" weight\u003d\".665\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".03\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"10000\" weight\u003d\"-.006\" \t\"EDUCATION\" actualValue\u003d\"\u0026lt; Bach.\" weight\u003d\"-.012\" \n100020\t5.337\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1946\" weight\u003d\".615\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".038\" \t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Divorc.\" weight\u003d\".005\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"9000\" weight\u003d\".004\" \n100024\t5.266\t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1952\" weight\u003d\".659\" \t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".042\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"5000\" weight\u003d\"-.023\" \t\"OCCUPATION\" actualValue\u003d\"Crafts\" weight\u003d\"-.078\" \n100025\t2.67\t\"CUST_INCOME_LEVEL\" actualValue\u003d\"H: 150,000 - 169,999\" weight\u003d\".054\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".039\" \t\"EDUCATION\" actualValue\u003d\"Assoc-A\" weight\u003d\".031\" \t\"OCCUPATION\" actualValue\u003d\"Prof.\" weight\u003d\".029\" \n100027\t3.757\t\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".156\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"11000\" weight\u003d\"-.021\" \t\"EDUCATION\" actualValue\u003d\"9th\" weight\u003d\"-.023\" \t\"CUST_INCOME_LEVEL\" actualValue\u003d\"L: 300,000 and above\" weight\u003d\"-.026\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_441462395",
+      "id": "20220124-201426_1429306708",
+      "dateCreated": "2018-02-06T15:44:16+0000",
+      "dateStarted": "2023-02-17T22:26:00+0000",
+      "dateFinished": "2023-02-17T22:26:02+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Show SVM model predictions vs actuals",
+      "text": "%sql\n\n-- Show predictions vs. actuals.\n\nSELECT CUST_ID,\n       round(PREDICTION(SVML_SH_REGR_SAMPLE USING *), 1) PRED_YRS_RESIDENCE,\n       YRS_RESIDENCE ACTUAL_YRS_RESIDENCE\nFROM   TEST_DATA_V\nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 424.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "stacked": false
+                },
+                "scatterChart": {
+                  "xAxis": {
+                    "name": "PRED_YRS_RESIDENCE",
+                    "index": 1.0,
+                    "aggr": "sum"
+                  },
+                  "yAxis": {
+                    "name": "ACTUAL_YRS_RESIDENCE",
+                    "index": 2.0,
+                    "aggr": "sum"
+                  }
+                },
+                "lineChart": {},
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PRED_YRS_RESIDENCE",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "ACTUAL_YRS_RESIDENCE",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PRED_YRS_RESIDENCE": "string",
+                      "ACTUAL_YRS_RESIDENCE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "keys": [],
+              "groups": [],
+              "values": []
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RESIDENCE\tACTUAL_YRS_RESIDENCE\n100002\t4.5\t4\n100004\t4.9\t5\n100005\t5\t5\n100014\t5.1\t5\n100015\t5.1\t6\n100017\t5.6\t5\n100020\t5.3\t6\n100024\t5.3\t5\n100025\t2.7\t3\n100027\t3.8\t3\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-1372770891",
+      "id": "20220124-201426_140058371",
+      "dateCreated": "2019-07-26T14:56:47+0000",
+      "dateStarted": "2023-02-17T22:26:02+0000",
+      "dateFinished": "2023-02-17T22:26:02+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Model quality statistics on the TEST data",
+      "text": "%sql\n\nSELECT ROUND(R2,6) COEF_OF_DETERMINATION_R2, \n       ROUND(MAE,6) MEAN_ABSOLUTE_ERROR, \n       ROUND(MSE,6) MEAN_SQUARED_ERROR, \n       ROUND(SQRT(MSE),6) ROOT_MEAN_SQUARED_ERROR\n       FROM \n       (SELECT AVG(ABS(PRED_YRS_RESIDENCE - ACTUAL_YRS_RESIDENCE)) MAE,\n               AVG(POWER(PRED_YRS_RESIDENCE - ACTUAL_YRS_RESIDENCE,2)) MSE,\n               1-(SUM(POWER(ACTUAL_YRS_RESIDENCE - PRED_YRS_RESIDENCE,2)))/(SUM(POWER(ACTUAL_YRS_RESIDENCE - \n                 (SELECT AVG(ROUND(PREDICTION(SVML_SH_REGR_SAMPLE USING *), 1)) FROM TEST_DATA_V),2))) R2              \n                 FROM (SELECT CUST_ID,\n                            ROUND(PREDICTION(SVML_SH_REGR_SAMPLE USING *), 1) PRED_YRS_RESIDENCE,\n                            YRS_RESIDENCE ACTUAL_YRS_RESIDENCE\n                       FROM TEST_DATA_V))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 114.633,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COEF_OF_DETERMINATION_R2": "string",
+                      "MEAN_ABSOLUTE_ERROR": "string",
+                      "MEAN_SQUARED_ERROR": "string",
+                      "ROOT_MEAN_SQUARED_ERROR": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COEF_OF_DETERMINATION_R2\tMEAN_ABSOLUTE_ERROR\tMEAN_SQUARED_ERROR\tROOT_MEAN_SQUARED_ERROR\n0.566487\t0.809677\t1.520058\t1.232906\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_44782746",
+      "id": "20220124-201426_1553058013",
+      "dateCreated": "2021-07-15T14:42:27+0000",
+      "dateStarted": "2023-02-17T22:26:02+0000",
+      "dateFinished": "2023-02-17T22:26:02+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Plot SVM model predictions vs actuals grouped by HOUSE_HOLD_SIZE",
+      "text": "%sql\n\n-- Show predictions vs. actuals in a scatter plot grouped by HOUSE_HOLD_SIZE.  \n-- Click the scatter plot icon and drag PRED_YRS_RESIDENCE to xAxis, \n--   ACTUAL_YRS_RESIDENCE to yAxis and HOUSEHOLD_SIZE to group.\n-- Clicking on the labels of each Household size, we can evaluate the model prediction \n--   quality for each different set\n\nSELECT CUST_ID,\n    round(PREDICTION(SVML_SH_REGR_SAMPLE USING *), 1) PRED_YRS_RESIDENCE,\n    YRS_RESIDENCE ACTUAL_YRS_RESIDENCE, CUST_GENDER, HOUSEHOLD_SIZE\nFROM TEST_DATA_V\nFETCH FIRST 100 ROWS ONLY;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "scatterChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "stacked": false
+                },
+                "scatterChart": {
+                  "xAxis": {
+                    "name": "ACTUAL_YRS_RESIDENCE",
+                    "index": 2.0,
+                    "aggr": "sum"
+                  },
+                  "yAxis": {
+                    "name": "PRED_YRS_RESIDENCE",
+                    "index": 1.0,
+                    "aggr": "sum"
+                  },
+                  "group": {
+                    "name": "HOUSEHOLD_SIZE",
+                    "index": 4.0,
+                    "aggr": "sum"
+                  }
+                },
+                "lineChart": {}
+              },
+              "keys": [],
+              "groups": [],
+              "values": []
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RESIDENCE\tACTUAL_YRS_RESIDENCE\tCUST_GENDER\tHOUSEHOLD_SIZE\n100002\t4.5\t4\tF\t2\n100004\t4.9\t5\tF\t2\n100005\t5\t5\tM\t3\n100014\t5.1\t5\tF\t2\n100015\t5.1\t6\tM\t2\n100017\t5.6\t5\tF\t9+\n100020\t5.3\t6\tF\t9+\n100024\t5.3\t5\tM\t3\n100025\t2.7\t3\tF\t2\n100027\t3.8\t3\tM\t3\n100029\t4.7\t5\tM\t3\n100030\t2.5\t2\tF\t2\n100031\t4\t4\tF\t6-8\n100033\t4.7\t5\tM\t9+\n100034\t4.9\t4\tM\t3\n100037\t5.3\t6\tM\t2\n100038\t2.3\t2\tF\t6-8\n100041\t1.9\t2\tF\t1\n100043\t2\t2\tM\t1\n100044\t2.4\t2\tM\t2\n100047\t2.1\t2\tM\t1\n100051\t4.6\t6\tF\t2\n100056\t4.7\t4\tM\t3\n100057\t4.9\t4\tM\t3\n100059\t5.6\t6\tM\t2\n100063\t5.8\t5\tM\t3\n100064\t5.5\t5\tM\t3\n100068\t6.6\t6\tM\t3\n100069\t4.5\t5\tF\t9+\n100071\t3.2\t4\tM\t3\n100072\t3.6\t3\tM\t6-8\n100076\t2.1\t2\tM\t1\n100079\t2.3\t3\tF\t6-8\n100082\t3\t3\tM\t2\n100083\t2.9\t3\tF\t9+\n100091\t4.7\t4\tM\t3\n100094\t5.1\t5\tM\t3\n100095\t3.9\t4\tM\t3\n100098\t2.4\t3\tM\t1\n100100\t4.3\t4\tF\t4-5\n100102\t3.7\t4\tM\t9+\n100104\t2.3\t2\tM\t1\n100107\t6\t6\tM\t2\n100109\t5.1\t7\tM\t3\n100115\t2.2\t2\tM\t1\n100118\t5.6\t6\tM\t3\n100127\t2\t2\tF\t1\n100128\t4\t3\tF\t4-5\n100131\t2.7\t3\tM\t2\n100136\t3.1\t4\tM\t2\n100137\t4.2\t2\tF\t6-8\n100138\t4.7\t4\tM\t2\n100139\t5.9\t6\tM\t3\n100140\t1.7\t1\tM\t1\n100144\t4.5\t4\tM\t2\n100147\t6.2\t6\tM\t3\n100151\t5.1\t5\tM\t3\n100152\t3.3\t3\tF\t4-5\n100153\t2.1\t3\tM\t1\n100156\t4.4\t5\tM\t3\n100158\t2.3\t2\tM\t2\n100159\t2\t3\tM\t6-8\n100162\t5.2\t5\tM\t2\n100163\t6.2\t6\tM\t3\n100168\t2.7\t3\tF\t9+\n100174\t5.4\t6\tM\t2\n100176\t4.2\t4\tM\t3\n100178\t5.2\t5\tM\t3\n100179\t6.1\t7\tM\t3\n100180\t1.9\t3\tM\t1\n100181\t2.1\t1\tF\t1\n100185\t5.8\t8\tM\t3\n100189\t2.2\t1\tM\t1\n100190\t5.1\t5\tM\t3\n100191\t2.9\t3\tM\t3\n100193\t2.5\t1\tM\t1\n100197\t4.4\t2\tM\t3\n100199\t5.3\t2\tF\t2\n100200\t1.6\t2\tM\t1\n100208\t3.5\t3\tF\t9+\n100210\t6.1\t14\tM\t3\n100211\t2.6\t2\tM\t2\n100216\t6.1\t6\tM\t2\n100219\t5.7\t5\tM\t3\n100222\t3.4\t4\tF\t2\n100223\t2.3\t3\tF\t2\n100225\t2.9\t2\tM\t3\n100229\t4.4\t6\tM\t3\n100230\t5.3\t6\tM\t3\n100231\t1.9\t2\tM\t6-8\n100233\t5.5\t6\tM\t3\n100234\t2\t2\tF\t2\n100235\t6.3\t7\tM\t3\n100239\t5\t4\tM\t3\n100240\t2.3\t2\tM\t1\n100241\t4.5\t4\tM\t3\n100243\t3.6\t3\tF\t4-5\n100245\t5\t5\tM\t3\n100248\t2.9\t3\tM\t2\n100249\t3.9\t4\tF\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_1126892850",
+      "id": "20220124-201426_1506885252",
+      "dateCreated": "2019-08-13T15:16:52+0000",
+      "dateStarted": "2023-02-17T22:26:02+0000",
+      "dateFinished": "2023-02-17T22:26:02+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Plot SVM model predictions vs residuals",
+      "text": "%sql\n\n-- Show predictions vs. residuals in a scatter plot grouped by HOUSE_HOLD_SIZE.  \n-- Click the scatter plot icon and drag PRED_YRS_RESIDENCE to xAxis, \n--   ACTUAL_YRS_RESIDENCE to yAxis and HOUSEHOLD_SIZE to group.\n\nSELECT CUST_ID,\n    round(PREDICTION(SVML_SH_REGR_SAMPLE USING *), 1) PRED_YRS_RESIDENCE,\n    round(round(PREDICTION(SVML_SH_REGR_SAMPLE USING *), 1) - YRS_RESIDENCE,2) RESIDUALS\nFROM TEST_DATA_V\nFETCH FIRST 100 ROWS ONLY;\n  \n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "scatterChart",
+              "height": 334.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "stacked": false
+                },
+                "scatterChart": {
+                  "xAxis": {
+                    "name": "PRED_YRS_RESIDENCE",
+                    "index": 1.0,
+                    "aggr": "sum"
+                  },
+                  "yAxis": {
+                    "name": "RESIDUALS",
+                    "index": 2.0,
+                    "aggr": "sum"
+                  }
+                },
+                "lineChart": {}
+              },
+              "keys": [],
+              "groups": [],
+              "values": []
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RESIDENCE\tRESIDUALS\n100002\t4.5\t0.5\n100004\t4.9\t-0.1\n100005\t5\t0\n100014\t5.1\t0.1\n100015\t5.1\t-0.9\n100017\t5.6\t0.6\n100020\t5.3\t-0.7\n100024\t5.3\t0.3\n100025\t2.7\t-0.3\n100027\t3.8\t0.8\n100029\t4.7\t-0.3\n100030\t2.5\t0.5\n100031\t4\t0\n100033\t4.7\t-0.3\n100034\t4.9\t0.9\n100037\t5.3\t-0.7\n100038\t2.3\t0.3\n100041\t1.9\t-0.1\n100043\t2\t0\n100044\t2.4\t0.4\n100047\t2.1\t0.1\n100051\t4.6\t-1.4\n100056\t4.7\t0.7\n100057\t4.9\t0.9\n100059\t5.6\t-0.4\n100063\t5.8\t0.8\n100064\t5.5\t0.5\n100068\t6.6\t0.6\n100069\t4.5\t-0.5\n100071\t3.2\t-0.8\n100072\t3.6\t0.6\n100076\t2.1\t0.1\n100079\t2.3\t-0.7\n100082\t3\t0\n100083\t2.9\t-0.1\n100091\t4.7\t0.7\n100094\t5.1\t0.1\n100095\t3.9\t-0.1\n100098\t2.4\t-0.6\n100100\t4.3\t0.3\n100102\t3.7\t-0.3\n100104\t2.3\t0.3\n100107\t6\t0\n100109\t5.1\t-1.9\n100115\t2.2\t0.2\n100118\t5.6\t-0.4\n100127\t2\t0\n100128\t4\t1\n100131\t2.7\t-0.3\n100136\t3.1\t-0.9\n100137\t4.2\t2.2\n100138\t4.7\t0.7\n100139\t5.9\t-0.1\n100140\t1.7\t0.7\n100144\t4.5\t0.5\n100147\t6.2\t0.2\n100151\t5.1\t0.1\n100152\t3.3\t0.3\n100153\t2.1\t-0.9\n100156\t4.4\t-0.6\n100158\t2.3\t0.3\n100159\t2\t-1\n100162\t5.2\t0.2\n100163\t6.2\t0.2\n100168\t2.7\t-0.3\n100174\t5.4\t-0.6\n100176\t4.2\t0.2\n100178\t5.2\t0.2\n100179\t6.1\t-0.9\n100180\t1.9\t-1.1\n100181\t2.1\t1.1\n100185\t5.8\t-2.2\n100189\t2.2\t1.2\n100190\t5.1\t0.1\n100191\t2.9\t-0.1\n100193\t2.5\t1.5\n100197\t4.4\t2.4\n100199\t5.3\t3.3\n100200\t1.6\t-0.4\n100208\t3.5\t0.5\n100210\t6.1\t-7.9\n100211\t2.6\t0.6\n100216\t6.1\t0.1\n100219\t5.7\t0.7\n100222\t3.4\t-0.6\n100223\t2.3\t-0.7\n100225\t2.9\t0.9\n100229\t4.4\t-1.6\n100230\t5.3\t-0.7\n100231\t1.9\t-0.1\n100233\t5.5\t-0.5\n100234\t2\t0\n100235\t6.3\t-0.7\n100239\t5\t1\n100240\t2.3\t0.3\n100241\t4.5\t0.5\n100243\t3.6\t0.6\n100245\t5\t0\n100248\t2.9\t-0.1\n100249\t3.9\t-0.1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_664933615",
+      "id": "20220124-201426_122958647",
+      "dateCreated": "2021-07-15T19:10:19+0000",
+      "dateStarted": "2023-02-17T22:26:03+0000",
+      "dateFinished": "2023-02-17T22:26:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Another option: create SVM Linear Regression Model using Settings Table\nThe settings table is an alternative way to specify algorithm settings to build the model. We first drop the settings table, create it, and then populate it with settings before building the model.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAnother option: create SVM Linear Regression Model using Settings Table\u003c/h2\u003e\n\u003cp\u003eThe settings table is an alternative way to specify algorithm settings to build the model. We first drop the settings table, create it, and then populate it with settings before building the model.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-1603169807",
+      "id": "20220124-201426_1194694105",
+      "dateCreated": "2020-05-18T23:44:23+0000",
+      "dateStarted": "2023-02-17T22:26:03+0000",
+      "dateFinished": "2023-02-17T22:26:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Drop previous settings and output tables and create SVM model settings table",
+      "text": "%script \n\n-- Drop any previous GLM Model Settings table for notebook repeatability\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE SVMLR_SETTINGS\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\n--Create Model Settings Table\nCREATE TABLE SVMLR_SETTINGS (\n    SETTING_NAME  VARCHAR2(30),\n    SETTING_VALUE VARCHAR2(4000));\n    ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable SVMLR_SETTINGS created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_1543398353",
+      "id": "20220124-201426_355498690",
+      "dateCreated": "2018-02-06T19:32:52+0000",
+      "dateStarted": "2023-02-17T22:26:03+0000",
+      "dateFinished": "2023-02-17T22:26:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Define model settings for automated data preparation and feature selection",
+      "text": "%script \n\nBEGIN \n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.ALGO_NAME, DBMS_DATA_MINING.ALGO_SUPPORT_VECTOR_MACHINES);\n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.PREP_AUTO, DBMS_DATA_MINING.PREP_AUTO_ON);  \n\n-- Specify a missing value treatment method:\n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.ODMS_MISSING_VALUE_TREATMENT, DBMS_DATA_MINING.ODMS_MISSING_VALUE_DELETE_ROW);\n   \n-- Switch between Kernel Types - Linear or Gaussian.  By default the system uses the Linear Kernel.\n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_KERNEL_FUNCTION, DBMS_DATA_MINING.SVMS_LINEAR);\n--    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_KERNEL_FUNCTION, DBMS_DATA_MINING.SVMS_GAUSSIAN);\n   \n-- Value of complexity factor for SVM algorithm (both classification and regression).  Default value estimated from the data by the algorithm.\n   INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_COMPLEXITY_FACTOR, 0.1);\n   \n-- Type of regularization that the SGD SVM solver uses (only available for linear SVM models). \n-- The default is system determined because it depends on the potential model size.  \n-- Also the Regularization setting for regression (Epsilon specifies the allowable residuals, or noise, in the data).     \n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_REGULARIZER, DBMS_DATA_MINING.SVMS_REGULARIZER_L1);\n--     INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_REGULARIZER, DBMS_DATA_MINING.SVMS_REGULARIZER_L2);\n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_EPSILON, 0.1);\n   \n-- Batch rows sets the size of the batch for the SGD solver (linear kernel only). An input of 0 triggers a data driven batch size estimate. The default is 20000. \n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_BATCH_ROWS, 20000);\n   \n-- Solver type, which cannot be selected if the kernel is non-linear. The default value is system determined.    \n    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_SOLVER, DBMS_DATA_MINING.SVMS_SOLVER_SGD);\n--    INSERT INTO SVMLR_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES (DBMS_DATA_MINING.SVMS_SOLVER, DBMS_DATA_MINING.SVMS_SOLVER_IPM);\n\nEND;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-2088102062",
+      "id": "20220124-201426_1672355322",
+      "dateCreated": "2018-02-06T15:27:49+0000",
+      "dateStarted": "2023-02-17T22:26:03+0000",
+      "dateFinished": "2023-02-17T22:26:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build a SVM Linear regression model for predicting YRS_RESIDENCE",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027SVML_SH_REGR_SAMPLE\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\n\nDECLARE\n    V_XLST DBMS_DATA_MINING_TRANSFORM.TRANSFORM_LIST;\n \nBEGIN\n    DBMS_DATA_MINING.CREATE_MODEL(\n    MODEL_NAME          \u003d\u003e \u0027SVML_SH_REGR_SAMPLE\u0027,\n    MINING_FUNCTION     \u003d\u003e DBMS_DATA_MINING.REGRESSION,\n    DATA_TABLE_NAME     \u003d\u003e \u0027TRAIN_DATA_V\u0027,\n    CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n    TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027,\n    SETTINGS_TABLE_NAME \u003d\u003e \u0027SVMLR_SETTINGS\u0027,\n    XFORM_LIST          \u003d\u003e V_XLST);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-1979196956",
+      "id": "20220124-201426_140433163",
+      "dateCreated": "2018-02-06T15:30:56+0000",
+      "dateStarted": "2023-02-17T22:26:04+0000",
+      "dateFinished": "2023-02-17T22:26:05+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eEnd of Script\u003c/h2\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_-1729431659",
+      "id": "20220124-201426_506354344",
+      "dateCreated": "2020-05-18T23:45:47+0000",
+      "dateStarted": "2023-02-17T22:26:05+0000",
+      "dateFinished": "2023-02-17T22:26:05+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:26:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055266990_319812008",
+      "id": "20220124-201426_1897603104",
+      "dateCreated": "2018-02-07T02:20:34+0000",
+      "status": "FINISHED",
+      "errorMessage": ""
+    }
+  ],
+  "name": "OML4SQL Regression SVM",
+  "id": "101075",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

@@ -1,0 +1,2929 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## OML4SQL Statistical Functions\n\nIn this notebook, you will use the SH schema data to to explore descriptive and comparative statistics performed inside Oracle Autonomous Database. For the machine learning examples, please see companion notebooks.\n\nCopyright (c) 2023 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 9.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eOML4SQL Statistical Functions\u003c/h2\u003e\n\u003cp\u003eIn this notebook, you will use the SH schema data to to explore descriptive and comparative statistics performed inside Oracle Autonomous Database. For the machine learning examples, please see companion notebooks.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-2060931213",
+      "id": "20220124-201423_226652032",
+      "dateCreated": "2018-02-04T02:24:52+0000",
+      "dateStarted": "2023-02-17T22:57:46+0000",
+      "dateFinished": "2023-02-17T22:57:46+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\u003cdl\u003e\n\u003cimg src\u003d\"http://www.oracle.com/technetwork/database/options/advanced-analytics/statistics-5663173.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"270\"/\u003e\n\u003c/dl\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 3.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 120.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdl\u003e\n\u003cimg src\u003d\"http://www.oracle.com/technetwork/database/options/advanced-analytics/statistics-5663173.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"270\"/\u003e\n\u003c/dl\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_436594441",
+      "id": "20220124-201423_2142063892",
+      "dateCreated": "2018-02-05T22:03:29+0000",
+      "dateStarted": "2023-02-17T22:57:46+0000",
+      "dateFinished": "2023-02-17T22:57:46+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nFor more statistical functions in the Documentation, start here: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/sql-statistical-functions.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/sql-statistical-functions.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/sql-statistical-functions.html\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eFor more statistical functions in the Documentation, start here: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/sql-statistical-functions.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/sql-statistical-functions.html\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmprg/sql-statistical-functions.html\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-1638473850",
+      "id": "20220124-201423_677450658",
+      "dateCreated": "2018-02-04T02:25:36+0000",
+      "dateStarted": "2023-02-17T22:57:46+0000",
+      "dateFinished": "2023-02-17T22:57:46+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display SH.COUNTRIES data",
+      "text": "%sql\n\nSELECT * FROM SH.COUNTRIES\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COUNTRY_ID": "string",
+                      "COUNTRY_ISO_CODE": "string",
+                      "COUNTRY_NAME": "string",
+                      "COUNTRY_SUBREGION": "string",
+                      "COUNTRY_SUBREGION_ID": "string",
+                      "COUNTRY_REGION": "string",
+                      "COUNTRY_REGION_ID": "string",
+                      "COUNTRY_TOTAL": "string",
+                      "COUNTRY_TOTAL_ID": "string",
+                      "COUNTRY_NAME_HIST": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNTRY_ID\tCOUNTRY_ISO_CODE\tCOUNTRY_NAME\tCOUNTRY_SUBREGION\tCOUNTRY_SUBREGION_ID\tCOUNTRY_REGION\tCOUNTRY_REGION_ID\tCOUNTRY_TOTAL\tCOUNTRY_TOTAL_ID\tCOUNTRY_NAME_HIST\n52771\tCN\tChina\tAsia\t52793\tAsia\t52802\tWorld total\t52806\t\n52781\tIN\tIndia\tAsia\t52793\tAsia\t52802\tWorld total\t52806\t\n52782\tJP\tJapan\tAsia\t52793\tAsia\t52802\tWorld total\t52806\t\n52783\tMY\tMalaysia\tAsia\t52793\tAsia\t52802\tWorld total\t52806\t\n52769\tSG\tSingapore\tAsia\t52793\tAsia\t52802\tWorld total\t52806\t\n52791\tZA\tSouth Africa\tAfrica\t52792\tAfrica\t52800\tWorld total\t52806\t\n52774\tAU\tAustralia\tAustralia\t52794\tOceania\t52805\tWorld total\t52806\t\n52785\tNZ\tNew Zealand\tAustralia\t52794\tOceania\t52805\tWorld total\t52806\t\n52787\tSA\tSaudi Arabia\tMiddle East\t52796\tMiddle East\t52804\tWorld total\t52806\t\n52786\tPL\tPoland\tEastern Europe\t52795\tEurope\t52803\tWorld total\t52806\t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-1497593181",
+      "id": "20220124-201423_1184363408",
+      "dateCreated": "2020-08-14T15:39:58+0000",
+      "dateStarted": "2023-02-17T22:57:47+0000",
+      "dateFinished": "2023-02-17T22:57:47+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display SH.CUSTOMERS data",
+      "text": "%sql\n\nSELECT * FROM SH.CUSTOMERS\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CUST_FIRST_NAME": "string",
+                      "CUST_LAST_NAME": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_YEAR_OF_BIRTH": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_STREET_ADDRESS": "string",
+                      "CUST_POSTAL_CODE": "string",
+                      "CUST_CITY": "string",
+                      "CUST_CITY_ID": "string",
+                      "CUST_STATE_PROVINCE": "string",
+                      "CUST_STATE_PROVINCE_ID": "string",
+                      "COUNTRY_ID": "string",
+                      "CUST_MAIN_PHONE_NUMBER": "string",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "string",
+                      "CUST_EMAIL": "string",
+                      "CUST_TOTAL": "string",
+                      "CUST_TOTAL_ID": "string",
+                      "CUST_SRC_ID": "string",
+                      "CUST_EFF_FROM": "string",
+                      "CUST_EFF_TO": "string",
+                      "CUST_VALID": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "CUST_FIRST_NAME",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "CUST_FIRST_NAME",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_FIRST_NAME\tCUST_LAST_NAME\tCUST_GENDER\tCUST_YEAR_OF_BIRTH\tCUST_MARITAL_STATUS\tCUST_STREET_ADDRESS\tCUST_POSTAL_CODE\tCUST_CITY\tCUST_CITY_ID\tCUST_STATE_PROVINCE\tCUST_STATE_PROVINCE_ID\tCOUNTRY_ID\tCUST_MAIN_PHONE_NUMBER\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tCUST_EMAIL\tCUST_TOTAL\tCUST_TOTAL_ID\tCUST_SRC_ID\tCUST_EFF_FROM\tCUST_EFF_TO\tCUST_VALID\n49671\tAbigail\tRuddy\tM\t1976\tmarried\t27 North Sagadahoc Boulevard\t60332\tEde\t51442\tGelderland\t52610\t52770\t519-236-6123\tG: 130,000 - 149,999\t1500\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n3228\tAbigail\tRuddy\tM\t1964\t\t37 West Geneva Street\t55406\tHoofddorp\t51669\tNoord-Holland\t52683\t52770\t327-194-5008\tG: 130,000 - 149,999\t7000\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n6783\tAbigail\tRuddy\tM\t1942\tsingle\t47 Toa Alta Road\t34077\tSchimmert\t52297\tLimburg\t52646\t52770\t288-613-9676\tG: 130,000 - 149,999\t11000\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n10338\tAbigail\tRuddy\tM\t1977\tmarried\t47 South Kanabec Road\t72996\tScheveningen\t52296\tZuid-Holland\t52771\t52770\t222-269-1259\tG: 130,000 - 149,999\t1500\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n13894\tAbigail\tRuddy\tM\t1949\t\t57 North 3rd Drive\t67644\tJoinville\t51698\tSanta Catarina\t52734\t52775\t675-133-2226\tG: 130,000 - 149,999\t9000\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n17449\tAbigail\tRuddy\tM\t1950\tsingle\t67 East Mcintosh Avenue\t83786\tNagoya\t51971\tAichi\t52543\t52782\t183-207-2933\tG: 130,000 - 149,999\t9000\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n21005\tAbigail\tRuddy\tM\t1946\tmarried\t77 Bradford Avenue\t52773\tSantos\t52293\tSao Paulo\t52735\t52775\t129-379-7148\tG: 130,000 - 149,999\t3000\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n24561\tAbigail\tRuddy\tM\t1978\t\t77 North Packard Avenue\t37400\tYokohama\t52526\tKanagawa\t52634\t52782\t689-236-7611\tG: 130,000 - 149,999\t7000\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n28116\tAbigail\tRuddy\tM\t1949\tsingle\t87 West Coshocton Avenue\t71349\tHaarlem\t51644\tNoord-Holland\t52683\t52770\t208-194-6025\tG: 130,000 - 149,999\t11000\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n31671\tAbigail\tRuddy\tM\t1951\tmarried\t97 Sagadahoc Avenue\t55056\tBolton\t51205\tEngland - Greater Manchester\t52590\t52789\t391-613-8000\tG: 130,000 - 149,999\t1500\tRuddy@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_233447213",
+      "id": "20220124-201423_1484225197",
+      "dateCreated": "2018-02-04T02:30:25+0000",
+      "dateStarted": "2023-02-17T22:57:47+0000",
+      "dateFinished": "2023-02-17T22:57:47+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display mode value for CUST_MARITAL_STATUS",
+      "text": "%sql \n\nSELECT STATS_MODE(CUST_MARITAL_STATUS) \nFROM SH.CUSTOMERS",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 90.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "STATS_MODE(CUST_MARITAL_STATUS)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "STATS_MODE(CUST_MARITAL_STATUS)",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [],
+          "scatter": {
+            "xAxis": {
+              "name": "STATS_MODE(CUST_MARITAL_STATUS)",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 89.6667
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "STATS_MODE(CUST_MARITAL_STATUS)\nsingle\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_2001679770",
+      "id": "20220124-201423_1302808922",
+      "dateCreated": "2018-02-04T02:31:20+0000",
+      "dateStarted": "2023-02-17T22:57:47+0000",
+      "dateFinished": "2023-02-17T22:57:47+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display median value for CUST_CREDIT_LIMIT",
+      "text": "%sql\n\nSELECT MEDIAN(CUST_CREDIT_LIMIT) \nFROM SH.CUSTOMERS;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 98.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MEDIAN(CUST_CREDIT_LIMIT)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "MEDIAN(CUST_CREDIT_LIMIT)",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [],
+          "scatter": {
+            "xAxis": {
+              "name": "MEDIAN(CUST_CREDIT_LIMIT)",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 84.6667
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MEDIAN(CUST_CREDIT_LIMIT)\n7000\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-2130501692",
+      "id": "20220124-201423_1836822351",
+      "dateCreated": "2018-02-04T02:32:19+0000",
+      "dateStarted": "2023-02-17T22:57:47+0000",
+      "dateFinished": "2023-02-17T22:57:47+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display median CUST_CREDIT_LIMIT grouped by CUST_MARITAL_STATUS in descendig order",
+      "text": "%sql \n\nSELECT CUST_MARITAL_STATUS, MEDIAN(CUST_CREDIT_LIMIT) \nFROM SH.CUSTOMERS \nGROUP BY CUST_MARITAL_STATUS\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 328.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_MARITAL_STATUS": "string",
+                      "MEDIAN(CUST_CREDIT_LIMIT)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "CUST_MARITAL_STATUS",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "MEDIAN(CUST_CREDIT_LIMIT)",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "MEDIAN(CUST_CREDIT_LIMIT)",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "CUST_MARITAL_STATUS",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_MARITAL_STATUS\tMEDIAN(CUST_CREDIT_LIMIT)\nDivorc.\t9000\nMabsent\t9000\nMar-AF\t11000\nMarried\t9000\nNeverM\t9000\nSepar.\t9000\nWidowed\t7000\ndivorced\t7000\nmarried\t5000\nsingle\t7000\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-158943768",
+      "id": "20220124-201423_336185859",
+      "dateCreated": "2018-02-04T02:37:58+0000",
+      "dateStarted": "2023-02-17T22:57:48+0000",
+      "dateFinished": "2023-02-17T22:57:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display mean CUST_CREDIT_LIMIT grouped by CUST_MARITAL_STATUS in descending order",
+      "text": "%sql \nSELECT CUST_MARITAL_STATUS, ROUND(AVG(CUST_CREDIT_LIMIT),2)\nFROM SH.CUSTOMERS \nGROUP BY CUST_MARITAL_STATUS \nORDER BY AVG(CUST_CREDIT_LIMIT) DESC\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 314.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_MARITAL_STATUS": "string",
+                      "ROUND(AVG(CUST_CREDIT_LIMIT),2)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_MARITAL_STATUS\tROUND(AVG(CUST_CREDIT_LIMIT),2)\nMar-AF\t10333.33\nSepar.\t8279.85\nMabsent\t8233.33\nNeverM\t8168.66\nMarried\t7800.64\nDivorc.\t7768.29\n\t7365.56\nWidowed\t7202.21\nwidow\t6400\nsingle\t6349.95\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-212609851",
+      "id": "20220124-201423_2009622589",
+      "dateCreated": "2018-02-04T02:38:47+0000",
+      "dateStarted": "2023-02-17T22:57:48+0000",
+      "dateFinished": "2023-02-17T22:57:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "STATS_MODE with dynamic data",
+      "text": "%md\nNote that STATS_MODE can only work with materialized tables, instead of dynamic data like a view or tables joined together. In that case, we recommend using the max count. For example, in the following paragraph we want to find the mode of the *COUNTRY_NAME*, which is obtained from joining two tables. In this case, it is better to achieve that by taking the max count. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNote that STATS_MODE can only work with materialized tables, instead of dynamic data like a view or tables joined together. In that case, we recommend using the max count. For example, in the following paragraph we want to find the mode of the \u003cem\u003eCOUNTRY_NAME\u003c/em\u003e, which is obtained from joining two tables. In this case, it is better to achieve that by taking the max count.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-1930399730",
+      "id": "20220124-201423_13763079",
+      "dateCreated": "2020-08-14T17:33:28+0000",
+      "dateStarted": "2023-02-17T22:57:48+0000",
+      "dateFinished": "2023-02-17T22:57:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Find mode of COUNTRY_NAME, i.e., country with most customers",
+      "text": "%sql\nSELECT COUNTRY_NAME,\n       RANK\nFROM (\n    SELECT COUNTRY_NAME,  \n           ROW_NUMBER() OVER( ORDER BY COUNT DESC) RANK\n    FROM (\n        SELECT COUNTRY_NAME, COUNT(*) COUNT\n        FROM SH.CUSTOMERS CUST, SH.COUNTRIES CO\n        WHERE  CUST.COUNTRY_ID \u003d CO.COUNTRY_ID\n        GROUP BY COUNTRY_NAME ) A ) B\nWHERE RANK \u003d1",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 236.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COUNTRY_NAME": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNTRY_NAME\tRANK\nUnited States of America\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_591275412",
+      "id": "20220124-201423_820237445",
+      "dateCreated": "2020-08-11T19:18:57+0000",
+      "dateStarted": "2023-02-17T22:57:48+0000",
+      "dateFinished": "2023-02-17T22:57:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display counts of COUNTRY_NAME to highlight mode visually",
+      "text": "%sql\n\nSELECT COUNTRY_NAME, COUNT(*) COUNT\nFROM SH.CUSTOMERS CUST, SH.COUNTRIES CO\nWHERE  CUST.COUNTRY_ID \u003d CO.COUNTRY_ID\nGROUP BY COUNTRY_NAME\nORDER BY COUNT DESC\nFETCH FIRST 20 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 8.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 262.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_CITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "rotate"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "COUNTRY_NAME",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "COUNT",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNTRY_NAME\tCOUNT\nUnited States of America\t18520\nGermany\t8173\nItaly\t7780\nUnited Kingdom\t7557\nFrance\t3833\nSpain\t2039\nCanada\t2010\nBrazil\t832\nAustralia\t831\nChina\t712\nPoland\t708\nJapan\t624\nSingapore\t597\nArgentina\t403\nDenmark\t383\nNew Zealand\t244\nTurkey\t91\nSouth Africa\t88\nSaudi Arabia\t75\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-1308607286",
+      "id": "20220124-201423_1784699208",
+      "dateCreated": "2020-08-11T19:31:55+0000",
+      "dateStarted": "2023-02-17T22:57:49+0000",
+      "dateFinished": "2023-02-17T22:57:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check 1st, 2nd, and 3rd quantile of amount sold - PERCENTILE_CONT resolves ties by interpolation. PERCENTILE_DISC outputs first value when seeing a tie",
+      "text": "%sql\nSELECT PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY AMOUNT_SOLD) \n      \"First Quantile cont\",\n    PERCENTILE_DISC(0.25) WITHIN GROUP (ORDER BY AMOUNT_SOLD) \n      \"First Quantile  disc\",\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY AMOUNT_SOLD) \n      \"Second Quantile cont\",\n    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY AMOUNT_SOLD) \n      \"Second Quantile  disc\",\n    PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY AMOUNT_SOLD) \n      \"Third Quantile cont\",\n    PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY AMOUNT_SOLD) \n      \"Third Quantile  disc\"\nFROM SH.SALES\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 94.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "First Quantile cont": "string",
+                      "First Quantile  disc": "string",
+                      "Second Quantile cont": "string",
+                      "Second Quantile  disc": "string",
+                      "Third Quantile cont": "string",
+                      "Third Quantile  disc": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "First Quantile cont\tFirst Quantile  disc\tSecond Quantile cont\tSecond Quantile  disc\tThird Quantile cont\tThird Quantile  disc\n17.38\t17.38\t34.24\t34.24\t53.89\t53.89\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_1020069600",
+      "id": "20220124-201423_1583173049",
+      "dateCreated": "2020-08-14T14:01:30+0000",
+      "dateStarted": "2023-02-17T22:57:49+0000",
+      "dateFinished": "2023-02-17T22:57:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using a t-test",
+      "text": "%md\n#### Use the SQL t-test function for performing a t-test in-database using the SH.SALES and SH.CUSTOMERS tables.  \n\nSee more information at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_T_TEST_.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_T_TEST_.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_T_TEST_.html \u003c/a\u003e\n\nThe t-test measures the significance of a difference of means. You use it to compare the means of two groups or the means of one group with a constant. A t-test is any statistical hypothesis test in which the test statistic follows a Student\u0027s t distribution under the null hypothesis. It can be used to determine if two sets of data are significantly different from each other, and is most commonly applied when the test statistic would follow a Normal distribution if the value of a scaling term in the test statistic were known. When the scaling term is unknown and is replaced by an estimate based on the data, the test statistic (under certain conditions) follows a Student\u0027s t distribution. \nFor more details on the background of t-tests , see \u003ca href\u003d\"https://en.wikipedia.org/wiki/Student%27s_t-test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Student%27s_t-test\u0027);\"\u003e https://en.wikipedia.org/wiki/Student%27s_t-test \u003c/a\u003e\n\n`Hint`: P_Values \u003c 0.05 show statistically significantly differences (over 95% confidence) in the amounts purchased by men vs. women\n`Hint`: NaN is used for display when there are nulls and/or empty\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003eUse the SQL t-test function for performing a t-test in-database using the SH.SALES and SH.CUSTOMERS tables.\u003c/h4\u003e\n\u003cp\u003eSee more information at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_T_TEST_.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_T_TEST_.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_T_TEST_.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eThe t-test measures the significance of a difference of means. You use it to compare the means of two groups or the means of one group with a constant. A t-test is any statistical hypothesis test in which the test statistic follows a Student\u0027s t distribution under the null hypothesis. It can be used to determine if two sets of data are significantly different from each other, and is most commonly applied when the test statistic would follow a Normal distribution if the value of a scaling term in the test statistic were known. When the scaling term is unknown and is replaced by an estimate based on the data, the test statistic (under certain conditions) follows a Student\u0027s t distribution.\n\u003cbr  /\u003eFor more details on the background of t-tests , see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/Student%27s_t-test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Student%27s_t-test\u0027);\"\u003e https://en.wikipedia.org/wiki/Student%27s_t-test \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u003ccode\u003eHint\u003c/code\u003e: P_Values \u003c 0.05 show statistically significantly differences (over 95% confidence) in the amounts purchased by men vs. women\n\u003cbr  /\u003e\u003ccode\u003eHint\u003c/code\u003e: NaN is used for display when there are nulls and/or empty\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-644116744",
+      "id": "20220124-201423_1309654607",
+      "dateCreated": "2019-08-13T16:27:46+0000",
+      "dateStarted": "2023-02-17T22:57:49+0000",
+      "dateFinished": "2023-02-17T22:57:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compare average amount SOLD_TO_MEN versus average amount SOLD_TO_WOMEN grouped by INCOME_LEVEL - determine if significantly different",
+      "text": "%sql \n\nSELECT SUBSTR(CUST_INCOME_LEVEL,1,22) INCOME_LEVEL,  \n       ROUND(AVG(DECODE(CUST_GENDER,\u0027M\u0027,AMOUNT_SOLD,NULL)),2) SOLD_TO_MEN,  \n\t   ROUND(AVG(DECODE(CUST_GENDER,\u0027F\u0027,AMOUNT_SOLD,NULL)),2) SOLD_TO_WOMEN,  \n\t   ROUND(STATS_T_TEST_INDEP(CUST_GENDER, AMOUNT_SOLD, \u0027STATISTIC\u0027,\u0027F\u0027),2) T_OBSERVED,  \n\t   ROUND(STATS_T_TEST_INDEP(CUST_GENDER, AMOUNT_SOLD),2) TWO_SIDED_P_VALUE\nFROM SH.CUSTOMERS C, SH.SALES S  \nWHERE C.CUST_ID\u003dS.CUST_ID  \nGROUP BY CUST_INCOME_LEVEL \nORDER BY 1",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {},
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "INCOME_LEVEL": "string",
+                      "SOLD_TO_MEN": "string",
+                      "SOLD_TO_WOMEN": "string",
+                      "T_OBSERVED": "string",
+                      "TWO_SIDED_P_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "INCOME_LEVEL",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "TWO_SIDED_P_VALUE",
+                  "index": 4.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "INCOME_LEVEL",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "SOLD_TO_MEN",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "SOLD_TO_MEN",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "INCOME_LEVEL",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "INCOME_LEVEL\tSOLD_TO_MEN\tSOLD_TO_WOMEN\tT_OBSERVED\tTWO_SIDED_P_VALUE\nA: Below 30,000\t105.28\t99.43\t-1.99\t0.05\nB: 30,000 - 49,999\t102.6\t109.83\t3.04\t0\nC: 50,000 - 69,999\t105.63\t110.13\t2.36\t0.02\nD: 70,000 - 89,999\t106.63\t110.47\t2.28\t0.02\nE: 90,000 - 109,999\t103.4\t101.61\t-1.25\t0.21\nF: 110,000 - 129,999\t106.76\t105.98\t-0.6\t0.55\nG: 130,000 - 149,999\t108.88\t107.31\t-0.85\t0.39\nH: 150,000 - 169,999\t110.99\t107.15\t-1.91\t0.06\nI: 170,000 - 189,999\t102.81\t107.44\t2.18\t0.03\nJ: 190,000 - 249,999\t108.04\t115.34\t2.58\t0.01\nK: 250,000 - 299,999\t112.38\t108.2\t-1.41\t0.16\nL: 300,000 and above\t120.97\t112.22\t-2.06\t0.04\n\t107.12\t113.8\t0.69\t0.49\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-2005585751",
+      "id": "20220124-201423_1617304823",
+      "dateCreated": "2018-02-04T02:39:45+0000",
+      "dateStarted": "2023-02-17T22:57:50+0000",
+      "dateFinished": "2023-02-17T22:57:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compare average amount SOLD_TO_MEN versus average amount SOLD_TO_WOMEN grouped by INCOME_LEVEL - determine if significantly different",
+      "text": "%sql \n\n-- Click the bar chart icon and expand settings. Drag INCOME_LEVEL to Keys, TWO_SIDED_P_VALUE to Values and select Avg. The group is empty. \n\nSELECT SUBSTR(CUST_INCOME_LEVEL,1,22) INCOME_LEVEL,  \n       ROUND(AVG(DECODE(CUST_GENDER,\u0027M\u0027,AMOUNT_SOLD,NULL)),2) SOLD_TO_MEN,  \n\t   ROUND(AVG(DECODE(CUST_GENDER,\u0027F\u0027,AMOUNT_SOLD,NULL)),2) SOLD_TO_WOMEN,  \n\t   ROUND(STATS_T_TEST_INDEP(CUST_GENDER, AMOUNT_SOLD, \u0027STATISTIC\u0027,\u0027F\u0027),2) T_OBSERVED,  \n\t   ROUND(STATS_T_TEST_INDEP(CUST_GENDER, AMOUNT_SOLD),2) TWO_SIDED_P_VALUE\nFROM SH.CUSTOMERS C, SH.SALES S  \nWHERE C.CUST_ID\u003dS.CUST_ID  \nGROUP BY CUST_INCOME_LEVEL  \nORDER BY TWO_SIDED_P_VALUE DESC",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 324.133,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "rotate"
+                },
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "INCOME_LEVEL": "string",
+                      "SOLD_TO_MEN": "string",
+                      "SOLD_TO_WOMEN": "string",
+                      "T_OBSERVED": "string",
+                      "TWO_SIDED_P_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "INCOME_LEVEL",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "TWO_SIDED_P_VALUE",
+                  "index": 4.0,
+                  "aggr": "avg"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "INCOME_LEVEL",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "SOLD_TO_MEN",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "SOLD_TO_MEN",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "INCOME_LEVEL",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "INCOME_LEVEL\tSOLD_TO_MEN\tSOLD_TO_WOMEN\tT_OBSERVED\tTWO_SIDED_P_VALUE\nF: 110,000 - 129,999\t106.76\t105.98\t-0.6\t0.55\n\t107.12\t113.8\t0.69\t0.49\nG: 130,000 - 149,999\t108.88\t107.31\t-0.85\t0.39\nE: 90,000 - 109,999\t103.4\t101.61\t-1.25\t0.21\nK: 250,000 - 299,999\t112.38\t108.2\t-1.41\t0.16\nH: 150,000 - 169,999\t110.99\t107.15\t-1.91\t0.06\nA: Below 30,000\t105.28\t99.43\t-1.99\t0.05\nL: 300,000 and above\t120.97\t112.22\t-2.06\t0.04\nI: 170,000 - 189,999\t102.81\t107.44\t2.18\t0.03\nC: 50,000 - 69,999\t105.63\t110.13\t2.36\t0.02\nD: 70,000 - 89,999\t106.63\t110.47\t2.28\t0.02\nJ: 190,000 - 249,999\t108.04\t115.34\t2.58\t0.01\nB: 30,000 - 49,999\t102.6\t109.83\t3.04\t0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_406715530",
+      "id": "20220124-201423_136623018",
+      "dateCreated": "2019-07-26T17:45:48+0000",
+      "dateStarted": "2023-02-17T22:57:51+0000",
+      "dateFinished": "2023-02-17T22:57:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Note: NaN is displayed above where INCOME_LEVEL is NULL - let\u0027s display those records",
+      "text": "%sql\n\nSELECT CUST_ID, CUST_FIRST_NAME, CUST_LAST_NAME, CUST_INCOME_LEVEL \nFROM SH.CUSTOMERS \nWHERE CUST_INCOME_LEVEL IS NULL\nFETCH FIRST 10 ROWS ONLY\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CUST_FIRST_NAME": "string",
+                      "CUST_LAST_NAME": "string",
+                      "CUST_INCOME_LEVEL": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_FIRST_NAME\tCUST_LAST_NAME\tCUST_INCOME_LEVEL\n803\tThatcher\tTyler\t\n963\tFabian\tLusk\t\n1043\tForrest\tBanfield\t\n723\tTrevor\tNielley\t\n270\tVerna\tWalsh\t\n590\tWadswworth\tWhite\t\n1017\tWashington\tDally\t\n31\tWilla\tFitz\t\n297\tJacinta\tMathews\t\n617\tJed\tHardy\t\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-1248307640",
+      "id": "20220124-201423_1017120658",
+      "dateCreated": "2019-08-13T16:21:24+0000",
+      "dateStarted": "2023-02-17T22:57:52+0000",
+      "dateFinished": "2023-02-17T22:57:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using an F-test",
+      "text": "%md\n#### Use an F-test to compare whether variances of two groups are significantly different\n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_F_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_F_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_F_TEST.html \u003c/a\u003e\n\nThe F-test tests whether variances of two groups are significantly different. The null hypothesis is that the variances of two groups are the same. The observed value of *F* is the ratio of one variance to the other, so values very different from 1 usually indicate significant differences. \nIf the p value is very small (such as p \u003c 0.05), then we reject the null hypothesis and we say that it is statistically significant (at more than 95% confidence) that the variances of the two groups are different.\n\nFor more details on the background of F-Tests, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/F-test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/F-test\u0027);\"\u003ehttps://en.wikipedia.org/wiki/F-test\u003c/a\u003e\n\nIn the following example, we compare the credit limit in two gender groups. We use F-test to check if the variances of the two gropus are the same.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003eUse an F-test to compare whether variances of two groups are significantly different\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_F_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_F_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_F_TEST.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eThe F-test tests whether variances of two groups are significantly different. The null hypothesis is that the variances of two groups are the same. The observed value of \u003cem\u003eF\u003c/em\u003e is the ratio of one variance to the other, so values very different from 1 usually indicate significant differences.\n\u003cbr  /\u003eIf the p value is very small (such as p \u0026lt; 0.05), then we reject the null hypothesis and we say that it is statistically significant (at more than 95% confidence) that the variances of the two groups are different.\u003c/p\u003e\n\u003cp\u003eFor more details on the background of F-Tests, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/F-test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/F-test\u0027);\"\u003ehttps://en.wikipedia.org/wiki/F-test\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eIn the following example, we compare the credit limit in two gender groups. We use F-test to check if the variances of the two gropus are the same.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_202076905",
+      "id": "20220124-201423_267266959",
+      "dateCreated": "2020-08-10T20:20:53+0000",
+      "dateStarted": "2023-02-17T22:57:52+0000",
+      "dateFinished": "2023-02-17T22:57:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compare variances of cust_credit_limit for men and women - determine if variances are significantly different",
+      "text": "%sql\n\nSELECT ROUND(VARIANCE(DECODE(CUST_GENDER, \u0027M\u0027, CUST_CREDIT_LIMIT, NULL)),2) VAR_MEN,\n       ROUND(VARIANCE(DECODE(CUST_GENDER, \u0027F\u0027, CUST_CREDIT_LIMIT, NULL)),2) VAR_WOMEN,\n       ROUND(STATS_F_TEST(CUST_GENDER, CUST_CREDIT_LIMIT, \u0027STATISTIC\u0027, \u0027F\u0027),2) F_STATISTIC,\n       ROUND(STATS_F_TEST(CUST_GENDER, CUST_CREDIT_LIMIT),2) TWO_SIDED_P_VALUE\n  FROM SH.CUSTOMERS;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 118.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "VAR_MEN": "string",
+                      "VAR_WOMEN": "string",
+                      "F_STATISTIC": "string",
+                      "TWO_SIDED_P_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "VAR_MEN\tVAR_WOMEN\tF_STATISTIC\tTWO_SIDED_P_VALUE\n12879896.68\t13046865.01\t1.01\t0.31\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-1996008944",
+      "id": "20220124-201423_1606356769",
+      "dateCreated": "2019-08-12T21:04:47+0000",
+      "dateStarted": "2023-02-17T22:57:52+0000",
+      "dateFinished": "2023-02-17T22:57:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Conclusion for F-test",
+      "text": "%md\nThe p-value is greater than 0.05, so the result above shows that the variances of the CUST_CREDIT_LIMIT for men and women has no statistical difference.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe p-value is greater than 0.05, so the result above shows that the variances of the CUST_CREDIT_LIMIT for men and women has no statistical difference.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-706290233",
+      "id": "20220124-201423_1915440799",
+      "dateCreated": "2020-08-10T23:19:45+0000",
+      "dateStarted": "2023-02-17T22:57:52+0000",
+      "dateFinished": "2023-02-17T22:57:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using one way ANOVA test",
+      "text": "%md\n#### Using one way ANOVA (analysis of variance) test to verify differences in means (for groups or variables) for statistical significance\n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_ONE_WAY_ANOVA.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_ONE_WAY_ANOVA.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_ONE_WAY_ANOVA.html \u003c/a\u003e\n\nThe one-way analysis of variance function (STATS_ONE_WAY_ANOVA) tests differences in means (for groups or variables) for statistical significance by comparing two different estimates of variance. One estimate is based on the variances within each group or category. This is known as the mean squares within or mean square error. The other estimate is based on the variances among the means of the groups. This is known as the mean squares between. If the means of the groups are significantly different, then the mean squares between will be larger than expected and will not match the mean squares within. If the mean squares of the groups are consistent, then the two variance estimates will be about the same.\n\nFor more information and background on ANOVA, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/One-way_analysis_of_variance\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/One-way_analysis_of_variance\u0027);\"\u003e https://en.wikipedia.org/wiki/One-way_analysis_of_variance \u003c/a\u003e\n\nIn the following example, we apply the one way ANOVA to test for each gender, whether the amount sold varies according to the income level. \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003eUsing one way ANOVA (analysis of variance) test to verify differences in means (for groups or variables) for statistical significance\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_ONE_WAY_ANOVA.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_ONE_WAY_ANOVA.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_ONE_WAY_ANOVA.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eThe one-way analysis of variance function (STATS_ONE_WAY_ANOVA) tests differences in means (for groups or variables) for statistical significance by comparing two different estimates of variance. One estimate is based on the variances within each group or category. This is known as the mean squares within or mean square error. The other estimate is based on the variances among the means of the groups. This is known as the mean squares between. If the means of the groups are significantly different, then the mean squares between will be larger than expected and will not match the mean squares within. If the mean squares of the groups are consistent, then the two variance estimates will be about the same.\u003c/p\u003e\n\u003cp\u003eFor more information and background on ANOVA, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/One-way_analysis_of_variance\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/One-way_analysis_of_variance\u0027);\"\u003e https://en.wikipedia.org/wiki/One-way_analysis_of_variance \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eIn the following example, we apply the one way ANOVA to test for each gender, whether the amount sold varies according to the income level.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-128905445",
+      "id": "20220124-201423_1309367263",
+      "dateCreated": "2020-08-14T01:21:03+0000",
+      "dateStarted": "2023-02-17T22:57:53+0000",
+      "dateFinished": "2023-02-17T22:57:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Apply one way ANOVA test to different income levels and the amount sold, for each gender group.",
+      "text": "%sql\n\nSELECT CUST_GENDER,\n       ROUND(STATS_ONE_WAY_ANOVA(CUST_INCOME_LEVEL, AMOUNT_SOLD, \u0027MEAN_SQUARES_BETWEEN\u0027),2) MEAN_SQUARES_BETWEEN ,\n       ROUND(STATS_ONE_WAY_ANOVA(CUST_INCOME_LEVEL, AMOUNT_SOLD, \u0027MEAN_SQUARES_WITHIN\u0027),2) MEAN_SQUARES_WITHIN,\n       STATS_ONE_WAY_ANOVA(CUST_INCOME_LEVEL, AMOUNT_SOLD, \u0027SIG\u0027) P_VALUE\n  FROM SH.CUSTOMERS C, SH.SALES S\n  WHERE C.CUST_ID \u003d S.CUST_ID\n  GROUP BY CUST_GENDER;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 174.633,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_GENDER": "string",
+                      "MEAN_SQUARES_BETWEEN": "string",
+                      "MEAN_SQUARES_WITHIN": "string",
+                      "P_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_GENDER\tMEAN_SQUARES_BETWEEN\tMEAN_SQUARES_WITHIN\tP_VALUE\nF\t379803.89\t67878.25\t0.0000000047839510702026533\nM\t624317.68\t67228.52\t0.000000000000000067139449119250277\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_24792882",
+      "id": "20220124-201423_818394050",
+      "dateCreated": "2020-08-10T18:48:43+0000",
+      "dateStarted": "2023-02-17T22:57:53+0000",
+      "dateFinished": "2023-02-17T22:57:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Conclusion of one way ANOVA test",
+      "text": "%md\nFrom ANOVA test result, we can see that for each gender group, the mean value of the amount sold is significantly different across income levels. \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eFrom ANOVA test result, we can see that for each gender group, the mean value of the amount sold is significantly different across income levels.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_157172374",
+      "id": "20220124-201423_388396284",
+      "dateCreated": "2020-08-10T18:53:47+0000",
+      "dateStarted": "2023-02-17T22:57:54+0000",
+      "dateFinished": "2023-02-17T22:57:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Prepare a view that consists of the gender and the amount sold",
+      "text": "%sql\n\nCREATE OR REPLACE VIEW CUST_GENDER_AMOUNT_SOLD_V AS\nSELECT CUST_GENDER, AMOUNT_SOLD\n  FROM SH.CUSTOMERS C, SH.SALES S\n  WHERE C.CUST_ID \u003d S.CUST_ID",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_GENDER": "string",
+                      "AMOUNT_SOLD": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-970236411",
+      "id": "20220124-201423_1070702385",
+      "dateCreated": "2020-08-10T23:35:31+0000",
+      "dateStarted": "2023-02-17T22:57:54+0000",
+      "dateFinished": "2023-02-17T22:57:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display data from CUST_GENDER_AMOUNT_SOLD_V",
+      "text": "%sql\n\nSELECT * FROM CUST_GENDER_AMOUNT_SOLD_V\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_GENDER": "string",
+                      "AMOUNT_SOLD": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_GENDER\tAMOUNT_SOLD\nF\t1205.99\nM\t1250.25\nM\t1250.25\nF\t1250.25\nM\t1250.25\nM\t1250.25\nM\t1250.25\nF\t1250.25\nM\t1250.25\nM\t1210.21\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263718_-652997407",
+      "id": "20220124-201423_722534071",
+      "dateCreated": "2020-08-14T02:53:55+0000",
+      "dateStarted": "2023-02-17T22:57:54+0000",
+      "dateFinished": "2023-02-17T22:57:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using Kolmogorov-Smirnov test",
+      "text": "%md\n\n---\n#### Use a Kolmogorov-Smirnov test to compare whether two samples come from the same population\n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_KS_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_KS_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_KS_TEST.html \u003c/a\u003e\n\nKolmogorov-Smirnov test compares two samples to test whether they are from the same population or from populations that have the same distribution. It does not assume that the population from which the samples were taken is normally distributed. The null hypothesis is that the two groups of data come from the same population or distribution. If the p-value \u003c 0.05, then we reject the null hypothesis and determine that the two groups of data come from the different populations with more than 95% confidence.\n\nFor more details and background on K-S tests, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test\u0027);\"\u003e https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test \u003c/a\u003e\n\nIn the following example, we check whether the distributions of the amount sold by two gender groups is different in distribution with statistical significance.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch4\u003eUse a Kolmogorov-Smirnov test to compare whether two samples come from the same population\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_KS_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_KS_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_KS_TEST.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eKolmogorov-Smirnov test compares two samples to test whether they are from the same population or from populations that have the same distribution. It does not assume that the population from which the samples were taken is normally distributed. The null hypothesis is that the two groups of data come from the same population or distribution. If the p-value \u0026lt; 0.05, then we reject the null hypothesis and determine that the two groups of data come from the different populations with more than 95% confidence.\u003c/p\u003e\n\u003cp\u003eFor more details and background on K-S tests, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test\u0027);\"\u003e https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eIn the following example, we check whether the distributions of the amount sold by two gender groups is different in distribution with statistical significance.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_1755804617",
+      "id": "20220124-201423_641995188",
+      "dateCreated": "2020-08-10T23:19:33+0000",
+      "dateStarted": "2023-02-17T22:57:54+0000",
+      "dateFinished": "2023-02-17T22:57:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Kolmogorov-Smirnov test - determine if distributions of amount sold by two gender groups are statistically different",
+      "text": "%sql\n\nSELECT ROUND(STATS_KS_TEST(CUST_GENDER, AMOUNT_SOLD, \u0027STATISTIC\u0027),5) KS_STATISTIC,\n       ROUND(STATS_KS_TEST(CUST_GENDER, AMOUNT_SOLD),5) P_VALUE\n  FROM CUST_GENDER_AMOUNT_SOLD_V",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 134.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "KS_STATISTIC": "string",
+                      "P_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "KS_STATISTIC\tP_VALUE\n0.00384\t0.00408\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_70698451",
+      "id": "20220124-201423_48304148",
+      "dateCreated": "2020-08-10T18:06:56+0000",
+      "dateStarted": "2023-02-17T22:57:55+0000",
+      "dateFinished": "2023-02-17T22:57:55+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Conclusion of   Kolmogorov-Smirnov test",
+      "text": "%md\n\n---\nSince the p-value \u003c 0.05, we reject the null hypothesis that the distributions of two gender groups are the same. Kolmogorov-Smirnov test result shows that the difference of distributions of two gender groups is significant at the more than 95% confidence. \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003eSince the p-value \u0026lt; 0.05, we reject the null hypothesis that the distributions of two gender groups are the same. Kolmogorov-Smirnov test result shows that the difference of distributions of two gender groups is significant at the more than 95% confidence.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_509663597",
+      "id": "20220124-201423_838483822",
+      "dateCreated": "2020-08-10T23:34:46+0000",
+      "dateStarted": "2023-02-17T22:57:55+0000",
+      "dateFinished": "2023-02-17T22:57:55+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using Mann Whitney test",
+      "text": "%md\n\n---\n#### Use a Mann Whitney test to check whether two populations have the same distribution function\n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_MW_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_MW_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_MW_TEST.html \u003c/a\u003e\n\nFor more details and background on the Mann Whitney test, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test\u0027);\"\u003e https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test \u003c/a\u003e\n\nIt compares two independent samples to test the null hypothesis that two populations have the same distribution function against the alternative hypothesis that the two distribution functions are different.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch4\u003eUse a Mann Whitney test to check whether two populations have the same distribution function\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_MW_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_MW_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_MW_TEST.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eFor more details and background on the Mann Whitney test, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test\u0027);\"\u003e https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eIt compares two independent samples to test the null hypothesis that two populations have the same distribution function against the alternative hypothesis that the two distribution functions are different.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_1074573015",
+      "id": "20220124-201423_489917088",
+      "dateCreated": "2020-08-10T18:17:30+0000",
+      "dateStarted": "2023-02-17T22:57:55+0000",
+      "dateFinished": "2023-02-17T22:57:55+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Mann Whitney Test - determine if distributions of amount sold by two gender groups are statistically different",
+      "text": "%sql\n\nSELECT ROUND(STATS_MW_TEST(CUST_GENDER, CUST_CREDIT_LIMIT, \u0027STATISTIC\u0027),2) Z_STATISTIC,\n       ROUND(STATS_MW_TEST(CUST_GENDER, CUST_CREDIT_LIMIT, \u0027TWO_SIDED_SIG\u0027, \u0027F\u0027),2) TWO_SIDED_P_VALUE\n  FROM SH.CUSTOMERS C, SH.SALES S\n  WHERE C.CUST_ID \u003d S.CUST_ID;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 124.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Z_STATISTIC": "string",
+                      "TWO_SIDED_P_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "Z_STATISTIC\tTWO_SIDED_P_VALUE\n-0.78\t0.43\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-1875969194",
+      "id": "20220124-201423_461168899",
+      "dateCreated": "2020-08-10T18:12:17+0000",
+      "dateStarted": "2023-02-17T22:57:56+0000",
+      "dateFinished": "2023-02-17T22:57:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Conclusion of Mann Whitney Test",
+      "text": "%md\n\n---\nSince the p-value is much larger than 0.05, we do not reject the hypothesis that the distributions of the amount sold in the two groups is the same. This means that the difference observed from the data is not significant. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003eSince the p-value is much larger than 0.05, we do not reject the hypothesis that the distributions of the amount sold in the two groups is the same. This means that the difference observed from the data is not significant.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-17541949",
+      "id": "20220124-201423_295121864",
+      "dateCreated": "2020-08-13T00:48:12+0000",
+      "dateStarted": "2023-02-17T22:57:56+0000",
+      "dateFinished": "2023-02-17T22:57:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create a view that contains income level and the amount sold to men and women",
+      "text": "%sql\n\nCREATE OR REPLACE VIEW INCOME_GENDER_SOLD_V AS\nSELECT SUBSTR(CUST_INCOME_LEVEL,1,22) INCOME_LEVEL,  \n\tROUND(AVG(DECODE(CUST_GENDER,\u0027M\u0027,AMOUNT_SOLD,NULL)),2) SOLD_TO_MEN,  \n\tROUND(AVG(DECODE(CUST_GENDER,\u0027F\u0027,AMOUNT_SOLD,NULL)),2) SOLD_TO_WOMEN\n    FROM SH.CUSTOMERS C, SH.SALES S  \n    WHERE C.CUST_ID\u003dS.CUST_ID  \n    AND SUBSTR(CUST_INCOME_LEVEL,1,22) IS NOT NULL\n    GROUP BY CUST_INCOME_LEVEL",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_530623124",
+      "id": "20220124-201423_1911975899",
+      "dateCreated": "2020-08-10T18:28:02+0000",
+      "dateStarted": "2023-02-17T22:57:56+0000",
+      "dateFinished": "2023-02-17T22:57:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the view",
+      "text": "%sql\n\nSELECT * \nFROM INCOME_GENDER_SOLD_V",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "INCOME_LEVEL": "string",
+                      "SOLD_TO_MEN": "string",
+                      "SOLD_TO_WOMEN": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "INCOME_LEVEL\tSOLD_TO_MEN\tSOLD_TO_WOMEN\nE: 90,000 - 109,999\t103.4\t101.61\nJ: 190,000 - 249,999\t108.04\t115.34\nD: 70,000 - 89,999\t106.63\t110.47\nL: 300,000 and above\t120.97\t112.22\nC: 50,000 - 69,999\t105.63\t110.13\nG: 130,000 - 149,999\t108.88\t107.31\nH: 150,000 - 169,999\t110.99\t107.15\nB: 30,000 - 49,999\t102.6\t109.83\nI: 170,000 - 189,999\t102.81\t107.44\nF: 110,000 - 129,999\t106.76\t105.98\nA: Below 30,000\t105.28\t99.43\nK: 250,000 - 299,999\t112.38\t108.2\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-404361486",
+      "id": "20220124-201423_1888591311",
+      "dateCreated": "2020-08-13T19:34:48+0000",
+      "dateStarted": "2023-02-17T22:57:56+0000",
+      "dateFinished": "2023-02-17T22:57:57+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using Wilcoxon Signed Rank Test",
+      "text": "%md\n\n---\n#### Use Wilcoxon Signed Rank test to determine whether the median of the differences between the samples are the same\n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_WSR_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_WSR_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_WSR_TEST.html \u003c/a\u003e\n\nWilcoxon Signed Ranks test of paired samples to determine whether the median of the differences between the samples is significantly different from zero. The absolute values of the differences are ordered and assigned ranks. Then the null hypothesis states that the sum of the ranks of the positive differences is equal to the sum of the ranks of the negative differences.\n\nFor more information and background on Wilcoxon Signed Rank tests, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test\u0027);\"\u003e https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test \u003c/a\u003e\n\nIn the following example, we go through each income level and obtain average amount sold to each gender group. We are interested to know whether there is a difference between the amount sold to men or women for each income level. WSR test focuses on the median of the differences of the amount sold in the two gender groups and do a hypothesis testing on whether the median is significantly different. The null hypothesis is that the median is the same. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch4\u003eUse Wilcoxon Signed Rank test to determine whether the median of the differences between the samples are the same\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_WSR_TEST.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_WSR_TEST.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/STATS_WSR_TEST.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eWilcoxon Signed Ranks test of paired samples to determine whether the median of the differences between the samples is significantly different from zero. The absolute values of the differences are ordered and assigned ranks. Then the null hypothesis states that the sum of the ranks of the positive differences is equal to the sum of the ranks of the negative differences.\u003c/p\u003e\n\u003cp\u003eFor more information and background on Wilcoxon Signed Rank tests, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/Wilcoxon_signed-rank_test\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test\u0027);\"\u003e https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eIn the following example, we go through each income level and obtain average amount sold to each gender group. We are interested to know whether there is a difference between the amount sold to men or women for each income level. WSR test focuses on the median of the differences of the amount sold in the two gender groups and do a hypothesis testing on whether the median is significantly different. The null hypothesis is that the median is the same.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-904461510",
+      "id": "20220124-201423_202968615",
+      "dateCreated": "2020-08-10T23:28:40+0000",
+      "dateStarted": "2023-02-17T22:57:57+0000",
+      "dateFinished": "2023-02-17T22:57:57+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Wilcoxon Signed Ranks Test - determine if median of difference between amount sold to men and amount sold to women is statistically different from zero ",
+      "text": "%sql\n\nSELECT ROUND(STATS_WSR_TEST(SOLD_TO_MEN, SOLD_TO_WOMEN, \u0027STATISTIC\u0027),2) Z_STATISTIC,\n       ROUND(STATS_WSR_TEST(SOLD_TO_MEN, SOLD_TO_WOMEN, \u0027TWO_SIDED_SIG\u0027),2) TWO_SIDED_P_VALUE\n  FROM INCOME_GENDER_SOLD_V",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 114.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Z_STATISTIC": "string",
+                      "TWO_SIDED_P_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "Z_STATISTIC\tTWO_SIDED_P_VALUE\n-0.12\t0.91\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_798948992",
+      "id": "20220124-201423_607679775",
+      "dateCreated": "2020-08-10T18:15:01+0000",
+      "dateStarted": "2023-02-17T22:57:57+0000",
+      "dateFinished": "2023-02-17T22:57:57+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Conclusion of Wilcoxon Signed Rank Test",
+      "text": "%md\n\n---\nThe p-value is much greater than 0.05. We do not reject the null hypothesis. This means that the difference between the median of the amount sold to two gender groups is not significant. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003eThe p-value is much greater than 0.05. We do not reject the null hypothesis. This means that the difference between the median of the amount sold to two gender groups is not significant.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-544272754",
+      "id": "20220124-201423_1727155956",
+      "dateCreated": "2020-08-10T23:45:16+0000",
+      "dateStarted": "2023-02-17T22:57:58+0000",
+      "dateFinished": "2023-02-17T22:57:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using Pearson\u0027s correlation",
+      "text": "%md\n\n---\n#### Using Pearson\u0027s correlation coefficient to measure the correlation between two columns \n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR.html \u003c/a\u003e\n\nThis is most popular correlation coefficient and widely used for measuring correlation of a set of number pairs.\nFor more information and background on Pearson\u0027s correlation, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/Pearson_correlation_coefficient\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Pearson_correlation_coefficient\u0027);\"\u003e https://en.wikipedia.org/wiki/Pearson_correlation_coefficient \u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch4\u003eUsing Pearson\u0027s correlation coefficient to measure the correlation between two columns\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eThis is most popular correlation coefficient and widely used for measuring correlation of a set of number pairs.\n\u003cbr  /\u003eFor more information and background on Pearson\u0027s correlation, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/Pearson_correlation_coefficient\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Pearson_correlation_coefficient\u0027);\"\u003e https://en.wikipedia.org/wiki/Pearson_correlation_coefficient \u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-683674610",
+      "id": "20220124-201423_452057088",
+      "dateCreated": "2020-08-13T15:32:57+0000",
+      "dateStarted": "2023-02-17T22:57:58+0000",
+      "dateFinished": "2023-02-17T22:57:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compute Pearson\u0027s correlation between amount sold to the two gender groups",
+      "text": "%sql\n\nSELECT ROUND(CORR(SOLD_TO_MEN, SOLD_TO_WOMEN),2) CORRELATION_COEF\nFROM INCOME_GENDER_SOLD_V",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 104.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CORRELATION_COEF": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CORRELATION_COEF\n0.38\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-24720006",
+      "id": "20220124-201423_1583187279",
+      "dateCreated": "2020-08-13T19:32:14+0000",
+      "dateStarted": "2023-02-17T22:57:58+0000",
+      "dateFinished": "2023-02-17T22:57:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using Spearman\u0027s rho correlation coefficient",
+      "text": "%md\n\n---\n#### Using Spearman\u0027s rho correlation coefficient to measure the correlation between two columns\n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html \u003c/a\u003e\n\nSpearman\u0027s rho correlation coefficient can find the nonlinear relationship between two variables by focusing the rank of each variables. The Spearman\u0027s rho correlation also provides a significance indicator like the p-value. If p-value is small (\u003c 0.05), then it means that there are significant corrleation between the two groups. \n\nFor more details and background on Spearman\u0027s rho correlation, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient\u0027);\"\u003e https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient \u003c/a\u003e \nIn the following example, we compute Spearman\u0027s rho coefficient between the income level and the amount sold to men and women. We check if the correlation between the amount sold and their income level is significant for men and women. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch4\u003eUsing Spearman\u0027s rho correlation coefficient to measure the correlation between two columns\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eSpearman\u0027s rho correlation coefficient can find the nonlinear relationship between two variables by focusing the rank of each variables. The Spearman\u0027s rho correlation also provides a significance indicator like the p-value. If p-value is small (\u0026lt; 0.05), then it means that there are significant corrleation between the two groups.\u003c/p\u003e\n\u003cp\u003eFor more details and background on Spearman\u0027s rho correlation, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient\u0027);\"\u003e https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient \u003c/a\u003e\n\u003cbr  /\u003eIn the following example, we compute Spearman\u0027s rho coefficient between the income level and the amount sold to men and women. We check if the correlation between the amount sold and their income level is significant for men and women.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-1811932758",
+      "id": "20220124-201423_959087382",
+      "dateCreated": "2020-08-13T19:37:08+0000",
+      "dateStarted": "2023-02-17T22:57:59+0000",
+      "dateFinished": "2023-02-17T22:57:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Compute Spearman\u0027s rho correlation coefficient for income level and the amount sold to men,  income level and the amount sold to women",
+      "text": "%sql\n\nSELECT  ROUND(CORR_S(INCOME_LEVEL, SOLD_TO_MEN, \u0027COEFFICIENT\u0027),2) MEN_COEFFICIENT,  \n        ROUND(CORR_S(INCOME_LEVEL, SOLD_TO_MEN, \u0027TWO_SIDED_SIG\u0027),2) MEN_TWO_SIDED_SIG,\n        ROUND(CORR_S(INCOME_LEVEL, SOLD_TO_WOMEN, \u0027COEFFICIENT\u0027),2) WOMEN_COEFFICIENT,  \n        ROUND(CORR_S(INCOME_LEVEL, SOLD_TO_WOMEN, \u0027TWO_SIDED_SIG\u0027),2) WOMEN_TWO_SIDED_SIG\nFROM  INCOME_GENDER_SOLD_V\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 94.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MEN_COEFFICIENT": "string",
+                      "MEN_TWO_SIDED_SIG": "string",
+                      "WOMEN_COEFFICIENT": "string",
+                      "WOMEN_TWO_SIDED_SIG": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MEN_COEFFICIENT\tMEN_TWO_SIDED_SIG\tWOMEN_COEFFICIENT\tWOMEN_TWO_SIDED_SIG\n0.71\t0.01\t0.38\t0.22\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_1593027231",
+      "id": "20220124-201423_1297870633",
+      "dateCreated": "2020-08-10T18:28:37+0000",
+      "dateStarted": "2023-02-17T22:57:59+0000",
+      "dateFinished": "2023-02-17T22:57:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Conclusion of Spearman\u0027s rho correlation",
+      "text": "%md\n\n---\nFor the correlation between the income level and the amount sold to men, the TWO_SIDED_SIG value is very small, which indicates the correlation between the income level and the amount sold to men has significant correlation. But for women, such a relationship is not significant. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003eFor the correlation between the income level and the amount sold to men, the TWO_SIDED_SIG value is very small, which indicates the correlation between the income level and the amount sold to men has significant correlation. But for women, such a relationship is not significant.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_1372386646",
+      "id": "20220124-201423_1509826394",
+      "dateCreated": "2020-08-13T20:12:04+0000",
+      "dateStarted": "2023-02-17T22:57:59+0000",
+      "dateFinished": "2023-02-17T22:57:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Using Kendall\u0027s tau-b correlation",
+      "text": "%md\n\n---\n#### Using Kendall\u0027s tau-b correlation to measure the correlation between two columns\n\nSee documentation at \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html \u003c/a\u003e\n\nKendall\u0027s tau-b correlation coefficient also reveals the nonlinear relationship between two variables. To calculate the coefficient, the number of concordant and discordant pairs is computed. A pair of observations is concordant if the observation with the larger x also has a larger value of y. A pair of observations is discordant if the observation with the larger x has a smaller y. \nThe Kendall\u0027s tau-b also provides a significance indicator like the p-value. If p-value is small (\u003c 0.05), then it means that there are significant corrleation between the two groups. \nFor more details and background on Kendall\u0027s tau-b correlation, see \u003ca href\u003d\"https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient\u0027);\"\u003e https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient \u003c/a\u003e \n\nIn the following example, we compute Kendall\u0027s tau-b  coefficient between the income level and the amount sold to men and women. We check if the correlation between the amount sold and their income level is significant for men and women. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:57:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003ch4\u003eUsing Kendall\u0027s tau-b correlation to measure the correlation between two columns\u003c/h4\u003e\n\u003cp\u003eSee documentation at \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html\u0027);\"\u003e https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CORR_A.html \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eKendall\u0027s tau-b correlation coefficient also reveals the nonlinear relationship between two variables. To calculate the coefficient, the number of concordant and discordant pairs is computed. A pair of observations is concordant if the observation with the larger x also has a larger value of y. A pair of observations is discordant if the observation with the larger x has a smaller y.\n\u003cbr  /\u003eThe Kendall\u0027s tau-b also provides a significance indicator like the p-value. If p-value is small (\u003c 0.05), then it means that there are significant corrleation between the two groups.\n\u003cbr  /\u003eFor more details and background on Kendall\u0027s tau-b correlation, see \u003ca href\u003d\"https: //en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient\" onclick\u003d\"return ! window.open(\u0027https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient\u0027);\"\u003e https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient \u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eIn the following example, we compute Kendall\u0027s tau-b  coefficient between the income level and the amount sold to men and women. We check if the correlation between the amount sold and their income level is significant for men and women.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_1413907722",
+      "id": "20220124-201423_1807458007",
+      "dateCreated": "2020-08-13T20:17:03+0000",
+      "dateStarted": "2023-02-17T22:57:59+0000",
+      "dateFinished": "2023-02-17T22:57:59+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Kendall\u0027s tau-b correlation coefficient  for income level and amount sold to men, and income level and amount sold to women",
+      "text": "%sql\n\nSELECT ROUND(CORR_K(INCOME_LEVEL, SOLD_TO_MEN, \u0027COEFFICIENT\u0027),2) MEN_COEFFICIENT,  \n       ROUND(CORR_K(INCOME_LEVEL, SOLD_TO_MEN, \u0027TWO_SIDED_SIG\u0027),2) MEN_TWO_SIDED_SIG,\n       ROUND(CORR_K(INCOME_LEVEL, SOLD_TO_WOMEN, \u0027COEFFICIENT\u0027),2) WOMEN_COEFFICIENT,  \n       ROUND(CORR_K(INCOME_LEVEL, SOLD_TO_WOMEN, \u0027TWO_SIDED_SIG\u0027),2) WOMEN_TWO_SIDED_SIG\nFROM  INCOME_GENDER_SOLD_V",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 124.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MEN_COEFFICIENT": "string",
+                      "MEN_TWO_SIDED_SIG": "string",
+                      "WOMEN_COEFFICIENT": "string",
+                      "WOMEN_TWO_SIDED_SIG": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MEN_COEFFICIENT\tMEN_TWO_SIDED_SIG\tWOMEN_COEFFICIENT\tWOMEN_TWO_SIDED_SIG\n0.61\t0.01\t0.36\t0.1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_1039934950",
+      "id": "20220124-201423_115643013",
+      "dateCreated": "2020-08-10T18:34:55+0000",
+      "dateStarted": "2023-02-17T22:58:00+0000",
+      "dateFinished": "2023-02-17T22:58:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Conclusion for Kendall\u0027s  tau-b correlation",
+      "text": "%md\n\n---\nFor the correlation between the income level and the amount sold to men, the TWO_SIDED_SIG value is very small, which indicates the correlation between the income level and the amount sold to men has significant correlation. But for women, such a relationship is not significant.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003chr /\u003e\n\u003cp\u003eFor the correlation between the income level and the amount sold to men, the TWO_SIDED_SIG value is very small, which indicates the correlation between the income level and the amount sold to men has significant correlation. But for women, such a relationship is not significant.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_-1957112159",
+      "id": "20220124-201423_349444055",
+      "dateCreated": "2020-08-14T01:20:12+0000",
+      "dateStarted": "2023-02-17T22:58:00+0000",
+      "dateFinished": "2023-02-17T22:58:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# End of script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_1964880588",
+      "id": "20220124-201423_1031397080",
+      "dateCreated": "2020-08-14T02:50:23+0000",
+      "dateStarted": "2023-02-17T22:58:00+0000",
+      "dateFinished": "2023-02-17T22:58:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:58:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263719_451547400",
+      "id": "20220124-201423_176398982",
+      "dateCreated": "2020-08-14T02:52:05+0000",
+      "dateStarted": "2023-02-17T22:58:01+0000",
+      "dateFinished": "2023-02-17T22:58:01+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Statistical Functions",
+  "id": "101045",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

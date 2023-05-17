@@ -1,4 +1,4 @@
-/* Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -28,7 +28,7 @@
  *
  *   Run this script and when the subscription has been created, run
  *   these statements in a SQL*Plus session:
- *      INSERT INTO CQNTABLE VALUES (1);
+ *      INSERT INTO NO_CQNTABLE VALUES (1);
  *      COMMIT;
  *
  *   This example requires node-oracledb 2.3 or later.
@@ -37,17 +37,32 @@
  *
  *****************************************************************************/
 
+const fs = require('fs');
 const oracledb = require("oracledb");
 const dbConfig = require('./dbconfig.js');
 
-// dbConfig.events = true;  // CQN needs events mode, which is true by default in 4.0
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
+
+dbConfig.events = true;  // CQN needs events mode
 
 const interval = setInterval(function() {
   console.log("waiting...");
 }, 5000);
 
-function myCallback(message)
-{
+function myCallback(message) {
   // message.type is one of the oracledb.SUBSCR_EVENT_TYPE_* values
   console.log("Message type:", message.type);
   if (message.type == oracledb.SUBSCR_EVENT_TYPE_DEREG) {
@@ -77,7 +92,8 @@ function myCallback(message)
 
 const options = {
   callback : myCallback,
-  sql: "SELECT * FROM cqntable",
+  sql: "SELECT * FROM no_cqntable",
+  // ipAddress: '127.0.0.1',
   // Stop after 60 seconds
   timeout : 60,
   // Return ROWIDs in the notification message
@@ -89,11 +105,30 @@ const options = {
   groupingType  : oracledb.SUBSCR_GROUPING_TYPE_SUMMARY
 };
 
+async function setup(connection) {
+  const stmts = [
+    `DROP TABLE no_cqntable`,
+
+    `CREATE TABLE no_cqntable (k NUMBER)`
+  ];
+
+  for (const s of stmts) {
+    try {
+      await connection.execute(s);
+    } catch (e) {
+      if (e.errorNum != 942)
+        console.error(e);
+    }
+  }
+}
+
 async function runTest() {
   let connection;
 
   try {
     connection = await oracledb.getConnection(dbConfig);
+
+    await setup(connection);
 
     await connection.subscribe('mysub', options);
 

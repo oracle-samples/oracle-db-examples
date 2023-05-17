@@ -12,57 +12,20 @@ Rem
 Rem    MODIFIED   (MM/DD/YY)
 Rem    nbsundar    04/06/18 - Created
 
-Rem Create a new user "jdbcuser" that will be used in all JDBC code samples
+Rem Create a new user "testuser" that will be used in all JDBC code samples
 Rem Login as sysadmin before executing the script 
-CREATE USER jdbcuser IDENTIFIED BY jdbcuser123;
+CREATE USER testuser IDENTIFIED BY testuser123;
 
-Rem Grant connect and resource access to the new "jdbcuser"
+Rem Grant connect and resource access to the new "testuser"
 Rem so that the user can connect and create objects
-GRANT CONNECT, RESOURCE TO jdbcuser;
+GRANT CONNECT, RESOURCE TO testuser;
 
-Rem Grant required access to the new "jdbcuser"
-GRANT UNLIMITED TABLESPACE TO jdbcuser;
+Rem Grant required access to the new "testuser"
+GRANT UNLIMITED TABLESPACE TO testuser;
 
-Rem Switch the current session to the new jdbcuser session
-ALTER SESSION SET CURRENT_SCHEMA=jdbcuser;
+Rem Switch the current session to the new testuser session
+ALTER SESSION SET CURRENT_SCHEMA=testuser;
 
-Rem Used in the SQLXMLSample.java code sample
-CREATE TABLE SQLXML_JDBC_SAMPLE (DOCUMENT XMLTYPE, ID NUMBER);
-
-Rem Used in the PLSQLSample.java code sample 
-CREATE TABLE PLSQL_JDBC_SAMPLE 
-    (NUM NUMBER(4) NOT NULL, 
-     NAME VARCHAR2(20) NOT NULL, 
-     INSERTEDBY VARCHAR2(20));
-
-Rem Used in LOBBasic.java code sample
-CREATE TABLE LOB_JDBC_SAMPLE
-   (LOB_ID INT NOT NULL, 
-    BLOB_DATA BLOB, 
-    CLOB_DATA CLOB, 
-    NCLOB_DATA NCLOB);
-
-Rem Used in DateTimeStampSample.java code sample
-CREATE TABLE EMP_DATE_JDBC_SAMPLE
-(EMP_ID INTEGER PRIMARY KEY, 
- DATE_OF_BIRTH DATE, 
- DATE_OF_JOINING TIMESTAMP WITH LOCAL TIME ZONE, 
- DATE_OF_RESIGNATION TIMESTAMP WITH TIME ZONE, 
- DATE_OF_LEAVING TIMESTAMP);
- 
-Rem Used in JSONBasicDemo.java code sample
-CREATE TABLE JSON_EMP_JDBC_SAMPLE
-  (EMP_ID RAW(16) NOT NULL PRIMARY KEY,
-   DATE_LOADED TIMESTAMP WITH TIME ZONE,
-   EMPLOYEE_DOCUMENT CLOB CONSTRAINT 
-   ENSURE_JSON CHECK (EMPLOYEE_DOCUMENT IS JSON));
-        
-Rem Used in JSONBasicDemo.java code sample                
-INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 1, "employee_name": "John Doe", "salary": 2000}');
-INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 2, "employee_name": "Jane Doe", "salary": 2010}');
-INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 3, "employee_name": "John Smith", "salary": 3000, "sons": [{"name": "Angie"}, {"name": "Linda"}]}');
-INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 3, "employee_name": "Jane Williams", "salary": 1000, "sons": [{"name": "Rosie"}]}');
-     
 Rem General DEPT table for other code samples 
 CREATE TABLE DEPT
    (DEPTNO NUMBER(2) CONSTRAINT PK_DEPT PRIMARY KEY,
@@ -102,6 +65,42 @@ INSERT INTO EMP VALUES(7900,'JAMES','CLERK',7698,to_date('3-12-1981','dd-mm-yyyy
 INSERT INTO EMP VALUES(7902,'FORD','ANALYST',7566,to_date('3-12-1981','dd-mm-yyyy'),3000,NULL,20);
 INSERT INTO EMP VALUES(7934,'MILLER','CLERK',7782,to_date('23-1-1982','dd-mm-yyyy'),1300,NULL,10);
     
+Rem Used in the SQLXMLSample.java code sample
+CREATE TABLE SQLXML_JDBC_SAMPLE (DOCUMENT XMLTYPE, ID NUMBER);
+
+Rem Used in the PLSQLSample.java code sample 
+CREATE TABLE PLSQL_JDBC_SAMPLE 
+    (NUM NUMBER(4) NOT NULL, 
+     NAME VARCHAR2(20) NOT NULL, 
+     INSERTEDBY VARCHAR2(20));
+
+Rem Used in LOBBasic.java code sample
+CREATE TABLE LOB_JDBC_SAMPLE
+   (LOB_ID INT NOT NULL, 
+    BLOB_DATA BLOB, 
+    CLOB_DATA CLOB, 
+    NCLOB_DATA NCLOB);
+
+Rem Used in DateTimeStampSample.java code sample
+CREATE TABLE EMP_DATE_JDBC_SAMPLE
+(EMP_ID INTEGER PRIMARY KEY, 
+ DATE_OF_BIRTH DATE, 
+ DATE_OF_JOINING TIMESTAMP WITH LOCAL TIME ZONE, 
+ DATE_OF_RESIGNATION TIMESTAMP WITH TIME ZONE, 
+ DATE_OF_LEAVING TIMESTAMP);
+ 
+Rem Used in JSONBasicDemo.java code sample
+CREATE TABLE JSON_EMP_JDBC_SAMPLE
+  (EMP_ID RAW(16) NOT NULL PRIMARY KEY,
+   DATE_LOADED TIMESTAMP WITH TIME ZONE,
+   EMPLOYEE_DOCUMENT CLOB CONSTRAINT 
+   ENSURE_JSON CHECK (EMPLOYEE_DOCUMENT IS JSON));
+        
+Rem Used in JSONBasicDemo.java code sample                
+INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 1, "employee_name": "John Doe", "salary": 2000}');
+INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 2, "employee_name": "Jane Doe", "salary": 2010}');
+INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 3, "employee_name": "John Smith", "salary": 3000, "sons": [{"name": "Angie"}, {"name": "Linda"}]}');
+INSERT INTO JSON_EMP_JDBC_SAMPLE VALUES (SYS_GUID(), SYSTIMESTAMP, '{"employee_number": 3, "employee_name": "Jane Williams", "salary": 1000, "sons": [{"name": "Rosie"}]}');   
     
 Rem commit the changes to the database
 commit;

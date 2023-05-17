@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved. */
 
 /******************************************************************************
  *
@@ -29,8 +29,28 @@
 
 'use strict';
 
+const fs = require('fs');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
+// On Windows and macOS, you can specify the directory containing the Oracle
+// Client Libraries at runtime, or before Node.js starts.  On other platforms
+// the system library search path must always be set before Node.js is started.
+// See the node-oracledb installation documentation.
+// If the search path is not correct, you will get a DPI-1047 error.
+let libPath;
+if (process.platform === 'win32') {           // Windows
+  libPath = 'C:\\oracle\\instantclient_19_12';
+} else if (process.platform === 'darwin') {   // macOS
+  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+}
+if (libPath && fs.existsSync(libPath)) {
+  oracledb.initOracleClient({ libDir: libPath });
+}
+
+// If each object's attributes are accessed multiple times, it may be more
+// efficient to fetch as simple JavaScriptobjects.
+// oracledb.dbObjectAsPojo = true;
 
 async function run() {
 
@@ -43,18 +63,20 @@ async function run() {
     //
     // Setup
     //
+    const stmts = [
+      `DROP TABLE no_geometry`,
 
-    await connection.execute(
-      `BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE testgeometry';
-         EXCEPTION WHEN OTHERS THEN
-         IF SQLCODE <> -942 THEN
-           RAISE;
-         END IF;
-       END;`);
+      `CREATE TABLE no_geometry (id NUMBER, geometry MDSYS.SDO_GEOMETRY)`
+    ];
 
-    await connection.execute(
-      `CREATE TABLE testgeometry (id NUMBER, geometry MDSYS.SDO_GEOMETRY)`);
+    for (const s of stmts) {
+      try {
+        await connection.execute(s);
+      } catch (e) {
+        if (e.errorNum != 942)
+          console.error(e);
+      }
+    }
 
     //
     // Get a prototype object for the database SDO_GEOMETRY type.
@@ -86,7 +108,7 @@ async function run() {
     );
 
     await connection.execute(
-      `INSERT INTO testgeometry (id, geometry) VALUES (:id, :g)`,
+      `INSERT INTO no_geometry (id, geometry) VALUES (:id, :g)`,
       {id: 1, g: geometry1}
     );
 
@@ -96,7 +118,7 @@ async function run() {
     //
 
     await connection.execute(
-      `INSERT INTO testgeometry (id, geometry) VALUES (:id, :g)`,
+      `INSERT INTO no_geometry (id, geometry) VALUES (:id, :g)`,
       { id: 2,
         g: {
           type: 'MDSYS.SDO_GEOMETRY',   // the name of the top-level database type, case sensitive
@@ -104,7 +126,7 @@ async function run() {
             SDO_GTYPE: 2003,
             SDO_SRID: null,
             SDO_POINT: null,
-            SDO_ELEM_INFO: [ 4, 1003, 3 ],
+            SDO_ELEM_INFO: [ 1, 1003, 3 ],
             SDO_ORDINATES: [ 4, 8, 5, 9 ]
           }
         }
@@ -116,7 +138,7 @@ async function run() {
     //
 
     result = await connection.execute(
-      `SELECT id, geometry FROM testgeometry`,
+      `SELECT id, geometry FROM no_geometry`,
       [],
       // outFormat determines whether rows will be in arrays or JavaScript objects.
       // It does not affect how the GEOMETRY column itself is represented.

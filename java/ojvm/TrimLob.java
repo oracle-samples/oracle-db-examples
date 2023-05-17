@@ -44,8 +44,8 @@ public class TrimLob
 
    DriverManager.registerDriver(new oracle.jdbc.OracleDriver());  
    conn = 
-         DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522/orcl", "scott",
-          "tiger");
+         DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522/orcl", "testuser",
+          "<your_db_password>");
   }
   long t0,t1;
    /* 

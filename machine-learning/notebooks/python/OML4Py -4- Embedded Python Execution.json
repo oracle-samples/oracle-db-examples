@@ -1,0 +1,2607 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n# Oracle Machine Learning for Python - Embedded Python Execution\n\n***Oracle Machine Learning for Python*** (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automatic machine learning capabilities.\n\nIn this notebook, we highlight using OML4Py Embedded Python Execution. We first build a linear model in Python directly, then create a function that will use Python engines spawned by the Autonomous Database environment.\n\nCopyright (c) 2022 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:08:47+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eOracle Machine Learning for Python - Embedded Python Execution\u003c/h1\u003e\n\u003cp\u003e\u003cstrong\u003e\u003cem\u003eOracle Machine Learning for Python\u003c/em\u003e\u003c/strong\u003e (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automatic machine learning capabilities.\u003c/p\u003e\n\u003cp\u003eIn this notebook, we highlight using OML4Py Embedded Python Execution. We first build a linear model in Python directly, then create a function that will use Python engines spawned by the Autonomous Database environment.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2022 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1737376131",
+      "id": "20220309-220907_693988113",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:08:49+0000",
+      "dateFinished": "2022-03-09T23:08:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n## Import libraries supporting OML4Py and create data table\n\nTo use OML4Py, first import the package ***oml***. \n\nUsers can get online help using Python\u0027s help function and specifying the function of interest.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:08:50+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eImport libraries supporting OML4Py and create data table\u003c/h2\u003e\n\u003cp\u003eTo use OML4Py, first import the package \u003cstrong\u003e\u003cem\u003eoml\u003c/em\u003e\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003eUsers can get online help using Python\u0027s help function and specifying the function of interest.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1242087316",
+      "id": "20220309-220907_272430341",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:08:50+0000",
+      "dateFinished": "2022-03-09T23:08:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%python\n\nimport warnings\nwarnings.filterwarnings(\u0027ignore\u0027)\n\nimport oml",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:08:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-772959272",
+      "id": "20220309-220907_1375813814",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:08:51+0000",
+      "dateFinished": "2022-03-09T23:09:01+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create a table for the IRIS data",
+      "text": "%python\n\nfrom sklearn.datasets import load_iris\nfrom sklearn import linear_model\nimport pandas as pd\n\niris \u003d load_iris()\nx \u003d pd.DataFrame(iris.data, \n                 columns \u003d [\"SEPAL_LENGTH\", \"SEPAL_WIDTH\", \"PETAL_LENGTH\", \"PETAL_WIDTH\"])\ny \u003d pd.DataFrame(list(map(lambda x: {0:\u0027setosa\u0027, 1: \u0027versicolor\u0027, 2:\u0027virginica\u0027}[x], iris.target)), \n                 columns \u003d [\u0027SPECIES\u0027])\niris_df \u003d pd.concat([x,y], axis\u003d1)\n\ntry:\n    oml.drop(table\u003d\"IRIS\")\nexcept:\n    pass\nIRIS \u003d oml.create(iris_df, table\u003d\"IRIS\")\nIRIS.head(4)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   SEPAL_LENGTH  SEPAL_WIDTH  PETAL_LENGTH  PETAL_WIDTH     SPECIES\n0           4.6          3.6             1          0.2      setosa\n1           5.1          2.5             3          1.1  versicolor\n2           6.0          2.2             4          1.0  versicolor\n3           5.8          2.6             4          1.2  versicolor\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_381489255",
+      "id": "20220309-220907_1089842953",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:02+0000",
+      "dateFinished": "2022-03-09T23:09:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Build and score a linear model from sklearn directly in Python\n\nA best practice with embedded Python execution is to validate your Python script, and then your user-defined function before invoking the embedded Python APIs. The next few paragraphs exercise the functionality we want.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:03+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eBuild and score a linear model from sklearn directly in Python\u003c/h1\u003e\n\u003cp\u003eA best practice with embedded Python execution is to validate your Python script, and then your user-defined function before invoking the embedded Python APIs. The next few paragraphs exercise the functionality we want.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_137059963",
+      "id": "20220309-220907_45236709",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:03+0000",
+      "dateFinished": "2022-03-09T23:09:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nfrom sklearn import linear_model\nlm \u003d linear_model.LinearRegression()\nX \u003d iris_df[[\"PETAL_WIDTH\"]]\ny \u003d iris_df[[\"PETAL_LENGTH\"]]\nmod \u003d lm.fit(X, y)\nprint(\"Model:\",mod)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Model: LinearRegression()\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1911934583",
+      "id": "20220309-220907_1968244843",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:04+0000",
+      "dateFinished": "2022-03-09T23:09:04+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\npred \u003d mod.predict(iris_df[[\"PETAL_WIDTH\"]])\npred[0:10]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "array([[1.52954613],\n       [1.52954613],\n       [1.52954613],\n       [1.52954613],\n       [1.52954613],\n       [1.97553423],\n       [1.75254018],\n       [1.52954613],\n       [1.52954613],\n       [1.30655208]])\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1243834361",
+      "id": "20220309-220907_764277383",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:05+0000",
+      "dateFinished": "2022-03-09T23:09:05+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nAssess model quality using mean squared error and R^2 and generate a scatterplot of the data along with a plot of the regression line.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:05+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eAssess model quality using mean squared error and R^2 and generate a scatterplot of the data along with a plot of the regression line.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_684208632",
+      "id": "20220309-220907_1089310168",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:06+0000",
+      "dateFinished": "2022-03-09T23:09:06+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nfrom sklearn.metrics import mean_squared_error, r2_score\n\nprint(\u0027Coefficients: \\n\u0027, mod.coef_)\nprint(\"Mean squared error: %.2f\"\n      % mean_squared_error(iris_df[[\"PETAL_LENGTH\"]], pred))\n\nprint(\u0027Variance score (1 is perfect prediction): %.2f\u0027 % r2_score(iris_df[[\"PETAL_LENGTH\"]], pred))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Coefficients: \n [[2.2299405]]\nMean squared error: 0.23\nVariance score (1 is perfect prediction): 0.93\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1577555725",
+      "id": "20220309-220907_1354781001",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:07+0000",
+      "dateFinished": "2022-03-09T23:09:07+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nimport matplotlib.pyplot as plt\n\nplt.scatter(iris_df.loc[:,\"PETAL_WIDTH\"], iris_df.loc[:,\"PETAL_LENGTH\"])\nplt.plot(iris_df[[\"PETAL_WIDTH\"]], pred, color\u003d\u0027blue\u0027, linewidth\u003d3)\nplt.grid(True)\nplt.title(\u0027Prediction of Petal Length\u0027)\n#plt.xticks(()) # Disable ticks\n#plt.yticks(())\nplt.xlabel(\u0027Petal Width\u0027)\nplt.ylabel(\u0027Petal Length\u0027)\n\nplt.show()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv style\u003d\u0027width:auto;height:auto\u0027\u003e\u003cimg src\u003ddata:image/png;base64,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idC7d2+bvxv4/W0ae+aW393m4wpWI3744QeEhYWhZ8+eaNGiBe68805s2LChznM2bNiAWbNmAQCmTZuGbdu2QWBpm13smV9qupEjRyIoKEh2fMOGDbj77rthMBgQGxuLoqIinD171oURurfG5pearkuXLhg4cCAAwN/fHxERETCbzXWew+9v09gzt9R8TLAaYTabERoaan3ctWtXmy9i7ed4e3sjICAAly5dcmmc7sqe+QWATz75BP3798e0adOQn5/vyhB1zd75p6bbtWsXbr75ZowfPx5HjhxROxy3lJeXh+zsbAwZMqTOcX5/m09ubgF+d5uLCVYjpFaiDAaDw88hafbM3R//+Efk5eXh0KFDuPXWW62rhdR8/O4618CBA3H69GkcPHgQjz32GBISEtQOye2UlZXh9ttvx+uvv462bdvWGeP3t3kamlt+d5uPCVYjunbtWmfFpKCgACEhIbLPqaqqQnFxMbcN7GTP/LZv3x4tW7YEANx///3Yt2+fS2PUM3vmn5qubdu28PPzAwBMmDABlZWVHnUvtuaqrKzE7bffjhkzZiAxMdFmnN/fpmtsbvndbT4mWI245ZZb8NNPP+Hnn3/G9evXkZaWhsmTJ9d5zuTJk/HBBx8AANavX48xY8bwf1F2smd+a9dUfP7554iIiHB1mLo1efJkfPjhhxAEAbt370ZAQAC6dOmidli68csvv1hXWX744QdUV1ejffv2KkflHgRBwJw5cxAREYEnn3xS8jn8/jaNPXPL727zeasdgNZ5e3vjn//8J+Lj42GxWHDvvfciMjIS/+///T/ExMRg8uTJmDNnDmbOnImwsDAEBQUhLS1N7bDdhj3zu2LFCnz++efw9vZGUFAQVq1apXbYbmP69OnIzMzExYsX0bVrV7zwwguorKwEADz00EOYMGECNm/ejLCwMLRu3Rrvv/++yhG7l8bmd/369XjzzTfh7e0NX19fpKWl8T9fdtqxYwdWr16NqKgoREdHAwBeeuklnDlzBgC/v81hz9zyu9t87OROREREpDBuERIREREpjAkWERERkcKYYBEREREpjAkWERERkcKYYBEREREpjAkWETmN0WhEdHQ0+vXrhz/96U/49ddfG3z+Sy+9ZNd5e/ToYdP0cPny5XjiiSesjx988EHceuut1scrV67EvHnzAADDhg2TPO/s2bOxfv16AMDrr79eJ96apotERPZggkVETuPr64sDBw7g8OHDaNGiBd56660Gn29vgiVl2LBh2Llzp/XxgQMHUFxcDIvFAgDYuXMnhg8fbv25MfUTLCIiRzDBIiKX+P3vf48TJ04AANasWYPBgwcjOjoaDz74ICwWCxYsWIDy8nJER0djxowZAICEhAQMGjQIkZGRSE1NbfD8AwYMwI8//ojy8nIUFxejdevWiI6ORk5ODgAxqapZuapZjRIEAY8++ij69u2LiRMn4vz58wCAFStWoLCwEKNHj8bo0aOt77Fo0SLcfPPNiI2Nxblz55SdICLSFSZYROR0VVVV2LJlC6KionDs2DF89NFH2LFjBw4cOACj0Yi1a9ciJSXFuuK1du1aAMC///1v7Nu3D1lZWVixYgUuXbok+x7e3t6Ijo7G3r17sXv3bgwZMgSxsbHYuXMnCgsLIQgCQkND67zms88+Q25uLnJycvDOO+9YV7bmzZuHkJAQbN++Hdu3bwcAXL16FbGxsTh48CBGjhyJd955x0mzRUR6wFvlEJHT1KxIAeIK1pw5c5Camop9+/bhlltusT6nY8eOkq9fsWIFPvvsMwBAfn4+fvrppwbvhzZ8+HDs3LkT5eXlGDp0KHr37o2XXnoJwcHBknVX3333HaZPnw6j0YiQkBCMGTNG9twtWrTApEmTAACDBg3C119/bd8kEJFHYoJFRE5TsyJVmyAImDVrFpKTkxt8bWZmJr755hvs2rULrVu3RlxcHCoqKhp8zbBhw/D222+joqICc+fORXBwMI4ePYrg4GBr/VV99t5fzcfHx/pco9GIqqoqu15HRJ6JW4RE5FJ/+MMfsH79emu90+XLl3H69GkAYhJTc7Pk4uJitGvXDq1bt8bx48exe/fuRs89bNgw7N69GxcuXEDHjh1hMBgQHByMDRs2SK5gjRw5EmlpabBYLDh79qx1OxAA/P39UVpaqsRHJiIPxASLiFyqb9++WLp0KcaNG4f+/ftj7NixOHv2LADggQceQP/+/TFjxgzcdtttqKqqQv/+/fHcc88hNja20XO3a9cOwcHBiIyMtB4bOnQozp8/j5tvvtnm+VOnTkXv3r0RFRWFhx9+GKNGjbKOPfDAAxg/fnydInciInsZBEEQ1A6CiIiISE+4gkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERAr7/7Yu49p5uQX5AAAAAElFTkSuQmCC style\u003d\u0027width\u003dauto;height:auto\u0027\u003e\u003cdiv\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1744536070",
+      "id": "20220309-220907_758057322",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:08+0000",
+      "dateFinished": "2022-03-09T23:09:09+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Build this same model using embedded Python execution\n\nUsing embedded Python execution, let\u0027s build the same linear model, but spawned Python engines under control of the Autonomous Database environment. First, we\u0027ll define our function, ***build_lm_1***, that returns the model as the result. We refer to this as a \"user-defined function.\" As we did above, we\u0027ll go further and score the training data and plot the model against the data points. Note that embedded Python execution can return images as well as structured content in the Python API. In the SQL API, as you\u0027ll see in another script, you choose between structured data, images, or XML output.\n\nWe run this function to ensure it returns what we expect. In this case, both an image and a model.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:09+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eBuild this same model using embedded Python execution\u003c/h1\u003e\n\u003cp\u003eUsing embedded Python execution, let\u0027s build the same linear model, but spawned Python engines under control of the Autonomous Database environment. First, we\u0027ll define our function, \u003cstrong\u003e\u003cem\u003ebuild_lm_1\u003c/em\u003e\u003c/strong\u003e, that returns the model as the result. We refer to this as a \u0026ldquo;user-defined function.\u0026rdquo; As we did above, we\u0027ll go further and score the training data and plot the model against the data points. Note that embedded Python execution can return images as well as structured content in the Python API. In the SQL API, as you\u0027ll see in another script, you choose between structured data, images, or XML output.\u003c/p\u003e\n\u003cp\u003eWe run this function to ensure it returns what we expect. In this case, both an image and a model.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1365534998",
+      "id": "20220309-220907_1878318978",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:10+0000",
+      "dateFinished": "2022-03-09T23:09:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ndef build_lm_1(dat):\n    import oml\n    from sklearn import linear_model\n    import matplotlib.pyplot as plt\n\n    lm \u003d linear_model.LinearRegression()\n    X \u003d dat[[\"PETAL_WIDTH\"]]\n    y \u003d dat[[\"PETAL_LENGTH\"]]\n    mod \u003d lm.fit(X, y)\n    \n    pred \u003d mod.predict(dat[[\"PETAL_WIDTH\"]])\n    plt.scatter(dat.loc[:,\"PETAL_WIDTH\"], dat.loc[:,\"PETAL_LENGTH\"])\n    plt.plot(dat[[\"PETAL_WIDTH\"]], pred, color\u003d\u0027blue\u0027, linewidth\u003d3)\n    plt.grid(True)\n    plt.title(\u0027Prediction of Petal Length\u0027)\n    \n    plt.xlabel(\u0027Petal Width\u0027)\n    plt.ylabel(\u0027Petal Length\u0027)\n    plt.show()\n    return mod\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1218916612",
+      "id": "20220309-220907_1130040553",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:11+0000",
+      "dateFinished": "2022-03-09T23:09:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nbuild_lm_1(iris_df)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv style\u003d\u0027width:auto;height:auto\u0027\u003e\u003cimg src\u003ddata:image/png;base64,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idC7d2+bvxv4/W0ae+aW393m4wpWI3744QeEhYWhZ8+eaNGiBe68805s2LChznM2bNiAWbNmAQCmTZuGbdu2QWBpm13smV9qupEjRyIoKEh2fMOGDbj77rthMBgQGxuLoqIinD171oURurfG5pearkuXLhg4cCAAwN/fHxERETCbzXWew+9v09gzt9R8TLAaYTabERoaan3ctWtXmy9i7ed4e3sjICAAly5dcmmc7sqe+QWATz75BP3798e0adOQn5/vyhB1zd75p6bbtWsXbr75ZowfPx5HjhxROxy3lJeXh+zsbAwZMqTOcX5/m09ubgF+d5uLCVYjpFaiDAaDw88hafbM3R//+Efk5eXh0KFDuPXWW62rhdR8/O4618CBA3H69GkcPHgQjz32GBISEtQOye2UlZXh9ttvx+uvv462bdvWGeP3t3kamlt+d5uPCVYjunbtWmfFpKCgACEhIbLPqaqqQnFxMbcN7GTP/LZv3x4tW7YEANx///3Yt2+fS2PUM3vmn5qubdu28PPzAwBMmDABlZWVHnUvtuaqrKzE7bffjhkzZiAxMdFmnN/fpmtsbvndbT4mWI245ZZb8NNPP+Hnn3/G9evXkZaWhsmTJ9d5zuTJk/HBBx8AANavX48xY8bwf1F2smd+a9dUfP7554iIiHB1mLo1efJkfPjhhxAEAbt370ZAQAC6dOmidli68csvv1hXWX744QdUV1ejffv2KkflHgRBwJw5cxAREYEnn3xS8jn8/jaNPXPL727zeasdgNZ5e3vjn//8J+Lj42GxWHDvvfciMjIS/+///T/ExMRg8uTJmDNnDmbOnImwsDAEBQUhLS1N7bDdhj3zu2LFCnz++efw9vZGUFAQVq1apXbYbmP69OnIzMzExYsX0bVrV7zwwguorKwEADz00EOYMGECNm/ejLCwMLRu3Rrvv/++yhG7l8bmd/369XjzzTfh7e0NX19fpKWl8T9fdtqxYwdWr16NqKgoREdHAwBeeuklnDlzBgC/v81hz9zyu9t87OROREREpDBuERIREREpjAkWERERkcKYYBEREREpjAkWERERkcKYYBEREREpjAkWETmN0WhEdHQ0+vXrhz/96U/49ddfG3z+Sy+9ZNd5e/ToYdP0cPny5XjiiSesjx988EHceuut1scrV67EvHnzAADDhg2TPO/s2bOxfv16AMDrr79eJ96apotERPZggkVETuPr64sDBw7g8OHDaNGiBd56660Gn29vgiVl2LBh2Llzp/XxgQMHUFxcDIvFAgDYuXMnhg8fbv25MfUTLCIiRzDBIiKX+P3vf48TJ04AANasWYPBgwcjOjoaDz74ICwWCxYsWIDy8nJER0djxowZAICEhAQMGjQIkZGRSE1NbfD8AwYMwI8//ojy8nIUFxejdevWiI6ORk5ODgAxqapZuapZjRIEAY8++ij69u2LiRMn4vz58wCAFStWoLCwEKNHj8bo0aOt77Fo0SLcfPPNiI2Nxblz55SdICLSFSZYROR0VVVV2LJlC6KionDs2DF89NFH2LFjBw4cOACj0Yi1a9ciJSXFuuK1du1aAMC///1v7Nu3D1lZWVixYgUuXbok+x7e3t6Ijo7G3r17sXv3bgwZMgSxsbHYuXMnCgsLIQgCQkND67zms88+Q25uLnJycvDOO+9YV7bmzZuHkJAQbN++Hdu3bwcAXL16FbGxsTh48CBGjhyJd955x0mzRUR6wFvlEJHT1KxIAeIK1pw5c5Camop9+/bhlltusT6nY8eOkq9fsWIFPvvsMwBAfn4+fvrppwbvhzZ8+HDs3LkT5eXlGDp0KHr37o2XXnoJwcHBknVX3333HaZPnw6j0YiQkBCMGTNG9twtWrTApEmTAACDBg3C119/bd8kEJFHYoJFRE5TsyJVmyAImDVrFpKTkxt8bWZmJr755hvs2rULrVu3RlxcHCoqKhp8zbBhw/D222+joqICc+fORXBwMI4ePYrg4GBr/VV99t5fzcfHx/pco9GIqqoqu15HRJ6JW4RE5FJ/+MMfsH79emu90+XLl3H69GkAYhJTc7Pk4uJitGvXDq1bt8bx48exe/fuRs89bNgw7N69GxcuXEDHjh1hMBgQHByMDRs2SK5gjRw5EmlpabBYLDh79qx1OxAA/P39UVpaqsRHJiIPxASLiFyqb9++WLp0KcaNG4f+/ftj7NixOHv2LADggQceQP/+/TFjxgzcdtttqKqqQv/+/fHcc88hNja20XO3a9cOwcHBiIyMtB4bOnQozp8/j5tvvtnm+VOnTkXv3r0RFRWFhx9+GKNGjbKOPfDAAxg/fnydInciInsZBEEQ1A6CiIiISE+4gkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERApjgkVERESkMCZYRERERAr7/7Yu49p5uQX5AAAAAElFTkSuQmCC style\u003d\u0027width\u003dauto;height:auto\u0027\u003e\u003cdiv\u003e\nLinearRegression()\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1537920382",
+      "id": "20220309-220907_298010578",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:11+0000",
+      "dateFinished": "2022-03-09T23:09:12+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe ***table_apply*** function takes the proxy object *IRIS* as input data and loads that data to the user-defined function as a pandas DataFrame. The user-defined function is passed as a Python string. We see that the model comes back as an OML object, which we can pull to the client and see that it\u0027s the linear model. We also display the image automatically.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:12+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe \u003cstrong\u003e\u003cem\u003etable_apply\u003c/em\u003e\u003c/strong\u003e function takes the proxy object \u003cem\u003eIRIS\u003c/em\u003e as input data and loads that data to the user-defined function as a pandas DataFrame. The user-defined function is passed as a Python string. We see that the model comes back as an OML object, which we can pull to the client and see that it\u0027s the linear model. We also display the image automatically.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1601731919",
+      "id": "20220309-220907_1156741337",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:13+0000",
+      "dateFinished": "2022-03-09T23:09:13+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ndef build_lm_1(dat):\n    import oml\n    from sklearn import linear_model\n    import matplotlib.pyplot as plt\n\n    lm \u003d linear_model.LinearRegression()\n    X \u003d dat[[\"PETAL_WIDTH\"]]\n    y \u003d dat[[\"PETAL_LENGTH\"]]\n    mod \u003d lm.fit(X, y)\n    \n    pred \u003d mod.predict(dat[[\"PETAL_WIDTH\"]])\n    plt.scatter(dat.loc[:,\"PETAL_WIDTH\"], dat.loc[:,\"PETAL_LENGTH\"])\n    plt.plot(dat[[\"PETAL_WIDTH\"]], pred, color\u003d\u0027blue\u0027, linewidth\u003d3)\n    plt.grid(True)\n    plt.title(\u0027Prediction of Petal Length\u0027)\n    \n    plt.xlabel(\u0027Petal Width\u0027)\n    plt.ylabel(\u0027Petal Length\u0027)\n    plt.show()\n    return mod\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1902235783",
+      "id": "20220309-220907_229881610",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:14+0000",
+      "dateFinished": "2022-03-09T23:09:14+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nmod \u003d oml.table_apply(data\u003dIRIS, func \u003d build_lm_1)\nprint(\"Type:\",type(mod))\nprint(\"Object:\",mod)\n\nprint(\"\\nType:\",type(mod))\nprint(\"Model:\",mod)\nprint(\"Coefficient\", mod.coef_)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type: \u003cclass \u0027sklearn.linear_model._base.LinearRegression\u0027\u003e\nObject: LinearRegression()\n\nType: \u003cclass \u0027sklearn.linear_model._base.LinearRegression\u0027\u003e\nModel: LinearRegression()\nCoefficient [[2.2299405]]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1273460719",
+      "id": "20220309-220907_378850833",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:15+0000",
+      "dateFinished": "2022-03-09T23:09:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nWe can also save this user-defined function in the Python script repository and invoke this function by providing the function name string.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:16+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eWe can also save this user-defined function in the Python script repository and invoke this function by providing the function name string.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_52992135",
+      "id": "20220309-220907_493020870",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:16+0000",
+      "dateFinished": "2022-03-09T23:09:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nbuild_lm_1 \u003d \"\"\"def build_lm_1(dat):\n    import oml\n    from sklearn import linear_model\n    import matplotlib.pyplot as plt\n\n    lm \u003d linear_model.LinearRegression()\n    X \u003d dat[[\"PETAL_WIDTH\"]]\n    y \u003d dat[[\"PETAL_LENGTH\"]]\n    mod \u003d lm.fit(X, y)\n    \n    pred \u003d mod.predict(dat[[\"PETAL_WIDTH\"]])\n    plt.scatter(dat.loc[:,\"PETAL_WIDTH\"], dat.loc[:,\"PETAL_LENGTH\"])\n    plt.plot(dat[[\"PETAL_WIDTH\"]], pred, color\u003d\u0027blue\u0027, linewidth\u003d3)\n    plt.grid(True)\n    plt.title(\u0027Prediction of Petal Length\u0027)\n    \n    plt.xlabel(\u0027Petal Width\u0027)\n    plt.ylabel(\u0027Petal Length\u0027)\n    plt.show()\n    return mod\"\"\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1054864719",
+      "id": "20220309-220907_1249992963",
+      "dateCreated": "2020-08-13T01:16:24+0000",
+      "dateStarted": "2022-03-09T23:09:17+0000",
+      "dateFinished": "2022-03-09T23:09:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\noml.script.create(\"build_lm_1\", build_lm_1, overwrite \u003d True)\noml.script.dir()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:17+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                      name  ...                date\n0          MyTEST_function  ... 2021-09-22 21:32:02\n1            RandomRedDots  ... 2022-03-09 22:14:42\n2               build_lm_1  ... 2022-03-09 23:09:18\n3            build_lm_rest  ... 2022-02-15 20:52:29\n4              group_count  ... 2022-02-15 20:52:08\n5  myLinearRegressionModel  ... 2022-02-09 18:11:59\n6               sk_svc_fit  ... 2022-02-11 18:18:24\n7          test_noinp_rest  ... 2022-03-08 00:32:47\n\n[8 rows x 4 columns]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-714922572",
+      "id": "20220309-220907_1511691454",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:18+0000",
+      "dateFinished": "2022-03-09T23:09:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNotice the value to ***func*** is now a string, not a Python function object, however, the results are the same.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:18+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNotice the value to \u003cstrong\u003e\u003cem\u003efunc\u003c/em\u003e\u003c/strong\u003e is now a string, not a Python function object, however, the results are the same.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_299907936",
+      "id": "20220309-220907_1783512490",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:19+0000",
+      "dateFinished": "2022-03-09T23:09:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nmod \u003d oml.table_apply(data\u003dIRIS, func \u003d \u0027build_lm_1\u0027)\n\nprint(\"Type:\",type(mod))\nprint(\"Object:\",mod)\n\nprint(\"\\nType:\",type(mod), \"\\n\")\nprint(\"Model:\",mod)\nprint(\"Coefficient\", mod.coef_)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type: \u003cclass \u0027sklearn.linear_model._base.LinearRegression\u0027\u003e\nObject: LinearRegression()\n\nType: \u003cclass \u0027sklearn.linear_model._base.LinearRegression\u0027\u003e \n\nModel: LinearRegression()\nCoefficient [[2.2299405]]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_275202693",
+      "id": "20220309-220907_1611703027",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:20+0000",
+      "dateFinished": "2022-03-09T23:09:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe ***row_apply*** function can be used to invoke a user-defined function on chunks of rows, which is useful to perform scoring in parallel for native Python models. In this example, the user-defined function ***score_lm_1*** takes a pandas DataFrame and a linear model. The ***row_apply*** invocation takes as arguments the proxy object *IRIS*, that we want 10 rows scored at a time (resulting in 15 function invocations), the user-defined functions, the linear model object, and that we want the result to be returned as a single table.\n\nFor illustrative purposes, you can also use the ***group_apply*** function to partition the data according to one or more columns and score as well, passing the model as an argument.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:21+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe \u003cstrong\u003e\u003cem\u003erow_apply\u003c/em\u003e\u003c/strong\u003e function can be used to invoke a user-defined function on chunks of rows, which is useful to perform scoring in parallel for native Python models. In this example, the user-defined function \u003cstrong\u003e\u003cem\u003escore_lm_1\u003c/em\u003e\u003c/strong\u003e takes a pandas DataFrame and a linear model. The \u003cstrong\u003e\u003cem\u003erow_apply\u003c/em\u003e\u003c/strong\u003e invocation takes as arguments the proxy object \u003cem\u003eIRIS\u003c/em\u003e, that we want 10 rows scored at a time (resulting in 15 function invocations), the user-defined functions, the linear model object, and that we want the result to be returned as a single table.\u003c/p\u003e\n\u003cp\u003eFor illustrative purposes, you can also use the \u003cstrong\u003e\u003cem\u003egroup_apply\u003c/em\u003e\u003c/strong\u003e function to partition the data according to one or more columns and score as well, passing the model as an argument.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_860474185",
+      "id": "20220309-220907_559435403",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:21+0000",
+      "dateFinished": "2022-03-09T23:09:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ndef score_lm_1(dat, model):\n    import pandas as pd\n    from sklearn import linear_model\n    pred \u003d model.predict(dat[[\"PETAL_WIDTH\"]])\n    return pd.concat([dat[[\u0027SPECIES\u0027, \u0027PETAL_LENGTH\u0027]], \n                      pd.DataFrame(pred, columns\u003d[\u0027PRED_PETAL_LENGTH\u0027])], axis\u003d1)\n\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-2137493547",
+      "id": "20220309-220907_795447674",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:22+0000",
+      "dateFinished": "2022-03-09T23:09:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nres \u003d oml.row_apply(IRIS, rows\u003d10, func\u003dscore_lm_1, model\u003dmod, \n                    func_value\u003dpd.DataFrame([(\u0027a\u0027, 1, 1)], \n                                            columns\u003d[\u0027SPECIES\u0027, \u0027PETAL_LENGTH\u0027, \u0027PRED_PETAL_LENGTH\u0027]))\nres.head()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  SPECIES  PETAL_LENGTH  PRED_PETAL_LENGTH\n0  setosa           1.3            1.75254\n1  setosa           1.3            1.75254\n2  setosa           1.4            1.75254\n3  setosa           1.4            1.75254\n4  setosa           1.4            1.75254\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1933904665",
+      "id": "20220309-220907_877742672",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:23+0000",
+      "dateFinished": "2022-03-09T23:09:24+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nres \u003d oml.group_apply(IRIS, index\u003dIRIS[[\u0027SPECIES\u0027]], func\u003dscore_lm_1, model\u003dmod, \n                    func_value\u003dpd.DataFrame([(\u0027a\u0027, 1, 1)], \n                                            columns\u003d[\u0027SPECIES\u0027, \u0027PETAL_LENGTH\u0027, \u0027PRED_PETAL_LENGTH\u0027]))\n\nres.head()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  SPECIES  PETAL_LENGTH  PRED_PETAL_LENGTH\n0  setosa           1.3            1.75254\n1  setosa           1.3            1.75254\n2  setosa           1.4            1.75254\n3  setosa           1.4            1.75254\n4  setosa           1.4            1.75254\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1827551781",
+      "id": "20220309-220907_1362325779",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:25+0000",
+      "dateFinished": "2022-03-09T23:09:27+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Build one model per SPECIES using Group Apply\n\nA better use of ***group_apply*** - the ability to automatically split the table data based on values in one or more columns - is for model building. The user-defined function is then invoked on each group. The function ***group_apply*** makes this easy, as well as specifying the desired number of parallel Python engines using the ***parallel*** argument.\n\nHere, we build three models, one specific to each species, and return them as a dictionary.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:27+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eBuild one model per SPECIES using Group Apply\u003c/h1\u003e\n\u003cp\u003eA better use of \u003cstrong\u003e\u003cem\u003egroup_apply\u003c/em\u003e\u003c/strong\u003e - the ability to automatically split the table data based on values in one or more columns - is for model building. The user-defined function is then invoked on each group. The function \u003cstrong\u003e\u003cem\u003egroup_apply\u003c/em\u003e\u003c/strong\u003e makes this easy, as well as specifying the desired number of parallel Python engines using the \u003cstrong\u003e\u003cem\u003eparallel\u003c/em\u003e\u003c/strong\u003e argument.\u003c/p\u003e\n\u003cp\u003eHere, we build three models, one specific to each species, and return them as a dictionary.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-484719526",
+      "id": "20220309-220907_855392680",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:28+0000",
+      "dateFinished": "2022-03-09T23:09:28+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\n\ndef build_lm_g(dat):\n    import oml\n    from sklearn import linear_model\n\n    lm \u003d linear_model.LinearRegression()\n    X \u003d dat[[\"PETAL_WIDTH\"]]\n    y \u003d dat[[\"PETAL_LENGTH\"]]\n    mod \u003d lm.fit(X, y)\n   \n    return mod\n\nmod \u003d oml.group_apply(IRIS[:,[\"PETAL_LENGTH\",\"PETAL_WIDTH\",\"SPECIES\"]], \n                      index\u003doml.DataFrame(IRIS[\u0027SPECIES\u0027]), \n                      func\u003dbuild_lm_g, parallel\u003d2,\n                      oml_connect \u003d True)\nprint(\"Type:\",type(mod))\nmod\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type: \u003cclass \u0027dict\u0027\u003e\n{\u0027setosa\u0027: LinearRegression(), \u0027virginica\u0027: LinearRegression(), \u0027versicolor\u0027: LinearRegression()}\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-430963247",
+      "id": "20220309-220907_1375597772",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:29+0000",
+      "dateFinished": "2022-03-09T23:09:31+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nNext, change the user-defined function to save each model in a datastore - instead of returning it - and return ***True*** instead. The datastore allows storing Python objects in the database under the provided name. The object assumes the name it is assigned in Python, here \"mod_\" and the corresponding Species value.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:31+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eNext, change the user-defined function to save each model in a datastore - instead of returning it - and return \u003cstrong\u003e\u003cem\u003eTrue\u003c/em\u003e\u003c/strong\u003e instead. The datastore allows storing Python objects in the database under the provided name. The object assumes the name it is assigned in Python, here \u0026ldquo;mod_\u0026rdquo; and the corresponding Species value.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_287945354",
+      "id": "20220309-220907_1866479465",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:32+0000",
+      "dateFinished": "2022-03-09T23:09:32+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ndef build_lm_2(dat, dsname):\n    import oml\n    from sklearn import linear_model\n    lm \u003d linear_model.LinearRegression()\n    X \u003d dat[[\"PETAL_WIDTH\"]]\n    y \u003d dat[[\"PETAL_LENGTH\"]]\n    lm.fit(X, y)\n    name \u003d \"mod_\" + dat.loc[dat.index[0],\u0027SPECIES\u0027]\n    oml.ds.save(objs \u003d {name: lm}, name\u003ddsname, \n                append\u003dTrue) \n    return name\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1113161051",
+      "id": "20220309-220907_623999099",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:33+0000",
+      "dateFinished": "2022-03-09T23:09:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nIf the datastore exists, we delete it so that the ***group_apply*** function completes successfully. The ***group_apply*** function takes the data, the ***index*** parameter that specifies the column or columns to partition on, the user-defined function, and that we wish to automatically connect to the database from the Python engine. Connecting to the database is necessary when using the datastore functionality.\n\nWe then print the outcome, which contains a dictionary of three elements each assigned the model object name.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:33+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eIf the datastore exists, we delete it so that the \u003cstrong\u003e\u003cem\u003egroup_apply\u003c/em\u003e\u003c/strong\u003e function completes successfully. The \u003cstrong\u003e\u003cem\u003egroup_apply\u003c/em\u003e\u003c/strong\u003e function takes the data, the \u003cstrong\u003e\u003cem\u003eindex\u003c/em\u003e\u003c/strong\u003e parameter that specifies the column or columns to partition on, the user-defined function, and that we wish to automatically connect to the database from the Python engine. Connecting to the database is necessary when using the datastore functionality.\u003c/p\u003e\n\u003cp\u003eWe then print the outcome, which contains a dictionary of three elements each assigned the model object name.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-256629030",
+      "id": "20220309-220907_1972407412",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:33+0000",
+      "dateFinished": "2022-03-09T23:09:33+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ntry:\n    oml.ds.delete(\u0027ds-1\u0027)\nexcept:\n    print(\"Datastore not found\")\nres \u003d oml.group_apply(IRIS[:,[\"PETAL_LENGTH\",\"PETAL_WIDTH\",\"SPECIES\"]], \n                      index\u003doml.DataFrame(IRIS[\u0027SPECIES\u0027]), \n                      func\u003dbuild_lm_2, dsname\u003d\"ds-1\",\n                      oml_connect \u003d True)\nprint(\"Outcome:\",res)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Outcome: {\u0027virginica\u0027: \u0027mod_virginica\u0027, \u0027versicolor\u0027: \u0027mod_versicolor\u0027, \u0027setosa\u0027: \u0027mod_setosa\u0027}\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-451431084",
+      "id": "20220309-220907_1265978782",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:34+0000",
+      "dateFinished": "2022-03-09T23:09:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nWhen we load the datastore, we get the three models loaded into the client Python engine, assigned to their respective variables. We can view the model for \"versicolor\".\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eWhen we load the datastore, we get the three models loaded into the client Python engine, assigned to their respective variables. We can view the model for \u0026ldquo;versicolor\u0026rdquo;.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1181875034",
+      "id": "20220309-220907_627101926",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:39+0000",
+      "dateFinished": "2022-03-09T23:09:39+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nEmbedded Python execution can also leverage functions from third-party packages. These packages need to be installed on the database server machine, but can then be used inside the user-defined function as shown here using ***LinearSVC***.\n\nAgain, we create this script in the Python script repository and then invoke it by name using ***table_apply***. We then pull the model to the client and view its type.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eEmbedded Python execution can also leverage functions from third-party packages. These packages need to be installed on the database server machine, but can then be used inside the user-defined function as shown here using \u003cstrong\u003e\u003cem\u003eLinearSVC\u003c/em\u003e\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003eAgain, we create this script in the Python script repository and then invoke it by name using \u003cstrong\u003e\u003cem\u003etable_apply\u003c/em\u003e\u003c/strong\u003e. We then pull the model to the client and view its type.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1044810634",
+      "id": "20220309-220907_188515985",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:40+0000",
+      "dateFinished": "2022-03-09T23:09:40+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nfit \u003d \"\"\"def fit(data):\n\n    from sklearn.svm import LinearSVC\n    x \u003d data.drop(\u0027SPECIES\u0027, axis \u003d 1).values\n    y \u003d data[\u0027SPECIES\u0027]\n    mod \u003d  LinearSVC().fit(x, y)\n    return mod\"\"\"\n\noml.script.create(\"sk_svc_fit\", fit, overwrite \u003d True)\noml.script.dir()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                      name  ...                date\n0          MyTEST_function  ... 2021-09-22 21:32:02\n1            RandomRedDots  ... 2022-03-09 22:14:42\n2               build_lm_1  ... 2022-03-09 23:09:18\n3            build_lm_rest  ... 2022-02-15 20:52:29\n4              group_count  ... 2022-02-15 20:52:08\n5  myLinearRegressionModel  ... 2022-02-09 18:11:59\n6               sk_svc_fit  ... 2022-03-09 23:09:41\n7          test_noinp_rest  ... 2022-03-08 00:32:47\n\n[8 rows x 4 columns]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1360070942",
+      "id": "20220309-220907_2050902190",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:41+0000",
+      "dateFinished": "2022-03-09T23:09:41+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nmod \u003d oml.table_apply(data\u003dIRIS, \n                      func \u003d \u0027sk_svc_fit\u0027,\n                      oml_input_type\u003d\"pandas.DataFrame\")\nprint(\"Type:\",type(mod))\nprint(\u0027Coefficients: \\n\u0027, mod.coef_)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type: \u003cclass \u0027sklearn.svm._classes.LinearSVC\u0027\u003e\nCoefficients: \n [[ 0.18424093  0.45122958 -0.80794144 -0.45071323]\n [ 0.04649077 -0.88760484  0.41127449 -0.96326043]\n [-0.85062576 -0.98679577  1.38103917  1.86529661]]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_-1653141502",
+      "id": "20220309-220907_457630666",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:42+0000",
+      "dateFinished": "2022-03-09T23:09:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe model can now be used normally, e.g., to predict outcomes.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:42+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe model can now be used normally, e.g., to predict outcomes.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747620_1867358707",
+      "id": "20220309-220907_948103076",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:42+0000",
+      "dateFinished": "2022-03-09T23:09:42+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\npred \u003d mod.predict(iris_df.drop(\u0027SPECIES\u0027, axis \u003d 1).values)\npred2 \u003d pred.reshape((-1,1))\npred2[0:10]\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "array([[\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027],\n       [\u0027setosa\u0027]], dtype\u003dobject)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-3408568",
+      "id": "20220309-220907_1474684459",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:43+0000",
+      "dateFinished": "2022-03-09T23:09:43+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nLet\u0027s assess model quality using a confusion matrix computed from the ***sklearn.metrics*** function confusion_matrix.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:43+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eLet\u0027s assess model quality using a confusion matrix computed from the \u003cstrong\u003e\u003cem\u003esklearn.metrics\u003c/em\u003e\u003c/strong\u003e function confusion_matrix.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1129258329",
+      "id": "20220309-220907_1595322177",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:44+0000",
+      "dateFinished": "2022-03-09T23:09:44+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nfrom sklearn.metrics import confusion_matrix\n\nconf_mat \u003d confusion_matrix(iris_df[[\"SPECIES\"]], pred2)\nconf_mat\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "array([[50,  0,  0],\n       [ 0, 47,  3],\n       [ 0,  2, 48]])\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-210062860",
+      "id": "20220309-220907_1935826906",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:45+0000",
+      "dateFinished": "2022-03-09T23:09:45+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe ***group_apply*** function can be used for simple or complex computations. For example, here it is used to simply count the number of each species in the data set.\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:45+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe \u003cstrong\u003e\u003cem\u003egroup_apply\u003c/em\u003e\u003c/strong\u003e function can be used for simple or complex computations. For example, here it is used to simply count the number of each species in the data set.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-269918055",
+      "id": "20220309-220907_1559378389",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:46+0000",
+      "dateFinished": "2022-03-09T23:09:46+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ndef group_count(dat):\n  import pandas as pd\n  return pd.DataFrame([(dat[\"SPECIES\"][0], dat.shape[0])],\n                      columns \u003d [\"SPECIES\", \"CNT\"])\n\nindex \u003d oml.DataFrame(IRIS[\u0027SPECIES\u0027])\nres \u003d oml.group_apply(IRIS, index, func\u003dgroup_count,\n                      oml_input_type\u003d\"pandas.DataFrame\",\n                      func_value\u003dpd.DataFrame([(\u0027a\u0027, 1)],\n                                              columns\u003d[\"SPECIES\", \"CNT\"]))\nres\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "      SPECIES  CNT\n0   virginica   50\n1  versicolor   50\n2      setosa   50\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-827653229",
+      "id": "20220309-220907_610158814",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:46+0000",
+      "dateFinished": "2022-03-09T23:09:48+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nThe ***index_apply*** function allows the same function to invoked a specified number of times. The first argument to the user-defined function is an index number for the function execution. For example, if the \"times\" argument is 12, each function invocation will receive a distinct value between 1 and 10. This can be used, e.g., for selecting behavior within the function or setting a random seed for Monte Carlo analysis.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:48+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eThe \u003cstrong\u003e\u003cem\u003eindex_apply\u003c/em\u003e\u003c/strong\u003e function allows the same function to invoked a specified number of times. The first argument to the user-defined function is an index number for the function execution. For example, if the \u0026ldquo;times\u0026rdquo; argument is 12, each function invocation will receive a distinct value between 1 and 10. This can be used, e.g., for selecting behavior within the function or setting a random seed for Monte Carlo analysis.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-985046013",
+      "id": "20220309-220907_1314428851",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:49+0000",
+      "dateFinished": "2022-03-09T23:09:49+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\ndef compute_random_mean(index):\n    import numpy as np\n    import scipy\n    from statistics import mean \n    np.random.seed(index)\n    res \u003d np.random.random((100,1))*10\n    return mean(res[1])\n\nprint(\"Test: \", compute_random_mean(3))\n\nres \u003d oml.index_apply(times\u003d12, func\u003dcompute_random_mean)\nres\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Test:  7.081478226181048\n[7.203244934421581, 0.25926231827891333, 7.081478226181048, 5.4723224917572235, 8.707323061773764, 3.3197980530117723, 7.7991879224011464, 9.68540662820932, 5.018745921487388, 0.207519493594015, 0.19475241487624584, 7.400496965154048]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1623862721",
+      "id": "20220309-220907_790994221",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:50+0000",
+      "dateFinished": "2022-03-09T23:09:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Multiple images returned from embedded Python execution\n\nHere, we create a function ***RandomRedDots*** that creates a simple DataFrame and generates two plots of random red dots. We create a function in the Python Script Repository named \"RandomRedDots\", and then run the native Python function.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:50+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eMultiple images returned from embedded Python execution\u003c/h1\u003e\n\u003cp\u003eHere, we create a function \u003cstrong\u003e\u003cem\u003eRandomRedDots\u003c/em\u003e\u003c/strong\u003e that creates a simple DataFrame and generates two plots of random red dots. We create a function in the Python Script Repository named \u0026ldquo;RandomRedDots\u0026rdquo;, and then run the native Python function.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1170772385",
+      "id": "20220309-220907_1649685901",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:50+0000",
+      "dateFinished": "2022-03-09T23:09:50+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nRandomRedDots \u003d \"\"\"def RandomRedDots (num_dots_1 \u003d 100, num_dots_2 \u003d 10):\n    import numpy as np\n    import pandas as pd\n    import matplotlib.pyplot as plt\n       \n    d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}\n    df \u003d pd.DataFrame(data\u003dd)\n    plt.scatter(range(0,num_dots_1), np.random.rand(100),c\u003d\u0027r\u0027)\n    plt.title(\"Random Red Dots\")\n    plt.show()\n    plt.scatter(range(0,num_dots_2), np.random.rand(10),c\u003d\u0027r\u0027)\n    plt.title(\"Random Red Dots\")\n    plt.show()\n    return df\"\"\"\n\n\noml.script.create(\"RandomRedDots\", func\u003dRandomRedDots, is_global\u003dTrue, overwrite\u003dTrue)\n\nprint(RandomRedDots)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "def RandomRedDots (num_dots_1 \u003d 100, num_dots_2 \u003d 10):\n    import numpy as np\n    import pandas as pd\n    import matplotlib.pyplot as plt\n       \n    d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}\n    df \u003d pd.DataFrame(data\u003dd)\n    plt.scatter(range(0,num_dots_1), np.random.rand(100),c\u003d\u0027r\u0027)\n    plt.title(\"Random Red Dots\")\n    plt.show()\n    plt.scatter(range(0,num_dots_2), np.random.rand(10),c\u003d\u0027r\u0027)\n    plt.title(\"Random Red Dots\")\n    plt.show()\n    return df\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1660766858",
+      "id": "20220309-220907_874158497",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:51+0000",
+      "dateFinished": "2022-03-09T23:09:51+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nIf we simply invoke the named function, we see that the result is an OML object. Notice that we see only a single image. To ensure we get both plots, we can modify the function in one of two ways as shown next.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:51+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eIf we simply invoke the named function, we see that the result is an OML object. Notice that we see only a single image. To ensure we get both plots, we can modify the function in one of two ways as shown next.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_2106498936",
+      "id": "20220309-220907_1056273822",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:52+0000",
+      "dateFinished": "2022-03-09T23:09:52+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nres \u003d oml.do_eval(func\u003d\"RandomRedDots\")\nprint(\"Type: \", type(res))\n\nres\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Type:  \u003cclass \u0027pandas.core.frame.DataFrame\u0027\u003e\n   id   val\n0   1  0.01\n1   2  0.02\n2   3  0.03\n3   4  0.04\n4   5  0.05\n5   6  0.06\n6   7  0.07\n7   8  0.08\n8   9  0.09\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-2119886298",
+      "id": "20220309-220907_1027230616",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:53+0000",
+      "dateFinished": "2022-03-09T23:09:53+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nInvoke the *RandomRedDots* function from the REST API with *graphicsFlag* to *true*:\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {
+          "token": ""
+        },
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eInvoke the \u003cem\u003eRandomRedDots\u003c/em\u003e function from the REST API with \u003cem\u003egraphicsFlag\u003c/em\u003e to \u003cem\u003etrue\u003c/em\u003e:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-231250284",
+      "id": "20220309-220907_2114054639",
+      "dateCreated": "2020-06-06T23:28:19+0000",
+      "dateStarted": "2022-03-09T23:09:54+0000",
+      "dateFinished": "2022-03-09T23:09:54+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -X POST --header \"Authorization: Bearer ${token}\" --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"graphicsFlag\":true}\u0027 \"${omlserver}/oml/api/py-scripts/v1/do-eval/RandomRedDots\"\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-880806863",
+      "id": "20220309-220907_506900511",
+      "dateCreated": "2020-08-11T22:45:54+0000",
+      "status": "FINISHED",
+      "errorMessage": ""
+    },
+    {
+      "text": "%md\n\nHere, we create separate figure objects, add subplots, and then create the scatter plot. We\u0027ll store this in the script repository as \"RandomRedDots2\" and \ninvoke the function to see the results. As expected, we get both plots.\n\nNow, when we invoke \"RandomRedDots2\" using embedded Python execution, we get both plots shown in the result.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:55+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eHere, we create separate figure objects, add subplots, and then create the scatter plot. We\u0027ll store this in the script repository as \u0026ldquo;RandomRedDots2\u0026rdquo; and\n\u003cbr  /\u003einvoke the function to see the results. As expected, we get both plots.\u003c/p\u003e\n\u003cp\u003eNow, when we invoke \u0026ldquo;RandomRedDots2\u0026rdquo; using embedded Python execution, we get both plots shown in the result.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-1404273571",
+      "id": "20220309-220907_200961986",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:55+0000",
+      "dateFinished": "2022-03-09T23:09:55+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nRandomRedDots2 \u003d \"\"\"def RandomRedDots2 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):\n    import numpy as np\n    import pandas as pd\n    import matplotlib.pyplot as plt  \n\n    d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}\n    df \u003d pd.DataFrame(data\u003dd)\n    fig \u003d plt.figure(1)\n    ax \u003d fig.add_subplot(111)\n    ax.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)\n    fig.suptitle(\"Random Red Dots\")\n\n    fig2 \u003d plt.figure(2)\n    ax2 \u003d fig2.add_subplot(111)\n    ax2.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)\n    fig2.suptitle(\"Random Red Dots\")\n    return df\"\"\"\n\noml.script.create(\"RandomRedDots2\", func\u003dRandomRedDots2, is_global\u003dTrue, overwrite\u003dTrue)\n\nprint(RandomRedDots2)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "def RandomRedDots2 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):\n    import numpy as np\n    import pandas as pd\n    import matplotlib.pyplot as plt  \n\n    d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}\n    df \u003d pd.DataFrame(data\u003dd)\n    fig \u003d plt.figure(1)\n    ax \u003d fig.add_subplot(111)\n    ax.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)\n    fig.suptitle(\"Random Red Dots\")\n\n    fig2 \u003d plt.figure(2)\n    ax2 \u003d fig2.add_subplot(111)\n    ax2.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)\n    fig2.suptitle(\"Random Red Dots\")\n    return df\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_272966877",
+      "id": "20220309-220907_1685296046",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:56+0000",
+      "dateFinished": "2022-03-09T23:09:56+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nres \u003d oml.do_eval(func\u003d\"RandomRedDots2\", num_dots_1 \u003d 600, num_dots_2 \u003d 200)\ntype(res)\n\nres\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:56+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id   val\n0   1  0.01\n1   2  0.02\n2   3  0.03\n3   4  0.04\n4   5  0.05\n5   6  0.06\n6   7  0.07\n7   8  0.08\n8   9  0.09\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-1185232413",
+      "id": "20220309-220907_365707358",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:09:57+0000",
+      "dateFinished": "2022-03-09T23:09:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nHere is the equivalent REST API call:\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eHere is the equivalent REST API call:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-1296036821",
+      "id": "20220309-220907_1053928624",
+      "dateCreated": "2020-06-06T23:28:47+0000",
+      "dateStarted": "2022-03-09T23:09:58+0000",
+      "dateFinished": "2022-03-09T23:09:58+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -X POST --header \"Authorization: Bearer ${token}\" --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"graphicsFlag\":true}\u0027 \"${omlserver}/oml/api/py-scripts/v1/do-eval/RandomRedDots2\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-1968188142",
+      "id": "20220309-220907_1712148695",
+      "dateCreated": "2020-08-11T22:47:21+0000",
+      "status": "FINISHED",
+      "errorMessage": ""
+    },
+    {
+      "text": "%md\n\nAnother way to approach this is to create a single plot composed to two subplots. This approach is somewhat simpler, but yields only a single image. Generating two images may be desired when using the SQL API so that each image is returned as a separate row. See the SQL API demo script for an example.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:09:59+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eAnother way to approach this is to create a single plot composed to two subplots. This approach is somewhat simpler, but yields only a single image. Generating two images may be desired when using the SQL API so that each image is returned as a separate row. See the SQL API demo script for an example.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_363192095",
+      "id": "20220309-220907_505106779",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:10:00+0000",
+      "dateFinished": "2022-03-09T23:10:00+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nRandomRedDots3 \u003d \"\"\"def RandomRedDots3 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):\n    import numpy as np\n    import pandas as pd\n    import matplotlib.pyplot as plt\n\n    d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}\n    df \u003d pd.DataFrame(data\u003dd)\n\n    plt.subplot(2,1, 1)\n    plt.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)\n    plt.title(\"Random Red Dots\")\n\n    plt.subplot(2, 1, 2)\n    plt.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)\n    plt.title(\"Random Red Dots\")\n    return df\"\"\"\n\noml.script.create(\"RandomRedDots3\", func\u003dRandomRedDots3, is_global\u003dTrue, overwrite\u003dTrue)\noml.do_eval(func\u003d\"RandomRedDots3\")\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id   val\n0   1  0.01\n1   2  0.02\n2   3  0.03\n3   4  0.04\n4   5  0.05\n5   6  0.06\n6   7  0.07\n7   8  0.08\n8   9  0.09\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1284843843",
+      "id": "20220309-220907_1763851382",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:10:01+0000",
+      "dateFinished": "2022-03-09T23:10:02+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nHere is the equivalent REST API call:\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eHere is the equivalent REST API call:\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-883872593",
+      "id": "20220309-220907_1512417742",
+      "dateCreated": "2020-06-06T23:29:12+0000",
+      "dateStarted": "2022-03-09T23:10:03+0000",
+      "dateFinished": "2022-03-09T23:10:03+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "\n\n$ curl -X POST --header \"Authorization: Bearer ${token}\" --header \u0027Content-Type: application/json\u0027 --header \u0027Accept: application/json\u0027 -d \u0027{\"graphicsFlag\":true}\u0027 \"${omlserver}/oml/api/py-scripts/v1/do-eval/RandomRedDots3\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:03+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-1152495536",
+      "id": "20220309-220907_1453511093",
+      "dateCreated": "2020-08-11T22:48:21+0000",
+      "status": "FINISHED",
+      "errorMessage": ""
+    },
+    {
+      "text": "%md\n\nWe can also return only the structured contents as an OML DataFrame, which keeps the result in the database - returning a proxy object to the result. We pull the results to the notebook explicitly to display it locally.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:03+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eWe can also return only the structured contents as an OML DataFrame, which keeps the result in the database - returning a proxy object to the result. We pull the results to the notebook explicitly to display it locally.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1908971091",
+      "id": "20220309-220907_309842867",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:10:04+0000",
+      "dateFinished": "2022-03-09T23:10:04+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nimport pandas as pd\nres \u003d oml.do_eval(func\u003dRandomRedDots, func_value\u003dpd.DataFrame({\"id\":[0],\"val\":[0]}))\ntype(res)\n\nres.pull()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   id   val\n0   1  0.01\n1   2  0.02\n2   3  0.03\n3   4  0.04\n4   5  0.05\n5   6  0.06\n6   7  0.07\n7   8  0.08\n8   9  0.09\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_-32021189",
+      "id": "20220309-220907_1791921159",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:10:05+0000",
+      "dateFinished": "2022-03-09T23:10:06+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\nFinally, note that a function stored in the Python Script Repository can be loaded back in the Python client engine, we can view its source, and finally invoke the function.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:06+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eFinally, note that a function stored in the Python Script Repository can be loaded back in the Python client engine, we can view its source, and finally invoke the function.\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_4068367",
+      "id": "20220309-220907_491922249",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:10:07+0000",
+      "dateFinished": "2022-03-09T23:10:07+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n\nrandom_red_dots \u003d oml.script.load(\u0027RandomRedDots2\u0027)\n\nprint(random_red_dots.get_source())\nrandom_red_dots()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "def RandomRedDots2 (num_dots_1 \u003d 100, num_dots_2 \u003d 10):\n    import numpy as np\n    import pandas as pd\n    import matplotlib.pyplot as plt  \n\n    d \u003d {\u0027id\u0027: range(1,10), \u0027val\u0027: [x/100 for x in range(1,10)]}\n    df \u003d pd.DataFrame(data\u003dd)\n    fig \u003d plt.figure(1)\n    ax \u003d fig.add_subplot(111)\n    ax.scatter(range(0,num_dots_1), np.random.rand(num_dots_1),c\u003d\u0027r\u0027)\n    fig.suptitle(\"Random Red Dots\")\n\n    fig2 \u003d plt.figure(2)\n    ax2 \u003d fig2.add_subplot(111)\n    ax2.scatter(range(0,num_dots_2), np.random.rand(num_dots_2),c\u003d\u0027r\u0027)\n    fig2.suptitle(\"Random Red Dots\")\n    return df\n   id   val\n0   1  0.01\n1   2  0.02\n2   3  0.03\n3   4  0.04\n4   5  0.05\n5   6  0.06\n6   7  0.07\n7   8  0.08\n8   9  0.09\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cdiv style\u003d\u0027width:auto;height:auto\u0027\u003e\u003cimg src\u003ddata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGQCAYAAAByNR6YAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjIsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy8li6FKAAAgAElEQVR4nO3df3RU5Z3H8c9gwDb8RoL8mPwwOxZD/LGUYdHVXQVPoV3b2GPZNBp/sNJNVc626Lptz2GXWpdUtl27rbItjXUtLJHY457TRCFpK1tctxVxDml7MKipTSCJuhIEBFk2kDz7x5iRJBPIZO7Mvc+979c5njg/SJ7cubn3c5/n+zw3ZIwxAgAAgGPGuN0AAAAAvyFgAQAAOIyABQAA4DACFgAAgMMIWAAAAA4jYAEAADiMgAUAAOAwAhaAtO3cuVPhcNjtZqSsvb1doVBIp0+fdrspAHyGgAX4VFFRkT760Y9qwoQJmjlzplasWKHjx4+73ay0hUIhjR8/XhMmTNCcOXN03333qbe3NyM/q38bTpw4UVOmTNGf/umfauPGjerr6xvRv//xj3+sa665JiNtA+BtBCzAx5555hkdP35cv/nNb9Tc3KyHHnrI7SY54re//a2OHz+u559/Xk899ZT+7d/+LWM/65lnntGxY8e0f/9+fe1rX9M//dM/aeXKlRn7eQD8gYAFBMDMmTO1bNky/eY3v0k8t23bNs2fP1+TJk1Sfn6+HnjggcRr/UNnmzZtUkFBgaZPn67q6urE6//7v/+rFStWaOrUqZo3b55efvnlAT9v3759uu666zRlyhSVlpaqoaEh8dqKFSt0zz336FOf+pQmTJigq6++Wm+//bZWr16tqVOn6pJLLlFzc/OIfq9IJKKrr756wO919OhRrVy5UrNmzdKcOXP093//94kert7eXt1///2aPn26iouLtW3bthFvw8mTJ6usrExPPfWUNm3apL179yZ+3u233668vDwVFhZq3bp16uvr0759+3TXXXfpxRdf1IQJEzRlyhRJ0vbt2zVv3jxNnDhRc+bM0T//8z+PuA0A7EHAAgKgs7NTjY2NikQiiefGjx+vzZs368iRI9q2bZt+8IMf6Kc//emAf/ff//3feu2117Rjxw49+OCD2rdvnyTpG9/4ht544w298cYb+tnPfqZNmzYl/s2pU6f0mc98RkuXLtU777yjRx99VJWVlXrttdcS7/nJT36idevWqbu7W+eff76uuuoqffzjH1d3d7eWL1+u++67b0S/16uvvqoXXnhhwO91xx13KCcnR7///e/V3Nysn//85/rRj34kSXrsscf07LPPqrm5WbFYTE8//XTK2/JP/uRPFA6H9cILL0iS/uZv/kZHjx7VH/7wBz3//PPavHmznnjiCZWUlGjjxo266qqrdPz4cR05ckSStHLlSv3whz/UsWPHtHfvXi1ZsiTlNgCwgAHgS4WFhWb8+PFmwoQJRpJZsmSJOXz48LDv//KXv2xWr15tjDGmra3NSDIdHR2J1xcuXGi2bt1qjDHmoosuMo2NjYnXfvjDH5o5c+YYY4z5r//6L3PhhRea3t7exOsVFRXm61//ujHGmDvuuMN84QtfSLz2yCOPmEsuuSTx+He/+52ZPHnysO2UZCZOnGhyc3ONJFNRUWFOnjxpjDHm7bffNuPGjTMnTpxIvP/JJ5801113nTHGmMWLF5sf/OAHidd+9rOfGUnm1KlTSX9WYWGh+cUvfjHk+UWLFpl169aZ06dPm3HjxplXXnkl8drGjRvNtddea4wx5oknnjBXX331gH+bn59vNm7caI4ePTrs7wjAfvRgAT7205/+VMeOHdPOnTv16quvqru7O/HaSy+9pMWLFysvL0+TJ0/Wxo0bB7wuxYcW++Xm5iaK5N98803l5+cnXissLEz8f/9rY8aMGfB6V1dX4vGFF16Y+P+PfvSjQx6fqxh/z549On78uJ566im99NJLev/99yVJ+/fv16lTpzRr1ixNmTJFU6ZM0Re/+EW9884752x3Krq6ujRt2jR1d3erp6dnwPcZ/LsO9h//8R/avn27CgsLde211+rFF18cVRsAeBsBCwiAa6+9VitWrND999+feO6WW25RWVmZOjo6dPToUd11110yxozo+82aNUsdHR2JxwcOHEj8/+zZs9XR0TFgpt2BAwc0Z84cB36TD4VCIZWXl+uqq67Sgw8+KEnKz8/X+eefr+7ubh05ckRHjhzRe++9p1deeeWc7R6pl19+WV1dXbrmmms0ffp0jR07Vvv37x/wPft/11AoNOTfL1y4UPX19XrnnXf02c9+VuXl5Sm3AYD3EbCAgFi9erV+8YtfJArCjx07pmnTpukjH/mIdu/erSeffHLE36u8vFwPPfSQDh8+rM7OTj366KOJ1xYtWqTx48frW9/6lk6dOqWdO3fqmWeeUUVFheO/kyR97WtfU01Njd5++23NmjVLS5cu1d/+7d/qvffeU19fn9544w09//zziXY/8sgj6uzs1OHDh7V+/foR/5z33ntPzz77rCoqKnTrrbfqsssu03nnnafy8nKtWbMmMdPwO9/5jm699VZJ8Z66zs5O9fT0SJJ6enpUW1uro0ePauzYsZo0aZLOO+885zcKANcRsICAyMvL0+23365//Md/lCR9//vf19q1azVx4kQ9+OCDKfWkfP3rX1dhYaEuuugiLV26VLfddlvitXHjxqmhoUGNjY2aPn267rnnHm3evFmXXHKJ47+TJF122WW69tpr9e1vf1uStHnzZvX09GjevHmaOnWqli9frrfeekuS9Nd//ddatmyZrrjiCn384x/XTTfddM7v/5nPfEYTJ05Ufn6+qqurdd999+mJJ55IvP7oo49q/PjxKi4u1jXXXKNbbrlFd955pyRpyZIlKi0t1cyZMzV9+nRJ0r//+7+rqKhIkyZN0saNG7VlyxanNwkADwiZkY4JAAAAYETowQIAAHAYAQsAAMBhBCwAAACHEbAAAAAcRsACAABwGAELAADAYQQsAAAAhxGwAAAAHEbAAgAAcBgBCwAAwGEELAAAAIcRsAAAABxGwAIAAHAYAQsAAMBhBCwAAACHEbAAAAAcRsACAABwGAELAADAYQQsAAAAhxGwAAAAHEbAAgAAcBgBCwAAwGEELAAAAIcRsAAAABxGwAIAAHAYAQsAAMBhBCwAAACHEbAAAAAcRsACAABwWI7bDbDJ9OnTVVRU5HYzAACwTnt7u7q7u91uRtYQsFJQVFSkWCzmdjMAALBONBp1uwlZxRAhAACAwwhYAAAADiNgAQAAOIyABQAA4DACFgAAgMMIWAAAAA4jYAEAADiMgAUAAOAwXwasO++8UzNmzNCll16a9HVjjL70pS8pEono8ssv1549e7LcQgAA4Ge+DFgrVqxQU1PTsK83NjaqtbVVra2tqqmp0d13353F1gEAAL/zZcD68z//c02bNm3Y1+vr63X77bcrFArpyiuv1JEjR/TWW29lsYUAAMDPfBmwzqWrq0v5+fmJx+FwWF1dXS62CAAA+EkgA5YxZshzoVAo6XtramoUjUYVjUZ18ODBTDcNTqutlYqKpDFj4l9ra91uEQAgAAIZsMLhsDo6OhKPOzs7NXv27KTvraqqUiwWUywWU15eXraaCCfU1kpVVdL+/ZIx8a9VVYSsMxFAASAjAhmwysrKtHnzZhljtGvXLk2ePFmzZs1yu1lw2po10okTA587cSL+PAigAJBBOW43IBNuvvlm7dy5U93d3QqHw/rGN76hU6dOSZLuuusu/cVf/IW2b9+uSCSi3NxcPfHEEy63GBlx4EBqzwfN2QJoZaU7bQIAnwiZZAVJSCoajSoWi7ndDIxUUVG8V2awwkKpvT3brfGeMWPiPVeDhUJSX1/22wPA14J2Dg3kECECorpays0d+Fxubvx5SAUFqT0PABgxAhb8q7JSqqmJ91iFQvGvNTUMf/UjgAJAxviyBgtIqKwkUA2nf7usWROvSysoiIcrthcApI2ABQQZARQAMoIhQgAAAIcRsAAAABxGwAIAAHAYAQsAAMBhBCwAAACHEbAAAAAcRsACkHm1tfFbF40ZE//q9xtKB+33BTAE62AByKzaWqmq6sMbS+/fH38s+XMNrqD9vgCSogcLQGatWfNh2Oh34kT8eT8K2u8LICkCFoDMOnAgtedtF7TfF0BSBCwAmVVQkNrztgva7wsgKQIWgMyqrpZycwc+l5sbfz4VthSOO/X7ArAaAQtAZlVWSjU1UmGhFArFv9bUpFbw3V84vn+/ZMyHheNeDFlO/L4ArBcyxhi3G2GLaDSqWCzmdjOA4CkqioeqwQoLpfb2bLcGwCgE7RxKDxYA76NwHIBlCFgAvI/CcQCWIWAB8D4KxwFYhoAFIDVuzOajcByAZQhY8BdbpvLbys3ZfJWV8YL2vr74V8IVAA8jYME/bJrKbytuAwMAI0LAgn9w8s88ZvMBwIgQsOAfnPwzj9l8ADAiBCz4Byf/zGM2HwCMCAEL/sHJP/OYzQcAI5LjdgMAx/Sf5NesiQ8LFhTEwxUnf2dVVrJNAeAcCFjwF07+AAAPYIgQAAA/YB1AT6EHCwAA2/WvA9i/VE3/OoASvfouoQcLAADbsQ6g5xCwAFsxHBAsfN44G9YB9ByGCAEbMRwQLHzeOJeCgvh+kex5uIIeLMBGDAcESxA+b3ro0sM6gJ5DwAJsxHBAsPj98+ZG7eljEWDPIWABNuK2QMHi9887CD102VBZKbW3S3198a+EK1cRsAAbMRzgDFuGpfz+efu9hw6BRMACbMRwQPpsGpby++ft9x46BFLIGGPcboQtotGoYrGY280A4ISiouSzrgoL48MryJ7BsySleA+dn0IkAncOpQcLQDAxLOUdfu+hQyCxDhaAYGLdIG/hRu3wGXqwAAST3wvHAbiKgAUgmBiWApBBBCwA3pSNJRRYNwhAhhCwgsaWdX8QbDYtoQAASfg2YDU1NWnu3LmKRCJav379kNcPHDigxYsXa/78+br88su1fft2F1qZZZy0YAtW9gZgOV8GrN7eXq1atUqNjY1qaWnR1q1b1dLSMuA969atU3l5uZqbm1VXV6d77rnHpdZmEScteNmZvavJZvdJLKEAwBq+DFi7d+9WJBJRcXGxxo0bp4qKCtXX1w94TygU0nvvvSdJOnr0qGbPnu1GU7OLdX/gVYN7V4fDEgrwIkovkIQv18Hq6upSfn5+4nE4HNZLL7004D0PPPCAli5dqkcffVTvv/++nnvuuWw3M/tY9wdelax3dTCWUIAXDV6Fvr/0QmLSRMD5sgcr2d1/QqHQgMdbt27VihUr1NnZqe3bt+u2225TX1/fkH9XU1OjaDSqaDSqgwcPZqzNWcG6P/Cqs/WisoQCRisbPUuUXmAYvgxY4XBYHR0dicednZ1DhgAff/xxlZeXS5KuuuoqnTx5Ut3d3UO+V1VVlWKxmGKxmPLy8jLb8Exj3R941XC9qIWFLKGA0cnWpB5KLzAMXwashQsXqrW1VW1tberp6VFdXZ3KysoGvKegoEA7duyQJO3bt08nT560P0CNBOv+wIvoXR2Kup70ZKtnabiLA0ovAs+XASsnJ0cbNmzQsmXLVFJSovLycpWWlmrt2rVqaGiQJD388MN67LHHdMUVV+jmm2/Wj3/84yHDiEDGcPIciN7VgVhSJX3Z6lni4gDDCJlkBUtIKhqNKhaLud0M2G5wUawUPyAHOVBgoKKi5BNSCgvjPc84t2xuw9raeM/YgQPxnqvqav6WkwjaOdSXPViAp1EUi3Ohrid92exZovQCSRCwgMEyPXzHyRPnQl1P+hh2hssIWMCZslH7wskT50JdjzPoWYKLCFjAmbIxfMfJE+dC7wtgPV+u5A6MWjaG7/pPkhTF4mwqK9knAIsRsIAzZet2Qpw8AcDXGCIEzsTwHQDAAQQs4EzUvgAAHMAQITAYw3cAgDTRgwUAAOAwAhaQqkwtRMr9CQHANwhYsJcbgSRTC5Fyc18A8BVu9pyCoN2o0tPcumFypm4gy819Afhc0M6h9GDBTm7dMDlTC5Fyf0IA8BUCFuzkViDJ1H0EuT8hEBzUWwYCAQt2ciuQZGohUhY4BYKBesvAIGDBTm4FkkwtRMoCp0AwuFXegKyjyD0FQSvQ87zaWm6YDMAuY8bEe64GC4Wkvr7styeLgnYOpQcL9qqsjM+w6+uLfyVcAfC64coYpk07e10WdVvWIWABAJAtycobxo6Vjh0bvi6Lui0rEbAAAMiWZPWWkyZJPT0D33dmXRZ1W1YiYAEAkE2DyxvefTf5+/qXnWGdPCsRsAAAcNO5lp1hnTwrEbAwFMWUAJA951p2hnXyrETAwkAUUwJAdp1rHbxkr99xR7wGiwthz2IdrBQEYg0PbjoMm7E2GoLArZvdpykQ59Az0IOFgSimhK3ofUVQMKvQCgQsDEQxJWzFSQdBwYWwFQhYGIhiStiKkw6CggthKxCwMBDFlN7F7M6zG8lJh20IP+BC2AoELAx15iJ41dXSpk3UtbiN+qJzO9dJh20IvzjXrMN+XFC4ilmEKQjaDAhJzCr0Cj6HkTnbLEK2IYLEgzMNg3YOJWClIGg7h6T4lU+yXSQUivdwITv4HNLHNkSQePCCImjnUIYIcXYUU3oDn0P62IYIEiZ9uI6AhbOjmNIb+BzSxzZEkHBB4ToCFs5upMWUyCw+h/SxDREkXFC4jhqsFARt/BgAYDGP3ToqaOdQerCATGB6NAC3nbnkTns7vbVZluN2AwDfGTw9un+9JYkDHAAEBD1YgNO4Jx6AdNELbj16sACnMT0aQDroBfcFerAApzE9GkA66AX3BQIW4DSmRwNIB73gvkDAApzGektA+oJcg0QvuC8QsIBMYHo0MHr9NUj798fvH9lfgxSUkEUvuC8QsAAA3hL0GiR6wX2BWYQAAG+hBikepghUVvNtD1ZTU5Pmzp2rSCSi9evXJ33PT37yE82bN0+lpaW65ZZbstxCAEBS1CDBB3wZsHp7e7Vq1So1NjaqpaVFW7duVUtLy4D3tLa26qGHHtKvfvUrvfLKK/rud7/rUmsBHwpygTLSRw0SfMCXAWv37t2KRCIqLi7WuHHjVFFRofr6+gHveeyxx7Rq1SpNnTpVkjRjxgw3mgr4T9ALlJE+apDgA74MWF1dXcrPz088DofD6urqGvCe119/Xa+//rquvvpqXXnllWpqasp2MwF/CnqBMpzBTFxYzpdF7saYIc+FQqEBj0+fPq3W1lbt3LlTnZ2d+rM/+zPt3btXU6ZMGfC+mpoa1dTUSJIOHjyYuUYDfkGBMgD4swcrHA6ro6Mj8bizs1OzZ88e8p4bb7xRY8eO1UUXXaS5c+eqtbV1yPeqqqpSLBZTLBZTXl5extsOWI8CZX+hng4YFV8GrIULF6q1tVVtbW3q6elRXV2dysrKBrzns5/9rH75y19Kkrq7u/X666+ruLjYjeYC/kKBsn9QTweMmi8DVk5OjjZs2KBly5appKRE5eXlKi0t1dq1a9XQ0CBJWrZsmS644ALNmzdPixcv1re//W1dcMEFLrcc8AEKlP2Dejpg1EImWcESkopGo4rFYm43AwCyY8yYeM/VYKFQvPgcSEHQzqG+7MECMAzqaZAK6umAUSNgAUFBPQ1SRT0dMGoELMDPzuyxuuMO6mmQGurpgFEjYAF+NbjHqrc3+ftYnwpnM5oFPxmKBvy50CgAJZ8Blgz1NHBSf7Dv3/f6h6Iler4QKPRgAX41kp4p6mngNJZ2ACQRsAD/Gq5n6rzzqKdB5nCrJEASAQvwr+FmgG3axA10kTks7QBIImAB/sUMMLiBpR0ASQQsBE3QZjeNZgYYkA6CPSCJWYQIEmY3AdlRWcnfFAKPHiwEB7ObAABZQsCyWdCGu9LF7CYAQJYQsGzFfeVSx+wmAECWELBsxXBX6pjdBADIEgKWrRjuSh2zmwD/oEQCHscsQlsVFMSHBZM9j+ExuwmwHzOCYQF6sGzFcBeAoKJEAhYgYNmK4S4AQUWJBCzAEKHNGO4CEESUSMAC9GABAOxCiQQsQMACANiFEglYgCFCAIB9KJGAx9GDBe9inRsAgKXowYI3sc4NAMBi9GDBm1jnBgBgMQIWMiPd4T3WuQEAWIyABef1D+/t3y8Z8+HwXioha7j1bFjnBgBgAQIWnOfE8B7r3AAALEbAgvOcGN5jnRsAgMUIWHCeU8N7lZVSe7vU1xf/SrgC0sPSJ0DWELDgPIb3AO9xojYSwIgRsOA8hvcA72HpEyCrWGgUmcFtLABvYekTIKvowQIwEHU6/sTSJ0BWEbAAfIg6Hf+iNhLIKgIWgA9Rp2O3s/U+UhsJZBU1WAA+RJ2OvUZyg3RqI4GsoQcLwIeo07EXvY+ApxCwAHyIOh170fsIeAoBC8CHqNOxF72PgKcQsAAMxC2K7ETvI+ApBCwA8AN6HwFPYRYhAPgFswQBz6AHCwAAwGEELAAAAIcRsAAAABzm24DV1NSkuXPnKhKJaP369cO+7+mnn1YoFFIsFsti62AVbn4MAEiRLwNWb2+vVq1apcbGRrW0tGjr1q1qaWkZ8r5jx47pkUce0aJFi1xoJazAzY8BAKPgy4C1e/duRSIRFRcXa9y4caqoqFB9ff2Q9/3DP/yDvvKVr+gjH/mIC62EFbj9CABgFHwZsLq6upSfn594HA6H1dXVNeA9zc3N6ujo0Kc//elsNw824fYjAIBR8GXAMsYMeS4UCiX+v6+vT/fee68efvjhc36vmpoaRaNRRaNRHTx40NF24gxerXPi9iMAgFHwZcAKh8Pq6OhIPO7s7NTs2bMTj48dO6a9e/fquuuuU1FRkXbt2qWysrKkhe5VVVWKxWKKxWLKy8vLSvsDx8t1Ttx+BPAGr16EAcPwZcBauHChWltb1dbWpp6eHtXV1amsrCzx+uTJk9Xd3a329na1t7fryiuvVENDg6LRqIutDjAv1zlx+xHAfV6+CAOG4cuAlZOTow0bNmjZsmUqKSlReXm5SktLtXbtWjU0NLjdPAzm9Tonbn4MuMvLF2HAMEImWcESkopGo6yXlQlFRfEr0sEKC+OBBsBQtbXxgHHgQLwmsLrav+F/zJh4z9VgoVD8wgdWCNo51Jc9WLAMdU5AaoI2ZMZkE1iIgAX3UeeEoEm3YDtoQ2ZchMFCOW43AJAUD1MEKgRBf+9Tf0Dq732SRv434PW6Raf1b5egDInCF+jBAoAzZXo5ACd6n4I4ZMZkE1iGgAUA/bJR2+RE7xNDZoDnEbCCjsX7gA9lo7bJid4n6hYBzyNgBVnQZiIB55KN2ianep8YMgM8jYAVZEGbiQScSzZqm+h9AgKBgGUTp4fzgjYTCTiXbNU20fsE+B4ByxaZGM4L4kwk4GzoXQLgEAKWLTIxnMdMJDjBbxMl6F1ynt/2EWAECFi2yMRwHlfrSBcTJeIIEMNjH0FAcbPnFLh6o0puiAwvYr8cujK7FO8J5mIljn0EH+Bmz/AmhvPgRaPtWfVTjw+zcc+OyTQIKAKWLRjOgxeNZqKE34aMCBBnx2QaBBQByyYU38JrRtOz6rceHwLE2dH77m1+6k32GAIWgNEbTc+q33p8CBBnR++7d/mtN9ljKHJPQdAK9ICM8GPRc21tvAfuwIF4z1V1NQEC3pflv8WgnUPpwYI76JYOLj/2+DB8DxsMPu4mC1eSvb3JHkPAQvbRLR1sQRwy4oICbkt23A2Fkr+X+kFHELCQunRPFn4rckbqgtTj4+YFBcEO/ZIdd40ZGrJs7032EAIWUuPEycJvRc7A2bh1QUFPMc403PHVmGD1JmcRAQupceJkwbT2kaH3wR/cuqCgpxhnGu742l/QHoTe5CwjYCE1Tpws/Fjk7DR6H/zDrQsKeopxJo67WUfAQmqcOFkEscg5VfQ+OMMLvYBundgyFey8sE2ROo672WcwYgsWLHC7Ce7bssWY3Fxj4v0q8f9yc+PPwzmh0MBt3P9fKOR2y+zhpX11yxZjCgvjn19hYXbakInf30vbFNYJ2jmUHiykhqug7KBOLX1e6gV0Y9ZkJv5WvbRNR4PeN2QRAQupC9IUe7dQL5E+apDO/beaauCweZtS14gsI2ABXkRPYfroBTy70QQOm7ep7b1vsA4BC/AqegrTQy/g2Y0mcNi8TW3ufYOVCFhIH3UN8CJ6Ac9uNIHD5m1qc+8brETAQnqoa4CX0Qs4vNEGDlu36Wh737iAxCgRsJAe6hoAO9k83Dcao+l94wISaQgZY4zbjbBFNBpVLBZzuxneMmZM/MAzWCgUv8IF4F21tfGLoQMH4j1X1dX29EhlQ1FRPFQN1n97GaQkaOfQHLcbAMsVFCQ/AFHXAHhfZSWB6mwojEcaGCJEeoI2zAAgOCiMRxoIWEiPzbOKAOBsuIBEGhgiRPoYZgDgR/3HNerUMAoELAAAhsMFJEaJIUIAAACHEbAAAAAcRsACAABwGAELAADAYQQsAAAAhxGwAAAAHEbAAgAAcJhvA1ZTU5Pmzp2rSCSi9evXD3n9O9/5jubNm6fLL79c119/vfYnu58eAADAKPgyYPX29mrVqlVqbGxUS0uLtm7dqpaWlgHvmT9/vmKxmH73u99p+fLl+spXvuJSawFYpbZWKiqSxoyJf62tdbtFADzIlwFr9+7dikQiKi4u1rhx41RRUaH6+voB71m8eLFyP7jH1JVXXqnOzk43mgrAJrW1UlWVtH+/ZEz8a1UVIQvAEL4MWF1dXcrPz088DofD6urqGvb9jz/+uD71qU9lo2kAbLZmjXTixMDnTpyIPw8AZ/DlvQiNMUOeC4VCSd+7ZcsWxWIxPf/880lfr6mpUU1NjSTp4MGDzjUSgH0OHEjteQCB5cserHA4rI6OjsTjzs5OzZ49e8j7nnvuOVVXV6uhoUHnn39+0u9VVVWlWCymWCymvLy8jLUZgAUKClJ7PhXUdgG+4suAtXDhQrW2tqqtrU09PT2qq6tTWVnZgPc0Nzfri1/8ohoaGjRjxgyXWpoBHKSBzKmulj6o3UzIzY0/nw5quwDf8WXAysnJ0YYNG7Rs2TKVlJSovLxcpaWlWjTKVcwAAAycSURBVLt2rRoaGiRJf/d3f6fjx4/rL//yL/XHf/zHQwKYlThIA5lVWSnV1EiFhVIoFP9aUxN/Ph3UdgG+EzLJCpaQVDQaVSwWc7sZwysqioeqwQoLpfb2bLfGDrW18ZPYgQPxYZ7q6vRPlkCqxoyJXxQNFgpJfX3Zb0+q+DvCCHj+HOowX/ZgWSETQ3kU4KaGHj94RSZruzKNvyMgKQKWGzJ1QLL5IO0GhmXgFZmq7coG/o6ApAhYbsjUAcnmg7Qb6PGDV2Sqtisb+DsCkiJguSFTBySbD9JuoMcPXlJZGa+V7OuLf7Xl75a/IyApApYbMnlAsvUg7QZ6/ID08XcEJEXAckOyA9LYsdLx46xflU1O9fix9hiCjJ5zICkClhsGH5AuuCD+9dAhZuFkW7o9fiOdsEAIcx7b1DvoOT879tVAYh2sFGRsDQ/Wr7LXSD67/hB25sSG3Fyu8tPBNoUt2FcTgrYOFgErBRnbOWxfZDDIRvLZEaCdxzaFLdhXE4IWsBgi9AJm4dhrJJ8d09idxzaFLdhXA4uA5QXMwrHXSD47ArTz2KawBftqYBGwvIBZOPYayWdne4D2YoGu7dsUwcG+GlwGI7ZgwQK3mwBbbdliTGGhMaFQ/OuWLW63aGS2bDEmN9eYeKVZ/L/cXG+039Ztiszx6j7h1XZlWdDOoRS5pyDrBXrcoR5uo0AXtmC2nudR5A5v4A718AIKdGELbjoNjyFgeRUHC3gBBbqwBRcD8BgClldxsIAXUKALW3AxAI8hYHkVBwt4ATNcYQsuBuAxBCyv4mABr+A+c7ABN2+Hx+S43QAMo/+gwCxCABiZysr0jpGDZyL2Ty7q/95AClimIQVBm2IKAIHCsiQZFbRzKEOEAABITC6CowhYAABITC6CowhYsAfFpwAyiclFcBABC3ZgZXsAmcZMRDiIIvcUBK1Az1MoPgVgA+6JOKygnUPpwYIdKD4FYANuc4YPELBgB4pPAdiAi0F8gIAFO1B8CsAGXAziAwQs2IF74gGwAReD+AABC/bgnnjnxuwlwF1cDOIDBCzAL1jKAkhdJi5KuBiECFiAfzB7CUgNFyXIIAKW3zFkFBzMXgJSw0UJMoiA5WdcnQULs5eA1HBRMhQX5Y4hYPkZV2fBwuwlIDVclAzERbmjCFh+xtVZsDB7CU7IRg+GV3pJuCgZiItyR+W43QBkUEFB8vv3BfXqLAgqKwlUGL3B99Hr78GQnNuvsvEzRqr/561ZE7/wLCiIh6ug/g1xUe4obvacAutuVMlNRwGkIhs3VefG7d6V4c/GunNomhgi9DOGjACkIhs9GPSSeBdDpo4iYPkdC94BGKlsFH1TWO5dXJQ7ioAFAIjLRg8GvSTexkW5YwhYAIC4bPRg0EuCgKDIPQVBK9ADAMApQTuH0oMFAADgMAIWssMrCwsCQDo4lmGECFjIPG6/AJtxQkU/jmVIgW8DVlNTk+bOnatIJKL169cPef3//u//9PnPf16RSESLFi1SOwvcZQ63X4CtOKHiTBzLkAJfBqze3l6tWrVKjY2Namlp0datW9XS0jLgPY8//rimTp2q3//+97r33nv11a9+1aXWBgALC8JWnFBxJo5lSIEvA9bu3bsViURUXFyscePGqaKiQvX19QPeU19frzvuuEOStHz5cu3YsUNMqMwQFhaErTih4kwcy5ACXwasrq4u5efnJx6Hw2F1dXUN+56cnBxNnjxZhw4dymo7A4OFBWErTqg4E8cypMCXAStZT1QoFEr5PZJUU1OjaDSqaDSqgwcPOtfIIGFhQdiKEyrOxLEMKchxuwGZEA6H1dHRkXjc2dmp2bNnJ31POBzW6dOndfToUU2bNm3I96qqqlJVVZWk+CJpGKXKSg5CsE//PrtmTXxYsKAgHq7Yl4OLYxlGyJc9WAsXLlRra6va2trU09Ojuro6lZWVDXhPWVmZNm3aJEl6+umntWTJkqQ9WAACjnuzARgFX/Zg5eTkaMOGDVq2bJl6e3t15513qrS0VGvXrlU0GlVZWZlWrlyp2267TZFIRNOmTVNdXZ3bzQYAAD7BvQhTELT7KAEA4JSgnUN9OUQIAADgJgIWAACAwwhYAAAADiNgAQAAOIyABQAA4DACFgAAgMMIWAAAAA4jYAEAADiMgAUAAOAwAhYAAIDDuFVOCqZPn66ioiJHv+fBgweVl5fn6PcE2zUT2KbOY5tmBtvVeU5s0/b2dnV3dzvUIu8jYLksaPdmyha2q/PYps5jm2YG29V5bNPUMUQIAADgMAIWAACAw8574IEHHnC7EUG3YMECt5vgS2xX57FNncc2zQy2q/PYpqmhBgsAAMBhDBECAAA4jIDloqamJs2dO1eRSETr1693uzlW6ujo0OLFi1VSUqLS0lJ973vfkyS9++67+sQnPqGLL75Yn/jEJ3T48GGXW2qf3t5ezZ8/X5/+9KclSW1tbVq0aJEuvvhiff7zn1dPT4/LLbTPkSNHtHz5cl1yySUqKSnRiy++yL6apn/5l39RaWmpLr30Ut188806efIk++oo3HnnnZoxY4YuvfTSxHPD7ZvGGH3pS19SJBLR5Zdfrj179rjVbE8jYLmkt7dXq1atUmNjo1paWrR161a1tLS43Szr5OTk6OGHH9a+ffu0a9cu/eu//qtaWlq0fv16XX/99WptbdX1119PgB2F733veyopKUk8/upXv6p7771Xra2tmjp1qh5//HEXW2enL3/5y/rkJz+pV199Vb/97W9VUlLCvpqGrq4uPfLII4rFYtq7d696e3tVV1fHvjoKK1asUFNT04Dnhts3Gxsb1draqtbWVtXU1Ojuu+92o8neZ+CKX//612bp0qWJx9/85jfNN7/5TRdb5A9lZWXm5z//ufnYxz5m3nzzTWOMMW+++ab52Mc+5nLL7NLR0WGWLFliduzYYW644QbT19dnLrjgAnPq1CljzND9F+d29OhRU1RUZPr6+gY8z746ep2dnSYcDptDhw6ZU6dOmRtuuME0NTWxr45SW1ubKS0tTTwebt+sqqoyTz75ZNL34UP0YLmkq6tL+fn5icfhcFhdXV0utsh+7e3tam5u1qJFi/Q///M/mjVrliRp1qxZeuedd1xunV1Wr16tb33rWxozJn6IOHTokKZMmaKcnBxJ7K+j8Yc//EF5eXn6q7/6K82fP19f+MIX9P7777OvpmHOnDm6//77VVBQoFmzZmny5MlasGAB+6pDhts3OX+NDAHLJSbJ5M1QKORCS/zh+PHj+tznPqfvfve7mjRpktvNsdqzzz6rGTNmDJiSzf6avtOnT2vPnj26++671dzcrPHjxzMcmKbDhw+rvr5ebW1tevPNN/X++++rsbFxyPvYV53F8WBkCFguCYfD6ujoSDzu7OzU7NmzXWyRvU6dOqXPfe5zqqys1E033SRJuvDCC/XWW29Jkt566y3NmDHDzSZa5Ve/+pUaGhpUVFSkiooK/ed//qdWr16tI0eO6PTp05LYX0cjHA4rHA5r0aJFkqTly5drz5497KtpeO6553TRRRcpLy9PY8eO1U033aRf//rX7KsOGW7f5Pw1MgQslyxcuFCtra1qa2tTT0+P6urqVFZW5nazrGOM0cqVK1VSUqL77rsv8XxZWZk2bdokSdq0aZNuvPFGt5ponYceekidnZ1qb29XXV2dlixZotraWi1evFhPP/20JLbpaMycOVP5+fl67bXXJEk7duzQvHnz2FfTUFBQoF27dunEiRMyxiS2KfuqM4bbN8vKyrR582YZY7Rr1y5Nnjw5MZSIM7hZABZ027ZtMxdffLEpLi4269atc7s5VnrhhReMJHPZZZeZK664wlxxxRVm27Ztpru72yxZssREIhGzZMkSc+jQIbebaqVf/vKX5oYbbjDGGPPGG2+YhQsXmj/6oz8yy5cvNydPnnS5dfZpbm42CxYsMJdddpm58cYbzbvvvsu+mqa1a9eauXPnmtLSUnPrrbeakydPsq+OQkVFhZk5c6bJyckxc+bMMT/60Y+G3Tf7+vrMPffcY4qLi82ll15qXn75ZZdb702s5A4AAOAwhggBAAAcRsACAABwGAELAADAYQQsAAAAhxGwAAAAHEbAAgAAcBgBCwAAwGEELAAAAIcRsAAAABxGwAIAAHAYAQsAAMBhBCwAAACHEbAAAAAcRsACAABwGAELAADAYQQsAAAAhxGwAAAAHEbAAgAAcBgBCwAAwGEELAAAAIcRsAAAABxGwAIAAHAYAQsAAMBhBCwAAACHEbAAAAAcRsACAABwGAELAADAYQQsAAAAh/0/wplVr7hG56kAAAAASUVORK5CYII\u003d style\u003d\u0027width\u003dauto;height:auto\u0027\u003e\u003cdiv\u003e\n\u003cdiv style\u003d\u0027width:auto;height:auto\u0027\u003e\u003cimg src\u003ddata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGQCAYAAAByNR6YAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjIsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy8li6FKAAAgAElEQVR4nO3dbXBcZd3H8d+Gbarpc2mQppuHZlbTJBbburFUcKDVIcLA6mCMSxektrggGUeoiM5EI2IjUQS1DVoXkRa7JijOkEBJtFQLikBYCWJJgQh52kWGxOkjK6bdnvvF2uWOSaHBKznJyffzZnOuc3Xzz74gX8+ejS7LsiwBAADAmAy7BwAAAHAaAgsAAMAwAgsAAMAwAgsAAMAwAgsAAMAwAgsAAMAwAgsAAMAwAgvA/2zPnj3yeDx2jzFq3d3dcrlcOnbsmN2jAHAYAgtwqIKCAr373e/WzJkzdeaZZ2rdunU6cuSI3WP9z1wul2bMmKGZM2dq0aJF2rhxo5LJ5Jh8rxOv4axZszR37lx9+MMf1tatW3X8+PFT+vfbtm3TueeeOyazAZjYCCzAwR544AEdOXJEzzzzjNrb23XLLbfYPZIRf/3rX3XkyBE98sgjuvfee/Xzn/98zL7XAw88oMOHD6unp0df+9rX9N3vflcbNmwYs+8HwBkILGAKOPPMM1VeXq5nnnkmvbZz504tX75cs2fPVm5urm666ab0uRNvnW3fvl15eXlasGCBamtr0+f/9a9/ad26dZo3b55KSkr01FNPDfl++/bt0/nnn6+5c+eqtLRUzc3N6XPr1q3TtddeqwsvvFAzZ87UOeeco1dffVXXXXed5s2bpyVLlqi9vf2Ufi6v16tzzjlnyM918OBBbdiwQQsXLtSiRYv09a9/PX2FK5lM6oYbbtCCBQtUWFionTt3nvJrOGfOHPn9ft17773avn279u7dm/5+n/3sZ5Wdna38/Hxt2rRJx48f1759+3TNNdfo8ccf18yZMzV37lxJ0kMPPaSSkhLNmjVLixYt0ve///1TngHA5EFgAVNALBZTS0uLvF5vem3GjBm65557dODAAe3cuVM/+clPdP/99w/5d3/605/0wgsvaPfu3br55pu1b98+SdK3vvUtvfTSS3rppZf029/+Vtu3b0//m6NHj+qSSy7RBRdcoNdee01btmxRMBjUCy+8kN7zq1/9Sps2bdLAwICmT5+uVatWacWKFRoYGFBFRYU2btx4Sj/X888/rz/+8Y9Dfq4rr7xSbrdbf//739Xe3q7f/e53+tnPfiZJuvPOO/Xggw+qvb1d0WhU991336hfyw996EPyeDz64x//KEn64he/qIMHD+rll1/WI488onvuuUd33323iouLtXXrVq1atUpHjhzRgQMHJEkbNmzQT3/6Ux0+fFh79+7VmjVrRj0DgEnAAuBI+fn51owZM6yZM2dakqw1a9ZY+/fvP+n+L33pS9Z1111nWZZldXV1WZKsvr6+9PmysjKroaHBsizLWrx4sdXS0pI+99Of/tRatGiRZVmW9eijj1rvec97rGQymT4fCASsb37zm5ZlWdaVV15pXXXVVelzmzdvtpYsWZI+fvbZZ605c+acdE5J1qxZs6ysrCxLkhUIBKw33njDsizLevXVV63MzEwrkUik9//yl7+0zj//fMuyLGv16tXWT37yk/S53/72t5Yk6+jRoyN+r/z8fGvXrl3D1leuXGlt2rTJOnbsmJWZmWk999xz6XNbt261zjvvPMuyLOvuu++2zjnnnCH/Njc319q6dat18ODBk/6MACY/rmABDnb//ffr8OHD2rNnj55//nkNDAykzz355JNavXq1srOzNWfOHG3dunXIeSn11uIJWVlZ6ZvkX3nlFeXm5qbP5efnp78+cS4jI2PI+Xg8nj5+z3vek/763e9+97Djt7sZ/+mnn9aRI0d077336sknn9Trr78uSerp6dHRo0e1cOFCzZ07V3PnztXVV1+t11577W3nHo14PK758+drYGBAg4ODQ57nv3/W//ab3/xGDz30kPLz83Xeeefp8ccff0czAJjYCCxgCjjvvPO0bt063XDDDem1tWvXyu/3q6+vTwcPHtQ111wjy7JO6fkWLlyovr6+9HFvb2/665ycHPX19Q35pF1vb68WLVpk4Cd5k8vlUmVlpVatWqWbb75ZkpSbm6vp06drYGBABw4c0IEDB3To0CE999xzbzv3qXrqqacUj8d17rnnasGCBZo2bZp6enqGPOeJn9Xlcg3792VlZWpqatJrr72mT37yk6qsrBz1DAAmPgILmCKuu+467dq1K31D+OHDhzV//ny9613vUltbm375y1+e8nNVVlbqlltu0f79+xWLxbRly5b0uZUrV2rGjBn63ve+p6NHj2rPnj164IEHFAgEjP9MkvS1r31N4XBYr776qhYuXKgLLrhAX/7yl3Xo0CEdP35cL730kh555JH03Js3b1YsFtP+/ftVV1d3yt/n0KFDevDBBxUIBHT55Zdr6dKlOu2001RZWanq6ur0Jw1vv/12XX755ZJSV+pisZgGBwclSYODg4pEIjp48KCmTZum2bNn67TTTjP/ogCwHYEFTBHZ2dn67Gc/q29/+9uSpB//+MeqqanRrFmzdPPNN4/qSso3v/lN5efna/Hixbrgggt0xRVXpM9lZmaqublZLS0tWrBgga699lrdc889WrJkifGfSZKWLl2q8847T7feeqsk6Z577tHg4KBKSko0b948VVRU6B//+Ick6fOf/7zKy8v1gQ98QCtWrNCll176ts9/ySWXaNasWcrNzVVtba02btyou+++O31+y5YtmjFjhgoLC3Xuuedq7dq1Wr9+vSRpzZo1Ki0t1ZlnnqkFCxZIkn7xi1+ooKBAs2fP1tatW7Vjxw7TLwmACcBlnep7AgAAADglXMECAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwjMACAAAwzG33AJPJggULVFBQYPcYAABMOt3d3RoYGLB7jHFDYI1CQUGBotGo3WMAADDp+Hw+u0cYV7xFCAAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAYBiBBQAAUiIRqaBAyshIPUYidk80abntHgAAAEwAkYgUCkmJROq4pyd1LEnBoH1zTVKOvYLV2tqqoqIieb1e1dXVDTvf29ur1atXa/ny5TrrrLP00EMP2TAlAAATRHX1m3F1QiKRWseoOTKwksmkqqqq1NLSoo6ODjU0NKijo2PInk2bNqmyslLt7e1qbGzUtddea9O0AABMAL29o1vHW3JkYLW1tcnr9aqwsFCZmZkKBAJqamoa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\u003d\u003d style\u003d\u0027width\u003dauto;height:auto\u0027\u003e\u003cdiv\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1603019256",
+      "id": "20220309-220907_1572697647",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:10:08+0000",
+      "dateFinished": "2022-03-09T23:10:08+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-03-09T23:10:08+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1646863747621_1018331631",
+      "id": "20220309-220907_1903938656",
+      "dateCreated": "2020-02-19T23:52:34+0000",
+      "dateStarted": "2022-03-09T23:10:09+0000",
+      "dateFinished": "2022-03-09T23:10:09+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4Py -4- Embedded Python Execution",
+  "id": "107973",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:OMLUSER-107973": []
+  },
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4Py -4- Embedded Python Execution"
+}
