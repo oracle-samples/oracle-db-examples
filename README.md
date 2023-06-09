@@ -12,11 +12,12 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [javascript](./javascript) | JavaScript based examples |
 | [machine-learning](./machine-learning) | Oracle Machine Learning examples |
 | [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
-| [plsql](./plsql) | PL/SQL based examples |
+| [plsql](./plsql) | PL/SQL examples |
 | [python](./python) | Python based examples |
 | [ruby](./ruby) | Ruby based examples |
-| [spatial](./spatial) | Spatial examples |
-| [sql](./sql) | SQL based examples |
+| [security](./security) | Security features examples |
+| [spatial](./spatial) | Spatial features examples |
+| [sql](./sql) | SQL examples |
 | [sqldeveloper](./sqldeveloper) | [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) examples |
 
 ## Documentation
