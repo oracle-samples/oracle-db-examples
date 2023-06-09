@@ -30,6 +30,14 @@ LiveSQL is also an excellent resource for getting started with Oracle Database.
 ## Dev Gym
 If you would like to challenge yourself, you can take quizzes, workouts and classes at [DevGym.oracle.com](https://devgym.oracle.com).
 
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
+
 ## License
 
 You may not use the identified files except in compliance with the

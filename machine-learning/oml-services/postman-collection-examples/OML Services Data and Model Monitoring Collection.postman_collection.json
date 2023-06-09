@@ -1,0 +1,519 @@
+{
+	"info": {
+		"_postman_id": "3697ab4c-2997-41d2-a7bb-81d8dd9ed682",
+		"name": "OML Services Data and Model Monitoring Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11705967"
+	},
+	"item": [
+		{
+			"name": "OML Token Acquisition",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);",
+							"pm.environment.set(\"token\", res.accessToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"maxRedirects": 150
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"grant_type\":\"password\",\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{omlserver}}/omlusers/api/oauth2/v1/token",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlusers",
+						"api",
+						"oauth2",
+						"v1",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Submitted Jobs",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Available models",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlserver}}/omlmod/v1/models/",
+					"host": [
+						"{{omlserver}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"models",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Model Monitoring job",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"mmjobID\", res.jobId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jobSchedule\": {\n        \"repeatInterval\": \"FREQ=DAILY\",\n        \"maxRuns\": \"10\"\n    },\n    \"jobProperties\": {\n        \"jobName\": \"MY_MODEL_MONITOR\",\n        \"jobType\": \"MODEL_MONITORING\",\n        \"jobServiceLevel\": \"LOW\",\n        \"outputData\": \"Global_Active_Power_Monitor\",\n        \"jobDescription\": \"Job to monitor model performance\",\n        \"baselineData\": \"HOUSEHOLD_POWER_BASE\",\n        \"newData\": \"HOUSEHOLD_POWER_NEW\",\n        \"frequency\": \"Year\",\n        \"threshold\": 0.15,\n        \"timeColumn\": \"DATES\",\n        \"caseidColumn\": null,\n        \"performanceMetric\": \"MEAN_SQUARED_ERROR\",\n        \"modelList\": [\"0bf13d1f-86a6-465d-93d1-8985afd1bbdb\"],\n        \"recompute\": false\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Model  Monitoring Job Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{mmjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{mmjobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Model Monitor Job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"updateProperties\": {\n    \"threshold\": 0.1,\n    \"recompute\": true\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{mmjobID}}/",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{mmjobID}}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "OML Create Data Monitoring Job",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"dmjobID\", res.jobId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jobSchedule\": {\n        \"repeatInterval\": \"FREQ=DAILY\",\n        \"maxRuns\": \"10\"\n    },\n    \"jobProperties\": {\n        \"jobName\": \"HouseholdPowerDataMonitoring\",\n        \"jobType\": \"DATA_MONITORING\",\n        \"jobServiceLevel\": \"LOW\",\n        \"inputSchemaName\": \"OMLUSER\",\n        \"outputSchemaName\": \"OMLUSER\",\n        \"outputData\": \"OUTPUT_TBLE_NAME\",\n        \"jobDescription\": \"Job to monitor data\",\n        \"baselineData\": \"HOUSEHOLD_POWER_BASE\",\n        \"newData\": \"HOUSEHOLD_POWER_NEW\",\n        \"timeColumn\": \"DATES\",\n        \"frequency\": \"Year\",\n        \"threshold\": 0.75,\n        \"featureList\": [\"GLOBAL_ACTIVE_POWER\",\n                       \"GLOBAL_REACTIVE_POWER\",\n                       \"VOLTAGE\",\n                       \"SUB_METERING_1\",\n                       \"SUB_METERING_2\",\n                       \"SUB_METERING_3\"],\n        \"recompute\": false\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Data Monitoring Job Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{dmjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{dmjobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Data Monitoring Job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"updateProperties\": {\n    \"threshold\": 0.80,\n    \"recompute\": true,\n    \"featureList\": [\"GLOBAL_ACTIVE_POWER\", \n                    \"GLOBAL_REACTIVE_POWER\", \n                    \"VOLTAGE\"]\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{dmjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{dmjobID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Peform an Action on a Monitoring Job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"action\": \"RUN\",\n  \"force\": \"false\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{dmjobID}}/action",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{dmjobID}}",
+						"action"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Monitoring Job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{dmjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{dmjobID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Batch Scoring Job Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{omlservice}}/omlmod/v1/jobs/{{regjobID}}",
+					"host": [
+						"{{omlservice}}"
+					],
+					"path": [
+						"omlmod",
+						"v1",
+						"jobs",
+						"{{regjobID}}"
+					]
+				},
+				"description": "List all the models currently managed by this OML Mod Service"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "modelMonitorJobID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "dataMonitorJobID",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

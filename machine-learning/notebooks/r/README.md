@@ -23,6 +23,6 @@ The specific denomination "OfficeHours_" in the name of the file indicates that 
 
 See [Oracle Machine Learning Notebooks - Get Started](https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/) for more information.
 
-#### Copyright (c) 2022 Oracle Corporation and/or its affilitiates.
+#### Copyright (c) 2023 Oracle Corporation and/or its affilitiates.
 
 ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
