@@ -19,7 +19,7 @@ The specific denomination "21c or 23c" in the name of the file means that the al
 
  See [Oracle Machine Learning Notebooks - Get Started](https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/) for more information.
 
-Last updated on: April 2023
+Last updated on: June 2023
 
 #### Copyright (c) 2023 Oracle Corporation and/or its affilitiates.
 
