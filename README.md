@@ -3,20 +3,21 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 
 | Repo/Folder name  | Description |
 | ------------- | ------------- |
-| [C](./C) | C based examples |
+| [C](./C) | C examples |
 | [apex](./apex) | APEX examples |
 | [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
 | [dotnet](https://github.com/oracle/dotnet-db-samples) | .NET based examples |
 | [exadata](./exadata) | Exadata examples |
-| [java](./java)  | Java based examples |
-| [javascript](./javascript) | JavaScript based examples |
+| [java](./java)  | Java examples |
+| [javascript](./javascript) | JavaScript examples |
 | [machine-learning](./machine-learning) | Oracle Machine Learning examples |
 | [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
-| [plsql](./plsql) | PL/SQL based examples |
-| [python](./python) | Python based examples |
-| [ruby](./ruby) | Ruby based examples |
-| [spatial](./spatial) | Spatial examples |
-| [sql](./sql) | SQL based examples |
+| [plsql](./plsql) | PL/SQL examples |
+| [python](./python) | Python examples |
+| [ruby](./ruby) | Ruby examples |
+| [security](./security) | Security features examples |
+| [spatial](./spatial) | Spatial features examples |
+| [sql](./sql) | SQL examples |
 | [sqldeveloper](./sqldeveloper) | [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) examples |
 
 ## Documentation
