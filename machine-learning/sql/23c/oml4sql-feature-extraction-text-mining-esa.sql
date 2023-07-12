@@ -11,21 +11,32 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
+--                            Prerequisites
+-----------------------------------------------------------------------
+
+-- Install the Wiki ESA model
+--   https://oss.oracle.com/machine-learning/
+-- Run the dmsh.sql script 
+--   https://github.com/oracle-samples/oracle-db-examples/blob/main/machine-learning/sql/23c/dmsh.sql
+
+-----------------------------------------------------------------------
 --                            EXAMPLES IN THIS SCRIPT
 -----------------------------------------------------------------------
--- Create an ESA model with CREATE_MODEL
+-- Create an ESA model with CREATE_MODEL PL/SQL procedure, which uses a
+-- separate settings table as input. 
 
 -- Walk thorugh 3 ESA use cases with the model
 
--- Create an ESA model with CREATE_MODEL2
+-- Create an ESA model with CREATE_MODEL2, which provides settings
+-- as part of the procedure. 
 
 -- (23c Feature) Create an ESA model with dense projections, which is  
 -- similar to a doc2vec approach, by specifying the ESAS_EMBEDDINGS 
--- parameter asESAS_EMBEDDINGS_ENABLED.
+-- parameter as ESAS_EMBEDDINGS_ENABLED.
 
 -- (23c Feature) Use the dense projection scoring results to create a  
 -- clustering model. You can use such projections to improve the quality  
--- of, e.g., classificationand clustering models - a common use case 
+-- of, e.g., classification and clustering models - a common use case 
 -- for dense projections.
 -----------------------------------------------------------------------
 
@@ -76,19 +87,11 @@ EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 
 -- Create a build data view with case ID and text column
-CREATE OR REPLACE VIEW mining_build_text_only AS
-  SELECT min(cust_id) cust_id, comments
+CREATE OR REPLACE VIEW mining_build_text_parallel AS
+  SELECT /*+ parallel (4)*/ min(cust_id) as cust_id, comments
   FROM   mining_build_text
   WHERE  length(comments) >= 70
   GROUP BY comments;
-
---------------------------------------------------------------------------------
---
--- Create view mining_build_text_parallel with a parallel hint
---
---------------------------------------------------------------------------------
-CREATE or REPLACE VIEW mining_build_text_parallel AS
-SELECT /*+ parallel (4)*/ * FROM mining_build_text_only;
 
 -- Create settings table to choose text policy and auto data prep
 CREATE TABLE ESA_text_sample_settings (
@@ -126,8 +129,8 @@ DECLARE
 BEGIN
   dbms_data_mining_transform.SET_TRANSFORM(
     xformlist, 'comments', null, 'comments', 'comments',
-      'TEXT(POLICY_NAME:DMDEMO_ESA_POLICY)(TOKEN_TYPE:STEM)');
--- 'TEXT(POLICY_NAME:DMDEMO_ESA_POLICY)(TOKEN_TYPE:THEME)');
+     -- 'TEXT(POLICY_NAME:DMDEMO_ESA_POLICY)(TOKEN_TYPE:STEM)');
+    'TEXT(POLICY_NAME:DMDEMO_ESA_POLICY)(TOKEN_TYPE:THEME)');
 
   DBMS_DATA_MINING.CREATE_MODEL(
     model_name          => 'ESA_text_sample',
@@ -177,14 +180,13 @@ ORDER BY view_name;
 --                               APPLY THE MODEL
 -----------------------------------------------------------------------
 --
--- Unlike other feature extraction functions, the Explicit Semantic Analysis
--- does not discover new features. It treats the rows of the training data
--- as pre-defined features. Test data are expressed via these pre-defined
--- features as a basis.
+-- Unlike other feature extraction functions, ESA does not discover new features. 
+-- It treats the rows of the training data as predefined features. 
+-- Test data are expressed via these pre-defined features as a basis.
 --
 
 -------------------------------------------------
--- SCORE NEW DATA USING SQL DATA MINING FUNCTIONS
+-- SCORE NEW DATA USING SQL FUNCTIONS
 --
 ------------------
 -- BUSINESS CASE 1
@@ -194,25 +196,25 @@ ORDER BY view_name;
 column value format 9.99999
 column comments format a200
 
-SELECT s.value, m.comments
-FROM
-  (SELECT feature_set(ESA_TEXT_SAMPLE, 5 using *) fset
-   FROM (SELECT 'card discount' AS comments FROM dual)) t,
-TABLE(t.fset) s, mining_build_text_parallel m
-WHERE s.feature_id = m.cust_id
-ORDER BY s.value desc;
+SELECT cust_id, 
+       1-feature_compare(ESA_TEXT_SAMPLE 
+                         using 'card discount' comments AND
+                         using comments) similarity,
+       comments 
+FROM   mining_build_text_parallel
+ORDER BY similarity desc;
 
--- One more similar example
-SELECT s.value, m.comments
-FROM
-  (SELECT feature_set(ESA_TEXT_SAMPLE, 5 using *) fset
-   FROM (SELECT 'computer manual' AS comments FROM dual)) t,
-TABLE(t.fset) s, mining_build_text_parallel m
-WHERE s.feature_id = m.cust_id
-ORDER BY s.value desc;
+-- Another similar example
+SELECT cust_id, 
+       1-feature_compare(ESA_TEXT_SAMPLE 
+                         using 'computer manual' comments AND
+                         using comments) similarity,
+       comments 
+FROM mining_build_text_parallel
+ORDER BY similarity DESC
 
--- Yet another example with longer text
--- The input is the following comments
+-- Another example with longer text
+-- The input is the following comment
 
 SELECT comments
 FROM   mining_test_text_parallel
@@ -220,12 +222,12 @@ WHERE  cust_id = 103030;
 
 -- the most relevant comments from build data
 SELECT s.value, m.comments
-FROM
-  (SELECT feature_set(ESA_TEXT_SAMPLE, 5 using *) fset
-   FROM (SELECT comments FROM mining_test_text_parallel
-   WHERE cust_id = 103030)) t,
-TABLE(t.fset) s, mining_build_text_parallel m
-WHERE s.feature_id = m.cust_id
+FROM   (SELECT feature_set(ESA_TEXT_SAMPLE, 5 using *) fset
+        FROM (SELECT comments FROM mining_test_text_parallel
+              WHERE cust_id = 103030)) t,
+       TABLE(t.fset) s, 
+       mining_build_text_parallel m
+WHERE  s.feature_id = m.cust_id
 ORDER BY s.value desc;
 
 ------------------
@@ -237,7 +239,9 @@ column coefficient format 9.99999
 column attribute_subname format a30
 
 -- comments for cust_id=101613
-SELECT comments FROM mining_build_text_parallel WHERE cust_id = 101613;
+SELECT comments 
+FROM   mining_build_text_parallel 
+WHERE  cust_id = 101613;
 
 -- attributes representing the comments in the model
 SELECT attribute_subname, coefficient
@@ -250,16 +254,13 @@ ORDER BY coefficient desc;
 -- Compare customer comments using the model
 --
 -- create a test data view with case ID and text column
-
 CREATE OR REPLACE VIEW mining_test_text_only AS
-SELECT min(cust_id) cust_id, comments 
+SELECT cust_id, comments 
 FROM   mining_test_text_parallel
-WHERE  cust_id < 103005 
-GROUP BY comments;
+WHERE  cust_id < 103005;
 
 column comments format a50
 -- test data
-
 SELECT cust_id, comments
 FROM mining_test_text_only
 ORDER BY cust_id;
@@ -270,7 +271,7 @@ ORDER BY cust_id;
 column comp format 9.99999
 
 SELECT a.cust_id id1, b.cust_id id2,
-   feature_compare(ESA_TEXT_SAMPLE using a.comments and using b.comments) comp
+       feature_compare(ESA_TEXT_SAMPLE using a.comments and using b.comments) comp
 FROM  mining_test_text_only a, mining_test_text_only b
 WHERE a.cust_id < b.cust_id
 ORDER BY comp;
@@ -290,8 +291,7 @@ EXCEPTION WHEN OTHERS THEN NULL; END;
 
 DECLARE
   xformlist dbms_data_mining_transform.TRANSFORM_LIST;
-
-  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+  v_setlst  DBMS_DATA_MINING.SETTING_LIST;
 
 BEGIN
   v_setlst('PREP_AUTO')               := 'ON';
@@ -314,18 +314,17 @@ BEGIN
 END;
 /
 
-------------------
--- Score the model
+-------------------------
+-- Score using the model
 
 column value format 9.99999
 column comments format a200
 
-SELECT s.value, m.comments
-FROM
-  (SELECT feature_set(ESA_TEXT_SAMPLE2, 5 using *) fset
-   FROM (SELECT 'card discount' AS comments FROM dual)) t,
-  TABLE(t.fset) s, mining_build_text_parallel m
-WHERE s.feature_id = m.cust_id
+SELECT s.feature_id, s.value 
+FROM 
+  (SELECT cust_id, comments, feature_set(ESA_TEXT_SAMPLE2, 5 using comments) fset 
+   FROM   mining_build_text_parallel) t,
+          TABLE(t.fset) s
 ORDER BY s.value desc;
 
 
@@ -334,16 +333,15 @@ ORDER BY s.value desc;
 -----------------------------------------------------------------------
 -- Create another model with CREATE_MODEL2, this time specifying the
 -- ESAS_EMBEDDINGS parameter and setting it to ESAS_EMBEDDINGS_ENABLE.
--- Doing so means that scoring this model will produce dense projctions with
--- embedding, similar to a doc2vec approach.
+-- Doing so means that scoring this model will produce dense projections with
+-- embeddings, similar to a doc2vec approach.
 
 BEGIN DBMS_DATA_MINING.DROP_MODEL('ESA_text_sample_dense');
 EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 DECLARE
   xformlist dbms_data_mining_transform.TRANSFORM_LIST;
-
-  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+  v_setlst  DBMS_DATA_MINING.SETTING_LIST;
 
 BEGIN
   v_setlst('PREP_AUTO')               := 'ON';
@@ -361,7 +359,7 @@ BEGIN
   DBMS_DATA_MINING.CREATE_MODEL2(
     model_name          => 'ESA_text_sample_dense',
     mining_function     => 'FEATURE_EXTRACTION',
-    data_query          => 'SELECT * FROM mining_build_text',
+    data_query          => 'SELECT * FROM mining_build_text_parallel',
     case_id_column_name => 'cust_id',
     set_list            => v_setlst,
     xform_list          => xformlist);
@@ -416,11 +414,11 @@ column value format 9.99999
 column comments format a200
 
 CREATE TABLE esa_dense_results AS
-SELECT s.feature_id, s.value, m.comments AS predicted_comment, m.cust_id AS id
-FROM
-  (SELECT feature_set(ESA_TEXT_SAMPLE_DENSE, 1 using *) fset
-   FROM (SELECT 'card discount' AS comments FROM dual)) t,
-  TABLE(t.fset) s, mining_build_text_parallel m;
+SELECT cust_id, s.feature_id, s.value, comments 
+FROM   (SELECT cust_id, comments,
+               feature_set(ESA_TEXT_SAMPLE_DENSE using comments) fset 
+        FROM   mining_build_text_parallel) t,
+       TABLE(t.fset) s;
 
 -----------------------------------------------------------------------
 --              PASS PROJECTIONS INTO CLUSTERING MODEL
@@ -432,22 +430,18 @@ FROM
 -- Here we create a clustering model using the dense projections.
 
 -------------------------
--- Add dense projections to the origional dataset.
+-- Prepare ESA dense results to create clustering model
 --
 
-BEGIN EXECUTE IMMEDIATE 'DROP TABLE esa_dense_results_parallel';
-EXCEPTION WHEN OTHERS THEN NULL; END;
-/
-CREATE TABLE esa_dense_results_parallel AS
-  SELECT *
-  FROM esa_dense_results RIGHT OUTER JOIN mining_build_text
-      ON esa_dense_results.id = mining_build_text.cust_id;
-/
-DELETE FROM esa_dense_results_parallel
-WHERE feature_id is null;
+CREATE OR REPLACE VIEW esa_dense_results_v AS
+  SELECT cust_id, 
+         comments,
+         CAST(COLLECT(dm_nested_numerical(feature_id, value))
+            AS dm_nested_numericals) AS nest
+  FROM esa_dense_results
+  GROUP BY cust_id, comments;
 
-COMMIT;
--------------------------
+---------------------------
 -- CREATE CLUSTERING MODEL
 -- Use the table augmented with the dense projection to create a
 -- clustering model
@@ -457,9 +451,8 @@ EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 
 DECLARE
-  xformlist dbms_data_mining_transform.TRANSFORM_LIST;
-
-  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+  xformlist DBMS_DATA_MINING_TRANSFORM.TRANSFORM_LIST;
+  v_setlst  DBMS_DATA_MINING.SETTING_LIST;
 
 BEGIN
   v_setlst('PREP_AUTO')    := 'ON';
@@ -467,9 +460,9 @@ BEGIN
   v_setlst('KMNS_DETAILS') := 'KMNS_DETAILS_HIERARCHY';
 
   DBMS_DATA_MINING.CREATE_MODEL2(
-    model_name          => 'clustering_example',
+    model_name          => 'CLUSTERING_EXAMPLE',
     mining_function     => 'CLUSTERING',
-    data_query          => 'SELECT * FROM esa_dense_results_parallel',
+    data_query          => 'SELECT * FROM esa_dense_results_v',
     case_id_column_name => 'cust_id',
     set_list =>v_setlst);
 END;
@@ -498,16 +491,18 @@ ORDER BY view_name;
 -- CLUSTERS
 -- For each cluster_id, provide the number of records in the cluster,
 -- the parent cluster id, the level in the hierarchy, and dispersion,
--- which is a measure of the quality of the cluster, and computationally,
+-- which is a measure of individual cluster quality, and computationally,
 -- the sum of square errors.
--- Since centroid, histogram, and rule details are not being requested
--- here, specify 0,0,0 as arguments to the table function to reduce
--- the amount of work it needs to perform when fetching details.
 --
-SELECT cluster_id clu_id, record_count rec_cnt, parent, tree_level,
-       ROUND(TO_NUMBER(dispersion),4) dispersion
+SELECT cluster_id CLU_ID, RECORD_COUNT REC_CNT, parent, TREE_LEVEL,
+       ROUND(TO_NUMBER(dispersion),3) dispersion
 FROM   DM$VDCLUSTERING_EXAMPLE
-ORDER BY cluster_id;
+ORDER BY CLUSTER_ID;
+
+SELECT CLUSTER_ID CLU_ID, RECORD_COUNT REC_CNT, ROUND(TO_NUMBER(dispersion),3) DISPERSION
+FROM   DM$VDCLUSTERING_EXAMPLE
+WHERE  LEFT_CHILD_ID IS NULL AND RIGHT_CHILD_ID IS NULL
+ORDER BY CLUSTER_ID;
 
 -----------------------------------------------------------------------
 --   End of script
