@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------
 --                            SAMPLE PROBLEM
 -----------------------------------------------------------------------
--- Create a ESM Time Series Model with Automated Model Search, which is
+-- Create an ESM Time Series Model with Automated Model Search, which is
 --   also the default behavior when no ESM model type is specified
 
 -----------------------------------------------------------------------
@@ -45,12 +45,9 @@ EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 DECLARE
     v_setlst DBMS_DATA_MINING.SETTING_LIST;
-BEGIN
-    
+BEGIN 
     v_setlst('ALGO_NAME')            := 'ALGO_EXPONENTIAL_SMOOTHING';
-    v_setlst('EXSM_INTERVAL')        := 'EXSM_INTERVAL_QTR'; 
-    v_setlst('EXSM_PREDICTION_STEP') := '4';                  
-    v_setlst('EMCS_MODEL_SEARCH')    := 'ENABLE';
+    v_setlst('EXSM_INTERVAL')       := 'EXSM_INTERVAL_DAY';
 
     DBMS_DATA_MINING.CREATE_MODEL2(
         MODEL_NAME          => 'ESM_SALES_FORECAST_1',
