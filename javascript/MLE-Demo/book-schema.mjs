@@ -15,8 +15,7 @@ import {
   const conn = oracledb.defaultConnection();
   conn.execute(`
   begin
-     utl_http.set_wallet('file:/home/smuench/apex/trunk/internal_utilities/dev/vagrant-devbox/scripts/CAcertBundle');
-     utl_http.set_proxy('www-proxy-brmdc.us.oracle.com:80','oraclecorp.com');
+     utl_http.set_wallet('file:/<absolute-path-to-your-wallet-directory>');
   end;
   `);
   
