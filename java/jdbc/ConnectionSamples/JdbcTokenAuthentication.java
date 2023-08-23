@@ -158,6 +158,12 @@ public class JdbcTokenAuthentication {
    */
   private static String requestToken(PublicKey publicKey) {
 
+    // Instance principal and resource principal authentication are also supported, and may be used
+    // as shown below.
+    // authentication = new InstancePrincipalAuthenticationDetailsProvider();
+    // authentication = new ResourcePrincipalAuthenticationDetailsProvider();
+
+    // In this code sample, authentication is shown using a config file. 
     // Read the configuration identified by the OCI_PROFILE
     final AuthenticationDetailsProvider authentication;
     try {
