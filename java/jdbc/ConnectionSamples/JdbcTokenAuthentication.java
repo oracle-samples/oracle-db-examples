@@ -157,17 +157,18 @@ public class JdbcTokenAuthentication {
    * @return Base 64 encoding of a JWT access token
    */
   private static String requestToken(PublicKey publicKey) {
-
-    // Instance principal and resource principal authentication are also supported, and may be used
-    // as shown below.
-    // authentication = new InstancePrincipalAuthenticationDetailsProvider();
-    // authentication = new ResourcePrincipalAuthenticationDetailsProvider();
-
-    // In this code sample, authentication is shown using a config file. 
-    // Read the configuration identified by the OCI_PROFILE
+  
     final AuthenticationDetailsProvider authentication;
+    
+    // Instance principal and resource principal authentication are also supported, and 
+    // can be used as shown below. 
+    // authentication = new InstancePrincipalAuthenticationDetailsProvider.builder().build();
+    // authentication = new ResourcePrincipalAuthenticationDetailsProvider.builder().build();
+     
     try {
-      authentication = new ConfigFileAuthenticationDetailsProvider(OCI_PROFILE);
+      // In this code sample, authentication is shown using a config file. 
+      // Read the configuration identified by the OCI_PROFILE
+       authentication = new ConfigFileAuthenticationDetailsProvider(OCI_PROFILE);
     }
     catch (IOException ioException) {
       // Not recovering if the profile can not be read
