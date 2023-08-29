@@ -43,6 +43,9 @@
  */
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
+import com.oracle.bmc.auth.AbstractAuthenticationDetailsProvider;
+import com.oracle.bmc.auth.InstancePrincipalsAuthenticationDetailsProvider;
+import com.oracle.bmc.auth.ResourcePrincipalAuthenticationDetailsProvider;
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
 import com.oracle.bmc.identitydataplane.DataplaneClient;
 import com.oracle.bmc.identitydataplane.model.GenerateScopedAccessTokenDetails;
