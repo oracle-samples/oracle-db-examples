@@ -158,7 +158,7 @@ public class JdbcTokenAuthentication {
    */
   private static String requestToken(PublicKey publicKey) {
   
-    final AuthenticationDetailsProvider authentication;
+    final AbstractAuthenticationDetailsProvider authentication;
     
     // Instance principal and resource principal authentication are also supported, and 
     // can be used as shown below. 
