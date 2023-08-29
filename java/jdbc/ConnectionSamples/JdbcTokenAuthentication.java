@@ -165,7 +165,7 @@ public class JdbcTokenAuthentication {
     
     // Instance principal and resource principal authentication are also supported, and 
     // can be used as shown below. 
-    // authentication = InstancePrincipalAuthenticationDetailsProvider.builder().build();
+    // authentication = InstancePrincipalsAuthenticationDetailsProvider.builder().build();
     // authentication = ResourcePrincipalAuthenticationDetailsProvider.builder().build();
      
     try {
@@ -206,7 +206,7 @@ public class JdbcTokenAuthentication {
         .build();
 
     // Request an access token using a DataplaneClient
-    try (DataplaneClient client = DataplaneClient.builder().build(authentication))) {
+    try (DataplaneClient client = DataplaneClient.builder().build(authentication)) {
       return client.generateScopedAccessToken(
         GenerateScopedAccessTokenRequest.builder()
           .generateScopedAccessTokenDetails(tokenDetails)
