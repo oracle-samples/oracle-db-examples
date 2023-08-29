@@ -182,8 +182,17 @@ public class JdbcTokenAuthentication {
 
     // This scope uses the * character to identify all databases in the cloud
     // tenancy of the authenticated user. The * could be replaced with the OCID
-    // of a compartment, or of a particular database within a compartment
+    // of a compartment, or of a particular database within a compartment. 
+    // Refer to the examples below. 
     String scope = "urn:oracle:db::id::*";
+
+    // A scope that authorizes access to all databases within a compartment has
+    // the form: urn:oracle:db::id::<compartment-ocid>
+    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxxxx
+
+    // A scope that authorizes access to a single database within a compartment
+    // has the form: urn:oracle:db::id::<compartment-ocid>::<database-ocid>
+    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxx::ocid1.autonomousdatabase.oc1.phx.xxxxxx
 
     // Create a GenerateScopedAccessTokenDetails object with the public key
     // and the scope
