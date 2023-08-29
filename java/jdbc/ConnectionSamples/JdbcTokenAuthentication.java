@@ -165,8 +165,8 @@ public class JdbcTokenAuthentication {
     
     // Instance principal and resource principal authentication are also supported, and 
     // can be used as shown below. 
-    // authentication = new InstancePrincipalAuthenticationDetailsProvider.builder().build();
-    // authentication = new ResourcePrincipalAuthenticationDetailsProvider.builder().build();
+    // authentication = InstancePrincipalAuthenticationDetailsProvider.builder().build();
+    // authentication = ResourcePrincipalAuthenticationDetailsProvider.builder().build();
      
     try {
       // In this code sample, authentication is shown using a config file. 
@@ -191,11 +191,11 @@ public class JdbcTokenAuthentication {
 
     // A scope that authorizes access to all databases within a compartment has
     // the form: urn:oracle:db::id::<compartment-ocid>
-    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxxxx
+    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxxxx"
 
     // A scope that authorizes access to a single database within a compartment
     // has the form: urn:oracle:db::id::<compartment-ocid>::<database-ocid>
-    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxx::ocid1.autonomousdatabase.oc1.phx.xxxxxx
+    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxx::ocid1.autonomousdatabase.oc1.phx.xxxxxx"
 
     // Create a GenerateScopedAccessTokenDetails object with the public key
     // and the scope
@@ -206,7 +206,7 @@ public class JdbcTokenAuthentication {
         .build();
 
     // Request an access token using a DataplaneClient
-    try (DataplaneClient client = new DataplaneClient(authentication)) {
+    try (DataplaneClient client = DataplaneClient.builder().build(authentication))) {
       return client.generateScopedAccessToken(
         GenerateScopedAccessTokenRequest.builder()
           .generateScopedAccessTokenDetails(tokenDetails)
