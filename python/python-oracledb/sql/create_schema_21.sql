@@ -28,9 +28,6 @@
  * Creates a table with the 21c JSON datatype
  *---------------------------------------------------------------------------*/
 
-drop table &main_user..CustomersAsJson purge
-/
-  
 create table &main_user..CustomersAsJson (
     id number(9) not null primary key,
     json_data json
