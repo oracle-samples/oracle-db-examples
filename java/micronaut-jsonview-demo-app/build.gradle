@@ -1,0 +1,51 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id "io.micronaut.application" version "4.0.2"
+    id "io.micronaut.test-resources" version "4.0.2"    
+}
+
+version = "0.1"
+group = "com.example.micronaut"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor "io.micronaut.data:micronaut-data-processor"
+    annotationProcessor "io.micronaut:micronaut-http-validation"
+    implementation "io.micronaut:micronaut-http-client"
+    implementation "io.micronaut.data:micronaut-data-jdbc"
+    implementation "io.micronaut.validation:micronaut-validation"
+    implementation "io.micronaut.serde:micronaut-serde-oracle-jdbc-json"
+    implementation "io.micronaut.serde:micronaut-serde-jackson"
+    implementation "io.micronaut.sql:micronaut-jdbc-hikari"
+    implementation "com.oracle.database.jdbc:ojdbc8"
+    runtimeOnly "ch.qos.logback:logback-classic"
+    runtimeOnly "io.micronaut.flyway:micronaut-flyway"
+    runtimeOnly "org.flywaydb:flyway-database-oracle:9.21.1"
+    runtimeOnly "org.yaml:snakeyaml"
+}
+
+
+application {
+    mainClass.set("com.example.micronaut.Application")
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+graalvmNative.toolchainDetection = false
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("com.example.micronaut.*")
+    }
+    testResources {
+        clientTimeout = 360
+    }
+}
+
