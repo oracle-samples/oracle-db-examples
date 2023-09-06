@@ -1,0 +1,59 @@
+SQL> @nulltest
+SQL> drop table foo;
+
+Table dropped.
+
+SQL> 
+SQL> create table foo(bar blob, constraint barisjson check (bar is json));
+
+Table created.
+
+SQL> 
+SQL> insert into foo values ( '{ "myarray":["abc", 1, null] }' );
+
+1 row created.
+
+SQL> 
+SQL> create search index fooindex on foo(bar) for json;
+
+Index created.
+
+SQL> 
+SQL> -- check tokens in index
+SQL> column token_text format a30
+SQL> select token_text, token_type from dr$fooindex$i;
+
+TOKEN_TEXT                     TOKEN_TYPE                                       
+------------------------------ ----------                                       
+1                                       0                                       
+ABC                                     0                                       
+DR$NOTNULL                            101                                       
+DR$NULL                               102                                       
+NULL                                    0                                       
+myarray                                 7                                       
+
+6 rows selected.
+
+SQL> 
+SQL> -- matches
+SQL> select json_serialize(bar) from foo where json_textcontains(bar, '$.myarray', 'a%');
+
+JSON_SERIALIZE(BAR)                                                             
+--------------------------------------------------------------------------------
+{"myarray":["abc",1,null]}                                                      
+
+SQL> 
+SQL> -- doesn't match
+SQL> select json_serialize(bar) from foo where json_textcontains(bar, '$.myarray', 'b%');
+
+no rows selected
+
+SQL> 
+SQL> -- does match but should not
+SQL> select json_serialize(bar) from foo where json_textcontains(bar, '$.myarray', 'n%');
+
+JSON_SERIALIZE(BAR)                                                             
+--------------------------------------------------------------------------------
+{"myarray":["abc",1,null]}                                                      
+
+SQL> spool off

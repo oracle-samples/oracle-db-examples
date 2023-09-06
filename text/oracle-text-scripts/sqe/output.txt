@@ -1,0 +1,88 @@
+SQL> exec ctx_query.remove_sqe('myruntime.sqe_1')
+BEGIN ctx_query.remove_sqe('myruntime.sqe_1'); END;
+
+*
+ERROR at line 1:
+ORA-20000: Oracle Text error:
+DRG-10825: stored query does not exist: myruntime.sqe_1
+ORA-06512: at "CTXSYS.DRUE", line 171
+ORA-06512: at "CTXSYS.CTX_QUERY", line 396
+ORA-06512: at line 1
+
+
+SQL> 
+SQL> exec ctx_query.store_sqe('myruntime.sqe_1', 'dog')
+BEGIN ctx_query.store_sqe('myruntime.sqe_1', 'dog'); END;
+
+*
+ERROR at line 1:
+ORA-20000: Oracle Text error:
+DRG-10801: cannot create an SQE for another user
+ORA-06512: at "CTXSYS.DRUE", line 171
+ORA-06512: at "CTXSYS.CTX_QUERY", line 343
+ORA-06512: at line 1
+
+
+SQL> 
+SQL> create index fooind on foo(text) indextype is ctxsys.context;
+
+Index created.
+
+SQL> 
+SQL> grant select on foo to myruntime;
+
+Grant succeeded.
+
+SQL> 
+SQL> connect myruntime/myruntime
+Connected.
+SQL> 
+SQL> -- this will fail with DRG-10825: stored query does not exist: sqe_1
+SQL> select * from mysys.foo where contains (text, 'cat and sqe(sqe_1)') > 0;
+select * from mysys.foo where contains (text, 'cat and sqe(sqe_1)') > 0
+*
+ERROR at line 1:
+ORA-29902: error in executing ODCIIndexStart() routine
+ORA-20000: Oracle Text error:
+DRG-10825: stored query does not exist: sqe_1
+
+
+SQL> 
+SQL> -- this will work
+SQL> select * from mysys.foo where contains (text, 'cat and sqe(mysys.sqe_1)') > 0;
+select * from mysys.foo where contains (text, 'cat and sqe(mysys.sqe_1)') > 0
+*
+ERROR at line 1:
+ORA-29902: error in executing ODCIIndexStart() routine
+ORA-20000: Oracle Text error:
+DRG-10825: stored query does not exist: mysys.sqe_1
+
+
+SQL> 
+SQL> 
+
+
+
+
+
+
+SQL> -- this will fail with DRG-10825: stored query does not exist: sqe_1
+SQL> select * from mysys.foo where contains (text, 'cat and sqe(sqe_1)') > 0;
+select * from mysys.foo where contains (text, 'cat and sqe(sqe_1)') > 0
+*
+ERROR at line 1:
+ORA-29902: error in executing ODCIIndexStart() routine
+ORA-20000: Oracle Text error:
+DRG-10825: stored query does not exist: sqe_1
+
+
+SQL> 
+SQL> -- this will work
+SQL> select * from mysys.foo where contains (text, 'cat and sqe(mysys.sqe_1)') > 0;
+
+TEXT
+--------------------------------------------------------------------------------
+cat dog rabbit
+
+SQL> 
+

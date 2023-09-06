@@ -1,0 +1,581 @@
+
+TKPROF: Release 9.2.0.0.0 - Beta on Tue Apr 9 14:42:48 2002
+
+(c) Copyright 2001 Oracle Corporation.  All rights reserved.
+
+Trace file: /opt/oracle/u01/admin/DOKT/udump/dokt_ora_2792.trc
+Sort options: default
+
+********************************************************************************
+count    = number of times OCI procedure was executed
+cpu      = cpu time in seconds executing 
+elapsed  = elapsed time in seconds executing
+disk     = number of physical reads of buffers from disk
+query    = number of buffers gotten for consistent read
+current  = number of buffers gotten in current mode (usually for update)
+rows     = number of rows processed by the fetch or execute call
+********************************************************************************
+
+alter session set sql_trace=true
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        0      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        0      0.00       0.00          0          0          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        1      0.00       0.00          0          0          0           0
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: 436  (ROGER)
+********************************************************************************
+
+select ts#,file#,block#,nvl(bobj#,0),nvl(tab#,0),intcols,nvl(clucols,0),
+  audit$,flags,pctfree$,pctused$,initrans,maxtrans,rowcnt,blkcnt,empcnt,
+  avgspc,chncnt,avgrln,analyzetime, samplesize,cols,property,nvl(degree,1),
+  nvl(instances,1),avgspc_flb,flbcnt,kernelcols,nvl(trigflag, 0),nvl(spare1,0)
+  ,nvl(spare2,0),spare4,spare6 
+from
+ tab$ where obj#=:1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        1      0.00       0.00          0          3          0           1
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.00       0.00          0          3          0           1
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select i.obj#,i.ts#,i.file#,i.block#,i.intcols,i.type#,i.flags, i.property,
+  i.pctfree$,i.initrans,i.maxtrans,i.blevel,i.leafcnt,i.distkey, i.lblkkey,
+  i.dblkkey,i.clufac,i.cols,i.analyzetime,i.samplesize,i.dataobj#, 
+  nvl(i.degree,1),nvl(i.instances,1),i.rowcnt,mod(i.pctthres$,256),
+  i.indmethod#,i.trunccnt,nvl(c.unicols,0),nvl(c.deferrable#+c.valid#,0), 
+  nvl(i.spare1,i.intcols),i.spare4,spare2,spare6, decode(i.pctthres$,null,
+  null, mod(trunc(i.pctthres$/256),256)) 
+from
+ ind$ i, (select enabled, min(cols) unicols, min(to_number(bitand(defer,1))) 
+  deferrable#, min(to_number(bitand(defer,4))) valid# from cdef$ where obj#=
+  :1 and enabled > 1 group by enabled) c where i.obj#=c.enabled(+) and i.bo#=
+  :1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        3      0.00       0.00          0          6          0           2
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        5      0.00       0.00          0          6          0           2
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select pos#,intcol#,col#,spare1,bo#,spare2 
+from
+ icol$ where obj#=:1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      2      0.01       0.00          0          0          0           0
+Fetch        4      0.00       0.00          0          8          0           2
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        7      0.01       0.00          0          8          0           2
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select name,intcol#,segcol#,type#,length,nvl(precision#,0),decode(type#,2,
+  nvl(scale,-127/*MAXSB1MINAL*/),178,scale,179,scale,180,scale,181,scale,182,
+  scale,183,scale,231,scale,0),null$,fixedstorage,nvl(deflength,0),default$,
+  rowid,col#,property, nvl(charsetid,0),nvl(charsetform,0),spare1,spare2,
+  nvl(spare3,0) 
+from
+ col$ where obj#=:1 order by intcol#
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        5      0.00       0.00          0          3          0           4
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        7      0.00       0.00          0          3          0           4
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select con#,obj#,rcon#,enabled,nvl(defer,0) 
+from
+ cdef$ where robj#=:1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        1      0.00       0.00          0          1          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.00       0.00          0          1          0           0
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select con#,type#,condlength,intcols,robj#,rcon#,match#,refact,nvl(enabled,0),
+  rowid,cols,nvl(defer,0),mtime,nvl(spare1,0) 
+from
+ cdef$ where obj#=:1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        2      0.00       0.00          0          4          0           1
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        4      0.00       0.00          0          4          0           1
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select intcol#,nvl(pos#,0),col# 
+from
+ ccol$ where con#=:1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        2      0.00       0.00          0          4          0           1
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        4      0.00       0.00          0          4          0           1
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select col#, grantee#, privilege#,max(mod(nvl(option$,0),2)) 
+from
+ objauth$ where obj#=:1 and col# is not null group by privilege#, col#, 
+  grantee# order by col#, grantee#
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        1      0.00       0.00          0          2          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.00       0.00          0          2          0           0
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select grantee#,privilege#,nvl(col#,0),max(mod(nvl(option$,0),2))
+from
+ objauth$ where obj#=:1 group by grantee#,privilege#,nvl(col#,0) order by 
+  grantee#
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        1      0.00       0.00          0          2          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.00       0.00          0          2          0           0
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+select /*+ PARALLEL(base 16) */ rowid, NULL, NULL, NULL, 'N', base.descrip
+from bike_items_p2 base
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.01       0.01          0          0          0           0
+Execute      1      0.05       0.72          0          3          0           0
+Fetch      237      0.03       0.01          0          0          0        3541
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total      239      0.09       0.74          0          3          0        3541
+
+Misses in library cache during parse: 1
+Optimizer goal: CHOOSE
+Parsing user id: 436  (ROGER)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      0  TABLE ACCESS FULL BIKE_ITEMS_P2 
+
+
+Rows     Execution Plan
+-------  ---------------------------------------------------
+      0  SELECT STATEMENT   GOAL: CHOOSE
+      0   TABLE ACCESS   GOAL: ANALYZED (FULL) OF 'BIKE_ITEMS_P2' 
+              [:Q726317000]
+             SELECT /*+ NO_EXPAND ROWID(A1) */ A1.ROWID,A1."DESCRIP" FROM 
+               "BIKE_ITEMS_P2" PX_GRANULE(0, BLOCK_RANGE, DYNAMIC)  A1
+
+********************************************************************************
+
+select u.name,o.name, t.update$, t.insert$, t.delete$, t.enabled  
+from
+ obj$ o,user$ u,trigger$ t  where t.baseobject=:1 and t.obj#=o.obj# and 
+  o.owner#=u.user#  order by o.obj#
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        1      0.00       0.00          0          1          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.00       0.00          0          1          0           0
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      0  SORT ORDER BY 
+      0   NESTED LOOPS  
+      0    NESTED LOOPS  
+      0     TABLE ACCESS BY INDEX ROWID TRIGGER$ 
+      0      INDEX RANGE SCAN I_TRIGGER1 (object id 109)
+      0     TABLE ACCESS BY INDEX ROWID OBJ$IGGER1 
+      0      INDEX UNIQUE SCAN I_OBJ1GER1 (object id 31)
+      0    TABLE ACCESS CLUSTER USER$1GER1 
+      0     INDEX UNIQUE SCAN I_USER#ER1 (object id 11)
+
+********************************************************************************
+
+DELETE FROM PLAN_TABLE 
+WHERE
+ STATEMENT_ID=:1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        2      0.00       0.00          0          0          0           0
+Execute      2      0.00       0.00          0          6          2           2
+Fetch        0      0.00       0.00          0          0          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        4      0.00       0.00          0          6          2           2
+
+Misses in library cache during parse: 1
+Optimizer goal: CHOOSE
+Parsing user id: 436  (ROGER)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      0  DELETE  
+      0   TABLE ACCESS FULL PLAN_TABLE 
+
+
+Rows     Execution Plan
+-------  ---------------------------------------------------
+      0  DELETE STATEMENT   GOAL: CHOOSE
+      0   DELETE OF 'PLAN_TABLE'
+      0    TABLE ACCESS (FULL) OF 'PLAN_TABLE'
+
+********************************************************************************
+
+SELECT ORA_TQ_BASE$.NEXTVAL 
+FROM
+ DUAL
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        2      0.00       0.00          0          0          0           0
+Execute      2      0.00       0.00          0          0          0           0
+Fetch        2      0.00       0.00          0          6          2           2
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        6      0.00       0.00          0          6          2           2
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 1)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      1  SEQUENCE  
+      1   TABLE ACCESS FULL DUAL 
+
+********************************************************************************
+
+update seq$ set increment$=:2,minvalue=:3,maxvalue=:4,cycle#=:5,order$=:6,
+  cache=:7,highwater=:8,audit$=:9,flags=:10 
+where
+ obj#=:1
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        2      0.00       0.00          0          0          0           0
+Execute      2      0.00       0.00          0          4          4           2
+Fetch        0      0.00       0.00          0          0          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        4      0.00       0.00          0          4          4           2
+
+Misses in library cache during parse: 0
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 2)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      1  UPDATE  
+      1   INDEX UNIQUE SCAN I_SEQ1 (object id 89)
+
+********************************************************************************
+
+EXPLAIN PLAN SET STATEMENT_ID='PLUS17171819' FOR select /*+ PARALLEL(base 16) */ rowid, NULL, NULL, NULL, 'N', base.descrip
+from bike_items_p2 base
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        0      0.00       0.00          0          0          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        2      0.00       0.00          0          0          0           0
+
+Misses in library cache during parse: 1
+Optimizer goal: CHOOSE
+Parsing user id: 436  (ROGER)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      0  TABLE ACCESS FULL BIKE_ITEMS_P2 
+
+********************************************************************************
+
+select user# 
+from
+ sys.user$ where name = 'OUTLN'
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        1      0.00       0.00          0          3          0           1
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.00       0.00          0          3          0           1
+
+Misses in library cache during parse: 1
+Optimizer goal: CHOOSE
+Parsing user id: SYS   (recursive depth: 2)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      1  TABLE ACCESS BY INDEX ROWID USER$ 
+      1   INDEX UNIQUE SCAN I_USER1 (object id 39)
+
+********************************************************************************
+
+insert into plan_table (statement_id, timestamp, operation, options,
+  object_node, object_owner, object_name, object_instance, object_type,
+  search_columns, id, parent_id, position, other,optimizer, cost, cardinality,
+   bytes, other_tag, partition_start, partition_stop, partition_id, 
+  distribution, cpu_cost, io_cost, temp_space, access_predicates, 
+  filter_predicates ) 
+values
+(:1,SYSDATE,:2,:3,:4,:5,:6,:7,:8,:9,:10,:11,:12,:13,:14,:15,:16,:17,:18,:19,
+  :20,:21,:22,:23,:24,:25,:26,:27)
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.01       0.00          0          0          0           0
+Execute      2      0.00       0.00          0          2          8           2
+Fetch        0      0.00       0.00          0          0          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.01       0.00          0          2          8           2
+
+Misses in library cache during parse: 1
+Misses in library cache during execute: 1
+Optimizer goal: CHOOSE
+Parsing user id: 436  (ROGER)   (recursive depth: 1)
+
+Rows     Execution Plan
+-------  ---------------------------------------------------
+      0  INSERT STATEMENT   GOAL: CHOOSE
+
+********************************************************************************
+
+select o.name, u.name 
+from
+ sys.obj$ o, sys.user$ u where obj# = :1 and owner# = user#
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      0      0.00       0.00          0          0          0           0
+Fetch        0      0.00       0.00          0          0          0           0
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        1      0.00       0.00          0          0          0           0
+
+Misses in library cache during parse: 1
+Parsing user id: SYS   (recursive depth: 1)
+********************************************************************************
+
+SELECT ID ID_PLUS_EXP,PARENT_ID PARENT_ID_PLUS_EXP,LPAD(' ',2*(LEVEL-1))
+  ||OPERATION||DECODE(OTHER_TAG,NULL,'','*')||DECODE(OPTIONS,NULL,'',' 
+  ('||OPTIONS||')')||DECODE(OBJECT_NAME,NULL,'',' OF '''||OBJECT_NAME||'''')
+  ||DECODE(OBJECT_TYPE,NULL,'',' ('||OBJECT_TYPE||')')||DECODE(ID,0,
+  DECODE(OPTIMIZER,NULL,'',' Optimizer='||OPTIMIZER))||DECODE(COST,NULL,'',' 
+  (Cost='||COST||DECODE(CARDINALITY,NULL,'',' Card='||CARDINALITY)
+  ||DECODE(BYTES,NULL,'',' Bytes='||BYTES)||')') PLAN_PLUS_EXP,OBJECT_NODE 
+  OBJECT_NODE_PLUS_EXP 
+FROM
+ PLAN_TABLE START WITH ID=0 AND STATEMENT_ID=:1 CONNECT BY PRIOR ID=PARENT_ID 
+  AND STATEMENT_ID=:1 ORDER BY ID,POSITION
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        2      0.00       0.00          0         10          0           2
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        4      0.00       0.00          0         10          0           2
+
+Misses in library cache during parse: 1
+Optimizer goal: CHOOSE
+Parsing user id: 436  (ROGER)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      2  SORT ORDER BY 
+      2   CONNECT BY WITH FILTERING 
+      1    NESTED LOOPS  
+      1     TABLE ACCESS FULL PLAN_TABLE 
+      1     TABLE ACCESS BY USER ROWID PLAN_TABLE 
+
+
+Rows     Execution Plan
+-------  ---------------------------------------------------
+      0  SELECT STATEMENT   GOAL: CHOOSE
+      2   SORT (ORDER BY)
+      2    CONNECT BY (WITH FILTERING)
+      1     NESTED LOOPS
+      1      TABLE ACCESS (FULL) OF 'PLAN_TABLE'
+      1      TABLE ACCESS (BY USER ROWID) OF 'PLAN_TABLE'
+      0     NESTED LOOPS
+      0      BUFFER (SORT)
+      0       CONNECT BY PUMP
+      0      TABLE ACCESS (FULL) OF 'PLAN_TABLE'
+
+********************************************************************************
+
+SELECT ID ID_PLUS_EXP,OTHER_TAG OTHER_TAG_PLUS_EXP,OTHER OTHER_PLUS_EXP 
+FROM
+ PLAN_TABLE WHERE STATEMENT_ID=:1 AND OTHER_TAG IS NOT NULL ORDER BY ID
+
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        1      0.00       0.00          0          0          0           0
+Execute      1      0.00       0.00          0          0          0           0
+Fetch        1      0.00       0.00          0          4          0           1
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total        3      0.00       0.00          0          4          0           1
+
+Misses in library cache during parse: 1
+Optimizer goal: CHOOSE
+Parsing user id: 436  (ROGER)
+
+Rows     Row Source Operation
+-------  ---------------------------------------------------
+      1  SORT ORDER BY 
+      1   TABLE ACCESS FULL PLAN_TABLE 
+
+
+Rows     Execution Plan
+-------  ---------------------------------------------------
+      0  SELECT STATEMENT   GOAL: CHOOSE
+      1   SORT (ORDER BY)
+      1    TABLE ACCESS (FULL) OF 'PLAN_TABLE'
+
+
+
+
+********************************************************************************
+
+OVERALL TOTALS FOR ALL NON-RECURSIVE STATEMENTS
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse        6      0.01       0.01          0          0          0           0
+Execute      7      0.05       0.72          0          9          2           2
+Fetch      240      0.03       0.01          0         14          0        3544
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total      253      0.09       0.75          0         23          2        3546
+
+Misses in library cache during parse: 5
+
+
+OVERALL TOTALS FOR ALL RECURSIVE STATEMENTS
+
+call     count       cpu    elapsed       disk      query    current        rows
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+Parse       17      0.01       0.00          0          0          0           0
+Execute     18      0.01       0.00          0          6         12           4
+Fetch       24      0.00       0.00          0         43          2          14
+------- ------  -------- ---------- ---------- ---------- ----------  ----------
+total       59      0.02       0.01          0         49         14          18
+
+Misses in library cache during parse: 3
+Misses in library cache during execute: 1
+
+    8  user  SQL statements in session.
+   16  internal SQL statements in session.
+   24  SQL statements in session.
+    5  statements EXPLAINed in this session.
+********************************************************************************
+Trace file: /opt/oracle/u01/admin/DOKT/udump/dokt_ora_2792.trc
+Trace file compatibility: 9.00.01
+Sort options: default
+
+       1  session in tracefile.
+       8  user  SQL statements in trace file.
+      16  internal SQL statements in trace file.
+      24  SQL statements in trace file.
+      21  unique SQL statements in trace file.
+       5  SQL statements EXPLAINed using schema:
+           ROGER.prof$plan_table
+             Default table was used.
+             Table was created.
+             Table was dropped.
+     468  lines in trace file.
+
+

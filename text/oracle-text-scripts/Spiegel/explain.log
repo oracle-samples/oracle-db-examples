@@ -1,0 +1,98 @@
+SQL> 
+SQL> explain plan for
+  2  create index bike_items_idx2 on bike_items_p2 (descrip)
+  3  indextype is ctxsys.context parallel 16;
+
+Explained.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> @xplp+
+SQL> REM
+SQL> REM REQUIRE: plan_table (created by the script ?/rdbms/admin/utlxplan.sql)
+SQL> REM
+SQL> 
+SQL> set pagesize 600
+SQL> set long	  4000
+SQL> set long	  2000
+SQL> set tab	  off
+SQL> set linesize 130
+SQL> set underline =
+SQL> col TQID         format A4
+SQL> col "SLAVE SQL"  format A95 WORD_WRAP
+SQL> 
+SQL> @?/rdbms/admin/utlxplp
+SQL> Rem
+SQL> Rem $Header: utlxplp.sql 23-jan-2002.08:55:23 bdagevil Exp $
+SQL> Rem
+SQL> Rem utlxplp.sql
+SQL> Rem
+SQL> Rem Copyright (c) 1998, 2002, Oracle Corporation.  All rights reserved.
+SQL> Rem
+SQL> Rem    NAME
+SQL> Rem      utlxplp.sql - UTiLity eXPLain Parallel plans
+SQL> Rem
+SQL> Rem    DESCRIPTION
+SQL> Rem      script utility to display the explain plan of the last explain plan
+SQL> Rem      command. Display also Parallel Query information if the plan happens to
+SQL> Rem      run parallel
+SQL> Rem
+SQL> Rem    NOTES
+SQL> Rem      Assume that the table PLAN_TABLE has been created. The script
+SQL> Rem      utlxplan.sql should be used to create that table
+SQL> Rem
+SQL> Rem      With SQL*plus, it is recomended to set linesize and pagesize before
+SQL> Rem      running this script. For example:
+SQL> Rem         set linesize 130
+SQL> Rem         set pagesize 0
+SQL> Rem
+SQL> Rem    MODIFIED   (MM/DD/YY)
+SQL> Rem    bdagevil    01/23/02 - rewrite with new dbms_xplan package
+SQL> Rem    bdagevil    04/05/01 - include CPU cost
+SQL> Rem    bdagevil    02/27/01 - increase Name column
+SQL> Rem    jihuang     06/14/00 - change order by to order siblings by.
+SQL> Rem    jihuang     05/10/00 - include plan info for recursive SQL in LE row source
+SQL> Rem    bdagevil    01/05/00 - make deterministic with order-by
+SQL> Rem    bdagevil    05/07/98 - Explain plan script for parallel plans
+SQL> Rem    bdagevil    05/07/98 - Created
+SQL> Rem
+SQL> 
+SQL> set markup html preformat on
+SQL> 
+SQL> Rem
+SQL> Rem Use the display table function from the dbms_xplan package to display the last
+SQL> Rem explain plan. Use default mode which will display only relevant information
+SQL> Rem
+SQL> select * from table(dbms_xplan.display());
+
+PLAN_TABLE_OUTPUT                                                                                                                 
+==================================================================================================================================
+                                                                                                                                  
+----------------------------------------------------------------------                                                            
+| Id  | Operation              |  Name       | Rows  | Bytes | Cost  |                                                            
+----------------------------------------------------------------------                                                            
+|   0 | CREATE INDEX STATEMENT |             |  1200K|    24M|   385 |                                                            
+----------------------------------------------------------------------                                                            
+                                                                                                                                  
+Note: cpu costing is off                                                                                                          
+
+8 rows selected.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> REM
+SQL> REM Print slave sql
+SQL> REM
+SQL> select decode(object_node,null,'',
+  2                substr(object_node,length(object_node)-3,1) || ',' ||
+  3                substr(object_node,length(object_node)-1,2)) TQID,
+  4         other "SLAVE SQL"
+  5    from plan_table
+  6    where other is not null and
+  7          timestamp >= (select max(timestamp) from plan_table where id=0);
+
+no rows selected
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> spool off

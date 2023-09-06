@@ -1,0 +1,931 @@
+TODO:  add index name and join chars
+TODO:  prog relax
+TODO:  add "default AND" : DONE
+TODO:  validate sections?
+TODO:  allow single word section searches eg title:dog : NO - too complicated, hard to find end of word
+TODO:  allTermsRequired should be global like other options
+TODO:  *** boost score with optional sections
+TODO:  check for only required sections, and only neg words
+TODO:   select * from avtest where contains(text, parser.progrelax('seca:(dog rabbit)'),1) > 0; - syntax err
+TODO:   select * from avtest where contains(text, parser.progrelax('cat +seca:(dog rabbit)'),1) > 0; - why do we see dog & report inside section search?
+TODO:  phrase search pointless if only one simple term
+TODO:   select * from avtest where contains(text, parser.progrelax('seca:(dog rabbit)'),1) > 0 _> fails
+
+set serverout on size 1000000
+set define off
+
+create or replace package parser is
+
+scoreTypeInteger integer := 0;
+scoreTypeFloat   integer := 1;
+
+optionFalse      integer := 0;
+optionTrue       integer := 1;
+
+function simpleSearch( inStr varchar2 ) return clob;
+function progRelax   ( inStr varchar2 ) return clob;
+
+procedure SetScoreType (scoreType integer);
+procedure UseNEAR2     (near2Option integer);
+procedure SetWildcard  (wildcard varchar2);
+
+procedure test;
+procedure teststr(textQ clob);
+
+-- Public variables
+allTermsRequired  boolean := FALSE;
+
+end parser;
+/
+list
+show errors
+
+create or replace package body parser is
+
+-- datatype used internally in this package
+
+type exprList is table of varchar2(4000);
+
+type queryTerms is record (
+  allTerms    exprList ,   -- all the non-section terms, in the order specified
+  reqTerms    exprList ,   -- these MUST be present, may include sections
+  optTerms    exprList ,   -- these CAN be present, may include sections
+  negTerms    exprList     -- these MUST NOT be present
+);
+
+type wordListType is table of varchar2(64);
+
+-- Global variables
+
+global_scoreType varchar2(20) default 'INTEGER';
+global_nearOper  varchar2(5)  default 'NEAR';
+global_wildCard  varchar2(1)  default '*';
+global_stopList  wordListType;
+
+-- find the first regexp in a string, return string with that 
+-- regexp removed, and the match itself
+
+procedure regexp_next_match 
+  (str in out varchar2, match out varchar2, pattern varchar2) 
+is
+  rest    varchar2(32767) := str;
+  newstart integer;
+begin
+     match := regexp_substr(rest, pattern, 1, 1, 'n');
+     newStart := regexp_instr(rest, pattern, 1, 1, 1, 'n');
+     str := substr(rest, newstart, length(rest)-newstart+1);
+end;
+
+-- parse a string into words consisting of alphunumerics, optional join characters
+-- and optional single leading and trailing wildchars. Double quotes surrounding 
+-- multiple word will treat them as a single one
+
+-- todo: move joinchars etc to globals
+
+-- Check whether word is in stopword list
+
+function notStopWord (testWord varchar2) return boolean is
+  i integer;
+  w varchar2(256);
+begin
+  -- strip any braces
+  w := testWord;
+  w := replace(w, '{', '');
+  w := replace(w, '}', '');
+
+  if global_stoplist is null or global_stopList.count() = 0 then
+    return true;
+  end if;
+  for i in 1 .. global_stopList.last loop
+    --p('comparing '''|| w ||''' against '''||global_stopList(i)||'''');
+    if lower(w) = lower(global_stopList(i)) then
+      return false;
+    end if;
+  end loop;
+  return true;
+end;
+
+procedure reParse (
+   userStr   in  clob, 
+   words     out wordListType, 
+   joinChars in  varchar2 default '',
+   leadChars in  varchar2 default '+-',
+   userWild  in  varchar2 default '*',
+   sysWild   in  varchar2 default '%') 
+is
+  str       varchar2(32767) := userStr;
+  pattern   varchar2(2000);
+  match     varchar2(2000);
+  i         integer;
+  lc        varchar2(128);
+  ec        varchar2(128);
+  joinC     varchar2(128) := joinChars; -- local copy for editing
+  jc1       varchar2(128) := '';        -- special position join chars
+  jc2       varchar2(128) := '';
+  jc3       varchar2(128) := '';
+begin
+
+  --p('reParse: str is ' || str);
+
+  if length(leadChars) > 0  then
+    lc := '['||leadChars||']?';
+  else
+    lc := '';
+  end if;
+
+  if length(userWild) > 0 then
+    ec := '['||userWild||']?';
+  else
+    ec := '';
+  end if;
+
+  -- Posix regular expressions do not allow escaping of characters in 
+  -- bracketed strings. If a join character is "]", it MUST appear as
+  -- the first character. "^" can appear anywhere BUT first, "-" MUST
+  -- appear at the end. That's what I call programmer unfriendly.
+
+  if instr (joinC, ']') > 0 then
+    jc1 := ']';
+    joinC := replace (joinC, ']', '');
+  end if;
+
+  if instr (joinC, '[') > 0 then
+    jc1 := jc1 || '[';
+    joinC := replace (joinC, '[', '');
+  end if;
+
+  if instr (joinC, '^') > 0 then
+    jc2 := '^';
+    joinC := replace (joinC, '^', '');
+  end if;
+
+  if instr (joinC, '-') > 0 then
+    jc3 := '-';
+    joinC := replace (joinC, '-', '');
+  end if;
+
+  pattern := '(' || lc || '[' || jc1 || '[:alnum:]' || joinC || jc2 || jc3 || ']+' || ec ||
+              ')|(' || lc || '".+")';
+  --p(pattern);
+
+  words := wordListType();
+  loop
+    regexp_next_match (str, match, pattern);
+
+    -- deal specially with quoted strings: we need to remove the quotes
+    -- and any non-alpha/numeric/join chars, except for + at beginning
+
+    if regexp_instr (match, '^' || lc || '"') > 0 then
+       -- remove the quotes, leaving any leading plus
+       match := regexp_replace (match, '^('|| lc || ')"(.+)"$', '\1\2');
+
+       -- remove any unwanted chars except + at the start
+       if instr (leadChars, substr (match, 1, 1)) > 0 then  
+         match := regexp_replace (match, '[^'||jc1||'[:space:][:alnum:]'||joinC||jc2||jc3||']+', ' ', 2);
+       else
+         match := regexp_replace (match, '[^[:space:][:alnum:]'||joinC||jc2||jc3||']+', ' ');
+       end if;
+ 
+       -- squash down multiple spaces
+       match := regexp_replace (match, '[[:space:]]+', ' ');
+    end if;
+
+    exit when match is null or length(match) = 0;
+
+    -- translate wild card and escape joinchars
+    -- OR surround word with braces (braces don't work with wild cards,
+    -- backslashes don't escape keywords)
+
+    if substr(match, length(match), 1) = userWild then
+       match := substr(match, 1, length(match)-1);
+       if length(joinChars) > 0 then
+         match := regexp_replace (match, '(['||jc1||joinC||jc2||jc3||'])', '\\\1'); 
+       end if;
+       match := match || sysWild;
+    else
+       match := regexp_replace (match, '^('||lc||')(.*)', '\1{\2}');
+    end if;
+
+    --p('adding new word '||match);
+    words.extend(1);
+
+    words(words.last()) := match;
+    --p('Word: <'||match||'>');
+    exit when str is null or length(str) = 0;
+  end loop;
+
+end reParse;
+
+-- given a string (subquery), parse it into a queryTerms record
+
+procedure createQueryTerms (
+ queryString in            clob, 
+ qTerms      in out nocopy queryTerms )
+is
+  words     wordListType;
+  firstChar varchar2(1);
+begin
+
+  reParse (queryString, words);
+
+  for i in 1 .. words.count() loop
+    firstChar := substr( words(i), 1, 1 );
+    case firstChar
+      when '+' then
+        qTerms.allTerms.extend(1);
+        qTerms.allTerms(qTerms.allTerms.last()) := substr( words(i), 2);   
+        qTerms.reqTerms.extend(1);
+        qTerms.reqTerms(qTerms.reqTerms.last()) := substr( words(i), 2);   
+      when '-' then
+        qTerms.negTerms.extend(1);
+        qTerms.negTerms(qTerms.negTerms.last()) := substr( words(i), 2);   
+      else
+        qTerms.allTerms.extend(1);
+        qTerms.allTerms(qTerms.allTerms.last()) := substr( words(i), 1);   
+        qTerms.optTerms.extend(1);
+        qTerms.optTerms(qTerms.optTerms.last()) := substr( words(i), 1);   
+    end case;
+  end loop;
+
+end createQueryTerms;
+
+-- Construct a simple query string from segments (words, phrases or section searches)
+-- Will find all required segments and accumulate over remaining segments
+
+procedure simpleQuery(  
+     query    in             queryTerms,
+     retStr   in out nocopy  clob 
+) is
+  plusList exprList;
+  optList  exprList; 
+  negList  exprList; 
+  conj     varchar2(3)    := '';
+  joiner   varchar2(3)    := '';
+
+begin
+  plusList := query.reqTerms;
+  optList  := query.optTerms;
+  negList  := query.negTerms;
+
+  retStr := '';
+
+  if allTermsRequired then 
+
+    if plusList.count > 0 or optList.count > 0 then
+      retStr := retStr || '(';
+    end if;
+
+    if plusList.count > 0 then
+      for i in 1..plusList.last loop
+        retStr := retStr || conj || plusList(i);
+        conj := '&';
+      end loop;
+    end if;
+
+    if optList.count > 0 then
+      for i in 1..optList.last loop
+        retStr := retStr || conj || optList(i);
+        conj := '&';
+      end loop;
+    end if;
+
+    if plusList.count > 0 or optList.count > 0 then
+      retStr := retStr || ')';
+    end if;
+
+    if negList.count > 0 then
+      for i in 1..negList.last loop
+        retStr := retStr || ' ~' || negList(i);
+      end loop; 
+    end if;
+
+  else  -- allTermsRequired = false
+
+    if plusList.count > 0 then
+
+      retStr := retStr || '(';
+      for i in 1..plusList.last loop
+        retStr := retStr || conj || plusList(i);
+        conj := '&';
+      end loop;
+      retStr := retStr || ')';
+
+      joiner := ' & ';
+   
+    end if;
+
+    if optList.count > 0 then
+
+      conj := '';
+      retStr := retStr || joiner || '(';
+
+      if plusList.count > 0 then
+
+        for i in 1..plusList.last loop
+          retStr := retStr || conj || plusList(i);
+          conj := ',';
+        end loop;
+
+      end if;
+
+      for i in 1..optList.last loop
+        retStr := retStr || conj || optList(i);
+        conj := ',';
+      end loop;
+
+      retStr := retStr || ')';
+
+    end if;
+
+    if negList.count > 0 then
+      for i in 1..negList.last loop
+        retStr := retStr || ' ~' || negList(i);
+      end loop; 
+    end if;
+
+  end if;
+
+end simpleQuery;
+
+-- Given an unparsed query string, turn it into a simple query
+
+procedure progRelax (
+     query    in             queryTerms,
+     retStr   in out nocopy  clob 
+) is
+  allList  exprList;
+  reqList  exprList;
+  optList  exprList; 
+  negList  exprList; 
+  andStr   varchar2(5) := '';
+  joiner   varchar2(5) := '';
+  re       varchar2(30);
+begin
+  allList := query.allTerms;
+  reqList := query.reqTerms;
+  optList := query.optTerms;
+  negList := query.negTerms;
+  retStr  := '
+<query>
+  <textquery>
+    <progression>';
+
+    -- STEP 1: All words together as phrase
+
+    retStr := retStr || chr(10) || '      <seq>';
+    joiner := '';
+    for i in 1..allList.count() loop
+      retStr := retStr || joiner || allList(i);
+      joiner := ' '; andStr := '&';
+    end loop;
+
+    -- plus any required sections
+    -- regexp to match the start of a section search eg +sect_name:(dog cat)
+    re := 'WITHIN [[:alnum:]_]+\)';
+
+    for i in 1..reqList.count() loop
+      if regexp_instr( reqList(i), re, 1, 1, 0) > 0 then
+        --dbms_output.put_line('required section:"'||reqList(i)||'"');
+        retStr := retStr || andStr || reqList(i);
+        andStr := '&';
+      else
+        null;
+        --dbms_output.put_line('required word:"'||reqList(i)||'"');
+      end if;
+    end loop;
+
+    -- deal with notAllowed words
+    if negList.last > 0 then
+      for i in 1..negList.last loop
+        retStr := retStr || '~' || negList(i);
+      end loop;
+    end if;
+    retStr := retStr || '</seq>';
+
+    -- STEP 2: All words present and close to each other
+    
+    if allList.count() > 0 then
+      andStr := '';
+      retStr := retStr || chr(10)||'      <seq>( ' ||global_nearOper|| '((';
+      for i in 1..allList.count() loop
+        retStr := retStr || andStr || allList(i);
+        andStr := ',';
+      end loop;
+      retStr := retStr || ')) )';
+
+      -- plus any required sections
+      -- regexp to match the start of a section search eg +sect_name:(dog cat)
+
+      for i in 1..reqList.count() loop
+        andStr := '&';
+        if regexp_instr( reqList(i), re, 1, 1, 0) > 0 then
+          --dbms_output.put_line('required section:"'||reqList(i)||'"');
+          retStr := retStr || andStr || reqList(i);
+          andStr := '&';
+        else
+          null;
+          --dbms_output.put_line('required word:"'||reqList(i)||'"');
+        end if;
+      end loop;
+
+      -- deal with notAllowed words
+      if negList.last > 0 then
+        for i in 1..negList.last loop
+          retStr := retStr || '~' || negList(i);
+        end loop;
+      end if;
+      retStr := retStr || '</seq>';
+
+    end if;
+
+    -- STEP 3: ALL words present, some near to each other
+
+    if allList.count() > 0 then
+      andStr := '';
+      retStr := retStr || chr(10)||'      <seq>((';
+      for i in 1..allList.count() loop
+        retStr := retStr || andStr || allList(i);
+        andStr := '&';
+      end loop;
+      retStr := retStr || ')10*10';
+
+      andStr := '';
+      retStr := retStr || ')&(';
+      for i in 1..allList.last loop
+        for k in i+1..(allList.last) loop
+          if i != k then
+            if notStopWord(allList(i)) and notStopWord(allList(k)) then 
+              retStr := retStr || andStr || ''||global_nearOper||'(('||allList(i)||','||allList(k)||'))';
+              andStr := '&';
+            end if;
+          end if;
+        end loop;
+      end loop;
+      retStr := retStr || ')';
+
+      -- plus any required sections
+      -- regexp to match the start of a section search eg +sect_name:(dog cat)
+
+      for i in 1..reqList.count() loop
+        andStr := '&';
+        if regexp_instr( reqList(i), re, 1, 1, 0) > 0 then
+          retStr := retStr || andStr || reqList(i);
+          andStr := '&';
+          --dbms_output.put_line('required section:"'||reqList(i)||'"');
+        else
+          null;
+          --dbms_output.put_line('required word:"'||reqList(i)||'"');
+        end if;
+      end loop;
+
+    end if;
+
+    -- deal with notAllowed words
+    if negList.count() > 0 then
+      for i in 1..negList.last loop
+        retStr := retStr || '~' || negList(i);
+      end loop;
+    end if;
+    retStr := retStr || '</seq>';
+
+    -- STEP 4: ALL words present, anywhere in doc
+
+    if allList.count() > 0 then
+
+      andStr := '';
+      retStr := retStr || chr(10)||'      <seq>(';
+      for i in 1..allList.last loop
+        retStr := retStr || andStr || allList(i);
+        andStr := '&';
+      end loop;
+      retStr := retStr || ')';
+
+      -- plus any required sections
+      -- regexp to match the start of a section search eg +sect_name:(dog cat)
+
+      for i in 1..reqList.count() loop
+        andStr := '&';
+        if regexp_instr( reqList(i), re, 1, 1, 0) > 0 then
+          --dbms_output.put_line('required section:"'||reqList(i)||'"');
+          retStr := retStr || andStr || reqList(i);
+          andStr := '&';
+        else
+          null;
+          --dbms_output.put_line('required word:"'||reqList(i)||'"');
+        end if;
+      end loop;
+
+    end if;
+
+    -- deal with notAllowed words
+    if negList.count > 0 then
+      for i in 1..negList.last loop
+        retStr := retStr || '~' || negList(i);
+      end loop;
+    end if;
+    retStr := retStr || '</seq>';
+
+    -- STEP 5: Some words present
+
+    if allList.count() > 0 then
+
+      andStr := '';
+      retStr := retStr || chr(10)||'      <seq>';
+
+      if reqList.count > 0 then
+        retStr := retStr || '((';
+        for i in 1..reqList.last loop
+          retStr := retStr || andStr || reqList(i);
+          andStr := '&';
+        end loop;
+        retStr := retStr || ')*10*10)';
+      end if;
+
+      andStr := '';
+      if reqList.count > 0 then
+        retStr := retStr || '&';
+      end if;
+      retStr := retStr || '(';
+      for i in 1..allList.last loop
+        retStr := retStr || andStr || allList(i);
+        andStr := ',';
+      end loop;
+      retStr := retStr || ')';
+
+      -- plus any required sections AND words
+      -- regexp to match the start of a section search eg +sect_name:(dog cat)
+      re := '[+-]?[[:alnum:]_]+:\(';
+
+      for i in 1..reqList.count() loop
+        andStr := '&';
+        if regexp_instr( reqList(i), re, 1, 1, 0) > 0 then
+          --dbms_output.put_line('required section:"'||reqList(i)||'"');
+          retStr := retStr || andStr || reqList(i);
+          andStr := '&';
+        else
+          --dbms_output.put_line('required word:"'||reqList(i)||'"');
+          retStr := retStr || andStr || reqList(i);
+          andStr := '&';
+        end if;
+      end loop;
+
+    end if;
+
+    -- deal with notAllowed words
+    if negList.count > 0 then
+      for i in 1..negList.last loop
+        retStr := retStr || '~' || negList(i);
+      end loop;
+    end if;
+    retStr := retStr || '</seq>';
+
+    -- END OF STEPS    
+
+    retStr := retStr || '
+    </progression>
+  </textquery>
+</query>';
+
+end progRelax;
+
+procedure strToQuery (
+  queryStr      in varchar2, 
+  simpleQry     in out nocopy clob
+) is
+  qTerms queryTerms;
+  allT   exprList;
+  reqT   exprList;
+  optT   exprList;
+  negT   exprList;
+begin
+
+  -- Initialise the table
+  allT := exprList();
+  reqT := exprList();
+  optT := exprList();
+  negT := exprList();
+  qTerms.allTerms := allT;
+  qTerms.reqTerms := reqT;
+  qTerms.optTerms := optT;
+  qTerms.negTerms := negT;
+
+  createQueryTerms (queryStr, qTerms);
+  simpleQuery( qTerms, simpleQry);
+
+end strToQuery;
+
+-- find the first regexp in a string, return string with that 
+-- regexp removed, and the match itself. Also return any 
+-- preceding string
+
+procedure regexp_split 
+  (str in out varchar2, match out varchar2, pattern varchar2, preceed in out varchar2) 
+is
+  rest     varchar2(32767) := str;
+  newstart integer;
+  reStart  integer;
+begin
+     match := regexp_substr(rest, pattern, 1, 1, 'n');
+     -- find start of re
+     reStart := regexp_instr(rest, pattern, 1, 1, 0, 'n');
+     -- find end of re
+     newStart := regexp_instr(rest, pattern, 1, 1, 1, 'n');
+     preceed := substr(str, 1, reStart-1);
+     str := substr(rest, newstart, length(rest)-newstart+1);
+end;
+
+-- Find end of a parenthesised string
+-- start points at first open paren, we track until we reach a corresponding close
+-- paren.  Can't do this in regular expressions
+-- returns character position of closing paren
+
+function  getSectionEnd( qStr in out nocopy clob, startPos integer ) return integer is
+  pos number;
+  openCount number := 0;
+  closeCount number := 0;
+begin
+  pos := startPos;
+  --dbms_output.put_line('strt pos is '||to_char(pos));
+  loop 
+   exit when pos > length(qStr);
+    if substr(qStr, pos, 1) = '(' then
+      openCount := openCount + 1;
+    elsif substr(qStr, pos, 1) = ')' then
+      closeCount := closeCount + 1;
+    end if;
+   exit when closeCount = openCount;
+    pos := pos + 1;
+  end loop;
+
+  --dbms_output.put_line('end pos is '||to_char(pos));
+  return pos;
+
+end getSectionEnd;
+
+procedure sectionSplitter ( 
+  queryText      in             clob,         -- query to process
+  querySegments  in out nocopy queryTerms    -- list of expressions
+) is
+   re        varchar2(255);
+   secName   varchar2(64);
+   secBody   varchar2(4000);
+   qry       clob;
+   p1        clob;
+   p2        clob;
+   firstChar varchar2(1);
+
+   counter integer;       -- prevent loops while testing
+   loopmax integer := 2;  --  -- "" --
+
+   rstart    integer;     -- start of regexp marking title
+   rend      integer;     -- end of regexp marking title
+   secEnd    integer;     -- length of section in parens
+
+   secQry    varchar2(4000); -- parsed section query
+begin
+
+  counter := 0;
+ 
+  qry := queryText;     -- get local copy so we can change it
+
+  -- regexp to match the start of a section search eg +sect_name:(dog cat)
+  re := '[+-]?[[:alnum:]_]+:\(';
+  -- loop round extracting section searches from query text
+  loop
+
+    counter := counter + 1;
+    exit when counter > loopmax;
+
+    rstart := regexp_instr(qry, re, 1, 1, 0, 'n');
+   exit when rstart = 0;
+    rend   := regexp_instr(qry, re, 1, 1, 1, 'n'); 
+
+    -- find the end of the section
+    secEnd   := getSectionEnd( qry, rend-1); 
+ 
+    secName := substr(qry, rstart, rend - rstart - 2);
+    secBody := substr(qry, rend, secEnd - rend);
+
+    -- parse the body of the section search into a simple query
+    strToQuery( secBody, secQry );
+
+    firstChar := substr(secName, 1, 1);
+
+    case firstChar
+      when '+' then 
+        secName := substr(secName, 2);
+        querySegments.reqTerms.extend(1);
+        querySegments.reqTerms(querySegments.reqTerms.last()) := 
+          '((' || secQry || ') WITHIN ' || secName || ')';
+      when '-' then
+        secName := substr(secName, 2);
+        querySegments.negTerms.extend(1);
+        querySegments.negTerms(querySegments.negTerms.last()) := 
+          '((' || secQry || ') WITHIN ' || secName || ')';
+      else
+        querySegments.optTerms.extend(1);
+        querySegments.optTerms(querySegments.optTerms.last()) := 
+          '((' || secQry || ') WITHIN ' || secName || ')';
+    end case;
+
+    --p1 := substr(qry, 1, rstart-1);
+    --p2 := substr(qry, secEnd + 1);
+    --qry := p1 || p2;
+    qry := substr(qry, 1, rstart-1) || substr(qry, secEnd + 1);
+
+    --dbms_output.put_line(qry);
+
+  end loop;
+
+  -- Remainder in qry is the query with all section subqueries removed.
+
+  createQueryTerms( qry, querySegments );
+  
+end sectionSplitter;
+
+procedure test is
+  plusList exprList;
+  ordList  exprList;
+  allList  exprList;
+  qry      clob;
+  query    queryTerms;
+  textQ    clob;
+begin
+  plusList := exprList();
+  ordList  := exprList();
+  allList  := exprList();
+
+  plusList.extend();
+  plusList(plusList.last()) := 'cat';
+  plusList.extend();
+  plusList(plusList.last()) := 'dog';
+
+  ordList.extend();
+  ordList(ordList.last()  ) := 'rabbit';
+
+  --ordList.extend();
+  --ordList(ordList.last()  ) := 'fox';
+
+  dbms_lob.createtemporary(qry, true);
+ 
+  query.allTerms := allList;
+  query.reqTerms := plusList;
+  query.optTerms := ordList;
+
+  simpleQuery(query, qry);
+  --dbms_output.put_line(qry);
+
+  textQ := 'abc +title_sec:(foo bar) baz';
+  --dbms_output.put_line(textQ);
+  sectionSplitter (textQ, query);
+
+end test;
+
+procedure teststr(textQ clob) is
+  query  queryTerms;
+  allT   exprList;
+  reqT   exprList;
+  optT   exprList;
+  negT   exprList;
+  final  clob;
+begin
+
+  -- Initialise the table
+  allT := exprList();
+  reqT := exprList();
+  optT := exprList();
+  negT := exprList();
+  query.allTerms := allT;
+  query.reqTerms := reqT;
+  query.optTerms := optT;
+  query.negTerms := negT;
+
+  --dbms_output.put_line(textQ);
+  --dbms_output.put_line('123456789 123456789 123456789 123456789 123456789');
+  --dbms_output.put_line('........10        20        30        40        50');
+  sectionSplitter (textQ, query);
+
+  simpleQuery( query, final );
+  --dbms_output.put_line ('final query is "'||final||'"');
+
+  --for i in 1 .. query.allTerms.count() loop
+    --dbms_output.put_line('ALL: "'||query.allTerms(i)||'"');
+  --end loop;
+  --for i in 1 .. query.reqTerms.count() loop
+    --dbms_output.put_line('REQ: "'||query.reqTerms(i)||'"');
+  --end loop;
+  --for i in 1 .. query.optTerms.count() loop
+    --dbms_output.put_line('OPT: "'||query.optTerms(i)||'"');
+  --end loop;
+  --for i in 1 .. query.negTerms.count() loop
+    --dbms_output.put_line('NEG: "'||query.negTerms(i)||'"');
+  --end loop;
+
+end teststr;
+
+function simpleSearch( inStr varchar2 ) return clob is
+  query  queryTerms;
+  allT   exprList;
+  reqT   exprList;
+  optT   exprList;
+  negT   exprList;
+  final  clob;
+begin
+
+  -- Initialise the table
+  allT := exprList();
+  reqT := exprList();
+  optT := exprList();
+  negT := exprList();
+  query.allTerms := allT;
+  query.reqTerms := reqT;
+  query.optTerms := optT;
+  query.negTerms := negT;
+
+  sectionSplitter ( inStr, query );
+
+  --for i in 1..query.allTerms.count() loop
+    --dbms_output.put_line('ALL: "'||query.allTerms(i)||'"');
+  --end loop;
+
+  simpleQuery     ( query, final );
+
+  -- --dbms_output.put_line ('final query is "'||final||'"');
+   
+  return final;
+
+end simpleSearch;
+
+function progRelax( inStr varchar2 ) return clob is
+  query  queryTerms;
+  allT   exprList;
+  reqT   exprList;
+  optT   exprList;
+  negT   exprList;
+  final  clob;
+begin
+
+  -- Initialise the table
+  allT := exprList();
+  reqT := exprList();
+  optT := exprList();
+  negT := exprList();
+  query.allTerms := allT;
+  query.reqTerms := reqT;
+  query.optTerms := optT;
+  query.negTerms := negT;
+
+  sectionSplitter ( inStr, query );
+
+  --for i in 1..query.allTerms.count() loop
+  --  dbms_output.put_line('ALL: "'||query.allTerms(i)||'"');
+  --end loop;
+
+  progRelax     ( query, final );
+
+  --dbms_output.put_line ('pr:final query is "'||final||'"');
+   
+  return final;
+
+end progrelax;
+
+procedure SetScoreType (scoreType integer)
+ is
+begin
+  if (scoreType = scoreTypeFloat) then
+    global_scoreType := 'FLOAT';
+  elsif (scoreType = scoreTypeInteger) then
+    global_scoreType := 'INTEGER';
+  else
+    raise_application_error (-20701, 'Invalid score type: use 0 for integer, 1 for float');
+  end if;
+end;
+
+procedure UseNEAR2     (near2Option integer)
+ is
+begin
+  if (near2Option = optionTrue) then 
+    global_nearOper := 'NEAR2';
+  elsif (near2Option = optionFalse) then
+    global_nearOper := 'NEAR';
+  else
+    raise_application_error (-20702, 'Invalid NEAR2 option: use 0 for NEAR, 1 for NEAR2');
+  end if;
+end;
+
+procedure SetWildCard (wildcard varchar2)
+ is
+begin
+  if (wildcard = '%') then
+    global_wildcard := wildcard;
+  elsif (wildcard = '*') then
+    global_wildcard := wildcard;
+  else
+    raise_application_error (-20703, 'Invalid wildcard: must be ''%'' or ''*''');
+  end if;
+end;
+
+end parser;
+/
+-- list
+show errors

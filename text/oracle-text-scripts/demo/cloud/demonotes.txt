@@ -1,0 +1,80 @@
+exec dbms_cloud.DROP_EXTERNAL_TEXT_INDEX('mydocs')
+
+begin
+    for c in (select object_name from table (dbms_cloud.list_objects (
+            credential_name => 'mycredential',
+            location_uri    => 'https://objectstorage.uk-london-1.oraclecloud.com/n/lrxqmecwz64w/b/mydocs/o/'))) LOOP
+        dbms_output.put_line(c.object_name);
+    end loop;
+end;
+
+
+begin
+    dbms_cloud.create_external_text_index (
+        credential_name => 'mycredential',
+        location_uri    => 'https://objectstorage.uk-london-1.oraclecloud.com/n/lrxqmecwz64w/b/mydocs/o/',
+        index_name      => 'mydocs',
+        format          => JSON_OBJECT('refresh_rate' value '1')
+    );
+end;
+
+select * from mydocs$txtidx where contains (object_name, 'jump%') > 0;
+
+select object_name, ctx_doc.snippet('mydocs$idx', rowid, 'jump%')
+from mydocs$txtidx
+where contains (object_name, 'jump%') > 0;
+
+exec dbms_cloud.DROP_EXTERNAL_TEXT_INDEX('mydocs')
+
+select 'drop table '||tname||';' from tab;
+
+exec ctx_ddl.drop_section_group('show_sg')
+
+exec ctx_ddl.drop_preference  ('shoe_ds')
+exec ctx_ddl.create_preference('shoe_ds', 'MULTI_COLUMN_DATASTORE')
+exec ctx_ddl.set_attribute    ('shoe_ds', 'COLUMNS', 'reviewer_name, review_text, review_rating')
+
+exec ctx_ddl.drop_preference  ('shoe_lex')
+exec ctx_ddl.create_preference('shoe_lex', 'AUTO_LEXER')
+exec ctx_ddl.create_policy    ('shoe_lex', lexer => 'show_lex')
+
+exec ctx_ddl.drop_section_group  ('shoe_sg')
+exec ctx_ddl.create_section_group('shoe_sg', 'BASIC_SECTION_GROUP')
+exec ctx_ddl.add_ndata_section   ('shoe_sg', 'name', 'reviewer_name')
+
+drop index shoe_index;
+
+create index shoe_index on shoe_reviews (review_text)
+indextype is ctxsys.context
+parameters ('
+  datastore     shoe_ds
+  lexer         shoe_lex
+  section group shoe_sg
+');
+
+select review_text from shoe_reviews 
+where contains (review_text, 'adidas') > 0;
+
+select reviewer_name from shoe_reviews 
+where contains (review_text, 'adidas AND NDATA(name, Karlos Vandike)', 1) > 0;
+
+select ctx_doc.sentiment_aggregate('shoe_index', rowidtochar(rowid))
+from SHOE_REVIEWS
+where contains (review_text, 'adidas') > 0
+and ctx_doc.sentiment_aggregate('shoe_index', rowidtochar(rowid)) > 20;
+
+select review_text, ctx_doc.sentiment_aggregate('shoe_index', rowidtochar(rowid))
+from SHOE_REVIEWS
+where contains (review_text, 'adidas') > 0
+and ctx_doc.sentiment_aggregate('shoe_index', rowidtochar(rowid)) < 1;
+
+select rowidtochar(rowid) from dual;
+
+select review_text, ctx_doc.sentiment_aggregate('shoe_index', rowidtochar(rowid))
+from SHOE_REVIEWS
+where contains (review_text, 'adidas') > 0
+and ctx_doc.sentiment_aggregate('shoe_index', rowidtochar(rowid)) > 20;
+
+
+https://objectstorage.uk-london-1.oraclecloud.com/p/rSIhaRxK4pxMKvwNvlEL6ECM2yztx7MwMbSVLkc_5ag-Bl7t7DJrmei9Pxrz-pMI/n/lrxqmecwz64w/b/mydocs/o/letter.txt
+

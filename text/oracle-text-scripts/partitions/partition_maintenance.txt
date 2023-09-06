@@ -1,0 +1,63 @@
+Partition Maintenance and Oracle Text
+
+Oracle Text supports "locally partitioned indexes" on partitioned tables.
+
+That means that if you have a RANGE partitioned base table, you can use the LOCAL keyword when you create your index, and Oracle Text will automatically produce a partitioned index, with one index partition for each partition of the base table.
+
+A partitioned index is very much like having a separate Oracle Text index on each partition. There is a $I table, a $K table, a $R table, etc, for each partition. The naming convention for the index is changed slightly - the $I table for an unpartitioned table is DR$index_name$I, for a partitioned table it is DR#index_name0001$I, DR#index_name0002$I, etc (the eagle-eyed will have spotted an apparent limit of 9,999 partitions, but in fact this is lifted in 11.2, as it moves to an alphunumeric naming convention after 9999).
+
+Note that currently only RANGE partitioned tables are supported with local Text indexes.
+
+An important feature of any partitioned table is the ability to split and merge partitions. Splitting means dividing one existing partition into two new partitions, and merging means combining two (or sometimes more) partitions into a single one. 
+
+Normally, any LOCAL indexes on partitions which have been split or merged become invalid - they must be rebuilt before they are useable. However, if you specify UPDATE GLOBAL INDEXES, the local indexes will be automatically rebuilt as part of the split or merge:
+
+ALTER TABLE my_table
+  MERGE PARTITIONS p2, p3 
+  INTO PARTITION p2and3;
+  UPDATE GLOBAL INDEXES
+
+That's fine - but if we've got lots of data in there, it's going to take quite some time to rebuild those indexes, and our application is going to be unavailable for all that time.
+
+Is there a way we can do a split or merge without having to take the application offline while we rebuild the indexes? Yes, there is. We can make use of a feature known as Partition Exchange, which allows us to swap a complete table, including its ready-built indexes, in place of an existing partition in a partitioned table.  The syntax looks like:
+
+ALTER TABLE my_table
+  EXCHANGE PARTITION p2a WITH TABLE my_temp_table
+  INCLUDING INDEXES
+  WITHOUT VALIDATION;
+
+The WITHOUT VALIDATION is optional, but makes it a lot quicker. It avoids the need for the system to check every partition key value to make sure the row is going into the correct partition. Obviously it needs to be used with care.
+
+So now we have a solution.  When we do a merge, we first copy the data from the partitions to be merged into a temporary table. We create an index on the temporary table using all the same index options as for our main table. When that index is complete, we do the ALTER TABLE ... MERGE PARTITION as above, but without the "UPDATE GLOBAL INDEXES" clause (thus leaving our indexes invalid for a short period) and then we do the ALTER TABLE ... EXCHANGE PARTITION to swap in the partition complete with its freshly built index in place of the merged partition with its invalid index.
+
+We can do something similar with SPLIT PARTITION. This time, though, we will need two temporary tables.  We copy the data out of the first part of the partition to be split into one temporary table, and the data from the second part of the partition to be split into the other temporary table.  We create indexes on both of those temporary tables (we can build the two indexes simultaneously if we have enough resources, or sequentially if not.  We then split the partition, without using UPDATE GLOBAL INDEXES:
+
+ALTER TABLE my_table 
+  SPLIT PARTITION p2 AT ( 50 )
+  INTO ( PARTITION p2a, PARTITION p2b )
+
+and then we do two partition exchanges
+
+ALTER TABLE my_table
+  EXCHANGE PARTITION p2a WITH TABLE my_temp_table_1
+  INCLUDING INDEXES
+  WITHOUT VALIDATION
+
+and again for the second
+
+ALTER TABLE my_table
+  EXCHANGE PARTITION p2b WITH TABLE my_temp_table_2
+  INCLUDING INDEXES
+  WITHOUT VALIDATION
+
+... and that's it. Or is it? What about changes which have been made to the base table since we copied the data out into temporary tables?
+
+Well the simple answer to that is to make sure we don't do any changes to the table. We could even make it read-only:
+
+ALTER TABLE my_table READ ONLY
+
+That solves the problem, but it's rather heavy-handed. After all, the reason we're doing all this is that it can take a long time to build text indexes, and we would prefer not to have to prevent updates to the table.  So instead we need to institute some kind of "change management".  There are doubtless several ways to achieve this, but I've done it by creating triggers which monitor any updates or inserts on the base table, and copy them to a temporary "staging" table. These transactions can then be copied back to the main table after the partition split or merge is complete, and the index sync'd in the normal way.
+
+I've provided a pair of complete examples which illustrate this process. They do a split and a merge respectively on a simple partitioned table, creating indexes on temporary tables as necessary and exchanging those tables in place of partitions in the main table.  They also create the necessary triggers to monitor updates, and roll these back into the main table on completion.
+
+One note about the example: I've partitioned the tables on a the "price" column.  While this seemed a good idea in the context of a simple, understandable "e-commerce" type model, it's actually a pretty bad idea, since you can't change the value of a partition key if it would cause the row to move partitions.  So if we have a partition boundary at 50, and an item which costs 49, then we can't increas its price to 51.

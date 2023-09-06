@@ -1,0 +1,21 @@
+drop table avtest; 
+create table avtest (pk number primary key, text clob); 
+
+insert into avtest values (1, 'cat'); insert into avtest values (2, 'cat dog');
+insert into avtest values (3, 'cat dog rabbit');
+insert into avtest values (4, 'cat dog rabbit fish');
+insert into avtest values (5, 'cat rabbit');
+insert into avtest values (6, 'cat rabbit fish');
+insert into avtest values (7, 'cat fish');
+insert into avtest values (8, 'cat dog fish');
+insert into avtest values (9, 'dog');
+insert into avtest values (10, 'dog rabbit');
+insert into avtest values (11, 'dog rabbit fish');
+insert into avtest values (12, 'dog fish');
+insert into avtest values (13, 'rabbit');
+insert into avtest values (14, 'rabbit fish');
+insert into avtest values (15, 'cat dog cat dog cat');
+insert into avtest values (16, 'cat dog cat dog cat rabbit');
+insert into avtest values (17, 'cat dog cat dog cat rabbit fish');
+insert into avtest values (18, 'cat dog cat dog cat fish' );
+commit; 	

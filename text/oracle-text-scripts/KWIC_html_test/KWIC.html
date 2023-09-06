@@ -1,0 +1,220 @@
+<title>Hitlist Highlighting with Oracle Text</title>
+<H1><FONT COLOR=BLUE>Hitlist Highlighting with Oracle Text</FONT></H1>
+
+<b>Get a <a HREF="KWIC.zip">zip archive</a> of all the files for this example.</b>
+
+<H3><FONT COLOR=BLUE>Introduction</FONT></H3>
+
+The result of a free-text search is commonly a list of documents - or
+"hit list" - which match the search. The user will typically scan this
+list looking for items which are relevent. To make this process
+efficient, we must present as much useful information as possible in
+the hitlist.  Sometimes the best way to do this is to present
+information such as the title of the document. But often it helps to
+be able to highlight a section, or sections, of the main text of the
+document which best matches the search terms, with those search terms
+highlighted.
+
+<P>
+This techique is sometimes known as "Key Words In Context", or KWIC.
+
+<P>
+This paper will demonstrate how to generate such a KWIC hitlist.
+It uses a Java bean to do the main work, and demonstrates calling that
+bean from a Java Server Page (JSP). The bean, or its component code,
+could easily be called from other Java environments, or from a PL/SQL
+procedure as a database procedure stored in Java.
+
+<P>
+The application illustrated is a simplified version of one used within
+Oracle to search a mailing list archive. It should be easily adaptable
+to customers own requirements.
+
+<H3><FONT COLOR=BLUE>The Algorithm</FONT></H3>
+
+The full algorith is presented in the file <code>algorithm.html</code>
+in the zip file (see the top of this document). It uses the concepts
+of "relevance" and "novelty". Relevance is a measure of the number of
+words which match in a particular segment. Novelty is the number of
+new words which have not been found in previous segments.
+
+<H3><FONT COLOR=BLUE>Testing the Application</FONT></H3>
+
+Create and populate a simple test table using <code>Create.sql</code>
+from the download zip file.  You will need to run it initially as a
+DBA user such as SYS or SYSTEM.  It will create a user called
+"testuser", then it will log on as that user, then create a table and
+populate it with two rows of nonsense text.  Note that if your
+environment requires a connect string, you will need to add it to the
+testuser/testuser username/password pair.
+
+
+<P>
+Then edit test.jsp, substituting in the necessary parameters for your
+database in the lines:
+
+<pre><font color=blue>  ods.setServerName   ("eddie");
+  ods.setPortNumber   (1521);
+  ods.setDatabaseName ("eddi10b");
+</font></pre>
+
+The first value is the server machine name, the second the SQL*Net
+port number (default is 1521) and the third is the database SID.
+If you are unsure of these values, check in your "<code>sqlnet.ora</code>" file or
+consult your database administrator.
+
+<P>
+Now copy test.jsp into your Oracle webserver's HTDOCS directory.  The
+default, on Unix, will be <code>$ORACLE_HOME/Apache/Apache/htdocs</code>.
+
+<P>
+Now compile the Java source:
+
+<pre><font color=blue>  javac KWIC.java
+</font></pre>
+
+If you don't already have "<code>javac</code>" in your PATH, you will find it
+(on Unix) in <code>$ORACLE_HOME/jdk/bin</code>.
+
+<P>
+If all goes well, this will generate KWIC.class. This must be
+copied into the directory
+<code>$ORACLE_HOME/Apache/Apache/htdocs/WEB-INF/classes</code> (or the equivalent
+on non-Unix systems). It will probably also be necessary to copy the
+file <code>$ORACLE_HOME/jdbc/lib/classes12.jar</code> into the same directory.
+
+Now go to your web browser, and type in 
+
+<pre><font color=blue>  http://yourservername/test.jsp
+</font></pre>
+
+If your Apache web server is running on a different port, such as
+8888, you would need to say:
+
+<pre><font color=blue>  http://yourservername:8888/test.jsp
+</font></pre>
+
+If all goes well you should get a web page consisting of a search
+box and a "number of rows" box.  Enter "quick and brown" in the search
+box and hit "submit".
+
+<P>
+You should now see a hitlist with two items, and the search terms
+highlighted in context.
+
+<H3><FONT COLOR=BLUE>Customizing</FONT></H3>
+
+<P>
+To work with your own table, it shouldn't be necessary to change the
+KWIC bean at all. You should be able to make all the necessary
+modifications in the JSP file.
+
+<P>
+Important: if you change the name of "test.jsp" you MUST change the line 
+
+<pre><font color=blue>&lt;form action="test.jsp" method="GET" &gt; 
+</font></pre>
+
+to refer to the new
+ name. Otherwise you'll find that when you hit SUBMIT you'll be
+ running the old version rather than the new one.
+
+<H3><FONT COLOR=BLUE>Dealing with Long or Formatted Documents</FONT></H3>
+
+<p> The example above uses very short pieces of text. It is important to
+realise that this code will <em>not</em> work well where the text is
+very large, and/or the text is derived from formatted documents (eg
+Word or PDF format). This is because it uses the CTX_DOC.HIGHLIGHT
+document service, which must fetch (and perhaps filter) the entire
+document, even if you only want to deal with the first few kilobytes
+of text.
+
+<p> In this case, it will be necessary to fetch, and maybe pre-filter
+the text and store the first few KB of each row in a "shadow"
+table. An index would be created on the shadow table, but need not be
+populated (use the NOPOPULATE parameter). The concordance bean should
+then be called with the name of the NOPOPULATE index, and the
+appropriate rowid from the shadow table.
+
+<p>
+We'll illustrate this with an example. It is up to you to provide the 
+documents for this example - any Word, PDF or other formatted text 
+documents will be suitable. The table will contain the file names of
+the documents, and the FILE_DATASTORE will be used in the index on them.
+
+Run this as the TESTUSER user created in the previous example:
+
+<pre><font color=blue>  create table mydocs (
+     file_name varchar2(255));
+
+  -- change the following to represent your own files
+
+  insert into mydocs values ('c:\MyDocs\hello1.doc');
+  insert into mydocs values ('c:\MyDocs\hello2.doc');
+
+  commit;
+
+  create index mydocs_index on mydocs(file_name)
+  indextype is ctxsys.context
+  parameters ('datastore ctxsys.file_datastore');
+
+  -- create the "shadow" table
+
+  create table mydocs_shadow(
+    mydocs_rowid rowid,      -- foreign key to rowid in mydocs
+    text_extract clob);
+
+  -- now create a dummy index on the shadow table
+
+  create index shadow_index on mydocs_shadow(text_extract)
+  indextype is ctxsys.context
+  parameters ('nopopulate');
+
+  -- this procedure will loop through mydocs, and will filter the document
+  -- for each row and insert the first 6000 characters into the shadow table
+
+  declare
+    extract_size integer := 6000;       -- amount to use as extract (max 32K)
+    fetch_size   integer;               -- amount actually fetched
+    the_text clob;                      -- filtered text
+    extract varchar2(32767);            -- extract of filtered text
+  begin
+    for c in (select rowid from mydocs) loop
+       ctx_doc.set_key_type('ROWID');   -- use rowids rather than primary keys
+       ctx_doc.filter(
+         index_name => 'mydocs_index',
+         textkey    => c.rowid,
+         restab     => the_text,
+         plaintext  => TRUE);
+       fetch_size := extract_size;
+       dbms_lob.read(the_text, fetch_size, 1, extract);
+       insert into mydocs_shadow values (c.rowid, extract);
+    end loop;
+  end;
+  /
+</font></pre>
+
+So after running that lot, you should have two tables - one containing
+the file names of some formatted documents, and the other (the
+"shadow" table) containing the first 6000 characters of the filtered
+text from those documents.
+
+<P>
+
+<code>Test2.jsp</code> (in the zip file) is a variant on the earlier Test.jsp,
+modified to suit this two-table approach. Rather than a simple query with
+a CONTAINS clause, it uses a join so it can fetch the rowid from the
+shadow table.
+
+<P>
+When it calls the KWIC java bean, it now passes the rowid from the shadow
+table, and specifies the index that was created on the shadow table. Since
+the shadow table contains a short, pre-filtered summary, it is very fast to
+aceess and process that table.
+
+<P>
+
+<P><HR><P>
+Last Modified: 08-DEC-2003 by <a href="mailto:roger.ford@oracle.com">Roger Ford</a>
+<P><HR><P>
+

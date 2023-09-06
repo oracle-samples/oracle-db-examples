@@ -1,0 +1,178 @@
+Some customers have reported problems that the SMALL_R_ROW setting does not work.
+
+This appears to be a problem where certain data dictionary values are out of step with the values expected by the software after upgrading from a previous version of the product.
+
+The following test (run by any user with CTXAPP role and ALTER SESSION privilege) will determine whether there is an issue with your system:
+
+drop table TEST_SMALLRTAB;
+create table TEST_SMALLRTAB (text varchar2(200));
+
+-- SMALL_R_ROW $R table will have 35K docs per row
+-- so insert 71K docs:
+
+begin
+   for i in 1..71000 loop
+      insert into TEST_SMALLRTAB values ('X');
+   end loop;
+end;
+/
+
+exec ctx_ddl.drop_preference('dr$test$smallrstor');
+exec ctx_ddl.create_preference('dr$test$smallrstor', 'basic_storage');
+exec ctx_ddl.set_attribute('dr$test$smallrstor', 'SMALL_R_ROW', 'T');
+
+alter session set events '30579 trace name context forever, level 268435456';
+
+create index TEST_SMALLRIND on TEST_SMALLRTAB(text) 
+   indextype is ctxsys.context
+   parameters ('storage dr$test$smallrstor');
+
+-- should get three rows returned
+select length(data) from DR$TEST_SMALLRIND$R;
+
+If the above test returns three rows like this:
+
+LENGTH(DATA)
+------------
+      490000
+      490000
+       14000
+
+Then SMALL_R_ROW is working correctly on your system and there is no need for further actions.
+
+If it returns two rows:
+
+LENGTH(DATA)
+------------
+      980000
+       14000
+
+Then SMALL_R_ROW is working but you do not have the optimum settings. You should install patch 16902031.
+
+If it returns a single row:
+
+LENGTH(DATA)
+------------
+      994000
+
+Then SMALL_R_ROW is NOT working and you should work through the rest of this note.
+
+To ascertain whether the problem is related to data dictionary settings, run the following as a DBA user
+
+select oat_id from ctxsys.dr$object_attribute where oat_name = 'SMALL_R_ROW';
+
+A correctly set-up system will return 90129. If incorrect, it will return 90127.
+
+If the test above failed but you still get 90129 here, there is some other issue with your system and you should
+ignore the rest of this note and seek help from Oracle Support.
+
+If you get 90127, the rest of this note applies.
+
+================================================================================================================
+WARNING: The steps below make internal changes to data dictionary tables. Any errors (either on your part,
+or on our part in drawing up the instructions) COULD RENDER YOUR SYSTEM UNUSABLE. You should take a full database
+backup before proceeding beyond this point.
+=================================================================================================================
+
+First we need to know which existing indexes have been affected. Run the following query as SYS or other DBA:
+
+select v.IXV_IDX_ID, i.idx_owner, i.idx_name, v.IXV_OAT_ID, v.IXV_VALUE
+  from ctxsys.dr$index_value v, ctxsys.ctx_indexes i
+  where v.IXV_OAT_ID in (90127,90128,90129,90130,90131)
+  and v.IXV_IDX_ID = i.idx_id;
+
+If this returns no data, or only the test index we created before, then we can skip the next step, and move to
+the sectoin with the comment "Now update tha data dictionary..."
+
+Update the settings for all affected indexes (note, run this ONCE ONLY. Otherwise you will corrupt index settings).
+
+update ctxsys.dr$index_value set ixv_oat_id = 90131 where ixv_oat_id = 90129;
+update ctxsys.dr$index_value set ixv_oat_id = 90130 where ixv_oat_id = 90128;
+update ctxsys.dr$index_value set ixv_oat_id = 90129 where ixv_oat_id = 90127;
+commit;
+
+Now update the data dictionary with the correct values for all settings. The following should be run as user SYS:
+
+alter system set current_schema=ctxsys;
+
+BEGIN
+
+delete from dr$object_attribute
+where OAT_ID=90127 and OAT_CLA_ID=9 and OAT_OBJ_ID=1 and OAT_ATT_ID=27
+and OAT_NAME='SMALL_R_ROW';
+
+delete from dr$object_attribute
+where OAT_ID=90128 and OAT_CLA_ID=9 and OAT_OBJ_ID=1 and OAT_ATT_ID=28
+and OAT_NAME='A_INDEX_CLAUSE';
+
+delete from dr$object_attribute
+where OAT_ID=90129 and OAT_CLA_ID=9 and OAT_OBJ_ID=1 and OAT_ATT_ID=29
+and OAT_NAME='F_INDEX_CLAUSE';
+
+commit;
+END;
+/
+BEGIN
+insert into dr$object_attribute values
+  (90127, 9, 1, 27,
+   'E_TABLE_CLAUSE', '',
+   'N', 'N', 'Y', 'S',
+   'NONE', null, 500, 'N');
+EXCEPTION
+  when dup_val_on_index then
+    null;
+END;
+/
+
+BEGIN
+insert into dr$object_attribute values
+  (90128, 9, 1, 28,
+   'STAGE_ITAB_TARGET_SIZE', '',
+   'N', 'N', 'Y', 'I',
+   '0', null, null, 'N');
+EXCEPTION
+  when dup_val_on_index then
+    null;
+END;
+/
+
+BEGIN
+insert into dr$object_attribute values
+  (90129, 9, 1, 29,
+   'SMALL_R_ROW', '',
+   'N', 'N', 'Y', 'B',
+   'FALSE', null, null, 'N');
+EXCEPTION
+  when dup_val_on_index then
+    null;
+END;
+/
+
+BEGIN
+  insert into dr$object_attribute values
+    (90130, 9, 1, 30, 'A_INDEX_CLAUSE', '', 'N', 'N', 'Y', 'S',
+    'NONE', null, 500, 'N');
+EXCEPTION
+  WHEN dup_val_on_index THEN
+    NULL;
+END;
+/
+
+BEGIN
+  insert into dr$object_attribute values
+    (90131, 9, 1, 31, 'F_INDEX_CLAUSE', '', 'N', 'N', 'Y', 'S',
+     'NONE', null, 500, 'N');
+EXCEPTION
+  WHEN dup_val_on_index THEN
+    NULL;
+END;
+/
+
+commit;
+
+When the script has completed, the data dictionary should be in a consistent state. However, indexes which has been
+built using the SMALL_R_ROW option will need to have their "$R" tables rebuilt to get the correct size rows.
+
+A utility script to perform this operation with the name small_r_conversion2.sql is available from Oracle Support.
+
+Roger Ford roger.ford@oracle.com August 2017.

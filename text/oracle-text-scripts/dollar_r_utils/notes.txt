@@ -1,0 +1,34 @@
+define  PASSWORD   = test2
+define  INDEX_NAME = myindex;
+
+drop table tempdocid;
+create table tempdocid (docid number);
+
+insert into tempdocid values (123);
+insert into tempdocid values (12345);
+insert into tempdocid values (98765);
+
+variable idxid number;
+
+insert into ctxsys.dr$pending
+   (pnd_cid,
+    pnd_pid,
+    pnd_rowid,
+    pnd_timestamp,
+    pnd_lock_failed)
+select 
+    cui.idx_id,
+    null,
+    k.textkey,
+    sysdate,
+    null
+from
+    ctx_user_indexes cui,
+    tempdocid t,
+    dr$&INDEX_NAME$k k
+where
+    cui.index_name = &INDEX_NAME
+    and k.docid = t.docid
+/
+
+    
