@@ -43,6 +43,9 @@
  */
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
+import com.oracle.bmc.auth.AbstractAuthenticationDetailsProvider;
+import com.oracle.bmc.auth.InstancePrincipalsAuthenticationDetailsProvider;
+import com.oracle.bmc.auth.ResourcePrincipalAuthenticationDetailsProvider;
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
 import com.oracle.bmc.identitydataplane.DataplaneClient;
 import com.oracle.bmc.identitydataplane.model.GenerateScopedAccessTokenDetails;
@@ -157,11 +160,18 @@ public class JdbcTokenAuthentication {
    * @return Base 64 encoding of a JWT access token
    */
   private static String requestToken(PublicKey publicKey) {
-
-    // Read the configuration identified by the OCI_PROFILE
-    final AuthenticationDetailsProvider authentication;
+  
+    final AbstractAuthenticationDetailsProvider authentication;
+    
+    // Instance principal and resource principal authentication are also supported, and 
+    // can be used as shown below. 
+    // authentication = InstancePrincipalsAuthenticationDetailsProvider.builder().build();
+    // authentication = ResourcePrincipalAuthenticationDetailsProvider.builder().build();
+     
     try {
-      authentication = new ConfigFileAuthenticationDetailsProvider(OCI_PROFILE);
+      // In this code sample, authentication is shown using a config file. 
+      // Read the configuration identified by the OCI_PROFILE
+       authentication = new ConfigFileAuthenticationDetailsProvider(OCI_PROFILE);
     }
     catch (IOException ioException) {
       // Not recovering if the profile can not be read
@@ -175,8 +185,17 @@ public class JdbcTokenAuthentication {
 
     // This scope uses the * character to identify all databases in the cloud
     // tenancy of the authenticated user. The * could be replaced with the OCID
-    // of a compartment, or of a particular database within a compartment
+    // of a compartment, or of a particular database within a compartment. 
+    // Refer to the examples below. 
     String scope = "urn:oracle:db::id::*";
+
+    // A scope that authorizes access to all databases within a compartment has
+    // the form: urn:oracle:db::id::<compartment-ocid>
+    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxxxx"
+
+    // A scope that authorizes access to a single database within a compartment
+    // has the form: urn:oracle:db::id::<compartment-ocid>::<database-ocid>
+    // String scope = "urn:oracle:db::id::ocid1.compartment.oc1..xxxxxx::ocid1.autonomousdatabase.oc1.phx.xxxxxx"
 
     // Create a GenerateScopedAccessTokenDetails object with the public key
     // and the scope
@@ -187,7 +206,7 @@ public class JdbcTokenAuthentication {
         .build();
 
     // Request an access token using a DataplaneClient
-    try (DataplaneClient client = new DataplaneClient(authentication)) {
+    try (DataplaneClient client = DataplaneClient.builder().build(authentication)) {
       return client.generateScopedAccessToken(
         GenerateScopedAccessTokenRequest.builder()
           .generateScopedAccessTokenDetails(tokenDetails)

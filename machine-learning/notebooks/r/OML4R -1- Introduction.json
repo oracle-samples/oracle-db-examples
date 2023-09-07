@@ -1,0 +1,2330 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n# Oracle Machine Learning for R (OML4R)\n\n***Oracle Machine Learning for R*** (OML4R) makes the open source R programming language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior for running in-database, as well as new automatic machine learning capabilities. \n\nIn this notebook, we highlight a few of the OML4R features:\n* Load ORE Library\n* Create database tables\n* Use the transparency layer\n* Rank attributes for predicitve value using the in-database attribute importance algorithm\n* Build predicitve models\n* Score data using these models\n\nCopyright (c) 2022 Oracle Corporation\n\n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Oracle Machine Learning for R (OML4R)</h1>\n<p><strong><em>Oracle Machine Learning for R</em></strong> (OML4R) makes the open source R programming language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior for running in-database, as well as new automatic machine learning capabilities.</p>\n<p>In this notebook, we highlight a few of the OML4R features:</p>\n<ul>\n<li>Load ORE Library</li>\n<li>Create database tables</li>\n<li>Use the transparency layer</li>\n<li>Rank attributes for predicitve value using the in-database attribute importance algorithm</li>\n<li>Build predicitve models</li>\n<li>Score data using these models</li>\n</ul>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1502427921",
+      "id": "20220621-220804_1673596423",
+      "dateCreated": "2022-05-26T15:27:31+0000",
+      "dateStarted": "2022-07-29T16:14:08+0000",
+      "dateFinished": "2022-07-29T16:14:09+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "text": "%md\n# Import libraries supporting OML4R\n\nTo use OML4R, first import the library **ORE**.\n\nUsers can get online help using R's help function and specifying the function of interest.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Import libraries supporting OML4R</h1>\n<p>To use OML4R, first import the library <strong>ORE</strong>.</p>\n<p>Users can get online help using R's help function and specifying the function of interest.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1096245540",
+      "id": "20220621-220804_718508094",
+      "dateCreated": "2022-05-26T15:41:25+0000",
+      "dateStarted": "2022-07-29T16:14:09+0000",
+      "dateFinished": "2022-07-29T16:14:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%r\nlibrary(ORE)\nlibrary(lattice)\n\noptions(ore.warn.order=FALSE)\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1104997496",
+      "id": "20220621-220804_1621239117",
+      "dateCreated": "2022-05-26T15:43:52+0000",
+      "dateStarted": "2022-07-29T16:14:10+0000",
+      "dateFinished": "2022-07-29T16:14:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "View the first few rows from the iris data.frame",
+      "text": "%r\n\nz.show(head(iris))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "2": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "Sepal.Length\tSepal.Width\tPetal.Length\tPetal.Width\tSpecies\n5.1\t3.5\t1.4\t0.2\tsetosa\n4.9\t3\t1.4\t0.2\tsetosa\n4.7\t3.2\t1.3\t0.2\tsetosa\n4.6\t3.1\t1.5\t0.2\tsetosa\n5\t3.6\t1.4\t0.2\tsetosa\n5.4\t3.9\t1.7\t0.4\tsetosa\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656358246178_1272900111",
+      "id": "paragraph_1656358246178_1272900111",
+      "dateCreated": "2022-06-27T19:30:46+0000",
+      "dateStarted": "2022-07-29T16:14:24+0000",
+      "dateFinished": "2022-07-29T16:14:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "text": "%md\n# OML4R Transparency Layer functionality\n## Using an R data.frame, create a database table and obtain a proxy object\nWe have a couple of options for loading data into the database from R. In this first example, we load the **iris** dataset This R data.frame can then be loaded into the database using the ***push*** function, which creates a temporary table and returns a proxy object that we assign to variable IRIS_TMP. Such temporary tables will be automatically deleted when the database connection is terminated unless the proxy object is saved in a datastore (the topics of 'datastore' is covered in another notebook).\n\nWe then invoke standard functions like ***shape*** and ***columns***, as well as ***head***, to begin to explore the data.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>OML4R Transparency Layer functionality</h1>\n<h2>Using an R data.frame, create a database table and obtain a proxy object</h2>\n<p>We have a couple of options for loading data into the database from R. In this first example, we load the <strong>iris</strong> dataset This R data.frame can then be loaded into the database using the <strong><em>push</em></strong> function, which creates a temporary table and returns a proxy object that we assign to variable IRIS_TMP. Such temporary tables will be automatically deleted when the database connection is terminated unless the proxy object is saved in a datastore (the topics of 'datastore' is covered in another notebook).</p>\n<p>We then invoke standard functions like <strong><em>shape</em></strong> and <strong><em>columns</em></strong>, as well as <strong><em>head</em></strong>, to begin to explore the data.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-719287307",
+      "id": "20220621-220804_695870553",
+      "dateCreated": "2022-05-26T15:46:37+0000",
+      "dateStarted": "2022-07-29T16:14:25+0000",
+      "dateFinished": "2022-07-29T16:14:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Look up help on OML4R and other functions",
+      "text": "%r\n\nhelp(ore.push)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.pull                package:OREbase                R Documentation\n\nOracle R Enterprise Data Exchange Functions\n\nDescription:\n\n     Pulls or pushes data between an R session and an Oracle R\n     Enterprise schema.\n\nUsage:\n\n     ore.pull(x, ...)\n     ore.push(x, ...)\n     \nArguments:\n\n       x: For function ‘ore.pull’, ‘ore’ objects. For function\n          ‘ore.push’, ‘vector’, ‘data.frame’, ‘matrix’, or ‘list’\n          objects.\n\n     ...: For future expansion.\n\nDetails:\n\n     Functions ‘ore.push’ and ‘ore.pull’ place data in or retrieve data\n     from an Oracle R Enterprise schema. The supported in-memory R\n     object to ‘ore’ object mappings are as follows:\n\n        • ‘logical’ maps to ‘ore.logical’\n\n        • ‘integer’ maps to ‘ore.integer’\n\n        • ‘numeric’ maps to ‘ore.numeric’\n\n        • ‘character’ maps to ‘ore.character’\n\n        • ‘factor’ maps to ‘ore.factor’\n\n        • ‘raw’ maps to ‘ore.raw’\n\n        • ‘Date’ maps to ‘ore.date’\n\n        • ‘POSIXt’ maps to ‘ore.datetime’\n\n        • ‘difftime’ maps to ‘ore.difftime’\n\n        • ‘data.frame’ with columns of type ‘logical’, ‘integer’,\n          ‘numeric’, ‘character’, ‘factor’, list of ‘raw’, ‘Date’,\n          ‘POSIXct’, ‘difftime’ maps to ‘ore.frame’ with the\n          appropriately typed columns\n\n     In addition to the mappings above, for function ‘ore.push’ if the\n     input is a ‘list’ object, ‘ore.push’ is applied recursively to\n     each element. Meanwhile, the list elements are serialized before\n     saving to the database. The argument ‘envAsEmptyenv’ in ‘...’ is a\n     logical value indicating whether referenced environments in the\n     list element objects to be saved should be replaced with an empty\n     environment during serialization. When ‘TRUE’, the referenced\n     environment will be replaced with an empty environment whose\n     parent is ‘.GlobalEnv’, and therefore, the contents in the\n     referenced environment will not be serialized and saved to the\n     database. In some situations, this could significantly reduce the\n     size of the saved objects. When ‘FALSE’, the contents in the\n     referenced environment will be serialized and saved, and could be\n     unserialized and loaded into memory when calling ‘ore.pull’. The\n     default value is regulated by the global option\n     ‘ore.envAsEmptyenv’.\n\n     For in-memory R types listed in the table above, the ‘ore.push’\n     function creates objects that maintain vector element or data set\n     row ordering of the original data object. For all other data types\n     the behavior of ‘ore.push’ is unspecified.\n\n     Attribute ‘ora.type’ can be used to specify mapping R types\n     ‘character’ and ‘factor’ to ‘CLOB’ and R type ‘raw’ to ‘BLOB’. The\n     ‘ora.type’ takes the string value ‘\"clob\"’ and ‘\"blob\"’\n     respectively for these two cases.\n\nValue:\n\n     Function ‘ore.pull’ returns an in-memory R object containing the\n     appropriate in-memory data.\n\n     Function ‘ore.push’ returns an ‘ore’ object of the appropriate\n     type.\n\nAuthor(s):\n\n     Oracle <email: oracle-r-enterprise@oracle.com>\n\nReferences:\n\n     Oracle R Enterprise\n\nSee Also:\n\n     ‘ore.ls’, ‘ore.frame’, ‘ore.matrix’, ‘ore.vector’ ‘ore.options’\n\nExamples:\n\n     vec <- 1:10\n     oreVec <- ore.push(vec)\n     class(oreVec)\n     vec2 <- ore.pull(oreVec)\n     class(vec2)\n     oreVec3 <- ore.push(oreVec)\n     class(oreVec3)\n     vec\n     oreVec\n     vec2\n     oreVec3\n     \n     IRIS <- ore.push(iris)\n     class(IRIS)\n     new.iris <- ore.pull(IRIS)\n     class(new.iris)\n     head(IRIS)\n     head(new.iris)\n     \n     vraw <- raw(2000L)\n     oreRaw <- ore.push(vraw)\n     class(oreRaw)\n     new.vraw <- ore.pull(oreRaw)\n     class(new.vraw)\n     length(new.vraw)\n     \n     vbraw <- raw(3000L)\n     attr(vbraw, \"ora.type\") <- \"blob\"\n     oreBRaw <- ore.push(vbraw)\n     class(oreBRaw)\n     new.vbraw <- ore.pull(oreBRaw)\n     class(new.vbraw)\n     length(new.vbraw)\n     \n     attr(iris$Species, \"ora.type\") <- \"clob\"\n     iris$Species.raw <- lapply(iris$Species, \n                                function(x) charToRaw(as.character(x)))\n     attr(iris$Species.raw, \"ora.type\") <- \"blob\"\n     IRIS2 <- ore.push(iris)\n     class(IRIS2)\n     new.iris2 <- ore.pull(IRIS2)\n     class(new.iris2)\n     "
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1915712228",
+      "id": "20220621-220804_1109437228",
+      "dateCreated": "2022-05-26T15:44:58+0000",
+      "dateStarted": "2022-07-29T16:14:25+0000",
+      "dateFinished": "2022-07-29T16:14:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "text": "%r\n\nIRIS_TMP <- ore.push(iris)\n\ndim(IRIS_TMP)\ncolnames(IRIS_TMP)\nz.show(head(IRIS_TMP,10))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "2": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "3": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>150</li><li>5</li></ol>\n\n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>'Sepal.Length'</li><li>'Sepal.Width'</li><li>'Petal.Length'</li><li>'Petal.Width'</li><li>'Species'</li></ol>\n\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "Sepal.Length\tSepal.Width\tPetal.Length\tPetal.Width\tSpecies\n5.1\t3.5\t1.4\t0.2\tsetosa\n4.9\t3\t1.4\t0.2\tsetosa\n4.7\t3.2\t1.3\t0.2\tsetosa\n4.6\t3.1\t1.5\t0.2\tsetosa\n5\t3.6\t1.4\t0.2\tsetosa\n5.4\t3.9\t1.7\t0.4\tsetosa\n4.6\t3.4\t1.4\t0.3\tsetosa\n5\t3.4\t1.5\t0.2\tsetosa\n4.4\t2.9\t1.4\t0.2\tsetosa\n4.9\t3.1\t1.5\t0.1\tsetosa\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1019388198",
+      "id": "20220621-220804_530449192",
+      "dateCreated": "2022-05-31T21:20:26+0000",
+      "dateStarted": "2022-07-29T16:14:25+0000",
+      "dateFinished": "2022-07-29T16:14:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "text": "%md\n\nWe can also create a persistent table using the ***create*** function and specify an R data.frame and a tablename. For emample, here we sepecify **IRIS2**. This table is now accessible both within OML4R and directly from SQL.\nUse the function ***z.show*** to automatically pull the desired data to R  for display in the notebook. By doing this, you can also use the built-in Zeppelin visualization options such as a bar, pie, area, line, and scatter plots.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>We can also create a persistent table using the <strong><em>create</em></strong> function and specify an R data.frame and a tablename. For emample, here we sepecify <strong>IRIS2</strong>. This table is now accessible both within OML4R and directly from SQL.\n<br  />Use the function <strong><em>z.show</em></strong> to automatically pull the desired data to R  for display in the notebook. By doing this, you can also use the built-in Zeppelin visualization options such as a bar, pie, area, line, and scatter plots.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1921649566",
+      "id": "20220621-220804_1860683227",
+      "dateCreated": "2022-05-31T21:27:37+0000",
+      "dateStarted": "2022-07-29T16:14:26+0000",
+      "dateFinished": "2022-07-29T16:14:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "text": "%r\n\nore.attach()\n\ntryCatch(ore.drop(table=\"IRIS2\"))\n\nore.create(iris, table=\"IRIS2\")\n\n\nz.show(head(IRIS2))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "Sepal.Length\tSepal.Width\tPetal.Length\tPetal.Width\tSpecies\n4.6\t3.6\t1\t0.2\tsetosa\n4.3\t3\t1.1\t0.1\tsetosa\n5\t3.2\t1.2\t0.2\tsetosa\n5.8\t4\t1.2\t0.2\tsetosa\n4.4\t3\t1.3\t0.2\tsetosa\n4.4\t3.2\t1.3\t0.2\tsetosa\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656356289069_1938948261",
+      "id": "paragraph_1656356289069_1938948261",
+      "dateCreated": "2022-06-27T18:58:09+0000",
+      "dateStarted": "2022-07-29T16:14:27+0000",
+      "dateFinished": "2022-07-29T16:14:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "Transparency layer functions available on an ORE DataFrame",
+      "text": "%md\n## Transparency layer functions available on an ORE DataFrame\nList the functions defined for an ORE DataFrame proxy object, in this case \"IRIS.\"",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Transparency layer functions available on an ORE DataFrame</h2>\n<p>List the functions defined for an ORE DataFrame proxy object, in this case &ldquo;IRIS.&rdquo;</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1370128985",
+      "id": "20220621-220804_1375325038",
+      "dateCreated": "2022-05-31T21:32:04+0000",
+      "dateStarted": "2022-07-29T16:14:27+0000",
+      "dateFinished": "2022-07-29T16:14:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "text": "%r\n\nclass <- methods(class=class(IRIS_TMP))\nclass",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "  [1] !                $                $<-              %*%             \n  [5] Arith            Compare          Logic            Math            \n  [9] NCOL             NROW             Ops              Summary         \n [13] [                [<-              [[               [[<-            \n [17] as.character     as.data.frame    as.env           as.integer      \n [21] as.list          as.logical       as.matrix        as.numeric      \n [25] as.ore           as.ore.character as.ore.factor    as.ore.frame    \n [29] as.ore.integer   as.ore.list      as.ore.logical   as.ore.matrix   \n [33] as.ore.numeric   as.vector        attach           by              \n [37] cbind            coerce           colMeans         colSums         \n [41] colnames         colnames<-       complete.cases   coplot          \n [45] cor              cov              crossprod        data.frame      \n [49] dbWriteTable     decode           dim              dimnames        \n [53] dimnames<-       encode           eval             get_all_vars    \n [57] head             initialize       interaction      is.finite       \n [61] is.infinite      is.na            is.nan           length          \n [65] log              logb             matlines         matplot         \n [69] matpoints        max.col          merge            na.omit         \n [73] names            names<-          ncol             nrow            \n [77] ore.create       ore.pull         ore.push         pairs           \n [81] plot             pmax             pmin             polygon         \n [85] polypath         print            rbind            round           \n [89] row.names        row.names<-      rowMeans         rowSums         \n [93] rownames         rownames<-       scale            show            \n [97] slotsFromS3      smoothScatter    solve            split           \n[101] subset           summary          svd              t               \n[105] t.test           tail             tapply           tcrossprod      \n[109] transform        unique           unlist           var             \n[113] var.test         wilcox.test      with             within          \n[117] xor              xspline          xy.coords       \nsee '?methods' for accessing help and source code"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1892570803",
+      "id": "20220621-220804_1049695546",
+      "dateCreated": "2022-05-31T21:33:51+0000",
+      "dateStarted": "2022-07-29T16:14:28+0000",
+      "dateFinished": "2022-07-29T16:14:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "text": "%md\n## Using standard R syntax on database data\nPerform a few operations on the SEPAL_LENGTH column of the IRIS database table using the transparency layer. Note that standard R syntax is used",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Using standard R syntax on database data</h2>\n<p>Perform a few operations on the SEPAL_LENGTH column of the IRIS database table using the transparency layer. Note that standard R syntax is used</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-432008807",
+      "id": "20220621-220804_1854457390",
+      "dateCreated": "2022-05-31T21:34:02+0000",
+      "dateStarted": "2022-07-29T16:14:28+0000",
+      "dateFinished": "2022-07-29T16:14:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "text": "%r\n\ncat(\"Add 5 to each SEPAL_LENGTH: \\n\")\nIRIS_TMP[1:20,1]+5\n\ncat(\"\\n\\nMin SEPAL_LENGTH:  \", min(IRIS_TMP[,1]))\ncat(\"\\n\\nMin SEPAL_LENGTH:  \", min(IRIS_TMP$Sepal.Length))\n\ncat(\"\\n\\nMean SEPAL_LENGTH:  \", mean(IRIS_TMP[,1]))\ncat(\"\\n\\nMean SEPAL_LENGTH:  \", mean(IRIS_TMP$Sepal.Length))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Add 5 to each SEPAL_LENGTH: \n [1] 10.1  9.9  9.7  9.6 10.0 10.4  9.6 10.0  9.4  9.9 10.4  9.8  9.8  9.3 10.8\n[16] 10.7 10.4 10.1 10.7 10.1\n\nMin SEPAL_LENGTH:   4.3\n\nMin SEPAL_LENGTH:   4.3\n\nMean SEPAL_LENGTH:   5.843333\n\nMean SEPAL_LENGTH:   5.843333"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1872655366",
+      "id": "20220621-220804_207896437",
+      "dateCreated": "2022-05-31T21:35:45+0000",
+      "dateStarted": "2022-07-29T16:14:28+0000",
+      "dateFinished": "2022-07-29T16:14:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "text": "%md\nExplore masking using the IRIS Petal.Length column. Note that standard R syntax is used. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Explore masking using the IRIS Petal.Length column. Note that standard R syntax is used.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1266980788",
+      "id": "20220621-220804_333002540",
+      "dateCreated": "2022-05-31T21:35:51+0000",
+      "dateStarted": "2022-07-29T16:14:29+0000",
+      "dateFinished": "2022-07-29T16:14:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "text": "%r\n\nbase <- IRIS_TMP$Petal.Length\n\nMASK1 <- IRIS_TMP[,3] > 5.1\nmask1 <- IRIS_TMP$Petal.Length[MASK1]\n\nMASK2 <- IRIS_TMP[,3] < 1.4 | IRIS_TMP[,3] > 5.6\nmask2 <- IRIS_TMP$Petal.Length[MASK2]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:29+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 5,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1655639443",
+      "id": "20220621-220804_626514088",
+      "dateCreated": "2022-06-21T21:34:18+0000",
+      "dateStarted": "2022-07-29T16:14:30+0000",
+      "dateFinished": "2022-07-29T16:14:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "text": "%r\n\ncat(\"Petal Length:\\n\")\nbase\n\ncat(\"\\n\\nPetal Length > 5.1:\\n\")\nmask1\n\ncat(\"\\n\\nPetal Length  < 1.4 | > 5.6:\\n\")\nmask2\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 7,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "Species": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Petal Length:\n  [1] 1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 1.5 1.6 1.4 1.1 1.2 1.5 1.3 1.4\n [19] 1.7 1.5 1.7 1.5 1.0 1.7 1.9 1.6 1.6 1.5 1.4 1.6 1.6 1.5 1.5 1.4 1.5 1.2\n [37] 1.3 1.4 1.3 1.5 1.3 1.3 1.3 1.6 1.9 1.4 1.6 1.4 1.5 1.4 4.7 4.5 4.9 4.0\n [55] 4.6 4.5 4.7 3.3 4.6 3.9 3.5 4.2 4.0 4.7 3.6 4.4 4.5 4.1 4.5 3.9 4.8 4.0\n [73] 4.9 4.7 4.3 4.4 4.8 5.0 4.5 3.5 3.8 3.7 3.9 5.1 4.5 4.5 4.7 4.4 4.1 4.0\n [91] 4.4 4.6 4.0 3.3 4.2 4.2 4.2 4.3 3.0 4.1 6.0 5.1 5.9 5.6 5.8 6.6 4.5 6.3\n[109] 5.8 6.1 5.1 5.3 5.5 5.0 5.1 5.3 5.5 6.7 6.9 5.0 5.7 4.9 6.7 4.9 5.7 6.0\n[127] 4.8 4.9 5.6 5.8 6.1 6.4 5.6 5.1 5.6 6.1 5.6 5.5 4.8 5.4 5.6 5.1 5.1 5.9\n[145] 5.7 5.2 5.0 5.2 5.4 5.1\n\nPetal Length > 5.1:\n [1] 6.0 5.9 5.6 5.8 6.6 6.3 5.8 6.1 5.3 5.5 5.3 5.5 6.7 6.9 5.7 6.7 5.7 6.0 5.6\n[20] 5.8 6.1 6.4 5.6 5.6 6.1 5.6 5.5 5.4 5.6 5.9 5.7 5.2 5.2 5.4\n\nPetal Length  < 1.4 | > 5.6:\n [1] 1.3 1.1 1.2 1.3 1.0 1.2 1.3 1.3 1.3 1.3 1.3 6.0 5.9 5.8 6.6 6.3 5.8 6.1 6.7\n[20] 6.9 5.7 6.7 5.7 6.0 5.8 6.1 6.4 6.1 5.9 5.7"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1142302467",
+      "id": "20220621-220804_222745498",
+      "dateCreated": "2022-06-21T21:09:08+0000",
+      "dateStarted": "2022-07-29T16:14:30+0000",
+      "dateFinished": "2022-07-29T16:14:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "text": "%md\n## Explore data by computing pairwise correlation\nUsing only numeric columns, compute a correlation matrix using the **IRIS_TMP** proxy object for the temporary database table using the overloaded **cor** function. Here we see that petal length and petal width are highly correlated.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Explore data by computing pairwise correlation</h2>\n<p>Using only numeric columns, compute a correlation matrix using the <strong>IRIS_TMP</strong> proxy object for the temporary database table using the overloaded <strong>cor</strong> function. Here we see that petal length and petal width are highly correlated.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1820800292",
+      "id": "20220621-220804_544525008",
+      "dateCreated": "2022-05-31T21:37:11+0000",
+      "dateStarted": "2022-07-29T16:14:30+0000",
+      "dateFinished": "2022-07-29T16:14:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%r\n\nIRIS_NUMERIC <- IRIS_TMP[, c(\"Sepal.Length\", \"Sepal.Width\", \"Petal.Length\", \"Petal.Width\")]\nclass(IRIS_NUMERIC)\n\nRES <- as.data.frame(cor(IRIS_NUMERIC, use = \"all.obs\"))\nclass(RES)\n\nRES\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "2": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "3": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.frame'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "'data.frame'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 4 x 4</caption>\n<thead>\n\t<tr><th></th><th scope=col>Sepal.Length</th><th scope=col>Sepal.Width</th><th scope=col>Petal.Length</th><th scope=col>Petal.Width</th></tr>\n\t<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><th scope=row>Sepal.Length</th><td> 1.0000000</td><td>-0.1175698</td><td> 0.8717538</td><td> 0.8179411</td></tr>\n\t<tr><th scope=row>Sepal.Width</th><td>-0.1175698</td><td> 1.0000000</td><td>-0.4284401</td><td>-0.3661259</td></tr>\n\t<tr><th scope=row>Petal.Length</th><td> 0.8717538</td><td>-0.4284401</td><td> 1.0000000</td><td> 0.9628654</td></tr>\n\t<tr><th scope=row>Petal.Width</th><td> 0.8179411</td><td>-0.3661259</td><td> 0.9628654</td><td> 1.0000000</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-2068864169",
+      "id": "20220621-220804_2051996069",
+      "dateCreated": "2022-05-31T21:38:47+0000",
+      "dateStarted": "2022-07-29T16:14:31+0000",
+      "dateFinished": "2022-07-29T16:14:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md \n## Explore column distributions\n\nOML4R overloads select graphics functions as well. Here, we illustrate the use of ***hist*** and ***boxplot*** to show the distribution of petal length. Here, the statistical computations take place in the database - avoiding data movement - and return only the summary statistics needed to produce the plot, which enables scalability. No overhead is incurred for moving the data to the client for processing, whether 150 rows (as in IRIS) or 150 million rows.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Explore column distributions</h2>\n<p>OML4R overloads select graphics functions as well. Here, we illustrate the use of <strong><em>hist</em></strong> and <strong><em>boxplot</em></strong> to show the distribution of petal length. Here, the statistical computations take place in the database - avoiding data movement - and return only the summary statistics needed to produce the plot, which enables scalability. No overhead is incurred for moving the data to the client for processing, whether 150 rows (as in IRIS) or 150 million rows.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1568060536",
+      "id": "20220621-220804_1632107740",
+      "dateCreated": "2022-05-31T21:39:38+0000",
+      "dateStarted": "2022-07-29T16:14:32+0000",
+      "dateFinished": "2022-07-29T16:14:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%r\n\nhist(IRIS_TMP$Sepal.Length, col=\"darkred\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "IMG",
+            "data": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAIAAAByhViMAAAABmJLR0QA/wD/AP+gvaeTAAAg\nAElEQVR4nOzde1xUdf748Q8XuQje81LIpfIuaq55y9JQvECCfs1rau6iZm76a7MyQ/2ipGsl\nK5pllNeVNimvK+2g6QoqC1FqsYRXTFHBksI7DOgwvz/msfM9CzgcBmYO8+H1/Is5c+bwniMz\nvTozZ8bJaDQKAAAAOD5nrQcAAABA7SDsAAAAJEHYAQAASIKwAwAAkARhBwAAIAnCDgAAQBKE\nHQAAgCQIOwAAAEkQdgAAAJIg7AAAACRB2AEAAEiCsAMAAJAEYQcAACAJwg4AAEAShB0AAIAk\nCDsAAABJEHYAAACSIOwAAAAkQdgBAABIgrADAACQBGEHAAAgCcIOAABAEoQdAACAJAg7AAAA\nSRB2AAAAkiDsAAAAJEHYAQAASIKwAwAAkARhBwAAIAnCDgAAQBKEHQAAgCQIOwAAAEkQdgAA\nAJIg7AAAACRB2AEAAEiCsAMAAJAEYQcAACAJwg4AAEAShB1srk2bNk7/8e6772o9Dmpk+/bt\nw4cPb926dYMGDcz/rD///LPWc6EaDhw44OTkNHLkSK0HsSueiNRjXzk0wg5VGzlypJNCxRV+\n/fVX5Qq///3vbTHGkiVLzL8iICDAFr8Cli1evHj8+PFff/31tWvX7t+/r/6GFv6Eyl1l4uzs\n7O3t/dhjj40cOXLdunV3796t1jZNsrOzX3vttV69ejVr1qxBgwZNmzZ99NFHe/Xq9cILL7z7\n7rtJSUnVvfsBAQEVR7XgoYceetB9XLJkSaW/IiIiotyac+bMqXJ3OTk5ubu7t27devDgwStW\nrPjll18s3xGj0ajyLtf6PnREVf6lORaeSKXnqvUAABxDQUHBe++9Z5/fZTQa7969e+HChQsX\nLvzjH//485//rNPpunfvrn4L77zzztKlSw0Gg3nJzZs3b968efHixRMnTmzbts3FxaVabVq7\n1q1bt2DBAg8PD+XCn3/++fPPP7dug6WlpdeuXbt27VpycvK77777ySefTJw48UErqwy7Or4P\nAVSKsIPN8TqdHI4dO3bv3j3zxV27do0cObJBgwZ2+NV5eXljx449efKkq6uqp6yNGzf+7//+\nr62nqomCgoL4+PiZM2cqF65du7akpKTmG79169aUKVNatGgxdOhQ5fJvvvnmr3/9a0ZGxsWL\nF4UQOp3O39+/ffv2PXv2HDJkyDPPPOPl5WVeue7vQwCV4qVYAKrcunVLeTEsLMwWVWc0Go1G\n440bN3Q6XZs2bczLz507l5qaqnIjy5YtM//crVu3ffv2FRQU6PX6ixcvbt26NTQ01LoX1C5e\nvGj8b127djVf6+/vX+7aX3/91cLWYmNjlUfOioqK4uLiqjuS6Rfdv3//9OnTY8eONS83GAxv\nvPGGcrVXXnmlf//+cXFx33///fXr100LL1269M9//jMmJiYkJOT1119XbtlG+xCArRF2sDkL\n78M1Go3bt29//vnnH3vsMS8vL3d3dz8/v759+06fPn3Lli3mtwqNHTvWyclp6dKl5hvm5uYq\n3/WyZcsW5WZzc3MjIyP79ev30EMPNWjQoFmzZt27d3/llVd++OGHSic0GAzr1q3r3bu3t7d3\nkyZN+vTps2bNmnv37r388svmX/Hkk09avlM6nS4oKKh58+ZOTk4pKSlCiOvXr+/atWvOnDl9\n+vRp2bKlm5ubp6dnmzZtnn322ejo6Ly8vIqTPPTQQ8rNXr9+/Y033mjXrp2Hh4ePj8+0adPO\nnTtnWvPIkSOjR49u3bq1h4dH+/bt58+ff+PGjer9w6jeUQsWLHBycir30p755Ilnn322ur+3\nSk2aNAkJCVmwYIFy4dmzZ9Xc9vLly6YjUiabN28ePnz4Qw895O7u7u/vP3Xq1H/84x/Z2dkj\nRoyo3ZlVcnNzM/1w6tSpffv2mZdv2rSpsLCw3Doqubi4dOzY8fPPP3/88cfNC//973/n5uaa\nfl69evW6devUb7CG+zA/Pz8qKurpp582/dk3a9bsd7/73fz5883zKJV7KN25cyc6OrpHjx7e\n3t6NGzd++umn4+PjK97KigeXndVkJ+j1+piYmCeffLJRo0ZeXl6/+93vPvjgg7Kysoo3rNZz\nV3WfSM3Uz4M6wQhU5bnnnrP8N1NQUKBcYdq0acprW7dubb5qxYoV5uUGgyE8PNzCH2ffvn1N\naz7//POW/4w3b95s3ux7771n4QW7l19+Wa/XK8crKioq94qVSe/evZWHQHr16mXhTq1evVp5\nACM5OdloNA4ZMsTCzI0aNdqzZ0+5PdmiRQvzCtOnT2/btm25W3l7e2dkZERHR1c8XhIYGHjn\nzh31/6zqd9Rbb71l4Y4MGjSoyt9l4U/IwlV79+5VXvXZZ5+puWG5Kj137pz6fVJdlo/YVTrq\nM888Y86vIUOGmFYwGAzmhUFBQf7+/ub1X3nllQdtSlR4MJY7b8n0d2g0Gtu1a2da4uTktGrV\nqi+//FIIERoamp+fn56e/sknn4waNeqNN94wb6cm+3Dt2rXu7u6iMm5ubh988EG59ZUPpZde\neknZpmYvvPDC/fv3lbey4sH1oCeiKlX5BFi7O+Hll1/u0qVLxRtOmTKl3K2q+9yl/onUunlQ\nRxB2qJqNwu6vf/2r5WcZK8JO+frRg0yaNEk5XkRERJU3ERbDbsyYMS4uLsqV1YSdEMLT0zM3\nN1e5WWXYPUjTpk0fdNXixYtV/ptWa0dpFXaxsbHKqzIzM9Xc8OrVq8rlzz777L///W+Vu6W6\nrAi7QYMGrV27ttyd2rFjh3nJV199Vbthd+/ePfP/Bvj5+RmNxgMHDgghnnvuuQcNbPU+/Mtf\n/iKqsm7dOuVNlA8lC6KiopS3suLBZbews91O2L9/v/JW1X3usi7s1M+DOoKwQ9XKPa9VSWXY\nTZkyxbz81VdfvXLlSmlp6dWrV48fP75ly5ZJkyaFhYUptxMVFWVev9L/iJ49e1YZWF27dk1P\nTy8pKTlz5sywYcOUEyYmJppu8uOPPyqXd+rU6ZtvvtHr9SdOnOjRo4fyKgthJ4Ro3br1l19+\nefv27dzc3D//+c9paWlGo3Hy5MmzZ8/et2/fqVOnrl+/rtfrL1++/MknnzRq1Mh8w7ffflu5\n2XJhN2HChPz8/GvXroWEhJTbyYsWLbp58+bp06eVRzg6dOig5h/Uih1lNBq3bdumvOrevXtq\nfpdJdcPu5s2b5d5jN3z4cPXb7N27d7ndFRAQMGbMmKVLl+7fv7+oqEj95JZZF3Z37txp3ry5\n6aLpwdK/f3/Txc6dO5eVlVkXdqWlpeUOd124cMFoNBoMBvM/t7Oz8+eff256CdhC2Bmt2oc/\n/fST8m2X06ZNO3nyZHFx8U8//TR9+nTzci8vr59//tl8q3IPpWHDhp05c0av1x8+fFj5YRzu\n7u7Xrl0z38qKB5d9wq5WdkL//v2zsrJu3rwZFxenfKhGRESYb2L1c1eVT6TWzYO6g7BD1WwU\ndmPGjDEv37VrV5VjVPl89OabbyrHUB7guXHjhvIZPzQ01LS83LGo7777znyTkydPKl/utBB2\nTk5O6enpavakyf/7f//PfNunn35aeZUy7Jo2bWr+z6fyzVhCiCeffNJ8k5UrVyonUdNbVuwo\no73CrlJDhgy5ceOG+m1mZGQ0bNjwQVvz8vKaPn365cuX1c//INaFndFojIyMNF10c3NTHq5b\nv3690WisbthVPHlCCNGtWzfzrfr166e8yvTfZj8/v2XLlu3bt6/SSrNiHyofTebD7SZlZWWP\nPvqo+drVq1ebr1I+lBo1aqT8hy73Z//hhx9W+S9i4cFln7Cr+U5wd3e/evWq+arhw4ebr+rX\nr1+lv0hU57mrumGnch7UHZw8Ac107NjR/PPzzz/fvXv38ePHL168OCEh4fLly1Zs8PDhw+af\ne/bsqfzYsyZNmowePdp88ciRI6YfMjIyzAs7d+6sPEOic+fOffv2VfN7n3rqqXL/4TQ7cODA\n9OnTn3jiiWbNmrm5uZneofzBBx+YV8jPz3/QZkeOHOnp6Wn62dfXV3nVhAkTzD8rj2oYjcZy\n565WyoodpaGFCxcePHiwSZMm6m/Sp0+f9PT0QYMGVXrt3bt3N27c2KNHj6ysrFqasdrmzJlj\nOkOitLR06tSppoWtWrVSHsZWw/QX5erq2qlTJ2UgOjs7K4s/OjpaeaDF9NF0ly5dWrRo0YgR\nIx566KE5c+aUO/nGin2o/LvKyMhQvivf2dn5woULymsr3WxYWJjyH9p0xob54jfffKNcuSYP\nLtup+U4YOXKk8lj1Y489Zv755s2bld7c6ucuNcrNo2xT5TyoOwg7VFvF/z8o9x47lWbNmmV+\nEjcajVlZWdu3b1+2bNmkSZP8/Pyeeuqp9PT0am1Q+cagip+orlxy586d27dvi//+jL2KN1E+\nhVlQ6XPo/fv3x40bN2zYsE2bNmVmZt64cUP5IXBmRUVFD9qsMubMhVdx1HJv71NzqpoVO0pD\ny5cvN73iU61bde/ePSUlJTs7e+XKlaNHj/bx8Sm3QmFh4ezZs2tvzOp5+OGHX3jhBdPPxcXF\nph9eeeWVch9ZbJ1GjRpt3bpVeWRl6NChSUlJyuOLSkVFRR999NHAgQP1er1yeXX3ofpzUR/0\njKE8VGmifBSYH601f3DZTs13gvlMFxPln4Ty0V0rz11qlJtH+VzEibF1E2EHzfj7+6empg4f\nPtzZuZK/w/T09CFDhpw+fVr9BpX/7a940milZWDFTSqq9IyHNWvWKI+gPIiFX9G4ceMHzaY8\nf0L5xQAq1cq9thGj0ajX67/55ptevXqZF27evFnNG9Ir6tKlyxtvvLF79+4rV65cuHBhxYoV\nyv8spaWlmT7RTRPz5s1TXvT09PzjH/9o9dYaNGjQsmXLQYMGLVu27MyZM5MnTy63wtChQ3/8\n8ceMjIzly5dXehwuKytr69atFZfbYh9W2mGisr/GSq+t+YOrLnjQTih3dlSlT4/Cjo9ilfOg\n7uBfCFoKDAzct2/ftWvXEhMT33///RkzZihfUCguLt60aZP6rT3yyCPmn5UveZgoPz7K29vb\n9E6yhx9+2Lzw0qVL5W6i/CgvCyp9pktISFAOptPpzG8esnySqR1YsaPsyd3dvW/fvvv27VMW\n89KlS8udqlldAQEBCxYsUO58qw8214pu3bopT1V58cUXlS87qmQ+am76SrGUlJSFCxcq/6rL\n6dOnT2Rk5KJFi4QQQ4YMSU1NHTx4sPnaKj8C2vI+VP7ecePGWXgPkOmDHiuq+IhTvivD/Mav\nuvzgqvlOsOIXWf3cBSkRdtBeixYtRo4c+eabb65fv/67776bO3eu+arz58+bf1Z+6Fql37yk\nPA7x/fff//vf/zZfvHnz5t///nfzxWeeecb0g/K9cT/++KPyDUOnT59+0Jtg1FC+IvPCCy+E\nhISYXnc2GAwHDx60erO1woodZX8PPfSQ8iut7ty5U+7TrR/k7t27I0aMeNC/XbnP/jWfnaoJ\n85c9ODk5vfbaa3b+7R4eHgMGDHjnnXfMS+7evWv+wYp9qPyo6v3791esjSolJiYq37Z14MAB\n5bd3mN/zUOsPrpiYGPM74by9va3YglnNd4JKVj93VflECkdH2EEz77///ogRI1avXp2enn7h\nwoWioqLi4uLjx48r37CvfBVAeTzjl19+0el0paWlyg3OnDlT+YazyZMnZ2RklJaWnj17dsKE\nCcqzCsyveZnft26+ePz48Xv37n3//femT3Gz+t61bNnS/PPu3buPHz+u1+tPnjw5YcKE48eP\nW73ZWmHFjtLESy+9pDw7b/369deuXavyVkajcf/+/f369evZs+d7772Xnp7+22+/3bt37+rV\nqxs2bPjzn/9sXrNDhw5WHCSrRcOGDTMdvCkrK1OeS1S7DAZD+/bt//jHP+7atevkyZPmkySM\nRmN+fv6GDRvMa5rfp2/dPpw5c6Y5Gm7duhUcHLx9+/arV6+Wlpbm5+d///3327ZtmzVrVseO\nHc1fKlPO7du3J0yYcO7cudLS0qNHj7788svmq9zc3MaPH2/6uY4/uGq4E1Sy+rmryidSODpV\n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\nAAAAJEGxAwAAkATFDgAAQBIUOwAAAElQ7AAAACRBsQMAAJAExQ4AAEASFDsAAABJUOwAAAAk\nQbEDAACQBMUOAABAEhQ7AAAASVDsVFBYWNiuXTuNRqPRaNTOAvsYOXKkpipRUVFqR4PdGAyG\nRYsWde7cWafTPfPMM1OmTDl16pTaoVBXX331VZV/eRVLlixROyDsICkpadq0aV26dHFzc/Pz\n8wsKCoqJiXn8+LHaueqFo9oBGqN33nnHYDConQJALXz99ddTpkwpKipSXhoMBoPBEBcXV1BQ\n4OHhoW421J+hQ4eqHQF1FRkZOX/+fPNLo9GYkZFx5syZ/fv3Hz161MHBQcVs9YEjdg3t/Pnz\n4eHhixYtUjsI7C8lJcX0/4WEhKgdCnZw/fr1SZMmFRUVDR48+OTJk0VFRQ8ePPj888+HDRvG\ncfen3ejRo02V3Lx5U6PR+Pr6vvTSS2oHRJ0UFRUtXbpUCDF16tRr164ZjcbMzMwdO3Y4Ojoe\nO3bs4MGDage0P4pdgyorKwsJCenWrdvKlSvVzgLAVkuWLDEajf369Tt+/PjQoUPd3Ny8vLx+\n+9vfnjhxwt3dXe10sL89e/aYTKZZs2Y5OnJe6+mWlpb26NGjJk2axMbG9ujRw9XV1dfX9803\n35w5c6YQ4vLly2oHtD/+l21Q77//fnJyckJCgrOzs9pZANjkzp07X331lRBiy5Ytrq6uasdB\nvSsrK/vwww81Gs2cOXPUzoK6at26dTXvtmnTpsGSNBiO2DWc1NTU9evXz58/PzAwUO0sqBfT\np0/39PR0c3Pr0aPHsmXLMjMz1U4EO0hISDCZTC1atBg+fLjaWdAQ/v3vf9+9e3f48OEdO3ZU\nOwvqqkWLFjNnznz48OGrr76anJxcUlKSlZW1c+fO6OhoPz+/6dOnqx3Q/ih2DcRkMoWGhvr4\n+GzatEntLKgvFy9eLCwsNBqNycnJH3zwQa9evS5evKh2KNRVenq6ECIgICArK+u1117z9vbW\n6XQ9evRYvXp1QUGB2ulgf7t37xZCcIGsNKKiojZu3Pjdd98pp2JbtWr11ltvvfzyy+fOnfPy\n8lI7nf1R7BrInj17Tp8+HRER4enpqXYW2F+nTp3Cw8OvXbv26NGjX3755aOPPurQoUNOTs6U\nKVOKi4vVToc6KSwsFELodLqBAwfGxMTk5uYWFxcnJydv2LChf//+OTk5ageEPf3000/ffvtt\ns2bNJk+erHYW2EdeXt7Vq1ct/6qWlZWlpKSkpaWpmKr+UOwaQkZGxvLly4ODg8eNG6d2FtSL\nyMjIBQsW9OjRQ3nC2YwZM86fP+/j43Pr1i3l8iw8vXQ6nRAiLi7Ozc0tPj4+Pz8/Ozv7wIED\nLVu2TE1NXbVqldoBYU/KbRMzZsxwcXFROwvsoKSk5De/+c0nn3wSHBys/OxtMBjCw8NTU1NH\njRqVmJiodkD7o9g1hDfeeEOr1e7cuVPtIGg4zZs3Hz9+vBDi2rVramdBnbRs2VIIYTKZDh06\nNHr06CZNmjRv3nzatGl79uwRQhw6dEjtgLCb0tLS6OhowXlYicTGxqampg4ZMuQf//iH8rO3\nn5/fggULtm7dWl5evm7dOrUD2h/FriEcPXo0Ly/P19fX/DTzpk2bKm8pL6W84xqQQ69evYQQ\n7u7u3bt3txzv37+/ECI7O7uiokKdZLC3uLi47OzsQYMG9ezZU+0ssI/k5GQhxIABA6weOTlw\n4EDzu5Kh2AH1Ijc394svvhBCPPfcc2pnQZ0EBAS0bNmyqKgoJSXFcvz7778XQrRs2VKr5Rup\nJLhtQj7K7REXLlywGj979qz5Xcnw/aghFBcXWz3WPC8vT3lLedmnTx91E6IuDhw48Morrxw9\nejQ9Pb2kpMRgMMTGxgYGBt67d++ZZ54ZM2aM2gFRJ1qtVnly/aRJk77++uuHDx/ev3//n//8\nZ2hoqBAiODhY7YCwj9TU1JMnT3p6ek6bNk3tLLCbsWPHCiHOnDkze/bs5OTk4uLijIyM8PDw\nt99+2/yuZDQmk0ntDI3RgwcPlLOxfP0lEB0dPWvWrMrj3t7e8fHxygk7PNXKysomTJgQHx9v\nNd63b98TJ05I+UN/I7R06dJt27bNnTtXuXoS0li2bNkHH3xQedzf3//06dN6vb7hI9Urip06\nKHYyKS0tPXLkSGxs7JUrV27fvu3s7NyxY8exY8cuWrRIue4eEigvL9+1a1d0dHRaWprJZOrS\npUtwcHBYWJhyzyyediUlJX5+fvfv3z9//vyAAQPUjgM7O3z48O7du5OSkvLy8lxdXbt27Tp5\n8uTFixe7ubmpHc3+KHYAAACS4Bo7AAAASVDsAAAAJEGxAwAAkATFDgAAQBIUOwAAAElQ7AAA\nACRBsQMAAJAExQ4AAEASFDsAAABJUOwAAAAkQbEDAACQBMUOAABAEhQ7AAAASVDsAAAAJEGx\nAwAAkATFDgAAQBIUOwAAAElQ7AAAACRBsQMAAJAExQ4AAEASFDsAAABJUOwAAAAkQbEDAACQ\nBMUOAABAEhQ7AAAASVDsAAAAJEGxAwAAkATFDgAAQBIUOwAAAElQ7AAAACRBsQMAAJAExQ5A\n49K8efOsrCy1U9ROeXm5RqPp1KmT2kHsLCsrS6PRBAQEqB0EkAfFDpCEXq/XaDT//e9/rUbM\nPDw8/P39ly9fnpOTY8viQoj4+PiJEye2bt3a2dm5RYsWAQEBixcvPnPmTEVFRY15Hjx4oLFB\nmzZtrNIePHiw8touXLhgXuTBgwdP2kZPT8++ffuuXbv24cOHNn3VKqnLJv8vqHI/AmhETACk\n4OXlJYRIT0+3GqmsTZs2BoOhxsWXLFnypO8bZ86cqTFPXl6eLd+C/Pz8LANoNJrRo0dXXtvc\nuXOVd4UQeXl5NW5j586ds7OzLddw4cKFKVOmtG3bVgjh4eExaNCgjRs3ZmZmWs6p4ybXn7Ky\nMiFEx44da5xZeT/+LygoKBBCdO3a1Wo8MzNTCNGvXz9VUgFS4ogdIDnl3/iKiorMzMx9+/Z5\nenoaDIY///nP1S91+vTpbdu2CSHmzZt3+fLlgoKCvLy8H374ITw8PCgoyMHBocbP1ev1Vt9u\n/vCHPwghtm7dajloMBgslxoxYsSxY8du375tOVhUVHTgwIFBgwa5ublVv40ZGRl/+9vfXF1d\n09LS1q9fb54QERExcODAzz777JdffhFCFBYWnjt37p133pk3b54dNxkAVEexAxoFjUbj6+s7\na9astWvXCiG++eab6ud/+eWXQoiJEydGRET07t3bw8NDr9f36dNnwYIFp06dCgwMrKecc+bM\nqaioiI6Othz89NNPCwoK5syZU/2yGo2mVatW8+fPX7NmjRAiPj5eGX/06NGyZctMJtOyZcvS\n09O9vb2Tk5MTExNXrFjRqlUr8+JqbTIA2BHFDmhc/P39hRD5+fnVTysqKhJCdO/evSEyWRg5\ncmS7du327dtnMpnMg1FRUe7u7i+//LKNK3n++eeFENnZ2crLa9euFRUVBQUFbdmypX379kKI\npk2bDh48eNOmTREREealarXJaWlpoaGhHTp0cHFx8fLyGjJkyP79+y0nmG8LKCgoCAsLa9u2\nrYuLS4cOHVatWqV8kOWqVq1aFRAQ0KxZM51O161bt7feeis3N9fGjf11bM9fXFy8Zs2ajh07\nuri4tGnTZtGiRYWFhVZr+/jjjwcMGODm5ubt7T1+/Pgff/xx8+bNGo1m165dQogdO3Z4enoK\nIVJTU81XQ44cOdJyDbZ8CgCbNMgJXwD17knX2FldbrV582YhRN++fatfPCoqSgjRtm3bn3/+\n2V4JqzwVaxUgOzv7vffeE0J88803ynhycrIQYvbs2SaTyd3dXVR1jZ3VNm7cuFEI0aVLF+Xl\nxYsXhRBjxoxRXnp7e1tdWqewfZOPHDlS5UnhuXPnmucoV4/5+/v379/fatrAgQONRqN5pp+f\nX+VVderUKTc31zzHvtfY1Sp/UFCQ1bQXX3zRcm3vvvuu1QSdTqe08L/+9a8mk2n79u2VP0tZ\nie2fAsBGFDtAEtUXu4qKiqysrL179yrd6C9/+Uv1ixuNRuUhFFqtdtCgQQsXLty3b19ycnJd\nEtpY7G7duqXVal955RVlfOnSpUKIxMREU03FTrmOMDIyUqfTCSHefPNNZU5ZWZmfn59Wq92x\nY0dBQcGTip2Nm3znzh0PDw9XV9dNmzalpaUZjcbs7Oy4uDjlWOAXX3yhTFMqixBCr9fv3bs3\nKyvr7t270dHRTZs2FUKsXbvWvMJRo0bt2rXr6tWrhYWFeXl5p06dGjZsmBBixYoV5jl2LHa1\nzd+6devY2NisrKy8vLz9+/e7uroKIb777jtl2qVLl5QjcEuXLk1LSysoKEhMTBw4cKCyrFLs\nTDXdPFHjpwCwHcUOkISNd8U6OTmFhYVVVFTUuHhRUdG6deueffZZy8W7d+8eFxf36xLaWOxM\nJtOoUaNcXV1zc3NLS0t9fHy6d++uzHlSsausU6dOlnfFJiYmtmjRQgjh6Oio1WqDg4MjIyOt\nbpu1cZNXr14thIiMjLRaNjExUQjx+9//XnlpriwHDx60nHbo0CEhhK+vbzVfqPz8fEdHR39/\nf/OIHYtdbfNfuHDBctqiRYuEENu2bVNeLly4UAgxa9Ysyzl5eXk+Pj61KnbVfwoA23GNHdC4\n9OrVKywsTHluSPXc3NxWr1598+bN9PT0uLi4lStX9urVKyUlZfLkycpZy/ozZ86c4uLijz/+\n+PDhw9nZ2TXeNmHm7u7eu3fv1atXJyUlNW/e3Dw+ePDgn3/+effu3RMmTNBqtZ9++um8efPa\ntWsXGRlpubgtm5yQkCCE+OMf/+jo6Ojg4ODg4KDVarVa7QsvvCCEuHnzpuUKmzRpMmXKFMuR\niRMnNmvWLCsr686dO8rI3bt333777d69e3t6emq1Wo1G4+XlVV5ertzAa3e1yt+2bVurU8m9\nevUSQpgfhaic5n7ttdcs5+j1+vHjx9seqcZPAWA7ih0gOeXgTWlpaUpKyrRp0y5evDhy5Mha\nXZnevn37SZMmbdy48fLly8oFVStXrnz8+HG9RRYTJ0709vbeu3dvVFSUk5PTjBkzqp9vPkBV\nWFh4+fLldevWVT6S5+HhERoaevDgQS8vr0uXLoWHhzs5Oc2fP//MmTOVV1jNJitt4/Hjx48f\nP66oqDAf+1QWLC0ttVyP+fHLlQeVxywbDIa+fftu3br1xx9/LCwsNFncMlJcXFzDl+lXqVV+\n5cCbJRcXF2Vx5aVyF07lywSrvHDwSWr8FAC2o9gBjYKTk1O3bt1iY2NHjBhx48aNGp9jVyWN\nRrN48WIhRE5OjtWj5uzL2dl5+vTply9fPnbs2Pjx45WzqHbUqlWrBQsWbNq0SQihnBt9ksqb\nrNfrhRDHjx+v8iRIUlKS5eLmw3KWlEf3KevZtm1bZmbmiBEjEhIScnJyysrKTCZTeXm5cplg\nfahV/hopBbryZla54QAaAMUOaES0Wm1ERISjo+POnTtv3br1K9bwn//8R/kP5XK3+qOcfjWZ\nTLafh60t5TBVjQfGrDZ58ODBQojw8HDLo2tPkp+fHxcXZzly+PDh3NxcX19f5ZjW9evXhRCb\nNm164YUXvL29HR0dhRDHjh0zGo2/YotsUav8NerXr58QIiYmxnIwPz//888/txxxcnIS9XYM\nEoAlih3QuHTp0mXu3LklJSXKU3yf5L333ps8eXJ0dPSVK1dycnJKS0tv3769d+/e3/3ud0KI\n559/vvLpM/sy3zowZsyYOq4qISFh9OjRsbGxN2/eVO5CuHfv3r59+5TbCJRry4TNm/zGG2+4\nubnFxcVNmDDh1KlT2dnZRqPxxo0bn3322eTJk//1r39ZfXpISEh0dPS9e/eys7NjYmJmz54t\nhAgNDVXe9fX1FUK8//77N27cUD5x165dr776qi3bNWzYMI1GY3WZYI1qm796M2fO1Gg0H374\n4fLly2/evFlYWHj27NkxY8aYHyKocHFx0ev1BoPh5MmTVmd7AdhZnW+/APA/wcbn2JlMpqys\nLHd3d61We+XKlSdNVh4yUiVvb+9Lly79ioS23xX7JDY+x87KiRMnzOGVuxPML0eNGlVeXq5M\ns32Tv/zySw8PjypnxsTEKHOU+z179uypPELFkuVz7L7//ntnZ2erCVOnTvX29nZxcTF/YpV3\nxQ4dOlQIERERUfnLWKXXX3+9tvkr/xZX5eDc8uXLzSOrVq2yWolOp5s6daoQYvfu3eZpVjdY\nWD7HzpZPAWAjjtgBjU7Lli2XLl1aUVGxYsWKJ83505/+dOjQoZCQkD59+vj4+Dg4OOj1+gED\nBqxZsyYlJaVv374NGbiOgoKCvv3229dff71Pnz5NmjQxmUx6vX7IkCERERFHjx41/xJY2zd5\n7Nix165dW7x4cffu3XU6nbu7e7du3YKDgw8dOhQcHGz50S4uLsePH1+4cGGbNm2cnJzat2+/\ncuXK48ePK89pE0IEBAQkJCSMGTPGx8dHp9P17Nlz69atn3zySb1+QWzPb4v169d/9NFH/fr1\nc3V1bdq06bhx486dO6f0y2bNmpmn7dixIyQkxM/Pj9+6C9Qrjckel1kAwNNCr9dfv35dOQda\nf7Kyslq1atWvX7/a3o4ggfz8/Oeeey4jI+Onn37q2LGj2nGAxsVR7QAA0KC0Ws5U2NPf//73\n27dvT5o0qXPnzkaj8YcfflizZk1GRkZgYCCtDmh4FDsAjYstD2eG7fLz89etW7du3TrLwaZN\nm+7evVutSEBjxk+uAH6NpKQkTbXGjRundsaq3b9/v77PwzYqoaGhGzZs6N+/v7e3t7Oz87PP\nPhsaGnrp0iV/f3+1owGNEdfYAfg1kpKSrH4NlJWXXnrpyJEjDZYHACAodgAAANLgVCwAAIAk\nKHYAAACSoNgBAABIgmIHAAAgCYodAACAJCh2AAAAkqDYAQAASIJiBwAAIAmKHQAAgCQodgAA\nAJKg2AEAAEiCYgcAACAJih0AAIAkKHYAAACSoNgBAABIgmIHAAAgCYodAACAJCh2AAAAkqDY\nAQAASIJiBwAAIAmKHQAAgCQodgAAAJKg2AEAAEji/wB34dfk84lmtQAAAABJRU5ErkJggg=="
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656430294542_1989037410",
+      "id": "paragraph_1656430294542_1989037410",
+      "dateCreated": "2022-06-28T15:31:34+0000",
+      "dateStarted": "2022-07-29T16:14:32+0000",
+      "dateFinished": "2022-07-29T16:14:33+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%r\n\nboxplot(IRIS_TMP$Sepal.Length, horizontal=TRUE, notch=TRUE, col=\"darkgreen\", \n        showmeans=TRUE, xlab=\"cm\", main=\"Distribution of IRIS Attributes\")\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "Sepal.Length",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "Sepal.Width",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 628,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "Sepal.Length",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "Sepal.Width",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "IMG",
+            "data": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAIAAAByhViMAAAABmJLR0QA/wD/AP+gvaeTAAAg\nAElEQVR4nO3deXxU9b344e9MQiCsIiiitVhRqcgixeLaa62tC7W2V1v3VluVVqtSrRZQ9kXQ\net2qdcOKW3F5qVVbRG2tWi1uiIqiSF0oKorKFiEhwJzfH7m/udMQQsgyk3x5nj98kTNzzvnM\nycnk7cxkJpUkSQAAoOVLF3oAAAAah7ADAIiEsAMAiISwAwCIhLADAIiEsAMAiISwAwCIhLAD\nAIiEsAMAiISwAwCIhLADAIiEsAMAiISwAwCIhLADAIiEsAMAiISwAwCIhLADAIiEsAMAiISw\nAwCIhLADAIiEsAMAiISwAwCIhLADAIiEsAMAiISwAwCIhLADAIiEsAMAiISwAwCIhLADAIiE\nsAMAiISwAwCIhLADAIiEsAMAiISwAwCIhLADAIiEsAMAiISwAwCIhLADAIiEsGPLtd1226X+\nvylTphR6nNrmaUGjtmj33nvvoYce2q1bt1atWmVv4Mcff1zouWhJPx1QWMKOFuyII45I5Uin\n061bt95qq62+8pWvHHDAAaeddtodd9xRXl7e1GOMHTs2O8NOO+3U1LtrapHdnLobNWrUMccc\n89hjjy1ZsmTdunV1X7HaeVjLRdkTtX379jvvvPMRRxzx+9//ftWqVZu1zSpvvPHGueeeO3Dg\nwM6dO7dq1arqtB84cOAJJ5wwZcqURx55ZHNvfpUHHnig2rTHH3/8xq5cl1MlstMpsptDlIoL\nPQA0miRJKisrKysrV6xY8f777z/77LM333zz0KFDzz///GHDhqXT/jeGjfr0008vueSS/Owr\nSZJVq1a9995777333l/+8peLL754xowZ/fr1q/sWJkyYMG7cuPXr12eXrFixouq0f/nll6dP\nn15UVLRZbZo1bdq0akv+9Kc/LV++fKuttqrH1oD8E3ZEbunSpRdeeOFf//rXBx98sH379rkX\nNben2JrbPLVoQaPW0UsvvbR27drsl/fff/8RRxzRqlWrPOz6ww8//OEPfzhv3rzi4jrdId98\n882jR49uikk+/fTTDR/qq6iouPvuu3/+8583xR7rLr5TDpqIxzCIR5IkmUxm2bJlzz///IUX\nXtixY8fsRU888cRxxx2XyWQKOB7N2cqVK3O//N73vtcUVZckSZIky5cvnzFjxnbbbZddvmDB\ngmeeeaaOG5k4cWL233379p05c+ann35aUVHx/vvv33bbbYMHD67xqdu6uOOOO3LrNmvDh/GA\n5iuBFuu73/1uLSfzv/71rx49euRe4bbbbsu9Qrdu3bIXTZ48OfeiTCZzzz33HHXUUV/5ylfa\ntm1bUlKy4447Dho06Gc/+9ktt9zy8ccfV13t6KOPrv3n65ZbbtnYvv7yl79885vf7Ny5cwjh\n73//e+3zVLuorKxs3Lhx/fr1a9euXYcOHfbff/9qNy1JkrKystxJpk+fnntp7uTf/e53G35z\nqnn//fdHjBix9957d+nSpbi4eKutturbt++ZZ545Z86cDa9cbWvl5eW//e1vBw4c2L59+7Zt\n2w4YMOCqq65av379hivWro4zDBs2rJabfOCBB25yR7Wch7VcdOWVV+ZedMMNN9RlxX//+9+5\ny1966aUN55k3b172e7pZ+vfvn93ykUcembujt956K/eadTlVttifjioffvjh6NGj999//65d\nu1a9CHLAgAEXXHDB+++/v+GRr+MdDtSFp2KJVs+ePe+8884DDjggu2TSpEk//vGPN7liJpP5\n7//+74ceeih34aJFixYtWvTCCy/84Q9/2HvvvZ977rmGzHbVVVede+65SZLUY9333ntvzz33\nfOedd7JLnn322WeffXbmzJm33XZbUVFRjWvV+1Gcerj00ksvuuii3Nd4LV++fPny5XPnzv39\n73//i1/84sorr2zdunWN6y5cuHDgwIHz5s3LLpkzZ86cOXNefPHF22+/PT8z5MfOO++c+2W7\ndu3qstbSpUtzv+zUqdOG19l9993//Oc/b+48r7zyyquvvpr98uKLL160aNGcOXOqvpw2bdrk\nyZM3d5v1E8FPxzXXXHP++eevWbMmu2T58uVVZ/JVV1112WWXnX322dmL8nCHwxbFU7HEbP/9\n9997772zX86fPz/3Hn9j7rjjjmp3so3rxRdf/PWvf12/31shhBtvvLHGW/HHP/5xwoQJG1sr\nb2E3adKkYcOG1fLK/euvv/6nP/1pLZfmVl3WHXfc8dhjj+Vnhvyo9k3s27dvXdbKfXQqhHD6\n6afPnTu3Uea55ZZbsv8eMGDAHnvscdJJJ2WX3H777fl5JUMEPx2XX3752WefnVt1uSorK885\n55zrrrsuu6Sp73DY4hT2AUNoiNqfiq1ywQUX5F7n3nvvzV60sSd3cn+fDR069IMPPqisrFy8\nePHs2bOnTZt2/PHHf+9738vdxZgxY7LX79GjR41jVPt93K1bt3vuuaesrGzhwoUXX3zxP//5\nz1rm2XD1Qw45ZP78+RUVFU899VTuey60bt16yZIlVatUe7Lpnnvuyd1gjU821e/m5I769ttv\n5z4osscee8yaNWvNmjXz588/5JBDcud5+OGHN3br9t1337lz565YseL666/P3drPfvazGoep\npn4zTJ8+PfeitWvX1mVfVTb3qdgVK1ZUe43doYceWvdtfv3rXw//aaeddjrqqKPGjRv36KOP\nrl69uu6TZ1VWVm6zzTbZDV5++eVJknz00Ue5R3LmzJnV1qrLqbKl/XS8++67ua/OPPnkk+fN\nm1deXv7uu++eeuqp2eXt2rXLPsG6uXc4UDthRwtWl7C74oorcq/z+9//PnvRxn5VHHXUUdnl\n999//ybH2NxfXalUatasWbVfp5ZfXR06dFi+fHn2opkzZ+bewGuuuaZqebVfXblFmzRZ2FXL\n6FdffTV70fLlyzt06JC9aPDgwTVurXXr1osXL85edOihh2Yv2meffWocppr6zZCfsKvRwQcf\nnPsN3eQ2n3/++bZt225sa+3atTv11FMXLVpU9/mTJLn//vuzWygqKsp+C77zne9klx933HHV\n1mqKsGvpPx25L9nce++9cy/KZDJf+cpXspdeeeWVVcs39w4HauepWCJX7fmjujzn0qtXr+y/\njz766H79+h1zzDGjRo266667Fi1a1PCR9ttvv3322afeq3/ve9/LfWXVoYce2rVr1+yXhX0t\nzlNPPZX994ABA3Lfm61Tp04/+MEPsl8+/fTTNW7hiCOOyH0oK/eFaCtWrMjPDPl00UUX/fWv\nf63xpXIbM2jQoFmzZh144IE1Xrpq1aqbb765f//+m/UUbe7fvX7nO9/JfgtyH0yqekO7um+z\nflr6T0fu6ff8889Xe2Pq9957L/fSqn809R0OWxphR+Q++uij3C9zn2/amJ///OfZ3w1Jksyd\nO/fee++dOHHi8ccf/+Uvf3m//fabNWtWQ0bKfdlfPVT7U98Qwo477pj9d2Hf7mvx4sXZf2/4\nvvy5S7744otqj5pU2WWXXXK/bNOmTfbfdXyNV8NnyKdJkyZVPcW8WWv169fvySeffOONN377\n29/+4Ac/2GGHHapdYenSpWeccUYdt1bt7ety/8DoqKOOyj46WPWGdps1Zz209J+ODz/8sI7X\n/PTTT6v+0dR3OGxphB2Ry/0f6BDCgAEDNrlKjx49nnnmmUMPPbTGD6uYNWvWwQcf/NZbb9V7\npC5dutR73bCpBx03dmm1Klq2bFlDZtiY3EDZcJK65Eu1Tziox+eFNHyGppMkSUVFxXPPPTdw\n4MDswltuueV//ud/6rG13r17n3/++Q888MAHH3zw3nvvTZ48ubS0NHvpP//5zzp+l6u9fd2J\nJ56YfZCpQ4cOq1evzl6Uhze0i/ino5rsMW/qOxy2NMKOmD399NMvvfRS9suvfvWr1d5jYmP6\n9Okzc+bMJUuWPPzww5deeulpp5221157ZS8tLy//wx/+UO+pGvjhZu+//361JbnP12Rfb1Rt\nL7m/nkMI7777bkNm2Jjtt98+++/cZ52qLFy4MPvv9u3b577cLbIZatG6deu999575syZuQUz\nbty43Aca62GnnXYaPnx47gu8kiTJPiZUu1tvvbWOe3nuuefmz59fn/nqrKX/dHTv3j377x/9\n6Ee1vBDqySefzF6zSe9w2NIIO6K1YMGC3FcIhRAuvPDCzdpCly5djjjiiAsuuOCmm2568cUX\nc996KvctFXI/CWpj73HQiB5++OHcV5s9/vjjn332WfbL7DNZpaWluX/SmDvw3/72tw1//2U1\n5ObkvvBrzpw5r732WvbLFStWPPjgg9kvv/GNb2zWllvWDJvUtWvX3I8F++KLL6ZMmVKXFVet\nWnXYYYdlX55VTUlJSe6XW2+99SY3WO3t6zYp90G7upwqW9pPxze/+c3svx999NFqbyhduzre\n4UDthB2xWbly5YsvvnjhhRcOHDgw93/WBw8efOKJJ9ZlC5deeulhhx125ZVXzpo167333lu9\nenV5efns2bNzX2uf+4xh7quzP/nkkxkzZlRWVjbGTalZWVnZscceu2DBgsrKyn/84x+/+MUv\nsheVlJQcc8wxVf9OpVK777579qJrr7328ccfLy8vf+qpp3LfdmFDDbk5p59+eu7vyxNPPPH5\n55+vrKx8++23jz322NyP7TrzzDPruM3N1RxmqIshQ4bk/jnnTTfdtGTJkk2ulSTJo48+us8+\n+wwYMOCSSy6ZNWvW559/vnbt2sWLF0+dOvXiiy/OXnO33XbL/VZuTO7b1+266641PraU+6eg\nuW9oV5dTZUv76Tj99NOz8bdy5cpvf/vb99577+LFiysrKz/66KM5c+ZMnz795z//ea9evT75\n5JOqq23uHQ5sQmP+iS3kV13eS6LKt771rZUrV1ZbfWNvoJD7a2xjHnzwwez1X3755U3+fG3y\nM7hqv061d+ramFGjRuWuNX78+LqsVe0NHRp4c2p5G9is448/vo43/Ne//nX2ol69etV43DZU\njxny+T52WZdeemnupb/5zW82uWLd/9qj2idc1aja29cNHTq0xqtV+2PS7Bva1eVU2QJ/Our4\n4Gv2PWU29w4HaucROyK39dZbX3zxxY8//ngjvprqrLPOyv0kzQEDBuS+3VpTO/3003v27Lnh\n8mOPPTb32b0Qwq9//evcT//MGjx48GGHHbax7Tfw5owcOXLKlCm5z1hV8/Of/zz3UaKm0Bxm\nqIszzjgj99nS6667rtonhm0onU7n/qVwjYqLi8ePH3/KKadscoA///nPua/DGzx4cI1X+/rX\nv577SFX22di6nCpb4E/HsGHDGvcD66rd4UDthB3xSKVSrVq16tixY48ePfbdd9+f/vSnt912\n2wcffDBixIjNekX28OHDn3jiiVGjRh188MG9evXq3LlzUVFRx44d+/Tpc+qpp/7jH//43e9+\nV22VBx54YPTo0X369KnlnWMby8477/zKK6+MGzeub9++bdu2bd++/b777jtt2rTp06dXS5m2\nbds+/fTTw4YN22WXXUpKSrbaaquDDjrojjvu+POf/1z7J5M28OYMGzZswYIFI0aMGDRo0NZb\nb11cXFx19M4444yXX375+uuvz8OHtDaHGTapffv2Q4cOzX5ZVlZ21VVX1b5K27Ztly5d+pe/\n/GXEiBGHHnrobrvt1rFjx+Li4pKSkm222Wa//fYbPnz43LlzR40aVZcBcv9som3btht7b7x0\nOp37oR25b2hXl1NlC/zpGDp06HvvvTdhwoSDDjqoW7duJSUl7dq122mnnfbaa6+f/OQnU6dO\nffvtt7NvFliPOxyoRSop6B//AwDQWDxiBwAQCWEHABAJYQcAEAlhBwAQCWEHABAJYQcAEAlh\nBwAQCWEHABAJYQcAEAlhBwAQCWEHABAJYQcAEAlhBwAQCWEHABAJYQcAEAlhBwAQCWEHABAJ\nYQcAEAlhBwAQCWEHABAJYQcAEAlhBwAQCWEHABAJYQcAEAlhBwAQCWEHABAJYQcAEAlhBwAQ\nCWEHABAJYQcAEAlhBwAQCWEHABAJYQcAEAlhBwAQCWEHABAJYQcAEAlhBwAQCWEHABCJ4kIP\n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\nXgrpVHr06NEFHOHYY4/t379/el46lBdwCoCCEXZAY/g4hA/CiSee2K9fvwJOkUqlxo8fn1mb\nCa8UcAqAghF2QGOYHYqLi8eMGVPoOcKRRx659z57p95KhbJCjwKQd8IOaLAPQlgcTj311J49\nexZ6lBBCmDhhYrI+8aAdsAUSdkBDpV5OtW7d+qKLLir0IP/r29/+9re+9a3UglRYXuhRAPJL\n2AEN835IliS//OUvd9xxx0KP8n8mT54ckhDmFHoOgPwSdkADJCE1J9W2Xdthw4YVepT/MGjQ\noMGDB4d3Q1ha6FEA8kjYAQ3wTkg+T84797xtt9220KNUN3ny5HQqHWYXeg6APBJ2QH1lQuqV\nVMdOHc8777xCj1KDvn37Hn300WFhCEsKPQpAvgg7oL7eDsnyZPiw4Z07dy70KDWbOHFiUVGR\nB+2ALYewA+plfUi9kurStctZZ51V6FE2arfddjvppJPChyEsLvQoAHkh7IB6eTMkXySjRo7q\n0KFDoUepzbhx41q1ahVeKvQcAHkh7IDNty6kX0t37959yJAhhR5lE3r06HH66aeHT0JYVOhR\nAJpecaEHgOatLIRWhZ6hGZofMqsz464cV1paWuhRNu2iiy76wx/+sGb2mmSrpNCzNLE1hR4A\nKDRhBzUrKioKIYT7Cz1Hc9WzZ89TTjml0FPUyfbbb3/WWWdddtll4e5Cj5IX/3vqAlskYQc1\n+9WvftW1a9d169YVepDmqKio6Ic//GGrVi3mwcxRo0ZttdVWZWVlhR6kyW2//fa77rproacA\nCkbYQc2++tWvTpw4sdBT0Dg6duzYfD7KFqDp+OMJAIBICDsAgEgIOwCASAg7AIBICDsAgEgI\nOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI\nCDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCA\nSAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsA\ngEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7\nAIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgI\nOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI\nCDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCA\nSAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsA\ngEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7\nAIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgI\nOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI\nCDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCA\nSAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsA\ngEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7\nAIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgI\nOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI\nCDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCA\nSAg7AIBICDsAgEgUF3qAFmP+/Plt2rQp9BSbYe3atdOmTevRo0c6vaXneyaT+de//rXLLrs4\nFA5FlkOR5VBUcRyyHIqsTCazcOHCU045pVWrVrnL58+fX6iRNknYbVrVt/PUU08t9CAAQL7d\ncMMNNS6vVnvNhLDbtBNPPHHdunXl5eWFHmTzvPbaa3/84x8POOCAHj16FHqWAlu4cOEzzzzj\nUASHIodDkeVQVHEcshyKrKpDccIJJ/Tr16/aRaWlpSeeeGJBptqEhEjdc889IYR77rmn0IMU\nnkOR5VBkORRZDkUVxyHLochqiYdiS3/6HAAgGsIOACASwg4AIBLCDgAgEsIOACASwg4AIBLC\nDgAgEsIOACASwg4AIBLCLlqlpaXZ/27hHIoshyLLochyKKo4DlkORVZLPBSpJEkKPQNNYv36\n9X/7298OPvjgoqKiQs9SYA5FlkOR5VBkORRVHIcshyKrJR4KYQcAEAlPxQIARELYAQBEQtgB\nAERC2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AEARELY\nAQBEQtgBAERC2AEARELYtWxffPFFjx49UqlUKpWqy/W//e1vp2oyderUph61KTTw5qxateqi\niy7abbfd2rRps+222/7oRz96/fXXm3rmJtKQQxHZWVHlgw8+OOecc3bdddfS0tIdd9zx6KOP\nfuqpp+qyYkxnRZX6HYqYzoqZM2fWeFuqnHfeeZvcQhxnRQOPQ0ynRJWXXnrp2GOP3W233dq2\nbbvDDjv813/91+23375+/fq6rNusT4mEluzss89Op9N1/1YefPDBNZ4GN910U1OP2hQacnNW\nrFix5557VluxdevWTzzxRB4mb3QNORSRnRVJksycObNdu3Yb3qKysrLaV4zsrEgacChiOise\neeSRGm9LlT/96U+1rx7NWdHA4xDTKZEkyXXXXVfjzTnkkEPWrVtX+7rN/JQQdi3Yc889l06n\nf/WrX1WdVXVZpeon880332zq2fKjITfnrLPOCiHsuOOOjz/+eHl5+YIFC37wgx+EEHbYYYfV\nq1c3+qhNrSGHIrKz4s033ywtLQ0h7Lfffk8++eSqVauWL1/+0EMPffOb3/ziiy9qXzeys6Ih\nhyKys2JD7777biqV2m677dauXVv7NSM7K6qp+3GI6ZT44osv2rZtG0KoeqStvLx88eLFV155\nZXFxcQjhrrvuqn31Zn5KCLuWqrKysk+fPr179/7kk0+E3eauWFZW1qZNmxDCs88+m11YUVGx\nyy67hBBuvfXWRh0zH4Rd1uGHHx5CGDhwYHl5+WatGN9ZUe9DkUR3Vmxo+PDhIYQRI0bUfrX4\nzopq6ngckrhOiTlz5oQQOnbsWC1nTzvttBDC8OHDa1m3+Z8SXmPXUl1yySXz5s2bOnVqSUlJ\noWdpef7+979XVFT07dt3v/32yy5s3br1z372sxDCjBkzCjcaDfLhhx/OnDkzhHDppZdW3fnW\nXWRnRUMORfTWrl17yy23pFKpU089tfZrRnZWVFP34xCZ7bffvpZLv/SlL9VyafM/JYRdizR/\n/vyJEyeeccYZ++67bz1WP+mkkzp06NC2bds99tjjggsuWLx4caNPmE/1uDlz584NIQwaNKja\n8r333juE0IxeA7uZGvKdjeOseOaZZ5Ik2XbbbQ866KDNXTeys6IhhyIrjrNiQ3/6058++eST\ngw46qGfPnrVfM7Kzopq6H4esOE6Jbbfd9pRTTlm5cuUJJ5wwb968NWvWfPzxx1dfffW0adN2\n2GGHk046qZZ1m/8pIexaniRJhgwZss0220yePLl+W5g9e/YXX3xRXl4+b968yy67rF+/frNn\nz27cIfOpHjdnyZIlIYQddtih2vKqJVWXtkQN+c7GcVa89957IYS99trr448//slPftKlS5fS\n0tI99thj5MiRZWVlta8b2VnRkEORFcdZsaEbbrghhFD1vFvtIjsrqqn7cciK5pSYOnXqxRdf\n/M9//nOPPfZo06ZN9+7dzz///OOOO+65557r1KlTLSs2/1NC2LU8N95449NPP33dddd16NBh\nc9fdZZddrr322tdff3316tX//ve/b7vttp133vmzzz47+uijKyoqmmLaJlXvm1NeXh5CaN26\ndbXlVc9YrV69uulmbiIN+c7GdFZ88cUXIYTS0tK999779ttvX7p0aUVFxbx58yZNmvT1r3/9\ns88+q2XdyM6KhhyKENdZUc2//vWvJ554Yuuttz7qqKM2eeXIzopcm3UcQnSnxLJly+bOnZv7\ng7B27do333xzwYIFta/YAk6JAr/Gj8304YcfdurU6ZhjjskuWbZsWUO+lZ9++uk222wTQnjg\ngQcaacZCquPNGTp0aAhh9OjR1Za/9dZbIYRtttmmKWfMk4Z8Z1vuWTFx4sQQQiqV6tWr1yOP\nPLJixYpPP/30rrvu6tatWwhhyJAhtawb2VnRkENRo5Z7VlRzwQUXhBCGDh1alytHdlbk2qzj\nUKOWe0pUVFT06tUrhPDjH/+4KlU/+OCDa6+9tn379sXFxVUvY9iY5n9KeMSuhTnrrLPS6fTV\nV1/dWBvs2rXrkUceGZrHKwMaro43Z9tttw0hfPjhh9WWVy2puqtq6RrynW25Z0VVtSRJ8sAD\nDxx22GEdO3bs2rXrsccee+ONN4YQHnjggVrWjeysaMihqFHLPStyVVZWTps2LdT5+cfIzoqs\nzT0ONWq5p8Qf//jH+fPnf+Mb37j11lv32GOP0tLSHXbY4cwzz/ztb3+7bt26CRMm1LJu8z8l\nhF0LM2PGjGXLlm233XbZd/3u3Llz1UVVX77yyiuFnbBF6Nu3bwjhhRdeqLb8+eefz15KS9Sv\nX78QQrt27Xbffffc5V//+tdDCJ9++mkmk9nYupGdFQ05FBG7//77P/3003322adPnz51uX5k\nZ0XW5h6HyMybNy+EMGjQoNR/fmhT1R9AVF26Mc3/lBB2W7qlS5c+/PDDIYTevXsXepZGUMeb\nc9BBB7Vp02bu3Ln//Oc/swvXrFnzhz/8IYQwePDgpp4zDxrynW25Z8Vee+3VrVu3VatWvfnm\nm7nLX3zxxRBCt27dsp/UsqHIzoqGHIoatdyzItfm/rlAZGdFVj3+bGJDLfeUqPrziA3jbNas\nWdlLN6YFnBKFfi6YhtrYa+wOPPDAEMJ1112XXTJ9+vTjjjvuL3/5y7vvvltRUbFo0aI777xz\nt912CyHsuOOOzeH9sjdL3W/Ohoci+c+3Dq+oqPjXv/6VfevwVatW5f3WNEhDDkVkZ0WSJJde\nemkIoVevXjNnzlyxYsVnn32WfWHZ2Wefnb1a9GdF0oBDEd9ZUaXqVVAdOnTY2CeqbQlnRVKv\n4xDZKZH9S96f/vSnb7zxRnl5+YcffnjNNddUff7eb37zm+w1W+IpIexavLqH3S233FJj3Hfp\n0uWFF17I79SNoO43p8afzBUrVvTv37/aus3nw/42S0MORWRnRZIklZWVVZ+4UM2AAQOWL1+e\nvVr0Z0XSgEMR31lRpepz7k8//fSNXWFLOCuSeh2H+E6J888/v8Zb1Ldv32XLlmWv1hJPCWHX\n4tU97NasWXPfffcdffTRu+yyS+vWrTt06LDnnnteeOGFH3/8cX5Hbhx1vzk1/mQmSVJWVjZi\nxIiePXuWlJR07dr1hz/84WuvvZav8RtTQw5FZGdFlbVr115xxRX9+/dv27ZtaWlp//79J02a\nVO1BhejPiir1OxRRnhUVFRVdunQJITz//PMbu86WcFbU7zhEeUr86U9/Ovzww7fZZpvi4uL2\n7dsPHDhw0qRJ1R5ya4mnRCpJkhqjFQCAlsUfTwAARELYAQBEQtgBAERC2AEARELYAQBEQtgB\nAERC2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AEARELY\nAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC\n2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AEARELYAQBEQtgBAERC2AGEEMKCBQvO\nOOOMXXfdtbS0dNtttz3ooIOmT5++fv36qks//vjjVCq11157rVq16vzzz+/Ro0ebNm169ep1\n3XXXVV1hxowZ//Vf/9WxY8dOnTr98Ic/XLRoUeFuCrDlSiVJUugZAArswQcfPOGEE1avXl1t\n+d///vdvfvObIYSPP/64e/fuffv2bdeu3XPPPZd7nauvvrqkpOSMM87IvTvt06fPq6++mk77\nn2cgr9zpAFu6f//738cff/zq1au/853vPPXUU5999tlnn3325JNPHnfcccXFxbnXnDt37kcf\nfXTfffd9/vnnS5YsGTlyZAhh9OjRv/rVr4YOHbpgwYJVq1Y9+eSTO+yww+uvv37fffcV6AYB\nWy6P2AFbuhEjRkyZMuWII4546KGHUqlUjdepesQuhDB79uyvfe1r2eW77777W2+99ZOf/OTW\nW2/NLrz++uvPOOOM3/zmN5dccklTDw+QyyN2wJbu2WefDSGcc845G6u6rC9/+cu5VRdC2H33\n3UMIP/jBD3IX9u7dO4TgZXZA/gk7YEu3bNmyEMKXvvSlTV5zm222qbakpKRkw+VVCysrKxtt\nRIC6EXbAlq5z584hhA8++KDQgwA0lLADtnT7779/COF3v/ud1xwDLZ2wA7Z0Z5xxRtu2bR9+\n+OFDDz306aefXrp06dKlS5966qkTTjjhmWeeKfR0AJuheNNXAYjal7/85T/+8Y/HH3/8448/\n/vjjj+deNGTIkEJNBVAPHrEDCN///vfnzJlz2mmn7bTTTiUlJd26dfvWt741ffr0b3zjG4Ue\nDWAzeB87AIBIeMQOACASwg4AIBLCDgAgEsIOACASwg4AIBLCDgAgEsIOACASwg4AIBLCDgAg\nEsIOACASwg4AIBLCDgAgEsIOACASwg4AIBLCDgAgEsIOACASwg4AIBLCDgAgEsIOACASwg4A\nIBLCDgAgEsIOACASwg4AIBLCDgAgEsIOACASwg4AIBLCDgAgEsIOACAS/w/kYFkRFqlVtgAA\nAABJRU5ErkJggg=="
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_261680728",
+      "id": "20220621-220804_1512454509",
+      "dateCreated": "2022-05-31T21:40:28+0000",
+      "dateStarted": "2022-07-29T16:14:33+0000",
+      "dateFinished": "2022-07-29T16:14:33+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%md\n# Use in-database ML algorithms\n## Compute attribute importance variable ranking\n\nUsing the **IRIS** table, determine which variables (a.k.a., attributes or predictors) are most important in predicting target Species.\n\nNotice that petal width is most predictive of the target Species. The importance value produced by this algorithm provides a relative ranking, not an absolute number, to be used to distinguish importance among variables.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Use in-database ML algorithms</h1>\n<h2>Compute attribute importance variable ranking</h2>\n<p>Using the <strong>IRIS</strong> table, determine which variables (a.k.a., attributes or predictors) are most important in predicting target Species.</p>\n<p>Notice that petal width is most predictive of the target Species. The importance value produced by this algorithm provides a relative ranking, not an absolute number, to be used to distinguish importance among variables.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_504154595",
+      "id": "20220621-220804_1552046771",
+      "dateCreated": "2022-05-31T21:41:34+0000",
+      "dateStarted": "2022-07-29T16:14:34+0000",
+      "dateFinished": "2022-07-29T16:14:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%r\nhelp(ore.odmAI)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.odmAI                package:OREdm                 R Documentation\n\nIn-Database Attribute Importance Ranking Models\n\nDescription:\n\n     Computes the relative importance of predictor variables for\n     predicting a response variable using Oracle Data Mining.\n\nUsage:\n\n     ore.odmAI (formula, \n                data, \n                auto.data.prep = TRUE,\n                na.action = na.pass,\n                odm.settings = NULL)\n     \nArguments:\n\n formula: An object of class ‘formula’ (or one that can be coerced to\n          that class): a symbolic description of the model to be\n          fitted. The details of model specification are given under\n          'Details'.\n\n    data: An ‘ore.frame’ object used for computing relative importance.\n\nauto.data.prep: A logical value that specifies whether Oracle Data\n          Mining should invoke automatic data preparation for the\n          build.\n\nna.action: A function to use for handling missing values, either\n          ‘na.pass’ to allow missing values or ‘na.omit’ to remove rows\n          with missing values. The default value is ‘na.pass’.\n\nodm.settings: Same as ‘odm.settings’ in ‘ore.odmKMeans’.\n\nDetails:\n\n     Attribute Importance uses a Minimum Description Length (MDL) based\n     algorithm that ranks the relative importance of predictor\n     variables in predicting a specified response (target) variable.\n     Use this function to gain insight into the relevance of variables\n     to guide manual variable selection or reduction, with the goal to\n     reduce predictive model build time and/or improve model accuracy.\n\n     The ‘formula’ specification has the form ‘response ~ terms’ where\n     ‘response’ is the numeric or character response vector and ‘terms’\n     is a series of terms,i.e., column names, to include in the\n     analysis. Multiple terms are specified using ‘+’ between column\n     names.  Use ‘response ~ .’ if all columns in ‘data’ should be used\n     for model building.  Functions can be applied to ‘response’ and\n     ‘terms’ to realize transformations.  To exclude columns, use ‘-’\n     before each column name to exclude.\n\nValue:\n\n     An object of class ‘ore.odmAI’ including the following components:\n\nimportance: A ‘data.frame’ of terms (predictor variables) as row names\n          with their corresponding importance value and rank.\n\n formula: The ‘formula’ provided when computing the relative\n          importance.\n\n    call: The matched call.\n\nAuthor(s):\n\n     Oracle\n\n     Maintainer: Oracle <email: oracle-r-enterprise@oracle.com>\n\nReferences:\n\n     Oracle R Enterprise\n\n     Oracle Data Mining Concepts\n\n     Oracle Data Mining User's Guide\n\nSee Also:\n\n     ‘ore.odmSVM’, ‘ore.odmGLM’, ‘ore.odmNB’, ‘ore.odmDT’, ‘partitions’\n\nExamples:\n\n       IRIS <- ore.push(iris)\n       ore.odmAI(Species ~ ., IRIS)\n     "
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_657615827",
+      "id": "20220621-220804_1359745879",
+      "dateCreated": "2022-06-21T17:45:09+0000",
+      "dateStarted": "2022-07-29T16:14:34+0000",
+      "dateFinished": "2022-07-29T16:14:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%r\n\nAI <- ore.odmAI(Species ~ ., IRIS_TMP, auto.data.prep = TRUE)\nAI",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmAI(formula = Species ~ ., data = IRIS_TMP, auto.data.prep = TRUE)\n\nImportance: \n             importance rank\nPetal.Width   1.0509353    1\nPetal.Length  1.0306334    2\nSepal.Length  0.4548240    3\nSepal.Width   0.1915138    4\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1361308791",
+      "id": "20220621-220804_259241142",
+      "dateCreated": "2022-05-31T21:44:10+0000",
+      "dateStarted": "2022-07-29T16:14:34+0000",
+      "dateFinished": "2022-07-29T16:14:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "%r\n\nres <- AI$importance\nres$attributes <- rownames(res)\n\nz.show(res)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "importance": "number",
+                      "rank": "number",
+                      "attributes": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "attributes",
+                  "index": 2,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "importance",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "importance\trank\tattributes\n1.05093529305676\t1\tPetal.Width\n1.03063335657126\t2\tPetal.Length\n0.45482398694827\t3\tSepal.Length\n0.191513795914506\t4\tSepal.Width\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-2025721943",
+      "id": "20220621-220804_1693780324",
+      "dateCreated": "2022-05-31T21:44:30+0000",
+      "dateStarted": "2022-07-29T16:14:35+0000",
+      "dateFinished": "2022-07-29T16:14:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "%md\n## Build predictive models\nIn this example, we set up the data and a ***demo*** cost matrix to build a Decision Tree model to predict Species from the **IRIS** table.\nRebuild the model and supply a test cost matrix.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Build predictive models</h2>\n<p>In this example, we set up the data and a <strong><em>demo</em></strong> cost matrix to build a Decision Tree model to predict Species from the <strong>IRIS</strong> table.\n<br  />Rebuild the model and supply a test cost matrix.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_317880106",
+      "id": "20220621-220804_711757963",
+      "dateCreated": "2022-05-31T21:44:56+0000",
+      "dateStarted": "2022-07-29T16:14:36+0000",
+      "dateFinished": "2022-07-29T16:14:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "%r\n\nhelp(ore.odmDT)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.odmDT                package:OREdm                 R Documentation\n\nIn-Database Decision Tree Models\n\nDescription:\n\n     Fits a classification tree using Oracle Data Mining.\n\nUsage:\n\n     ore.odmDT(formula, \n            data, \n            auto.data.prep = TRUE,\n            cost.matrix = NULL,\n            impurity.metric = \"gini\",\n            max.depth = 7, \n            min.rec.split = 20,\n            min.pct.split = 0.1,\n            min.rec.node = 10,\n            min.pct.node = 0.05,\n            na.action = na.pass,\n            odm.settings = NULL)\n     \n     \n     ## S3 method for class 'ore.odmDT'\n     predict(object,\n       newdata,                \n       supplemental.cols = NULL,\n       type = c(\"class\",\"raw\"),\n       na.action = na.pass,\n       bestN = NULL,...)\n     \nArguments:\n\n formula: An object of class ‘formula’ (or one that can be coerced to\n          that class): a symbolic description of the model to be\n          fitted. The details of model specification are given under\n          'Details'.\n\n    data: An ‘ore.frame’ object used for model building.\n\nauto.data.prep: A logical value that specifies whether Oracle Data\n          Mining should invoke automatic data preparation for the\n          build.\n\ncost.matrix: An optional numerical square matrix that specifies the\n          costs for incorrectly predicting the target values.\n          Specifying the row and column names of the matrix is\n          required. The values of the names are possible target values:\n          the row names represent actual target values and the column\n          names represent predicted target values. The vectors of the\n          row and column names must be the same. In general, the\n          diagonal entries of the matrix are zeros. The default value\n          is ‘NULL’.\n\nimpurity.metric: Tree impurity metric \"gini\" or \"entropy\". The default\n          value is \"gini\".\n\nmax.depth: The maximum depth of the tree, from root to leaf inclusive.\n          A value in the range of 2 to 20. The default value is 7.\n\nmin.rec.split: The minimum number of cases required in a node for a\n          further split to be possible. The value must be positive. The\n          default value is 20.\n\nmin.pct.split: The minimum number of cases required in a node for a\n          further split to be possible. The value is expressed as a\n          percentage of all rows in the training data, and must be in\n          the range of 0 to 20. The default value is 0.1 (0.1 percent).\n\nmin.rec.node: The optional minimum number of cases required in a child\n          node. The value must be positive. The default value is 10.\n\nmin.pct.node: The optional minimum number of cases required in a child\n          node. The value is expressed as a percentage of the rows in\n          the training data, and must be in the range of 0 to 10. The\n          default value is 0.05 (0.05 percent).\n\nna.action: A function to use for handling missing values, either\n          ‘na.pass’ to allow missing values or ‘na.omit’ to remove rows\n          with missing values. The default value is ‘na.pass’.\n\nodm.settings: Same as ‘odm.settings’ in ‘ore.odmKMeans’.\n\n  object: An object of type ‘ore.odmDT’.\n\n newdata: The data used for scoring.\n\nsupplemental.cols: The columns from ‘newdata’ to include as the columns\n          in the ‘ore.frame’ prediction result.\n\n    type: If set to ‘\"raw\"’, provides probability for each class\n          returned. If set to ‘\"class\"’, the class with the maximum\n          probability is returned. The default value is\n          ‘c(\"class\",\"raw\")’.\n\n   bestN: A positive integer that restricts the returned target classes\n          to the specified number of those that have the highest\n          probability.\n\n     ...: Additional arguments affecting the predictions produced.\n\nDetails:\n\n     The Decision Tree algorithm can be used for both binary and\n     multiclass classification problems.  The tree structure, created\n     in the model build, is used for a series of simple tests. Each\n     test is based on a single predictor. It is a membership test:\n     either IN or NOT IN a list of values (categorical predictor); or\n     LESS THAN or EQUAL TO some value (numeric predictor).\n\n     The ‘formula’ specification has the form ‘response ~ terms’ where\n     ‘response’ is the numeric or character response vector and ‘terms’\n     is a series of terms, for example, the column names, to include in\n     the model. Multiple terms are specified using ‘+’ between column\n     names. Use ‘response ~ .’ if all columns in ‘data’ should be used\n     for model building. Functions can be applied to ‘response’ and\n     ‘terms’ to realize transformations. To exclude columns, use ‘-’\n     before each column name to exclude.\n\n     The function ‘predict’ computes predictions based on the input\n     data and model. Results are specified in the section on Value.\n\nValue:\n\n     The function ‘ore.odmDT’ returns an object of class ‘ore.odmDT’,\n     which includes the following components:\n\n    name: The name of the in-database model.\n\nsettings: A ‘data.frame’ of settings used to build the model.\n\nattributes: A ‘data.frame’ of attributes used to build the model. The\n          columns include: name, type (numerical or categorical), data\n          type, data length (size), precision and scale for numeric\n          data, and whether the variable is the target.\n\ndistributions: The target class distributions at each tree node.\n\n   nodes: The node summary information. See ‘summary.ore.odmDT’.\n\n formula: The ‘formula’ used for the model fitted.\n\n    call: The matched call.\n     The function ‘predict’ returns an ‘ore.frame’ with columns\n     according to the ‘type’ and ‘supplemental.cols’ parameters. If\n     ‘type’ is ‘\"class\"’, the result includes the most likely target\n     class and its probability. If ‘type’ is ‘\"raw\"’, the result\n     includes one column for each target class and the column values\n     reflect the probability for that class. Both can be specified\n     together. If ‘supplemental.cols’ are specified, the named columns\n     are included in the result.\n\nAuthor(s):\n\n     Oracle\n\n     Maintainer: Oracle <email: oracle-r-enterprise@oracle.com>\n\nReferences:\n\n     Oracle R Enterprise\n\n     Oracle Data Mining Concepts\n\n     Oracle Data Mining User's Guide\n\nSee Also:\n\n     ‘ore.odmSVM’, ‘ore.odmGLM’, ‘ore.odmNB’, ‘partitions’\n\nExamples:\n\n       m <- mtcars\n       m$gear <- as.factor(m$gear)\n       m$cyl  <- as.factor(m$cyl)\n       m$vs   <- as.factor(m$vs)\n       m$ID   <- 1:nrow(m)\n       MTCARS <- ore.push(m)\n       row.names(MTCARS) <- MTCARS\n     \n       dt.mod  <- ore.odmDT(gear ~ ., MTCARS)\n       summary(dt.mod)\n     \n       dt.res  <- predict (dt.mod, MTCARS,\"gear\")\n       with(dt.res, table(gear,PREDICTION))  # generate confusion matrix\n     "
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656431077926_166758174",
+      "id": "paragraph_1656431077926_166758174",
+      "dateCreated": "2022-06-28T15:44:37+0000",
+      "dateStarted": "2022-07-29T16:14:36+0000",
+      "dateFinished": "2022-07-29T16:14:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%md\nBuild a Decision Tree model specifying a maximum tree depth of 4, and display model details.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Build a Decision Tree model specifying a maximum tree depth of 4, and display model details.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_265215112",
+      "id": "20220621-220804_152005089",
+      "dateCreated": "2022-05-31T21:47:17+0000",
+      "dateStarted": "2022-07-29T16:14:37+0000",
+      "dateFinished": "2022-07-29T16:14:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "%r\n\noptions(ore.parallel=4)\n\nMOD1 <- ore.odmDT(Species~., IRIS_TMP, max.depth=4)\nMOD1\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmDT(formula = Species ~ ., data = IRIS_TMP, max.depth = 4)\n\nSettings: \n                                               value\nclas.max.sup.bins                                 32\nclas.weights.balanced                            OFF\nodms.details                             odms.enable\nodms.missing.value.treatment odms.missing.value.auto\nodms.sampling                  odms.sampling.disable\nprep.auto                                         ON\nimpurity.metric                        impurity.gini\nterm.max.depth                                     4\nterm.minpct.node                                0.05\nterm.minpct.split                                0.1\nterm.minrec.node                                  10\nterm.minrec.split                                 20\n\nNodes:n  parent node.id row.count prediction\n1     NA       0       150     setosa\n2      0       1       100 versicolor\n3      0       2        50     setosa\n4      1       3        54 versicolor\n5      1       4        46  virginica\n                                       split\n1                                       <NA>\n2  (Petal.Length >(2.4500000000000002E+000))\n3 (Petal.Length <=(2.4500000000000002E+000))\n4                (Petal.Width <=(1.75E+000))\n5                 (Petal.Width >(1.75E+000))\n                                 surrogate\n1                                     <NA>\n2  Petal.Width >(8.0000000000000004E-001))\n3 Petal.Width <=(8.0000000000000004E-001))\n4              Petal.Length <=(4.75E+000))\n5               Petal.Length >(4.75E+000))\n                                                                full.splits\n1                                                                         (\n2                                 (Petal.Length >(2.4500000000000002E+000))\n3                                (Petal.Length <=(2.4500000000000002E+000))\n4 (Petal.Length >(2.4500000000000002E+000)) AND (Petal.Width <=(1.75E+000))\n5  (Petal.Length >(2.4500000000000002E+000)) AND (Petal.Width >(1.75E+000))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1247520466",
+      "id": "20220621-220804_1165881229",
+      "dateCreated": "2022-05-31T21:47:50+0000",
+      "dateStarted": "2022-07-29T16:14:37+0000",
+      "dateFinished": "2022-07-29T16:14:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:69"
+    },
+    {
+      "title": "Define a cost matrix",
+      "text": "%r\n\nvalue <- c(0, 0.4, 0.5, 0.8, 0, 0.5, 0.2, 0.6, 0)\ncost.matrix <- matrix(value,ncol=3,byrow=TRUE)\ncolnames(cost.matrix) <- c('setosa','versicolor', 'virginica')\nrownames(cost.matrix) <- c('setosa','versicolor', 'virginica')\nnames(dimnames(cost.matrix)) <- c(\"ACTUAL_TARGET_VALUE\",\"PREDICTED_TARGET_VALUE\")\ncost.matrix <- as.table(cost.matrix)\ncost.matrix",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                   PREDICTED_TARGET_VALUE\nACTUAL_TARGET_VALUE setosa versicolor virginica\n         setosa        0.0        0.4       0.5\n         versicolor    0.8        0.0       0.5\n         virginica     0.2        0.6       0.0"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1030264743",
+      "id": "20220621-220804_457947194",
+      "dateCreated": "2022-05-31T21:47:08+0000",
+      "dateStarted": "2022-07-29T16:14:40+0000",
+      "dateFinished": "2022-07-29T16:14:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:70"
+    },
+    {
+      "title": "Rebuild model and supply cost matrix",
+      "text": "%r\n\nMOD2 <- ore.odmDT(Species~., IRIS_TMP, max.depth=4, cost.matrix=cost.matrix)\nMOD2",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmDT(formula = Species ~ ., data = IRIS_TMP, cost.matrix = cost.matrix, \n    max.depth = 4)\n\nSettings: \n                                               value\nclas.max.sup.bins                                 32\nclas.weights.balanced                            OFF\nodms.details                             odms.enable\nodms.missing.value.treatment odms.missing.value.auto\nodms.sampling                  odms.sampling.disable\nprep.auto                                         ON\nimpurity.metric                        impurity.gini\nterm.max.depth                                     4\nterm.minpct.node                                0.05\nterm.minpct.split                                0.1\nterm.minrec.node                                  10\nterm.minrec.split                                 20\n\nNodes:n  parent node.id row.count prediction\n1     NA       0       150     setosa\n2      0       1       100 versicolor\n3      0       2        50     setosa\n4      1       3        54 versicolor\n5      1       4        46  virginica\n                                       split\n1                                       <NA>\n2  (Petal.Length >(2.4500000000000002E+000))\n3 (Petal.Length <=(2.4500000000000002E+000))\n4                (Petal.Width <=(1.75E+000))\n5                 (Petal.Width >(1.75E+000))\n                                 surrogate\n1                                     <NA>\n2  Petal.Width >(8.0000000000000004E-001))\n3 Petal.Width <=(8.0000000000000004E-001))\n4              Petal.Length <=(4.75E+000))\n5               Petal.Length >(4.75E+000))\n                                                                full.splits\n1                                                                         (\n2                                 (Petal.Length >(2.4500000000000002E+000))\n3                                (Petal.Length <=(2.4500000000000002E+000))\n4 (Petal.Length >(2.4500000000000002E+000)) AND (Petal.Width <=(1.75E+000))\n5  (Petal.Length >(2.4500000000000002E+000)) AND (Petal.Width >(1.75E+000))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656431510799_353924391",
+      "id": "paragraph_1656431510799_353924391",
+      "dateCreated": "2022-06-28T15:51:50+0000",
+      "dateStarted": "2022-07-29T16:14:41+0000",
+      "dateFinished": "2022-07-29T16:14:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%md\n## Use the Decision Tree model to predict Species\n\nWhen predicting values, users can include supplemental columns from the original data. This can be particularly useful to compare actual target values against predicted values, or to include unique keys for subsequent row identification. This is necessary since row order is not implicitly maintained on results from the database. This is consistent with how SQL and relational databases provide ordering only if requested by the user via a sort.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Use the Decision Tree model to predict Species</h2>\n<p>When predicting values, users can include supplemental columns from the original data. This can be particularly useful to compare actual target values against predicted values, or to include unique keys for subsequent row identification. This is necessary since row order is not implicitly maintained on results from the database. This is consistent with how SQL and relational databases provide ordering only if requested by the user via a sort.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1395073336",
+      "id": "20220621-220804_190564193",
+      "dateCreated": "2022-05-31T21:48:18+0000",
+      "dateStarted": "2022-07-29T16:14:43+0000",
+      "dateFinished": "2022-07-29T16:14:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "%r\n\nPREDICTION <- predict(MOD1, IRIS_TMP, type=\"class\", supplemental.cols = \n                      c(\"Sepal.Length\",\"Sepal.Width\",\"Petal.Length\",\"Petal.Width\",\"Species\"))\n\nz.show(head(PREDICTION))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Species": "number",
+                      "Sepal.Length": "number",
+                      "Sepal.Width": "number",
+                      "Petal.Length": "number",
+                      "Petal.Width": "number",
+                      "PREDICTION": "string",
+                      "PROBABILITY": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "Sepal.Length\tSepal.Width\tPetal.Length\tPetal.Width\tSpecies\tPREDICTION\tPROBABILITY\n5.1\t3.5\t1.4\t0.2\tsetosa\tsetosa\t1\n4.9\t3\t1.4\t0.2\tsetosa\tsetosa\t1\n4.7\t3.2\t1.3\t0.2\tsetosa\tsetosa\t1\n4.6\t3.1\t1.5\t0.2\tsetosa\tsetosa\t1\n5\t3.6\t1.4\t0.2\tsetosa\tsetosa\t1\n5.4\t3.9\t1.7\t0.4\tsetosa\tsetosa\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1434307911",
+      "id": "20220621-220804_1301754968",
+      "dateCreated": "2022-05-31T21:48:50+0000",
+      "dateStarted": "2022-07-29T16:14:44+0000",
+      "dateFinished": "2022-07-29T16:14:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\n## Generate and display a Confusion Matrix for the predicted results\nUsing the overloaded **crosstab** function, compute the confusion matrix between the actual values in SPECIES and the predictions in the PREDICTION column.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Generate and display a Confusion Matrix for the predicted results</h2>\n<p>Using the overloaded <strong>crosstab</strong> function, compute the confusion matrix between the actual values in SPECIES and the predictions in the PREDICTION column.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1849984492",
+      "id": "20220621-220804_1059392618",
+      "dateCreated": "2022-05-31T21:49:24+0000",
+      "dateStarted": "2022-07-29T16:14:45+0000",
+      "dateFinished": "2022-07-29T16:14:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "%r\n\nwith(PREDICTION, table(Species, PREDICTION))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "            PREDICTION\nSpecies      setosa versicolor virginica\n  setosa         50          0         0\n  versicolor      0         49         1\n  virginica       0          5        45"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_270016797",
+      "id": "20220621-220804_361663876",
+      "dateCreated": "2022-05-31T21:52:26+0000",
+      "dateStarted": "2022-07-29T16:14:45+0000",
+      "dateFinished": "2022-07-29T16:14:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "%md\n## Build an Anomaly Detection Model with SVM\nThe Support Vector Machine algorithm supports a one-class SVM option for anomaly detection. Predictions with value 0 are considered anomalies. Users can specify various settings, e.g., the outlier rate or the type of SVM kernel functions.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Build an Anomaly Detection Model with SVM</h2>\n<p>The Support Vector Machine algorithm supports a one-class SVM option for anomaly detection. Predictions with value 0 are considered anomalies. Users can specify various settings, e.g., the outlier rate or the type of SVM kernel functions.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1849274569",
+      "id": "20220621-220804_598467977",
+      "dateCreated": "2022-05-31T22:09:29+0000",
+      "dateStarted": "2022-07-29T16:14:45+0000",
+      "dateFinished": "2022-07-29T16:14:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:76"
+    },
+    {
+      "text": "%r\n\nSVM.MOD <- ore.odmSVM(~ ., IRIS_TMP, \"anomaly.detection\", odm.settings=list(SVMS_OUTLIER_RATE = 0.1))\nSVM.MOD\n\nsummary(SVM.MOD)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmSVM(formula = ~., data = IRIS_TMP, type = \"anomaly.detection\", \n    odm.settings = list(SVMS_OUTLIER_RATE = 0.1))\n\nSettings: \n                                               value\nodms.details                             odms.enable\nodms.missing.value.treatment odms.missing.value.auto\nodms.sampling                  odms.sampling.disable\nprep.auto                                         ON\nactive.learning                            al.enable\nconv.tolerance                                 1e-04\nkernel.cache.size                              5e+07\nkernel.function                             gaussian\nnum.pivots                                       200\noutlier.rate                                     0.1\nCall:\nore.odmSVM(formula = ~., data = IRIS_TMP, type = \"anomaly.detection\", \n    odm.settings = list(SVMS_OUTLIER_RATE = 0.1))\n\nSettings: \n                                               value\nodms.details                             odms.enable\nodms.missing.value.treatment odms.missing.value.auto\nodms.sampling                  odms.sampling.disable\nprep.auto                                         ON\nactive.learning                            al.enable\nconv.tolerance                                 1e-04\nkernel.cache.size                              5e+07\nkernel.function                             gaussian\nnum.pivots                                       200\noutlier.rate                                     0.1\n\nCoefficients: \n[1] No coefficients with gaussian kernel\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1211681758",
+      "id": "20220621-220804_1118355157",
+      "dateCreated": "2022-05-31T22:10:58+0000",
+      "dateStarted": "2022-07-29T16:14:46+0000",
+      "dateFinished": "2022-07-29T16:14:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "%md\nWe can predict which cases are anomalies using the ***predict*** function. if ***proba*** is set to True, we will get the probability associated with the prediction.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>We can predict which cases are anomalies using the <strong><em>predict</em></strong> function. if <strong><em>proba</em></strong> is set to True, we will get the probability associated with the prediction.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-186576919",
+      "id": "20220621-220804_1536057843",
+      "dateCreated": "2022-05-31T22:10:44+0000",
+      "dateStarted": "2022-07-29T16:14:49+0000",
+      "dateFinished": "2022-07-29T16:14:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:78"
+    },
+    {
+      "text": "%r\n\nSVM.PRED  <- predict(SVM.MOD, IRIS_TMP, proba = TRUE)\nz.show(head(SVM.PRED))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "X.0.": "number",
+                      "X.1.": "number",
+                      "PREDICTION": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "X.0.\tX.1.\tPREDICTION\n0.476530247084157\t0.523469752915843\t1\n0.476781250709879\t0.523218749290121\t1\n0.484726110975234\t0.515273889024766\t1\n0.483510421875865\t0.516489578124135\t1\n0.481979962924867\t0.518020037075133\t1\n0.472588550907161\t0.527411449092839\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-1601027679",
+      "id": "20220621-220804_945696843",
+      "dateCreated": "2022-05-31T22:11:55+0000",
+      "dateStarted": "2022-07-29T16:14:50+0000",
+      "dateFinished": "2022-07-29T16:14:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "%md\nLet's assess how many anomalies were identified. Here we see that roughly 5% are reported as indicated from our setting above.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Let's assess how many anomalies were identified. Here we see that roughly 5% are reported as indicated from our setting above.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_1615951789",
+      "id": "20220621-220804_1143283044",
+      "dateCreated": "2022-05-31T22:12:48+0000",
+      "dateStarted": "2022-07-29T16:14:50+0000",
+      "dateFinished": "2022-07-29T16:14:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "%r\n\nwith(SVM.PRED, table(PREDICTION))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "PREDICTION\n  0   1 \n 15 135 "
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_-120333799",
+      "id": "20220621-220804_1132219683",
+      "dateCreated": "2022-05-31T22:13:23+0000",
+      "dateStarted": "2022-07-29T16:14:51+0000",
+      "dateFinished": "2022-07-29T16:14:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "%md\n# End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:14:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {},
+        "colWidth": 12,
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of Script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655849284167_29526841",
+      "id": "20220621-220804_1809132870",
+      "dateCreated": "2022-05-31T22:16:11+0000",
+      "dateStarted": "2022-07-29T16:14:51+0000",
+      "dateFinished": "2022-07-29T16:14:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:82"
+    }
+  ],
+  "name": "OML4R -1- Introduction",
+  "id": "18799",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:OMLUSER-18799": [],
+    "MDWD9201D2221:OMLUSER-18799": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4R -1- Introduction"
+}

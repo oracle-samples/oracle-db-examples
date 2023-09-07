@@ -1,0 +1,1614 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## Explicit Semantic Analysis (ESA) for Text Analytics\n\nExplicit Semantic Analysis (ESA) is an unsupervised algorithm for feature extraction of explicit features based on an existing knowledge base.  It is the process of understanding the meaning of a section of text as a combination of the concepts found in the text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA offers some unique benefits. Most notably, it improves text document categorization by calculating `semantic relatedness` (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.\n\nThe Oracle Machine Learning for R function *ore.odmESA* extracts text-based features from a corpus of documents and performs document similarity comparisons. All processing occurs inside Oracle Autonomous Database.\n\nIn this notebook, we'll use the Wikipedia Model as an example:\n\n - Create an OML4R proxy ESA model object for the pre-loaded Wikipedia model \n - Examples of using the Wiki ESA model\n - Basic ESA Wiki model features for words\n - Basic ESA Wiki model features for phrases\n - ESA Wiki Model document similarity on phrases\n - ESA Wiki Model document similarity on long phrases\n\n*Note: The pre-built Wikipedia model must be installed in your Autonomous Database instance to run this notebook. See instructions below.*\n\nCopyright (c) 2022 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:47:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Explicit Semantic Analysis (ESA) for Text Analytics</h2>\n<p>Explicit Semantic Analysis (ESA) is an unsupervised algorithm for feature extraction of explicit features based on an existing knowledge base.  It is the process of understanding the meaning of a section of text as a combination of the concepts found in the text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA offers some unique benefits. Most notably, it improves text document categorization by calculating <code>semantic relatedness</code> (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.</p>\n<p>The Oracle Machine Learning for R function <em>ore.odmESA</em> extracts text-based features from a corpus of documents and performs document similarity comparisons. All processing occurs inside Oracle Autonomous Database.</p>\n<p>In this notebook, we'll use the Wikipedia Model as an example:</p>\n<ul>\n<li>Create an OML4R proxy ESA model object for the pre-loaded Wikipedia model</li>\n<li>Examples of using the Wiki ESA model</li>\n<li>Basic ESA Wiki model features for words</li>\n<li>Basic ESA Wiki model features for phrases</li>\n<li>ESA Wiki Model document similarity on phrases</li>\n<li>ESA Wiki Model document similarity on long phrases</li>\n</ul>\n<p><em>Note: The pre-built Wikipedia model must be installed in your Autonomous Database instance to run this notebook. See instructions below.</em></p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-2064176949",
+      "id": "20220629-141759_1726536700",
+      "dateCreated": "2022-06-15T15:56:14+0000",
+      "dateStarted": "2022-07-29T18:47:33+0000",
+      "dateFinished": "2022-07-29T18:47:33+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \nOracle ADW Documentation: <a href=\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\nOML folder on Oracle Github: <a href=\"https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle/oracle-db-examples/tree/master/machine-learning');\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\nOML web page: <a href=\"https://www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\nOML Explicit Semantic Analysis: <a href=\"https://www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-explicit-semantic-analysis');\">https://www.oracle.com/goto/ml-explicit-semantic-analysis</a>\n\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Oracle ADW Documentation: <a href=\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\n<br  />OML folder on Oracle Github: <a href=\"https: //github.com/oracle/oracle-db-examples/tree/master/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle/oracle-db-examples/tree/master/machine-learning');\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\n<br  />OML web page: <a href=\"https: //www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\n<br  />OML Explicit Semantic Analysis: <a href=\"https: //www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-explicit-semantic-analysis');\">https://www.oracle.com/goto/ml-explicit-semantic-analysis</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-1037786239",
+      "id": "20220629-141759_1140225790",
+      "dateCreated": "2022-06-15T15:57:26+0000",
+      "dateStarted": "2022-07-29T18:41:22+0000",
+      "dateFinished": "2022-07-29T18:41:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "text": "%md\n## Using the Wikipedia model as an example",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Using the Wikipedia model as an example</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_963037347",
+      "id": "20220629-141759_874610772",
+      "dateCreated": "2022-06-15T16:04:23+0000",
+      "dateStarted": "2022-07-29T18:41:22+0000",
+      "dateFinished": "2022-07-29T18:41:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Delete existing policies and create new policies for the Wiki Lexer",
+      "text": "%r \n\n# Should be executed in a separate session, otherwise it will not work\n# Specify settings for the Policy\n\nore.exec(\"BEGIN ctx_ddl.drop_policy('wiki_txtpol'); EXCEPTION WHEN OTHERS THEN NULL; END;\")\nore.exec(\"BEGIN ctx_ddl.drop_preference( 'wiki_lexer'); EXCEPTION WHEN OTHERS THEN NULL; END;\")\nore.exec(\"BEGIN ctx_ddl.create_preference('wiki_lexer', 'BASIC_LEXER'); END;\")\nore.exec(\"BEGIN ctx_ddl.set_attribute('wiki_lexer', 'INDEX_STEMS', 'ENGLISH'); END;\")\nore.exec(\"BEGIN ctx_ddl.create_policy(policy_name => 'wiki_txtpol', lexer => 'wiki_lexer'); END;\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-204309120",
+      "id": "20220629-141759_988419483",
+      "dateCreated": "2022-06-15T16:05:10+0000",
+      "dateStarted": "2022-07-29T18:41:22+0000",
+      "dateFinished": "2022-07-29T18:41:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "text": "%md\n### The pre-built Wikipedia model must be loaded to the Oracle Autonomous Database. It is a relatively large model object at 800 MB.\n#### Follow the setup in template notebook *OML Import ESA Wiki Model*\n\n#### Relevant Oracle blogs:\n1. <a href=\"https://blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2\" onclick=\"return ! window.open('https://blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2');\"> New Wikipedia-Based Cognitive Model Available for Text Processing </a> \n2. <a href=\"https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\" onclick=\"return ! window.open('https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model');\"> Text Analytics using a pre-built Wikipedia-based Topic Model </a> \n3. <a href=\"https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\" onclick=\"return ! window.open('https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics');\"> Explicit Semantic Analysis (ESA) for Text Analytics </a> \n\nWe will also need to create a model proxy object for the Wiki model into OML4R\n - Use the included function ore.createESA.wiki_model() to create our proxy object\n - This function retrieves information about the Wikipedia model and uses that information to create our ESA model using the ore.odmESA function\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>The pre-built Wikipedia model must be loaded to the Oracle Autonomous Database. It is a relatively large model object at 800 MB.</h3>\n<h4>Follow the setup in template notebook <em>OML Import ESA Wiki Model</em></h4>\n<h4>Relevant Oracle blogs:</h4>\n<ol>\n<li><a href=\"https: //blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2\" onclick=\"return ! window.open('https://blogs.oracle.com/machinelearning/how-to-get-started-using-oracle-advanced-analytics-122-new-feature%3a-explicit-semantic-analysis-v2');\"> New Wikipedia-Based Cognitive Model Available for Text Processing </a></li>\n<li><a href=\"https: //blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\" onclick=\"return ! window.open('https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model');\"> Text Analytics using a pre-built Wikipedia-based Topic Model </a></li>\n<li><a href=\"https: //blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\" onclick=\"return ! window.open('https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics');\"> Explicit Semantic Analysis (ESA) for Text Analytics </a></li>\n</ol>\n<p>We will also need to create a model proxy object for the Wiki model into OML4R</p>\n<ul>\n<li>Use the included function ore.createESA.wiki_model() to create our proxy object</li>\n<li>This function retrieves information about the Wikipedia model and uses that information to create our ESA model using the ore.odmESA function</li>\n</ul>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-79299473",
+      "id": "20220629-141759_444407297",
+      "dateCreated": "2022-06-15T16:05:23+0000",
+      "dateStarted": "2022-07-29T18:41:37+0000",
+      "dateFinished": "2022-07-29T18:41:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Import libraries and set options",
+      "text": "%r\n\nlibrary(ORE)\noptions(ore.warn.order=FALSE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_1138340963",
+      "id": "20220629-141759_1791806006",
+      "dateCreated": "2022-06-15T16:05:22+0000",
+      "dateStarted": "2022-07-29T18:41:37+0000",
+      "dateFinished": "2022-07-29T18:41:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "# Check to see if the pre-loaded model is available",
+      "text": "%sql\n\n-- We should expect one row with the model WIKI_MODEL\nselect MODEL_NAME, MINING_FUNCTION, ALGORITHM, ALGORITHM_TYPE, CREATION_DATE from USER_MINING_MODELS where MODEL_NAME='WIKI_MODEL'",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MODEL_NAME": "string",
+                      "MINING_FUNCTION": "string",
+                      "ALGORITHM": "string",
+                      "ALGORITHM_TYPE": "string",
+                      "CREATION_DATE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MODEL_NAME\tMINING_FUNCTION\tALGORITHM\tALGORITHM_TYPE\tCREATION_DATE\nWIKI_MODEL\tFEATURE_EXTRACTION\tEXPLICIT_SEMANTIC_ANALYS\tNATIVE\t2022-07-29 16:32:50\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-302197644",
+      "id": "20220629-141759_1389872155",
+      "dateCreated": "2022-06-15T16:05:22+0000",
+      "dateStarted": "2022-07-29T18:41:37+0000",
+      "dateFinished": "2022-07-29T18:41:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "title": "Create function for getting proxy model object for the pre-loaded Wikipedia Model",
+      "text": "%r\n \nore.createESA.wiki_model <- function () {\n  model.name <- \"WIKI_MODEL\"\n  attr(model.name, \"owner\") <- OREbase:::.ore.schema()\n  formula <- \"~ TEXT\"\n  formula <- as.formula(formula, env = parent.frame())\n  env.lst <- list()\n  model.settings   <- OREdm:::.ore.getModelSettings(model.name,\"esas_\")\n  model.attributes <- OREdm:::.ore.getModelAttributes(model.name)\n  query <- paste(\n    \"SELECT \",\n    \"FEATURE_ID, \",\n    \"nvl2(attribute_subname, \", \"attribute_name\",\"||\",\"'.'\", \"||\",\n    \"attribute_subname,  attribute_name) attribute_name,\",\n    \"COEFFICIENT \",\n    \"FROM \", \"DM$VAWIKI_MODEL\",\n    \" where ROWNUM <= 10 order by 1,2,3\",\n    sep=\"\");\n  features.all <- OREdm:::.ore.frame4query(query, extRef = env.lst)\n  esa.mod <- OREdm:::.create.ore.odmESA(model.name,\n                                        model.settings,\n                                        model.attributes,\n                                        formula,\n                                        env.lst,\n                                        match.call(),\n                                        features=features.all)\n}\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-1946069548",
+      "id": "20220629-141759_955991319",
+      "dateCreated": "2022-06-15T16:05:21+0000",
+      "dateStarted": "2022-07-29T18:41:40+0000",
+      "dateFinished": "2022-07-29T18:41:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "title": "Call the function to obtain proxy object",
+      "text": "%r \n\nesa_wiki_mod <- ore.createESA.wiki_model()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:41:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_353801968",
+      "id": "20220629-141759_1241831711",
+      "dateCreated": "2022-06-15T16:05:21+0000",
+      "dateStarted": "2022-07-29T18:41:41+0000",
+      "dateFinished": "2022-07-29T18:41:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "Check the first 100 rows of the 21.7 mi rows of features",
+      "text": "%r\n \nz.show(head(features(esa_wiki_mod), 100))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:44:03+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "COEFFICIENT": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tATTRIBUTE_NAME\tATTRIBUTE_VALUE\tCOEFFICIENT\n'Adud al-Dawla\tTEXT.ABBAD\tNA\t0.0191274174186567\n'Adud al-Dawla\tTEXT.ABBASID\tNA\t0.0249151625558249\n'Adud al-Dawla\tTEXT.ABU\tNA\t0.059714023220152\n'Adud al-Dawla\tTEXT.ADUD\tNA\t0.565944673491387\n'Adud al-Dawla\tTEXT.ALABAMA\tNA\t0.22831900492864\n'Adud al-Dawla\tTEXT.ARDASHIR\tNA\t0.0111940903957132\n'Adud al-Dawla\tTEXT.AYYAD\tNA\t0.0249760282115664\n'Adud al-Dawla\tTEXT.BADR\tNA\t0.00986964445080499\n'Adud al-Dawla\tTEXT.BAGHDAD\tNA\t0.0459066966195087\n'Adud al-Dawla\tTEXT.BAHA\tNA\t0.0104589006276045\n'Adud al-Dawla\tTEXT.BAHRAM\tNA\t0.0161236096703584\n'Adud al-Dawla\tTEXT.BAKR\tNA\t0.0134365270355992\n'Adud al-Dawla\tTEXT.BALOCH\tNA\t0.0104772299872558\n'Adud al-Dawla\tTEXT.BAM\tNA\t0.00887829440770621\n'Adud al-Dawla\tTEXT.BANI\tNA\t0.00975646268058504\n'Adud al-Dawla\tTEXT.BAQILLANI\tNA\t0.0144646112351293\n'Adud al-Dawla\tTEXT.BARDAS\tNA\t0.0128361499358996\n'Adud al-Dawla\tTEXT.BEDOUIN\tNA\t0.00872220567501009\n'Adud al-Dawla\tTEXT.BUYID\tNA\t0.0846594574850417\n'Adud al-Dawla\tTEXT.BUYIDS\tNA\t0.0194587149365686\n'Adud al-Dawla\tTEXT.BYZANTINES\tNA\t0.0202176515677629\n'Adud al-Dawla\tTEXT.BYZANTIUM\tNA\t0.00820039029135046\n'Adud al-Dawla\tTEXT.CALIPH\tNA\t0.0232450776566311\n'Adud al-Dawla\tTEXT.CARAVANSERAI\tNA\t0.0114335306364663\n'Adud al-Dawla\tTEXT.CHILDLESS\tNA\t0.00801411366862151\n'Adud al-Dawla\tTEXT.CHOSROES\tNA\t0.0134748733114124\n'Adud al-Dawla\tTEXT.CONCUBINE\tNA\t0.00802143665804979\n'Adud al-Dawla\tTEXT.CONSUMMATE\tNA\t0.00815164021102195\n'Adud al-Dawla\tTEXT.DAWLA\tNA\t0.723942878242064\n'Adud al-Dawla\tTEXT.DAYLAMITE\tNA\t0.0501999484162784\n'Adud al-Dawla\tTEXT.DAYLAMITES\tNA\t0.0143428417394205\n'Adud al-Dawla\tTEXT.DESPOT\tNA\t0.00935953765459191\n'Adud al-Dawla\tTEXT.DINAR\tNA\t0.00961407929094202\n'Adud al-Dawla\tTEXT.DIYAR\tNA\t0.0191274174186567\n'Adud al-Dawla\tTEXT.EMBELLISH\tNA\t0.00786795749121632\n'Adud al-Dawla\tTEXT.EMIR\tNA\t0.0314917677186082\n'Adud al-Dawla\tTEXT.ENRICHMENT\tNA\t0.00811412374362538\n'Adud al-Dawla\tTEXT.EUPHRATES\tNA\t0.00874861239537755\n'Adud al-Dawla\tTEXT.FADL\tNA\t0.0226663780212495\n'Adud al-Dawla\tTEXT.FAKHR\tNA\t0.0275993124557871\n'Adud al-Dawla\tTEXT.FARAJ\tNA\t0.0116971284535617\n'Adud al-Dawla\tTEXT.GOR\tNA\t0.0112543478978115\n'Adud al-Dawla\tTEXT.GORGAN\tNA\t0.0122048966987822\n'Adud al-Dawla\tTEXT.GRAMMARIAN\tNA\t0.00925693943414468\n'Adud al-Dawla\tTEXT.HAMADAN\tNA\t0.0169517398437838\n'Adud al-Dawla\tTEXT.HAMDANID\tNA\t0.0188381765657075\n'Adud al-Dawla\tTEXT.HAMDANIDS\tNA\t0.0259449538696399\n'Adud al-Dawla\tTEXT.HARUN\tNA\t0.0101103503589411\n'Adud al-Dawla\tTEXT.HASAN\tNA\t0.0151329041024834\n'Adud al-Dawla\tTEXT.HORMUZ\tNA\t0.0109490678074295\n'Adud al-Dawla\tTEXT.HUSAIN\tNA\t0.0149480328455242\n'Adud al-Dawla\tTEXT.HUSAYN\tNA\t0.00956774133608969\n'Adud al-Dawla\tTEXT.IBN\tNA\t0.0842530506638853\n'Adud al-Dawla\tTEXT.ILYAS\tNA\t0.0170241892897465\n'Adud al-Dawla\tTEXT.IMAD\tNA\t0.0332821869454185\n'Adud al-Dawla\tTEXT.IMAM\tNA\t0.0116784256335568\n'Adud al-Dawla\tTEXT.IMPALE\tNA\t0.00899550414807461\n'Adud al-Dawla\tTEXT.IMRAN\tNA\t0.0095032072007147\n'Adud al-Dawla\tTEXT.IRRIGATE\tNA\t0.00806235431550003\n'Adud al-Dawla\tTEXT.ISFAHAN\tNA\t0.0144289732453719\n'Adud al-Dawla\tTEXT.ISFANDIYAR\tNA\t0.0147419758625679\n'Adud al-Dawla\tTEXT.ISHAQ\tNA\t0.00995878319735963\n'Adud al-Dawla\tTEXT.IZZ\tNA\t0.129121646709541\n'Adud al-Dawla\tTEXT.KAKI\tNA\t0.0116170421624621\n'Adud al-Dawla\tTEXT.KARBALA\tNA\t0.0109616928162925\n'Adud al-Dawla\tTEXT.KARD\tNA\t0.0137655251180668\n'Adud al-Dawla\tTEXT.KARUN\tNA\t0.0115225213027311\n'Adud al-Dawla\tTEXT.KERMAN\tNA\t0.0322142654226283\n'Adud al-Dawla\tTEXT.KERMANSHAH\tNA\t0.0116971284535617\n'Adud al-Dawla\tTEXT.KHALAF\tNA\t0.0117388107268482\n'Adud al-Dawla\tTEXT.KHORRAMSHAHR\tNA\t0.0134748733114124\n'Adud al-Dawla\tTEXT.KHUSRAW\tNA\t0.0776226895619185\n'Adud al-Dawla\tTEXT.KHUZESTAN\tNA\t0.0110264383618927\n'Adud al-Dawla\tTEXT.KURD\tNA\t0.0129519058817242\n'Adud al-Dawla\tTEXT.LAQAB\tNA\t0.0137655251180668\n'Adud al-Dawla\tTEXT.MAKAN\tNA\t0.0228670612729326\n'Adud al-Dawla\tTEXT.MAKRAN\tNA\t0.017806772201188\n'Adud al-Dawla\tTEXT.MANSUR\tNA\t0.00904863982642141\n'Adud al-Dawla\tTEXT.MARSHY\tNA\t0.00847075416697272\n'Adud al-Dawla\tTEXT.MARZUBAN\tNA\t0.0221129637938519\n'Adud al-Dawla\tTEXT.MOBAD\tNA\t0.0145969810444171\n'Adud al-Dawla\tTEXT.MOSUL\tNA\t0.0190851912529848\n'Adud al-Dawla\tTEXT.MU\tNA\t0.0488914103923194\n'Adud al-Dawla\tTEXT.MUDAR\tNA\t0.0131222336053104\n'Adud al-Dawla\tTEXT.MUFID\tNA\t0.0136132687777778\n'Adud al-Dawla\tTEXT.MUQADDASI\tNA\t0.0119662927857039\n'Adud al-Dawla\tTEXT.NAJAF\tNA\t0.0108399242519064\n'Adud al-Dawla\tTEXT.NASIR\tNA\t0.00877548570835643\n'Adud al-Dawla\tTEXT.NISHAPUR\tNA\t0.0114509174976689\n'Adud al-Dawla\tTEXT.NOMAD\tNA\t0.00768822108128912\n'Adud al-Dawla\tTEXT.NOWRUZ\tNA\t0.0114509174976689\n'Adud al-Dawla\tTEXT.OMAN\tNA\t0.0116225388283156\n'Adud al-Dawla\tTEXT.PATRONIZE\tNA\t0.0116340695331498\n'Adud al-Dawla\tTEXT.PERSEPOLIS\tNA\t0.0103280488741183\n'Adud al-Dawla\tTEXT.POLEMIC\tNA\t0.00847075416697272\n'Adud al-Dawla\tTEXT.QABUS\tNA\t0.0515969173816329\n'Adud al-Dawla\tTEXT.QAZVIN\tNA\t0.0116170421624621\n'Adud al-Dawla\tTEXT.RAHBA\tNA\t0.0144646112351293\n'Adud al-Dawla\tTEXT.RECONQUER\tNA\t0.0081983274118409\n'Adud al-Dawla\tTEXT.RUKN\tNA\t0.078612357636442\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_563793667",
+      "id": "20220629-141759_1184184083",
+      "dateCreated": "2022-06-15T16:05:20+0000",
+      "dateStarted": "2022-07-29T18:43:48+0000",
+      "dateFinished": "2022-07-29T18:45:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "Basic settings of the ESA model and the 21.7 mi rows of features",
+      "text": "%r\n\nsummary(esa_wiki_mod)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:45:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.createESA.wiki_model()\n\nSettings: \n                                               value\nmin.items                                         25\ntopn.features                                   1000\nvalue.threshold                            .00000001\nodms.details                             odms.enable\nodms.missing.value.treatment odms.missing.value.auto\nodms.sampling                  odms.sampling.disable\nodms.text.max.features                        200000\nodms.text.min.documents                            5\nodms.text.policy.name                    wiki_txtpol\nprep.auto                                         ON\n\nFeatures: \n               FEATURE_ID ATTRIBUTE_NAME COEFFICIENT\n1                   BMD-1         TEXT.1   0.1368543\n2      Bell UH-1 Iroquois         TEXT.1   0.1737152\n3     Cessna O-1 Bird Dog         TEXT.1   0.1613225\n4           Chandrayaan-1         TEXT.1   0.1275755\n5          Chicago Pile-1         TEXT.1   0.1551303\n6  Mikoyan-Gurevich MiG-1         TEXT.1   0.1935011\n7                   PDP-1         TEXT.1   0.1950218\n8    ProSiebenSat.1 Media         TEXT.1   0.1685555\n9               Wrestle-1         TEXT.1   0.1340204\n10         Yakovlev Yak-1         TEXT.1   0.1839094"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-738818",
+      "id": "20220629-141759_714003654",
+      "dateCreated": "2022-06-15T16:05:20+0000",
+      "dateStarted": "2022-07-29T18:45:41+0000",
+      "dateFinished": "2022-07-29T18:46:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "text": "%md\n# Examples using the Wiki ESA model\n ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Examples using the Wiki ESA model</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-281856976",
+      "id": "20220629-141759_1220538237",
+      "dateCreated": "2022-06-15T16:05:19+0000",
+      "dateStarted": "2022-07-29T18:46:14+0000",
+      "dateFinished": "2022-07-29T18:46:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "Basic example of ESA features for the word 'Bank' using the Wikipedia Model",
+      "text": "%r\n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"Bank\")))\n\nz.show(predict(esa_wiki_mod, TEMP_DF, type = c(\"class\", \"raw\"))[-c(3)])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 118,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "P1": "string",
+                      "P2": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "P1\tP2\nBanking in India\t0.12073074740514\nBanking in Australia\t0.11861539327698\nBank of America\t0.113071554116955\nBank\t0.109941636462343\nCentral bank\t0.107803077904466\nNational Bank Act\t0.106470427774569\nStandard Bank\t0.105024979812532\nBankBoston\t0.104744369832675\nOnline banking\t0.102503159518508\nBank of England\t0.096106744902625\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_450669895",
+      "id": "20220629-141759_606014292",
+      "dateCreated": "2022-06-15T16:05:19+0000",
+      "dateStarted": "2022-07-29T18:46:14+0000",
+      "dateFinished": "2022-07-29T18:46:23+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "title": " ESA features for the words 'NFL Games' using the Wikipedia Model",
+      "text": "%r\n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"NFL Games\")))\n\nz.show(predict(esa_wiki_mod, TEMP_DF, type = c(\"class\", \"raw\"))[-c(3)])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 188,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "P1": "string",
+                      "P2": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "P1\tP2\nNational Football League\t0.144836254979624\nNFL International Series\t0.139684141888651\nThursday Night Football\t0.114362409545099\nHistory of the National Football League championship\t0.112721298239857\nChicago College All-Star Game\t0.111212971099872\nNFL Network\t0.110076945165456\nNFL Films\t0.106270569533189\nThe NFL Today\t0.102924455670641\nNational Football League Christmas games\t0.101040928011359\nPlayoff Bowl\t0.0925872345552612\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_-858437666",
+      "id": "20220629-141759_1272810859",
+      "dateCreated": "2022-06-15T16:05:18+0000",
+      "dateStarted": "2022-07-29T18:46:23+0000",
+      "dateFinished": "2022-07-29T18:46:33+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "ESA features for a text about using R on Oracle Database using the Wikipedia Model",
+      "text": "%r \n\nTEMP_DF <- ore.push(data.frame(ID = 1, TEXT = c(\"Data scientists and broader R users can take advantage of the R ecosystem on data managed by Oracle Database. R provides a suite of software packages for data manipulation, graphics, statistical functions, and machine learning algorithms. Oracle Machine Learning for R extends R’s capabilities through three primary areas: transparent access and manipulation of database data from R, in-database machine learning algorithms, ease of deployment using embedded R execution.\")))\n\nz.show(predict(esa_wiki_mod, TEMP_DF, type = c(\"class\", \"raw\"))[-c(3)])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:47:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 172,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "P1": "string",
+                      "P2": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "P1\tP2\nDatabase\t0.138153264333878\nData mining\t0.135965584589925\nMachine learning\t0.1325152013941\nData science\t0.117836217441854\nOracle Corporation\t0.116486459958878\nSupervised learning\t0.110513880296051\nAnalysis of algorithms\t0.105911885236646\nMicrosoft Access\t0.0994831076884941\nObject database\t0.0936664783762529\nEnterprise software\t0.0935335850823769\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_1921102202",
+      "id": "20220629-141759_388585522",
+      "dateCreated": "2022-06-15T16:05:18+0000",
+      "dateStarted": "2022-07-29T18:46:33+0000",
+      "dateFinished": "2022-07-29T18:46:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "title": "ESA features for a text about OML4Spark using the Wikipedia Model",
+      "text": "%r \n\nTEMP_DF <- ore.push(data.frame(ID = 1, TEXT = c(\"OML4Spark R API provides functions for manipulating data stored in a local File System, HDFS, HIVE, Spark DataFrames, Impala, Oracle Database, and other JDBC sources. OML4Spark takes advantage of all the nodes of a Hadoop cluster for scalable, high-performance machine learning modeling in Big Data environments. \")))\n\nz.show(predict(esa_wiki_mod, TEMP_DF, type = c(\"class\", \"raw\"))[-c(3)])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "P1": "string",
+                      "P2": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "P1\tP2\nApache Hadoop\t0.35186953266221\nApache Spark\t0.218089549030044\nJava Database Connectivity\t0.184992809374709\nData modeling\t0.142714506107067\nDatabase\t0.140527053633504\nHigh-availability cluster\t0.136451747421796\nData warehouse\t0.119438462115326\nData mining\t0.117130383015355\nOracle Corporation\t0.111502625481305\nBig data\t0.106993497700792\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_509918843",
+      "id": "20220629-141759_542808493",
+      "dateCreated": "2022-06-15T16:05:18+0000",
+      "dateStarted": "2022-07-29T18:46:41+0000",
+      "dateFinished": "2022-07-29T18:46:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "ESA features for a long text about the Oracle Machine Learning AutoML UI using the Wikipedia Model",
+      "text": "%r\n\nTEMP_DF <- ore.push(data.frame(ID = 1, TEXT = c(\"Oracle Machine Learning AutoML User Interface makes it easy for citizen data scientists and expert data scientists to build and deploy machine learning models. OML AutoML UI, a new component of Oracle Machine Learning on Oracle Autonomous Database, provides a no-code browser-based interface that automates the machine learning modeling process and simplifies deployment to just a few clicks. While data scientists may prefer to write code, perhaps using the OML4Py AutoML feature, OML AutoML UI makes machine learning possible for a much broader set of users, who may “know enough ML to be dangerous” but are not familiar with specific algorithm details and the modeling process to refine usable models. At the same time, OML AutoML UI delivers significant productivity improvements for data scientists as a modeling accelerator.\")))\n\nz.show(predict(esa_wiki_mod, TEMP_DF, type = c(\"class\", \"raw\"))[-c(3)])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 144,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "P1": "string",
+                      "P2": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "P1\tP2\nMachine learning\t0.155704473503718\nData modeling\t0.1409575620346\nUser interface\t0.128292546465855\nOne UI\t0.124529147700334\nData mining\t0.121863746936165\nSoftware design\t0.109564690786559\nBusiness process modeling\t0.106090024431756\nDatabase\t0.0965120800867556\nData science\t0.0891308488999173\nImplementation\t0.0817726804242852\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_1955214044",
+      "id": "20220629-141759_2093179737",
+      "dateCreated": "2022-06-15T19:24:09+0000",
+      "dateStarted": "2022-07-29T18:46:50+0000",
+      "dateFinished": "2022-07-29T18:46:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "title": "",
+      "text": "%md\n# Comparing Strings for Similarity of Text using the Wikipedia Model\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Comparing Strings for Similarity of Text using the Wikipedia Model</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_2029271476",
+      "id": "20220629-141759_1532104575",
+      "dateCreated": "2022-06-15T19:24:08+0000",
+      "dateStarted": "2022-07-29T18:46:58+0000",
+      "dateFinished": "2022-07-29T18:46:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "title": "Comparison of \"fish\" vs \"salmon\" using the Wikipedia model",
+      "text": "%r\n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"fish\", \"salmon\")))\n\nz.show(feature_compare(esa_wiki_mod, TEMP_DF, compare.cols = \"TEXT\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.146447776027241\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_419171638",
+      "id": "20220629-141759_115811567",
+      "dateCreated": "2022-06-15T19:25:20+0000",
+      "dateStarted": "2022-07-29T18:46:59+0000",
+      "dateFinished": "2022-07-29T18:46:59+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "Comparison of \"fish\" vs \"hawk\" using the Wikipedia Model",
+      "text": "%r\n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"fish\", \"hawk\")))\n\nz.show(feature_compare(esa_wiki_mod, TEMP_DF, compare.cols = \"TEXT\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 88,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "TEXT_A": "string",
+                      "TEXT_B": "string",
+                      "SIMILARITY": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.000369489611985352\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_565316840",
+      "id": "20220629-141759_1912881775",
+      "dateCreated": "2022-06-15T19:25:19+0000",
+      "dateStarted": "2022-07-29T18:46:59+0000",
+      "dateFinished": "2022-07-29T18:46:59+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "title": "Comparison of two simple texts about machine learning using the Wikipedia Model",
+      "text": "%r \n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"Regression models predict values on a continuous range.\", \"Classification algorithms assign data to two or more classes.\")))\n\nz.show(feature_compare(esa_wiki_mod, TEMP_DF, compare.cols = \"TEXT\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:46:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 98,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.168889290068795\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_467284707",
+      "id": "20220629-141759_364527325",
+      "dateCreated": "2022-06-15T19:25:18+0000",
+      "dateStarted": "2022-07-29T18:47:00+0000",
+      "dateFinished": "2022-07-29T18:47:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "title": "Comparison of texts about machine learning and geography using the Wikipedia Model",
+      "text": "%r \n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"Regression models predict values on a continuous range.\", \"The U.S. is bordered by Canada and Mexico.\")))\n\nz.show(feature_compare(esa_wiki_mod, TEMP_DF, compare.cols = \"TEXT\"))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:47:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.0102609559472403\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_1296829502",
+      "id": "20220629-141759_1582883554",
+      "dateCreated": "2022-06-15T19:24:08+0000",
+      "dateStarted": "2022-07-29T18:47:00+0000",
+      "dateFinished": "2022-07-29T18:47:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "title": "Text about OML4R and SailGP using the Wikipedia Model",
+      "text": "%r\n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"OML4R has data types that map R data types to SQL data types. In an R session, when you create database objects from R objects or you create R objects from database data, OML4R translates R data types to SQL data types and the reverse where possible. OML4R creates objects that are instances of OML4R classes. OML4R overloads many standard R functions so that they use OML4R classes and data types. R language constructs and syntax are supported for objects that are mapped to Oracle Database objects.\", \"In the SailGP league, thousands of sensors are attached to the catamarans and their crew members, generating millions of data points that are shared with broadcast partners, fans, race officials, and importantly, across the fleet. Each team has full access to one another’s data for post-race analysis, with the goal that sailing performance on the water, not technology, should determine the winner. \")))\n\nz.show(feature_compare(esa_wiki_mod, TEMP_DF, compare.cols = \"TEXT\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:47:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 138,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.23962673310945\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_1807466247",
+      "id": "20220629-141759_836785403",
+      "dateCreated": "2022-06-15T19:27:16+0000",
+      "dateStarted": "2022-07-29T18:47:02+0000",
+      "dateFinished": "2022-07-29T18:47:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "title": "Text about OML4R and OML4Py using the Wikipedia Model",
+      "text": "%r \n\nTEMP_DF <- ore.push(data.frame(TEXT = c(\"OML4R has data types that map R data types to SQL data types. In an R session, when you create database objects from R objects or you create R objects from database data, OML4R translates R data types to SQL data types and the reverse where possible. OML4R creates objects that are instances of OML4R classes. OML4R overloads many standard R functions so that they use OML4R classes and data types. R language constructs and syntax are supported for objects that are mapped to Oracle Database objects.\", \"Oracle Machine Learning for Python (OML4Py) is a component of the Oracle Database Enterprise Edition that makes open source Python ready for the enterprise and big data. OML4Py integrates Python with the Oracle Database and provides a comprehensive, database-centric environment for end-to-end analytical processing. OML4Py provides the users the capability to execute Python functions on database-resident data for data exploration and preparation, whilst seamlessly leveraging the Oracle Database as a high-performance computing (HPC) environment. Furthermore, Python users can natively invoke powerful in-database machine learning algorithms directly in Python.\")))\n\nz.show(feature_compare(esa_wiki_mod, TEMP_DF, compare.cols = \"TEXT\"))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:47:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.591289940606868\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_836785129",
+      "id": "20220629-141759_1638360474",
+      "dateCreated": "2022-06-15T19:27:16+0000",
+      "dateStarted": "2022-07-29T18:47:03+0000",
+      "dateFinished": "2022-07-29T18:47:03+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "%md\n# End of script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T18:47:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279979_1612846685",
+      "id": "20220629-141759_1969805516",
+      "dateCreated": "2022-06-15T19:27:15+0000",
+      "dateStarted": "2022-07-29T18:47:03+0000",
+      "dateFinished": "2022-07-29T18:47:03+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    }
+  ],
+  "name": "OML4R Feature Extraction ESA Wiki Model",
+  "id": "19183",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:MARK-19183": [],
+    "MDWD9201D2221:MARK-19183": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4R Feature Extraction ESA: Wiki Model"
+}

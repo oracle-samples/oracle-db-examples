@@ -1,0 +1,1588 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n\n# OML4R Data Transformation Date Datatypes\n\nIn this notebook, we demonstrate how to perform various operations on date and time data using database table proxy objects using OML4R.\n\nUsing a sequence of date and time data spanning from 2001/01/01 to 2001/12/31, we show how to do operations on date and time data. These operations include arithmetic, aggregation, \ncomparisons, accessing details of data, coercion, as well as an example of ARIMA with a rolling mean window function.\n\nCopyright (c) 2022 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:12:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>OML4R Data Transformation Date Datatypes</h1>\n<p>In this notebook, we demonstrate how to perform various operations on date and time data using database table proxy objects using OML4R.</p>\n<p>Using a sequence of date and time data spanning from 2001/01/01 to 2001/12/31, we show how to do operations on date and time data. These operations include arithmetic, aggregation,\n<br  />comparisons, accessing details of data, coercion, as well as an example of ARIMA with a rolling mean window function.</p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1629595131",
+      "id": "20220629-191605_961020883",
+      "dateCreated": "2022-06-21T16:38:39+0000",
+      "dateStarted": "2022-08-01T14:12:59+0000",
+      "dateFinished": "2022-08-01T14:12:59+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \n\nOML4R documentation on preparing time series data: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-time-series-data.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-time-series-data.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-time-series-data.html</a>",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:12:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>OML4R documentation on preparing time series data: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-time-series-data.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-time-series-data.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-time-series-data.html</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_232692484",
+      "id": "20220629-191605_638839703",
+      "dateCreated": "2022-06-21T16:38:58+0000",
+      "dateStarted": "2022-08-01T14:12:59+0000",
+      "dateFinished": "2022-08-01T14:12:59+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import R libraries and set seed",
+      "text": "%r\n\nlibrary(ORE)\nset.seed(100)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:12:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1151560621",
+      "id": "20220629-191605_152326212",
+      "dateCreated": "2022-06-21T16:39:00+0000",
+      "dateStarted": "2022-08-01T14:12:59+0000",
+      "dateFinished": "2022-08-01T14:12:59+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Create datetime dataset as a database table with ore.push",
+      "text": "%r \n\nn <- 500\n\nmydata <- data.frame(datetime = seq(as.POSIXct(\"2001/01/01\"), as.POSIXct(\"2001/12/31\"), length.out = n), \n                     difftime = as.difftime(runif(n), units = \"mins\"), \n                     x = rnorm(n))\n\nMYDATA <- ore.push(mydata) # create temporary table and return proxy object\n\nclass(MYDATA)\nclass(MYDATA$datetime)\n\nz.show(head(MYDATA, 3))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:12:59+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "2": {
+            "graph": {
+              "mode": "table",
+              "height": 204,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "datetime0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0,
+                          "direction": "asc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "difftime1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "x2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datetime": "number",
+                      "difftime": "number",
+                      "x": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.frame'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "'ore.datetime'\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "datetime\tdifftime\tx\n2001-01-01 00:00:00\t18.465967\t-0.771408001996856\n2001-01-01 17:30:25\t15.46035\t-0.507342353723463\n2001-01-02 11:00:50\t33.139346\t-0.270022583786385\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1475355678",
+      "id": "20220629-191605_320672126",
+      "dateCreated": "2022-06-21T16:38:51+0000",
+      "dateStarted": "2022-08-01T14:13:00+0000",
+      "dateFinished": "2022-08-01T14:13:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "text": "%md\n\n# Date and time arithmetic",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Date and time arithmetic</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1757335622",
+      "id": "20220629-191605_1781718613",
+      "dateCreated": "2022-06-21T16:39:07+0000",
+      "dateStarted": "2022-08-01T14:13:00+0000",
+      "dateFinished": "2022-08-01T14:13:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Create day1Shift dataset by adding 1 day to each date in MYDATA$datetime",
+      "text": "%r  \n\noptions(\"width\"=200)\n\nday1Shift <- MYDATA$datetime + as.difftime(1, units = \"days\")\n\ncat(class(day1Shift), \"\\n\")\nhead(MYDATA$datetime, 3)\ncat(\"\\n\")\nhead(day1Shift, 3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.datetime \n[1] \"2001-01-01 00:00:00 UTC\" \"2001-01-01 17:30:25 UTC\" \"2001-01-02 11:00:50 UTC\"\n[1] \"2001-01-02 00:00:00 UTC\" \"2001-01-02 17:30:25 UTC\" \"2001-01-03 11:00:50 UTC\""
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1288150610",
+      "id": "20220629-191605_1397018583",
+      "dateCreated": "2022-06-21T16:39:06+0000",
+      "dateStarted": "2022-08-01T14:13:01+0000",
+      "dateFinished": "2022-08-01T14:13:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Use diff function to get the differences in time between each value of MYDATA$datetime.",
+      "text": "%r\n\nlag1Diff <- diff(MYDATA$datetime)\ncat(class(lag1Diff), \"\\n\")\nhead(lag1Diff, 3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.difftime \nTime differences in secs\n[1] 63025.25 63025.25 63025.25"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_897848194",
+      "id": "20220629-191605_2021204875",
+      "dateCreated": "2022-06-21T16:39:06+0000",
+      "dateStarted": "2022-08-01T14:13:01+0000",
+      "dateFinished": "2022-08-01T14:13:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "text": "%md\n\n# Date and time aggregates\n\nObtain statistical aggregates of your date and time data.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Date and time aggregates</h1>\n<p>Obtain statistical aggregates of your date and time data.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-383106390",
+      "id": "20220629-191605_51661595",
+      "dateCreated": "2022-06-21T16:39:05+0000",
+      "dateStarted": "2022-08-01T14:13:01+0000",
+      "dateFinished": "2022-08-01T14:13:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "text": "%r\n\nmin(MYDATA$datetime)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[1] \"2001-01-01 UTC\""
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_1257754560",
+      "id": "20220629-191605_2133392730",
+      "dateCreated": "2022-06-21T16:47:33+0000",
+      "dateStarted": "2022-08-01T14:13:02+0000",
+      "dateFinished": "2022-08-01T14:13:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "text": "%r\n\nmax(MYDATA$datetime)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[1] \"2001-12-31 UTC\""
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_2027106847",
+      "id": "20220629-191605_174567199",
+      "dateCreated": "2022-06-21T16:47:38+0000",
+      "dateStarted": "2022-08-01T14:13:02+0000",
+      "dateFinished": "2022-08-01T14:13:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "text": "%r\n\nrange(MYDATA$datetime)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[1] \"2001-01-01 UTC\" \"2001-12-31 UTC\""
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1704882412",
+      "id": "20220629-191605_993239203",
+      "dateCreated": "2022-06-21T16:47:38+0000",
+      "dateStarted": "2022-08-01T14:13:03+0000",
+      "dateFinished": "2022-08-01T14:13:03+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "text": "%r\n\nmedian(MYDATA$datetime)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:03+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 93.1108,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[1] \"2001-07-02 UTC\""
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-891690280",
+      "id": "20220629-191605_450783309",
+      "dateCreated": "2022-06-21T16:47:38+0000",
+      "dateStarted": "2022-08-01T14:13:03+0000",
+      "dateFinished": "2022-08-01T14:13:03+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "Calculate quantiles at the 0%, 5%, and 10% marks",
+      "text": "%r \n\nquantile(MYDATA$datetime, probs = c(0, 0.05, 0.10))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:03+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                       0%                        5%                       10% \n\"2001-01-01 00:00:00 UTC\" \"2001-01-19 04:47:59 UTC\" \"2001-02-06 09:35:59 UTC\" "
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_830280647",
+      "id": "20220629-191605_581207137",
+      "dateCreated": "2022-06-21T16:47:38+0000",
+      "dateStarted": "2022-08-01T14:13:04+0000",
+      "dateFinished": "2022-08-01T14:13:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "text": "%md\n\n# Date and time comparisons",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:04+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Date and time comparisons</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1183275291",
+      "id": "20220629-191605_353163389",
+      "dateCreated": "2022-06-21T16:47:37+0000",
+      "dateStarted": "2022-08-01T14:13:05+0000",
+      "dateFinished": "2022-08-01T14:13:05+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "Use comparison to identify all data that is in Q1",
+      "text": "%r \n\nisQ1 <- MYDATA$datetime < as.Date(\"2001/04/01\")\ncat(class(isQ1), \"\\n\")\nhead(isQ1, 3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.logical \n[1] TRUE TRUE TRUE"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_2058169294",
+      "id": "20220629-191605_857494727",
+      "dateCreated": "2022-06-21T16:47:37+0000",
+      "dateStarted": "2022-08-01T14:13:05+0000",
+      "dateFinished": "2022-08-01T14:13:05+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "title": "Use comparison and identified Q1 data to identify subset of data that is in March",
+      "text": "%r\n\nisMarch <- isQ1 & MYDATA$datetime > as.Date(\"2001/03/01\")\ncat(class(isMarch), \"\\n\")\ncat(sum(isMarch), \"\\n\")\nhead(isMarch[70:85,], 100)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.logical \n43 \n [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_1994676173",
+      "id": "20220629-191605_1516883689",
+      "dateCreated": "2022-06-21T16:50:33+0000",
+      "dateStarted": "2022-08-01T14:13:05+0000",
+      "dateFinished": "2022-08-01T14:13:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "Use comparison to get subset of data that is at the end of the year",
+      "text": "%r   \n\neoySubset <- MYDATA[MYDATA$datetime > as.Date(\"2001/12/27\"), ]\nclass(eoySubset)\nz.show(head(eoySubset))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 248,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datetime": "number",
+                      "difftime": "number",
+                      "x": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.frame'\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "datetime\tdifftime\tx\n2001-12-27 08:27:53\t6.263731\t-1.33717666886641\n2001-12-28 01:58:18\t34.794086\t2.31131788765912\n2001-12-28 19:28:44\t19.985368\t-0.350491028513415\n2001-12-29 12:59:09\t0.226655\t-0.321103323805441\n2001-12-30 06:29:34\t59.675767\t-0.428961592336069\n2001-12-31 00:00:00\t22.154092\t-0.229611260023931\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_25855249",
+      "id": "20220629-191605_1550376521",
+      "dateCreated": "2022-06-21T16:50:33+0000",
+      "dateStarted": "2022-08-01T14:13:06+0000",
+      "dateFinished": "2022-08-01T14:13:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%md\n\n# Date and time accessors\n\nExtract various features from your date and time data.\n\nCreate a function to extract all details from data given a dataframe DF and column name dates.\nAfter running this function, an attribute importance algorithm can then tell you how impactful these new columns are.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Date and time accessors</h1>\n<p>Extract various features from your date and time data.</p>\n<p>Create a function to extract all details from data given a dataframe DF and column name dates.\n<br  />After running this function, an attribute importance algorithm can then tell you how impactful these new columns are.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_361159258",
+      "id": "20220629-191605_802433673",
+      "dateCreated": "2022-06-21T16:50:33+0000",
+      "dateStarted": "2022-08-01T14:13:07+0000",
+      "dateFinished": "2022-08-01T14:13:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%r\n\ndateFeatureExtraction <- function(dat, dateCol){\n  \n  datesIndex <- which(colnames(dat) == dateCol)\n  colnames(dat)[datesIndex] <- \"datesCol\"\n  \n  dat <- cbind(dat, year = ore.year(dat$datesCol), month = ore.month(dat$datesCol),\n               dayOfMonth = ore.mday(dat$datesCol), hour = ore.hour(dat$datesCol),\n               minute = ore.minute(dat$datesCol), second = ore.second(dat$datesCol))\n  \n  colnames(dat)[datesIndex] <- dateCol\n  \n  return(dat)\n}\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1029926385",
+      "id": "20220629-191605_2126510552",
+      "dateCreated": "2022-06-21T16:50:33+0000",
+      "dateStarted": "2022-08-01T14:13:07+0000",
+      "dateFinished": "2022-08-01T14:13:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "Extract details from MYDATA and view data",
+      "text": "%r \n\nDATE_DETAILS <- dateFeatureExtraction(MYDATA, \"datetime\")\n\nz.show(head(DATE_DETAILS))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datetime": "number",
+                      "difftime": "number",
+                      "x": "number",
+                      "year": "number",
+                      "month": "number",
+                      "dayOfMonth": "number",
+                      "hour": "number",
+                      "minute": "number",
+                      "second": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "datetime\tdifftime\tx\tyear\tmonth\tdayOfMonth\thour\tminute\tsecond\n2001-01-01 00:00:00\t18.465967\t-0.771408001996856\t2001\t1\t1\t0\t0\t0\n2001-01-01 17:30:25\t15.46035\t-0.507342353723463\t2001\t1\t1\t17\t30\t25.250501\n2001-01-02 11:00:50\t33.139346\t-0.270022583786385\t2001\t1\t2\t11\t0\t50.501002\n2001-01-03 04:31:15\t3.382989\t0.74811656342622\t2001\t1\t3\t4\t31\t15.751503\n2001-01-03 22:01:41\t28.112957\t0.668593810460555\t2001\t1\t3\t22\t1\t41.002004\n2001-01-04 15:32:06\t29.026244\t-0.455298660081533\t2001\t1\t4\t15\t32\t6.252505\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-104300143",
+      "id": "20220629-191605_1781890656",
+      "dateCreated": "2022-06-21T16:50:32+0000",
+      "dateStarted": "2022-08-01T14:13:07+0000",
+      "dateFinished": "2022-08-01T14:13:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%md\n\n# Date and time Coercion\n\nCoerce details of your date and time data to other datatypes",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Date and time Coercion</h1>\n<p>Coerce details of your date and time data to other datatypes</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_1421401069",
+      "id": "20220629-191605_1890942969",
+      "dateCreated": "2022-06-21T16:50:32+0000",
+      "dateStarted": "2022-08-01T14:13:08+0000",
+      "dateFinished": "2022-08-01T14:13:08+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "title": "Coercion to date only and ore.date datatype",
+      "text": "%r \n\ndateOnly <- as.ore.date(MYDATA$datetime)\nclass(dateOnly)\nhead(sort(unique(dateOnly)), 3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.date'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li><time datetime=\"2001-01-01\">2001-01-01</time></li><li><time datetime=\"2001-01-02\">2001-01-02</time></li><li><time datetime=\"2001-01-03\">2001-01-03</time></li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_1762265214",
+      "id": "20220629-191605_2126222084",
+      "dateCreated": "2022-06-21T16:50:32+0000",
+      "dateStarted": "2022-08-01T14:13:08+0000",
+      "dateFinished": "2022-08-01T14:13:08+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "title": "Coercion to name of day and ore.character datatype",
+      "text": "%r\n \nnameOfDay <- as.ore.character(MYDATA$datetime, format = \"DAY\")\ncat(class(nameOfDay), \"\\n\")\nsort(unique(nameOfDay))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.character \n[1] \"FRIDAY   \" \"MONDAY   \" \"SATURDAY \" \"SUNDAY   \" \"THURSDAY \" \"TUESDAY  \" \"WEDNESDAY\""
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_2067727951",
+      "id": "20220629-191605_2144060466",
+      "dateCreated": "2022-06-21T16:50:31+0000",
+      "dateStarted": "2022-08-01T14:13:08+0000",
+      "dateFinished": "2022-08-01T14:13:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "title": "Coercion to day of year and ore.integer datatype",
+      "text": "%r \n\ndayOfYear <- as.integer(as.character(MYDATA$datetime, format = \"DDD\"))\nclass(dayOfYear)\nrange(dayOfYear)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.integer'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>1</li><li>365</li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_467246565",
+      "id": "20220629-191605_1053582293",
+      "dateCreated": "2022-06-21T16:54:22+0000",
+      "dateStarted": "2022-08-01T14:13:09+0000",
+      "dateFinished": "2022-08-01T14:13:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "title": "Coercion to week of year and ore.integer datatype",
+      "text": "%r\n\nweekOfYear <- as.integer(as.character(MYDATA$datetime, format = \"WW\"))\nclass(weekOfYear)\nrange(weekOfYear)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.integer'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>1</li><li>53</li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1987999736",
+      "id": "20220629-191605_1700632898",
+      "dateCreated": "2022-06-21T16:54:40+0000",
+      "dateStarted": "2022-08-01T14:13:09+0000",
+      "dateFinished": "2022-08-01T14:13:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    },
+    {
+      "title": "Coercion to quarter and ore.integer datatype ",
+      "text": "%r\n\nquarter <- as.integer(as.character(MYDATA$datetime, format = \"Q\"))\ncat(class(quarter), \"\\n\")\nsort(unique(quarter))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "ore.integer \n[1] 1 2 3 4"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1811027001",
+      "id": "20220629-191605_1197217118",
+      "dateCreated": "2022-06-21T16:55:04+0000",
+      "dateStarted": "2022-08-01T14:13:10+0000",
+      "dateFinished": "2022-08-01T14:13:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "%md\n\n# ARIMA example with rolling mean window function",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>ARIMA example with rolling mean window function</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-1418404745",
+      "id": "20220629-191605_1712829395",
+      "dateCreated": "2022-06-21T16:55:04+0000",
+      "dateStarted": "2022-08-01T14:13:10+0000",
+      "dateFinished": "2022-08-01T14:13:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "title": "Add rolling mean columns to the dataset using functions ore.rollmean and ore.rollsd",
+      "text": "%r\n\nrow.names(MYDATA) <- MYDATA$datetime\nMYDATA$rollmean5 <- ore.rollmean(MYDATA$x, k = 5)\n\nMYDATA$rollsd5 <- ore.rollsd(MYDATA$x, k = 5)\n\nz.show(head(MYDATA))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datetime": "number",
+                      "difftime": "number",
+                      "x": "number",
+                      "rollmean5": "number",
+                      "rollsd5": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "datetime\tdifftime\tx\trollmean5\trollsd5\n2001-01-01 00:00:00\t18.465967\t-0.771408001996856\t-0.516257646502235\t0.250811575156571\n2001-01-01 17:30:25\t15.46035\t-0.507342353723463\t-0.200164094020121\t0.664528529488939\n2001-01-02 11:00:50\t33.139346\t-0.270022583786385\t-0.0264125131239859\t0.694367830618671\n2001-01-03 04:31:15\t3.382989\t0.74811656342622\t0.0368093552590786\t0.619985234137527\n2001-01-03 22:01:41\t28.112957\t0.668593810460555\t-0.24729121885517\t1.08371209457437\n2001-01-04 15:32:06\t29.026244\t-0.455298660081533\t0.183108711300886\t1.44090022507514\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_1198734837",
+      "id": "20220629-191605_999859727",
+      "dateCreated": "2022-06-21T16:55:03+0000",
+      "dateStarted": "2022-08-01T14:13:11+0000",
+      "dateFinished": "2022-08-01T14:13:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    },
+    {
+      "title": "Get subset of MYDATA for month of March",
+      "text": "%r \n\nmarchData <- ore.pull(MYDATA[isMarch,])",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-601806988",
+      "id": "20220629-191605_839303095",
+      "dateCreated": "2022-06-21T16:54:40+0000",
+      "dateStarted": "2022-08-01T14:13:11+0000",
+      "dateFinished": "2022-08-01T14:13:12+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:69"
+    },
+    {
+      "title": "ARIMA example on column x",
+      "text": "%r\n\n# Use ts function to convert marchData$x to time-series data\ntseries.x <- ts(marchData$x)\n\n# Apply arima function to time series data\narima110.x <- arima(tseries.x, c(1,1,0))\n\n# Use arima model to predict 3 periods into the future.\npredict(arima110.x, 3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<dl>\n\t<dt>$pred</dt>\n\t\t<dd>A Time Series:<br><style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>0.737665008766931</li><li>0.737107845887169</li><li>0.737403253131558</li></ol>\n</dd>\n\t<dt>$se</dt>\n\t\t<dd>A Time Series:<br><style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>1.52717485052426</li><li>1.68731253103124</li><li>2.04012596396468</li></ol>\n</dd>\n</dl>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_1258467594",
+      "id": "20220629-191605_366455372",
+      "dateCreated": "2022-06-21T16:39:04+0000",
+      "dateStarted": "2022-08-01T14:13:12+0000",
+      "dateFinished": "2022-08-01T14:13:12+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:70"
+    },
+    {
+      "title": "ARIMA example on column rm5",
+      "text": "%r\n\n# Use ts function to convert marchData$rollmean5 to time-series data\ntseries.rm5 <- ts(marchData$rollmean5)\n\n# Apply arima function to time series data\narima110.rm5 <- arima(tseries.rm5, c(1,1,0))\n\n# Use arima model to predict 3 periods into the future\npredict(arima110.rm5, 3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<dl>\n\t<dt>$pred</dt>\n\t\t<dd>A Time Series:<br><style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>0.0500358177001674</li><li>0.0500209842289667</li><li>0.0500210887985084</li></ol>\n</dd>\n\t<dt>$se</dt>\n\t\t<dd>A Time Series:<br><style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>0.377205002878134</li><li>0.531571466289616</li><li>0.650282151047021</li></ol>\n</dd>\n</dl>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165903_-779444002",
+      "id": "20220629-191605_1317341710",
+      "dateCreated": "2022-06-21T16:57:03+0000",
+      "dateStarted": "2022-08-01T14:13:12+0000",
+      "dateFinished": "2022-08-01T14:13:12+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%md\n\n# End of script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-01T14:13:12+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656530165904_-1331686273",
+      "id": "20220629-191605_819160335",
+      "dateCreated": "2022-06-21T16:57:01+0000",
+      "dateStarted": "2022-08-01T14:13:13+0000",
+      "dateFinished": "2022-08-01T14:13:13+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:72"
+    }
+  ],
+  "name": "OML4R Data Transformation Date Datatypes",
+  "id": "19257",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:OMLUSER-19257": [],
+    "MDWD9201D2221:OMLUSER-19257": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4R Data Transformation Date Datatypes"
+}

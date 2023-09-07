@@ -1,5 +1,5 @@
 # Oracle Machine Learning for Python
-This set of notebooks from the OML4Py workshop [Python Users: Build intelligent applications faster with Oracle Machine Learning](https://apexapps.oracle.com/pls/apex/dbpm/r/livelabs/view-workshop?wid=786&clear=180&session=101223418598505) introduces you to Oracle Machine Learning for Python (OML4Py) on Oracle Autonomous Database. 
+This set of notebooks from the OML4Py workshop [Introduction to Oracle Machine Learning for Python on Autonomous Database](https://bit.ly/oml4pyhol) introduces you to Oracle Machine Learning for Python (OML4Py) on Oracle Autonomous Database. 
 
 Oracle Machine Learning for Python (OML4Py) supports scalable in-database data exploration and preparation using native Python syntax, scalable in-database algorithms for machine learning model building and scoring, and automated machine learning (AutoML). Users can also invoke user-defined Python functions from Python and REST APIs using database-spawned Python engines. OML4Py increases data scientist productivity and reduces solution deployment complexity. Join us for this tour of OML4Py.
 
@@ -25,12 +25,12 @@ The current folder contains the examples based on Oracle Machine Learning for Py
  * **Lab 5 OML4Py Embedded Python Execution** - Examples of using open-source Python scripts and algorithms (like SciKit-Learn) with OML4Py
  * **Lab 6 OML4Py AutoML** - Examples of how to execute OML AutoML processes to identify the ideal algorithms and tune the models.
 
-More information on the Live Labs workshop [Python Users: Build intelligent applications faster with Oracle Machine Learning](https://apexapps.oracle.com/pls/apex/dbpm/r/livelabs/view-workshop?wid=786&clear=180&session=101223418598505)
+More information on the Live Labs workshop [Introduction to Oracle Machine Learning for Python on Autonomous Database](https://bit.ly/oml4pyhol)
 
-See also [Introducing Oracle Machine Learning Notebooks for the Oracle Autonomous Data Warehouse](https://blogs.oracle.com/datamining/introducing-oracle-machine-learning-sql-notebooks-for-the-oracle-autonomous-data-warehouse-cloud) blog post for more information on OML Notebooks.
+See also [Announcing next generation OML Notebooks on Oracle Autonomous Database](https://blogs.oracle.com/machinelearning/post/announcing-next-generation-to-oml-notebooks-on-oracle-autonomous-database) blog post for more information on OML Notebooks.
 
-Last updated: October 2021
+Last updated: April 2023
 
-#### Copyright (c) 2021 Oracle Corporation and/or its affilitiates.
+#### Copyright (c) 2023 Oracle Corporation and/or its affilitiates.
 
 ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)

@@ -1,0 +1,3205 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n\n# Oracle Machine Learning for R - Datastore and Script Repository\n\n***Oracle Machine Learning for R*** (OML4R) makes the open source R scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior into SQL for running in-database.\n\nIn this notebook, we highlight the datastore and script repository features of OML4R.\n\nWith a datastore, you can store R objects in a named datastore entry. This named datastore can then be used in subsequent R sessions and even be made available to other users or programs by granting/revoking read permissions.\n\nR objects, including OML4R proxy objects, exist for the duration of the current R session unless you explicitly save them. You can save one or more R objects, including OML4R proxy objects, to a named datastore and then load those objects in a later R session. This is also useful when using embedded R execution. Datastores exist in the user’s Oracle Database schema. A datastore, and the objects it contains, persist in the database until explicitly deleted.\n\nUsing a datastore, you can:\n\n* Save OML4R and other R objects in one R session and load them in another R session\n* Pass non-scalar arguments to R functions for use in embedded R execution from both the R, and more importantly, the SQL API where only scalar values can be passed to functions\n* List available datastores and explore the contents of a datastore\n\nWith the script repository, users can:\n\n* Create and store user-defined R functions as scripts in Oracle Database\n* Grant or revoke the read/execute privilege to a script\n* List available scripts\n* Load a script function into the R environment\n* Drop a script from the script repository\n\nYou can make scripts either private or global. A private script is available only to the owner. A global script is available to any user. For private scripts, the owner of the script may grant the read privilege to other users or revoke that privilege.\n\nCopyright (c) 2022 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Oracle Machine Learning for R - Datastore and Script Repository</h1>\n<p><strong><em>Oracle Machine Learning for R</em></strong> (OML4R) makes the open source R scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior into SQL for running in-database.</p>\n<p>In this notebook, we highlight the datastore and script repository features of OML4R.</p>\n<p>With a datastore, you can store R objects in a named datastore entry. This named datastore can then be used in subsequent R sessions and even be made available to other users or programs by granting/revoking read permissions.</p>\n<p>R objects, including OML4R proxy objects, exist for the duration of the current R session unless you explicitly save them. You can save one or more R objects, including OML4R proxy objects, to a named datastore and then load those objects in a later R session. This is also useful when using embedded R execution. Datastores exist in the user’s Oracle Database schema. A datastore, and the objects it contains, persist in the database until explicitly deleted.</p>\n<p>Using a datastore, you can:</p>\n<ul>\n<li>Save OML4R and other R objects in one R session and load them in another R session</li>\n<li>Pass non-scalar arguments to R functions for use in embedded R execution from both the R, and more importantly, the SQL API where only scalar values can be passed to functions</li>\n<li>List available datastores and explore the contents of a datastore</li>\n</ul>\n<p>With the script repository, users can:</p>\n<ul>\n<li>Create and store user-defined R functions as scripts in Oracle Database</li>\n<li>Grant or revoke the read/execute privilege to a script</li>\n<li>List available scripts</li>\n<li>Load a script function into the R environment</li>\n<li>Drop a script from the script repository</li>\n</ul>\n<p>You can make scripts either private or global. A private script is available only to the owner. A global script is available to any user. For private scripts, the owner of the script may grant the read privilege to other users or revoke that privilege.</p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1580883311",
+      "id": "20220629-141759_1934255006",
+      "dateCreated": "2022-04-26T20:41:21+0000",
+      "dateStarted": "2022-07-29T16:18:18+0000",
+      "dateFinished": "2022-07-29T16:18:19+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "Import R libraries and create a data table",
+      "text": "\n%md\n\nTo use OML4R, first import the library ORE.\n\nUsers can get online help using R's help function and specifying the function of interest.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>To use OML4R, first import the library ORE.</p>\n<p>Users can get online help using R's help function and specifying the function of interest.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-320426994",
+      "id": "20220629-141759_244033026",
+      "dateCreated": "2022-04-26T20:42:14+0000",
+      "dateStarted": "2022-07-29T16:18:19+0000",
+      "dateFinished": "2022-07-29T16:18:19+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import libraries and check RQADMIN role",
+      "text": "%r\n\nlibrary(ORE)\nlibrary(MASS)  # for Boston data set",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAttaching package: ‘MASS’\n\n\nThe following object is masked from ‘package:OREstats’:\n\n    fitdistr\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1339842202",
+      "id": "20220629-141759_278390988",
+      "dateCreated": "2022-04-26T20:42:13+0000",
+      "dateStarted": "2022-07-29T16:18:20+0000",
+      "dateFinished": "2022-07-29T16:18:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "",
+      "text": "%md\n\n## Create dataframes and load them into Autonomous Database\n\nWe load three data sets, then invoke create and display the columns for each. These will be used in exploring datastore functionality.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Create dataframes and load them into Autonomous Database</h2>\n<p>We load three data sets, then invoke create and display the columns for each. These will be used in exploring datastore functionality.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1836748147",
+      "id": "20220629-141759_2016816304",
+      "dateCreated": "2022-04-26T20:42:13+0000",
+      "dateStarted": "2022-07-29T16:18:34+0000",
+      "dateFinished": "2022-07-29T16:18:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "Create IRIS temporary database table and get proxy object",
+      "text": "%r\n\nIRIS_TMP <- ore.push(iris)\n\nz.show(colnames(IRIS_TMP))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 4,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Sepal.Length Sepal.Width Petal.Length Petal.Width Species"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_280886588",
+      "id": "20220629-141759_1489036987",
+      "dateCreated": "2022-04-26T20:42:12+0000",
+      "dateStarted": "2022-07-29T16:18:35+0000",
+      "dateFinished": "2022-07-29T16:18:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Create MTCARS temporary data table",
+      "text": "%r\n\nMTCARS_TMP <- ore.push(mtcars)  \n\nz.show(colnames(MTCARS_TMP))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 4,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "mpg cyl disp hp drat wt qsec vs am gear carb"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1265037255",
+      "id": "20220629-141759_195620887",
+      "dateCreated": "2022-04-26T20:42:12+0000",
+      "dateStarted": "2022-07-29T16:18:35+0000",
+      "dateFinished": "2022-07-29T16:18:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Create BOSTON temporary data table",
+      "text": "%r\n\nBOSTON_TMP <- ore.push(Boston)\n\nz.show(colnames(BOSTON_TMP))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 4,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "crim zn indus chas nox rm age dis rad tax ptratio black lstat medv"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1210128850",
+      "id": "20220629-141759_618047526",
+      "dateCreated": "2022-04-26T20:42:11+0000",
+      "dateStarted": "2022-07-29T16:18:35+0000",
+      "dateFinished": "2022-07-29T16:18:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "text": "%md\n\n## Save R objects to datastore\n\nSave the original *iris* data set and the temporary BOSTON proxy object to a datastore named “ds_rdata”, overwriting if the named datastore already exists. Note that you can store actual data objects in a datastore, but large data objects should remain as database tables for performance and scalability.\n\nBy storing the BOSTON_TMP object, the temporary table will not be deleted when the session terminates.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Save R objects to datastore</h2>\n<p>Save the original <em>iris</em> data set and the temporary BOSTON proxy object to a datastore named “ds_rdata”, overwriting if the named datastore already exists. Note that you can store actual data objects in a datastore, but large data objects should remain as database tables for performance and scalability.</p>\n<p>By storing the BOSTON_TMP object, the temporary table will not be deleted when the session terminates.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1505270043",
+      "id": "20220629-141759_1833714592",
+      "dateCreated": "2022-04-26T20:42:11+0000",
+      "dateStarted": "2022-07-29T16:18:36+0000",
+      "dateFinished": "2022-07-29T16:18:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "text": "%r\n\nore.save(iris, BOSTON_TMP, name=\"ds_rdata\", description=\"r datasets\", overwrite=TRUE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-878192086",
+      "id": "20220629-141759_845579660",
+      "dateCreated": "2022-04-26T20:55:12+0000",
+      "dateStarted": "2022-07-29T16:18:36+0000",
+      "dateFinished": "2022-07-29T16:18:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "text": "%md\n\nAdd a third object, the temporary MTCARS proxy object, to that same datastore",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Add a third object, the temporary MTCARS proxy object, to that same datastore</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_2117586273",
+      "id": "20220629-141759_2114122655",
+      "dateCreated": "2022-04-26T20:42:10+0000",
+      "dateStarted": "2022-07-29T16:18:45+0000",
+      "dateFinished": "2022-07-29T16:18:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "text": "%r\n\nore.save(MTCARS_TMP, name=\"ds_rdata\", append=TRUE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1030857323",
+      "id": "20220629-141759_1870980065",
+      "dateCreated": "2022-04-26T20:42:10+0000",
+      "dateStarted": "2022-07-29T16:18:45+0000",
+      "dateFinished": "2022-07-29T16:18:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "text": "%md\n\n---\nSave the *IRIS_TMP* DataFrame to a new datastore, and then list the datastores. Notice we see the datastore name, the number of objects in the datastore, the size in bytes consumed, when the datastore was create/updated, and any description provided by the user. Our two datastores *ds_iris_proxy* and *ds_rdata* are present, with the latter containing three objects.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Save the <em>IRIS_TMP</em> DataFrame to a new datastore, and then list the datastores. Notice we see the datastore name, the number of objects in the datastore, the size in bytes consumed, when the datastore was create/updated, and any description provided by the user. Our two datastores <em>ds_iris_proxy</em> and <em>ds_rdata</em> are present, with the latter containing three objects.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1093369304",
+      "id": "20220629-141759_1624960242",
+      "dateCreated": "2022-04-26T20:42:09+0000",
+      "dateStarted": "2022-07-29T16:18:48+0000",
+      "dateFinished": "2022-07-29T16:18:48+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "text": "%r\n\nore.save(IRIS_TMP, name=\"ds_iris_proxy\", description=\"iris data.frame proxy object\", overwrite=TRUE)\n\nore.datastore()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "datastore.name": "string",
+                      "object.count": "number",
+                      "size": "number",
+                      "creation.date": "number",
+                      "description": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 2 x 5</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>object.count</th><th scope=col>size</th><th scope=col>creation.date</th><th scope=col>description</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dttm&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds_iris_proxy</td><td>1</td><td>1578</td><td>2022-07-29 16:18:50</td><td>iris data.frame proxy object</td></tr>\n\t<tr><td>ds_rdata     </td><td>3</td><td>9603</td><td>2022-07-29 16:18:36</td><td>r datasets                  </td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_2046875394",
+      "id": "20220629-141759_1712742272",
+      "dateCreated": "2022-04-26T20:42:09+0000",
+      "dateStarted": "2022-07-29T16:18:48+0000",
+      "dateFinished": "2022-07-29T16:18:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "text": "%md\n\n## Store model objects in a datastore\n\nTo illustrate storing other types of objects in datastores, we'll create regression models using base R and OML4R.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Store model objects in a datastore</h2>\n<p>To illustrate storing other types of objects in datastores, we'll create regression models using base R and OML4R.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1144511612",
+      "id": "20220629-141759_258066134",
+      "dateCreated": "2022-04-26T20:42:08+0000",
+      "dateStarted": "2022-07-29T16:18:51+0000",
+      "dateFinished": "2022-07-29T16:18:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "text": "%r\n\nregr1 <- lm(medv ~ ., data = Boston)\n\nregr2 <- ore.odmGLM(formula = medv ~ age+crim+rm, data = BOSTON_TMP)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-497278787",
+      "id": "20220629-141759_1194501936",
+      "dateCreated": "2022-04-26T20:42:08+0000",
+      "dateStarted": "2022-07-29T16:18:51+0000",
+      "dateFinished": "2022-07-29T16:18:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "text": "%md\n\nSave objects to a datastore and allow the read privilege to be granted to them. Then grant the read privilege to all users by specifying user=None. Finally list the datastores to which the read privilege has been granted.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Save objects to a datastore and allow the read privilege to be granted to them. Then grant the read privilege to all users by specifying user=None. Finally list the datastores to which the read privilege has been granted.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-207456307",
+      "id": "20220629-141759_1891135064",
+      "dateCreated": "2022-04-26T20:42:07+0000",
+      "dateStarted": "2022-07-29T16:18:53+0000",
+      "dateFinished": "2022-07-29T16:18:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "text": "%r\n\nore.save(regr1, regr2, name=\"ds_rmodel\", grantable=TRUE, overwrite=TRUE)\n\nore.datastore()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 3 x 5</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>object.count</th><th scope=col>size</th><th scope=col>creation.date</th><th scope=col>description</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dttm&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds_iris_proxy</td><td>1</td><td>  1578</td><td>2022-07-29 16:18:50</td><td>iris data.frame proxy object</td></tr>\n\t<tr><td>ds_rdata     </td><td>3</td><td>  9603</td><td>2022-07-29 16:18:36</td><td>r datasets                  </td></tr>\n\t<tr><td>ds_rmodel    </td><td>2</td><td>161668</td><td>2022-07-29 16:18:54</td><td>NA                          </td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-437021260",
+      "id": "20220629-141759_612816272",
+      "dateCreated": "2022-04-26T20:42:07+0000",
+      "dateStarted": "2022-07-29T16:18:54+0000",
+      "dateFinished": "2022-07-29T16:18:54+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%r\n\nore.grant(name=\"ds_rmodel\", type=\"datastore\", user=NULL)\n\nore.datastore(type=\"grantable\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 5</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>object.count</th><th scope=col>size</th><th scope=col>creation.date</th><th scope=col>description</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dttm&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds_rmodel</td><td>2</td><td>161668</td><td>2022-07-29 16:18:54</td><td>NA</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1794374476",
+      "id": "20220629-141759_626057376",
+      "dateCreated": "2022-04-26T21:02:09+0000",
+      "dateStarted": "2022-07-29T16:18:54+0000",
+      "dateFinished": "2022-07-29T16:18:54+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md\n\n## Load datastore objects into memory\n\nLoad all R objects from a datastore to the global workspace and sort the result by name.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Load datastore objects into memory</h2>\n<p>Load all R objects from a datastore to the global workspace and sort the result by name.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-223870812",
+      "id": "20220629-141759_2005518365",
+      "dateCreated": "2022-04-26T20:42:06+0000",
+      "dateStarted": "2022-07-29T16:18:55+0000",
+      "dateFinished": "2022-07-29T16:18:55+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%md\n\nRemove the objects regr1 and regr2 from the current environment prior to loading them from the datastore. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Remove the objects regr1 and regr2 from the current environment prior to loading them from the datastore.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658512690358_1777490195",
+      "id": "paragraph_1658512690358_1777490195",
+      "dateCreated": "2022-07-22T17:58:10+0000",
+      "dateStarted": "2022-07-29T16:18:55+0000",
+      "dateFinished": "2022-07-29T16:18:55+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%r\n\nrm(regr1, regr2)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1658512646493_1999852316",
+      "id": "paragraph_1658512646493_1999852316",
+      "dateCreated": "2022-07-22T17:57:26+0000",
+      "dateStarted": "2022-07-29T16:18:55+0000",
+      "dateFinished": "2022-07-29T16:18:55+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%r\n\nz.show(sort(ore.load(name=\"ds_rdata\")))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:18:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "BOSTON_TMP MTCARS_TMP iris"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_21706228",
+      "id": "20220629-141759_1156624922",
+      "dateCreated": "2022-04-26T20:42:06+0000",
+      "dateStarted": "2022-07-29T16:18:56+0000",
+      "dateFinished": "2022-07-29T16:19:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%md\n\nLoad the named R object, ***regr2***, from the datastore to the current workspace, and check if 'regr2' is loaded.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:01+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Load the named R object, <strong><em>regr2</em></strong>, from the datastore to the current workspace, and check if 'regr2' is loaded.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-2091606404",
+      "id": "20220629-141759_1447609665",
+      "dateCreated": "2022-04-26T20:42:05+0000",
+      "dateStarted": "2022-07-29T16:19:02+0000",
+      "dateFinished": "2022-07-29T16:19:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%r\n\nore.load(name=\"ds_rmodel\", list=c(\"regr2\"))\n'regr2' %in% ls()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'regr2'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "TRUE"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-315715898",
+      "id": "20220629-141759_1958701768",
+      "dateCreated": "2022-04-26T20:42:05+0000",
+      "dateStarted": "2022-07-29T16:19:02+0000",
+      "dateFinished": "2022-07-29T16:19:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "%md\n\nLoad the named R object, ***regr1***, from the datastore to new environment ***e***.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Load the named R object, <strong><em>regr1</em></strong>, from the datastore to new environment <strong><em>e</em></strong>.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-3213096",
+      "id": "20220629-141759_1305447778",
+      "dateCreated": "2022-04-26T20:42:04+0000",
+      "dateStarted": "2022-07-29T16:19:07+0000",
+      "dateFinished": "2022-07-29T16:19:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "%r\n\ne <- new.env()\nore.load(name=\"ds_rmodel\", list=c(\"regr1\"), envir=e)\nls(envir=e)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:08+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'regr1'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "'regr1'"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1731284920",
+      "id": "20220629-141759_208574115",
+      "dateCreated": "2022-04-26T21:05:28+0000",
+      "dateStarted": "2022-07-29T16:19:08+0000",
+      "dateFinished": "2022-07-29T16:19:13+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "%md\n\n## Show datastores and other detail",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Show datastores and other detail</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1932704124",
+      "id": "20220629-141759_480000162",
+      "dateCreated": "2022-04-26T21:05:27+0000",
+      "dateStarted": "2022-07-29T16:19:13+0000",
+      "dateFinished": "2022-07-29T16:19:13+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%r\n\nore.datastore(type=\"all\")[,c(\"owner\", \"datastore.name\", \"object.count\")]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:13+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 3 x 3</caption>\n<thead>\n\t<tr><th scope=col>owner</th><th scope=col>datastore.name</th><th scope=col>object.count</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>OMLUSER</td><td>ds_iris_proxy</td><td>1</td></tr>\n\t<tr><td>OMLUSER</td><td>ds_rdata     </td><td>3</td></tr>\n\t<tr><td>OMLUSER</td><td>ds_rmodel    </td><td>2</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1714183539",
+      "id": "20220629-141759_335210707",
+      "dateCreated": "2022-04-26T21:05:27+0000",
+      "dateStarted": "2022-07-29T16:19:13+0000",
+      "dateFinished": "2022-07-29T16:19:15+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "%md\n\nWe can then show datastores to which other users have been granted the read privilege.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:15+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>We can then show datastores to which other users have been granted the read privilege.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_794516955",
+      "id": "20220629-141759_586142547",
+      "dateCreated": "2022-04-26T21:05:26+0000",
+      "dateStarted": "2022-07-29T16:19:16+0000",
+      "dateFinished": "2022-07-29T16:19:16+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "%r\n\nore.datastore(type=\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 2</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>grantee</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds_rmodel</td><td>PUBLIC</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_880690707",
+      "id": "20220629-141759_1514967587",
+      "dateCreated": "2022-04-26T21:05:25+0000",
+      "dateStarted": "2022-07-29T16:19:16+0000",
+      "dateFinished": "2022-07-29T16:19:19+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%md\n\nOr, show datastores to which this user has been granted the read privilege (there currently are none).",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Or, show datastores to which this user has been granted the read privilege (there currently are none).</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1775016378",
+      "id": "20220629-141759_661190880",
+      "dateCreated": "2022-04-26T21:07:56+0000",
+      "dateStarted": "2022-07-29T16:19:19+0000",
+      "dateFinished": "2022-07-29T16:19:19+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%r\n\nore.datastore(type=\"granted\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:20+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 0 x 6</caption>\n<thead>\n\t<tr><th scope=col>owner</th><th scope=col>datastore.name</th><th scope=col>object.count</th><th scope=col>size</th><th scope=col>creation.date</th><th scope=col>description</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dttm&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-12678208",
+      "id": "20220629-141759_1662001326",
+      "dateCreated": "2022-04-26T21:08:01+0000",
+      "dateStarted": "2022-07-29T16:19:20+0000",
+      "dateFinished": "2022-07-29T16:19:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "%md\n\nOr, show datastores whose names match a pattern.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Or, show datastores whose names match a pattern.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_757106322",
+      "id": "20220629-141759_1069093588",
+      "dateCreated": "2022-04-26T21:08:00+0000",
+      "dateStarted": "2022-07-29T16:19:22+0000",
+      "dateFinished": "2022-07-29T16:19:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%r\n\nore.datastore(pattern=\"rdata\")[, c(\"datastore.name\", \"object.count\")]",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 2</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>object.count</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds_rdata</td><td>3</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-836699063",
+      "id": "20220629-141759_31085194",
+      "dateCreated": "2022-04-26T21:08:01+0000",
+      "dateStarted": "2022-07-29T16:19:22+0000",
+      "dateFinished": "2022-07-29T16:19:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "%md\n\n## Describe contents of a datastore\n\nLet's describe the contents of the ds_iris_proxy datastore.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Describe contents of a datastore</h2>\n<p>Let's describe the contents of the ds_iris_proxy datastore.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-868051525",
+      "id": "20220629-141759_1637156265",
+      "dateCreated": "2022-04-26T21:07:57+0000",
+      "dateStarted": "2022-07-29T16:19:23+0000",
+      "dateFinished": "2022-07-29T16:19:23+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "%r\n\nore.datastoreSummary(name=\"ds_iris_proxy\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 6</caption>\n<thead>\n\t<tr><th scope=col>object.name</th><th scope=col>class</th><th scope=col>size</th><th scope=col>length</th><th scope=col>row.count</th><th scope=col>col.count</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>IRIS_TMP</td><td>ore.frame</td><td>1578</td><td>5</td><td>NA</td><td>5</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-2100149260",
+      "id": "20220629-141759_56777829",
+      "dateCreated": "2022-04-26T21:07:59+0000",
+      "dateStarted": "2022-07-29T16:19:23+0000",
+      "dateFinished": "2022-07-29T16:19:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:76"
+    },
+    {
+      "text": "%md\n\n## User privileges on a datastore\n\nRevoke the read privilege from every user, and again show datastores to which read privilege has been granted. The result is empty.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>User privileges on a datastore</h2>\n<p>Revoke the read privilege from every user, and again show datastores to which read privilege has been granted. The result is empty.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-2018929682",
+      "id": "20220629-141759_1950007663",
+      "dateCreated": "2022-04-26T21:07:55+0000",
+      "dateStarted": "2022-07-29T16:19:25+0000",
+      "dateFinished": "2022-07-29T16:19:25+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "%r\n\nore.revoke(name=\"ds_rmodel\", type=\"datastore\", user=NULL)\n\nore.datastore(type=\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:25+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 0 x 2</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>grantee</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_471149618",
+      "id": "20220629-141759_665289568",
+      "dateCreated": "2022-04-26T21:07:54+0000",
+      "dateStarted": "2022-07-29T16:19:26+0000",
+      "dateFinished": "2022-07-29T16:19:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:78"
+    },
+    {
+      "text": "%md\n\nGrant the read privilege to the user OMLUSER2.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Grant the read privilege to the user OMLUSER2.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-130070319",
+      "id": "20220629-141759_1851155056",
+      "dateCreated": "2022-04-26T21:10:54+0000",
+      "dateStarted": "2022-07-29T16:19:30+0000",
+      "dateFinished": "2022-07-29T16:19:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "%r\n\nore.grant(name=\"ds_rmodel\", type=\"datastore\", user=\"OMLUSER2\")\n\nore.datastore(type=\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 2</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>grantee</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds_rmodel</td><td>OMLUSER2</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1269384601",
+      "id": "20220629-141759_2143718059",
+      "dateCreated": "2022-04-26T21:10:55+0000",
+      "dateStarted": "2022-07-29T16:19:31+0000",
+      "dateFinished": "2022-07-29T16:19:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "%md\n\n## Delete datastore content\n\nDelete some objects from the datastore. Delete a datastore. Show the existing datastores again.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Delete datastore content</h2>\n<p>Delete some objects from the datastore. Delete a datastore. Show the existing datastores again.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1765269292",
+      "id": "20220629-141759_1565859205",
+      "dateCreated": "2022-04-26T21:10:52+0000",
+      "dateStarted": "2022-07-29T16:19:34+0000",
+      "dateFinished": "2022-07-29T16:19:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "%r\n\nore.delete(name=\"ds_rdata\", list=c(\"iris\", \"BOSTON_TMP\"))\n\nore.delete(name=\"ds_rdata\")\n\nore.delete(name=\"ds_rmodel\") \n\nore.datastore()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>'iris'</li><li>'BOSTON_TMP'</li></ol>\n\n"
+          },
+          {
+            "type": "HTML",
+            "data": "'ds_rdata'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "'ds_rmodel'\n"
+          },
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 5</caption>\n<thead>\n\t<tr><th scope=col>datastore.name</th><th scope=col>object.count</th><th scope=col>size</th><th scope=col>creation.date</th><th scope=col>description</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dttm&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>ds_iris_proxy</td><td>1</td><td>1578</td><td>2022-07-29 16:18:50</td><td>iris data.frame proxy object</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-97192717",
+      "id": "20220629-141759_1181886924",
+      "dateCreated": "2022-04-26T21:11:01+0000",
+      "dateStarted": "2022-07-29T16:19:35+0000",
+      "dateFinished": "2022-07-29T16:19:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:82"
+    },
+    {
+      "text": "%md\n\n# R Script Repository\n\nTo illustrate using the R Script Repository, we first define a function ***build_lm1*** that will fit a regression model. With this function, we create a script named “MyLM_function1”. OML4R stores named user-defined functions -- the scripts -- in the repository.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>R Script Repository</h1>\n<p>To illustrate using the R Script Repository, we first define a function <strong><em>build_lm1</em></strong> that will fit a regression model. With this function, we create a script named “MyLM_function1”. OML4R stores named user-defined functions &ndash; the scripts &ndash; in the repository.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1540991640",
+      "id": "20220629-141759_459970192",
+      "dateCreated": "2022-04-26T21:10:54+0000",
+      "dateStarted": "2022-07-29T16:19:40+0000",
+      "dateFinished": "2022-07-29T16:19:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:83"
+    },
+    {
+      "title": "Define function object",
+      "text": "%r\n\nbuild_lm1 <- function(dat){\n  \n  regr <- lm(Sepal.Length  ~ ., data=dat)\n  \n  return(regr)\n}",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_105645121",
+      "id": "20220629-141759_1345504388",
+      "dateCreated": "2022-04-26T21:11:00+0000",
+      "dateStarted": "2022-07-29T16:19:40+0000",
+      "dateFinished": "2022-07-29T16:19:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:84"
+    },
+    {
+      "title": "View function",
+      "text": "%r\n\nbuild_lm1",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<pre class=language-r><code>function (dat) \n{\n<span style=white-space:pre-wrap>    regr &lt;- lm(Sepal.Length ~ ., data = dat)</span>\n<span style=white-space:pre-wrap>    return(regr)</span>\n}</code></pre>"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1730417333",
+      "id": "20220629-141759_629031474",
+      "dateCreated": "2022-04-26T21:10:51+0000",
+      "dateStarted": "2022-07-29T16:19:40+0000",
+      "dateFinished": "2022-07-29T16:19:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:85"
+    },
+    {
+      "text": "%md\n\n## Create scripts in repository\n\nCreate ***MyLM_function1*** in the script repository",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Create scripts in repository</h2>\n<p>Create <strong><em>MyLM_function1</em></strong> in the script repository</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_643425000",
+      "id": "20220629-141759_1913987864",
+      "dateCreated": "2022-04-26T21:10:59+0000",
+      "dateStarted": "2022-07-29T16:19:41+0000",
+      "dateFinished": "2022-07-29T16:19:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:86"
+    },
+    {
+      "text": "%r\n\nore.scriptDrop(\"MyLM_function1\", silent=TRUE)\n\nore.scriptCreate(\"MyLM_function1\", FUN=build_lm1, overwrite=TRUE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_224266806",
+      "id": "20220629-141759_1023735260",
+      "dateCreated": "2022-04-26T21:10:57+0000",
+      "dateStarted": "2022-07-29T16:19:41+0000",
+      "dateFinished": "2022-07-29T16:19:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:87"
+    },
+    {
+      "text": "%md\n\nList the scripts available only to the current user.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>List the scripts available only to the current user.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-2106393019",
+      "id": "20220629-141759_2077491228",
+      "dateCreated": "2022-04-26T21:10:58+0000",
+      "dateStarted": "2022-07-29T16:19:42+0000",
+      "dateFinished": "2022-07-29T16:19:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:88"
+    },
+    {
+      "text": "%r\n\nore.scriptList(type=\"user\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "NAME": "string",
+                      "SCRIPT": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 3 x 2</caption>\n<thead>\n\t<tr><th scope=col>NAME</th><th scope=col>SCRIPT</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>MyLM_function1</td><td><span style=white-space:pre-wrap>function (dat) \n{\n    regr &lt;- lm(Sepal.Length ~ ., data = dat)\n    return(regr)\n}                                                                                                                           </span></td></tr>\n\t<tr><td>build.lmRestR </td><td><span style=white-space:pre-wrap>function (dat) \n{\n    dat$Species &lt;- as.factor(dat$Species)\n    mod &lt;- lm(Petal.Length ~ ., dat)\n    res &lt;- summary(mod)\n    res.list &lt;- list(Coef = res$coefficients, R2 = res$r.squared)\n    res.list\n}</span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>group.countR  </span></td><td><span style=white-space:pre-wrap>function (df) \n{\n    x &lt;- aggregate(df[, \"Species\"], by = list(df$Species), FUN = length)\n    names(x) &lt;- c(\"SPECIES\", \"COUNT\")\n    return(x)\n}                                                            </span></td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1166717870",
+      "id": "20220629-141759_753705606",
+      "dateCreated": "2022-04-26T21:10:52+0000",
+      "dateStarted": "2022-07-29T16:19:42+0000",
+      "dateFinished": "2022-07-29T16:19:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:89"
+    },
+    {
+      "text": "%md\n\nGrant the read privilege to the ***MyLM_function1*** script to the user OMLUSER2.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Grant the read privilege to the <strong><em>MyLM_function1</em></strong> script to the user OMLUSER2.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_952669276",
+      "id": "20220629-141759_2008701408",
+      "dateCreated": "2022-04-26T21:07:52+0000",
+      "dateStarted": "2022-07-29T16:19:42+0000",
+      "dateFinished": "2022-07-29T16:19:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:90"
+    },
+    {
+      "text": "%r\n\nore.grant(name=\"MyLM_function1\", type=\"rqscript\", \"OMLUSER2\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1422701403",
+      "id": "20220629-141759_1829435614",
+      "dateCreated": "2022-04-27T15:01:34+0000",
+      "dateStarted": "2022-07-29T16:19:43+0000",
+      "dateFinished": "2022-07-29T16:19:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:91"
+    },
+    {
+      "text": "%md\n\nList the scripts to which read privilege has been granted.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>List the scripts to which read privilege has been granted.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_537302716",
+      "id": "20220629-141759_914739587",
+      "dateCreated": "2022-04-27T15:01:42+0000",
+      "dateStarted": "2022-07-29T16:19:43+0000",
+      "dateFinished": "2022-07-29T16:19:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:92"
+    },
+    {
+      "text": "%r\n\nore.scriptList(type=\"grant\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 1 x 2</caption>\n<thead>\n\t<tr><th scope=col>NAME</th><th scope=col>GRANTEE</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>MyLM_function1</td><td>OMLUSER2</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1512253880",
+      "id": "20220629-141759_2142547271",
+      "dateCreated": "2022-04-27T15:01:43+0000",
+      "dateStarted": "2022-07-29T16:19:43+0000",
+      "dateFinished": "2022-07-29T16:19:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:93"
+    },
+    {
+      "text": "%md\n\nRevoke the read privilege to the MyLM_function1 script from the user OMLUSER2.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Revoke the read privilege to the MyLM_function1 script from the user OMLUSER2.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1254157192",
+      "id": "20220629-141759_1524928008",
+      "dateCreated": "2022-04-27T15:01:45+0000",
+      "dateStarted": "2022-07-29T16:19:44+0000",
+      "dateFinished": "2022-07-29T16:19:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:94"
+    },
+    {
+      "text": "%r\n\nore.revoke(name=\"MyLM_function1\", type=\"rqscript\", user=\"OMLUSER2\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1978130337",
+      "id": "20220629-141759_1620197762",
+      "dateCreated": "2022-04-27T15:01:39+0000",
+      "dateStarted": "2022-07-29T16:19:44+0000",
+      "dateFinished": "2022-07-29T16:19:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:95"
+    },
+    {
+      "text": "%md\n\n## Invoke function using embedded R execution\n\nWe'll use embedded R execution to invoke this function. First we get a proxy object to the IRIS table. then we use ***tableApply***, providing the proxy object and function name. We'll view the result and then pull the coefficients.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Invoke function using embedded R execution</h2>\n<p>We'll use embedded R execution to invoke this function. First we get a proxy object to the IRIS table. then we use <strong><em>tableApply</em></strong>, providing the proxy object and function name. We'll view the result and then pull the coefficients.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_2107335002",
+      "id": "20220629-141759_2013502938",
+      "dateCreated": "2022-04-27T15:01:41+0000",
+      "dateStarted": "2022-07-29T16:19:44+0000",
+      "dateFinished": "2022-07-29T16:19:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:96"
+    },
+    {
+      "title": "Get IRIS proxy object",
+      "text": "%r\n\nore.sync(table=\"IRIS_R\")\n\nIRIS <- IRIS_R",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_2022267945",
+      "id": "20220629-141759_570939656",
+      "dateCreated": "2022-04-27T15:01:40+0000",
+      "dateStarted": "2022-07-29T16:19:45+0000",
+      "dateFinished": "2022-07-29T16:19:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:97"
+    },
+    {
+      "title": "Use tableApply to provide full IRIS data set to function",
+      "text": "%r\n\nres <- ore.tableApply(IRIS, FUN.NAME=\"MyLM_function1\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_688399130",
+      "id": "20220629-141759_1559074702",
+      "dateCreated": "2022-04-27T15:01:41+0000",
+      "dateStarted": "2022-07-29T16:19:46+0000",
+      "dateFinished": "2022-07-29T16:19:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:98"
+    },
+    {
+      "title": "Show model coefficients",
+      "text": "%r\n\nres_df <- data.frame(attribute = names(res$coefficients), coefficients = res$coefficients)\n\nz.show(res_df)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "attribute": "string",
+                      "coefficients": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "attribute\tcoefficients\n(Intercept)\t2.17126629215508\nSepal.Width\t0.495888938388551\nPetal.Length\t0.829243912234805\nPetal.Width\t-0.315155173326472\nSpeciesversicolor\t-0.723561957780729\nSpeciesvirginica\t-1.02349781449083\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-2060158748",
+      "id": "20220629-141759_771834816",
+      "dateCreated": "2022-04-27T15:01:33+0000",
+      "dateStarted": "2022-07-29T16:19:47+0000",
+      "dateFinished": "2022-07-29T16:19:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:99"
+    },
+    {
+      "text": "%md\n\n## Storing functions as 'global'\n\nLet's define and save another function ***build_lm2***, but this time as global. We'll then invoke that function to build another model.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Storing functions as 'global'</h2>\n<p>Let's define and save another function <strong><em>build_lm2</em></strong>, but this time as global. We'll then invoke that function to build another model.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-416161336",
+      "id": "20220629-141759_1250490007",
+      "dateCreated": "2022-04-27T15:01:38+0000",
+      "dateStarted": "2022-07-29T16:19:47+0000",
+      "dateFinished": "2022-07-29T16:19:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:100"
+    },
+    {
+      "text": "%r\n\nbuild_lm2 <- function(dat){\n  \n  regr <- lm(Petal.Width  ~ Petal.Length, data=dat)\n  \n  return(regr)\n}",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_226449831",
+      "id": "20220629-141759_1457240407",
+      "dateCreated": "2022-04-27T15:01:36+0000",
+      "dateStarted": "2022-07-29T16:19:48+0000",
+      "dateFinished": "2022-07-29T16:19:48+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:101"
+    },
+    {
+      "text": "%r\n\nore.scriptCreate(\"MyGlobalLM_function\", FUN=build_lm2, overwrite=TRUE, global=TRUE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_121708296",
+      "id": "20220629-141759_1715078629",
+      "dateCreated": "2022-04-27T15:01:37+0000",
+      "dateStarted": "2022-07-29T16:19:48+0000",
+      "dateFinished": "2022-07-29T16:19:48+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:102"
+    },
+    {
+      "text": "%r\n\nres <- ore.tableApply(IRIS, FUN.NAME=\"MyGlobalLM_function\")\n\nres",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nlm(formula = Petal.Width ~ Petal.Length, data = dat)\n\nCoefficients:\n (Intercept)  Petal.Length  \n     -0.3631        0.4158  \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_2080187126",
+      "id": "20220629-141759_1115768225",
+      "dateCreated": "2022-04-27T15:01:31+0000",
+      "dateStarted": "2022-07-29T16:19:48+0000",
+      "dateFinished": "2022-07-29T16:19:48+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:103"
+    },
+    {
+      "text": "%md\n\nList the scripts in the script repository available to the current user only.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>List the scripts in the script repository available to the current user only.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1601609594",
+      "id": "20220629-141759_1328561960",
+      "dateCreated": "2022-04-27T15:01:30+0000",
+      "dateStarted": "2022-07-29T16:19:49+0000",
+      "dateFinished": "2022-07-29T16:19:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:104"
+    },
+    {
+      "text": "%r\n\nore.scriptList()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 3 x 2</caption>\n<thead>\n\t<tr><th scope=col>NAME</th><th scope=col>SCRIPT</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>MyLM_function1</td><td><span style=white-space:pre-wrap>function (dat) \n{\n    regr &lt;- lm(Sepal.Length ~ ., data = dat)\n    return(regr)\n}                                                                                                                           </span></td></tr>\n\t<tr><td>build.lmRestR </td><td><span style=white-space:pre-wrap>function (dat) \n{\n    dat$Species &lt;- as.factor(dat$Species)\n    mod &lt;- lm(Petal.Length ~ ., dat)\n    res &lt;- summary(mod)\n    res.list &lt;- list(Coef = res$coefficients, R2 = res$r.squared)\n    res.list\n}</span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>group.countR  </span></td><td><span style=white-space:pre-wrap>function (df) \n{\n    x &lt;- aggregate(df[, \"Species\"], by = list(df$Species), FUN = length)\n    names(x) &lt;- c(\"SPECIES\", \"COUNT\")\n    return(x)\n}                                                            </span></td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-2139270225",
+      "id": "20220629-141759_1152005784",
+      "dateCreated": "2022-04-27T15:09:50+0000",
+      "dateStarted": "2022-07-29T16:19:49+0000",
+      "dateFinished": "2022-07-29T16:19:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:105"
+    },
+    {
+      "text": "%md\n\nList all of the scripts available to the current user.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>List all of the scripts available to the current user.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1032623251",
+      "id": "20220629-141759_1921582789",
+      "dateCreated": "2022-04-27T15:09:53+0000",
+      "dateStarted": "2022-07-29T16:19:49+0000",
+      "dateFinished": "2022-07-29T16:19:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:106"
+    },
+    {
+      "text": "%r\n\nore.scriptList(type='all')",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 20 x 3</caption>\n<thead>\n\t<tr><th scope=col>OWNER</th><th scope=col>NAME</th><th scope=col>SCRIPT</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>OMLUSER</td><td><span style=white-space:pre-wrap>MyLM_function1       </span></td><td><span style=white-space:pre-wrap>function (dat) \n{\n    regr &lt;- lm(Sepal.Length ~ ., data = dat)\n    return(regr)\n}                                                                                                                                                                                                                                    </span></td></tr>\n\t<tr><td>OMLUSER</td><td><span style=white-space:pre-wrap>build.lmRestR        </span></td><td><span style=white-space:pre-wrap>function (dat) \n{\n    dat$Species &lt;- as.factor(dat$Species)\n    mod &lt;- lm(Petal.Length ~ ., dat)\n    res &lt;- summary(mod)\n    res.list &lt;- list(Coef = res$coefficients, R2 = res$r.squared)\n    res.list\n}                                                                                                         </span></td></tr>\n\t<tr><td>OMLUSER</td><td><span style=white-space:pre-wrap>group.countR         </span></td><td><span style=white-space:pre-wrap>function (df) \n{\n    x &lt;- aggregate(df[, \"Species\"], by = list(df$Species), FUN = length)\n    names(x) &lt;- c(\"SPECIES\", \"COUNT\")\n    return(x)\n}                                                                                                                                                                     </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>MyGlobalLM_function  </span></td><td><span style=white-space:pre-wrap>function (dat) \n{\n    regr &lt;- lm(Petal.Width ~ Petal.Length, data = dat)\n    return(regr)\n}                                                                                                                                                                                                                          </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQ$R.Version         </span></td><td><span style=white-space:pre-wrap>function()\n{\n  v &lt;- as.character(R.Version())\n  v[v == \"\"] &lt;- NA_character_\n  data.frame(name=names(R.Version()), value=unname(v),\n             stringsAsFactors=FALSE)\n}                                                                                                                                          </span></td></tr>\n\t<tr><td>RQSYS  </td><td>RQ$getRversion       </td><td>function()\n{\n  data.frame(Version=as.character(getRversion()),\n             stringsAsFactors=FALSE)\n}                                                                                                                                                                                                                </td></tr>\n\t<tr><td>RQSYS  </td><td>RQ$installed.packages</td><td>function()\n{\n  data.frame(installed.packages()[,c(1L,3L,2L),drop=FALSE],\n             stringsAsFactors=FALSE)\n}                                                                                                                                                                                                      </td></tr>\n\t<tr><td>RQSYS  </td><td>RQ$packageVersion    </td><td>function(pkg)\n{\n  data.frame(Version=as.character(packageVersion(pkg=pkg)),\n             stringsAsFactors=FALSE)\n}                                                                                                                                                                                                   </td></tr>\n\t<tr><td>RQSYS  </td><td>RQG$boxplot          </td><td>function(x, ...)\n{\n  boxplot(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                                                                                                             </td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$cdplot           </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$cdplot requires 2 columns to produce graphic\")\n  x[[2L]] &lt;- as.factor(x[[2L]])\n  cdplot(x[[1L]], x[[2L]], ...)\n  invisible(NULL)\n}                                                                                                                    </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$hist             </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (is.data.frame(x))\n    x &lt;- x[[1L]]\n  hist(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                                                                     </span></td></tr>\n\t<tr><td>RQSYS  </td><td>RQG$matplot          </td><td>function(x, ...)\n{\n  matplot(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                                                                                                             </td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$pairs            </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$pairs requires at least 2 columns to produce graphic\")\n  pairs(x, ...)\n  invisible(NULL)\n}                                                                                                                                                             </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$plot1d           </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (is.data.frame(x))\n    x &lt;- x[[1L]]\n  if (is.character(x))\n    x &lt;- as.factor(x)\n  plot(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                      </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$plot2d           </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$plot2d requires 2 columns to produce graphic\")\n  x &lt;- x[1:2]\n  if (is.character(x[[1L]]))\n    x[[1L]] &lt;- as.factor(x[[1L]])\n  if (is.character(x[[2L]]))\n    x[[2L]] &lt;- as.factor(x[[2L]])\n  plot(x[1:2], ...)\n  invisible(NULL)\n}                </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$smoothScatter    </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$smoothScatter requires 2 columns to produce graphic\")\n  x &lt;- x[1:2]\n  if (is.character(x[[1L]]))\n    x[[1L]] &lt;- as.factor(x[[1L]])\n  if (is.character(x[[2L]]))\n    x[[2L]] &lt;- as.factor(x[[2L]])\n  smoothScatter(x[1:2], ...)\n  invisible(NULL)\n}</span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>compute.randomMean   </span></td><td><span style=white-space:pre-wrap>function (index) \n{\n    set.seed(index)\n    x &lt;- rnorm(10)\n    res &lt;- mean(x)\n    res\n}                                                                                                                                                                                                                            </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>compute.randomMeanR  </span></td><td><span style=white-space:pre-wrap>function (index) \n{\n    set.seed(index)\n    x &lt;- rnorm(10)\n    res &lt;- mean(x)\n    res\n}                                                                                                                                                                                                                            </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>group.count          </span></td><td><span style=white-space:pre-wrap>function (dat) \n{\n    res &lt;- aggregate(dat, by = list(dat$Species), FUN = length)\n    colnames(res)[1] &lt;- \"Species\"\n    res\n}                                                                                                                                                                                       </span></td></tr>\n\t<tr><td>RQSYS  </td><td>my.predict           </td><td>function (dat) \n{\n    ore.load(name = \"ds_regr\")\n    pred = cbind(PRED = predict(regr, newdata = dat, supplemental.cols = \"Sepal.Length\"), dat[\"Sepal.Length\"])\n    pred\n}                                                                                                                                          </td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1175916851",
+      "id": "20220629-141759_980281720",
+      "dateCreated": "2022-04-27T15:09:49+0000",
+      "dateStarted": "2022-07-29T16:19:50+0000",
+      "dateFinished": "2022-07-29T16:19:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:107"
+    },
+    {
+      "text": "%md\n\nList the scripts available to all users.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>List the scripts available to all users.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1874185539",
+      "id": "20220629-141759_1961515106",
+      "dateCreated": "2022-04-27T15:09:49+0000",
+      "dateStarted": "2022-07-29T16:19:50+0000",
+      "dateFinished": "2022-07-29T16:19:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:108"
+    },
+    {
+      "text": "%r\n\nore.scriptList(type=\"global\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 5 x 2</caption>\n<thead>\n\t<tr><th scope=col>NAME</th><th scope=col>SCRIPT</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>MyGlobalLM_function</td><td><span style=white-space:pre-wrap>function (dat) \n{\n    regr &lt;- lm(Petal.Width ~ Petal.Length, data = dat)\n    return(regr)\n}                                                                                </span></td></tr>\n\t<tr><td>compute.randomMean </td><td><span style=white-space:pre-wrap>function (index) \n{\n    set.seed(index)\n    x &lt;- rnorm(10)\n    res &lt;- mean(x)\n    res\n}                                                                                  </span></td></tr>\n\t<tr><td>compute.randomMeanR</td><td><span style=white-space:pre-wrap>function (index) \n{\n    set.seed(index)\n    x &lt;- rnorm(10)\n    res &lt;- mean(x)\n    res\n}                                                                                  </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>group.count        </span></td><td><span style=white-space:pre-wrap>function (dat) \n{\n    res &lt;- aggregate(dat, by = list(dat$Species), FUN = length)\n    colnames(res)[1] &lt;- \"Species\"\n    res\n}                                             </span></td></tr>\n\t<tr><td>my.predict         </td><td>function (dat) \n{\n    ore.load(name = \"ds_regr\")\n    pred = cbind(PRED = predict(regr, newdata = dat, supplemental.cols = \"Sepal.Length\"), dat[\"Sepal.Length\"])\n    pred\n}</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_390730646",
+      "id": "20220629-141759_1642184337",
+      "dateCreated": "2022-04-27T15:09:48+0000",
+      "dateStarted": "2022-07-29T16:19:51+0000",
+      "dateFinished": "2022-07-29T16:19:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:109"
+    },
+    {
+      "text": "%md\n\n## Loading functions from the script repository\n\nLoad the MyLM_function1 and MyGlobalLM_function scripts, and pull the models to the local R session. Build the models on the IRIS data set and pull the coefficients.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Loading functions from the script repository</h2>\n<p>Load the MyLM_function1 and MyGlobalLM_function scripts, and pull the models to the local R session. Build the models on the IRIS data set and pull the coefficients.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-860234464",
+      "id": "20220629-141759_1533289286",
+      "dateCreated": "2022-04-27T15:09:47+0000",
+      "dateStarted": "2022-07-29T16:19:51+0000",
+      "dateFinished": "2022-07-29T16:19:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:110"
+    },
+    {
+      "text": "%r\n\nore.scriptLoad(name=\"MyLM_function1\", newname = \"MYLM\")\nore.scriptLoad(name=\"MyGlobalLM_function\", newname = \"GlobalMYLM\")\n\ncat(\"MYLM: \\n\")\nMYLM(iris)\ncat(\"\\n\\nGlobalMYLM: \\n\")\nGlobalMYLM(iris)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "MYLM: \n\nCall:\nlm(formula = Sepal.Length ~ ., data = dat)\n\nCoefficients:\n      (Intercept)        Sepal.Width       Petal.Length        Petal.Width  \n           2.1713             0.4959             0.8292            -0.3152  \nSpeciesversicolor   Speciesvirginica  \n          -0.7236            -1.0235  \n\n\nGlobalMYLM: \n\nCall:\nlm(formula = Petal.Width ~ Petal.Length, data = dat)\n\nCoefficients:\n (Intercept)  Petal.Length  \n     -0.3631        0.4158  \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_658302539",
+      "id": "20220629-141759_236398459",
+      "dateCreated": "2022-04-27T15:09:46+0000",
+      "dateStarted": "2022-07-29T16:19:51+0000",
+      "dateFinished": "2022-07-29T16:19:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:111"
+    },
+    {
+      "text": "%md\n\n## Drop scripts from repository\n\nDrop one of the private scripts.\n\nDrop the global script.\n\nList the available scripts again.",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Drop scripts from repository</h2>\n<p>Drop one of the private scripts.</p>\n<p>Drop the global script.</p>\n<p>List the available scripts again.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-1130309746",
+      "id": "20220629-141759_1046807790",
+      "dateCreated": "2022-04-27T15:13:07+0000",
+      "dateStarted": "2022-07-29T16:19:52+0000",
+      "dateFinished": "2022-07-29T16:19:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:112"
+    },
+    {
+      "text": "%r\n\nore.scriptDrop(\"MyLM_function1\")\nore.scriptDrop(\"MyGlobalLM_function\", global=TRUE)\nore.scriptList(type=\"all\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 18 x 3</caption>\n<thead>\n\t<tr><th scope=col>OWNER</th><th scope=col>NAME</th><th scope=col>SCRIPT</th></tr>\n\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>OMLUSER</td><td><span style=white-space:pre-wrap>build.lmRestR        </span></td><td><span style=white-space:pre-wrap>function (dat) \n{\n    dat$Species &lt;- as.factor(dat$Species)\n    mod &lt;- lm(Petal.Length ~ ., dat)\n    res &lt;- summary(mod)\n    res.list &lt;- list(Coef = res$coefficients, R2 = res$r.squared)\n    res.list\n}                                                                                                         </span></td></tr>\n\t<tr><td>OMLUSER</td><td><span style=white-space:pre-wrap>group.countR         </span></td><td><span style=white-space:pre-wrap>function (df) \n{\n    x &lt;- aggregate(df[, \"Species\"], by = list(df$Species), FUN = length)\n    names(x) &lt;- c(\"SPECIES\", \"COUNT\")\n    return(x)\n}                                                                                                                                                                     </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQ$R.Version         </span></td><td><span style=white-space:pre-wrap>function()\n{\n  v &lt;- as.character(R.Version())\n  v[v == \"\"] &lt;- NA_character_\n  data.frame(name=names(R.Version()), value=unname(v),\n             stringsAsFactors=FALSE)\n}                                                                                                                                          </span></td></tr>\n\t<tr><td>RQSYS  </td><td>RQ$getRversion       </td><td>function()\n{\n  data.frame(Version=as.character(getRversion()),\n             stringsAsFactors=FALSE)\n}                                                                                                                                                                                                                </td></tr>\n\t<tr><td>RQSYS  </td><td>RQ$installed.packages</td><td>function()\n{\n  data.frame(installed.packages()[,c(1L,3L,2L),drop=FALSE],\n             stringsAsFactors=FALSE)\n}                                                                                                                                                                                                      </td></tr>\n\t<tr><td>RQSYS  </td><td>RQ$packageVersion    </td><td>function(pkg)\n{\n  data.frame(Version=as.character(packageVersion(pkg=pkg)),\n             stringsAsFactors=FALSE)\n}                                                                                                                                                                                                   </td></tr>\n\t<tr><td>RQSYS  </td><td>RQG$boxplot          </td><td>function(x, ...)\n{\n  boxplot(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                                                                                                             </td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$cdplot           </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$cdplot requires 2 columns to produce graphic\")\n  x[[2L]] &lt;- as.factor(x[[2L]])\n  cdplot(x[[1L]], x[[2L]], ...)\n  invisible(NULL)\n}                                                                                                                    </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$hist             </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (is.data.frame(x))\n    x &lt;- x[[1L]]\n  hist(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                                                                     </span></td></tr>\n\t<tr><td>RQSYS  </td><td>RQG$matplot          </td><td>function(x, ...)\n{\n  matplot(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                                                                                                             </td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$pairs            </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$pairs requires at least 2 columns to produce graphic\")\n  pairs(x, ...)\n  invisible(NULL)\n}                                                                                                                                                             </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$plot1d           </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (is.data.frame(x))\n    x &lt;- x[[1L]]\n  if (is.character(x))\n    x &lt;- as.factor(x)\n  plot(x, ...)\n  invisible(NULL)\n}                                                                                                                                                                      </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$plot2d           </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$plot2d requires 2 columns to produce graphic\")\n  x &lt;- x[1:2]\n  if (is.character(x[[1L]]))\n    x[[1L]] &lt;- as.factor(x[[1L]])\n  if (is.character(x[[2L]]))\n    x[[2L]] &lt;- as.factor(x[[2L]])\n  plot(x[1:2], ...)\n  invisible(NULL)\n}                </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>RQG$smoothScatter    </span></td><td><span style=white-space:pre-wrap>function(x, ...)\n{\n  if (NCOL(x) &lt; 2L)\n    stop(\"script RQG$smoothScatter requires 2 columns to produce graphic\")\n  x &lt;- x[1:2]\n  if (is.character(x[[1L]]))\n    x[[1L]] &lt;- as.factor(x[[1L]])\n  if (is.character(x[[2L]]))\n    x[[2L]] &lt;- as.factor(x[[2L]])\n  smoothScatter(x[1:2], ...)\n  invisible(NULL)\n}</span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>compute.randomMean   </span></td><td><span style=white-space:pre-wrap>function (index) \n{\n    set.seed(index)\n    x &lt;- rnorm(10)\n    res &lt;- mean(x)\n    res\n}                                                                                                                                                                                                                            </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>compute.randomMeanR  </span></td><td><span style=white-space:pre-wrap>function (index) \n{\n    set.seed(index)\n    x &lt;- rnorm(10)\n    res &lt;- mean(x)\n    res\n}                                                                                                                                                                                                                            </span></td></tr>\n\t<tr><td><span style=white-space:pre-wrap>RQSYS  </span></td><td><span style=white-space:pre-wrap>group.count          </span></td><td><span style=white-space:pre-wrap>function (dat) \n{\n    res &lt;- aggregate(dat, by = list(dat$Species), FUN = length)\n    colnames(res)[1] &lt;- \"Species\"\n    res\n}                                                                                                                                                                                       </span></td></tr>\n\t<tr><td>RQSYS  </td><td>my.predict           </td><td>function (dat) \n{\n    ore.load(name = \"ds_regr\")\n    pred = cbind(PRED = predict(regr, newdata = dat, supplemental.cols = \"Sepal.Length\"), dat[\"Sepal.Length\"])\n    pred\n}                                                                                                                                          </td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_254602438",
+      "id": "20220629-141759_167694502",
+      "dateCreated": "2022-04-27T15:13:07+0000",
+      "dateStarted": "2022-07-29T16:19:52+0000",
+      "dateFinished": "2022-07-29T16:19:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:113"
+    },
+    {
+      "text": "%md\n\n# End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of Script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_1943081125",
+      "id": "20220629-141759_1664105173",
+      "dateCreated": "2022-04-27T15:13:06+0000",
+      "dateStarted": "2022-07-29T16:19:53+0000",
+      "dateFinished": "2022-07-29T16:19:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:114"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:19:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656512279577_-101025082",
+      "id": "20220629-141759_739739485",
+      "dateCreated": "2022-04-27T15:13:05+0000",
+      "dateStarted": "2022-07-29T16:19:53+0000",
+      "dateFinished": "2022-07-29T16:19:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:115"
+    }
+  ],
+  "name": "OML4R -3- Datastore and Script Repository",
+  "id": "19181",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:MARK-19181": [],
+    "MDWD9201D2221:MARK-19181": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

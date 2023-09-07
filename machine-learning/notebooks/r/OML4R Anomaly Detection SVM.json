@@ -1,0 +1,1845 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n# Detect Unusual or Rare Occurrences using SVM Anomaly Detection\nOracle Machine Learning supports anomaly detection to identify rare or unusual records (customers, transactions, etc.) in your data using the semi-supervised learning algorithm One-Class Support Vector Machine. In this notebook, you will build a One-Class SVM model and then use it to flag unusual or suspicious records. The data used in this example is from the SH schema. The entire machine learning methodology runs inside Oracle Autonomous Database (ADB).\n\nCopyright (c) 2022 Oracle Corporation\n\n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>Detect Unusual or Rare Occurrences using SVM Anomaly Detection</h1>\n<p>Oracle Machine Learning supports anomaly detection to identify rare or unusual records (customers, transactions, etc.) in your data using the semi-supervised learning algorithm One-Class Support Vector Machine. In this notebook, you will build a One-Class SVM model and then use it to flag unusual or suspicious records. The data used in this example is from the SH schema. The entire machine learning methodology runs inside Oracle Autonomous Database (ADB).</p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947841_-1079695028",
+      "id": "20220624-153547_23168105",
+      "dateCreated": "2022-06-22T19:18:15+0000",
+      "dateStarted": "2022-07-29T16:32:31+0000",
+      "dateFinished": "2022-07-29T16:32:32+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \nOracle ADW Documentation: [https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html](https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html)\nOML folder on Oracle Github: [https://github.com/oracle/oracle-db-examples/tree/master/machine-learning](https://github.com/oracle/oracle-db-examples/tree/master/machine-learning)\nOML web page: [https://www.oracle.com/machine-learning](https://www.oracle.com/machine-learning)\nOML Classification: [https://www.oracle.com/goto/ml-classification](https://www.oracle.com/goto/ml-classification)\nOML Support Vector Machine: [https://oracle.com/goto/ml-support-vector-machine](https://oracle.com/goto/ml-support-vector-machine)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Oracle ADW Documentation: <a href=\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\n<br  />OML folder on Oracle Github: <a href=\"https://github.com/oracle/oracle-db-examples/tree/master/machine-learning\">https://github.com/oracle/oracle-db-examples/tree/master/machine-learning</a>\n<br  />OML web page: <a href=\"https://www.oracle.com/machine-learning\">https://www.oracle.com/machine-learning</a>\n<br  />OML Classification: <a href=\"https://www.oracle.com/goto/ml-classification\">https://www.oracle.com/goto/ml-classification</a>\n<br  />OML Support Vector Machine: <a href=\"https://oracle.com/goto/ml-support-vector-machine\">https://oracle.com/goto/ml-support-vector-machine</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_492091588",
+      "id": "20220624-153547_1987997660",
+      "dateCreated": "2022-06-23T18:39:53+0000",
+      "dateStarted": "2022-07-29T16:32:33+0000",
+      "dateFinished": "2022-07-29T16:32:33+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import libraries and set display options",
+      "text": "%r\n\nlibrary(ORE)\nlibrary(lattice)\nlibrary(OREdplyr)\noptions(ore.warn.order=FALSE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAttaching package: ‘OREdplyr’\n\n\nThe following objects are masked from ‘package:dplyr’:\n\n    arrange, arrange_, count, count_, cume_dist, dense_rank, desc,\n    distinct, distinct_, filter, filter_, first, full_join, group_by,\n    group_by_, group_size, groups, inner_join, last, left_join,\n    min_rank, mutate, mutate_, n, n_distinct, n_groups, nth, ntile,\n    percent_rank, rename, rename_, right_join, row_number, sample_frac,\n    sample_n, select, select_, slice, slice_, summarise, summarise_,\n    tally, top_n, transmute, transmute_, ungroup\n\n\nThe following object is masked from ‘package:stats’:\n\n    filter\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1495928913",
+      "id": "20220624-153547_1715570890",
+      "dateCreated": "2022-06-23T18:41:10+0000",
+      "dateStarted": "2022-07-29T16:32:33+0000",
+      "dateFinished": "2022-07-29T16:32:48+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Create OML Data Frames for tables CUSTOMERS and SUPPLEMENTARY_DEMOGRAPHICS",
+      "text": "%r\n\nore.sync(query= c(\"CUSTOMERS\" =  'SELECT CUST_ID, CUST_GENDER, CUST_MARITAL_STATUS, CUST_YEAR_OF_BIRTH, CUST_INCOME_LEVEL, CUST_CREDIT_LIMIT FROM SH.CUSTOMERS')) \nore.sync(query= c(\"SUPP_DEM\" = \"SELECT CUST_ID, EDUCATION, AFFINITY_CARD, HOUSEHOLD_SIZE, OCCUPATION, YRS_RESIDENCE, Y_BOX_GAMES FROM SH.SUPPLEMENTARY_DEMOGRAPHICS\"))\nore.attach()",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:48+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_-1113331274",
+      "id": "20220624-153547_143168135",
+      "dateCreated": "2022-06-23T18:46:20+0000",
+      "dateStarted": "2022-07-29T16:32:49+0000",
+      "dateFinished": "2022-07-29T16:32:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "Display a few rows from CUSTOMERS",
+      "text": "%r\n\nz.show(head(CUSTOMERS))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\n49671\tM\tmarried\t1976\tG: 130,000 - 149,999\t1500\n3228\tM\tNA\t1964\tG: 130,000 - 149,999\t7000\n6783\tM\tsingle\t1942\tG: 130,000 - 149,999\t11000\n10338\tM\tmarried\t1977\tG: 130,000 - 149,999\t1500\n13894\tM\tNA\t1949\tG: 130,000 - 149,999\t9000\n17449\tM\tsingle\t1950\tG: 130,000 - 149,999\t9000\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_-616201788",
+      "id": "20220624-153547_88542515",
+      "dateCreated": "2022-06-23T18:42:33+0000",
+      "dateStarted": "2022-07-29T16:32:49+0000",
+      "dateFinished": "2022-07-29T16:32:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Display a few rows from SUPP_DEM",
+      "text": "%r\n\nz.show(head(SUPP_DEM))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\n102547\t10th\t0\t1\tOther\t0\t1\n101050\t10th\t0\t1\tOther\t0\t1\n100040\t11th\t0\t1\tSales\t0\t1\n102117\tHS-grad\t0\t1\tFarming\t0\t1\n101074\t10th\t0\t1\tHandler\t1\t1\n104179\t10th\t0\t1\tHandler\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1284642849",
+      "id": "20220624-153547_4358856",
+      "dateCreated": "2022-06-23T19:34:58+0000",
+      "dateStarted": "2022-07-29T16:32:50+0000",
+      "dateFinished": "2022-07-29T16:32:50+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Merge CUSTOMERS and SUPP_DEM on CUST_ID column using proxy objects ",
+      "text": "%r\n\nCUST_DF <- merge(CUSTOMERS, SUPP_DEM, by = \"CUST_ID\")  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:50+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_301697911",
+      "id": "20220624-153547_1781489106",
+      "dateCreated": "2022-06-23T19:35:49+0000",
+      "dateStarted": "2022-07-29T16:32:51+0000",
+      "dateFinished": "2022-07-29T16:32:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "title": "Display a few rows of CUST_DF",
+      "text": "%r\n\nz.show(head(CUST_DF))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "number",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "date",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "number",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "date",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\n100100\tF\tMarried\t1959\tJ: 190,000 - 249,999\t10000\tMasters\t1\t4-5\tProf.\t4\t0\n100200\tM\tNeverM\t1983\tL: 300,000 and above\t9000\t< Bach.\t0\t1\tOther\t2\t1\n100300\tM\tMarried\t1961\tG: 130,000 - 149,999\t10000\tBach.\t1\t3\tProf.\t4\t0\n100400\tM\tDivorc.\t1944\tC: 50,000 - 69,999\t9000\t12th\t0\t6-8\tTransp.\t6\t0\n100500\tM\tNeverM\t1983\tH: 150,000 - 169,999\t15000\tHS-grad\t0\t1\tCrafts\t2\t1\n100600\tM\tMarried\t1978\tK: 250,000 - 299,999\t9000\t11th\t0\t3\tTransp.\t3\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_878810671",
+      "id": "20220624-153547_654304954",
+      "dateCreated": "2022-06-23T19:36:23+0000",
+      "dateStarted": "2022-07-29T16:32:52+0000",
+      "dateFinished": "2022-07-29T16:32:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "title": "Visualize the distribution of birth date, marital status, and years of residence",
+      "text": "%r\n\nDF <- aggregate(CUST_DF$YRS_RESIDENCE, by = list(CUST_YEAR_OF_BIRTH = CUST_DF$CUST_YEAR_OF_BIRTH, CUST_MARITAL_STATUS = CUST_DF$CUST_MARITAL_STATUS), FUN = sum)\ncolnames(DF) <- c('CUST_YEAR_OF_BIRTH','CUST_MARITAL STATUS', 'sum(YRS_RESIDENCE)')\nz.show(DF)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_MARITAL STATUS": "string",
+                      "sum(YRS_RESIDENCE)": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": true
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "scatterChart": {
+                  "xAxis": {
+                    "name": "CUST_YEAR_OF_BIRTH",
+                    "index": 0,
+                    "aggr": "sum"
+                  },
+                  "yAxis": {
+                    "name": "CUST_MARITAL STATUS",
+                    "index": 1,
+                    "aggr": "sum"
+                  },
+                  "size": {
+                    "name": "sum(YRS_RESIDENCE)",
+                    "index": 2,
+                    "aggr": "sum"
+                  }
+                }
+              },
+              "keys": [
+                {
+                  "name": "CUST_YEAR_OF_BIRTH",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [
+                {
+                  "name": "CUST_MARITAL.STATUS",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ],
+              "values": [
+                {
+                  "name": "sum.YRS_RESIDENCE.",
+                  "index": 2,
+                  "aggr": "sum"
+                }
+              ],
+              "commonSetting": {}
+            },
+            "helium": {}
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_MARITAL_STATUS": "string",
+                      "x": "number"
+                    },
+                    "updated": true
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_YEAR_OF_BIRTH\tCUST_MARITAL.STATUS\tsum.YRS_RESIDENCE.\n1913\tMarried\t29\n1913\tNeverM\t23\n1921\tMarried\t8\n1922\tDivorc.\t8\n1922\tWidowed\t4\n1923\tMarried\t10\n1923\tNeverM\t4\n1924\tMabsent\t4\n1924\tMarried\t20\n1925\tMarried\t40\n1925\tWidowed\t10\n1926\tMabsent\t8\n1926\tMarried\t34\n1926\tNeverM\t4\n1926\tWidowed\t8\n1927\tWidowed\t14\n1928\tDivorc.\t8\n1928\tMabsent\t6\n1928\tMar-AF\t2\n1928\tMarried\t16\n1928\tNeverM\t8\n1928\tWidowed\t24\n1929\tDivorc.\t0\n1929\tMarried\t19\n1929\tWidowed\t8\n1930\tMarried\t7\n1930\tWidowed\t14\n1931\tDivorc.\t2\n1931\tMarried\t9\n1931\tWidowed\t22\n1932\tMarried\t50\n1932\tNeverM\t8\n1932\tSepar.\t0\n1932\tWidowed\t2\n1933\tMarried\t53\n1933\tWidowed\t9\n1934\tDivorc.\t14\n1934\tMarried\t96\n1934\tWidowed\t4\n1935\tMabsent\t10\n1935\tMarried\t69\n1935\tNeverM\t10\n1935\tWidowed\t16\n1936\tDivorc.\t14\n1936\tMarried\t80\n1936\tNeverM\t16\n1936\tWidowed\t6\n1937\tMarried\t51\n1937\tWidowed\t27\n1938\tDivorc.\t23\n1938\tMarried\t92\n1938\tSepar.\t6\n1938\tWidowed\t43\n1939\tDivorc.\t26\n1939\tMarried\t74\n1939\tNeverM\t11\n1939\tSepar.\t6\n1939\tWidowed\t14\n1940\tDivorc.\t6\n1940\tMarried\t113\n1940\tSepar.\t6\n1940\tWidowed\t55\n1941\tDivorc.\t24\n1941\tMarried\t74\n1941\tNeverM\t29\n1941\tWidowed\t24\n1942\tDivorc.\t12\n1942\tMarried\t134\n1942\tWidowed\t10\n1943\tDivorc.\t52\n1943\tMabsent\t3\n1943\tMarried\t168\n1943\tNeverM\t12\n1943\tWidowed\t48\n1944\tDivorc.\t64\n1944\tMabsent\t12\n1944\tMarried\t158\n1944\tNeverM\t30\n1944\tSepar.\t21\n1944\tWidowed\t28\n1945\tDivorc.\t77\n1945\tMarried\t191\n1945\tNeverM\t19\n1945\tWidowed\t25\n1946\tDivorc.\t73\n1946\tMabsent\t12\n1946\tMarried\t166\n1946\tSepar.\t12\n1946\tWidowed\t30\n1947\tDivorc.\t31\n1947\tMabsent\t8\n1947\tMarried\t177\n1947\tNeverM\t48\n1947\tSepar.\t20\n1948\tDivorc.\t60\n1948\tMabsent\t12\n1948\tMarried\t214\n1948\tNeverM\t18\n1948\tSepar.\t12\n1948\tWidowed\t20\n1949\tDivorc.\t71\n1949\tMabsent\t5\n1949\tMarried\t189\n1949\tNeverM\t10\n1949\tSepar.\t10\n1949\tWidowed\t5\n1950\tDivorc.\t92\n1950\tMabsent\t35\n1950\tMarried\t195\n1950\tNeverM\t25\n1950\tWidowed\t10\n1951\tDivorc.\t13\n1951\tMabsent\t7\n1951\tMarried\t226\n1951\tNeverM\t26\n1951\tSepar.\t13\n1951\tWidowed\t15\n1952\tDivorc.\t109\n1952\tMabsent\t3\n1952\tMarried\t274\n1952\tNeverM\t16\n1952\tSepar.\t30\n1952\tWidowed\t18\n1953\tDivorc.\t45\n1953\tMabsent\t21\n1953\tMarried\t263\n1953\tSepar.\t10\n1953\tWidowed\t5\n1954\tDivorc.\t94\n1954\tMabsent\t23\n1954\tMarried\t249\n1954\tNeverM\t71\n1954\tSepar.\t71\n1954\tWidowed\t12\n1955\tDivorc.\t123\n1955\tMabsent\t13\n1955\tMarried\t327\n1955\tNeverM\t42\n1955\tSepar.\t2\n1955\tWidowed\t10\n1956\tDivorc.\t86\n1956\tMabsent\t9\n1956\tMarried\t338\n1956\tNeverM\t57\n1956\tSepar.\t40\n1956\tWidowed\t16\n1957\tDivorc.\t118\n1957\tMabsent\t25\n1957\tMarried\t375\n1957\tNeverM\t73\n1957\tSepar.\t44\n1957\tWidowed\t15\n1958\tDivorc.\t182\n1958\tMabsent\t23\n1958\tMarried\t283\n1958\tNeverM\t63\n1958\tSepar.\t15\n1959\tDivorc.\t128\n1959\tMarried\t375\n1959\tNeverM\t61\n1959\tSepar.\t14\n1959\tWidowed\t6\n1960\tDivorc.\t88\n1960\tMabsent\t12\n1960\tMarried\t265\n1960\tNeverM\t34\n1960\tSepar.\t15\n1961\tDivorc.\t80\n1961\tMarried\t317\n1961\tNeverM\t105\n1961\tWidowed\t16\n1962\tDivorc.\t79\n1962\tMarried\t233\n1962\tNeverM\t104\n1962\tSepar.\t33\n1962\tWidowed\t14\n1963\tDivorc.\t88\n1963\tMarried\t242\n1963\tNeverM\t96\n1964\tDivorc.\t107\n1964\tMabsent\t6\n1964\tMarried\t256\n1964\tNeverM\t77\n1964\tSepar.\t2\n1964\tWidowed\t5\n1965\tDivorc.\t67\n1965\tMarried\t330\n1965\tNeverM\t50\n1965\tSepar.\t10\n1966\tDivorc.\t67\n1966\tMarried\t317\n1966\tNeverM\t114\n1966\tSepar.\t16\n1967\tDivorc.\t112\n1967\tMarried\t275\n1967\tNeverM\t114\n1967\tSepar.\t14\n1967\tWidowed\t16\n1968\tDivorc.\t72\n1968\tMar-AF\t8\n1968\tMarried\t331\n1968\tNeverM\t156\n1968\tSepar.\t4\n1969\tDivorc.\t74\n1969\tMabsent\t18\n1969\tMarried\t252\n1969\tNeverM\t103\n1969\tSepar.\t16\n1970\tDivorc.\t55\n1970\tMabsent\t12\n1970\tMarried\t230\n1970\tNeverM\t84\n1970\tSepar.\t3\n1970\tWidowed\t9\n1971\tDivorc.\t95\n1971\tMabsent\t6\n1971\tMarried\t206\n1971\tNeverM\t78\n1971\tSepar.\t16\n1972\tDivorc.\t28\n1972\tMabsent\t3\n1972\tMarried\t184\n1972\tNeverM\t92\n1972\tSepar.\t11\n1973\tDivorc.\t27\n1973\tMabsent\t17\n1973\tMarried\t152\n1973\tNeverM\t116\n1973\tSepar.\t11\n1974\tDivorc.\t39\n1974\tMabsent\t8\n1974\tMarried\t164\n1974\tNeverM\t135\n1974\tSepar.\t6\n1975\tDivorc.\t25\n1975\tMabsent\t3\n1975\tMarried\t202\n1975\tNeverM\t180\n1975\tSepar.\t11\n1976\tDivorc.\t46\n1976\tMarried\t85\n1976\tNeverM\t212\n1976\tSepar.\t3\n1977\tDivorc.\t8\n1977\tMarried\t137\n1977\tNeverM\t180\n1977\tSepar.\t2\n1978\tDivorc.\t24\n1978\tMarried\t71\n1978\tNeverM\t256\n1978\tSepar.\t15\n1979\tDivorc.\t10\n1979\tMarried\t54\n1979\tNeverM\t177\n1979\tSepar.\t17\n1980\tDivorc.\t12\n1980\tMarried\t29\n1980\tNeverM\t226\n1980\tSepar.\t6\n1981\tDivorc.\t2\n1981\tMabsent\t13\n1981\tMarried\t15\n1981\tNeverM\t213\n1982\tDivorc.\t4\n1982\tMarried\t6\n1982\tNeverM\t156\n1982\tSepar.\t4\n1983\tMarried\t16\n1983\tNeverM\t198\n1984\tNeverM\t137\n1985\tNeverM\t73\n1986\tNeverM\t39\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1645614383",
+      "id": "20220624-153547_468470211",
+      "dateCreated": "2022-06-23T19:36:56+0000",
+      "dateStarted": "2022-07-29T16:32:52+0000",
+      "dateFinished": "2022-07-29T16:32:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "Build an Anomaly Detection Model",
+      "text": "%md\n### Build an Anomaly Detection model\n\nBuild a one-class SVM anomaly detection model using ore.odmSVM.  Specify the outlier rate, which is the proportion of rows that should be flagged as outliers. \n\nNote that settings can be specified as explicit arguments - as indicated in the R documentation ?ore.odmSVM - or through a list of name-value pairs specified in the odm.settings argument. ",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>Build an Anomaly Detection model</h3>\n<p>Build a one-class SVM anomaly detection model using ore.odmSVM.  Specify the outlier rate, which is the proportion of rows that should be flagged as outliers.</p>\n<p>Note that settings can be specified as explicit arguments - as indicated in the R documentation ?ore.odmSVM - or through a list of name-value pairs specified in the odm.settings argument.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1054641500",
+      "id": "20220624-153547_262982836",
+      "dateCreated": "2022-06-23T21:34:54+0000",
+      "dateStarted": "2022-07-29T16:32:53+0000",
+      "dateFinished": "2022-07-29T16:32:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "Build the One-Class SVM model",
+      "text": "%r\n\nSVM.MOD <- ore.odmSVM(~., data = CUST_DF, type = \"anomaly.detection\", outlier.rate = 0.01)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:32:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1537142678",
+      "id": "20220624-153547_528339294",
+      "dateCreated": "2022-06-23T21:37:43+0000",
+      "dateStarted": "2022-07-29T16:32:54+0000",
+      "dateFinished": "2022-07-29T16:33:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "title": "",
+      "text": "%md\n### Examples of possible setting overrides for SVM using the name-value settings specification with odm.settings\n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm\n\nA complete list of settings can be found in the Documentation link:\n\n– Algorithm Settings: [Support Vector Machine](https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB)\n\n– Shared Settings: [All algorithms](https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html)\n\n– Specify a row weight column\n\n```\n'ODMS_ROW_WEIGHT_COLUMN_NAME' : '<row_weight_column_name>'\n```\n– Specify a missing value treatment method for the training data. This setting does not affect the scoring data. The default value is ODMS_MISSING_VALUE_AUTO. The option ODMS_MISSING_VALUE_MEAN_MODE replaces missing values with the mean (numeric attributes) or the mode (categorical attributes) both at build time and apply time where appropriate. The option ODMS_MISSING_VALUE_AUTO performs different strategies for different algorithms. When ODMS_MISSING_VALUE_TREATMENT is set to ODMS_MISSING_VALUE_DELETE_ROW, the rows in the training data that contain missing values are deleted. However, if you want to replicate this missing value treatment in the scoring data, then you must perform the transformation explicitly.\n\n```\n'ODMS_MISSING_VALUE_TREATMENT' : 'ODMS_MISSING_VALUE_AUTO'\n```\n– Switch between Kernel Types - Linear or Gaussian\nBy default the system uses the Linear Kernel. The linear kernel also is able to return the coefficients, while this is not available on the Gaussian\n\n```\n'SVMS_KERNEL_FUNCTION' : 'SVMS_LINEAR'\n```\n```\n'SVMS_KERNEL_FUNCTION' : 'SVMS_GAUSSIAN'\n```\n– Value of complexity factor for SVM algorithm (both classification and regression).\nDefault value estimated from the data by the algorithm.\n\n```\n'SVMS_COMPLEXITY_FACTOR' : '0.1'\n```\n– Type of regularization that the SGD SVM solver uses (only available for linear SVM models). The default is system determined because it depends on the potential model size.\n\n```\n'SVMS_REGULARIZER' : 'SVMS_REGULARIZER_L1'\n```\n```\n'SVMS_REGULARIZER' : 'SVMS_REGULARIZER_L2'\n```\n– Specify a regularization setting for regression, similar to complexity factor. Epsilon specifies the allowable residuals, or noise, in the data. It takes a value larger than 0. The default is 0.1.\n\n```\n 'SVMS_EPSILON' : '0.1'  \n``` \n– Batch rows sets the size of the batch for the SGD solver (linear kernel only). An input of 0 triggers a data driven batch size estimate. The default is 20000.\n\n```\n'SVMS_BATCH_ROWS' : '20000'\n```\n– Solver type, which cannot be selected if the kernel is non-linear. The default value is system determined.\n\n```\n'SVMS_SOLVER' : 'SVMS_SOLVER_SGD'\n```\n```\n'SVMS_SOLVER' : 'SVMS_SOLVER_IPM'\n```\n– Specify the convergence tolerance for SVM algorithm. It requires a number larger than 0. Default is 0.0001.\n\n```\n'SVMS_CONV_TOLERANCE' : '0.001'\n```\n– Specify an upper limit on the number of pivots used in the Incomplete Cholesky decomposition. It can be set only for non-linear kernels. It requires a value from a range of 1 to 10,000 (inclusive of the edges). The default value is 200.\n\n```\n'SVMS_NUM_PIVOTS' : '200'\n```",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>Examples of possible setting overrides for SVM using the name-value settings specification with odm.settings</h3>\n<p>If the user does not override the default settings, then relevant settings are determined by the algorithm</p>\n<p>A complete list of settings can be found in the Documentation link:</p>\n<p>– Algorithm Settings: <a href=\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\">Support Vector Machine</a></p>\n<p>– Shared Settings: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html\">All algorithms</a></p>\n<p>– Specify a row weight column</p>\n<pre><code>'ODMS_ROW_WEIGHT_COLUMN_NAME' : '&lt;row_weight_column_name&gt;'\n</code></pre>\n<p>– Specify a missing value treatment method for the training data. This setting does not affect the scoring data. The default value is ODMS_MISSING_VALUE_AUTO. The option ODMS_MISSING_VALUE_MEAN_MODE replaces missing values with the mean (numeric attributes) or the mode (categorical attributes) both at build time and apply time where appropriate. The option ODMS_MISSING_VALUE_AUTO performs different strategies for different algorithms. When ODMS_MISSING_VALUE_TREATMENT is set to ODMS_MISSING_VALUE_DELETE_ROW, the rows in the training data that contain missing values are deleted. However, if you want to replicate this missing value treatment in the scoring data, then you must perform the transformation explicitly.</p>\n<pre><code>'ODMS_MISSING_VALUE_TREATMENT' : 'ODMS_MISSING_VALUE_AUTO'\n</code></pre>\n<p>– Switch between Kernel Types - Linear or Gaussian\n<br  />By default the system uses the Linear Kernel. The linear kernel also is able to return the coefficients, while this is not available on the Gaussian</p>\n<pre><code>'SVMS_KERNEL_FUNCTION' : 'SVMS_LINEAR'\n</code></pre>\n<pre><code>'SVMS_KERNEL_FUNCTION' : 'SVMS_GAUSSIAN'\n</code></pre>\n<p>– Value of complexity factor for SVM algorithm (both classification and regression).\n<br  />Default value estimated from the data by the algorithm.</p>\n<pre><code>'SVMS_COMPLEXITY_FACTOR' : '0.1'\n</code></pre>\n<p>– Type of regularization that the SGD SVM solver uses (only available for linear SVM models). The default is system determined because it depends on the potential model size.</p>\n<pre><code>'SVMS_REGULARIZER' : 'SVMS_REGULARIZER_L1'\n</code></pre>\n<pre><code>'SVMS_REGULARIZER' : 'SVMS_REGULARIZER_L2'\n</code></pre>\n<p>– Specify a regularization setting for regression, similar to complexity factor. Epsilon specifies the allowable residuals, or noise, in the data. It takes a value larger than 0. The default is 0.1.</p>\n<pre><code> 'SVMS_EPSILON' : '0.1'  \n</code></pre>\n<p>– Batch rows sets the size of the batch for the SGD solver (linear kernel only). An input of 0 triggers a data driven batch size estimate. The default is 20000.</p>\n<pre><code>'SVMS_BATCH_ROWS' : '20000'\n</code></pre>\n<p>– Solver type, which cannot be selected if the kernel is non-linear. The default value is system determined.</p>\n<pre><code>'SVMS_SOLVER' : 'SVMS_SOLVER_SGD'\n</code></pre>\n<pre><code>'SVMS_SOLVER' : 'SVMS_SOLVER_IPM'\n</code></pre>\n<p>– Specify the convergence tolerance for SVM algorithm. It requires a number larger than 0. Default is 0.0001.</p>\n<pre><code>'SVMS_CONV_TOLERANCE' : '0.001'\n</code></pre>\n<p>– Specify an upper limit on the number of pivots used in the Incomplete Cholesky decomposition. It can be set only for non-linear kernels. It requires a value from a range of 1 to 10,000 (inclusive of the edges). The default value is 200.</p>\n<pre><code>'SVMS_NUM_PIVOTS' : '200'\n</code></pre>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_833700813",
+      "id": "20220624-153547_1190018621",
+      "dateCreated": "2022-06-23T21:38:21+0000",
+      "dateStarted": "2022-07-29T16:33:00+0000",
+      "dateFinished": "2022-07-29T16:33:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "Build the SVM model using the odm.settings",
+      "text": "%r\n\nsettings <- list(svms_outlier_rate = '0.01', svms_regularizer = 'SVMS_REGULARIZER_L1', svms_kernel_function = 'SVMS_LINEAR', svms_conv_tolerance = 0.001 )\n\nSVM.MOD <- ore.odmSVM(~., data = CUST_DF, \n                      type = \"anomaly.detection\",\n                      odm.settings = settings)\nsummary(SVM.MOD)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nCall:\nore.odmSVM(formula = ~., data = CUST_DF, type = \"anomaly.detection\", \n    odm.settings = settings)\n\nSettings: \n                                               value\nodms.details                             odms.enable\nodms.missing.value.treatment odms.missing.value.auto\nodms.sampling                  odms.sampling.disable\nprep.auto                                         ON\nactive.learning                            al.enable\nconv.tolerance                                 0.001\nkernel.cache.size                              5e+07\nkernel.function                               linear\noutlier.rate                                    0.01\nregularizer                           regularizer.l1\n\nCoefficients: \n              variable                value     estimate\n1          (Intercept)                      -1.000000491\n2        AFFINITY_CARD                       0.533187088\n3    CUST_CREDIT_LIMIT                       0.904174856\n4          CUST_GENDER                    F  0.944724238\n5          CUST_GENDER                    M  1.086436436\n6              CUST_ID                       0.974924793\n7    CUST_INCOME_LEVEL      A: Below 30,000  0.069078694\n8    CUST_INCOME_LEVEL   B: 30,000 - 49,999  0.145265468\n9    CUST_INCOME_LEVEL   C: 50,000 - 69,999  0.098754992\n10   CUST_INCOME_LEVEL   D: 70,000 - 89,999  0.080186591\n11   CUST_INCOME_LEVEL  E: 90,000 - 109,999  0.169994663\n12   CUST_INCOME_LEVEL F: 110,000 - 129,999  0.200750695\n13   CUST_INCOME_LEVEL G: 130,000 - 149,999  0.175458584\n14   CUST_INCOME_LEVEL H: 150,000 - 169,999  0.200093355\n15   CUST_INCOME_LEVEL I: 170,000 - 189,999  0.226143730\n16   CUST_INCOME_LEVEL J: 190,000 - 249,999  0.289046239\n17   CUST_INCOME_LEVEL K: 250,000 - 299,999  0.158834634\n18   CUST_INCOME_LEVEL L: 300,000 and above  0.217553029\n19 CUST_MARITAL_STATUS              Divorc.  0.434445683\n20 CUST_MARITAL_STATUS              Mabsent  0.059256134\n21 CUST_MARITAL_STATUS               Mar-AF  0.002444605\n22 CUST_MARITAL_STATUS              Married  0.716268228\n23 CUST_MARITAL_STATUS               NeverM  0.600822589\n24 CUST_MARITAL_STATUS               Separ.  0.105091063\n25 CUST_MARITAL_STATUS              Widowed  0.112832373\n26  CUST_YEAR_OF_BIRTH                       1.411096227\n27           EDUCATION                 10th  0.080537332\n28           EDUCATION                 11th  0.083574205\n29           EDUCATION                 12th  0.035647395\n30           EDUCATION              1st-4th  0.012169450\n31           EDUCATION              5th-6th  0.025580999\n32           EDUCATION              7th-8th  0.063932059\n33           EDUCATION                  9th  0.057288066\n34           EDUCATION              < Bach.  0.418922975\n35           EDUCATION              Assoc-A  0.108468443\n36           EDUCATION              Assoc-V  0.125578850\n37           EDUCATION                Bach.  0.312883893\n38           EDUCATION              HS-grad  0.518107344\n39           EDUCATION              Masters  0.111040748\n40           EDUCATION                  PhD  0.025214822\n41           EDUCATION              Presch.  0.001690826\n42           EDUCATION               Profsc  0.050523266\n43      HOUSEHOLD_SIZE                    1  0.313540719\n44      HOUSEHOLD_SIZE                    2  0.547847331\n45      HOUSEHOLD_SIZE                    3  0.552514933\n46      HOUSEHOLD_SIZE                  4-5  0.151945929\n47      HOUSEHOLD_SIZE                  6-8  0.095757336\n48      HOUSEHOLD_SIZE                   9+  0.369554425\n49          OCCUPATION                    ?  0.140320370\n50          OCCUPATION              Armed-F  0.001552633\n51          OCCUPATION              Cleric.  0.243564911\n52          OCCUPATION               Crafts  0.204346175\n53          OCCUPATION                Exec.  0.220996584\n54          OCCUPATION              Farming  0.070156757\n55          OCCUPATION              Handler  0.082790910\n56          OCCUPATION              House-s  0.014856271\n57          OCCUPATION              Machine  0.130661379\n58          OCCUPATION                Other  0.230752921\n59          OCCUPATION                Prof.  0.253894918\n60          OCCUPATION              Protec.  0.038816702\n61          OCCUPATION                Sales  0.218183276\n62          OCCUPATION              TechSup  0.097716939\n63          OCCUPATION              Transp.  0.082549927\n64       YRS_RESIDENCE                       0.747704907\n65         Y_BOX_GAMES                       0.595857354\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_2134656901",
+      "id": "20220624-153547_1068881266",
+      "dateCreated": "2022-06-23T21:38:57+0000",
+      "dateStarted": "2022-07-29T16:33:01+0000",
+      "dateFinished": "2022-07-29T16:33:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "title": "Invoke predict() to score data for anomalies",
+      "text": "%r\n\nRES_DF <- predict(SVM.MOD, CUST_DF, supplemental.cols = colnames(CUST_DF), proba = TRUE, type = \"class\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1097003527",
+      "id": "20220624-153547_1452635996",
+      "dateCreated": "2022-06-23T21:39:31+0000",
+      "dateStarted": "2022-07-29T16:33:06+0000",
+      "dateFinished": "2022-07-29T16:33:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "Anomalies are indicated by PREDICTION = 0, display a few rows flagged as anomalies",
+      "text": "%r\n\nz.show(head(RES_DF[RES_DF$PREDICTION == 0,]))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "CUST_GENDER1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "CUST_MARITAL_STATUS2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "CUST_YEAR_OF_BIRTH3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "CUST_INCOME_LEVEL4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "CUST_CREDIT_LIMIT5",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "EDUCATION6",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "AFFINITY_CARD7",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "HOUSEHOLD_SIZE8",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OCCUPATION9",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "YRS_RESIDENCE10",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Y_BOX_GAMES11",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PREDICTION12",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PROBABILITY13",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0,
+                          "direction": "desc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Bin_PROBABILITY14",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Bin_PROBABILITY.115",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "number",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "date",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number",
+                      "PREDICTION": "number",
+                      "PROBABILITY": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\tPREDICTION\tPROBABILITY\n100400\tM\tDivorc.\t1944\tC: 50,000 - 69,999\t9000\t12th\t0\t6-8\tTransp.\t6\t0\t0\t0.562704326544703\n100001\tF\tWidowed\t1941\tG: 130,000 - 149,999\t1500\t< Bach.\t0\t2\tExec.\t3\t0\t0\t0.557876401433934\n100017\tF\tMabsent\t1935\tI: 170,000 - 189,999\t10000\t< Bach.\t0\t9+\tFarming\t5\t0\t0\t0.542615745076834\n100031\tF\tDivorc.\t1967\tH: 150,000 - 169,999\t1500\tBach.\t0\t6-8\tSales\t4\t0\t0\t0.500269901330298\n100072\tM\tMabsent\t1971\tJ: 190,000 - 249,999\t9000\t5th-6th\t0\t6-8\tCrafts\t3\t0\t0\t0.524271250281955\n100132\tF\tWidowed\t1926\tI: 170,000 - 189,999\t3000\t< Bach.\t0\t2\tHouse-s\t4\t0\t0\t0.637477532369609\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_-1739709465",
+      "id": "20220624-153547_655604721",
+      "dateCreated": "2022-06-23T21:40:06+0000",
+      "dateStarted": "2022-07-29T16:33:07+0000",
+      "dateFinished": "2022-07-29T16:33:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "title": "Plot the probability distribution to be an anomaly against marital status",
+      "text": "%r\n\nrownames(RES_DF) <- RES_DF['CUST_ID']\nRES_DF <- mutate(RES_DF,\"Bin_PROBABILITY\" = cut(RES_DF$PROBABILITY, breaks = 10, dig.lab=3)) \ntemp <- ore.crosstab(CUST_MARITAL_STATUS ~ Bin_PROBABILITY, RES_DF)\n\nz.show(temp)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_MARITAL_STATUS0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Bin_PROBABILITY1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "ORE$FREQ2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0,
+                          "direction": "asc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "ORE$STRATA3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "ORE$GROUP4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_MARITAL_STATUS": "string",
+                      "Bin_PROBABILITY": "string",
+                      "ORE$FREQ": "number",
+                      "ORE$STRATA": "number",
+                      "ORE$GROUP": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": true
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "Bin_PROBABILITY",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [
+                {
+                  "name": "CUST_MARITAL_STATUS",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "values": [
+                {
+                  "name": "ORE.FREQ",
+                  "index": 2,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "number",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number",
+                      "PREDICTION": "number",
+                      "PROBABILITY": "number",
+                      "Bin.PROBABILITY.": "number",
+                      "Bin.PROBABILITY..1": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_MARITAL_STATUS\tBin_PROBABILITY\tORE.FREQ\tORE.STRATA\tORE.GROUP\nDivorc.\t(0.5,0.545]\t8\t1\t1\nDivorc.\t(0.545,0.59]\t14\t1\t1\nDivorc.\t(0.59,0.635]\t20\t1\t1\nDivorc.\t(0.635,0.68]\t35\t1\t1\nDivorc.\t(0.68,0.725]\t55\t1\t1\nDivorc.\t(0.725,0.769]\t109\t1\t1\nDivorc.\t(0.769,0.814]\t140\t1\t1\nDivorc.\t(0.814,0.859]\t153\t1\t1\nDivorc.\t(0.859,0.904]\t73\t1\t1\nDivorc.\t(0.904,0.949]\t8\t1\t1\nMabsent\t(0.5,0.545]\t6\t1\t1\nMabsent\t(0.545,0.59]\t7\t1\t1\nMabsent\t(0.59,0.635]\t12\t1\t1\nMabsent\t(0.635,0.68]\t8\t1\t1\nMabsent\t(0.68,0.725]\t12\t1\t1\nMabsent\t(0.725,0.769]\t14\t1\t1\nMabsent\t(0.769,0.814]\t8\t1\t1\nMabsent\t(0.814,0.859]\t6\t1\t1\nMabsent\t(0.859,0.904]\t2\t1\t1\nMar-AF\t(0.5,0.545]\t2\t1\t1\nMar-AF\t(0.635,0.68]\t1\t1\t1\nMarried\t(0.5,0.545]\t5\t1\t1\nMarried\t(0.545,0.59]\t1\t1\t1\nMarried\t(0.59,0.635]\t10\t1\t1\nMarried\t(0.635,0.68]\t20\t1\t1\nMarried\t(0.68,0.725]\t55\t1\t1\nMarried\t(0.725,0.769]\t86\t1\t1\nMarried\t(0.769,0.814]\t241\t1\t1\nMarried\t(0.814,0.859]\t483\t1\t1\nMarried\t(0.859,0.904]\t711\t1\t1\nMarried\t(0.904,0.949]\t422\t1\t1\nNeverM\t(0.5,0.545]\t2\t1\t1\nNeverM\t(0.545,0.59]\t2\t1\t1\nNeverM\t(0.59,0.635]\t4\t1\t1\nNeverM\t(0.635,0.68]\t17\t1\t1\nNeverM\t(0.68,0.725]\t42\t1\t1\nNeverM\t(0.725,0.769]\t106\t1\t1\nNeverM\t(0.769,0.814]\t207\t1\t1\nNeverM\t(0.814,0.859]\t396\t1\t1\nNeverM\t(0.859,0.904]\t536\t1\t1\nNeverM\t(0.904,0.949]\t191\t1\t1\nSepar.\t(0.5,0.545]\t11\t1\t1\nSepar.\t(0.545,0.59]\t10\t1\t1\nSepar.\t(0.59,0.635]\t13\t1\t1\nSepar.\t(0.635,0.68]\t10\t1\t1\nSepar.\t(0.68,0.725]\t21\t1\t1\nSepar.\t(0.725,0.769]\t29\t1\t1\nSepar.\t(0.769,0.814]\t24\t1\t1\nSepar.\t(0.814,0.859]\t15\t1\t1\nSepar.\t(0.859,0.904]\t1\t1\t1\nWidowed\t(0.5,0.545]\t23\t1\t1\nWidowed\t(0.545,0.59]\t13\t1\t1\nWidowed\t(0.59,0.635]\t27\t1\t1\nWidowed\t(0.635,0.68]\t22\t1\t1\nWidowed\t(0.68,0.725]\t19\t1\t1\nWidowed\t(0.725,0.769]\t19\t1\t1\nWidowed\t(0.769,0.814]\t12\t1\t1\nWidowed\t(0.814,0.859]\t1\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1518875762",
+      "id": "20220624-153547_280717048",
+      "dateCreated": "2022-06-23T21:42:38+0000",
+      "dateStarted": "2022-07-29T16:33:07+0000",
+      "dateFinished": "2022-07-29T16:33:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "Display the top 5 most anomalous cases",
+      "text": "%r\n\nz.show(head(ore.sort(RES_DF[RES_DF$PREDICTION == 0,], by = c('PROBABILITY'), reverse =TRUE),5)  )",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:09+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "number",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "number",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number",
+                      "PREDICTION": "number",
+                      "PROBABILITY": "number",
+                      "Bin_PROBABILITY": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\tPREDICTION\tPROBABILITY\tBin_PROBABILITY\n100199\tF\tWidowed\t1922\tF: 110,000 - 129,999\t1500\t9th\t0\t2\tHouse-s\t2\t0\t0\t0.803307844886286\t(0.769,0.814]\n100170\tF\tWidowed\t1943\tF: 110,000 - 129,999\t3000\t7th-8th\t0\t9+\t?\t3\t0\t0\t0.701078977491907\t(0.68,0.725]\n103154\tF\tWidowed\t1922\tF: 110,000 - 129,999\t1500\t9th\t0\t2\tHouse-s\t2\t0\t0\t0.684590840278712\t(0.68,0.725]\n101137\tF\tWidowed\t1935\tH: 150,000 - 169,999\t1500\t10th\t0\t9+\tOther\t3\t0\t0\t0.67996173775069\t(0.68,0.725]\n100646\tF\tWidowed\t1941\tG: 130,000 - 149,999\t1500\tBach.\t0\t9+\tTechSup\t2\t0\t0\t0.667046911688017\t(0.635,0.68]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1482382497",
+      "id": "20220624-153547_20201432",
+      "dateCreated": "2022-06-23T21:55:19+0000",
+      "dateStarted": "2022-07-29T16:33:10+0000",
+      "dateFinished": "2022-07-29T16:33:10+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "title": "Assign explicit model names",
+      "text": "%md\n\nWe can assign a model name explicitly at the time we build the model. This is facilitated through the use of `odm.settings`. We'll rebuild the model with the assigned name 'SVM_ANOMALY_DETECTION_MODEL' for use in the query below.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>We can assign a model name explicitly at the time we build the model. This is facilitated through the use of <code>odm.settings</code>. We'll rebuild the model with the assigned name 'SVM_ANOMALY_DETECTION_MODEL' for use in the query below.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_931153785",
+      "id": "20220624-153547_2087098165",
+      "dateCreated": "2022-06-23T22:04:05+0000",
+      "dateStarted": "2022-07-29T16:33:11+0000",
+      "dateFinished": "2022-07-29T16:33:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%r\n\nore.exec(\"BEGIN DBMS_DATA_MINING.DROP_MODEL(model_name=> 'SVM_ANOMALY_DETECTION_MODEL'); EXCEPTION WHEN others THEN null; END;\")\n\nMOD.SVM2 <- ore.odmSVM(formula = ~., data = CUST_DF, type = 'anomaly.detection', odm.settings = list(model_name = \"SVM_ANOMALY_DETECTION_MODEL\"))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Warning message:\n“The created mining model SVM_ANOMALY_DETECTION_MODEL is explicitly named. ORE does not manage this mining model's life cycle.”\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_2017494268",
+      "id": "20220624-153547_1183872891",
+      "dateCreated": "2022-06-23T22:06:55+0000",
+      "dateStarted": "2022-07-29T16:33:11+0000",
+      "dateFinished": "2022-07-29T16:33:17+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "Materialize CUST_DF data frame into table CUSTOMER360_TAB for use in the PREDICTION_DETAILS query",
+      "text": "%r\n\nore.drop(\"CUSTOMERS360_TAB\")\nore.create(CUST_DF, \"CUSTOMERS360_TAB\")",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:17+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_-1187041581",
+      "id": "20220624-153547_232211959",
+      "dateCreated": "2022-06-23T22:06:39+0000",
+      "dateStarted": "2022-07-29T16:33:17+0000",
+      "dateFinished": "2022-07-29T16:33:19+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "title": "View PREDICTION_DETAILS in SQL of top 3 attributes that explain factors leading to prediction",
+      "text": "%sql\n\nSELECT CUST_ID, \n RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),'rank=\"1\"/>') FIRST_ATTRIBUTE,\n RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),'rank=\"2\"/>') SECOND_ATTRIBUTE,\n RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),'rank=\"3\"/>') THIRD_ATTRIBUTE\n FROM (SELECT CUST_ID, PREDICTION_DETAILS(SVM_ANOMALY_DETECTION_MODEL, '0' USING *) PREDICTION_DETAILS FROM CUSTOMERS360_TAB\n       WHERE PREDICTION_PROBABILITY(SVM_ANOMALY_DETECTION_MODEL, '0' USING *) > 0.50\n       AND OCCUPATION = 'TechSup'\n       ORDER BY CUST_ID) OUT,\n       XMLTABLE('/Details'\n                PASSING OUT.PREDICTION_DETAILS\n                COLUMNS \n                \"Attribute1\" XMLType PATH 'Attribute[1]',\n                \"Attribute2\" XMLType PATH 'Attribute[2]',\n                \"Attribute3\" XMLType PATH 'Attribute[3]') \n       OUTPRED",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:19+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "FIRST_ATTRIBUTE": "date",
+                      "SECOND_ATTRIBUTE": "date",
+                      "THIRD_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\n100061\t\"EDUCATION\" actualValue=\"Assoc-V\" weight=\".039\" \t\"CUST_MARITAL_STATUS\" actualValue=\"Divorc.\" weight=\".039\" \t\"CUST_INCOME_LEVEL\" actualValue=\"D: 70,000 - 89,999\" weight=\".028\" \n100489\t\"EDUCATION\" actualValue=\"Assoc-A\" weight=\".043\" \t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\".037\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"1500\" weight=\".024\" \n100646\t\"CUST_MARITAL_STATUS\" actualValue=\"Widowed\" weight=\".066\" \t\"EDUCATION\" actualValue=\"Bach.\" weight=\".022\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"1500\" weight=\".022\" \n100792\t\"AFFINITY_CARD\" actualValue=\"1\" weight=\".055\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"15000\" weight=\".033\" \t\"HOUSEHOLD_SIZE\" actualValue=\"4-5\" weight=\".032\" \n100941\t\"EDUCATION\" actualValue=\"9th\" weight=\".051\" \t\"HOUSEHOLD_SIZE\" actualValue=\"4-5\" weight=\".033\" \t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\".015\" \n101706\t\"CUST_MARITAL_STATUS\" actualValue=\"Mabsent\" weight=\".081\" \t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\".039\" \t\"CUST_INCOME_LEVEL\" actualValue=\"A: Below 30,000\" weight=\".029\" \n102254\t\"CUST_MARITAL_STATUS\" actualValue=\"Separ.\" weight=\".079\" \t\"AFFINITY_CARD\" actualValue=\"1\" weight=\".053\" \t\"EDUCATION\" actualValue=\"Masters\" weight=\".041\" \n102862\t\"AFFINITY_CARD\" actualValue=\"1\" weight=\".055\" \t\"CUST_MARITAL_STATUS\" actualValue=\"Divorc.\" weight=\".043\" \t\"EDUCATION\" actualValue=\"Assoc-V\" weight=\".038\" \n102922\t\"CUST_MARITAL_STATUS\" actualValue=\"Widowed\" weight=\".064\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"1500\" weight=\".023\" \t\"CUST_YEAR_OF_BIRTH\" actualValue=\"1931\" weight=\".021\" \n103341\t\"EDUCATION\" actualValue=\"Assoc-V\" weight=\".039\" \t\"CUST_MARITAL_STATUS\" actualValue=\"Divorc.\" weight=\".039\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"15000\" weight=\".034\" \n103441\t\"CUST_MARITAL_STATUS\" actualValue=\"Widowed\" weight=\".066\" \t\"EDUCATION\" actualValue=\"Bach.\" weight=\".022\" \t\"CUST_INCOME_LEVEL\" actualValue=\"G: 130,000 - 149,999\" weight=\".018\" \n103887\t\"EDUCATION\" actualValue=\"Assoc-V\" weight=\".039\" \t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\".038\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"15000\" weight=\".033\" \n104148\t\"EDUCATION\" actualValue=\"Assoc-V\" weight=\".039\" \t\"CUST_MARITAL_STATUS\" actualValue=\"Divorc.\" weight=\".029\" \t\"CUST_ID\" actualValue=\"104148\" weight=\".021\" \n104286\t\"EDUCATION\" actualValue=\"9th\" weight=\".049\" \t\"HOUSEHOLD_SIZE\" actualValue=\"4-5\" weight=\".033\" \t\"CUST_ID\" actualValue=\"104286\" weight=\".023\" \n104320\t\"AFFINITY_CARD\" actualValue=\"1\" weight=\".05\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"15000\" weight=\".034\" \t\"CUST_ID\" actualValue=\"104320\" weight=\".024\" \n104347\t\"AFFINITY_CARD\" actualValue=\"1\" weight=\".05\" \t\"EDUCATION\" actualValue=\"Assoc-A\" weight=\".036\" \t\"CUST_CREDIT_LIMIT\" actualValue=\"15000\" weight=\".033\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_311322315",
+      "id": "20220624-153547_759001450",
+      "dateCreated": "2022-06-23T22:09:39+0000",
+      "dateStarted": "2022-07-29T16:33:19+0000",
+      "dateFinished": "2022-07-29T16:33:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "title": "View prediction details in transactional format",
+      "text": "%sql\n\nWITH d AS\n (SELECT CUST_ID, PREDICTION_DETAILS(SVM_ANOMALY_DETECTION_MODEL, '0' using *) anomalyDetails FROM CUSTOMERS360_TAB)\n  SELECT d.CUST_ID, x.name, x.weight\n         from d,\n         XMLTable('/Details'\n                  PASSING d.anomalyDetails\n                  COLUMNS\n                  class varchar2(20) PATH '@class') c,\n         XMLTable('/Details/Attribute'\n                  PASSING d.anomalyDetails\n                  COLUMNS\n                  name varchar2(20) PATH '@name',\n                  weight varchar2(30) PATH '@weight') x\n    WHERE c.class='0'\nORDER BY CUST_ID, name;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "NAME": "string",
+                      "WEIGHT": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tNAME\tWEIGHT\n100001\tCUST_CREDIT_LIMIT\t.023\n100001\tCUST_ID\t.028\n100001\tCUST_INCOME_LEVEL\t.018\n100001\tCUST_MARITAL_STATUS\t.064\n100001\tY_BOX_GAMES\t.015\n100002\tCUST_GENDER\t.012\n100002\tCUST_ID\t.028\n100002\tCUST_INCOME_LEVEL\t.01\n100002\tEDUCATION\t.021\n100002\tY_BOX_GAMES\t.017\n100003\tAFFINITY_CARD\t.009\n100003\tCUST_ID\t.029\n100003\tCUST_INCOME_LEVEL\t.018\n100003\tEDUCATION\t.008\n100003\tY_BOX_GAMES\t.018\n100004\tCUST_CREDIT_LIMIT\t.033\n100004\tCUST_ID\t.028\n100004\tCUST_INCOME_LEVEL\t.017\n100004\tCUST_MARITAL_STATUS\t.027\n100004\tY_BOX_GAMES\t.016\n100005\tAFFINITY_CARD\t.049\n100005\tCUST_CREDIT_LIMIT\t.022\n100005\tCUST_ID\t.028\n100005\tCUST_INCOME_LEVEL\t.019\n100005\tEDUCATION\t.037\n100006\tAFFINITY_CARD\t.008\n100006\tCUST_ID\t.028\n100006\tCUST_INCOME_LEVEL\t.018\n100006\tCUST_YEAR_OF_BIRTH\t.007\n100006\tY_BOX_GAMES\t.039\n100007\tAFFINITY_CARD\t.008\n100007\tCUST_ID\t.028\n100007\tCUST_INCOME_LEVEL\t.01\n100007\tCUST_MARITAL_STATUS\t.026\n100007\tY_BOX_GAMES\t.016\n100008\tAFFINITY_CARD\t.009\n100008\tCUST_CREDIT_LIMIT\t.033\n100008\tCUST_ID\t.029\n100008\tEDUCATION\t.008\n100008\tY_BOX_GAMES\t.018\n100009\tAFFINITY_CARD\t.049\n100009\tCUST_ID\t.028\n100009\tCUST_INCOME_LEVEL\t.015\n100009\tEDUCATION\t.012\n100009\tY_BOX_GAMES\t.045\n100010\tAFFINITY_CARD\t.011\n100010\tCUST_ID\t.028\n100010\tCUST_INCOME_LEVEL\t.008\n100010\tCUST_YEAR_OF_BIRTH\t.003\n100010\tY_BOX_GAMES\t.044\n100011\tCUST_ID\t.029\n100011\tCUST_INCOME_LEVEL\t.02\n100011\tEDUCATION\t.053\n100011\tOCCUPATION\t.016\n100011\tY_BOX_GAMES\t.017\n100012\tAFFINITY_CARD\t.049\n100012\tCUST_CREDIT_LIMIT\t.035\n100012\tCUST_ID\t.028\n100012\tCUST_INCOME_LEVEL\t.017\n100012\tEDUCATION\t.049\n100013\tAFFINITY_CARD\t.011\n100013\tCUST_ID\t.027\n100013\tCUST_INCOME_LEVEL\t.028\n100013\tOCCUPATION\t.01\n100013\tY_BOX_GAMES\t.015\n100014\tCUST_CREDIT_LIMIT\t.013\n100014\tCUST_ID\t.027\n100014\tCUST_INCOME_LEVEL\t.023\n100014\tCUST_MARITAL_STATUS\t.028\n100014\tY_BOX_GAMES\t.016\n100015\tAFFINITY_CARD\t.01\n100015\tCUST_ID\t.029\n100015\tCUST_INCOME_LEVEL\t.009\n100015\tCUST_MARITAL_STATUS\t.075\n100015\tY_BOX_GAMES\t.016\n100016\tAFFINITY_CARD\t.008\n100016\tCUST_ID\t.028\n100016\tCUST_INCOME_LEVEL\t.016\n100016\tCUST_MARITAL_STATUS\t.029\n100016\tY_BOX_GAMES\t.016\n100017\tCUST_ID\t.027\n100017\tCUST_MARITAL_STATUS\t.077\n100017\tCUST_YEAR_OF_BIRTH\t.016\n100017\tOCCUPATION\t.013\n100017\tY_BOX_GAMES\t.015\n100018\tCUST_CREDIT_LIMIT\t.022\n100018\tCUST_ID\t.026\n100018\tCUST_INCOME_LEVEL\t.03\n100018\tHOUSEHOLD_SIZE\t.031\n100018\tY_BOX_GAMES\t.042\n100019\tAFFINITY_CARD\t.05\n100019\tCUST_ID\t.027\n100019\tCUST_INCOME_LEVEL\t.022\n100019\tEDUCATION\t.035\n100019\tY_BOX_GAMES\t.015\n100020\tAFFINITY_CARD\t.008\n100020\tCUST_ID\t.028\n100020\tCUST_MARITAL_STATUS\t.031\n100020\tEDUCATION\t.045\n100020\tY_BOX_GAMES\t.015\n100021\tAFFINITY_CARD\t.011\n100021\tCUST_CREDIT_LIMIT\t.007\n100021\tCUST_ID\t.028\n100021\tCUST_INCOME_LEVEL\t.012\n100021\tY_BOX_GAMES\t.015\n100022\tAFFINITY_CARD\t.049\n100022\tCUST_ID\t.028\n100022\tCUST_INCOME_LEVEL\t.01\n100022\tEDUCATION\t.034\n100022\tY_BOX_GAMES\t.014\n100023\tAFFINITY_CARD\t.011\n100023\tCUST_ID\t.027\n100023\tCUST_YEAR_OF_BIRTH\t.004\n100023\tYRS_RESIDENCE\t.008\n100023\tY_BOX_GAMES\t.015\n100024\tAFFINITY_CARD\t.011\n100024\tCUST_CREDIT_LIMIT\t.004\n100024\tCUST_ID\t.028\n100024\tCUST_INCOME_LEVEL\t.015\n100024\tY_BOX_GAMES\t.015\n100025\tCUST_GENDER\t.01\n100025\tCUST_ID\t.027\n100025\tCUST_INCOME_LEVEL\t.017\n100025\tEDUCATION\t.042\n100025\tY_BOX_GAMES\t.04\n100026\tAFFINITY_CARD\t.012\n100026\tCUST_CREDIT_LIMIT\t.034\n100026\tCUST_ID\t.028\n100026\tEDUCATION\t.018\n100026\tY_BOX_GAMES\t.015\n100027\tAFFINITY_CARD\t.011\n100027\tCUST_ID\t.028\n100027\tCUST_INCOME_LEVEL\t.008\n100027\tEDUCATION\t.05\n100027\tY_BOX_GAMES\t.015\n100028\tCUST_CREDIT_LIMIT\t.024\n100028\tCUST_ID\t.028\n100028\tCUST_INCOME_LEVEL\t.02\n100028\tEDUCATION\t.023\n100028\tY_BOX_GAMES\t.017\n100029\tAFFINITY_CARD\t.049\n100029\tCUST_CREDIT_LIMIT\t.013\n100029\tCUST_ID\t.028\n100029\tEDUCATION\t.036\n100029\tY_BOX_GAMES\t.015\n100030\tAFFINITY_CARD\t.008\n100030\tCUST_ID\t.027\n100030\tCUST_INCOME_LEVEL\t.013\n100030\tCUST_MARITAL_STATUS\t.024\n100030\tY_BOX_GAMES\t.042\n100031\tCUST_CREDIT_LIMIT\t.022\n100031\tCUST_ID\t.026\n100031\tCUST_MARITAL_STATUS\t.032\n100031\tEDUCATION\t.022\n100031\tHOUSEHOLD_SIZE\t.032\n100032\tAFFINITY_CARD\t.009\n100032\tCUST_CREDIT_LIMIT\t.001\n100032\tCUST_ID\t.027\n100032\tCUST_MARITAL_STATUS\t.002\n100032\tY_BOX_GAMES\t.017\n100033\tAFFINITY_CARD\t.009\n100033\tCUST_ID\t.027\n100033\tCUST_MARITAL_STATUS\t.037\n100033\tHOUSEHOLD_SIZE\t.011\n100033\tY_BOX_GAMES\t.016\n100034\tAFFINITY_CARD\t.049\n100034\tCUST_ID\t.027\n100034\tCUST_INCOME_LEVEL\t.008\n100034\tEDUCATION\t.049\n100034\tY_BOX_GAMES\t.014\n100035\tAFFINITY_CARD\t.053\n100035\tCUST_ID\t.026\n100035\tCUST_INCOME_LEVEL\t.017\n100035\tEDUCATION\t.018\n100035\tHOUSEHOLD_SIZE\t.034\n100036\tAFFINITY_CARD\t.012\n100036\tCUST_ID\t.028\n100036\tCUST_INCOME_LEVEL\t.008\n100036\tEDUCATION\t.016\n100036\tY_BOX_GAMES\t.015\n100037\tAFFINITY_CARD\t.053\n100037\tCUST_ID\t.027\n100037\tCUST_MARITAL_STATUS\t.08\n100037\tEDUCATION\t.047\n100037\tY_BOX_GAMES\t.015\n100038\tCUST_GENDER\t.014\n100038\tCUST_ID\t.027\n100038\tCUST_INCOME_LEVEL\t.019\n100038\tHOUSEHOLD_SIZE\t.041\n100038\tY_BOX_GAMES\t.041\n100039\tAFFINITY_CARD\t.05\n100039\tCUST_CREDIT_LIMIT\t.034\n100039\tCUST_ID\t.028\n100039\tEDUCATION\t.037\n100039\tY_BOX_GAMES\t.015\n100040\tCUST_GENDER\t.011\n100040\tCUST_ID\t.027\n100040\tCUST_YEAR_OF_BIRTH\t.01\n100040\tEDUCATION\t.048\n100040\tY_BOX_GAMES\t.037\n100041\tCUST_CREDIT_LIMIT\t.032\n100041\tCUST_GENDER\t.01\n100041\tCUST_ID\t.026\n100041\tCUST_INCOME_LEVEL\t.011\n100041\tY_BOX_GAMES\t.038\n100042\tAFFINITY_CARD\t.049\n100042\tCUST_ID\t.027\n100042\tEDUCATION\t.015\n100042\tYRS_RESIDENCE\t.006\n100042\tY_BOX_GAMES\t.015\n100043\tAFFINITY_CARD\t.008\n100043\tCUST_ID\t.027\n100043\tCUST_INCOME_LEVEL\t.018\n100043\tCUST_YEAR_OF_BIRTH\t.004\n100043\tY_BOX_GAMES\t.038\n100044\tAFFINITY_CARD\t.009\n100044\tCUST_ID\t.027\n100044\tCUST_INCOME_LEVEL\t.021\n100044\tCUST_YEAR_OF_BIRTH\t.005\n100044\tY_BOX_GAMES\t.039\n100045\tAFFINITY_CARD\t.012\n100045\tCUST_CREDIT_LIMIT\t.033\n100045\tCUST_ID\t.028\n100045\tEDUCATION\t.039\n100045\tY_BOX_GAMES\t.015\n100046\tAFFINITY_CARD\t.049\n100046\tCUST_CREDIT_LIMIT\t.013\n100046\tCUST_ID\t.028\n100046\tCUST_INCOME_LEVEL\t.015\n100046\tY_BOX_GAMES\t.015\n100047\tAFFINITY_CARD\t.008\n100047\tCUST_CREDIT_LIMIT\t.014\n100047\tCUST_ID\t.027\n100047\tCUST_INCOME_LEVEL\t.03\n100047\tY_BOX_GAMES\t.037\n100048\tAFFINITY_CARD\t.009\n100048\tCUST_CREDIT_LIMIT\t.024\n100048\tCUST_ID\t.027\n100048\tCUST_INCOME_LEVEL\t.014\n100048\tY_BOX_GAMES\t.037\n100049\tCUST_GENDER\t.009\n100049\tCUST_ID\t.026\n100049\tCUST_INCOME_LEVEL\t.009\n100049\tCUST_MARITAL_STATUS\t.027\n100049\tY_BOX_GAMES\t.016\n100050\tCUST_CREDIT_LIMIT\t.022\n100050\tCUST_ID\t.027\n100050\tCUST_INCOME_LEVEL\t.015\n100050\tEDUCATION\t.052\n100050\tY_BOX_GAMES\t.038\n100051\tCUST_ID\t.026\n100051\tCUST_INCOME_LEVEL\t.01\n100051\tCUST_MARITAL_STATUS\t.028\n100051\tOCCUPATION\t.01\n100051\tY_BOX_GAMES\t.016\n100052\tAFFINITY_CARD\t.048\n100052\tCUST_ID\t.027\n100052\tCUST_INCOME_LEVEL\t.015\n100052\tEDUCATION\t.036\n100052\tY_BOX_GAMES\t.014\n100053\tAFFINITY_CARD\t.011\n100053\tCUST_ID\t.027\n100053\tCUST_INCOME_LEVEL\t.018\n100053\tCUST_YEAR_OF_BIRTH\t.017\n100053\tY_BOX_GAMES\t.015\n100054\tAFFINITY_CARD\t.008\n100054\tCUST_CREDIT_LIMIT\t.006\n100054\tCUST_GENDER\t.008\n100054\tCUST_ID\t.027\n100054\tY_BOX_GAMES\t.017\n100055\tAFFINITY_CARD\t.009\n100055\tCUST_GENDER\t.009\n100055\tCUST_ID\t.027\n100055\tHOUSEHOLD_SIZE\t.03\n100055\tY_BOX_GAMES\t.043\n100056\tAFFINITY_CARD\t.011\n100056\tCUST_ID\t.027\n100056\tCUST_INCOME_LEVEL\t.017\n100056\tEDUCATION\t.017\n100056\tY_BOX_GAMES\t.015\n100057\tAFFINITY_CARD\t.049\n100057\tCUST_ID\t.027\n100057\tCUST_INCOME_LEVEL\t.007\n100057\tEDUCATION\t.014\n100057\tY_BOX_GAMES\t.015\n100058\tCUST_CREDIT_LIMIT\t.013\n100058\tCUST_ID\t.027\n100058\tCUST_INCOME_LEVEL\t.015\n100058\tOCCUPATION\t.012\n100058\tY_BOX_GAMES\t.015\n100059\tAFFINITY_CARD\t.056\n100059\tCUST_ID\t.026\n100059\tCUST_INCOME_LEVEL\t.021\n100059\tCUST_MARITAL_STATUS\t.038\n100059\tY_BOX_GAMES\t.015\n100060\tCUST_CREDIT_LIMIT\t.032\n100060\tCUST_ID\t.025\n100060\tCUST_INCOME_LEVEL\t.016\n100060\tCUST_MARITAL_STATUS\t.07\n100060\tY_BOX_GAMES\t.015\n100061\tCUST_ID\t.026\n100061\tCUST_INCOME_LEVEL\t.028\n100061\tCUST_MARITAL_STATUS\t.039\n100061\tEDUCATION\t.039\n100061\tY_BOX_GAMES\t.016\n100062\tCUST_CREDIT_LIMIT\t.033\n100062\tCUST_ID\t.027\n100062\tCUST_INCOME_LEVEL\t.018\n100062\tEDUCATION\t.023\n100062\tY_BOX_GAMES\t.017\n100063\tAFFINITY_CARD\t.051\n100063\tCUST_CREDIT_LIMIT\t.013\n100063\tCUST_ID\t.026\n100063\tCUST_INCOME_LEVEL\t.021\n100063\tY_BOX_GAMES\t.015\n100064\tAFFINITY_CARD\t.011\n100064\tCUST_ID\t.026\n100064\tCUST_INCOME_LEVEL\t.018\n100064\tOCCUPATION\t.006\n100064\tY_BOX_GAMES\t.015\n100065\tCUST_ID\t.026\n100065\tCUST_INCOME_LEVEL\t.014\n100065\tCUST_MARITAL_STATUS\t.036\n100065\tOCCUPATION\t.012\n100065\tY_BOX_GAMES\t.016\n100066\tAFFINITY_CARD\t.049\n100066\tCUST_ID\t.027\n100066\tCUST_INCOME_LEVEL\t.007\n100066\tEDUCATION\t.015\n100066\tY_BOX_GAMES\t.015\n100067\tCUST_ID\t.027\n100067\tCUST_INCOME_LEVEL\t.016\n100067\tEDUCATION\t.02\n100067\tOCCUPATION\t.009\n100067\tY_BOX_GAMES\t.017\n100068\tAFFINITY_CARD\t.05\n100068\tCUST_ID\t.027\n100068\tCUST_INCOME_LEVEL\t.026\n100068\tCUST_YEAR_OF_BIRTH\t.009\n100068\tY_BOX_GAMES\t.014\n100069\tCUST_ID\t.026\n100069\tCUST_INCOME_LEVEL\t.017\n100069\tCUST_MARITAL_STATUS\t.032\n100069\tEDUCATION\t.052\n100069\tY_BOX_GAMES\t.015\n100070\tAFFINITY_CARD\t.05\n100070\tCUST_ID\t.027\n100070\tCUST_INCOME_LEVEL\t.014\n100070\tEDUCATION\t.004\n100070\tY_BOX_GAMES\t.015\n100071\tAFFINITY_CARD\t.051\n100071\tCUST_ID\t.027\n100071\tCUST_INCOME_LEVEL\t.018\n100071\tEDUCATION\t.004\n100071\tY_BOX_GAMES\t.044\n100072\tCUST_ID\t.026\n100072\tCUST_MARITAL_STATUS\t.084\n100072\tEDUCATION\t.051\n100072\tHOUSEHOLD_SIZE\t.044\n100072\tY_BOX_GAMES\t.015\n100073\tAFFINITY_CARD\t.049\n100073\tCUST_CREDIT_LIMIT\t.034\n100073\tCUST_ID\t.026\n100073\tCUST_INCOME_LEVEL\t.017\n100073\tEDUCATION\t.049\n100074\tAFFINITY_CARD\t.009\n100074\tCUST_ID\t.026\n100074\tCUST_INCOME_LEVEL\t.024\n100074\tOCCUPATION\t.015\n100074\tY_BOX_GAMES\t.017\n100075\tAFFINITY_CARD\t.012\n100075\tCUST_ID\t.027\n100075\tCUST_INCOME_LEVEL\t.012\n100075\tEDUCATION\t.017\n100075\tY_BOX_GAMES\t.015\n100076\tAFFINITY_CARD\t.008\n100076\tCUST_CREDIT_LIMIT\t.032\n100076\tCUST_ID\t.027\n100076\tCUST_INCOME_LEVEL\t.018\n100076\tY_BOX_GAMES\t.036\n100077\tCUST_CREDIT_LIMIT\t.033\n100077\tCUST_ID\t.026\n100077\tCUST_INCOME_LEVEL\t.017\n100077\tHOUSEHOLD_SIZE\t.031\n100077\tY_BOX_GAMES\t.016\n100078\tAFFINITY_CARD\t.01\n100078\tCUST_CREDIT_LIMIT\t.007\n100078\tCUST_ID\t.026\n100078\tOCCUPATION\t.011\n100078\tY_BOX_GAMES\t.044\n100079\tCUST_GENDER\t.01\n100079\tCUST_ID\t.027\n100079\tCUST_INCOME_LEVEL\t.014\n100079\tHOUSEHOLD_SIZE\t.029\n100079\tY_BOX_GAMES\t.038\n100080\tAFFINITY_CARD\t.011\n100080\tCUST_ID\t.027\n100080\tCUST_INCOME_LEVEL\t.019\n100080\tEDUCATION\t.05\n100080\tY_BOX_GAMES\t.044\n100081\tAFFINITY_CARD\t.049\n100081\tCUST_ID\t.027\n100081\tCUST_INCOME_LEVEL\t.021\n100081\tEDUCATION\t.014\n100081\tY_BOX_GAMES\t.015\n100082\tCUST_CREDIT_LIMIT\t.033\n100082\tCUST_ID\t.027\n100082\tCUST_INCOME_LEVEL\t.01\n100082\tEDUCATION\t.022\n100082\tY_BOX_GAMES\t.039\n100083\tCUST_ID\t.025\n100083\tCUST_INCOME_LEVEL\t.027\n100083\tCUST_MARITAL_STATUS\t.026\n100083\tEDUCATION\t.022\n100083\tY_BOX_GAMES\t.041\n100084\tCUST_ID\t.025\n100084\tCUST_INCOME_LEVEL\t.012\n100084\tCUST_MARITAL_STATUS\t.066\n100084\tOCCUPATION\t.009\n100084\tY_BOX_GAMES\t.015\n100085\tAFFINITY_CARD\t.05\n100085\tCUST_ID\t.026\n100085\tCUST_INCOME_LEVEL\t.014\n100085\tCUST_YEAR_OF_BIRTH\t.007\n100085\tY_BOX_GAMES\t.014\n100086\tCUST_CREDIT_LIMIT\t.031\n100086\tCUST_ID\t.025\n100086\tEDUCATION\t.05\n100086\tHOUSEHOLD_SIZE\t.027\n100086\tY_BOX_GAMES\t.036\n100087\tAFFINITY_CARD\t.009\n100087\tCUST_ID\t.026\n100087\tCUST_INCOME_LEVEL\t.031\n100087\tEDUCATION\t.02\n100087\tY_BOX_GAMES\t.017\n100088\tAFFINITY_CARD\t.009\n100088\tCUST_ID\t.027\n100088\tEDUCATION\t.052\n100088\tHOUSEHOLD_SIZE\t.013\n100088\tY_BOX_GAMES\t.017\n100089\tAFFINITY_CARD\t.048\n100089\tCUST_CREDIT_LIMIT\t.023\n100089\tCUST_ID\t.027\n100089\tCUST_YEAR_OF_BIRTH\t.016\n100089\tY_BOX_GAMES\t.014\n100090\tCUST_CREDIT_LIMIT\t.024\n100090\tCUST_ID\t.027\n100090\tCUST_INCOME_LEVEL\t.012\n100090\tEDUCATION\t.023\n100090\tY_BOX_GAMES\t.017\n100091\tAFFINITY_CARD\t.012\n100091\tCUST_ID\t.027\n100091\tCUST_INCOME_LEVEL\t.016\n100091\tEDUCATION\t.016\n100091\tY_BOX_GAMES\t.015\n100092\tCUST_ID\t.026\n100092\tCUST_MARITAL_STATUS\t.039\n100092\tCUST_YEAR_OF_BIRTH\t.018\n100092\tEDUCATION\t.024\n100092\tY_BOX_GAMES\t.016\n100093\tAFFINITY_CARD\t.011\n100093\tCUST_CREDIT_LIMIT\t.034\n100093\tCUST_ID\t.026\n100093\tCUST_INCOME_LEVEL\t.009\n100093\tY_BOX_GAMES\t.015\n100094\tAFFINITY_CARD\t.051\n100094\tCUST_CREDIT_LIMIT\t.013\n100094\tCUST_ID\t.026\n100094\tCUST_INCOME_LEVEL\t.025\n100094\tY_BOX_GAMES\t.015\n100095\tCUST_CREDIT_LIMIT\t.022\n100095\tCUST_ID\t.026\n100095\tCUST_INCOME_LEVEL\t.02\n100095\tEDUCATION\t.033\n100095\tY_BOX_GAMES\t.015\n100096\tCUST_GENDER\t.011\n100096\tCUST_ID\t.026\n100096\tCUST_INCOME_LEVEL\t.011\n100096\tEDUCATION\t.044\n100096\tY_BOX_GAMES\t.016\n100097\tCUST_CREDIT_LIMIT\t.023\n100097\tCUST_ID\t.026\n100097\tCUST_INCOME_LEVEL\t.012\n100097\tEDUCATION\t.053\n100097\tY_BOX_GAMES\t.017\n100098\tCUST_ID\t.025\n100098\tCUST_MARITAL_STATUS\t.075\n100098\tEDUCATION\t.045\n100098\tHOUSEHOLD_SIZE\t.009\n100098\tY_BOX_GAMES\t.038\n100099\tAFFINITY_CARD\t.011\n100099\tCUST_ID\t.025\n100099\tCUST_INCOME_LEVEL\t.009\n100099\tOCCUPATION\t.01\n100099\tY_BOX_GAMES\t.015\n100100\tAFFINITY_CARD\t.053\n100100\tCUST_ID\t.025\n100100\tEDUCATION\t.035\n100100\tHOUSEHOLD_SIZE\t.03\n100100\tY_BOX_GAMES\t.014\n100101\tAFFINITY_CARD\t.049\n100101\tCUST_ID\t.026\n100101\tCUST_INCOME_LEVEL\t.014\n100101\tEDUCATION\t.014\n100101\tY_BOX_GAMES\t.015\n100102\tAFFINITY_CARD\t.009\n100102\tCUST_ID\t.026\n100102\tCUST_INCOME_LEVEL\t.028\n100102\tHOUSEHOLD_SIZE\t.011\n100102\tY_BOX_GAMES\t.017\n100103\tAFFINITY_CARD\t.008\n100103\tCUST_CREDIT_LIMIT\t.032\n100103\tCUST_ID\t.026\n100103\tOCCUPATION\t.012\n100103\tY_BOX_GAMES\t.037\n100104\tCUST_CREDIT_LIMIT\t.022\n100104\tCUST_ID\t.024\n100104\tCUST_MARITAL_STATUS\t.073\n100104\tEDUCATION\t.042\n100104\tY_BOX_GAMES\t.037\n100105\tAFFINITY_CARD\t.008\n100105\tCUST_ID\t.026\n100105\tCUST_YEAR_OF_BIRTH\t.003\n100105\tEDUCATION\t.021\n100105\tY_BOX_GAMES\t.037\n100106\tAFFINITY_CARD\t.01\n100106\tCUST_GENDER\t.01\n100106\tCUST_ID\t.026\n100106\tHOUSEHOLD_SIZE\t.03\n100106\tY_BOX_GAMES\t.015\n100107\tCUST_ID\t.026\n100107\tCUST_INCOME_LEVEL\t.01\n100107\tCUST_MARITAL_STATUS\t.038\n100107\tEDUCATION\t.055\n100107\tY_BOX_GAMES\t.016\n100108\tAFFINITY_CARD\t.011\n100108\tCUST_CREDIT_LIMIT\t.033\n100108\tCUST_ID\t.026\n100108\tEDUCATION\t.04\n100108\tY_BOX_GAMES\t.015\n100109\tAFFINITY_CARD\t.011\n100109\tCUST_ID\t.026\n100109\tCUST_INCOME_LEVEL\t.016\n100109\tEDUCATION\t.036\n100109\tY_BOX_GAMES\t.015\n100110\tCUST_CREDIT_LIMIT\t.022\n100110\tCUST_ID\t.025\n100110\tCUST_INCOME_LEVEL\t.021\n100110\tOCCUPATION\t.013\n100110\tY_BOX_GAMES\t.043\n100111\tAFFINITY_CARD\t.009\n100111\tCUST_CREDIT_LIMIT\t.014\n100111\tCUST_ID\t.026\n100111\tCUST_INCOME_LEVEL\t.021\n100111\tY_BOX_GAMES\t.018\n100112\tAFFINITY_CARD\t.011\n100112\tCUST_CREDIT_LIMIT\t.013\n100112\tCUST_ID\t.025\n100112\tCUST_INCOME_LEVEL\t.012\n100112\tY_BOX_GAMES\t.015\n100113\tCUST_CREDIT_LIMIT\t.013\n100113\tCUST_ID\t.025\n100113\tCUST_INCOME_LEVEL\t.024\n100113\tEDUCATION\t.053\n100113\tY_BOX_GAMES\t.036\n100114\tCUST_ID\t.026\n100114\tCUST_INCOME_LEVEL\t.02\n100114\tEDUCATION\t.044\n100114\tHOUSEHOLD_SIZE\t.039\n100114\tY_BOX_GAMES\t.037\n100115\tAFFINITY_CARD\t.009\n100115\tCUST_ID\t.026\n100115\tCUST_INCOME_LEVEL\t.018\n100115\tEDUCATION\t.019\n100115\tY_BOX_GAMES\t.038\n100116\tCUST_GENDER\t.012\n100116\tCUST_ID\t.025\n100116\tEDUCATION\t.037\n100116\tHOUSEHOLD_SIZE\t.031\n100116\tY_BOX_GAMES\t.015\n100117\tAFFINITY_CARD\t.008\n100117\tCUST_ID\t.025\n100117\tCUST_INCOME_LEVEL\t.013\n100117\tCUST_MARITAL_STATUS\t.026\n100117\tY_BOX_GAMES\t.016\n100118\tAFFINITY_CARD\t.05\n100118\tCUST_CREDIT_LIMIT\t.007\n100118\tCUST_ID\t.026\n100118\tCUST_INCOME_LEVEL\t.008\n100118\tY_BOX_GAMES\t.014\n100119\tCUST_ID\t.025\n100119\tCUST_INCOME_LEVEL\t.018\n100119\tCUST_MARITAL_STATUS\t.03\n100119\tEDUCATION\t.024\n100119\tY_BOX_GAMES\t.016\n100120\tCUST_CREDIT_LIMIT\t.022\n100120\tCUST_ID\t.025\n100120\tCUST_INCOME_LEVEL\t.02\n100120\tEDUCATION\t.035\n100120\tY_BOX_GAMES\t.015\n100121\tAFFINITY_CARD\t.009\n100121\tCUST_ID\t.026\n100121\tCUST_INCOME_LEVEL\t.015\n100121\tCUST_MARITAL_STATUS\t.033\n100121\tY_BOX_GAMES\t.041\n100122\tAFFINITY_CARD\t.01\n100122\tCUST_ID\t.025\n100122\tCUST_INCOME_LEVEL\t.024\n100122\tHOUSEHOLD_SIZE\t.031\n100122\tY_BOX_GAMES\t.016\n100123\tCUST_ID\t.025\n100123\tCUST_INCOME_LEVEL\t.015\n100123\tCUST_MARITAL_STATUS\t.064\n100123\tCUST_YEAR_OF_BIRTH\t.013\n100123\tY_BOX_GAMES\t.015\n100124\tCUST_CREDIT_LIMIT\t.023\n100124\tCUST_ID\t.025\n100124\tCUST_INCOME_LEVEL\t.016\n100124\tOCCUPATION\t.013\n100124\tY_BOX_GAMES\t.015\n100125\tAFFINITY_CARD\t.008\n100125\tCUST_ID\t.025\n100125\tCUST_INCOME_LEVEL\t.021\n100125\tEDUCATION\t.019\n100125\tY_BOX_GAMES\t.037\n100126\tAFFINITY_CARD\t.011\n100126\tCUST_CREDIT_LIMIT\t.013\n100126\tCUST_ID\t.025\n100126\tCUST_INCOME_LEVEL\t.015\n100126\tY_BOX_GAMES\t.015\n100127\tAFFINITY_CARD\t.007\n100127\tCUST_CREDIT_LIMIT\t.032\n100127\tCUST_GENDER\t.007\n100127\tCUST_ID\t.026\n100127\tY_BOX_GAMES\t.037\n100128\tAFFINITY_CARD\t.054\n100128\tCUST_ID\t.025\n100128\tCUST_INCOME_LEVEL\t.023\n100128\tEDUCATION\t.02\n100128\tHOUSEHOLD_SIZE\t.036\n100129\tCUST_CREDIT_LIMIT\t.031\n100129\tCUST_ID\t.025\n100129\tCUST_INCOME_LEVEL\t.008\n100129\tEDUCATION\t.039\n100129\tY_BOX_GAMES\t.037\n100130\tAFFINITY_CARD\t.011\n100130\tCUST_CREDIT_LIMIT\t.007\n100130\tCUST_ID\t.025\n100130\tEDUCATION\t.049\n100130\tY_BOX_GAMES\t.015\n100131\tAFFINITY_CARD\t.009\n100131\tCUST_ID\t.025\n100131\tCUST_INCOME_LEVEL\t.018\n100131\tCUST_MARITAL_STATUS\t.033\n100131\tY_BOX_GAMES\t.042\n100132\tCUST_ID\t.024\n100132\tCUST_MARITAL_STATUS\t.063\n100132\tCUST_YEAR_OF_BIRTH\t.028\n100132\tOCCUPATION\t.017\n100132\tY_BOX_GAMES\t.015\n100133\tCUST_GENDER\t.009\n100133\tCUST_ID\t.025\n100133\tCUST_INCOME_LEVEL\t.031\n100133\tEDUCATION\t.023\n100133\tY_BOX_GAMES\t.037\n100134\tCUST_ID\t.025\n100134\tCUST_INCOME_LEVEL\t.01\n100134\tCUST_MARITAL_STATUS\t.029\n100134\tEDUCATION\t.044\n100134\tY_BOX_GAMES\t.016\n100135\tAFFINITY_CARD\t.053\n100135\tCUST_ID\t.024\n100135\tCUST_INCOME_LEVEL\t.021\n100135\tEDUCATION\t.042\n100135\tHOUSEHOLD_SIZE\t.035\n100136\tCUST_CREDIT_LIMIT\t.032\n100136\tCUST_ID\t.026\n100136\tEDUCATION\t.023\n100136\tOCCUPATION\t.013\n100136\tY_BOX_GAMES\t.039\n100137\tCUST_ID\t.024\n100137\tCUST_INCOME_LEVEL\t.019\n100137\tCUST_MARITAL_STATUS\t.03\n100137\tEDUCATION\t.046\n100137\tHOUSEHOLD_SIZE\t.032\n100138\tAFFINITY_CARD\t.01\n100138\tCUST_CREDIT_LIMIT\t.033\n100138\tCUST_ID\t.025\n100138\tEDUCATION\t.02\n100138\tY_BOX_GAMES\t.017\n100139\tAFFINITY_CARD\t.011\n100139\tCUST_ID\t.025\n100139\tCUST_YEAR_OF_BIRTH\t.007\n100139\tEDUCATION\t.055\n100139\tY_BOX_GAMES\t.015\n100140\tAFFINITY_CARD\t.008\n100140\tCUST_ID\t.025\n100140\tCUST_YEAR_OF_BIRTH\t.007\n100140\tEDUCATION\t.007\n100140\tY_BOX_GAMES\t.036\n100141\tAFFINITY_CARD\t.011\n100141\tCUST_CREDIT_LIMIT\t.022\n100141\tCUST_ID\t.025\n100141\tCUST_INCOME_LEVEL\t.014\n100141\tY_BOX_GAMES\t.042\n100142\tCUST_CREDIT_LIMIT\t.014\n100142\tCUST_ID\t.024\n100142\tCUST_INCOME_LEVEL\t.013\n100142\tCUST_MARITAL_STATUS\t.027\n100142\tY_BOX_GAMES\t.016\n100143\tAFFINITY_CARD\t.008\n100143\tCUST_GENDER\t.01\n100143\tCUST_ID\t.025\n100143\tEDUCATION\t.022\n100143\tY_BOX_GAMES\t.017\n100144\tAFFINITY_CARD\t.057\n100144\tCUST_ID\t.026\n100144\tCUST_MARITAL_STATUS\t.008\n100144\tEDUCATION\t.007\n100144\tY_BOX_GAMES\t.017\n100145\tAFFINITY_CARD\t.008\n100145\tCUST_ID\t.025\n100145\tCUST_INCOME_LEVEL\t.01\n100145\tCUST_YEAR_OF_BIRTH\t.004\n100145\tY_BOX_GAMES\t.037\n100146\tAFFINITY_CARD\t.05\n100146\tCUST_CREDIT_LIMIT\t.004\n100146\tCUST_ID\t.025\n100146\tCUST_INCOME_LEVEL\t.015\n100146\tY_BOX_GAMES\t.015\n100147\tCUST_CREDIT_LIMIT\t.023\n100147\tCUST_ID\t.024\n100147\tCUST_INCOME_LEVEL\t.028\n100147\tCUST_YEAR_OF_BIRTH\t.03\n100147\tY_BOX_GAMES\t.015\n100148\tCUST_ID\t.024\n100148\tCUST_MARITAL_STATUS\t.065\n100148\tCUST_YEAR_OF_BIRTH\t.015\n100148\tEDUCATION\t.053\n100148\tY_BOX_GAMES\t.015\n100149\tAFFINITY_CARD\t.049\n100149\tCUST_CREDIT_LIMIT\t.022\n100149\tCUST_ID\t.024\n100149\tCUST_INCOME_LEVEL\t.019\n100149\tEDUCATION\t.039\n100150\tAFFINITY_CARD\t.011\n100150\tCUST_ID\t.025\n100150\tCUST_INCOME_LEVEL\t.017\n100150\tCUST_YEAR_OF_BIRTH\t.006\n100150\tY_BOX_GAMES\t.015\n100151\tAFFINITY_CARD\t.011\n100151\tCUST_CREDIT_LIMIT\t.004\n100151\tCUST_ID\t.024\n100151\tCUST_INCOME_LEVEL\t.016\n100151\tY_BOX_GAMES\t.015\n100152\tCUST_GENDER\t.01\n100152\tCUST_ID\t.024\n100152\tCUST_INCOME_LEVEL\t.024\n100152\tHOUSEHOLD_SIZE\t.032\n100152\tY_BOX_GAMES\t.015\n100153\tAFFINITY_CARD\t.008\n100153\tCUST_CREDIT_LIMIT\t.007\n100153\tCUST_ID\t.025\n100153\tEDUCATION\t.007\n100153\tY_BOX_GAMES\t.036\n100154\tCUST_CREDIT_LIMIT\t.034\n100154\tCUST_ID\t.024\n100154\tCUST_INCOME_LEVEL\t.016\n100154\tCUST_MARITAL_STATUS\t.028\n100154\tY_BOX_GAMES\t.016\n100155\tAFFINITY_CARD\t.011\n100155\tCUST_ID\t.025\n100155\tCUST_INCOME_LEVEL\t.014\n100155\tEDUCATION\t.037\n100155\tY_BOX_GAMES\t.043\n100156\tAFFINITY_CARD\t.05\n100156\tCUST_CREDIT_LIMIT\t.004\n100156\tCUST_ID\t.025\n100156\tCUST_INCOME_LEVEL\t.017\n100156\tY_BOX_GAMES\t.015\n100157\tCUST_CREDIT_LIMIT\t.014\n100157\tCUST_ID\t.024\n100157\tCUST_INCOME_LEVEL\t.013\n100157\tEDUCATION\t.047\n100157\tY_BOX_GAMES\t.037\n100158\tAFFINITY_CARD\t.009\n100158\tCUST_ID\t.024\n100158\tCUST_INCOME_LEVEL\t.021\n100158\tCUST_YEAR_OF_BIRTH\t.006\n100158\tY_BOX_GAMES\t.039\n100159\tCUST_CREDIT_LIMIT\t.013\n100159\tCUST_ID\t.024\n100159\tCUST_INCOME_LEVEL\t.018\n100159\tHOUSEHOLD_SIZE\t.039\n100159\tY_BOX_GAMES\t.038\n100160\tCUST_ID\t.024\n100160\tCUST_INCOME_LEVEL\t.019\n100160\tCUST_MARITAL_STATUS\t.031\n100160\tEDUCATION\t.044\n100160\tY_BOX_GAMES\t.016\n100161\tCUST_ID\t.025\n100161\tCUST_INCOME_LEVEL\t.029\n100161\tEDUCATION\t.022\n100161\tYRS_RESIDENCE\t.021\n100161\tY_BOX_GAMES\t.017\n100162\tAFFINITY_CARD\t.009\n100162\tCUST_ID\t.025\n100162\tCUST_INCOME_LEVEL\t.014\n100162\tCUST_MARITAL_STATUS\t.036\n100162\tY_BOX_GAMES\t.016\n100163\tAFFINITY_CARD\t.011\n100163\tCUST_CREDIT_LIMIT\t.007\n100163\tCUST_ID\t.024\n100163\tCUST_YEAR_OF_BIRTH\t.029\n100163\tY_BOX_GAMES\t.015\n100164\tAFFINITY_CARD\t.049\n100164\tCUST_ID\t.025\n100164\tEDUCATION\t.017\n100164\tYRS_RESIDENCE\t.013\n100164\tY_BOX_GAMES\t.015\n100165\tCUST_GENDER\t.011\n100165\tCUST_ID\t.024\n100165\tCUST_INCOME_LEVEL\t.031\n100165\tEDUCATION\t.022\n100165\tY_BOX_GAMES\t.017\n100166\tAFFINITY_CARD\t.055\n100166\tCUST_GENDER\t.012\n100166\tCUST_ID\t.024\n100166\tHOUSEHOLD_SIZE\t.033\n100166\tY_BOX_GAMES\t.015\n100167\tCUST_CREDIT_LIMIT\t.024\n100167\tCUST_ID\t.024\n100167\tCUST_INCOME_LEVEL\t.024\n100167\tCUST_YEAR_OF_BIRTH\t.008\n100167\tY_BOX_GAMES\t.039\n100168\tAFFINITY_CARD\t.008\n100168\tCUST_ID\t.024\n100168\tCUST_INCOME_LEVEL\t.012\n100168\tCUST_MARITAL_STATUS\t.026\n100168\tY_BOX_GAMES\t.04\n100169\tCUST_CREDIT_LIMIT\t.033\n100169\tCUST_ID\t.023\n100169\tCUST_INCOME_LEVEL\t.031\n100169\tHOUSEHOLD_SIZE\t.03\n100169\tY_BOX_GAMES\t.041\n100170\tCUST_ID\t.023\n100170\tCUST_INCOME_LEVEL\t.018\n100170\tCUST_MARITAL_STATUS\t.065\n100170\tEDUCATION\t.051\n100170\tY_BOX_GAMES\t.014\n100171\tAFFINITY_CARD\t.055\n100171\tCUST_ID\t.023\n100171\tCUST_INCOME_LEVEL\t.028\n100171\tHOUSEHOLD_SIZE\t.032\n100171\tY_BOX_GAMES\t.015\n100172\tCUST_CREDIT_LIMIT\t.032\n100172\tCUST_ID\t.024\n100172\tCUST_YEAR_OF_BIRTH\t.008\n100172\tOCCUPATION\t.01\n100172\tY_BOX_GAMES\t.037\n100173\tAFFINITY_CARD\t.049\n100173\tCUST_CREDIT_LIMIT\t.022\n100173\tCUST_ID\t.024\n100173\tEDUCATION\t.036\n100173\tY_BOX_GAMES\t.014\n100174\tAFFINITY_CARD\t.054\n100174\tCUST_CREDIT_LIMIT\t.022\n100174\tCUST_ID\t.024\n100174\tCUST_MARITAL_STATUS\t.044\n100174\tEDUCATION\t.019\n100175\tAFFINITY_CARD\t.011\n100175\tCUST_ID\t.024\n100175\tCUST_YEAR_OF_BIRTH\t.003\n100175\tYRS_RESIDENCE\t.001\n100175\tY_BOX_GAMES\t.043\n100176\tAFFINITY_CARD\t.05\n100176\tCUST_ID\t.024\n100176\tCUST_INCOME_LEVEL\t.012\n100176\tOCCUPATION\t.013\n100176\tY_BOX_GAMES\t.015\n100177\tCUST_ID\t.024\n100177\tCUST_INCOME_LEVEL\t.009\n100177\tCUST_YEAR_OF_BIRTH\t.008\n100177\tOCCUPATION\t.012\n100177\tY_BOX_GAMES\t.037\n100178\tAFFINITY_CARD\t.011\n100178\tCUST_CREDIT_LIMIT\t.013\n100178\tCUST_ID\t.024\n100178\tCUST_INCOME_LEVEL\t.015\n100178\tY_BOX_GAMES\t.015\n100179\tAFFINITY_CARD\t.048\n100179\tCUST_ID\t.024\n100179\tCUST_INCOME_LEVEL\t.022\n100179\tEDUCATION\t.036\n100179\tY_BOX_GAMES\t.014\n100180\tAFFINITY_CARD\t.009\n100180\tCUST_ID\t.024\n100180\tCUST_INCOME_LEVEL\t.009\n100180\tEDUCATION\t.007\n100180\tY_BOX_GAMES\t.037\n100181\tCUST_CREDIT_LIMIT\t.032\n100181\tCUST_GENDER\t.007\n100181\tCUST_ID\t.024\n100181\tCUST_INCOME_LEVEL\t.018\n100181\tY_BOX_GAMES\t.037\n100182\tAFFINITY_CARD\t.011\n100182\tCUST_CREDIT_LIMIT\t.033\n100182\tCUST_ID\t.024\n100182\tCUST_INCOME_LEVEL\t.008\n100182\tY_BOX_GAMES\t.015\n100183\tAFFINITY_CARD\t.05\n100183\tCUST_ID\t.024\n100183\tCUST_INCOME_LEVEL\t.017\n100183\tCUST_YEAR_OF_BIRTH\t.004\n100183\tY_BOX_GAMES\t.015\n100184\tAFFINITY_CARD\t.008\n100184\tCUST_CREDIT_LIMIT\t.024\n100184\tCUST_ID\t.024\n100184\tCUST_INCOME_LEVEL\t.024\n100184\tY_BOX_GAMES\t.017\n100185\tAFFINITY_CARD\t.049\n100185\tCUST_ID\t.024\n100185\tEDUCATION\t.016\n100185\tYRS_RESIDENCE\t.008\n100185\tY_BOX_GAMES\t.015\n100186\tAFFINITY_CARD\t.008\n100186\tCUST_CREDIT_LIMIT\t.032\n100186\tCUST_ID\t.024\n100186\tCUST_YEAR_OF_BIRTH\t.009\n100186\tY_BOX_GAMES\t.037\n100187\tAFFINITY_CARD\t.008\n100187\tCUST_CREDIT_LIMIT\t.007\n100187\tCUST_ID\t.023\n100187\tCUST_MARITAL_STATUS\t.029\n100187\tY_BOX_GAMES\t.039\n100188\tAFFINITY_CARD\t.007\n100188\tCUST_CREDIT_LIMIT\t.032\n100188\tCUST_ID\t.024\n100188\tCUST_YEAR_OF_BIRTH\t.008\n100188\tY_BOX_GAMES\t.036\n100189\tAFFINITY_CARD\t.009\n100189\tCUST_ID\t.023\n100189\tCUST_INCOME_LEVEL\t.01\n100189\tEDUCATION\t.043\n100189\tY_BOX_GAMES\t.039\n100190\tCUST_CREDIT_LIMIT\t.022\n100190\tCUST_ID\t.023\n100190\tCUST_INCOME_LEVEL\t.028\n100190\tEDUCATION\t.014\n100190\tY_BOX_GAMES\t.015\n100191\tAFFINITY_CARD\t.011\n100191\tCUST_ID\t.023\n100191\tCUST_INCOME_LEVEL\t.016\n100191\tCUST_YEAR_OF_BIRTH\t.004\n100191\tY_BOX_GAMES\t.043\n100192\tAFFINITY_CARD\t.048\n100192\tCUST_ID\t.024\n100192\tCUST_INCOME_LEVEL\t.013\n100192\tEDUCATION\t.035\n100192\tY_BOX_GAMES\t.014\n100193\tCUST_CREDIT_LIMIT\t.013\n100193\tCUST_ID\t.023\n100193\tCUST_INCOME_LEVEL\t.022\n100193\tEDUCATION\t.017\n100193\tY_BOX_GAMES\t.038\n100194\tCUST_CREDIT_LIMIT\t.024\n100194\tCUST_GENDER\t.01\n100194\tCUST_ID\t.023\n100194\tCUST_INCOME_LEVEL\t.03\n100194\tY_BOX_GAMES\t.038\n100195\tCUST_ID\t.024\n100195\tCUST_INCOME_LEVEL\t.018\n100195\tCUST_YEAR_OF_BIRTH\t.008\n100195\tHOUSEHOLD_SIZE\t.038\n100195\tY_BOX_GAMES\t.038\n100196\tCUST_ID\t.024\n100196\tCUST_INCOME_LEVEL\t.016\n100196\tCUST_YEAR_OF_BIRTH\t.011\n100196\tEDUCATION\t.045\n100196\tY_BOX_GAMES\t.015\n100197\tAFFINITY_CARD\t.011\n100197\tCUST_CREDIT_LIMIT\t.013\n100197\tCUST_ID\t.024\n100197\tCUST_INCOME_LEVEL\t.015\n100197\tY_BOX_GAMES\t.015\n100198\tCUST_GENDER\t.012\n100198\tCUST_ID\t.023\n100198\tCUST_INCOME_LEVEL\t.019\n100198\tEDUCATION\t.046\n100198\tY_BOX_GAMES\t.037\n100199\tCUST_CREDIT_LIMIT\t.021\n100199\tCUST_ID\t.021\n100199\tCUST_MARITAL_STATUS\t.061\n100199\tCUST_YEAR_OF_BIRTH\t.032\n100199\tEDUCATION\t.05\n100200\tAFFINITY_CARD\t.009\n100200\tCUST_ID\t.024\n100200\tCUST_INCOME_LEVEL\t.01\n100200\tCUST_YEAR_OF_BIRTH\t.007\n100200\tY_BOX_GAMES\t.036\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_1690363361",
+      "id": "20220624-153547_1697289415",
+      "dateCreated": "2022-06-23T22:09:41+0000",
+      "dateStarted": "2022-07-29T16:33:23+0000",
+      "dateFinished": "2022-07-29T16:33:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%script\n\nBEGIN\nDBMS_DATA_MINING.DROP_MODEL(model_name => 'SVM_ANOMALY_DETECTION_MODEL');\nEXCEPTION WHEN others THEN null;\nEND;",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656356520866_1650389022",
+      "id": "paragraph_1656356520866_1650389022",
+      "dateCreated": "2022-06-27T19:02:00+0000",
+      "dateStarted": "2022-07-29T16:33:35+0000",
+      "dateFinished": "2022-07-29T16:33:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%md\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-07-29T16:33:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of Script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656084947842_-870247640",
+      "id": "20220624-153547_541330614",
+      "dateCreated": "2022-06-23T22:11:31+0000",
+      "dateStarted": "2022-07-29T16:33:39+0000",
+      "dateFinished": "2022-07-29T16:33:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    }
+  ],
+  "name": "OML4R Anomaly Detection SVM",
+  "id": "18913",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:OMLUSER-18913": [],
+    "MDWD9201D2221:OMLUSER-18913": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

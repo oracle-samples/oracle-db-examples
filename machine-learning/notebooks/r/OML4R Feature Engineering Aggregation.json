@@ -1,0 +1,978 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## OML4R Feature Engineering: Aggregation\nIn this notebook, we demonstrate how to perform aggregation for min, max, mean, and count using OML4R.\n\nUsing the SH schema SALES table, which contains transaction records for each customer and products purchased, we create features by aggregating the amount sold for each customer and product pair.\n\nCopyright (c) 2022 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>OML4R Feature Engineering: Aggregation</h2>\n<p>In this notebook, we demonstrate how to perform aggregation for min, max, mean, and count using OML4R.</p>\n<p>Using the SH schema SALES table, which contains transaction records for each customer and products purchased, we create features by aggregating the amount sold for each customer and product pair.</p>\n<p>Copyright (c) 2022 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_1139601300",
+      "id": "20220622-214018_1980611248",
+      "dateCreated": "2022-04-25T19:28:49+0000",
+      "dateStarted": "2022-08-02T14:29:34+0000",
+      "dateFinished": "2022-08-02T14:29:36+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "For more information",
+      "text": "%md\n\nOML4R documentation on Data Preparation: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-and-exploring-data-in-database.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-and-exploring-data-in-database.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-and-exploring-data-in-database.html</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>OML4R documentation on Data Preparation: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-and-exploring-data-in-database.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-and-exploring-data-in-database.html');\">https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oreug/preparing-and-exploring-data-in-database.html</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_-1740084952",
+      "id": "20220622-214018_94670250",
+      "dateCreated": "2022-04-25T19:29:07+0000",
+      "dateStarted": "2022-08-02T14:29:36+0000",
+      "dateFinished": "2022-08-02T14:29:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "Import R libraries",
+      "text": "%r\n\nlibrary(ORE)\nlibrary(OREdplyr)\noptions(ore.warn.order=FALSE)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nAttaching package: ‘OREdplyr’\n\n\nThe following objects are masked from ‘package:dplyr’:\n\n    arrange, arrange_, count, count_, cume_dist, dense_rank, desc,\n    distinct, distinct_, filter, filter_, first, full_join, group_by,\n    group_by_, group_size, groups, inner_join, last, left_join,\n    min_rank, mutate, mutate_, n, n_distinct, n_groups, nth, ntile,\n    percent_rank, rename, rename_, right_join, row_number, sample_frac,\n    sample_n, select, select_, slice, slice_, summarise, summarise_,\n    tally, top_n, transmute, transmute_, ungroup\n\n\nThe following object is masked from ‘package:stats’:\n\n    filter\n\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_-1493504006",
+      "id": "20220622-214018_1363303661",
+      "dateCreated": "2022-04-25T19:29:06+0000",
+      "dateStarted": "2022-08-02T14:29:36+0000",
+      "dateFinished": "2022-08-02T14:29:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "# Get a proxy object to the SALES data and view a few records.",
+      "text": "%r\n\nore.sync(query = c(\"SALES_DF\" = \"select cust_id, prod_id, amount_sold from sh.sales\"))\nore.attach()\n\nz.show(head(SALES_DF))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0,
+                          "direction": "desc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PROD_ID1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "AMOUNT_SOLD2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PROD_ID": "number",
+                      "AMOUNT_SOLD": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PROD_ID": "number",
+                      "AMOUNT_SOLD": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPROD_ID\tAMOUNT_SOLD\n524\t13\t1205.99\n2128\t13\t1250.25\n3212\t13\t1250.25\n3375\t13\t1250.25\n5204\t13\t1250.25\n7082\t13\t1250.25\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_-1357785825",
+      "id": "20220622-214018_1184755692",
+      "dateCreated": "2022-04-25T19:29:04+0000",
+      "dateStarted": "2022-08-02T14:29:51+0000",
+      "dateFinished": "2022-08-02T14:29:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "View multiple records for each customer and product pair with count",
+      "text": "%r\n\nOUTPUT <- rename(count(SALES_DF, CUST_ID, PROD_ID), \"count\" = n)\n\nz.show(OUTPUT)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:51+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PROD_ID1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "count2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PROD_ID": "number",
+                      "count": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "CUST_ID",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "PROD_ID",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PROD_ID": "number",
+                      "count": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPROD_ID\tcount\n2\t14\t12\n2\t18\t14\n2\t23\t4\n2\t26\t4\n2\t31\t8\n2\t32\t1\n2\t33\t3\n2\t40\t4\n2\t116\t1\n2\t123\t6\n2\t125\t8\n2\t126\t8\n2\t127\t10\n2\t128\t9\n2\t131\t3\n3\t18\t3\n3\t23\t8\n3\t24\t9\n3\t26\t6\n3\t27\t4\n3\t33\t3\n3\t39\t4\n3\t41\t2\n3\t42\t2\n3\t43\t3\n3\t115\t3\n3\t117\t4\n3\t118\t5\n3\t119\t6\n3\t130\t5\n3\t131\t4\n3\t132\t2\n3\t137\t3\n3\t139\t3\n3\t141\t2\n3\t143\t1\n3\t144\t1\n4\t30\t2\n4\t40\t1\n4\t118\t2\n4\t127\t3\n4\t130\t3\n4\t133\t4\n4\t134\t1\n4\t137\t2\n4\t139\t2\n4\t140\t1\n6\t15\t7\n6\t19\t6\n6\t21\t9\n6\t23\t3\n6\t24\t3\n6\t25\t3\n6\t26\t3\n6\t27\t3\n6\t40\t9\n6\t42\t7\n6\t47\t8\n6\t120\t8\n6\t123\t6\n6\t124\t6\n6\t125\t6\n6\t126\t6\n6\t127\t6\n6\t129\t6\n6\t131\t8\n6\t132\t9\n6\t135\t9\n6\t147\t3\n7\t24\t4\n7\t31\t3\n7\t32\t2\n7\t35\t3\n7\t36\t4\n7\t37\t4\n7\t38\t2\n7\t41\t3\n7\t45\t2\n7\t46\t2\n7\t47\t3\n7\t48\t4\n7\t115\t7\n7\t116\t8\n7\t117\t8\n7\t120\t9\n7\t121\t7\n7\t122\t4\n7\t123\t3\n7\t124\t4\n7\t138\t3\n7\t139\t5\n7\t142\t4\n7\t143\t2\n7\t144\t1\n7\t146\t4\n7\t148\t5\n8\t18\t2\n8\t23\t3\n8\t25\t3\n8\t26\t1\n8\t28\t4\n8\t113\t1\n8\t116\t1\n8\t120\t2\n8\t125\t1\n8\t126\t1\n8\t127\t1\n8\t131\t2\n8\t132\t5\n8\t148\t2\n9\t18\t2\n9\t23\t2\n9\t24\t2\n9\t26\t3\n9\t27\t3\n9\t28\t3\n9\t29\t3\n9\t32\t4\n9\t33\t7\n9\t34\t2\n9\t35\t5\n9\t37\t7\n9\t41\t1\n9\t42\t1\n9\t44\t1\n9\t46\t5\n9\t114\t2\n9\t116\t5\n9\t117\t5\n9\t118\t6\n9\t119\t3\n9\t120\t1\n9\t123\t2\n9\t128\t5\n9\t130\t1\n9\t133\t1\n9\t135\t2\n9\t140\t1\n9\t141\t1\n9\t142\t1\n9\t144\t2\n9\t147\t2\n10\t23\t5\n10\t25\t3\n10\t26\t3\n10\t40\t2\n10\t46\t1\n10\t48\t2\n10\t113\t7\n10\t116\t9\n10\t117\t9\n10\t120\t8\n10\t123\t4\n10\t127\t6\n10\t128\t8\n10\t132\t3\n11\t13\t1\n11\t17\t2\n11\t19\t1\n11\t23\t2\n11\t26\t1\n11\t27\t3\n11\t32\t1\n11\t46\t1\n11\t117\t3\n11\t125\t1\n11\t126\t2\n11\t127\t2\n11\t128\t3\n11\t131\t4\n12\t19\t6\n12\t24\t8\n12\t26\t3\n12\t27\t1\n12\t28\t5\n12\t34\t2\n12\t38\t2\n12\t40\t4\n12\t42\t3\n12\t43\t1\n12\t113\t4\n12\t116\t2\n12\t117\t2\n12\t118\t1\n12\t119\t3\n12\t121\t3\n12\t125\t3\n12\t126\t1\n12\t130\t9\n12\t132\t6\n12\t133\t7\n12\t134\t4\n12\t135\t1\n12\t137\t3\n12\t138\t4\n12\t140\t7\n12\t142\t3\n12\t143\t2\n12\t146\t4\n13\t16\t6\n13\t25\t4\n13\t28\t7\n13\t36\t5\n13\t39\t3\n13\t40\t4\n13\t44\t1\n13\t47\t1\n13\t113\t4\n13\t114\t1\n13\t115\t1\n13\t116\t1\n13\t118\t1\n13\t120\t4\n13\t133\t4\n13\t134\t3\n13\t135\t3\n13\t138\t1\n13\t139\t5\n13\t143\t2\n13\t144\t1\n13\t146\t5\n14\t17\t5\n14\t20\t4\n14\t30\t5\n14\t46\t1\n14\t117\t1\n14\t126\t2\n14\t128\t5\n14\t130\t3\n14\t132\t1\n14\t140\t3\n14\t148\t2\n15\t20\t4\n15\t25\t4\n15\t26\t3\n15\t30\t4\n15\t35\t3\n15\t37\t2\n15\t38\t2\n15\t40\t4\n15\t43\t1\n15\t46\t2\n15\t48\t3\n15\t114\t2\n15\t116\t4\n15\t117\t2\n15\t118\t3\n15\t119\t4\n15\t123\t3\n15\t124\t4\n15\t125\t4\n15\t128\t4\n15\t130\t5\n15\t131\t4\n15\t132\t3\n15\t134\t3\n15\t135\t4\n15\t137\t2\n15\t141\t1\n15\t148\t2\n17\t15\t4\n17\t23\t4\n17\t31\t3\n17\t33\t6\n17\t34\t3\n17\t38\t2\n17\t40\t3\n17\t42\t2\n17\t45\t2\n17\t47\t2\n17\t48\t4\n17\t122\t1\n17\t127\t3\n17\t128\t6\n17\t132\t2\n17\t134\t2\n17\t140\t7\n17\t141\t1\n17\t142\t3\n17\t145\t2\n17\t147\t4\n17\t148\t5\n18\t18\t2\n18\t23\t1\n18\t35\t1\n18\t36\t5\n18\t37\t6\n18\t40\t5\n18\t41\t2\n18\t42\t3\n18\t43\t2\n18\t45\t2\n18\t113\t3\n18\t119\t6\n18\t123\t4\n18\t126\t3\n18\t127\t4\n18\t129\t2\n18\t130\t5\n18\t132\t4\n18\t133\t4\n18\t134\t4\n18\t135\t5\n18\t137\t2\n18\t139\t2\n18\t140\t2\n18\t142\t1\n18\t146\t1\n19\t33\t1\n19\t35\t1\n19\t40\t1\n19\t118\t1\n19\t124\t1\n19\t130\t1\n19\t133\t1\n20\t23\t2\n20\t24\t4\n20\t26\t3\n20\t27\t3\n20\t28\t4\n20\t33\t4\n20\t35\t3\n20\t39\t10\n20\t40\t5\n20\t41\t2\n20\t43\t3\n20\t44\t1\n20\t113\t5\n20\t114\t4\n20\t115\t2\n20\t117\t5\n20\t118\t5\n20\t120\t5\n20\t124\t3\n20\t128\t4\n20\t132\t2\n20\t133\t4\n20\t135\t2\n22\t15\t1\n22\t18\t2\n22\t20\t1\n22\t21\t1\n22\t22\t1\n22\t25\t3\n22\t26\t2\n22\t30\t3\n22\t32\t1\n22\t34\t2\n22\t37\t5\n22\t40\t7\n22\t45\t2\n22\t47\t9\n22\t114\t4\n22\t115\t2\n22\t119\t5\n22\t120\t5\n22\t123\t1\n22\t124\t5\n22\t125\t5\n22\t129\t4\n22\t130\t6\n22\t131\t4\n22\t133\t4\n22\t134\t1\n22\t135\t7\n22\t141\t1\n22\t144\t1\n23\t13\t1\n23\t16\t2\n23\t18\t5\n23\t20\t4\n23\t26\t1\n23\t27\t2\n23\t30\t5\n23\t33\t4\n23\t36\t2\n23\t37\t2\n23\t40\t5\n23\t41\t2\n23\t43\t2\n23\t113\t4\n23\t120\t3\n23\t123\t2\n23\t128\t2\n23\t129\t3\n23\t133\t2\n23\t139\t1\n23\t141\t1\n23\t144\t1\n23\t146\t3\n23\t147\t3\n23\t148\t3\n26\t13\t1\n26\t23\t5\n26\t24\t6\n26\t28\t5\n26\t31\t5\n26\t33\t4\n26\t35\t4\n26\t39\t7\n26\t41\t5\n26\t42\t5\n26\t44\t2\n26\t45\t7\n26\t46\t3\n26\t48\t5\n26\t114\t3\n26\t116\t2\n26\t118\t4\n26\t121\t3\n26\t128\t5\n26\t130\t7\n26\t134\t3\n26\t135\t5\n26\t137\t3\n26\t139\t2\n26\t140\t4\n26\t141\t3\n26\t142\t2\n26\t146\t3\n26\t148\t5\n27\t14\t4\n27\t15\t6\n27\t23\t3\n27\t25\t8\n27\t29\t2\n27\t30\t5\n27\t31\t6\n27\t33\t5\n27\t34\t5\n27\t36\t5\n27\t38\t4\n27\t40\t8\n27\t44\t2\n27\t45\t3\n27\t48\t8\n27\t113\t2\n27\t116\t3\n27\t117\t2\n27\t120\t3\n27\t124\t2\n27\t126\t3\n27\t128\t3\n27\t129\t3\n27\t130\t4\n27\t131\t3\n27\t133\t3\n27\t135\t2\n27\t139\t1\n27\t142\t1\n27\t144\t2\n27\t148\t1\n28\t15\t1\n28\t21\t1\n28\t23\t3\n28\t26\t1\n28\t27\t3\n28\t34\t1\n28\t45\t1\n28\t116\t2\n28\t117\t2\n28\t119\t3\n28\t130\t2\n28\t133\t1\n28\t145\t1\n28\t148\t2\n32\t13\t4\n32\t14\t2\n32\t17\t2\n32\t18\t1\n32\t22\t3\n32\t27\t2\n32\t32\t2\n32\t36\t3\n32\t41\t8\n32\t44\t1\n32\t47\t3\n32\t113\t2\n32\t114\t5\n32\t119\t6\n32\t123\t4\n32\t124\t4\n32\t125\t3\n32\t126\t4\n32\t127\t5\n32\t134\t4\n32\t135\t1\n32\t140\t3\n32\t142\t2\n32\t143\t1\n33\t15\t1\n33\t16\t3\n33\t18\t3\n33\t22\t1\n33\t23\t2\n33\t24\t2\n33\t28\t2\n33\t31\t3\n33\t32\t1\n33\t39\t5\n33\t40\t4\n33\t43\t2\n33\t45\t1\n33\t46\t2\n33\t47\t5\n33\t114\t1\n33\t117\t2\n33\t118\t3\n33\t122\t2\n33\t123\t6\n33\t124\t7\n33\t126\t4\n33\t130\t3\n33\t133\t2\n33\t135\t2\n33\t137\t3\n33\t139\t2\n33\t148\t1\n34\t22\t2\n34\t27\t4\n34\t28\t3\n34\t30\t3\n34\t31\t3\n34\t32\t3\n34\t36\t2\n34\t37\t3\n34\t41\t3\n34\t42\t2\n34\t43\t2\n34\t44\t1\n34\t45\t3\n34\t47\t3\n34\t114\t10\n34\t115\t6\n34\t117\t8\n34\t118\t9\n34\t119\t10\n34\t120\t7\n34\t122\t6\n34\t131\t6\n34\t137\t4\n34\t138\t3\n34\t139\t5\n34\t140\t4\n34\t141\t5\n34\t142\t2\n34\t145\t3\n34\t146\t6\n36\t18\t9\n36\t19\t12\n36\t23\t4\n36\t24\t6\n36\t26\t4\n36\t30\t3\n36\t35\t3\n36\t36\t4\n36\t37\t5\n36\t38\t5\n36\t39\t5\n36\t42\t3\n36\t43\t3\n36\t44\t2\n36\t48\t5\n36\t113\t4\n36\t121\t3\n36\t133\t8\n36\t137\t1\n36\t138\t2\n36\t143\t1\n36\t144\t1\n37\t26\t2\n37\t28\t3\n37\t30\t5\n37\t31\t2\n37\t34\t2\n37\t42\t1\n37\t46\t1\n37\t47\t1\n37\t124\t4\n37\t125\t1\n37\t128\t2\n37\t132\t1\n37\t133\t2\n37\t139\t1\n37\t148\t2\n38\t13\t6\n38\t15\t5\n38\t16\t7\n38\t18\t6\n38\t19\t12\n38\t23\t10\n38\t28\t12\n38\t31\t11\n38\t38\t6\n38\t39\t5\n38\t42\t10\n38\t44\t2\n38\t46\t5\n40\t27\t1\n40\t28\t2\n40\t32\t1\n40\t37\t1\n40\t40\t1\n40\t41\t1\n40\t114\t1\n40\t115\t1\n40\t119\t3\n40\t127\t2\n40\t133\t2\n40\t137\t1\n40\t140\t1\n40\t141\t3\n41\t13\t2\n41\t14\t2\n41\t16\t2\n41\t18\t3\n41\t26\t3\n41\t27\t5\n41\t28\t4\n41\t29\t6\n41\t30\t5\n41\t34\t2\n41\t35\t5\n41\t38\t1\n41\t40\t1\n41\t42\t2\n41\t44\t1\n41\t45\t2\n41\t46\t1\n41\t48\t3\n41\t114\t3\n41\t115\t3\n41\t116\t4\n41\t117\t2\n41\t121\t1\n41\t131\t3\n41\t132\t2\n41\t133\t2\n41\t135\t3\n41\t139\t6\n41\t141\t4\n41\t145\t3\n41\t146\t2\n41\t147\t4\n42\t14\t1\n42\t15\t1\n42\t16\t5\n42\t19\t7\n42\t24\t5\n42\t26\t4\n42\t28\t8\n42\t29\t2\n42\t31\t3\n42\t32\t1\n42\t34\t2\n42\t35\t6\n42\t36\t4\n42\t37\t4\n42\t38\t3\n42\t39\t5\n42\t40\t2\n42\t42\t2\n42\t43\t1\n42\t44\t1\n42\t45\t4\n42\t47\t5\n42\t114\t3\n42\t116\t4\n42\t117\t4\n42\t118\t6\n42\t120\t4\n42\t121\t2\n42\t123\t2\n42\t126\t3\n42\t129\t2\n42\t131\t4\n42\t133\t6\n42\t134\t4\n42\t136\t2\n42\t137\t4\n42\t139\t4\n42\t141\t5\n42\t145\t4\n42\t146\t3\n42\t147\t2\n42\t148\t4\n44\t14\t1\n44\t16\t2\n44\t19\t8\n44\t24\t3\n44\t27\t1\n44\t31\t2\n44\t33\t1\n44\t34\t1\n44\t35\t2\n44\t37\t3\n44\t38\t1\n44\t40\t2\n44\t42\t1\n44\t48\t2\n44\t125\t1\n44\t127\t1\n44\t128\t1\n44\t130\t3\n44\t140\t1\n44\t147\t1\n44\t148\t2\n49\t19\t2\n49\t24\t1\n49\t45\t1\n49\t48\t1\n49\t125\t1\n49\t127\t2\n49\t130\t1\n49\t132\t1\n49\t139\t1\n49\t140\t2\n49\t148\t1\n53\t24\t1\n53\t29\t1\n53\t30\t1\n53\t36\t2\n53\t37\t1\n53\t116\t1\n53\t142\t1\n55\t24\t1\n55\t28\t1\n55\t30\t1\n55\t48\t1\n55\t119\t2\n55\t132\t1\n55\t139\t1\n55\t147\t1\n58\t24\t2\n58\t37\t2\n58\t40\t2\n58\t48\t1\n58\t116\t1\n58\t121\t1\n58\t128\t1\n58\t137\t1\n60\t45\t1\n60\t47\t2\n60\t114\t1\n60\t118\t2\n60\t120\t1\n60\t125\t2\n60\t134\t1\n60\t148\t1\n62\t21\t2\n62\t23\t1\n62\t28\t2\n62\t36\t3\n62\t41\t1\n62\t45\t1\n62\t114\t2\n62\t122\t1\n62\t127\t1\n62\t128\t1\n62\t134\t1\n62\t148\t1\n63\t25\t1\n63\t45\t1\n63\t120\t1\n63\t121\t1\n64\t13\t1\n64\t24\t1\n64\t34\t1\n64\t38\t1\n64\t45\t1\n64\t115\t1\n64\t117\t2\n64\t122\t1\n64\t129\t1\n64\t133\t2\n64\t134\t1\n64\t145\t1\n66\t128\t1\n68\t16\t1\n68\t30\t1\n68\t34\t1\n68\t48\t1\n68\t115\t1\n68\t118\t1\n68\t148\t2\n71\t23\t1\n71\t26\t1\n71\t36\t1\n71\t39\t1\n71\t48\t2\n71\t117\t1\n71\t118\t1\n71\t128\t3\n71\t131\t1\n71\t133\t1\n71\t135\t1\n71\t147\t1\n72\t15\t1\n72\t34\t1\n72\t125\t1\n72\t128\t1\n72\t133\t1\n72\t140\t1\n72\t148\t1\n75\t13\t1\n75\t15\t1\n75\t16\t2\n75\t23\t1\n75\t41\t1\n75\t126\t1\n77\t14\t1\n77\t31\t1\n77\t40\t1\n77\t48\t1\n77\t125\t1\n77\t146\t1\n79\t35\t1\n79\t37\t1\n79\t38\t1\n79\t44\t1\n79\t46\t1\n79\t113\t1\n79\t120\t1\n79\t126\t1\n79\t134\t1\n79\t138\t1\n79\t140\t1\n81\t25\t2\n81\t119\t2\n81\t123\t1\n81\t128\t1\n85\t20\t1\n85\t28\t1\n85\t31\t1\n85\t35\t1\n85\t37\t2\n85\t46\t1\n85\t119\t2\n85\t120\t2\n85\t124\t1\n85\t126\t1\n85\t130\t2\n86\t41\t1\n86\t47\t1\n86\t113\t2\n86\t114\t2\n86\t116\t2\n86\t117\t1\n86\t118\t3\n86\t124\t1\n86\t128\t1\n86\t130\t1\n91\t24\t3\n91\t30\t4\n91\t31\t1\n91\t34\t1\n91\t40\t2\n91\t42\t1\n91\t48\t1\n91\t123\t1\n91\t127\t1\n91\t130\t1\n91\t133\t2\n91\t134\t1\n91\t148\t1\n92\t121\t1\n92\t128\t1\n95\t23\t1\n95\t24\t1\n95\t30\t1\n95\t118\t1\n96\t23\t1\n96\t37\t1\n96\t113\t1\n96\t114\t1\n96\t120\t1\n96\t121\t1\n96\t122\t1\n96\t124\t1\n96\t127\t1\n96\t130\t1\n96\t137\t1\n96\t139\t1\n96\t148\t1\n97\t33\t1\n97\t39\t1\n97\t47\t2\n97\t121\t1\n97\t126\t1\n97\t131\t1\n97\t133\t1\n100\t24\t2\n100\t25\t1\n100\t33\t2\n100\t41\t1\n100\t45\t2\n100\t114\t2\n100\t125\t1\n100\t126\t1\n100\t127\t1\n100\t134\t2\n200\t20\t1\n200\t33\t2\n200\t46\t1\n200\t114\t2\n200\t117\t2\n200\t119\t6\n200\t128\t5\n200\t130\t3\n200\t146\t2\n200\t148\t3\n300\t13\t1\n300\t14\t1\n300\t23\t1\n300\t24\t2\n300\t25\t2\n300\t26\t1\n300\t27\t1\n300\t28\t3\n300\t30\t4\n300\t31\t2\n300\t33\t4\n300\t34\t3\n300\t40\t4\n300\t48\t2\n300\t120\t1\n300\t128\t1\n300\t129\t1\n300\t130\t2\n300\t131\t1\n300\t135\t1\n300\t137\t1\n300\t141\t1\n300\t147\t1\n400\t20\t2\n400\t23\t6\n400\t25\t11\n400\t27\t3\n400\t28\t4\n400\t30\t4\n400\t34\t2\n400\t35\t3\n400\t38\t3\n400\t40\t6\n400\t41\t4\n400\t42\t5\n400\t44\t4\n400\t48\t9\n400\t113\t1\n400\t121\t2\n400\t134\t2\n400\t135\t7\n400\t137\t1\n400\t139\t2\n400\t143\t1\n400\t145\t1\n400\t146\t2\n500\t18\t5\n500\t19\t7\n500\t24\t6\n500\t25\t3\n500\t26\t5\n500\t27\t4\n500\t29\t3\n500\t32\t3\n500\t37\t6\n500\t38\t1\n500\t40\t6\n500\t42\t2\n500\t48\t6\n500\t113\t4\n500\t117\t2\n500\t120\t4\n500\t121\t4\n500\t127\t3\n500\t132\t2\n500\t134\t4\n500\t135\t5\n500\t139\t2\n500\t140\t2\n500\t145\t2\n500\t148\t4\n600\t15\t6\n600\t16\t4\n600\t19\t7\n600\t23\t3\n600\t29\t4\n600\t32\t4\n600\t33\t5\n600\t34\t2\n600\t35\t3\n600\t37\t4\n600\t38\t2\n600\t41\t4\n600\t46\t3\n600\t48\t5\n600\t113\t2\n600\t130\t3\n600\t131\t2\n600\t132\t2\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_-1902052668",
+      "id": "20220622-214018_1574835637",
+      "dateCreated": "2022-04-25T19:28:59+0000",
+      "dateStarted": "2022-08-02T14:29:51+0000",
+      "dateFinished": "2022-08-02T14:29:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Compute cross tabulation using min, max, mean, and count for each customer and product ",
+      "text": "%r\n \nMAX_DF <- summarise(group_by(SALES_DF, CUST_ID, PROD_ID), \"max(AMOUNT_SOLD)\" = max(AMOUNT_SOLD))\nMIN_DF <- summarise(group_by(SALES_DF, CUST_ID, PROD_ID), \"min(AMOUNT_SOLD)\" = min(AMOUNT_SOLD))\nMEAN_DF <-summarise(group_by(SALES_DF, CUST_ID, PROD_ID), \"mean(AMOUNT_SOLD)\" = mean(AMOUNT_SOLD))\nCOUNT_DF <- summarise(group_by(SALES_DF, CUST_ID, PROD_ID), \"count(AMOUNT_SOLD)\" = n())",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:52+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_-885086045",
+      "id": "20220622-214018_1062241334",
+      "dateCreated": "2022-04-25T19:29:02+0000",
+      "dateStarted": "2022-08-02T14:29:53+0000",
+      "dateFinished": "2022-08-02T14:29:54+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "text": "%r\n\nhead(MAX_DF)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:54+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 6 x 3</caption>\n<thead>\n\t<tr><th scope=col>CUST_ID</th><th scope=col>PROD_ID</th><th scope=col>max.AMOUNT_SOLD.</th></tr>\n\t<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>2</td><td>14</td><td>1259.99</td></tr>\n\t<tr><td>2</td><td>18</td><td>1702.99</td></tr>\n\t<tr><td>2</td><td>23</td><td>  23.75</td></tr>\n\t<tr><td>2</td><td>26</td><td> 167.99</td></tr>\n\t<tr><td>2</td><td>31</td><td>   9.71</td></tr>\n\t<tr><td>2</td><td>32</td><td>  73.43</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656519289513_97474606",
+      "id": "paragraph_1656519289513_97474606",
+      "dateCreated": "2022-06-29T16:14:49+0000",
+      "dateStarted": "2022-08-02T14:29:54+0000",
+      "dateFinished": "2022-08-02T14:29:55+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "text": "%r\n\nhead(MIN_DF)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:55+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 6 x 3</caption>\n<thead>\n\t<tr><th scope=col>CUST_ID</th><th scope=col>PROD_ID</th><th scope=col>min.AMOUNT_SOLD.</th></tr>\n\t<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>2</td><td>14</td><td>1239.99</td></tr>\n\t<tr><td>2</td><td>18</td><td>1204.26</td></tr>\n\t<tr><td>2</td><td>23</td><td>  23.75</td></tr>\n\t<tr><td>2</td><td>26</td><td> 167.24</td></tr>\n\t<tr><td>2</td><td>31</td><td>   9.71</td></tr>\n\t<tr><td>2</td><td>32</td><td>  73.43</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656519349976_1873097989",
+      "id": "paragraph_1656519349976_1873097989",
+      "dateCreated": "2022-06-29T16:15:49+0000",
+      "dateStarted": "2022-08-02T14:29:55+0000",
+      "dateFinished": "2022-08-02T14:29:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "text": "%r\n\nhead(MEAN_DF)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 6 x 3</caption>\n<thead>\n\t<tr><th scope=col>CUST_ID</th><th scope=col>PROD_ID</th><th scope=col>mean.AMOUNT_SOLD.</th></tr>\n\t<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>2</td><td>14</td><td>1253.323</td></tr>\n\t<tr><td>2</td><td>18</td><td>1498.164</td></tr>\n\t<tr><td>2</td><td>23</td><td>  23.750</td></tr>\n\t<tr><td>2</td><td>26</td><td> 167.615</td></tr>\n\t<tr><td>2</td><td>31</td><td>   9.710</td></tr>\n\t<tr><td>2</td><td>32</td><td>  73.430</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656519356122_604203478",
+      "id": "paragraph_1656519356122_604203478",
+      "dateCreated": "2022-06-29T16:15:56+0000",
+      "dateStarted": "2022-08-02T14:29:57+0000",
+      "dateFinished": "2022-08-02T14:29:57+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "text": "%r\n\nhead(COUNT_DF)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<table class=\"dataframe\">\n<caption>A data.frame: 6 x 3</caption>\n<thead>\n\t<tr><th scope=col>CUST_ID</th><th scope=col>PROD_ID</th><th scope=col>count.AMOUNT_SOLD.</th></tr>\n\t<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n</thead>\n<tbody>\n\t<tr><td>2</td><td>14</td><td>12</td></tr>\n\t<tr><td>2</td><td>18</td><td>14</td></tr>\n\t<tr><td>2</td><td>23</td><td> 4</td></tr>\n\t<tr><td>2</td><td>26</td><td> 4</td></tr>\n\t<tr><td>2</td><td>31</td><td> 8</td></tr>\n\t<tr><td>2</td><td>32</td><td> 1</td></tr>\n</tbody>\n</table>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656519364523_40546861",
+      "id": "paragraph_1656519364523_40546861",
+      "dateCreated": "2022-06-29T16:16:04+0000",
+      "dateStarted": "2022-08-02T14:29:58+0000",
+      "dateFinished": "2022-08-02T14:29:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "title": "Join all results",
+      "text": "%r\n\nAGG_DF <- merge(MAX_DF, MIN_DF)\nAGG_DF <- merge(AGG_DF, MEAN_DF)\nAGG_DF <- merge(AGG_DF, COUNT_DF)",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:29:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_2109991424",
+      "id": "20220622-214018_379322047",
+      "dateCreated": "2022-04-25T19:29:02+0000",
+      "dateStarted": "2022-08-02T14:29:59+0000",
+      "dateFinished": "2022-08-02T14:30:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "View aggregated data",
+      "text": "%r\n\nz.show(round(AGG_DF, 2))",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:30:06+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0,
+                          "direction": "asc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PROD_ID1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "max.AMOUNT_SOLD.2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "min.AMOUNT_SOLD.3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "mean.AMOUNT_SOLD.4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "count.AMOUNT_SOLD.5",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PROD_ID": "number",
+                      "max.AMOUNT_SOLD.": "number",
+                      "min.AMOUNT_SOLD.": "number",
+                      "mean.AMOUNT_SOLD.": "number",
+                      "count.AMOUNT_SOLD.": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PROD_ID": "number",
+                      "max.AMOUNT_SOLD.": "number",
+                      "min.AMOUNT_SOLD.": "number",
+                      "mean.AMOUNT_SOLD.": "number",
+                      "count.AMOUNT_SOLD.": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPROD_ID\tmax.AMOUNT_SOLD.\tmin.AMOUNT_SOLD.\tmean.AMOUNT_SOLD.\tcount.AMOUNT_SOLD.\n32\t118\t9.87\t7\t7.72\t4\n8343\t118\t17.46\t7\t13.94\t3\n7700\t118\t17.48\t7\t15.75\t8\n2189\t120\t8\t8\t8\t1\n4732\t120\t8\t8\t8\t1\n4804\t120\t8\t8\t8\t1\n5473\t120\t8\t8\t8\t1\n5526\t120\t8\t8\t8\t1\n7649\t120\t8\t8\t8\t1\n8201\t120\t8\t8\t8\t1\n19207\t120\t8\t8\t8\t1\n23170\t120\t8\t8\t8\t1\n9475\t120\t8\t8\t8\t2\n11805\t120\t8\t8\t8\t2\n4521\t144\t8.11\t8\t8.05\t4\n1543\t120\t8.14\t8\t8.07\t2\n8392\t144\t8.14\t8\t8.07\t4\n248\t120\t8.14\t8\t8.11\t4\n1256\t120\t8.14\t8\t8.09\t5\n2403\t120\t8.86\t8\t8.2\t6\n1006\t120\t54.29\t8\t23.68\t3\n7929\t120\t54.55\t8\t31.27\t2\n1290\t120\t54.55\t8\t36.1\t5\n8538\t120\t1148.39\t8\t111.75\t11\n3103\t120\t9\t9\t9\t1\n4397\t120\t9.09\t9\t9.04\t2\n1637\t120\t9.09\t9\t9.06\t3\n1562\t120\t9.22\t9\t9.06\t5\n819\t120\t9.22\t9\t9.13\t7\n3559\t120\t9.22\t9\t9.06\t13\n707\t146\t11\t11\t11\t1\n9225\t146\t13.33\t11\t12.33\t4\n9286\t146\t15.24\t11\t12.6\t3\n3451\t116\t13\t13\t13\t1\n4666\t116\t13\t13\t13\t1\n6487\t116\t13\t13\t13\t1\n7202\t116\t13\t13\t13\t1\n12461\t116\t13\t13\t13\t1\n16295\t116\t13\t13\t13\t1\n18987\t116\t13\t13\t13\t1\n49833\t116\t13\t13\t13\t1\n5221\t116\t13\t13\t13\t2\n6192\t116\t13\t13\t13\t2\n7895\t116\t13\t13\t13\t2\n958\t116\t13\t13\t13\t5\n4965\t116\t13.48\t13\t13.24\t2\n4682\t116\t13.48\t13\t13.32\t3\n9295\t116\t13.48\t13\t13.12\t4\n18\t116\t13.48\t13\t13.19\t5\n5018\t116\t13.48\t13\t13.38\t5\n7784\t116\t13.48\t13\t13.27\t7\n560\t125\t16\t16\t16\t1\n11812\t125\t16\t16\t16\t2\n3743\t125\t16\t16\t16\t3\n2652\t125\t16.09\t16\t16.05\t2\n10090\t125\t16.09\t16\t16.04\t5\n33720\t125\t16.17\t16\t16.1\t8\n3312\t125\t16.17\t16\t16.08\t8\n2644\t124\t18.37\t18\t18.18\t2\n3707\t124\t18.56\t18\t18.28\t2\n12206\t124\t18.56\t18\t18.28\t2\n817\t124\t18.56\t18\t18.31\t3\n1054\t124\t18.56\t18\t18.31\t3\n5530\t124\t18.56\t18\t18.31\t3\n7636\t124\t18.56\t18\t18.31\t3\n14814\t124\t18.56\t18\t18.31\t3\n10006\t124\t18.56\t18\t18.27\t4\n2699\t124\t18.77\t18\t18.39\t2\n538\t139\t20\t20\t20\t1\n510\t139\t20.2\t20\t20.1\t2\n5233\t139\t20.2\t20\t20.1\t2\n16247\t139\t20.2\t20\t20.1\t2\n7421\t139\t20.2\t20\t20.13\t3\n9978\t139\t20.2\t20\t20.13\t3\n27323\t139\t20.2\t20\t20.13\t3\n12447\t139\t20.42\t20\t20.28\t3\n2491\t139\t20.42\t20\t20.21\t3\n1822\t139\t20.42\t20\t20.21\t3\n3006\t139\t20.42\t20\t20.21\t5\n5126\t139\t20.42\t20\t20.21\t5\n4597\t139\t20.91\t20\t20.48\t6\n482\t139\t22.47\t20\t21.65\t3\n4729\t23\t24.79\t22\t23.34\t6\n50840\t23\t23\t23\t23\t1\n10868\t23\t23.03\t23\t23.02\t2\n1915\t126\t26\t26\t26\t1\n2026\t126\t29.52\t26\t27.76\t2\n3112\t126\t29.55\t26\t27.18\t3\n33560\t126\t29.95\t26\t28.76\t7\n2616\t126\t29.97\t26\t27.45\t3\n6752\t126\t30.57\t26\t28.38\t5\n11136\t126\t31.83\t26\t29.83\t6\n1862\t133\t29\t29\t29\t1\n2268\t133\t29\t29\t29\t1\n3873\t133\t29\t29\t29\t1\n4020\t133\t29\t29\t29\t1\n3309\t133\t29\t29\t29\t2\n5227\t133\t34\t29\t31.93\t3\n2789\t133\t32.83\t29\t30.91\t2\n14718\t133\t32.83\t29\t32.28\t7\n3985\t133\t32.99\t29\t31\t2\n2805\t133\t33.25\t29\t32.07\t5\n6828\t133\t33.28\t29\t30.22\t4\n1430\t133\t33.28\t29\t32.42\t5\n7519\t133\t33.3\t29\t30.78\t5\n3363\t133\t33.4\t29\t32.21\t4\n1188\t133\t33.4\t29\t31.66\t5\n1159\t133\t33.75\t29\t32.42\t5\n4190\t133\t33.75\t29\t32.42\t5\n6252\t133\t33.97\t29\t31.48\t2\n10683\t133\t33.97\t29\t32.55\t5\n2709\t133\t34.07\t29\t31.97\t5\n8174\t133\t34.07\t29\t32.71\t5\n8138\t133\t34.07\t29\t31.29\t6\n6231\t133\t34.28\t29\t32.25\t3\n3069\t133\t34.28\t29\t31.47\t4\n3458\t133\t34.39\t29\t32.49\t3\n36261\t133\t34.5\t29\t32.37\t3\n39974\t133\t34.5\t29\t33.04\t5\n362\t133\t34.85\t29\t32.34\t6\n9730\t133\t39.05\t29\t33.82\t6\n7014\t126\t31.86\t30\t30.96\t4\n450\t133\t34\t34\t34\t1\n10267\t133\t34\t34\t34\t1\n2375\t127\t47\t47\t47\t1\n23565\t127\t47\t47\t47\t2\n1746\t127\t47\t47\t47\t3\n2275\t127\t47.26\t47\t47.09\t3\n553\t127\t47.26\t47\t47.2\t4\n4997\t127\t47.66\t47\t47.33\t2\n6184\t127\t47.66\t47\t47.44\t3\n31669\t127\t51.39\t47\t49.2\t2\n16280\t127\t51.79\t47\t48.6\t3\n2262\t127\t52\t52\t52\t1\n4693\t120\t8\t6.42\t7.09\t6\n10932\t120\t7.3\t6.42\t6.88\t4\n12149\t120\t7.3\t6.42\t6.79\t5\n26448\t120\t8\t6.49\t7.59\t4\n6149\t120\t7.3\t6.49\t6.91\t6\n10792\t120\t7.3\t6.49\t6.96\t7\n5948\t120\t1113.27\t6.49\t449.61\t5\n11489\t120\t1113.27\t6.49\t626.84\t7\n4687\t120\t8\t6.54\t7.46\t6\n300\t120\t6.54\t6.54\t6.54\t1\n10312\t120\t6.54\t6.54\t6.54\t1\n3153\t119\t6.54\t6.54\t6.54\t2\n7489\t120\t6.54\t6.54\t6.54\t2\n492\t120\t6.54\t6.54\t6.54\t3\n10247\t120\t7.04\t6.54\t6.87\t3\n14008\t119\t7.29\t6.54\t7.11\t5\n12147\t119\t7.31\t6.54\t6.92\t2\n808\t119\t7.31\t6.54\t7.05\t3\n5772\t119\t7.34\t6.54\t7.1\t7\n2721\t119\t7.36\t6.54\t6.95\t2\n10959\t119\t7.36\t6.54\t7.14\t4\n753\t120\t7.37\t6.54\t6.75\t4\n5102\t119\t7.4\t6.54\t7.25\t10\n3655\t119\t7.44\t6.54\t7.06\t5\n4927\t119\t7.44\t6.54\t7.11\t9\n6794\t119\t7.44\t6.54\t7.28\t10\n36261\t119\t7.46\t6.54\t7.1\t5\n11691\t119\t7.46\t6.54\t7.24\t5\n4053\t119\t7.46\t6.54\t7.18\t7\n12111\t119\t7.46\t6.54\t7.2\t8\n12773\t119\t7.47\t6.54\t7.02\t11\n4683\t119\t7.5\t6.54\t6.95\t6\n1407\t119\t7.5\t6.54\t7.03\t6\n5550\t119\t7.51\t6.54\t7.18\t6\n2633\t119\t7.58\t6.54\t7.07\t3\n3929\t119\t7.58\t6.54\t7.36\t5\n5005\t119\t7.58\t6.54\t7.21\t8\n6614\t119\t7.58\t6.54\t7.22\t8\n12633\t119\t7.58\t6.54\t7.2\t10\n3303\t119\t7.58\t6.54\t7.23\t11\n5329\t120\t7.72\t6.54\t7.3\t3\n2645\t119\t7.75\t6.54\t7.24\t4\n6789\t119\t7.75\t6.54\t7.16\t5\n9701\t119\t7.86\t6.54\t7.5\t4\n8189\t119\t7.86\t6.54\t7.43\t5\n9492\t119\t7.86\t6.54\t7.46\t6\n1870\t119\t7.86\t6.54\t7.26\t7\n3363\t119\t7.86\t6.54\t7.35\t9\n7014\t119\t7.86\t6.54\t7.49\t12\n9727\t120\t7.89\t6.54\t6.99\t3\n4749\t120\t7.89\t6.54\t7.16\t4\n1575\t120\t8.14\t6.54\t7.34\t2\n6553\t120\t8.14\t6.54\t7.57\t3\n11073\t120\t8.14\t6.54\t7.47\t3\n712\t120\t8.14\t6.54\t7.7\t6\n7053\t120\t8.14\t6.54\t7.69\t7\n13466\t119\t8.25\t6.54\t7.23\t7\n6611\t119\t8.37\t6.54\t7.28\t6\n6645\t119\t8.37\t6.54\t7.24\t7\n3567\t119\t8.37\t6.54\t7.37\t7\n5050\t119\t8.37\t6.54\t7.45\t7\n10679\t119\t8.37\t6.54\t7.17\t7\n118\t119\t8.42\t6.54\t7.48\t2\n4099\t119\t8.48\t6.54\t7.8\t3\n4984\t119\t8.48\t6.54\t7.38\t8\n3871\t119\t8.48\t6.54\t7.28\t8\n11073\t119\t8.48\t6.54\t7.42\t10\n8485\t119\t8.52\t6.54\t7.39\t3\n10491\t119\t8.52\t6.54\t7.64\t4\n11854\t120\t8.74\t6.54\t7.48\t8\n10417\t120\t8.74\t6.54\t7.67\t9\n4206\t120\t8.86\t6.54\t7.65\t7\n30098\t120\t8.86\t6.54\t7.69\t9\n8750\t120\t51.68\t6.54\t29.11\t2\n4419\t120\t51.89\t6.54\t40.5\t4\n184\t120\t52.62\t6.54\t14.94\t6\n2944\t120\t52.72\t6.54\t21.93\t3\n13658\t120\t52.98\t6.54\t36.96\t3\n12902\t120\t52.98\t6.54\t18.9\t4\n2570\t120\t52.98\t6.54\t13.3\t8\n8392\t120\t53.82\t6.54\t16.92\t5\n9880\t120\t53.82\t6.54\t44.03\t5\n1315\t120\t53.82\t6.54\t36.86\t14\n3741\t120\t54.13\t6.54\t30.34\t2\n6147\t120\t54.55\t6.54\t14.11\t7\n580\t120\t54.55\t6.54\t12.86\t9\n5668\t119\t7.47\t6.57\t6.87\t3\n6769\t119\t7.51\t6.57\t7.25\t4\n6864\t119\t7.58\t6.57\t7.38\t5\n10731\t119\t7.75\t6.57\t7.16\t2\n1667\t119\t7.75\t6.57\t7.16\t4\n589\t119\t7.75\t6.57\t7.28\t5\n5623\t119\t7.75\t6.57\t7.33\t9\n16251\t119\t7.51\t6.59\t6.97\t5\n2052\t119\t6.67\t6.67\t6.67\t1\n3066\t119\t6.67\t6.67\t6.67\t1\n2523\t119\t7.58\t6.67\t7.13\t2\n4057\t119\t7.58\t6.67\t7.13\t2\n8186\t119\t7.58\t6.67\t7.13\t2\n6230\t119\t7.58\t6.67\t7.28\t3\n7397\t119\t7.58\t6.67\t7.35\t4\n6640\t119\t7.58\t6.67\t7.34\t6\n21781\t119\t7.58\t6.67\t7.2\t6\n5264\t119\t7.58\t6.67\t7.45\t7\n6707\t119\t7.86\t6.67\t7.26\t2\n7097\t119\t7.86\t6.67\t7.26\t4\n1349\t119\t7.86\t6.67\t7.58\t5\n339\t119\t7.86\t6.67\t7.47\t6\n2256\t119\t7.86\t6.67\t7.47\t6\n4072\t119\t7.86\t6.67\t7.53\t7\n12076\t119\t7.86\t6.67\t7.61\t8\n885\t119\t7.86\t6.67\t7.44\t9\n8872\t119\t7.86\t6.67\t7.47\t9\n8482\t119\t7.86\t6.67\t7.41\t11\n409\t119\t8.37\t6.67\t7.28\t5\n11656\t119\t8.48\t6.67\t7.58\t3\n8621\t119\t8.48\t6.67\t7.33\t6\n2407\t119\t8.48\t6.67\t7.46\t7\n33761\t119\t8.48\t6.67\t7.45\t9\n3050\t119\t7.47\t6.75\t7.37\t7\n6003\t120\t7.52\t6.75\t7.13\t2\n9167\t119\t8.37\t6.75\t7.4\t9\n9286\t119\t8.63\t6.75\t7.73\t6\n4635\t120\t7.27\t6.83\t7.05\t2\n10073\t120\t8.86\t6.83\t7.51\t5\n14053\t120\t8.88\t6.83\t7.34\t4\n5855\t120\t8.88\t6.83\t7.59\t6\n4027\t119\t8.63\t6.87\t7.59\t12\n266\t144\t7.8\t6.9\t7.35\t2\n12496\t144\t7.95\t6.9\t7.57\t3\n217\t144\t7.98\t6.9\t7.64\t4\n4713\t144\t7.98\t6.9\t7.64\t5\n21787\t144\t8.03\t6.9\t7.46\t2\n2935\t144\t8.04\t6.9\t7.45\t4\n10881\t144\t8.11\t6.9\t7.5\t2\n2978\t144\t8.14\t6.9\t7.83\t6\n13455\t120\t6.93\t6.93\t6.93\t1\n892\t120\t6.93\t6.93\t6.93\t2\n27\t120\t6.93\t6.93\t6.93\t3\n30787\t120\t6.93\t6.93\t6.93\t3\n4855\t120\t1113.27\t6.93\t671.9\t8\n4648\t120\t8\t6.94\t7.4\t5\n7109\t120\t7.04\t6.94\t6.99\t2\n16244\t120\t7.04\t6.94\t6.99\t2\n10472\t120\t7.92\t6.94\t7.58\t3\n1596\t120\t8.03\t6.94\t7.62\t3\n4884\t120\t8.03\t6.94\t7.77\t5\n7206\t120\t8.03\t6.94\t7.77\t5\n8645\t120\t8.03\t6.94\t7.68\t8\n4153\t120\t8.14\t6.94\t7.7\t3\n3247\t120\t8.14\t6.94\t7.44\t5\n9984\t120\t8.74\t6.94\t7.89\t3\n2671\t120\t51.36\t6.94\t22.28\t6\n2592\t120\t51.89\t6.94\t22.27\t6\n8896\t120\t8\t6.97\t7.49\t2\n33718\t120\t8\t6.97\t7.49\t2\n182\t120\t8\t6.97\t7.63\t3\n4603\t120\t8\t6.97\t7.63\t3\n2630\t120\t8\t6.97\t7.46\t3\n8620\t120\t8\t6.97\t7.8\t6\n415\t120\t6.97\t6.97\t6.97\t1\n6610\t120\t6.97\t6.97\t6.97\t1\n27987\t120\t7.89\t6.97\t7.43\t2\n3178\t120\t8.03\t6.97\t7.78\t5\n1620\t120\t8.03\t6.97\t7.81\t6\n8482\t120\t8.14\t6.97\t7.74\t10\n2616\t120\t8.77\t6.97\t7.93\t4\n3545\t119\t7.51\t7.02\t7.37\t4\n4277\t119\t7.51\t7.02\t7.39\t5\n2397\t119\t7.51\t7.02\t7.4\t6\n2314\t119\t7.86\t7.02\t7.4\t8\n9160\t119\t7.86\t7.02\t7.43\t11\n7405\t120\t8\t7.04\t7.49\t3\n9970\t120\t8\t7.04\t7.68\t5\n11952\t120\t8\t7.04\t7.69\t5\n4526\t120\t8\t7.04\t7.84\t6\n12633\t120\t8\t7.04\t7.72\t10\n265\t120\t9\t7.04\t8.45\t4\n1368\t120\t9\t7.04\t8.45\t4\n1813\t120\t7.04\t7.04\t7.04\t1\n2523\t120\t7.04\t7.04\t7.04\t1\n9145\t120\t7.04\t7.04\t7.04\t1\n3447\t120\t8.14\t7.04\t7.86\t6\n12768\t120\t8.14\t7.04\t7.86\t6\n13124\t120\t8.14\t7.04\t7.87\t8\n1737\t120\t8.74\t7.04\t7.73\t3\n1382\t120\t8.74\t7.04\t7.62\t7\n4685\t120\t8.86\t7.04\t7.95\t2\n1753\t120\t8.86\t7.04\t7.82\t4\n6570\t120\t8.86\t7.04\t7.82\t6\n6455\t120\t8.86\t7.04\t7.72\t7\n8976\t120\t8.88\t7.04\t7.65\t3\n1779\t120\t51.68\t7.04\t18.87\t8\n18013\t120\t54.55\t7.04\t23.35\t6\n15380\t119\t7.51\t7.05\t7.32\t8\n6158\t119\t7.58\t7.05\t7.38\t3\n50833\t120\t8\t7.1\t7.59\t5\n585\t120\t7.1\t7.1\t7.1\t1\n998\t119\t7.1\t7.1\t7.1\t1\n1969\t120\t7.1\t7.1\t7.1\t1\n2076\t120\t7.1\t7.1\t7.1\t1\n3314\t120\t7.1\t7.1\t7.1\t1\n3526\t120\t7.1\t7.1\t7.1\t1\n9090\t119\t7.1\t7.1\t7.1\t1\n10208\t119\t7.1\t7.1\t7.1\t1\n27297\t119\t7.1\t7.1\t7.1\t1\n43750\t119\t7.1\t7.1\t7.1\t1\n10698\t120\t7.1\t7.1\t7.1\t2\n22297\t120\t7.1\t7.1\t7.1\t2\n3647\t120\t7.1\t7.1\t7.1\t3\n13429\t119\t7.86\t7.1\t7.78\t10\n1057\t120\t8.14\t7.1\t7.83\t4\n11257\t120\t8.14\t7.1\t7.89\t5\n9045\t119\t8.37\t7.1\t7.74\t2\n3900\t119\t8.37\t7.1\t7.95\t3\n3769\t119\t8.37\t7.1\t7.95\t3\n1514\t119\t8.37\t7.1\t7.74\t4\n2285\t119\t8.37\t7.1\t7.74\t4\n4319\t119\t8.37\t7.1\t7.74\t4\n4924\t119\t8.37\t7.1\t7.74\t4\n5546\t119\t8.37\t7.1\t7.74\t4\n11117\t119\t8.37\t7.1\t7.74\t4\n9778\t119\t8.37\t7.1\t8.05\t4\n7936\t119\t8.37\t7.1\t7.86\t5\n1521\t119\t8.37\t7.1\t7.74\t6\n1909\t119\t8.37\t7.1\t7.74\t6\n9268\t119\t8.37\t7.1\t7.74\t6\n251\t119\t8.37\t7.1\t7.75\t6\n22354\t119\t8.37\t7.1\t7.85\t6\n832\t119\t8.37\t7.1\t7.87\t6\n2818\t119\t8.37\t7.1\t7.67\t7\n9042\t119\t8.37\t7.1\t7.74\t7\n1439\t119\t8.39\t7.1\t7.9\t5\n7531\t119\t8.4\t7.1\t7.76\t6\n8351\t119\t8.42\t7.1\t7.97\t3\n4881\t119\t8.42\t7.1\t7.72\t10\n2537\t119\t8.48\t7.1\t8.02\t3\n3757\t119\t8.48\t7.1\t8.02\t3\n10009\t119\t8.48\t7.1\t8.02\t3\n18013\t119\t8.48\t7.1\t8.02\t3\n804\t119\t8.48\t7.1\t7.81\t3\n6564\t119\t8.48\t7.1\t7.8\t4\n608\t119\t8.48\t7.1\t7.83\t4\n3110\t119\t8.48\t7.1\t8.13\t4\n2443\t119\t8.48\t7.1\t7.43\t5\n1148\t119\t8.48\t7.1\t7.59\t5\n3678\t119\t8.48\t7.1\t7.83\t5\n4640\t119\t8.48\t7.1\t7.93\t5\n449\t119\t8.48\t7.1\t7.96\t5\n10258\t119\t8.48\t7.1\t7.72\t6\n2922\t119\t8.48\t7.1\t7.79\t6\n8026\t119\t8.48\t7.1\t7.64\t7\n11013\t119\t8.48\t7.1\t7.85\t7\n545\t119\t8.48\t7.1\t7.89\t7\n10619\t119\t8.48\t7.1\t7.85\t8\n1564\t119\t8.48\t7.1\t7.87\t8\n11245\t119\t8.48\t7.1\t7.87\t9\n11739\t119\t8.48\t7.1\t7.85\t10\n4562\t119\t8.48\t7.1\t7.73\t11\n7122\t119\t8.48\t7.1\t7.77\t11\n8806\t119\t8.52\t7.1\t7.81\t2\n4759\t119\t8.52\t7.1\t8\t3\n604\t119\t8.52\t7.1\t8.03\t3\n1269\t119\t8.52\t7.1\t7.81\t4\n3270\t119\t8.52\t7.1\t7.81\t4\n7962\t119\t8.52\t7.1\t8.09\t4\n1674\t119\t8.52\t7.1\t7.49\t4\n14345\t119\t8.52\t7.1\t8.16\t4\n10659\t119\t8.52\t7.1\t7.87\t5\n402\t119\t8.52\t7.1\t7.44\t5\n1387\t119\t8.52\t7.1\t7.94\t5\n1585\t119\t8.52\t7.1\t8.21\t5\n222\t119\t8.52\t7.1\t8.21\t5\n196\t119\t8.52\t7.1\t7.76\t6\n3788\t119\t8.52\t7.1\t7.81\t6\n144\t119\t8.52\t7.1\t7.89\t7\n2611\t119\t8.52\t7.1\t7.5\t7\n17633\t119\t8.52\t7.1\t7.74\t7\n17001\t119\t8.52\t7.1\t7.81\t7\n3452\t119\t8.52\t7.1\t7.87\t7\n6106\t119\t8.52\t7.1\t7.87\t7\n12136\t119\t8.52\t7.1\t8.23\t8\n4196\t119\t8.52\t7.1\t7.65\t8\n965\t119\t8.52\t7.1\t7.73\t9\n3974\t119\t8.52\t7.1\t7.81\t10\n5696\t119\t8.52\t7.1\t7.88\t10\n994\t119\t8.52\t7.1\t7.92\t10\n2163\t119\t8.52\t7.1\t7.86\t11\n9319\t119\t8.52\t7.1\t7.76\t12\n13711\t119\t8.52\t7.1\t8.33\t14\n447\t119\t8.55\t7.1\t7.83\t2\n2349\t119\t8.55\t7.1\t7.83\t2\n8448\t119\t8.55\t7.1\t7.97\t3\n190\t119\t8.55\t7.1\t8.07\t3\n9048\t119\t8.55\t7.1\t7.83\t4\n5725\t119\t8.63\t7.1\t7.87\t2\n9039\t119\t8.63\t7.1\t7.87\t2\n1555\t119\t8.63\t7.1\t8.12\t3\n3217\t119\t8.63\t7.1\t7.83\t4\n5870\t119\t8.63\t7.1\t7.87\t4\n385\t119\t8.63\t7.1\t8.19\t4\n13440\t119\t8.63\t7.1\t7.46\t5\n1911\t119\t8.63\t7.1\t7.67\t5\n781\t119\t8.63\t7.1\t7.72\t5\n6543\t119\t8.63\t7.1\t7.78\t5\n2101\t119\t8.63\t7.1\t8.02\t5\n32\t119\t8.63\t7.1\t7.41\t6\n11779\t119\t8.63\t7.1\t7.63\t6\n3532\t119\t8.63\t7.1\t7.78\t6\n746\t119\t8.63\t7.1\t7.91\t7\n3555\t119\t8.63\t7.1\t7.68\t7\n32860\t119\t8.63\t7.1\t7.86\t7\n8501\t119\t8.63\t7.1\t7.92\t7\n31473\t119\t8.63\t7.1\t7.93\t7\n6841\t119\t8.63\t7.1\t7.81\t8\n2948\t119\t8.63\t7.1\t7.98\t8\n5577\t119\t8.63\t7.1\t7.64\t9\n2120\t119\t8.63\t7.1\t7.76\t9\n1496\t119\t8.63\t7.1\t7.89\t9\n7080\t119\t8.63\t7.1\t8.09\t9\n10795\t119\t8.63\t7.1\t7.68\t10\n8476\t119\t8.63\t7.1\t7.73\t10\n5106\t119\t8.63\t7.1\t7.46\t10\n8178\t119\t8.63\t7.1\t7.9\t10\n16053\t119\t8.63\t7.1\t7.99\t10\n5497\t119\t8.63\t7.1\t7.9\t12\n9520\t120\t8.74\t7.1\t8.19\t3\n2280\t120\t8.74\t7.1\t7.92\t4\n9483\t120\t8.74\t7.1\t8\t4\n4268\t120\t8.74\t7.1\t8.15\t4\n508\t120\t8.74\t7.1\t8.08\t5\n1929\t120\t8.74\t7.1\t8.08\t5\n1469\t120\t8.74\t7.1\t7.88\t6\n5872\t120\t8.77\t7.1\t8.26\t8\n33762\t120\t8.86\t7.1\t7.98\t2\n3036\t120\t8.86\t7.1\t7.69\t3\n13479\t120\t8.86\t7.1\t8.03\t3\n422\t120\t8.86\t7.1\t8.23\t3\n1736\t120\t8.86\t7.1\t8.27\t3\n2202\t120\t8.86\t7.1\t7.98\t4\n608\t120\t8.86\t7.1\t8.06\t4\n10668\t120\t8.86\t7.1\t8.36\t4\n5449\t120\t8.86\t7.1\t8.42\t4\n2812\t120\t8.86\t7.1\t7.93\t4\n2818\t120\t8.86\t7.1\t8.01\t4\n3326\t120\t8.86\t7.1\t8.01\t4\n8503\t120\t8.86\t7.1\t8.18\t4\n804\t120\t8.86\t7.1\t7.87\t5\n6001\t120\t8.86\t7.1\t8.15\t5\n7786\t120\t8.86\t7.1\t8.16\t5\n724\t120\t8.86\t7.1\t8.37\t7\n838\t120\t8.86\t7.1\t7.99\t7\n8479\t120\t8.86\t7.1\t8.36\t7\n8870\t120\t8.86\t7.1\t8.42\t8\n750\t120\t8.86\t7.1\t8.15\t8\n16984\t120\t8.86\t7.1\t8.08\t9\n7339\t120\t8.86\t7.1\t8.1\t10\n1979\t120\t8.86\t7.1\t8.11\t11\n8687\t120\t8.96\t7.1\t8.03\t2\n9032\t120\t8.96\t7.1\t8.34\t3\n8402\t120\t8.96\t7.1\t8.03\t4\n26638\t120\t8.96\t7.1\t8.03\t4\n6374\t120\t8.96\t7.1\t7.57\t4\n18386\t120\t8.96\t7.1\t8.48\t5\n2692\t120\t8.96\t7.1\t8.46\t5\n1582\t120\t8.96\t7.1\t8.54\t6\n7654\t120\t8.99\t7.1\t8.04\t2\n1423\t120\t9.08\t7.1\t8.38\t3\n1908\t120\t9.08\t7.1\t8.42\t3\n9968\t120\t9.08\t7.1\t8.42\t3\n3148\t120\t9.08\t7.1\t8.09\t4\n5444\t120\t9.08\t7.1\t8.09\t4\n7422\t120\t9.08\t7.1\t7.84\t4\n5728\t120\t9.08\t7.1\t8.47\t4\n478\t120\t9.08\t7.1\t8.2\t5\n3351\t120\t9.08\t7.1\t8.2\t5\n10445\t120\t9.08\t7.1\t8.22\t5\n2475\t120\t9.08\t7.1\t7.62\t5\n19017\t120\t9.08\t7.1\t8.57\t5\n3334\t120\t9.08\t7.1\t8.05\t6\n1799\t120\t9.08\t7.1\t8.42\t6\n10393\t120\t9.08\t7.1\t7.95\t6\n2270\t120\t9.08\t7.1\t8.68\t6\n6433\t120\t9.08\t7.1\t8.17\t7\n367\t120\t9.08\t7.1\t8.14\t7\n6428\t120\t9.08\t7.1\t8.23\t8\n3085\t120\t9.08\t7.1\t8.16\t9\n7330\t120\t9.08\t7.1\t8.42\t9\n3721\t120\t9.08\t7.1\t8.17\t9\n1690\t120\t9.08\t7.1\t8.32\t9\n10796\t120\t9.08\t7.1\t8.37\t9\n4489\t120\t9.08\t7.1\t8.43\t9\n11943\t120\t9.08\t7.1\t8.27\t10\n9171\t120\t9.08\t7.1\t8.3\t10\n3555\t120\t9.08\t7.1\t8.01\t12\n8351\t120\t9.12\t7.1\t8.88\t13\n3592\t120\t9.22\t7.1\t9.01\t27\n7076\t120\t51.36\t7.1\t29.68\t4\n5259\t120\t51.36\t7.1\t19.4\t8\n8836\t120\t51.89\t7.1\t27.07\t7\n22988\t120\t54.55\t7.1\t23.22\t3\n3654\t120\t54.55\t7.1\t42.58\t4\n127\t120\t54.55\t7.1\t14.63\t7\n1599\t147\t7.11\t7.11\t7.11\t1\n23861\t147\t7.11\t7.11\t7.11\t1\n6749\t147\t7.53\t7.11\t7.32\t2\n269\t147\t7.64\t7.11\t7.46\t3\n12655\t147\t7.98\t7.11\t7.69\t3\n8349\t147\t8.05\t7.11\t7.71\t5\n9158\t147\t8.07\t7.11\t7.75\t3\n22473\t147\t8.07\t7.11\t7.56\t3\n3985\t147\t8.1\t7.11\t7.61\t2\n1659\t147\t8.1\t7.11\t7.75\t3\n2700\t147\t8.1\t7.11\t7.72\t4\n9591\t147\t8.17\t7.11\t7.6\t3\n10260\t147\t8.17\t7.11\t7.86\t6\n2985\t147\t8.18\t7.11\t7.64\t2\n2652\t147\t8.18\t7.11\t7.74\t4\n3057\t147\t8.19\t7.11\t7.65\t2\n6579\t147\t8.21\t7.11\t7.83\t3\n23179\t147\t8.21\t7.11\t7.84\t3\n3241\t147\t8.21\t7.11\t7.66\t4\n2645\t147\t8.21\t7.11\t7.79\t4\n492\t147\t8.21\t7.11\t7.79\t4\n6067\t147\t8.21\t7.11\t7.82\t6\n3307\t147\t8.21\t7.11\t7.83\t6\n897\t147\t8.26\t7.11\t7.94\t4\n3333\t147\t8.26\t7.11\t7.87\t7\n27145\t147\t8.28\t7.11\t7.7\t2\n2806\t147\t8.34\t7.11\t7.72\t2\n6230\t147\t8.34\t7.11\t7.72\t2\n4931\t147\t8.34\t7.11\t7.92\t6\n10679\t147\t8.46\t7.11\t8.06\t4\n18136\t147\t8.49\t7.11\t8.03\t3\n25058\t147\t8.58\t7.11\t7.84\t2\n7779\t147\t8.58\t7.11\t7.88\t3\n2119\t147\t8.58\t7.11\t8.06\t3\n12078\t147\t8.58\t7.11\t8.06\t3\n30097\t147\t8.58\t7.11\t8.09\t3\n2866\t147\t8.81\t7.11\t8.08\t4\n5016\t147\t10.21\t7.11\t8.26\t4\n31449\t119\t7.13\t7.13\t7.13\t1\n10007\t119\t7.13\t7.13\t7.13\t2\n147\t119\t7.13\t7.13\t7.13\t3\n11201\t119\t7.13\t7.13\t7.13\t3\n351\t119\t7.13\t7.13\t7.13\t4\n7681\t119\t7.13\t7.13\t7.13\t5\n911\t119\t7.23\t7.13\t7.18\t2\n6699\t119\t7.23\t7.13\t7.16\t3\n465\t119\t7.23\t7.13\t7.15\t5\n41\t119\t7.31\t7.13\t7.22\t5\n13976\t119\t7.34\t7.13\t7.23\t7\n5105\t119\t7.34\t7.13\t7.23\t9\n5840\t119\t7.58\t7.13\t7.43\t3\n1916\t119\t7.58\t7.13\t7.45\t4\n810\t119\t7.58\t7.13\t7.49\t5\n7313\t119\t7.86\t7.13\t7.49\t7\n8758\t119\t8.25\t7.13\t7.5\t3\n6096\t119\t8.28\t7.13\t7.71\t2\n938\t119\t8.28\t7.13\t7.55\t3\n8445\t119\t8.28\t7.13\t7.36\t5\n556\t119\t8.28\t7.13\t7.38\t5\n7935\t119\t8.28\t7.13\t7.37\t5\n1493\t119\t8.37\t7.13\t7.54\t3\n1561\t119\t8.37\t7.13\t7.96\t3\n4845\t119\t8.37\t7.13\t7.68\t5\n2813\t119\t8.37\t7.13\t7.62\t6\n1971\t119\t8.39\t7.13\t7.92\t3\n2357\t119\t8.39\t7.13\t7.74\t6\n7996\t119\t8.39\t7.13\t7.67\t7\n5733\t119\t8.39\t7.13\t7.99\t8\n1844\t119\t8.39\t7.13\t8.05\t9\n915\t119\t8.42\t7.13\t8.06\t4\n3539\t119\t8.42\t7.13\t7.96\t6\n2762\t119\t8.42\t7.13\t8\t8\n3720\t119\t8.42\t7.13\t7.81\t9\n8236\t119\t8.42\t7.13\t8.05\t12\n4955\t119\t8.51\t7.13\t7.59\t3\n542\t119\t8.51\t7.13\t8.11\t4\n8295\t119\t8.51\t7.13\t7.41\t5\n908\t119\t8.51\t7.13\t7.93\t5\n10138\t119\t8.51\t7.13\t7.74\t6\n5587\t119\t8.51\t7.13\t8.01\t6\n3487\t119\t8.51\t7.13\t7.83\t8\n5775\t119\t8.52\t7.13\t7.71\t4\n9348\t119\t7.21\t7.14\t7.17\t2\n14937\t119\t7.21\t7.14\t7.17\t2\n3464\t119\t7.21\t7.14\t7.18\t5\n3332\t119\t7.25\t7.14\t7.21\t5\n3863\t119\t7.29\t7.14\t7.21\t4\n9162\t119\t7.46\t7.14\t7.3\t6\n9563\t119\t7.46\t7.14\t7.34\t8\n13493\t119\t7.51\t7.14\t7.36\t8\n9001\t119\t7.86\t7.14\t7.36\t4\n17011\t119\t8.51\t7.14\t7.62\t6\n3552\t119\t7.22\t7.15\t7.2\t3\n12268\t119\t7.22\t7.15\t7.2\t3\n1170\t119\t7.29\t7.15\t7.22\t5\n3497\t119\t7.58\t7.15\t7.43\t6\n2369\t119\t7.58\t7.15\t7.44\t7\n2646\t119\t7.86\t7.15\t7.53\t8\n2139\t119\t8.25\t7.15\t7.7\t2\n9839\t119\t8.25\t7.15\t7.7\t2\n4125\t119\t8.48\t7.15\t7.96\t7\n3425\t119\t8.63\t7.15\t8.17\t5\n2761\t119\t8.63\t7.15\t8.23\t12\n1863\t119\t7.25\t7.18\t7.21\t2\n2242\t119\t7.25\t7.18\t7.21\t2\n2574\t119\t7.31\t7.18\t7.25\t4\n5028\t119\t7.31\t7.18\t7.25\t4\n683\t119\t7.34\t7.18\t7.29\t6\n11780\t119\t7.34\t7.18\t7.27\t9\n10854\t119\t7.51\t7.18\t7.32\t5\n29750\t119\t7.51\t7.18\t7.38\t5\n17566\t119\t8.51\t7.18\t7.63\t6\n1104\t119\t8.48\t7.21\t7.64\t3\n2754\t119\t8.52\t7.21\t7.87\t2\n3012\t119\t8.52\t7.21\t8.04\t3\n33763\t119\t8.63\t7.21\t7.92\t2\n2184\t119\t7.22\t7.22\t7.22\t1\n3042\t119\t7.29\t7.22\t7.27\t3\n3742\t119\t7.29\t7.22\t7.27\t3\n5948\t119\t7.36\t7.22\t7.3\t8\n3925\t119\t7.46\t7.22\t7.34\t2\n12668\t119\t7.51\t7.22\t7.36\t4\n12774\t119\t7.51\t7.22\t7.42\t6\n11310\t119\t8.4\t7.22\t7.81\t2\n1741\t119\t8.4\t7.22\t7.79\t4\n4182\t119\t8.4\t7.22\t7.79\t4\n8223\t119\t8.4\t7.22\t7.79\t4\n27323\t119\t8.55\t7.22\t7.88\t2\n8754\t119\t8.55\t7.22\t8.06\t3\n1491\t119\t7.23\t7.23\t7.23\t1\n2953\t119\t7.23\t7.23\t7.23\t2\n5865\t119\t7.23\t7.23\t7.23\t2\n26605\t119\t7.31\t7.23\t7.28\t3\n7198\t119\t7.34\t7.23\t7.28\t7\n10618\t119\t8.25\t7.23\t7.6\t3\n6205\t119\t8.25\t7.23\t7.74\t4\n6238\t119\t8.25\t7.23\t7.47\t5\n4851\t119\t8.37\t7.23\t7.95\t3\n6818\t119\t8.39\t7.23\t7.62\t3\n12089\t119\t8.39\t7.23\t7.58\t7\n1953\t147\t8.49\t7.23\t7.86\t2\n3213\t147\t8.49\t7.23\t7.86\t2\n2322\t119\t8.51\t7.23\t7.87\t2\n8198\t119\t8.51\t7.23\t7.87\t2\n6777\t119\t8.51\t7.23\t7.84\t4\n3020\t119\t8.51\t7.23\t8.13\t4\n6265\t119\t8.51\t7.23\t8.13\t4\n1731\t119\t8.51\t7.23\t8.19\t5\n11551\t119\t8.51\t7.23\t8.25\t7\n9865\t119\t8.51\t7.23\t8.07\t10\n5503\t119\t8.51\t7.23\t8.33\t13\n8723\t119\t8.51\t7.23\t8.13\t17\n2098\t119\t8.52\t7.23\t7.66\t3\n2796\t119\t8.52\t7.23\t8.21\t5\n5153\t119\t8.63\t7.23\t8.16\t3\n9966\t119\t8.63\t7.23\t7.87\t4\n48811\t119\t8.63\t7.23\t8.16\t4\n987\t119\t8.63\t7.23\t8.29\t10\n6966\t119\t7.34\t7.24\t7.3\t4\n6731\t119\t7.34\t7.24\t7.3\t5\n1890\t119\t7.34\t7.24\t7.29\t5\n6507\t119\t7.34\t7.24\t7.3\t6\n6963\t119\t7.34\t7.24\t7.3\t6\n5650\t119\t7.36\t7.24\t7.3\t8\n2255\t119\t7.4\t7.24\t7.33\t8\n6188\t119\t7.31\t7.25\t7.28\t2\n8095\t120\t7.27\t7.27\t7.27\t1\n30381\t120\t7.27\t7.27\t7.27\t1\n33732\t120\t7.27\t7.27\t7.27\t1\n6109\t119\t7.34\t7.27\t7.32\t3\n27327\t119\t7.34\t7.27\t7.31\t4\n7399\t119\t7.36\t7.27\t7.33\t4\n1898\t119\t7.36\t7.27\t7.33\t5\n5412\t119\t7.36\t7.27\t7.32\t7\n6013\t120\t7.37\t7.27\t7.32\t6\n3176\t119\t7.4\t7.27\t7.34\t9\n16873\t120\t7.61\t7.27\t7.38\t5\n8809\t120\t8.14\t7.27\t7.77\t3\n6063\t120\t8.14\t7.27\t7.84\t5\n378\t119\t7.44\t7.29\t7.36\t6\n5771\t119\t7.44\t7.29\t7.37\t8\n5946\t119\t7.52\t7.29\t7.39\t9\n12069\t120\t7.3\t7.3\t7.3\t1\n6789\t120\t8.86\t7.3\t7.96\t5\n3538\t119\t7.31\t7.31\t7.31\t1\n4132\t119\t7.31\t7.31\t7.31\t1\n1254\t119\t7.31\t7.31\t7.31\t2\n6685\t119\t7.34\t7.31\t7.33\t2\n17290\t119\t7.34\t7.31\t7.33\t3\n4966\t119\t8.25\t7.31\t7.56\t4\n27954\t119\t7.34\t7.33\t7.34\t2\n5742\t119\t7.4\t7.33\t7.37\t2\n255\t119\t7.4\t7.33\t7.38\t3\n6252\t119\t7.4\t7.33\t7.38\t3\n24554\t119\t7.4\t7.33\t7.38\t3\n8630\t119\t7.46\t7.33\t7.41\t4\n1669\t119\t7.46\t7.33\t7.41\t5\n1114\t119\t7.86\t7.33\t7.48\t6\n3307\t119\t7.34\t7.34\t7.34\t1\n7490\t119\t7.34\t7.34\t7.34\t1\n16381\t119\t7.34\t7.34\t7.34\t1\n4027\t147\t8.34\t7.34\t7.92\t3\n10889\t147\t8.46\t7.34\t7.62\t5\n11123\t147\t8.84\t7.34\t8.09\t2\n1066\t147\t8.84\t7.34\t8.01\t4\n883\t147\t8.94\t7.34\t8.21\t3\n27744\t119\t7.44\t7.36\t7.39\t3\n3656\t119\t7.44\t7.36\t7.4\t4\n13040\t119\t7.51\t7.36\t7.43\t9\n634\t119\t7.86\t7.36\t7.57\t7\n488\t119\t7.86\t7.36\t7.64\t7\n2658\t120\t7.37\t7.37\t7.37\t1\n4195\t120\t7.37\t7.37\t7.37\t3\n1823\t119\t7.44\t7.37\t7.41\t2\n2150\t119\t7.44\t7.37\t7.41\t2\n3810\t119\t7.44\t7.37\t7.41\t2\n735\t119\t7.44\t7.37\t7.42\t3\n1982\t119\t7.44\t7.37\t7.42\t3\n1392\t120\t7.72\t7.37\t7.54\t2\n5562\t119\t7.86\t7.37\t7.64\t7\n4023\t120\t7.89\t7.37\t7.76\t4\n4535\t120\t8.06\t7.37\t7.66\t4\n4242\t120\t8.14\t7.37\t7.8\t5\n10198\t120\t8.14\t7.37\t7.84\t5\n2375\t120\t9.08\t7.37\t8.51\t3\n2745\t147\t7.38\t7.38\t7.38\t1\n547\t147\t7.94\t7.38\t7.66\t2\n1261\t147\t7.94\t7.38\t7.66\t2\n1693\t147\t7.94\t7.38\t7.66\t2\n3053\t147\t7.94\t7.38\t7.66\t2\n3243\t147\t7.94\t7.38\t7.66\t2\n15443\t147\t7.94\t7.38\t7.66\t2\n23237\t147\t7.94\t7.38\t7.66\t2\n1242\t147\t7.94\t7.38\t7.75\t3\n5532\t147\t7.94\t7.38\t7.75\t3\n9978\t147\t7.94\t7.38\t7.75\t3\n14053\t147\t7.94\t7.38\t7.75\t3\n6431\t147\t8.07\t7.38\t7.72\t2\n873\t147\t8.07\t7.38\t7.8\t3\n1493\t147\t8.07\t7.38\t7.8\t3\n2346\t147\t8.07\t7.38\t7.71\t4\n11649\t147\t8.07\t7.38\t7.83\t4\n593\t147\t8.07\t7.38\t7.88\t5\n9669\t147\t8.07\t7.38\t7.77\t5\n12447\t147\t8.07\t7.38\t7.8\t6\n11191\t147\t8.26\t7.38\t7.97\t3\n2156\t147\t8.34\t7.38\t8\t4\n550\t119\t7.46\t7.39\t7.42\t2\n2236\t119\t7.86\t7.39\t7.56\t8\n11808\t119\t7.86\t7.39\t7.59\t10\n3300\t119\t7.4\t7.4\t7.4\t1\n4535\t118\t7.4\t7.4\t7.4\t1\n833\t119\t7.4\t7.4\t7.4\t2\n7041\t119\t7.4\t7.4\t7.4\t2\n8217\t119\t7.46\t7.4\t7.45\t4\n4159\t118\t8.07\t7.4\t7.85\t3\n17011\t118\t8.16\t7.4\t7.79\t3\n639\t118\t8.16\t7.4\t7.88\t4\n3312\t118\t8.28\t7.4\t7.95\t3\n3651\t118\t8.59\t7.4\t8.18\t4\n2063\t119\t8.63\t7.4\t8.02\t2\n7489\t118\t9.57\t7.4\t8.37\t7\n9622\t118\t9.7\t7.4\t8.55\t2\n3332\t118\t9.7\t7.4\t8.39\t6\n49048\t118\t9.7\t7.4\t8.13\t7\n4189\t118\t9.73\t7.4\t8.42\t3\n4569\t118\t9.73\t7.4\t8.95\t3\n1191\t118\t9.73\t7.4\t8.64\t5\n8898\t118\t9.77\t7.4\t8.75\t7\n5332\t118\t9.87\t7.4\t8.64\t5\n1903\t118\t17.09\t7.4\t13.8\t6\n2642\t118\t17.09\t7.4\t13.8\t6\n2944\t118\t17.12\t7.4\t13.79\t6\n7118\t118\t17.19\t7.4\t15.84\t8\n1888\t118\t17.32\t7.4\t13.94\t6\n2866\t118\t17.36\t7.4\t9.86\t5\n12774\t118\t17.54\t7.4\t15.45\t5\n4053\t118\t17.54\t7.4\t14.84\t8\n11073\t118\t17.54\t7.4\t12.19\t9\n33742\t118\t463.17\t7.4\t73.16\t7\n2553\t120\t8\t7.42\t7.71\t2\n7223\t120\t8\t7.42\t7.71\t2\n9583\t120\t8\t7.42\t7.77\t3\n2060\t120\t7.42\t7.42\t7.42\t1\n5840\t120\t7.42\t7.42\t7.42\t1\n12900\t120\t7.52\t7.42\t7.47\t2\n1937\t147\t7.94\t7.42\t7.68\t2\n443\t147\t7.98\t7.42\t7.63\t3\n2065\t147\t7.98\t7.42\t7.63\t3\n2720\t147\t7.98\t7.42\t7.63\t3\n1889\t147\t7.98\t7.42\t7.79\t3\n13187\t147\t7.98\t7.42\t7.79\t3\n1170\t147\t8.05\t7.42\t7.74\t2\n5345\t147\t8.05\t7.42\t7.74\t4\n4152\t147\t8.07\t7.42\t7.88\t4\n12206\t147\t8.07\t7.42\t7.9\t5\n7386\t147\t8.07\t7.42\t7.84\t6\n351\t147\t8.28\t7.42\t7.93\t7\n2286\t147\t8.58\t7.42\t8.16\t3\n8390\t120\t8.74\t7.42\t8.01\t4\n5533\t120\t9.08\t7.42\t8.12\t5\n1457\t120\t54.55\t7.42\t17.08\t5\n14414\t120\t54.55\t7.42\t19.47\t8\n2240\t119\t7.51\t7.43\t7.48\t3\n3329\t119\t7.51\t7.43\t7.48\t3\n3510\t119\t7.51\t7.43\t7.48\t3\n6272\t119\t7.51\t7.43\t7.48\t3\n18319\t119\t7.51\t7.43\t7.48\t3\n1708\t119\t7.51\t7.43\t7.47\t8\n6334\t119\t8.63\t7.43\t8.39\t5\n2645\t120\t53.82\t7.43\t42.01\t4\n1419\t144\t7.47\t7.44\t7.46\t2\n5864\t147\t8.34\t7.44\t7.89\t2\n13053\t144\t8.41\t7.44\t7.92\t2\n2616\t144\t8.46\t7.44\t7.95\t2\n9178\t144\t8.46\t7.44\t7.95\t2\n2222\t144\t8.58\t7.44\t8.01\t2\n21781\t144\t8.58\t7.44\t8.07\t4\n7386\t144\t7.87\t7.45\t7.68\t4\n1766\t144\t9.59\t7.45\t8.26\t4\n2137\t119\t8.48\t7.46\t7.74\t4\n3191\t119\t7.47\t7.47\t7.47\t2\n3368\t119\t7.47\t7.47\t7.47\t2\n40556\t119\t7.47\t7.47\t7.47\t2\n5549\t119\t7.47\t7.47\t7.47\t4\n1715\t119\t7.47\t7.47\t7.47\t5\n2792\t119\t7.47\t7.47\t7.47\t6\n7098\t119\t7.58\t7.47\t7.53\t2\n1132\t119\t7.58\t7.47\t7.54\t3\n2149\t119\t7.58\t7.47\t7.54\t3\n3792\t119\t7.58\t7.47\t7.49\t6\n10381\t119\t7.58\t7.47\t7.49\t7\n2054\t119\t7.86\t7.47\t7.67\t2\n7108\t119\t7.86\t7.47\t7.6\t3\n13989\t119\t7.86\t7.47\t7.6\t3\n10198\t119\t7.86\t7.47\t7.59\t5\n2856\t119\t7.86\t7.47\t7.6\t5\n9682\t119\t7.86\t7.47\t7.64\t6\n40207\t118\t8.15\t7.48\t7.93\t3\n3918\t118\t8.4\t7.48\t8.01\t3\n12773\t118\t8.54\t7.48\t8.22\t8\n10247\t118\t8.99\t7.48\t7.97\t5\n17629\t118\t9.6\t7.48\t8.4\t6\n13748\t118\t9.73\t7.48\t8.61\t2\n7981\t118\t9.87\t7.48\t8.5\t3\n1885\t118\t9.87\t7.48\t8.4\t10\n3789\t118\t16.92\t7.48\t12.2\t2\n10742\t118\t16.96\t7.48\t14.53\t4\n14008\t118\t16.96\t7.48\t14.54\t4\n1483\t118\t17.09\t7.48\t15.1\t5\n36751\t118\t17.09\t7.48\t13.19\t5\n10718\t118\t17.09\t7.48\t14.5\t8\n117\t118\t17.21\t7.48\t14.66\t4\n11809\t118\t17.31\t7.48\t14\t3\n10113\t118\t17.32\t7.48\t11.97\t5\n8933\t118\t17.32\t7.48\t14.32\t7\n2913\t118\t17.48\t7.48\t14.11\t3\n9225\t118\t17.48\t7.48\t12.72\t6\n6919\t147\t7.98\t7.49\t7.74\t2\n2965\t147\t8.05\t7.49\t7.77\t2\n3372\t147\t8.05\t7.49\t7.77\t2\n3743\t147\t8.05\t7.49\t7.77\t2\n2459\t147\t8.05\t7.49\t7.86\t3\n3401\t147\t8.05\t7.49\t7.86\t3\n13976\t147\t8.05\t7.49\t7.86\t3\n1892\t147\t8.1\t7.49\t7.82\t7\n7198\t147\t8.18\t7.49\t7.92\t3\n10739\t147\t8.34\t7.49\t7.84\t6\n21284\t147\t8.34\t7.49\t8.01\t6\n1419\t119\t7.75\t7.5\t7.55\t5\n6565\t119\t7.86\t7.5\t7.6\t9\n3503\t119\t7.51\t7.51\t7.51\t1\n10317\t147\t7.51\t7.51\t7.51\t1\n12558\t119\t7.51\t7.51\t7.51\t1\n21284\t119\t7.51\t7.51\t7.51\t1\n12900\t119\t7.51\t7.51\t7.51\t2\n12605\t119\t7.86\t7.51\t7.71\t3\n156\t147\t8.07\t7.51\t7.79\t2\n10883\t147\t8.07\t7.51\t7.79\t2\n9728\t147\t8.07\t7.51\t7.76\t3\n1241\t147\t8.07\t7.51\t7.88\t3\n1886\t147\t8.07\t7.51\t7.88\t3\n8836\t147\t8.07\t7.51\t7.88\t3\n1589\t147\t8.07\t7.51\t7.79\t4\n23226\t147\t8.07\t7.51\t7.79\t4\n1720\t147\t8.1\t7.51\t7.71\t3\n3349\t147\t8.1\t7.51\t7.71\t3\n1403\t147\t8.1\t7.51\t7.81\t4\n3879\t147\t8.1\t7.51\t7.94\t4\n3665\t147\t8.1\t7.51\t7.88\t6\n17435\t147\t8.1\t7.51\t7.9\t6\n4928\t147\t8.17\t7.51\t7.84\t2\n9610\t119\t8.48\t7.51\t8\t2\n6027\t119\t8.48\t7.51\t7.86\t3\n38710\t119\t8.48\t7.51\t7.86\t3\n6492\t120\t8\t7.52\t7.84\t3\n9450\t120\t8\t7.52\t7.8\t3\n11250\t120\t8\t7.52\t7.81\t5\n4253\t120\t8\t7.52\t7.88\t5\n4819\t120\t8\t7.52\t7.9\t5\n1817\t118\t17.36\t7.52\t9.76\t6\n557\t120\t54.55\t7.52\t38.87\t3\n3303\t120\t54.55\t7.52\t31.03\t6\n9377\t120\t54.55\t7.52\t46.5\t6\n1959\t118\t7.53\t7.53\t7.53\t1\n1544\t147\t8.1\t7.53\t7.82\t2\n6963\t147\t8.1\t7.53\t7.82\t2\n9952\t147\t8.1\t7.53\t7.9\t3\n7222\t147\t8.1\t7.53\t7.91\t3\n3167\t33\t45.18\t45\t45.09\t2\n8068\t33\t45.18\t45\t45.09\t2\n3090\t33\t45.27\t45\t45.15\t3\n12078\t31\t10.24\t8.41\t9.38\t5\n5708\t31\t10.24\t8.42\t9.2\t3\n2453\t31\t10.24\t8.51\t9.38\t2\n12668\t30\t10.31\t8.54\t9.4\t6\n1460\t30\t10.52\t8.54\t9.51\t4\n1918\t30\t10.73\t8.54\t9.62\t9\n2498\t30\t10.26\t8.63\t9.63\t6\n1672\t30\t10.33\t8.63\t9.28\t4\n27197\t30\t10.52\t8.63\t9.61\t8\n2165\t30\t10.52\t8.63\t9.79\t6\n1917\t30\t10.54\t8.63\t9.71\t4\n2527\t30\t11.22\t8.63\t9.86\t8\n8117\t30\t10.57\t8.8\t9.91\t3\n10880\t30\t10.73\t8.8\t9.88\t5\n2598\t30\t11.22\t8.8\t10.11\t6\n4712\t31\t10.24\t8.86\t9.28\t4\n3626\t31\t10.24\t9.14\t9.36\t5\n3203\t31\t10.24\t9.14\t9.99\t5\n1936\t31\t10.24\t9.14\t9.81\t8\n7969\t31\t10.24\t9.14\t9.74\t11\n5408\t31\t10.24\t9.14\t9.66\t3\n7527\t31\t10.24\t9.14\t9.63\t9\n3148\t31\t10.24\t9.14\t9.74\t5\n5534\t31\t10.24\t9.14\t9.74\t5\n4031\t31\t10.24\t9.14\t9.8\t5\n5579\t31\t10.24\t9.14\t9.74\t5\n9084\t31\t10.24\t9.14\t9.41\t4\n6421\t31\t10.24\t9.14\t9.56\t6\n9255\t31\t10.24\t9.14\t9.62\t6\n5729\t31\t10.24\t9.14\t9.66\t3\n11932\t31\t10.24\t9.14\t9.56\t6\n8298\t31\t10.24\t9.14\t9.59\t7\n2856\t30\t10.63\t9.22\t10.24\t4\n17420\t30\t10.63\t9.22\t10.16\t3\n8854\t30\t10.68\t9.22\t9.71\t3\n81\t30\t11.22\t9.22\t10.19\t4\n9970\t30\t11.22\t9.22\t10.36\t9\n2168\t30\t10.63\t9.26\t10.28\t9\n7704\t30\t10.63\t9.26\t10.24\t8\n7791\t30\t10.73\t9.26\t9.96\t10\n15822\t31\t10.24\t9.35\t9.61\t4\n2119\t30\t10.63\t9.35\t10.21\t7\n6548\t30\t10.63\t9.35\t10.36\t6\n718\t30\t10.63\t9.35\t10.3\t5\n5632\t30\t10.63\t9.35\t10.19\t10\n7533\t30\t10.63\t9.35\t10.33\t5\n5264\t30\t10.63\t9.35\t10.27\t4\n1277\t30\t10.63\t9.35\t10.22\t5\n6752\t30\t10.63\t9.35\t9.99\t3\n27987\t30\t10.68\t9.35\t10.24\t3\n6071\t30\t11.38\t9.35\t10.65\t3\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_-1574072063",
+      "id": "20220622-214018_994386532",
+      "dateCreated": "2022-04-26T20:02:03+0000",
+      "dateStarted": "2022-08-02T14:30:06+0000",
+      "dateFinished": "2022-08-02T14:30:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "text": "%md\n\n# End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:30:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of Script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_-269166343",
+      "id": "20220622-214018_2011955895",
+      "dateCreated": "2022-04-26T20:02:02+0000",
+      "dateStarted": "2022-08-02T14:30:07+0000",
+      "dateFinished": "2022-08-02T14:30:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2022-08-02T14:30:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1655934018833_223466171",
+      "id": "20220622-214018_1285966152",
+      "dateCreated": "2022-04-26T20:02:01+0000",
+      "dateStarted": "2022-08-02T14:30:07+0000",
+      "dateFinished": "2022-08-02T14:30:07+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    }
+  ],
+  "name": "OML4R Feature Engineering Aggregation",
+  "id": "18856",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA8A6C520D18:MARK-18856": [],
+    "MDWD9201D2221:MARK-18856": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}
