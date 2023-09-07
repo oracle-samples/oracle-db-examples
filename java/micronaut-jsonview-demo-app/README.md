@@ -1,3 +1,7 @@
+# Using JSON Relational Duality Views with Micronaut® Framework
+
+This [blog](https://blogs.oracle.com/java/post/json-relational-duality-views-with-micronaut-framework) explains how to use the Oracle JSON Relational Duality feature in a Micronaut Java application.
+
 This is an example application for Micronaut Data using an Oracle JSON Duality View.
 
 It uses a test container with the container image "gvenzl/oracle-free:latest-faststart" by default and then
