@@ -1,0 +1,23 @@
+#!/bin/bash
+
+HOST=<host>
+PORT=<portNum>
+
+# CDB 
+SERVICE=<serviceName>
+SERVICE_DOMAIN=<domain of service>
+
+# sys password
+SYSPASSWRD=<sys password>
+
+# Specify an existing user and password or a user and password that will be created.
+USER=<database user>
+USER_PWD=<database user password>
+
+sqlplus="sqlplus sys/${SYSPASSWRD}@'(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=${HOST})(PORT=${PORT})))(CONNECT_DATA=(SERVICE_NAME=${SERVICE}.${SERVICE_DOMAIN})(SERVER=DEDICATED)))' as sysdba @./sql/setupTeq.sql ${USER} ${USER_PWD}"
+
+echo quit | $sqlplus
+
+sqlplusTEQ="sqlplus ${USER}/${USER_PWD}@'(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=${HOST})(PORT=${PORT})))(CONNECT_DATA=(SERVICE_NAME=cdb1_pdb1.${SERVICE_DOMAIN})(SERVER=DEDICATED)))' @./sql/createTEQ.sql"
+
+echo quit | $sqlplusTEQ
