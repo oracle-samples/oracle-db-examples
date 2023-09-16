@@ -14,7 +14,10 @@ SYSPASSWRD=<sys password>
 USER=<database user>
 USER_PWD=<database user password>
 
-sqlplus="sqlplus sys/${SYSPASSWRD}@'(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=${HOST})(PORT=${PORT})))(CONNECT_DATA=(SERVICE_NAME=${SERVICE}.${SERVICE_DOMAIN})(SERVER=DEDICATED)))' as sysdba @./sql/setupTeq.sql ${USER} ${USER_PWD}"
+# Specify the seed database
+SEED_DB=<name of seed database>
+
+sqlplus="sqlplus sys/${SYSPASSWRD}@'(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=${HOST})(PORT=${PORT})))(CONNECT_DATA=(SERVICE_NAME=${SERVICE}.${SERVICE_DOMAIN})(SERVER=DEDICATED)))' as sysdba @./sql/setupTeq.sql ${USER} ${USER_PWD} ${SEED_DB}"
 
 echo quit | $sqlplus
 

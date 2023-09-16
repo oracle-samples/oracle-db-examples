@@ -1,17 +1,12 @@
 set serveroutput on
-create user if not exists &1 identified by &2
 
 alter pluggable database all close immediate;
 drop pluggable database cdb1_pdb1 including datafiles;
-drop pluggable database cdb1_pdb2 including datafiles;
-drop pluggable database cdb1_pdb3 including datafiles;
-drop pluggable database cdb1_pdb4 including datafiles;
-create pluggable database cdb1_pdb1 &1 user &1 identified by  &2 file_name_convert=('pdb0', 'pdb1');
-
+create pluggable database cdb1_pdb1 admin user &1 identified by &2 file_name_convert=('&3', 'pdb1');
+alter pluggable database all open;
 alter session set container=cdb1_pdb1;
-alter pluggable database open;
-drop tablespace users including contents and datafiles;
-CREATE TABLESPACE users DATAFILE 'users3.dbf' SIZE 500M EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE users DATAFILE 'users.dbf' SIZE 500M EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
 ALTER USER &1
       DEFAULT TABLESPACE users;
 alter user &1 quota 1G on users;
