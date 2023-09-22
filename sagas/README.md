@@ -4,8 +4,6 @@ Repository for saga benchmark application.  This application mimics a real appli
 
 ## Getting started
 
-*Note*: You will need the saga jar from the saga annotations project.
-
 In order to drive the application, you will need to install Artillery (global installation is recommended).
 
 ```
