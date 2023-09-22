@@ -24,7 +24,7 @@ Copy the template file `application.properties.example` in src/main/resources in
 
 Run `mvn clean install` which will copy the properties file as well as build and package each of the applications.
 
-From the root directory, run `mvn exec:java -pl sqlgenerator`. This will run the sql generator program that will generate all of the necessary sql scripts into the `sql` subdirectory.
+From the root directory, create a `sql` directory, i.e., `mkdir sql` then run `mvn exec:java -pl sqlgenerator`. This will run the sql generator program that will generate all of the necessary sql scripts into the `sql` subdirectory.
 
 Copy `initdb.sh.example` to `initdb.sh` and mark it as executable, i.e. `chmod a+x ./initdb.sh`
 
