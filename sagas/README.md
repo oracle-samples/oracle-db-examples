@@ -24,7 +24,7 @@ Copy the template file `application.properties.example` in src/main/resources in
 
 Run `mvn clean install` which will copy the properties file as well as build and package each of the applications.
 
-From the root directory, create a `sql` directory, i.e., `mkdir sql` then run `mvn exec:java -pl sqlgenerator`. This will run the sql generator program that will generate all of the necessary sql scripts into the `sql` subdirectory.
+From the root directory, create a `sql` directory, i.e., `mkdir sql` then run `mvn exec:java -pl sqlgenerator`. This will run the sql generator program that will generate all of the necessary sql scripts into the `sql` subdirectory. Modify `setupPDBS.sql` to match your CDB details, specifically, change `<seed_database>` on the `create pluggable database` lines to the value of your seed database.
 
 Copy `initdb.sh.example` to `initdb.sh` and mark it as executable, i.e. `chmod a+x ./initdb.sh`
 
@@ -38,7 +38,7 @@ From the base directory, run `mvn clean install` to build everything.
 
 **Optional** Copy setenv.sh into the bin folder of the Tomcat directory. This will add some network and JMS tuning as well as add some additional logging.
 
-The application is split into 4 components. The Travel Agency is a WAR that needs to be deployed into a Tomcat 10 container. The Airline and Car applications are standalone Java apps. To start the airline, run `mvn exec:java` from the sagabenchmark/airline directory, where N is the number of the airline instance, e.g., 1 would create a participant called Airline1.
+The application is split into 4 components. The Travel Agency is a WAR that needs to be deployed into a Tomcat 10 container. The Airline and Car applications are standalone Java apps. To start the Airline, run `mvn exec:java` from the airline directory. Similary, to start Car, run `mvn exec:java` from the car directory.
 
 To run the driver, run `npm start` (you may need to run `npm install` first to install the JavaScript dependencies).
 
