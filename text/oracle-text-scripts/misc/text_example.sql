@@ -1,4 +1,4 @@
-connect system/welcome1
+connect system/oracle
 
 -- drop the user and all objects before starting - obviously will fail first time
 

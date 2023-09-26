@@ -3,7 +3,7 @@
 
 -- This procedure runs as user CTXSYS, so that user must be unlocked
 
-connect system/welcome1
+connect system/oracle
 
 alter session set current_schema = CTXSYS
 

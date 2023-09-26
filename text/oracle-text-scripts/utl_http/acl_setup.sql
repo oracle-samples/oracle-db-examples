@@ -31,7 +31,7 @@ COMMIT;
 
 BEGIN
   DBMS_NETWORK_ACL_ADMIN.ASSIGN_ACL(acl  => 'www.xml',
-                                    host => '10.245.248.89',
+                                    host => '192.168.1.1',
                                     lower_port => 8080,
                                     upper_port => 8080);
 END;

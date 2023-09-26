@@ -1,4 +1,4 @@
-connect sys/welcome1 as sysdba
+connect sys/oracle as sysdba
 drop user newtestuser cascade;
 create user newtestuser identified by newtestuser default tablespace users temporary tablespace temp;
 grant connect,resource,ctxapp,create job to newtestuser;

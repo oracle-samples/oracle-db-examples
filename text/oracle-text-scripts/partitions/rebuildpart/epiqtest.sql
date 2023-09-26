@@ -1,4 +1,4 @@
-connect system/telstar
+connect system/oracle
 
 set echo on
 

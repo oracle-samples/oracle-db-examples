@@ -21,11 +21,11 @@ column token_text format a30
 
 select token_type, token_text from dr$fooindex$i;
 
-connect system/welcome1
+connect system/oracle
 alter system set sql_trace=true;
 connect roger/roger
 
 select rowid from foo where contains (bar, 'fuzzy(hello) within bar') > 0;
 
-connect system/welcome1
+connect system/oracle
 alter system set sql_trace=false;

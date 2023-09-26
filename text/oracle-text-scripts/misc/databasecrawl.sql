@@ -1,4 +1,4 @@
-connect system/welcome1
+connect system/oracle
 
 create user testuser identified by testuser;
 grant connect,resource to testuser;

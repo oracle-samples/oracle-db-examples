@@ -1,18 +1,18 @@
-connect sys/welcome1 as sysdba
+connect sys/oracle as sysdba
 
 drop user my_public_user cascade;
 drop user my_040100 cascade;
 drop user enduser cascade;
 
-create user MY_PUBLIC_USER identified by welcome1;
+create user MY_PUBLIC_USER identified by oracle;
 grant connect,resource,ctxapp to MY_PUBLIC_USER;
 grant execute on ctxsys.ctx_thes to MY_PUBLIC_USER;
 
-create user MY_040100      identified by welcome1;
+create user MY_040100      identified by oracle;
 grant connect,resource,ctxapp to MY_040100;
 grant execute on ctxsys.ctx_thes to MY_040100;
 
-create user ENDUSER        identified by welcome1;
+create user ENDUSER        identified by oracle;
 grant resource to ENDUSER;
 grant create any table to ENDUSER;
 grant execute on ctxsys.ctx_thes to ENDUSER;
@@ -20,7 +20,7 @@ grant execute on ctxsys.ctx_thes to ENDUSER;
 grant execute on SYS.DBMS_SYS_SQL to MY_PUBLIC_USER;
 grant execute on SYS.DBMS_SYS_SQL to MY_040100;
 
-connect my_040100/welcome1
+connect my_040100/oracle
 
 create or replace procedure tab_create is
    uid number;
@@ -43,11 +43,11 @@ show err
 
 grant execute on tab_create to my_public_user;
 
-connect my_public_user/welcome1
+connect my_public_user/oracle
 
 exec my_040100.tab_create
 
-connect sys/welcome1 as sysdba
+connect sys/oracle as sysdba
 
 select table_name, owner from all_tables where table_name = 'FOOTEST';
 

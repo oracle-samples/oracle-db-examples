@@ -1,4 +1,4 @@
-connect sys/welcome1 as sysdba
+connect sys/oracle as sysdba
 
 drop user vpdtest cascade;
 
@@ -29,7 +29,7 @@ insert into shadow values (1, 'x');
 insert into orders values (2, 'jumps over the lazy dog', 160);
 insert into shadow values (2, 'x');
 
-connect sys/welcome1 as sysdba
+connect sys/oracle as sysdba
 
 -- create the authorization function
 -- should allow non-dba users to only see row 1 in our orders table
@@ -77,7 +77,7 @@ prompt
 prompt Selecting from table as user vpdtest
 prompt
 select rowid from orders;
-connect sys/welcome1 as sysdba
+connect sys/oracle as sysdba
 prompt
 prompt Selecting from table as user sys
 prompt

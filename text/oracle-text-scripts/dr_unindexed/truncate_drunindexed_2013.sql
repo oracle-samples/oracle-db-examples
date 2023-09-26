@@ -10,11 +10,11 @@
 -- CHANGE SYSTEM PASSWORD in line below
 -- it is strongly recommended to change the CTXSYS password in the "alter user" and "connect" statements as well
 
-connect system/welcome1
+connect system/oracle
 
-alter user ctxsys identified by welcome1 account unlock;
+alter user ctxsys identified by oracle account unlock;
 
-connect ctxsys/welcome1
+connect ctxsys/oracle
 
 set serveroutput on size 100000
 

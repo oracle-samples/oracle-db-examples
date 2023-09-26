@@ -1,4 +1,4 @@
-connect system/telstar
+connect system/oracle
 
 drop user testuser cascade;
 
@@ -29,7 +29,7 @@ column index_name format a25
 
 select segment_name, segment_type, tablespace_name from user_segments;
 
-connect system/telstar
+connect system/oracle
 
 alter tablespace ts rename to ts_old;
 
@@ -58,7 +58,7 @@ select segment_name, segment_type, tablespace_name from user_segments;
 
 select index_name, tablespace_name from user_indexes;
 
-connect system/telstar
+connect system/oracle
 
 drop tablespace ts_old including contents and datafiles;
 

@@ -1,4 +1,4 @@
-connect roger/telstar@local817
+connect roger/oracle@local817
 begin
   ctx_ddl.drop_preference ( 'my_user_datastore' );
 end;

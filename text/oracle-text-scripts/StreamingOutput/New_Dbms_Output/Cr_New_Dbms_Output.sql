@@ -1,4 +1,4 @@
-CONNECT Sys/telstar AS SYSDBA
+CONNECT Sys/oracle AS SYSDBA
 alter session set Plsql_Warnings = 'Error:All, Disable:06010'
 /
 /*

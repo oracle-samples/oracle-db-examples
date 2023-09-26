@@ -1,6 +1,6 @@
 set echo on
 
-connect system/welcome1
+connect system/oracle
 drop user testuser cascade;
 
 create user testuser identified by testuser default tablespace users temporary tablespace temp quota unlimited on users quota unlimited on sysaux quota unlimited on system;

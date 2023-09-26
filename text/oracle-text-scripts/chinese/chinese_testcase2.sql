@@ -1,6 +1,6 @@
 -- see comments at the start of chinese_testcase.sql
 
-connect system/welcome1
+connect system/oracle
 
 drop user testuser cascade;
 

@@ -1,4 +1,4 @@
-connect system/welcome1
+connect system/oracle
 
 alter user scott account unlock identified by tiger;
 grant connect,resource,ctxapp to scott;

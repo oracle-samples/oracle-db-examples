@@ -4,7 +4,7 @@
 -- this scripts drops any existing user called TESTUSER and tablespace NEWTBSP
 -- expects a USERS tablespace. Change that to sysaux if you're in ADE and haven't added a USERS tablespace
 
-connect system/welcome1
+connect system/oracle
 
 set echo on
 set timing on

@@ -1,4 +1,4 @@
-connect system/welcome1
+connect system/oracle
 
 alter system set events '30579 trace name context forever, level 2'; 
 

@@ -1,2 +1,0 @@
-SQL> 
-SQL> spool off

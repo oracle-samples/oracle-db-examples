@@ -1,4 +1,4 @@
-connect sys/welcome1@den00btl as sysdba
+connect sys/oracle@den00btl as sysdba
 drop user cntest cascade;
 create user cntest identified by cntest default tablespace users temporary tablespace temp quota unlimited on users;
 grant connect,resource,ctxapp to cntest;

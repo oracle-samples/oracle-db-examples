@@ -1,4 +1,4 @@
-connect system/welcome1
+connect system/oracle
 
 drop user sampleuser cascade;
 

@@ -1,7 +1,3 @@
-
-
-
-
 -- CTXDIAG package
 -- This package is for analyzing problems with the Oracle Text index $K and $R tables
 --
@@ -285,10 +281,6 @@ create package body ctx_diag as
         into v_row, v_len;
 
         v_first := c_max*v_row + v_len/14;             -- redo last valid DocID
-	if v_len = c_max*14 then
-	  v_len := 0;
-	  v_prev := v_row;
-	end if;
       exception
         when no_data_found then
           v_first := 1;                                          -- $R is empty
@@ -305,7 +297,7 @@ create package body ctx_diag as
     -- read $K
     open v_cur for 'select docid, textkey '||
                      'from '||p_ktab||' '||
-                    'where docid > '||v_first||' '||
+                    'where docid >= '||v_first||' '||
                     'order by 1 asc';
     loop
       fetch v_cur bulk collect into v_tab limit 1000;

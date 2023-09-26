@@ -1,6 +1,6 @@
 From - Wed Nov 22 00:46:53 2000
 Return-Path: <Garrett.Kaminaga@oracle.com>
-Received: from oracle.com (stpc499.us.oracle.com [144.25.23.126])
+Received: from oracle.com 
 	by gmgw01.oraclecorp.com (8.8.8+Sun/8.8.8) with ESMTP id QAA28029
 	for <roger.ford@oracle.com>; Tue, 21 Nov 2000 16:21:53 -0800 (PST)
 Message-ID: <3A1B1237.7843EA34@oracle.com>
@@ -35,7 +35,7 @@ Roger Ford wrote:
 
 -- 
 ------------------------------------------------------------------
-Garrett Kaminaga                              phone (650) 506-9002
+Garrett Kaminaga                              phone 
 ------------------------------------------------------------------
 --------------682061AE2EDCA6165CB11E10
 Content-Type: text/plain; charset=us-ascii;

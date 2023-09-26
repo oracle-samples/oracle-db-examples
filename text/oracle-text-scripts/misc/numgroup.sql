@@ -1,4 +1,4 @@
-connect system/welcome1
+connect system/oracle
 
 alter user ctxsys account unlock identified by ctxsys;
 

@@ -6,7 +6,7 @@
 -- change the "del" to "rm" if using linux
 -- before re-running the script, delete the .dmp and .log files created in the EXPDMP directory
 
-connect system/welcome1
+connect system/oracle
 
 drop user test_user cascade;
 
@@ -35,8 +35,8 @@ insert into foo values (2, 'jumps over the lazy dog');
 
 create index foobar on foo(bar) indextype is ctxsys.context;
 
-connect system/welcome1
+connect system/oracle
 
 alter tablespace test_tbs read only;
 
-host expdp system/welcome1 directory=expdmp dumpfile=expdp.dmp transport_tablespaces=test_tbs transport_full_check=y logfile=expdp.log
+host expdp system/oracle directory=expdmp dumpfile=expdp.dmp transport_tablespaces=test_tbs transport_full_check=y logfile=expdp.log

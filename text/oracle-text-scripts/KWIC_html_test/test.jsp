@@ -13,7 +13,7 @@ OracleDataSource ods = new OracleDataSource();
 ods.setUser         ("roger");
 ods.setPassword     ("roger");
 ods.setDriverType   ("thin");
-ods.setServerName   ("138.3.9.87");
+ods.setServerName   ("192.168.1.1");
 ods.setPortNumber   (1521);
 ods.setDatabaseName ("eng10p");
 

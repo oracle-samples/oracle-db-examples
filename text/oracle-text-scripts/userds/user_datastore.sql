@@ -1,6 +1,6 @@
 -- user datastore examples
 
-connect sys/telstar as sysdba
+connect sys/oracle as sysdba
 
 drop user testuser cascade;
 
