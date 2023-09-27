@@ -7,9 +7,7 @@ Some of them were designed to be passed on to customers to illustrate particular
 As I intend to retire in the not too distant future, I wanted to make these scripts available for anyone working with Oracle Text. Probably the best way to use them is to download the lot, then use a recursive **grep** to look for the code feature or setting you're interested in. For example:
 
 ```
-<copy>
 find . -name \*.sql -exec grep -iH USER_DATASTORE {} \;
-</copy>
 ```
 
 (You can use the -r flag on some greps of course rather than using **find**)
