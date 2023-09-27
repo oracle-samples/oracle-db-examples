@@ -1,0 +1,102 @@
+SQL> @xmlsections
+SQL> -- drop table myxml;
+SQL> 
+SQL> create table myxml (xmlvalue clob);
+
+Table created.
+
+SQL> 
+SQL> insert into myxml values ('
+  2  <ERecord>
+  3    <WorkOrderOperationInformationVVO>
+  4  	 <WorkOrderOperationInformationVVORow>
+  5  	   <WorkOrderId>100</WorkOrderId>
+  6  	 </WorkOrderOperationInformationVVORow>
+  7    </WorkOrderOperationInformationVVO>
+  8    <OperationTransaction>
+  9  	 <OperationName>Op100</OperationName>
+ 10  	 <Item>AS54888</Item>
+ 11    </OperationTransaction>
+ 12  </ERecord>
+ 13  ');
+
+1 row created.
+
+SQL> 
+SQL> -- exec ctx_ddl.drop_section_group('mysections')
+SQL> exec ctx_ddl.create_section_group('mysections', 'XML_SECTION_GROUP')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- true in 4th arg means it's searchable outside the section as well
+SQL> exec ctx_ddl.add_field_section('mysections', 'Item', 'Item', TRUE)
+
+PL/SQL procedure successfully completed.
+
+SQL> -- this will be range searchable
+SQL> exec ctx_ddl.add_sdata_section('mysections', 'WorkOrderId', 'WorkOrdrderId', 'NUMBER')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> create index myxmlindex on myxml(xmlvalue)
+  2  indextype is ctxsys.context
+  3  parameters ('section group mysections sync (on commit)')
+  4  /
+
+Index created.
+
+SQL> 
+SQL> select * from myxml where contains(xmlvalue, 'AS54888 within Item') > 0;
+
+XMLVALUE
+--------------------------------------------------------------------------------
+
+<ERecord>
+  <WorkOrderOperationInformationVVO>
+    <WorkOrderOperationInformati
+
+
+SQL> 
+SQL> -- now add a new field section "OtherItem"
+SQL> 
+SQL> alter index myxmlindex rebuild parameters('add field section OtherItem TAG OtherItem VISIBLE');
+
+Index altered.
+
+SQL> 
+SQL> insert into myxml values ('
+  2  <ERecord>
+  3    <WorkOrderOperationInformationVVO>
+  4  	 <WorkOrderOperationInformationVVORow>
+  5  	   <WorkOrderId>150</WorkOrderId>
+  6  	 </WorkOrderOperationInformationVVORow>
+  7    </WorkOrderOperationInformationVVO>
+  8    <OperationTransaction>
+  9  	 <OperationName>Op200</OperationName>
+ 10  	 <Item>AS54888</Item>
+ 11  	 <OtherItem>AS54889</OtherItem>
+ 12    </OperationTransaction>
+ 13  </ERecord>
+ 14  ');
+
+1 row created.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> select * from myxml where contains(xmlvalue, 'AS54889 within OtherItem') > 0;
+
+XMLVALUE
+--------------------------------------------------------------------------------
+
+<ERecord>
+  <WorkOrderOperationInformationVVO>
+    <WorkOrderOperationInformati
+
+
+SQL> spool off

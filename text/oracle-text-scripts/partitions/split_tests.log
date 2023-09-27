@@ -1,0 +1,223 @@
+
+SQL> @split_tests
+SQL> connect / as sysdba
+Connected.
+SQL> 
+SQL> drop user ptest cascade;
+
+User dropped.
+
+SQL> 
+SQL> drop tablespace ptest1 including contents and datafiles;
+
+Tablespace dropped.
+
+SQL> drop tablespace ptest2 including contents and datafiles;
+
+Tablespace dropped.
+
+SQL> 
+SQL> create tablespace ptest1 datafile '/home/oracle/dbinstall/oradata/R192/ptest1.dbf' size 10m autoextend on;
+
+Tablespace created.
+
+SQL> create tablespace ptest2 datafile '/home/oracle/dbinstall/oradata/R192/ptest2.dbf' size 10m autoextend on;
+
+Tablespace created.
+
+SQL> 
+SQL> create user ptest identified by ptest default tablespace users;
+
+User created.
+
+SQL> 
+SQL> grant connect,resource,ctxapp,unlimited tablespace to ptest;
+
+Grant succeeded.
+
+SQL> 
+SQL> connect ptest/ptest
+Connected.
+SQL> 
+SQL> -- create a partitioned base table
+SQL> 
+SQL> DROP TABLE bike_items;
+DROP TABLE bike_items
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> 
+SQL> CREATE TABLE bike_items
+  2  ( id	  NUMBER,
+  3    price   NUMBER,
+  4    descrip VARCHAR2(40)
+  5  )
+  6  PARTITION BY RANGE (price)
+  7  ( PARTITION p1 VALUES LESS THAN  (	 10 ) TABLESPACE users,
+  8    PARTITION p2 VALUES LESS THAN  (	100 ) TABLESPACE users,
+  9    PARTITION p3 VALUES LESS THAN  ( maxvalue ) TABLESPACE users
+ 10  );
+
+Table created.
+
+SQL> 
+SQL> -- add some data to that table
+SQL> 
+SQL> INSERT INTO bike_items VALUES ( 1, 2.50,  'inner tube for MTB wheel');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 2, 29,	  'wheel, front, basic');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 3, 75,	  'wheel, front, top quality');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 4, 1.99,  'valve caps, set of 4');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 5, 15.99, 'seat');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 6, 130,   'hydraulic disk brake, front wheel');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 7, 25,	  'v-type brake, rear wheel');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 8, 750,   'full-suspension mountain bike');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES ( 9, 250,   'mountain bike frame');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES (10, 40,	  'tires - pair');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES (11, 45,	  'wheel, rear, basic');
+
+1 row created.
+
+SQL> INSERT INTO bike_items VALUES (12, 89.99, 'wheel, rear top quality');
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> exec ctx_ddl.create_preference('part_storage'  , 'BASIC_STORAGE')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec ctx_ddl.set_attribute    ('part_storage'  , 'I_INDEX_CLAUSE', 'tablespace ptest1')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec ctx_ddl.create_preference('index_storage' , 'BASIC_STORAGE')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec ctx_ddl.set_attribute    ('index_storage' , 'I_INDEX_CLAUSE', 'tablespace ptest2')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- create a local partitioned index on the table
+SQL> 
+SQL> CREATE INDEX bike_items_idx ON bike_items (descrip)
+  2  INDEXTYPE IS ctxsys.context
+  3  LOCAL (
+  4  partition p1 parameters ('storage part_storage'),
+  5  partition p2 parameters ('storage part_storage'),
+  6  partition p3 parameters ('storage part_storage') )
+  7  PARAMETERS ('storage index_storage')
+  8  ;
+
+Index created.
+
+SQL> 
+SQL> column index_name format a30
+SQL> column tablespace_name format a30
+SQL> 
+SQL> select index_name, tablespace_name from user_indexes where index_name like 'DR%X';
+
+INDEX_NAME		       TABLESPACE_NAME
+------------------------------ ------------------------------
+DR$BIKE_ITEMS_IDX#0001$X       PTEST1
+DR$BIKE_ITEMS_IDX#0002$X       PTEST1
+DR$BIKE_ITEMS_IDX#0003$X       PTEST1
+
+SQL> 
+SQL> -- now split a partition
+SQL> 
+SQL> ALTER TABLE bike_items
+  2    SPLIT PARTITION p2 AT ( 50 )
+  3    INTO ( PARTITION p2a, PARTITION p2b );
+
+Table altered.
+
+SQL> 
+SQL> -- rebuild index partitions
+SQL> -- the first will use a specific storage clause, the second will default to the index storage
+SQL> 
+SQL> alter index bike_items_idx rebuild partition p2a parameters ('storage part_storage');
+
+Index altered.
+
+SQL> alter index bike_items_idx rebuild partition p2b;
+
+Index altered.
+
+SQL> 
+SQL> -- sync the index
+SQL> 
+SQL> exec ctx_ddl.sync_index('bike_items_idx', '', 'p2a')
+
+PL/SQL procedure successfully completed.
+
+SQL> exec ctx_ddl.sync_index('bike_items_idx', '', 'p2b')
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- and try a query
+SQL> 
+SQL> select * from bike_items where contains (descrip, 'wheel') > 0;
+
+	ID	PRICE DESCRIP
+---------- ---------- ----------------------------------------
+	 1	  2.5 inner tube for MTB wheel
+	 2	   29 wheel, front, basic
+	 7	   25 v-type brake, rear wheel
+	11	   45 wheel, rear, basic
+	 3	   75 wheel, front, top quality
+	12	89.99 wheel, rear top quality
+	 6	  130 hydraulic disk brake, front wheel
+
+7 rows selected.
+
+SQL> 
+SQL> -- check the tablespaces again
+SQL> -- we should see that only one of the partitions uses the index default storage
+SQL> 
+SQL> select index_name, tablespace_name from user_indexes where index_name like 'DR%X';
+
+INDEX_NAME		       TABLESPACE_NAME
+------------------------------ ------------------------------
+DR$BIKE_ITEMS_IDX#0001$X       PTEST1
+DR$BIKE_ITEMS_IDX#0002$X       PTEST1
+DR$BIKE_ITEMS_IDX#0003$X       PTEST1
+DR$BIKE_ITEMS_IDX#0004$X       PTEST2
+
+SQL> 

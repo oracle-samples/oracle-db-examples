@@ -1,0 +1,492 @@
+<title>Advanced MDATA - tips and tricks</title>
+
+<H1><FONT COLOR=BLUE>Advanced MDATA - tips and tricks</FONT></H1>
+
+<H3><FONT COLOR=BLUE>About this Document</FONT></H3>
+
+This document is aimed at developers and other technically-minded people wishing to take full
+advantage of the new mdata feature in Oracle Text, at the Oracle 10g release.
+
+<P>
+It assumes a working knowledge of Oracle Text features.  The document
+presents a variety of techniques, along with code samples. It is
+important to read the code samples as you work through the document -
+the main text does not cover all the details that can be understood by
+reading the code and comments.
+
+<P>
+The examples aim to be self-contained - in that they contain the complete code
+necessary to demonstrate the feature in question. However, they may not be complete -
+for example in a number of places a trigger would be necessary to keep the 
+indexes up to date, but this has been omitted for brevity. In all cases, you are 
+likely to see errors at the beginning of the file the first time you run an 
+example, as the various tables and objects are dropped before being created.
+
+
+<H3><FONT COLOR=BLUE>Introduction</FONT></H3>
+
+MDATA is a new feature (in 10g) for handling document metadata. It introduces
+a new section type MDATA_SECTION.
+
+<P>
+In some respects, mdata sections are similar to ordinary zone or field sections, but with some important differences.
+
+<P>
+Firstly, the mdata section content is not tokenized or processed in any way:
+
+If you had a field section containing the phrase "In Stock", then the
+index would typically contain "IN" and "STOCK"; it would be divided
+into individual words (more accurately <i>tokens</i>) and each token
+would be processed according to the indexing options in use: in this
+case being upper-cased. 
+
+<P>
+However, as an mdata section, the index would only contain a single
+entry for the whole phrase "In Stock": complete and unchanged.
+
+<P>
+Secondly, if you make an update to text in a field section it is
+necessary to re-index the entire text of the document which has been
+changed.
+
+<P>
+With mdata sections you can call a special procedure to update just
+the mdata information. The updates will then be reflected in the index
+without requiring the whole text of the document to be reindexed.
+
+<H3><FONT COLOR=BLUE>Why would I use MDATA?</FONT></H3>
+
+The main reason for using mdata sections is to improve the performance
+of "mixed" queries. A mixed query is one which includes a text
+predicate (such as "the text contains the word 'summer'") and a
+structured predicate (such as "STATUS='In Stock'").
+
+<P>
+Let's look at an example. In an on-line bookstore, I have a table
+which contains one column with the titles of the books, and another
+column with their status, either "In Stock" or "Out of Stock".
+
+<P>
+Conventionally, I might create a text index (INDEXTYPE=CTXSYS.CONTEXT)
+on the title column, and then a structured index - either a BTREE
+index or perhaps a BITMAP index - on the status column.
+
+<P>
+Given a query such as the following, we will look at how it would be
+processed:
+
+<pre><font color=blue>select title from books
+where contains (title, 'summer') > 0
+and status = 'In Stock'
+</font></pre>
+
+Oracle's query optimizer knows that there are indexes on the <code>title</code> and
+<code>status</code> columns. It can decide to run this query using one
+of three plans:
+
+<OL>
+  <LI>It can use the text index on the title column, then for each rowid returned from this index, it can check the status against the actual column value </LI>
+  <LI>It can use the index on the status column, then for each rowid found it can do a "functional lookup" in the text index. </LI>
+  <LI>It can use both indexes, and combine the results by some technique, such as sort-merge. </LI>
+</OL>
+
+The optimizer is pretty good at selecting the most efficient plan for
+such a query. However, none of these plans can be as efficient as a
+simple single-index lookup.
+<P>
+
+By using mdata, we can rephrase this query like this:
+
+<pre><font color=blue>select title from books
+where contains (title, 'summer and mdata(status, In Stock)') > 0
+</font></pre>
+
+This query can be satisfied entirely by the text index. Any rows
+containing "summer" but with the wrong value for the mdata will never
+be returned even from the text index. In almost all cases, this will
+be faster than any possible plan chosen from the list above.
+
+<P>
+This performance benefit can also be realised by using field sections.
+Where mdata sections really work better is when records are updated -
+especially if those updates are very frequent.
+
+<P>
+When a field section is updated, the whole document is re-indexed.
+This presents two potential problems: Firstly, because of the way text
+indexes work, the whole record becomes unsearchable until a SYNC is
+run on the index. Secondly, frequent re-indexing causes fragmentation
+of the text index structures.
+
+<P>
+So, for example, a library application might store the title, author,
+abstract and reviews of a book within a text-indexed field. It might
+have an mdata section containing the name (or id) of the person
+currently borrowing that book.  If you had used a field section for
+this, you'd need to re-index all of that information every time the
+book was borrowed. By using mdata, only the name (or id) needs to be
+re-indexed, but this can still be used as part of a full text search.
+
+<H3><FONT COLOR=BLUE>Can We See an Example?</FONT></H3>
+
+<P> As a basic example, see the file <a
+href="mdata_files/simple.sql">simple.sql</a>
+
+This creates a simple "library stock" application. It has a table with
+a CLOB column containing XML fragments.
+
+<P>
+There are two normally-text-indexed fields, title and author. There are also two fields - stocklevel and status - which are indexed using the new MDATA section group.
+
+We index the table and then search for a book:
+
+<pre><font color=blue>select book_info from library_stock 
+where contains (book_info, 
+'irving within author and mdata(status, In Stock)') > 0;
+</font></pre>
+
+Here we can see the basic mdata search syntax. The mdata function takes the name of the section, and then the string to search for. Leading and trailing whitespace is ignored, but otherwise the string MUST be an exact match. "in stock" or "Stock" would not be a match here. Note that no quotes are required or allowed in the string, unless present in the original.
+
+<P>
+We can look at the some of the data held in the index. Tokens for MDATA sections have token_types in the range 400 to 499 (or -400 to -499 for changes, as we'll see shortly)
+
+<pre><font color=blue>select token_text, token_type, token_first, token_last from
+dr$lib_index$i where token_type >= 400 or token_type <= -400;
+
+TOKEN_TEXT		       TOKEN_TYPE TOKEN_FIRST TOKEN_LAST TOKEN_COUNT
+------------------------------ ---------- ----------- ---------- -----------
+0				      401	    3	       3	   1
+1				      401	    1	       1	   1
+12				      401	    2	       2	   1
+In Stock			      400	    1	       2	   2
+Out of Stock			      400	    3	       3	   1
+</font></pre>
+
+Next, we run a PL/SQL block which updates the metadata, using the procedures
+ctx_ddl.remove_mdata and ctx_ddl.add_mdata. Note that this does not affect the data in the table at all - it ONLY affects the information in the index, and therefore queries that run against that index.
+
+Running our select on the index again, we see that there are new rows for the modified sections. These have TOKEN_TYPE values in the range -400 to -499. These are DELTA, or changed records, and avoid the need to perform a (possibly expensive) update to existing columns.
+
+<pre><font color=blue>TOKEN_TEXT		       TOKEN_TYPE TOKEN_FIRST TOKEN_LAST TOKEN_COUNT
+------------------------------ ---------- ----------- ---------- -----------
+0				     -401	    1	       1	   1
+0				      401	    3	       3	   1
+1				     -401	    1	       1	   0
+1				      401	    1	       1	   1
+12				      401	    2	       2	   1
+In Stock			     -400	    1	       1	   0
+In Stock			      400	    1	       2	   2
+Out of Stock			     -400	    1	       1	   1
+Out of Stock			      400	    3	       3	   1
+</font></pre>
+
+The example then goes on to show that the data is unaffected by a SYNC of the index, but the negative token types go away once the index is optimised.
+
+<H3><FONT COLOR=BLUE>Working with XMLType Columns</FONT></H3>
+
+The file <a href="mdata_files/simpleXML.sql">simpleXML.sql</a> shows a variation on the previous example. The data is held in a XMLType column, rather than a CLOB. Other than that, and the fact that we can now extract individual elements (such as the title) from the XML text, the example is the same as the one before.
+
+<H3><FONT COLOR=BLUE>Working with Individual Columns</FONT></H3>
+
+One problem with the previous two examples is that the metadata in the index gets out of step with the data in the table. Initially we are indexing the data in the XML text. However, as soon as we start changing the metadata, we are changing ONLY tghe data in the index. If we reduce the stocklevel from 1 to 0, the XML text in the table will still read <stocklevel>1</stocklevel>. If, instead, we change the XML text in the table, then our table and index will be in step - but we'd have to reinndex the entire XML document, which is something we're trying to avoid.
+
+<P>
+So simple_uds stores the information in structured columns, and
+assembles the XML-like text "on the fly" during indexing.  This is
+done using a User Datastore procedure (if you're not familiar with
+this, see the Oracle Text Developers' Guide for more information).
+
+<P>
+The procedure my_datastore_doc takes the contents of the title, author and stocklevel columns, and combines them into an XML fragment, together with a generated tag for status - either "In Stock" or "Out of Stock" (this is an improvement on the previous versions, which hard-coded the status flag even though it should really be derived from stocklevel).
+
+<P>
+A User Datastore index is created on a single column - here we've
+chosen to use the TITLE column. We therefore need triggers to deal
+with updates to the other columns. An update to AUTHOR (which is
+conventionally text-indexed) will trigger a change to the TITLE column
+(actually just a copy to itself) to force a re-index.
+
+<P>
+A second trigger deals with updates to the STOCKLEVEL column. This
+alters the metadata in the index, without requiring the reindexing of
+the row. If STOCKLEVEL changes to or from zero, the value of STATUS is
+set to "In Stock" or "Out of Stock" as appropriate.
+
+<P>
+Why do we bother having separate STOCKLEVEL and STATUS mdata sections?  Well, it's not strictly necessary. We cannot do range searches on the STCOKLEVEL value. MDATA only allows equality searches, so we can't do mdata(stocklevel, > 0) for example. However we CAN do something like:
+
+<pre><font color=blue>select id, title, stocklevel from library_stock
+  where contains (title, '(irving within author) not (mdata(stocklevel, 0))') &gt; 0
+</font></pre>
+
+However, it is useful to demonstrate the use of derived MDATA, even if it's not completely necessary for this example.
+
+<H3><FONT COLOR=BLUE>Multiple Values</FONT></H3>
+
+There is no need to restrict MDATA to a single value per document.
+
+The example simple_mult.sql shows a situation where roles are indexed in a many-to-many relationship with users - a user may have multiple roles, and a role may be assigned to multiple users.
+
+This is simply a matter of repeating the data - logically at least we could have
+
+<pre><font color=blue>&lt;rolename&gt;dba&lt;/rolename&gt;
+&lt;rolename&gt;admin&lt;/rollname&gt;
+</font></pre>
+
+In fact this example shows a new technique in that the rolenames are never stored in the data at all - they are added only via the ctx_ddl.add_mdata call. This has the advantage that there is no possibility of the index mdata getting out of sync with the table data, and there is no need for triggers. The main disadvantage is that you must load all the mdata AFTER completing the index build.
+
+<H3><FONT COLOR=BLUE>Getting Around MDATA limitations - (1) Length</FONT></H3>
+
+The maximum length of an MDATA value is 64 characters. Anything beyond this point will be quietly truncated, both at indexing time and during the query. The effect of this is that when searching for long values you might sometimes get unexpected results.
+
+<P>
+The next example, <a href="mdata_files/lengthlimits.sql">lengthlimits.sql</a>, shows a way around this problem.
+
+In the first part of the example, we create a simple table containing 71 character "code" values. The two codes vary only in the last character. We then create a user datastore to generate an XML fragment, similar to the last example (note: triggers are omitted for brevity). The user datastore is used to create an index.
+
+<P>
+Now we're going to find that if we search for one of the values, it
+finds both, since they've been truncated at 64 characters in the
+index:
+
+<pre><font color=blue>select code from test_length
+  where contains (text,
+  'mdata(code,
+  a123456789b1234567889c123456789d123456789e123456789f123456789g123456789x)'
+  ) > 0;
+
+CODE
+--------------------------------------------------------------------------------
+a123456789b1234567889c123456789d123456789e123456789f123456789g123456789x
+a123456789b1234567889c123456789d123456789e123456789f123456789g123456789y
+</font></pre>
+
+<P>
+So we need a workaround. The workaround consists of a lookup table,
+which contains short values to be indexed, and the long values which
+are actually in the table. We must do a lookup in this table at
+indexing time - in our user datastore, and at query time via a simple
+PL/SQL lookup function.  That way, the values that are indexed are
+well within the 64 character limit. You can see this in a lot more
+detail by following the full example.
+
+<P>
+The lookup table approach can be used for other types of
+expansion. For example, although mdata only allows exact matching, you
+can provide your own stem operator by storing stem expansions in a
+lookup table. See the example file <a href="mdata_files/stems.sql">stems.sql</a>.
+
+Getting Around MDATA limitations - (2) Maximum Sections
+
+There is a limit of 100 mdata sections. If you try to exceed this, you will get a message like:
+
+<pre><font color=blue>ERROR at line 1:
+ORA-20000: Oracle Text error:
+DRG-11110: maximum number of mdata sections exceeded
+ORA-06512: at "CTXSYS.DRUE", line 160
+ORA-06512: at "CTXSYS.CTX_DDL", line 224
+ORA-06512: at line 1
+</font></pre>
+
+But what if you need more than 100 sections? Given the exact-match nature of mdata sections,
+instead of using
+
+<pre><font color=blue>&lt;SEC1&gt;dog&lt;/SEC1&gt;
+&lt;SEC2&gt;cat&lt;/SEC2&gt;
+&lt;SEC3&gt;rabbit&lt;/SEC3&gt;
+</font></pre>
+
+you can use
+
+<pre><font color=blue>&lt;SEC&gt;1 dog&lt;/SEC&gt;
+&lt;SEC&gt;2 cat&lt;/SEC&gt;
+&lt;SEC&gt;3 rabbit&lt;/SEC&gt;
+</font></pre>
+
+And the search just has to prepend the section number to the search string. 
+This can be extended indefinitely.
+
+<P>
+(There is no example code for this section)
+
+<H3><FONT COLOR=BLUE>Logical Partitioning</FONT></H3>
+
+It is often useful to be able to divide a table into logical "chunks" or partitions.
+For example, I might want to be able to search on information in the last week,
+the last month, or the last year.  You can do this using a real partitioned table,
+which is very efficient when you only want to search in that partition - but there
+are some disadvantages:
+
+<P>
+Data must be regularly moved between partitions, as it becomes too old
+for the current partition Searches across more than one partition are
+less efficient than if all the data was held in a single table.
+
+<P>
+So a common technique in previous versions was to use a field section:
+
+<pre><font color=blue>&lt;DATERANGE&gt;THISWEEK&lt;/DATERANGE&gt;
+</font></pre>
+
+and you could then search for <code>" ... contains (col, ( (terms) and THISWEEK within daterange ) > 0"</code>
+
+This approach works well, except that you need to reindex each document every time
+you modify the DATERANGE element.  Using mdata avoids this problem. The query would
+now become <code>" ... contains ( (terms) and MDATA(daterange, THISWEEK) ) > 0"</code>
+
+<H3><FONT COLOR=BLUE>Mixed Queries with Range Predicates</FONT></H3>
+
+"Mixed" queries, containing text operators and a structured range search can
+be expensive to process. It is often necessary for the kernel to a large number
+of table or index lookups to satisfy the query. This is why we strive to have 
+the whole query satisfied from the text index. Sometimes, however, this is not
+possible.  Consider the query
+
+<pre><font color=blue> contains (text, 'oracle') &gt; 0
+ and date between '12-JAN-2004' and '03-FEB-2004'
+</font></pre>
+
+Now we can't completely solve that date clause from the text index, at least
+without using complicated algorithms described elsewhere) but we can use the
+text index as a "primary filter", by storing (say) the month and year in an
+mdata section and using a query like:
+
+<pre><font color=blue> contains (text, 'oracle
+   and ( mdata(month, JAN2004) OR mdata(month FEB2004) )') &gt; 0
+ and date between '12-JAN-2004' and '03-FEB-2004'
+</font></pre>
+
+This way, the mdata restrictions mean the text search part of the query will
+only fetch rows from January and February 2004, and the structured part of
+the search will have very much less work to do to prune these rows to the
+desired set of dates.
+
+<P>
+Performance note: Each mdata operator uses a database cursor, so you
+should not use too many of them. Searching over several years by
+specifying all the months is probably not a good idea. Instead, you
+can store different levels of mdata:
+
+<pre><font color=blue>&lt;DECADE&gt;2000-2009&lt;/DECADE&gt;
+&lt;YEAR&gt;2004&lt;/YEAR&gt;
+&lt;QUARTER&gt;1-2004&lt;/QUARTER&gt;
+&lt;MONTH&gt;FEB2004&lt;/MONTH&gt;
+</font></pre>
+
+Or use a single repeating field and code the values so they can be 
+distinguished:
+
+<pre><font color=blue>&lt;DATERANGE&gt;2000-2009&lt;/DATERANGE&gt;
+&lt;DATERANGE&gt;YEAR2004&lt;/DATERANGE&gt;
+&lt;DATERANGE&gt;Q1-2004&lt;/DATERANGE&gt;
+&lt;DATERANGE&gt;FEB2004&lt;/DATERANGE&gt;
+</font></pre>
+
+<H3><FONT COLOR=BLUE>Sorting</FONT></H3>
+
+Given the logical partitioning in the previous section, we can see how this might be extended to help sorting
+- mimicing the way real partitions make sorting more efficient.
+
+<P>
+Let's assume we want to search by date, and we need to fetch the first
+50 hits. The technique would be to run a query on
+
+<pre><font color=blue>DOG and MDATA(daterange, FEB2004)  (current month)
+</font></pre>
+
+then if you don't get enough hits from this to fill our hitlist, we can move on to
+
+<pre><font color=blue>DOG and MDATA(012004,dp) (last month)
+</font></pre>
+
+and so on. Each invocation needs an ORDER BY to do the fine-grain sorting, but the number of rows being sorted is minimal.
+
+In testing, this technique performs relatively well. it is optimal when you only need one partition, so if you know the average date spread of rows returned, they can size the partitions correctly.
+
+<P>
+The following strategy is even better:
+
+<OL>
+  <LI>Issue query without any sorting criteria, and fetch the first 50 rows </LI>
+  <LI>If you don't get 50 rows, sort what you have and return.  Otherwise, </LI>
+  <LI>Iterative partition scanning as above </LI>
+</OL>
+
+You can use a similar technique with multi-resolution partitions (as discussed in the logical partition section)
+to improve partition scanning:
+
+<OL>
+  <LI>Get first 50 rows of first, largest grain partition (i.e. YEAR), no sort </LI>
+  <LI>If we've got 50 rows, try next smallest partition (i.e. HALF), no sort ... etc.  This minimizes the number of invocations of the same query. </LI>
+</OL>
+
+Another variation is to use progressive relaxation. This technique - 
+described in more detail <a href="http://otn.oracle.com/products/text/htdocs/prog_relax.html">here</a>  -
+allows you to execute a series of query "sequences" intended to return hits in the order the sequences are executed.
+
+<P>
+The benefits of progressive relaxation are only really seen when a set
+number of rows are fetched, and the fetches stop before all rows have
+been fetched.
+
+<P>
+The file progrelax.sql demonstrates this, using the query:
+
+<pre><font color=blue>select score(1), book_info from test_table 
+where contains (month_info, '
+&lt;query&gt;
+  &lt;textquery&gt;
+    &lt;progression&gt;
+      &lt;seq&gt; mdata(month, 122003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 112003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 102003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 092003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 082003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 072003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 062003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 052003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 042003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 032003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 022003) &lt;/seq&gt;
+      &lt;seq&gt; mdata(month, 012003) &lt;/seq&gt;
+   &lt;/progression&gt;
+ &lt;/textquery&gt;
+&lt;/query&gt;
+',1) &gt; 0 and rownum &lt;= 5;
+</font></pre>
+
+Note that (roughly speaking, anyway) only enough mdata cursors will be opened to provide the number
+of rows fetched - so the presence of twelve mdata queries here does not necessarily require twelve
+seperate cursors.
+
+<H3><FONT COLOR=BLUE>MDATA Scoring - bug 3407570</FONT></H3>
+
+In Oracle 10g Release 1, there is a bug with the score returned from mdata.
+It SHOULD return 0 if no match, or 100 if there is a match. However it actually
+returns a lower value than 100 - normally 1.
+
+<P>
+This causes problems with AND queries, since AND always scores the
+LOWER of the two sides. So a search for
+
+<pre><font color=blue>  '(lord of the rings) and mdata(mediatype, DVD)'
+</font></pre>
+
+will always return a score of 1, since the mdata score overrides the score
+from the phrase search.
+
+<P>
+To workaround this, you can force the score of the mdata clause to the
+maximum (100) like so:
+
+<pre><font color=blue>  '(lord of the rings) and mdata(mediatype, DVD)*10*10'
+</font></pre>
+
+<P>
+Note the maximum score multiplier is 10 - so you have to do it twice
+as above.
+
+
+<p><hr><p>
+Last modified: 3-MARCH-2004 by <a href="mailto:roger.ford@oracle.com">Roger Ford</a
+<p><hr><p>
