@@ -22,8 +22,8 @@ Clone the project from the repository. Open a bash window and change the directo
 
 Copy `initdb.sh.example` to `initdb.sh` and mark it as executable, i.e. `chmod a+x ./initdb.sh`
 
-Modify `initdb.sh` to fill in the hostname, port, name of the CDB, service domain, sys password, user, user password. The user and user
-password can be an existing user or a new user to create. To (re)initialize the database, run `./initdb.sh`
+Modify `initdb.sh` to fill in the hostname, port, name of the CDB, service domain, sys password, user, user password, the name of the seed database, and the name of the
+pluggable database to create. The user and user password can be an existing user or a new user to create. To (re)initialize the database, run `./initdb.sh`
 
 The initdb.sh script will create a transactional event queue with the name of **TEQ** with the required privileges that is discussed in the 
 [Oracle TxEventQ Connector](https://mvnrepository.com/artifact/com.oracle.database.messaging/txeventq-connector) Readme. Use this queue
