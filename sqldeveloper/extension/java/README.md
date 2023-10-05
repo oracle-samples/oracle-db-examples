@@ -25,3 +25,6 @@ Optionally accept connection info from the command line and/or on a [SocketServe
 
 * [ConnectionHelperClient](ConnectionHelperClient)
 A simple command line client for the ConnectionHelper socket server.
+
+* [WorksheetAction](WorksheetAction)
+How to add actions to the worksheet context menu and / or toolbar; execute the action directly or in a background task; and present advanced / detailed information in a result panel.
