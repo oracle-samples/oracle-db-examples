@@ -15,7 +15,8 @@ declare
    cursor c1 is
      select index_owner,index_name,table_owner,table_name,column_name
      from   dba_ind_columns
-     where  (index_owner,index_name) in (select owner,index_name from dba_indexes where auto = 'YES')
+     where  (index_owner,index_name) in (select owner,index_name from dba_indexes 
+                                         where auto = 'YES' and visibility = 'VISIBLE')
      order by index_owner,index_name,column_position;
    po varchar2(100) := 'X';
    pn varchar2(100) := 'X';
