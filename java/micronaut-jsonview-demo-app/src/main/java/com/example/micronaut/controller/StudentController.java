@@ -7,15 +7,16 @@
 
 package com.example.micronaut.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.example.micronaut.dto.CreateStudentDto;
-import com.example.micronaut.entity.Student;
-import com.example.micronaut.entity.StudentCourse;
+import com.example.micronaut.entity.Course;
+import com.example.micronaut.entity.view.CourseView;
+import com.example.micronaut.entity.view.StudentScheduleView;
 import com.example.micronaut.entity.view.StudentView;
+import com.example.micronaut.entity.view.TeacherView;
 import com.example.micronaut.repository.CourseRepository;
-import com.example.micronaut.repository.StudentCourseRepository;
-import com.example.micronaut.repository.StudentRepository;
 import com.example.micronaut.repository.view.StudentViewRepository;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;
@@ -31,18 +32,14 @@ import io.micronaut.http.annotation.Status;
 public final class StudentController {
 
     private final CourseRepository courseRepository;
-    private final StudentRepository studentRepository;
-    private final StudentCourseRepository studentCourseRepository;
     private final StudentViewRepository studentViewRepository;
 
-    public StudentController(CourseRepository courseRepository, StudentRepository studentRepository, StudentCourseRepository studentCourseRepository, StudentViewRepository studentViewRepository) { // <2>
+    public StudentController(CourseRepository courseRepository, StudentViewRepository studentViewRepository) { // <2>
         this.courseRepository = courseRepository;
-        this.studentRepository = studentRepository;
-        this.studentCourseRepository = studentCourseRepository;
         this.studentViewRepository = studentViewRepository;
     }
 
-    @Get("/") // <3>
+    @Get // <3>
     public Iterable<StudentView> findAll() {
         return studentViewRepository.findAll();
     }
@@ -75,15 +72,16 @@ public final class StudentController {
         });
     }
 
-    @Post("/") // <8>
+    @Post// <8>
     @Status(HttpStatus.CREATED) 
-    public Optional<StudentView> create(@NonNull @Body CreateStudentDto createDto) {
-      // Use a relational operation to insert a new row in the STUDENT table
-      Student student = studentRepository.save(new Student(createDto.student(), createDto.averageGrade()));
-      // For each of the courses in createDto parameter, insert a row in the STUDENT_COURSE table
-      courseRepository.findByNameIn(createDto.courses()).stream()
-          .forEach(course -> studentCourseRepository.save(new StudentCourse(student, course)));
-      return studentViewRepository.findByStudent(student.name());
+    public StudentView create(@NonNull @Body CreateStudentDto createDto) {
+        // Must initialize data for student view by given courses
+        List<Course> courses = courseRepository.findByNameIn(createDto.courses());
+        List<StudentScheduleView> scheduleViews = courses.stream()
+                .map(c -> new StudentScheduleView(null, new CourseView(c.id(), c.name(), new TeacherView(c.teacher().id(), c.teacher().name()), c.room(), c.time()))).toList();
+        StudentView studentView = new StudentView(createDto.student(), createDto.averageGrade(),
+                scheduleViews);
+        return studentViewRepository.save(studentView);
     }
 
     @Delete("/{id}") // <9>

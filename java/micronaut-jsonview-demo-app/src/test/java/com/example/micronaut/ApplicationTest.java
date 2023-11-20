@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest
@@ -39,15 +40,14 @@ class ApplicationTest {
 
         // Create new
         CreateStudentDto createStudentDto = new CreateStudentDto("Aniko", 8.5, List.of("Math", "English"));
-        Optional<StudentView> optStudentView = studentClient.save(createStudentDto);
-        assertTrue(optStudentView.isPresent());
-        StudentView studentView = optStudentView.get();
+        StudentView studentView = studentClient.save(createStudentDto);
+        assertNotNull(studentView);
         assertEquals("Aniko", studentView.student());
         // Student has two courses
         assertEquals(2, studentView.schedule().size());
 
         // Find by name
-        optStudentView = studentClient.findByStudent("Aniko");
+        Optional<StudentView> optStudentView = studentClient.findByStudent("Aniko");
         assertTrue(optStudentView.isPresent());
         studentView = optStudentView.get();
         assertEquals(8.5, studentView.averageGrade());

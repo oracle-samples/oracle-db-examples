@@ -36,7 +36,7 @@ interface StudentClient {
     Optional<StudentView> updateStudent(Long id, @NonNull String student);
 
     @Post
-    Optional<StudentView> save(@Valid @Body CreateStudentDto createStudentDto);
+    StudentView save(@Valid @Body CreateStudentDto createStudentDto);
 
     @Delete("/{id}")
     @Status(HttpStatus.NO_CONTENT)
