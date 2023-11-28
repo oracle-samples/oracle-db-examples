@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2023, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at http://oss.oracle.com/licenses/upl.
+#
+
+apiVersion: database.oracle.com/v1alpha1
+kind: SingleInstanceDatabase
+metadata:
+  name: db-
+spec:
+  
+  # Setup with LoadBalancer
+  loadBalancer: true
+
+  ## Use only alphanumeric characters for sid
+  sid: XE
+  
+  ## DB edition
+  edition: express
+  
+  ## Secret containing SIDB password mapped to secretKey
+  adminPassword:
+    secretName: default-admin-password
+
+  ## Database image details
+  image:
+    ## Oracle Database Free is only supported from DB version 23.2 onwards
+    pullFrom: container-registry.oracle.com/database/express:latest
+    prebuiltDB: true
+
+  ## size is the required minimum size of the persistent volume
+  ## storageClass is specified for automatic volume provisioning
+  ## accessMode can only accept one of ReadWriteOnce, ReadWriteMany
+  persistence:
+    size: 50Gi
+    ## oci-bv applies to OCI block volumes. Use "standard" storageClass for dynamic provisioning in Minikube. Update as appropriate for other cloud service providers
+    storageClass: "oci-bv"
+    accessMode: "ReadWriteOnce"
+
+  ## Count of Database Pods. Should be 1 for express edition.
+  replicas: 1
