@@ -48,10 +48,10 @@ public class Application {
     @EventListener
     public void init(StartupEvent startupEvent) {
         // Clear the existing tables
+        studentCourseRepository.deleteAll();
         courseRepository.deleteAll();
         studentRepository.deleteAll();
         teacherRepository.deleteAll();
-        studentCourseRepository.deleteAll();
 
         // Use relational operations to insert three new rows in the STUDENT table
         Student dennis = studentRepository.save(new Student("Denis", 8.5));
