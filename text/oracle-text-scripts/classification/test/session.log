@@ -1,0 +1,150 @@
+h:\auser\Work\Code\sql\classification\test>sqlplus /nolog @text_test2
+sqlplus /nolog @text_test2
+
+SQL*Plus: Release 12.1.0.1.0 Production on Thu Sep 18 14:47:11 2014
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+SQL> 
+SQL> connect ctxsys/ctxsys@localhost/pdb1
+Connected.
+SQL> 
+SQL> exec ctx_thes.drop_thesaurus('TEXT_TAGS');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> host ctxload -thes -name TEXT_TAGS -thescase y -file text_test.txt -user ctxsys/ctxsys@localhost/pdb1
+Connecting...
+Creating thesaurus TEXT_TAGS...
+Thesaurus TEXT_TAGS created...
+Processing...
+12 lines processed successfully
+Beginning insert...12 lines inserted successfully
+Disconnected
+
+SQL> host ctxkbtc -user ctxsys/ctxsys@localhost/pdb1 -name TEXT_TAGS -verbose
+Oracle Text knowledge base extension: thesaurus compiler
+Connecting... 
+Deleting old extended knowledge base.
+Deleting C:\app\raford\product\12.1.0\dbhome_1\ctx\data\enlx\drelsGB.dat
+Deleting C:\app\raford\product\12.1.0\dbhome_1\ctx\data\enlx\dreldGB.dat
+Deleting C:\app\raford\product\12.1.0\dbhome_1\ctx\data\enlx\dreliGB.dat
+Deleting C:\app\raford\product\12.1.0\dbhome_1\ctx\data\enlx\drelkGB.dat
+Deleting C:\app\raford\product\12.1.0\dbhome_1\ctx\data\enlx\drefdGB.dat
+Deleting C:\app\raford\product\12.1.0\dbhome_1\ctx\data\enlx\drefiGB.dat
+Processing thesaurus: TEXT_TAGS
+processing term: 10g
+processing term: table
+processing term: view
+processing term: database
+processing term: Database
+processing term: Oracle
+processing term: oracle
+processing term: 11G
+processing term: 11g
+Processed 9 terms.
+processing BT and RT relations.
+Done processing thesaurus: TEXT_TAGS
+Compiling and writing new flat files.
+Writing extended knowledge base to files.
+.............................................
+Writing new terms in thesaurus to files.
+Done writing all terms.
+Writing index file for IDs.
+Writing index file for terms.
+Writing query feedback data for extended knowledge base.
+.......................................................................................................................
+Writing index file for query feedback data.
+Oracle Text knowledge base successfully extended.
+Disconnected
+
+SQL> 
+SQL> connect roger/roger@localhost/pdb1
+Connected.
+SQL> 
+SQL> begin
+  2  ctx_ddl.drop_preference('TEXT_TAGS_LEX');
+  3  end;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> begin
+  2  ctx_ddl.create_preference('TEXT_TAGS_LEX', 'BASIC_LEXER');
+  3  ctx_ddl.set_attribute('TEXT_TAGS_LEX', 'INDEX_THEMES', 'YES');
+  4  ctx_ddl.set_attribute('TEXT_TAGS_LEX', 'PROVE_THEMES', 'NO');
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> drop table text_tags purge;
+
+Table dropped.
+
+SQL> create table text_tags (
+  2  	     tag_name varchar2(20),
+  3  	     tag_query varchar2(256)
+  4  );
+
+Table created.
+
+SQL> 
+SQL> insert into text_tags values('Database','about(Database)');
+
+1 row created.
+
+SQL> insert into text_tags values('Oracle','about(Oracle)');
+
+1 row created.
+
+SQL> insert into text_tags values('Oracle 11g','about(11g)');
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create index text_tags_idx on text_tags(tag_query) indextype is ctxsys.ctxrule
+  2  	     parameters('lexer TEXT_TAGS_LEX');
+
+Index created.
+
+SQL> 
+SQL> select tag_name from text_tags where matches(tag_query, 'I have a table or view that does not exist')>0;
+
+no rows selected
+
+SQL> select tag_name from text_tags where matches(tag_query, 'oracle text needs better documentation.')>0;
+
+TAG_NAME
+--------------------
+Oracle
+
+SQL> select tag_name from text_tags where matches(tag_query, 'oracle 11g text needs better documentation.')>0;
+
+TAG_NAME
+--------------------
+Oracle
+Oracle 11g
+
+SQL> select tag_name from text_tags where matches(tag_query, '11g text needs better documentation.')>0;
+
+TAG_NAME
+--------------------
+Oracle
+Oracle 11g
+
+SQL> select tag_name from text_tags where matches(tag_query, '11G text needs better documentation.')>0;
+
+TAG_NAME
+--------------------
+Oracle
+Oracle 11g
+
+SQL> 

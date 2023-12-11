@@ -1,0 +1,77 @@
+set echo on
+host mkdir -p /u01/app/oracle/oradata/pdb1
+host mkdir -p /tmp/pdb1/pdbdir /tmp/pdb2/pdbdir
+
+host echo This is file 1 > /tmp/pdb1/pdbdir/file1.txt
+host echo This is file 2 > /tmp/pdb2/pdbdir/file2.txt
+
+connect sys/oracle as sysdba
+
+create pluggable database pdb1 admin user pdbadmin1 identified by oracle create_file_dest = '/u01/app/oracle/oradata/pdb1' path_prefix = '/tmp/pdb1/';
+create pluggable database pdb2 admin user pdbadmin2 identified by oracle create_file_dest = '/u01/app/oracle/oradata/pdb2' path_prefix = '/tmp/pdb2/';
+
+alter pluggable database pdb1 open;
+alter pluggable database pdb2 open;
+-- PDB 1
+
+connect sys/oracle@localhost/pdb1 as sysdba
+grant dba to pdbadmin1;
+
+connect pdbadmin1/oracle@localhost/pdb1
+create user testuser identified by testuser default tablespace system quota unlimited on system;
+grant connect,resource,ctxapp,create any directory to testuser;
+
+connect testuser/testuser@localhost/pdb1
+
+create directory mydir as 'pdbdir';
+
+set serveroutput on 
+
+declare
+   fid utl_file.file_type;
+   buf varchar2(2000);
+begin
+   fid := utl_file.fopen( 'MYDIR', 'file1.txt', 'r');
+   utl_file.get_line(fid, buf, 2000);
+   dbms_output.put_line('=========================');
+   dbms_output.put_line(buf);
+   dbms_output.put_line('=========================');
+   utl_file.fclose(fid);
+end;
+/
+
+-- PDB 2 
+
+connect sys/oracle@localhost/pdb2 as sysdba
+grant dba to pdbadmin2;
+
+connect pdbadmin2/oracle@localhost/pdb2
+create user testuser identified by testuser default tablespace system quota unlimited on system;
+grant connect,resource,ctxapp,create any directory to testuser;
+
+connect testuser/testuser@localhost/pdb2
+
+create directory mydir as 'pdbdir';
+
+set serveroutput on 
+
+declare
+   fid utl_file.file_type;
+   buf varchar2(2000);
+begin
+   fid := utl_file.fopen( 'MYDIR', 'file2.txt', 'r');
+   utl_file.get_line(fid, buf, 2000);
+   dbms_output.put_line('=========================');
+   dbms_output.put_line(buf);
+   dbms_output.put_line('=========================');
+   utl_file.fclose(fid);
+end;
+/
+
+-- cleanup
+
+connect sys/oracle as sysdba
+alter pluggable database pdb1 close;
+drop pluggable database pdb1 including datafiles;
+alter pluggable database pdb2 close;
+drop pluggable database pdb2 including datafiles;

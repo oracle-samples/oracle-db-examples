@@ -1,0 +1,123 @@
+Creating XML-only applications with Oracle Text
+
+Although it's common to creat applications using SQL SELECT statements with the CONTAINS clause, this is not always the most efficient way of working. An alternative method is to use the XML-based Result Set Interface, probably along with SDATA and MVDATA fields or columns.
+
+The advantage of doing this is that its easy to obtain summary information (such as the total number of hits, and the number of hits within a particular category, or "facet") without having to fetch all the results of the query.
+
+To use the Result Set Interface, you specify a <i>Result Set Descriptor</i>, or RSD. This declares the information which is to be returned. The information to be returned can consist of 
+1/ The total result count of the query
+2/ A hitlist
+3/ Summary information over MVDATA or SDATA fields.
+
+In turn, the hitlist consists of repeating elements, each of which may contain
+1/ The rowid of the hit
+2/ SDATA fields from the hit
+
+Here's a simple example of a Result Set Descriptor:
+
+<ctx_result_set_descriptor>
+  <hitlist start_hit_num="1" end_hit_num="10" order="SCORE DESC">
+    <rowid />
+    <sdata name="title" />
+    <sdata name="author" />
+    <sdata name="articledate" />
+    <snippet radius="20" max_length="160" starttag="&lt;b&gt;" endtag="&lt;/b&gt;" />
+  </hitlist>
+  <count />
+</ctx_result_set_descriptor>
+
+This is requesting a hitlist with the top 10 hits (ordered by score), plus the count of the total number of results.
+For each hit, we are requesting the rowid (which we could use to fetch further information about the row, if necessary), the contents of the SDATA fields or columns called title, author and articledate, and a snippet - a short summary with keywords highlighted (in this case by <b>...</b>).
+
+In order to obtain summary information, we can include group sections within the result set descriptor. For example to get the top 10 values for each of the mvdata fields auth and artdt we could modify our result set descriptor to:
+
+<ctx_result_set_descriptor>
+  <hitlist start_hit_num="1" end_hit_num="10" order="score desc">
+    <rowid />
+    <sdata name="title" />
+    <sdata name="author" />
+    <sdata name="articledate" />
+    <snippet radius="20" max_length="160" starttag="&lt;b&gt;" endtag="&lt;/b&gt;" />
+  </hitlist>
+  <count />
+  <group mvdata = "mediatype" topn="10">
+    <count/>
+  </group>
+  <group mvdata = "star_rating" topn="10">
+    <count/>
+  </group>
+</ctx_result_set_descriptor>
+
+These group sections allow us to get summary information for the entire result set. It might, for example, tell us that in the entire result set, 230 items have a star rating of 5. mvdata sections hold numeric values, and it is up to our application to decide what meaning each value has within a particular mvdata section.  For example mediatype value 1 might represent a book, 2 a DVD, 3 a CD, and so on. Oracle Text has no knowledge of these meanings - it is entirely up to the application to keep track of what any particular number means.
+
+Having fetched mvdata values as above, we can then use them in MVAND or MVOR operators in future queries. This is useful for building faceted navigation - if the user clicks on my mediatype 2 (which I might have displayed as "Hits within DVDs") then we can re-run query with the additional restriction "AND MVAND(mediatype, (2))".  If our application allows the user to select multiple values, I could run something like "AND MVAND(mediatype, (2,3)) AND MVAND(star_rating, (3,4,5))".
+
+Having created the result set descriptor above, we can use with a query by calling ctx_query.result_set.  For example I might do:
+
+begin 
+  ctx_query.result_set(
+   index_name            => 'demotable_index',
+   query                 => 'database',
+   result_set_descriptor => :rsd,
+   result_set            => :rsout
+  );
+end;
+/
+Where my result set descriptor was in the bind variable :rsd.  The output of the query will be written to another bind variable :rsout (which must have been initialized, typically by dbms_lob.createtemporary). It might look like this:
+
+<ctx_result_set>
+  <hitlist>
+    <hit>
+      <rowid>AAAW40AAGAAAAEcAAA</rowid>
+      <sdata name="TITLE">A Database Performance Primer</sdata>
+      <sdata name="AUTHOR">Fred Smith</sdata>
+      <sdata name="ARTICLEDATE">2010-01-20 00:00:00</sdata>
+      <snippet>
+        <segment>Learn to tune your <b>database</b> for maximum performance</segment>
+      </snippet>
+    </hit>
+    <hit>
+      <rowid>AAAW40AAGAAAAEcAAB</rowid>
+      <sdata name="TITLE">Databases for work and leisure</sdata>
+      <sdata name="AUTHOR">Fred Jones</sdata>
+      <sdata name="ARTICLEDATE">2011-02-17 00:00:00</sdata>
+      <snippet>
+        <segment>money and have fun with a <b>database</b>
+        </segment>
+      </snippet>
+    </hit>
+  </hitlist>
+  <count>2</count>
+  <groups mvdata="MEDIATYPE">
+    <group value="1">
+      <count>2</count>
+    </group>
+    <group value="7">
+      <count>1</count>
+    </group>
+  </groups>
+  <groups mvdata="STAR_RATING">
+    <group value="4">
+      <count>1</count>
+    </group>
+    <group value="5">
+      <count>1</count>
+    </group>
+  </groups>
+</ctx_result_set>
+
+Now we have all the results in XML format, we can use any XML processing language to manipulate it. If we're working in the database, we can obviously use Oracle XML Database functions. For example:
+
+SELECT mediatype, summary_count FROM 
+   XMLTABLE(
+    '//groups[@mvdata="MEDIATYPE"]/group'
+    PASSING xmltype(:rsout)
+    COLUMNS
+     mediatype     NUMBER PATH '@value',
+     summary_count NUMBER PATH 'count/text()'
+  );
+
+
+
+This gives us the count for each mediatype in the whole result set. Remember the "facet_id" we're selecting here has no meaning to Oracle Text, we will probably want to join that query back to another table that says, for example, that mediatype = 1 is 'Books' and mediatype = 7 is 'eBooks'.
+
