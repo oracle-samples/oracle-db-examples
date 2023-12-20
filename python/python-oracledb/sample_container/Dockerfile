@@ -13,9 +13,9 @@
 # USAGE
 #
 #   Get an Oracle Database container (see
-#   https://hub.docker.com/r/gvenzl/oracle-xe):
+#   https://hub.docker.com/r/gvenzl/oracle-free):
 #
-#     podman pull docker.io/gvenzl/oracle-xe:21-slim
+#     podman pull docker.io/gvenzl/oracle-free
 #
 #   Create a container with the database, Python, python-oracledb and the
 #   samples. Choose a password for the sample schemas and pass it as an
@@ -40,10 +40,12 @@
 #
 #     python bind_insert.py
 #
+#   Use `vim` to edit files, if required.
+#
 #   The database will persist across container shutdowns, but will be deleted
 #   when the container is deleted.
 
-FROM docker.io/gvenzl/oracle-xe:21-slim
+FROM docker.io/gvenzl/oracle-free
 
 USER root
 
@@ -54,16 +56,18 @@ RUN microdnf module disable python36 && \
 
 WORKDIR /samples/
 
-COPY setup.py setup.py
-
-RUN  curl -LO https://github.com/oracle/python-oracledb/archive/refs/heads/main.zip && \
-     unzip main.zip && mv python-oracledb-main/samples/* . && \
-     /bin/rm -rf python-oracledb-main samples main.zip && \
-     cat create_schema.py >> /samples/setup.py && chown -R oracle.oinstall /samples/
+RUN curl -LO https://github.com/oracle/python-oracledb/archive/refs/heads/main.zip && \
+    unzip main.zip && \
+    cp python-oracledb-main/samples/sample_container/setup.py . && \
+    /bin/rm -rf python-oracledb-main/samples/sample_container/ python-oracledb-main/samples/sample_notebooks/ && \
+    mv python-oracledb-main/samples/* . && \
+    /bin/rm -rf python-oracledb-main samples main.zip && \
+    cat create_schema.py >> /samples/setup.py && \
+    chown -R oracle.oinstall /samples/
 
 USER oracle
 
-RUN  python3 -m pip install oracledb Flask --user --no-warn-script-location
+RUN python3 -m pip install oracledb Flask --user --no-warn-script-location
 
 ARG PYO_PASSWORD
 
@@ -72,8 +76,8 @@ ENV PYO_SAMPLES_MAIN_PASSWORD=${PYO_PASSWORD}
 ENV PYO_SAMPLES_EDITION_USER=pythoneditions
 ENV PYO_SAMPLES_EDITION_PASSWORD=${PYO_PASSWORD}
 ENV PYO_SAMPLES_EDITION_NAME=python_e1
-ENV PYO_SAMPLES_CONNECT_STRING="localhost/xepdb1"
-ENV PYO_SAMPLES_DRCP_CONNECT_STRING="localhost/xepdb1:pooled"
+ENV PYO_SAMPLES_CONNECT_STRING="localhost/freepdb1"
+ENV PYO_SAMPLES_DRCP_CONNECT_STRING="localhost/freepdb1:pooled"
 ENV PYO_SAMPLES_ADMIN_USER=system
 
 # Run the samples using the default python-oracledb 'Thin' mode, if possible

@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # drcp_pool.py
 #
 # Demonstrates the use of Database Resident Connection Pooling (DRCP)
@@ -93,18 +93,18 @@
 # Then you can query the data dictionary:
 #
 #   select cclass_name, num_requests, num_hits,
-#          num_misses, num_waits, num_authentications
+#          num_misses, num_waits, num_authentications as num_auths
 #   from   v$cpool_cc_stats;
 #
 # Output will be like:
 #
-#   CCLASS_NAME      NUM_REQUESTS NUM_HITS NUM_MISSES NUM_WAITS NUM_AUTHENTICATIONS
-#   ---------------- ------------ -------- ---------- --------- -------------------
-#   PYTHONDEMO.MYAPP         1001      997          4         0                   4
+#   CCLASS_NAME      NUM_REQUESTS NUM_HITS NUM_MISSES NUM_WAITS NUM_AUTHS
+#   ---------------- ------------ -------- ---------- --------- ---------
+#   PYTHONDEMO.MYAPP         1001      997          4         0         4
 #
 # With ADB-S databases, query V$CPOOL_CONN_INFO instead.
 #
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import os
 import sys
@@ -115,17 +115,17 @@ import oracledb
 import sample_env
 
 # Port to listen on
-port = int(os.environ.get('PORT', '8080'))
+port = int(os.environ.get("PORT", "8080"))
 
 # determine whether to use python-oracledb thin mode or thick mode
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 # start_pool(): starts the connection pool
 def start_pool():
-
     # Generally a fixed-size pool is recommended, i.e. pool_min=pool_max.  Here
     # the pool contains 4 connections, which will allow 4 concurrent users.
 
@@ -133,15 +133,20 @@ def start_pool():
     pool_max = 4
     pool_inc = 0
 
-    pool = oracledb.create_pool(user=sample_env.get_main_user(),
-                                password=sample_env.get_main_password(),
-                                dsn=sample_env.get_drcp_connect_string(),
-                                min=pool_min, max=pool_max, increment=pool_inc,
-                                session_callback=init_session,
-                                cclass="MYAPP",
-                                purity=oracledb.ATTR_PURITY_SELF)
+    pool = oracledb.create_pool(
+        user=sample_env.get_main_user(),
+        password=sample_env.get_main_password(),
+        dsn=sample_env.get_drcp_connect_string(),
+        min=pool_min,
+        max=pool_max,
+        increment=pool_inc,
+        session_callback=init_session,
+        cclass="MYAPP",
+        purity=oracledb.ATTR_PURITY_SELF,
+    )
 
     return pool
+
 
 # init_session(): a 'session callback' to efficiently set any initial state
 # that each connection should have.
@@ -155,63 +160,81 @@ def start_pool():
 #
 def init_session(connection, requestedTag_ignored):
     with connection.cursor() as cursor:
-        cursor.execute("""
+        cursor.execute(
+            """
             alter session set
-              time_zone = 'UTC'
-              nls_date_format = 'YYYY-MM-DD HH24:MI'""")
+                time_zone = 'UTC'
+                nls_date_format = 'YYYY-MM-DD HH24:MI'
+            """
+        )
 
-#------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+
 
 # create_schema(): drop and create the demo table, and add a row
 def create_schema():
     with pool.acquire() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("""
+            cursor.execute(
+                """
                 begin
-                  begin
-                    execute immediate 'drop table demo';
+                    begin
+                        execute immediate 'drop table demo';
                     exception when others then
-                      if sqlcode <> -942 then
-                        raise;
-                      end if;
-                  end;
+                        if sqlcode <> -942 then
+                            raise;
+                        end if;
+                    end;
 
-                  execute immediate 'create table demo (
-                       id       number generated by default as identity,
-                       username varchar2(40))';
+                    execute immediate 'create table demo (
+                        id       number generated by default as identity,
+                        username varchar2(40)
+                    )';
 
-                  execute immediate 'insert into demo (username) values (''chris'')';
+                    execute immediate 'insert into demo (username)
+                    values (''chris'')';
 
-                  commit;
-                end;""")
+                    commit;
+                end;
+                """
+            )
 
-#------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 app = Flask(__name__)
 
+
 # Display a welcome message on the 'home' page
-@app.route('/')
+@app.route("/")
 def index():
     return "Welcome to the demo app"
+
 
 # Add a new username
 #
 # The new user's id is generated by the database and returned in the OUT bind
 # variable 'idbv'.
-@app.route('/post/<string:username>')
+@app.route("/post/<string:username>")
 def post(username):
     with pool.acquire() as connection:
         with connection.cursor() as cursor:
             connection.autocommit = True
             idbv = cursor.var(int)
-            cursor.execute("""
+            cursor.execute(
+                """
                 insert into demo (username)
                 values (:unbv)
-                returning id into :idbv""", [username, idbv])
-            return f'Inserted {username} with id {idbv.getvalue()[0]}'
+                returning id into :idbv
+                """,
+                [username, idbv],
+            )
+            return f"Inserted {username} with id {idbv.getvalue()[0]}"
+
 
 # Show the username for a given id
-@app.route('/user/<int:id>')
+@app.route("/user/<int:id>")
 def show_username(id):
     with pool.acquire() as connection:
         with connection.cursor() as cursor:
@@ -219,10 +242,10 @@ def show_username(id):
             r = cursor.fetchone()
             return r[0] if r is not None else "Unknown user id"
 
-#------------------------------------------------------------------------------
 
-if __name__ == '__main__':
+# -----------------------------------------------------------------------------
 
+if __name__ == "__main__":
     # Start a pool of connections
     pool = start_pool()
 
@@ -230,7 +253,7 @@ if __name__ == '__main__':
     create_schema()
 
     m = f"\nTry loading http://127.0.0.1:{port}/user/1 in a browser\n"
-    sys.modules['flask.cli'].show_server_banner = lambda *x: print(m)
+    sys.modules["flask.cli"].show_server_banner = lambda *x: print(m)
 
     # Start a webserver
     app.run(port=port)

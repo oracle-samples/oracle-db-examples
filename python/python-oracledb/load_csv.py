@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,13 +20,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # load_csv.py
 #
 # A sample showing how to load CSV data.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import csv
 import os
@@ -40,7 +40,7 @@ if not sample_env.get_is_thin():
 
 # CSV file.  This sample file has both valid rows and some rows with data too
 # large to insert.
-FILE_NAME = os.path.join('data', 'load_csv.csv')
+FILE_NAME = os.path.join("data", "load_csv.csv")
 
 # Adjust the number of rows to be inserted in each iteration to meet your
 # memory and performance requirements.  Typically this is a large-ish value to
@@ -49,9 +49,12 @@ FILE_NAME = os.path.join('data', 'load_csv.csv')
 # behavior of the code.
 BATCH_SIZE = 19
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
+
 
 def process_batch(batch_number, cursor, data):
     print("processing batch", batch_number + 1)
@@ -60,10 +63,10 @@ def process_batch(batch_number, cursor, data):
         line_num = (batch_number * BATCH_SIZE) + error.offset + 1
         print("Error", error.message, "at line", line_num)
 
-with connection.cursor() as cursor:
 
+with connection.cursor() as cursor:
     # Clean up the table for demonstration purposes
-    cursor.execute('truncate table LoadCsvTab');
+    cursor.execute("truncate table LoadCsvTab")
 
     # Predefine the memory areas to match the table definition.
     # This can improve performance by avoiding memory reallocations.
@@ -74,8 +77,8 @@ with connection.cursor() as cursor:
     cursor.setinputsizes(None, 25)
 
     # Loop over the data and insert it in batches
-    with open(FILE_NAME, 'r') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+    with open(FILE_NAME, "r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
         sql = "insert into LoadCsvTab (id, name) values (:1, :2)"
         data = []
         batch_number = 0

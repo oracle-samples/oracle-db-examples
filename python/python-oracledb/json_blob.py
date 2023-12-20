@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2020, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # json_blob.py
 #
 # Demonstrates how to use a BLOB as a JSON column store.
@@ -34,7 +34,7 @@
 # Documentation:
 #     python-oracledb: https://oracledb.readthedocs.io/en/latest/user_guide/json_data_type.html
 #     Oracle Database: https://www.oracle.com/pls/topic/lookup?ctx=dblatest&id=ADJSN
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import json
 import sys
@@ -46,13 +46,11 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-# use the feature that transforms JSON data in VARCHAR2 and LOB columns to
-# objects
-oracledb.__future__.old_json_col_as_obj = True
-
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 if not connection.thin:
     client_version = oracledb.clientversion()[0]
@@ -64,7 +62,6 @@ if db_version < 12:
 
 # Insert JSON data
 with connection.cursor() as cursor:
-
     data = dict(name="Rod", dept="Sales", location="Germany")
     inssql = "insert into CustomersAsBlob values (:1, :2)"
 
@@ -78,9 +75,8 @@ with connection.cursor() as cursor:
 
 # Select JSON data
 with connection.cursor() as cursor:
-
     sql = "select c.json_data from CustomersAsBlob c"
-    for j, in cursor.execute(sql):
+    for (j,) in cursor.execute(sql):
         print(j)
 
     # Using JSON_VALUE to extract a value from a JSON column
@@ -96,7 +92,7 @@ with connection.cursor() as cursor:
     sql = """select c.json_data.location
              from CustomersAsBlob c
              offset 0 rows fetch next 1 rows only"""
-    for j, in cursor.execute(sql):
+    for (j,) in cursor.execute(sql):
         print(j)
 
     # Using JSON_OBJECT to extract relational data as JSON

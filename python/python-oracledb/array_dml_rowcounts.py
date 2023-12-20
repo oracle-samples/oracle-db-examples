@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,16 +20,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # array_dml_rowcounts.py
 #
 # Demonstrates the use of the 12.1 feature that allows cursor.executemany()
 # to return the number of rows affected by each individual execution as a list.
 # The parameter "arraydmlrowcounts" must be set to True in the call to
 # cursor.executemany() after which cursor.getarraydmlrowcounts() can be called.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -38,19 +38,23 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 with connection.cursor() as cursor:
-
     # show the number of rows for each parent ID as a means of verifying the
     # output from the delete statement
-    for parent_id, count in cursor.execute("""
-            select ParentId, count(*)
-            from ChildTable
-            group by ParentId
-            order by ParentId"""):
+    for parent_id, count in cursor.execute(
+        """
+        select ParentId, count(*)
+        from ChildTable
+        group by ParentId
+        order by ParentId
+        """
+    ):
         print("Parent ID:", parent_id, "has", int(count), "rows.")
     print()
 
@@ -61,11 +65,11 @@ with connection.cursor() as cursor:
     print()
 
     # enable array DML row counts for each iteration executed in executemany()
-    cursor.executemany("""
-            delete from ChildTable
-            where ParentId = :1""",
-            [(i,) for i in parent_ids_to_delete],
-            arraydmlrowcounts = True)
+    cursor.executemany(
+        "delete from ChildTable where ParentId = :1",
+        [(i,) for i in parent_ids_to_delete],
+        arraydmlrowcounts=True,
+    )
 
     # display the number of rows deleted for each parent ID
     row_counts = cursor.getarraydmlrowcounts()

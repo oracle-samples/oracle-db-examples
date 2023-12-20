@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,15 +25,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # scrollable_cursors.py
 #
 # Demonstrates how to use scrollable cursors. These allow moving forward and
 # backward in the result set but incur additional overhead on the server to
 # retain this information.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -41,9 +41,11 @@ import sample_env
 # this script is currently only supported in python-oracledb thick mode
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 # show all of the rows available in the table
 with connection.cursor() as cursor:
@@ -54,7 +56,7 @@ with connection.cursor() as cursor:
     print()
 
 # create a scrollable cursor
-with connection.cursor(scrollable = True) as cursor:
+with connection.cursor(scrollable=True) as cursor:
     # set array size smaller than the default (100) to force scrolling by the
     # database; otherwise, scrolling occurs directly within the buffers
     cursor.arraysize = 3
@@ -62,20 +64,20 @@ with connection.cursor(scrollable = True) as cursor:
 
     # scroll to last row in the result set; the first parameter is not needed
     # and is ignored)
-    cursor.scroll(mode = "last")
+    cursor.scroll(mode="last")
     print("LAST ROW")
     print(cursor.fetchone())
     print()
 
     # scroll to the first row in the result set; the first parameter not needed
     # and is ignored
-    cursor.scroll(mode = "first")
+    cursor.scroll(mode="first")
     print("FIRST ROW")
     print(cursor.fetchone())
     print()
 
     # scroll to an absolute row number
-    cursor.scroll(5, mode = "absolute")
+    cursor.scroll(5, mode="absolute")
     print("ROW 5")
     print(cursor.fetchone())
     print()

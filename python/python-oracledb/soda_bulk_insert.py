@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2019, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2019, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # soda_bulk_insert.py
 #
 # Demonstrates the use of SODA bulk insert.
@@ -30,7 +30,7 @@
 # Oracle Client must be at 18.5 or higher.
 # Oracle Database must be at 18.1 or higher.
 # The user must have been granted the SODA_APP privilege.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -38,9 +38,11 @@ import sample_env
 # this script is currently only supported in python-oracledb thick mode
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 # the general recommendation for simple SODA usage is to enable autocommit
 connection.autocommit = True
@@ -57,23 +59,11 @@ if collection is not None:
 # Explicit metadata is used for maximum version portability.
 # Refer to the documentation.
 metadata = {
-    "keyColumn": {
-        "name": "ID"
-    },
-    "contentColumn": {
-        "name": "JSON_DOCUMENT",
-        "sqlType": "BLOB"
-    },
-    "versionColumn": {
-        "name": "VERSION",
-        "method": "UUID"
-    },
-    "lastModifiedColumn": {
-        "name": "LAST_MODIFIED"
-    },
-    "creationTimeColumn": {
-        "name": "CREATED_ON"
-    }
+    "keyColumn": {"name": "ID"},
+    "contentColumn": {"name": "JSON_DOCUMENT", "sqlType": "BLOB"},
+    "versionColumn": {"name": "VERSION", "method": "UUID"},
+    "lastModifiedColumn": {"name": "LAST_MODIFIED"},
+    "creationTimeColumn": {"name": "CREATED_ON"},
 }
 
 # create a new (or open an existing) SODA collection
@@ -89,7 +79,7 @@ in_docs = [
     dict(name="Bill", age=35),
     dict(name="Sally", age=43),
     dict(name="Jill", age=28),
-    dict(name="Cynthia", age=12)
+    dict(name="Cynthia", age=12),
 ]
 
 # perform bulk insert
@@ -100,5 +90,5 @@ print()
 
 # perform search of all persons under the age of 40
 print("Persons under the age of 40:")
-for doc in collection.find().filter({'age': {'$lt': 40}}).getDocuments():
+for doc in collection.find().filter({"age": {"$lt": 40}}).getDocuments():
     print(doc.getContent()["name"] + ",", "key", doc.key)

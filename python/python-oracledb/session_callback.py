@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2019, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # session_callback.py
 #
 # Demonstrates how to use a connection pool session callback written in
@@ -54,7 +54,7 @@
 #  The application console output will show that queries are executed multiple
 #  times for each session created, but the initialization function for each
 #  session is invoked only once.
-#  ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import os
 import sys
@@ -65,13 +65,14 @@ import oracledb
 import sample_env
 
 # Port to listen on
-port = int(os.environ.get('PORT', '8080'))
+port = int(os.environ.get("PORT", "8080"))
 
 # determine whether to use python-oracledb thin mode or thick mode
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 # init_session(): The session callback. The requested_tag parameter is not used
 # in this example.
@@ -79,44 +80,54 @@ def init_session(conn, requested_tag):
     # Your session initialization code would be here.  This example just
     # queries the session id to show that the callback is invoked once per
     # session.
-    for r, in conn.cursor().execute("SELECT SYS_CONTEXT('USERENV','SID') FROM DUAL"):
+    for (r,) in conn.cursor().execute(
+        "SELECT SYS_CONTEXT('USERENV','SID') FROM DUAL"
+    ):
         print(f"init_session() invoked for session {r}")
+
 
 # start_pool(): starts the connection pool with a session callback defined
 def start_pool():
-
-    pool = oracledb.create_pool(user=sample_env.get_main_user(),
-                                password=sample_env.get_main_password(),
-                                dsn=sample_env.get_connect_string(),
-                                min=4, max=4, increment=0,
-                                session_callback=init_session)
+    pool = oracledb.create_pool(
+        user=sample_env.get_main_user(),
+        password=sample_env.get_main_password(),
+        dsn=sample_env.get_connect_string(),
+        min=4,
+        max=4,
+        increment=0,
+        session_callback=init_session,
+    )
 
     return pool
 
-#------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 app = Flask(__name__)
 
-@app.route('/')
+
+@app.route("/")
 def index():
     with pool.acquire() as connection:
         with connection.cursor() as cursor:
-            sql = "SELECT CURRENT_TIMESTAMP, SYS_CONTEXT('USERENV','SID') FROM DUAL"
+            sql = """
+                SELECT CURRENT_TIMESTAMP, SYS_CONTEXT('USERENV','SID')
+                FROM DUAL"""
             cursor.execute(sql)
-            t,s = cursor.fetchone()
+            t, s = cursor.fetchone()
             r = f"Query at time {t} used session {s}"
             print(r)
             return r
 
-#------------------------------------------------------------------------------
 
-if __name__ == '__main__':
+# -----------------------------------------------------------------------------
 
+if __name__ == "__main__":
     # Start a pool of connections
     pool = start_pool()
 
     m = f"\nTry loading http://127.0.0.1:{port}/ in a browser\n"
-    sys.modules['flask.cli'].show_server_banner = lambda *x: print(m)
+    sys.modules["flask.cli"].show_server_banner = lambda *x: print(m)
 
     # Start a webserver
     app.run(port=port)

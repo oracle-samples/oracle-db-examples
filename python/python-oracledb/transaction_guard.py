@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,9 +25,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # transaction_guard.py
 #
 # Demonstrates the use of Transaction Guard to verify if a transaction has
@@ -50,7 +50,7 @@
 #         dbms_service.start_service('orcl-tg');
 #     end;
 #     /
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import sys
 
@@ -64,24 +64,27 @@ oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 CONNECT_STRING = "localhost/orcl-tg"
 
 # create transaction and generate a recoverable error
-pool = oracledb.create_pool(user=sample_env.get_main_user(),
-                            password=sample_env.get_main_password(),
-                            dsn=CONNECT_STRING, min=1, max=9, increment=2)
+pool = oracledb.create_pool(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=CONNECT_STRING,
+    min=1,
+    max=9,
+    increment=2,
+)
 connection = pool.acquire()
 cursor = connection.cursor()
-cursor.execute("""
-        delete from TestTempTable
-        where IntCol = 1""")
-cursor.execute("""
-        insert into TestTempTable
-        values (1, null)""")
-input("Please kill %s session now. Press ENTER when complete." % \
-      sample_env.get_main_user())
+cursor.execute("delete from TestTempTable where IntCol = 1")
+cursor.execute("insert into TestTempTable values (1, null)")
+input(
+    "Please kill %s session now. Press ENTER when complete."
+    % sample_env.get_main_user()
+)
 try:
-    connection.commit() # this should fail
+    connection.commit()  # this should fail
     sys.exit("Session was not killed. Terminating.")
 except oracledb.DatabaseError as e:
-    error_obj, = e.args
+    (error_obj,) = e.args
     if not error_obj.isrecoverable:
         sys.exit("Session is not recoverable. Terminating.")
 ltxid = connection.ltxid
@@ -93,7 +96,8 @@ pool.drop(connection)
 connection = pool.acquire()
 cursor = connection.cursor()
 args = (oracledb.Binary(ltxid), cursor.var(bool), cursor.var(bool))
-_, committed, completed = cursor.callproc("dbms_app_cont.get_ltxid_outcome",
-                                          args)
+_, committed, completed = cursor.callproc(
+    "dbms_app_cont.get_ltxid_outcome", args
+)
 print("Failed transaction was committed:", committed)
 print("Failed call was completed:", completed)

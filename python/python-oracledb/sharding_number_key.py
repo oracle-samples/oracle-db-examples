@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2020, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2020, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # sharding_number_key.py
 #
 # Demonstrates how to use sharding keys with a sharded database.
@@ -30,7 +30,7 @@
 # sharded database must first be created. Information on how to create a
 # sharded database can be found in the documentation:
 # https://www.oracle.com/pls/topic/lookup?ctx=dblatest&id=SHARD
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -38,18 +38,24 @@ import sample_env
 # this script is currently only supported in python-oracledb thick mode
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-pool = oracledb.create_pool(user=sample_env.get_main_user(),
-                            password=sample_env.get_main_password(),
-                            dsn=sample_env.get_connect_string(), min=1, max=5,
-                            increment=1)
+pool = oracledb.create_pool(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+    min=1,
+    max=5,
+    increment=1,
+)
+
 
 def connect_and_display(sharding_key):
     print("Connecting with sharding key:", sharding_key)
     with pool.acquire(shardingkey=[sharding_key]) as conn:
         cursor = conn.cursor()
         cursor.execute("select sys_context('userenv', 'db_name') from dual")
-        name, = cursor.fetchone()
+        (name,) = cursor.fetchone()
         print("--> connected to database", name)
+
 
 connect_and_display(100)
 connect_and_display(167)

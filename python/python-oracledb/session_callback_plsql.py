@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2019, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # session_callback_plsql.py
 #
 # Demonstrates how to use a connection pool session callback written in
@@ -38,7 +38,7 @@
 # state.
 #
 # Also see session_callback.py and session_callback_tagging.py
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -47,11 +47,15 @@ import sample_env
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 # create pool with session callback defined
-pool = oracledb.create_pool(user=sample_env.get_main_user(),
-                            password=sample_env.get_main_password(),
-                            dsn=sample_env.get_connect_string(), min=2, max=5,
-                            increment=1,
-                            session_callback="pkg_SessionCallback.TheCallback")
+pool = oracledb.create_pool(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+    min=2,
+    max=5,
+    increment=1,
+    session_callback="pkg_SessionCallback.TheCallback",
+)
 
 # truncate table logging calls to PL/SQL session callback
 with pool.acquire() as conn:
@@ -64,7 +68,7 @@ print("(1) acquire session without tag")
 with pool.acquire() as conn:
     cursor = conn.cursor()
     cursor.execute("select to_char(current_date) from dual")
-    result, = cursor.fetchone()
+    (result,) = cursor.fetchone()
     print("main(): result is", repr(result))
 
 # acquire session, specifying a tag; since the session returned has no tag,
@@ -74,7 +78,7 @@ print("(2) acquire session with tag")
 with pool.acquire(tag="NLS_DATE_FORMAT=SIMPLE") as conn:
     cursor = conn.cursor()
     cursor.execute("select to_char(current_date) from dual")
-    result, = cursor.fetchone()
+    (result,) = cursor.fetchone()
     print("main(): result is", repr(result))
 
 # acquire session, specifying the same tag; since a session exists in the pool
@@ -84,7 +88,7 @@ print("(3) acquire session with same tag")
 with pool.acquire(tag="NLS_DATE_FORMAT=SIMPLE") as conn:
     cursor = conn.cursor()
     cursor.execute("select to_char(current_date) from dual")
-    result, = cursor.fetchone()
+    (result,) = cursor.fetchone()
     print("main(): result is", repr(result))
 
 # acquire session, specifying a different tag; since no session exists in the
@@ -95,7 +99,7 @@ print("(4) acquire session with different tag")
 with pool.acquire(tag="NLS_DATE_FORMAT=FULL;TIME_ZONE=UTC") as conn:
     cursor = conn.cursor()
     cursor.execute("select to_char(current_date) from dual")
-    result, = cursor.fetchone()
+    (result,) = cursor.fetchone()
     print("main(): result is", repr(result))
 
 # acquire session, specifying a different tag but also specifying that a
@@ -104,20 +108,24 @@ with pool.acquire(tag="NLS_DATE_FORMAT=FULL;TIME_ZONE=UTC") as conn:
 # session state will be changed and the tag will be saved when the connection
 # is closed
 print("(4) acquire session with different tag but match any also specified")
-with pool.acquire(tag="NLS_DATE_FORMAT=FULL;TIME_ZONE=MST", matchanytag=True) \
-        as conn:
+with pool.acquire(
+    tag="NLS_DATE_FORMAT=FULL;TIME_ZONE=MST", matchanytag=True
+) as conn:
     cursor = conn.cursor()
     cursor.execute("select to_char(current_date) from dual")
-    result, = cursor.fetchone()
+    (result,) = cursor.fetchone()
     print("main(): result is", repr(result))
 
 # acquire session and display results from PL/SQL session logs
 with pool.acquire() as conn:
     cursor = conn.cursor()
-    cursor.execute("""
-            select RequestedTag, ActualTag
-            from PLSQLSessionCallbacks
-            order by FixupTimestamp""")
+    cursor.execute(
+        """
+        select RequestedTag, ActualTag
+        from PLSQLSessionCallbacks
+        order by FixupTimestamp
+        """
+    )
     print("(5) PL/SQL session callbacks")
     for requestedTag, actualTag in cursor:
         print("Requested:", requestedTag, "Actual:", actualTag)

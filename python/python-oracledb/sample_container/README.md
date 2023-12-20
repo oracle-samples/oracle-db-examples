@@ -9,10 +9,12 @@ It has been tested in an Oracle Linux 8 environment using 'podman', but
 ## Usage
 
 - Get an Oracle Database container (see
-  https://hub.docker.com/r/gvenzl/oracle-xe):
+  https://hub.docker.com/r/gvenzl/oracle-free):
+
+  The steps below use 'podman', but 'docker' will also work.
 
   ```
-  podman pull docker.io/gvenzl/oracle-xe:21-slim
+  podman pull docker.io/gvenzl/oracle-free
   ```
 
 - Create a container with the database, Python, python-oracledb and the

@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,16 +25,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # editioning.py
 #
 # Demonstrates the use of Edition-Based Redefinition, a feature that is
 # available in Oracle Database 11.2 and higher. See the Oracle documentation on
 # the subject for additional information. Adjust the contents at the top of the
 # script for your own database as needed.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import os
 
@@ -50,49 +50,72 @@ edition_name = sample_env.get_edition_name()
 connection = oracledb.connect(edition_connect_string)
 print("Edition should be None, actual value is:", repr(connection.edition))
 cursor = connection.cursor()
-cursor.execute("""
-        create or replace function TestEditions return varchar2 as
-        begin
-            return 'Base Procedure';
-        end;""")
+cursor.execute(
+    """
+    create or replace function TestEditions return varchar2 as
+    begin
+        return 'Base Procedure';
+    end;
+    """
+)
 result = cursor.callfunc("TestEditions", str)
-print("Function should return 'Base Procedure', actually returns:",
-      repr(result))
+print(
+    "Function should return 'Base Procedure', actually returns:", repr(result)
+)
 
 # next, change the edition and recreate the procedure in the new edition
 cursor.execute("alter session set edition = %s" % edition_name)
-print("Edition should be", repr(edition_name.upper()),
-      "actual value is:", repr(connection.edition))
-cursor.execute("""
-        create or replace function TestEditions return varchar2 as
-        begin
-            return 'Edition 1 Procedure';
-        end;""")
+print(
+    "Edition should be",
+    repr(edition_name.upper()),
+    "actual value is:",
+    repr(connection.edition),
+)
+cursor.execute(
+    """
+    create or replace function TestEditions return varchar2 as
+    begin
+        return 'Edition 1 Procedure';
+    end;
+    """
+)
 result = cursor.callfunc("TestEditions", str)
-print("Function should return 'Edition 1 Procedure', actually returns:",
-      repr(result))
+print(
+    "Function should return 'Edition 1 Procedure', actually returns:",
+    repr(result),
+)
 
 # next, change the edition back to the base edition and demonstrate that the
 # original function is being called
 cursor.execute("alter session set edition = ORA$BASE")
 result = cursor.callfunc("TestEditions", str)
-print("Function should return 'Base Procedure', actually returns:",
-      repr(result))
+print(
+    "Function should return 'Base Procedure', actually returns:", repr(result)
+)
 
 # the edition can be set upon connection
-connection = oracledb.connect(edition_connect_string,
-                              edition=edition_name.upper())
+connection = oracledb.connect(
+    edition_connect_string, edition=edition_name.upper()
+)
 cursor = connection.cursor()
 result = cursor.callfunc("TestEditions", str)
-print("Function should return 'Edition 1 Procedure', actually returns:",
-      repr(result))
+print(
+    "Function should return 'Edition 1 Procedure', actually returns:",
+    repr(result),
+)
 
 # it can also be set via the environment variable ORA_EDITION
 os.environ["ORA_EDITION"] = edition_name.upper()
 connection = oracledb.connect(edition_connect_string)
-print("Edition should be", repr(edition_name.upper()),
-      "actual value is:", repr(connection.edition))
+print(
+    "Edition should be",
+    repr(edition_name.upper()),
+    "actual value is:",
+    repr(connection.edition),
+)
 cursor = connection.cursor()
 result = cursor.callfunc("TestEditions", str)
-print("Function should return 'Edition 1 Procedure', actually returns:",
-      repr(result))
+print(
+    "Function should return 'Edition 1 Procedure', actually returns:",
+    repr(result),
+)

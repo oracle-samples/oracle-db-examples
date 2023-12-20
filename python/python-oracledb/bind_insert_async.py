@@ -1,0 +1,111 @@
+# -----------------------------------------------------------------------------
+# Copyright (c) 2023, Oracle and/or its affiliates.
+#
+# This software is dual-licensed to you under the Universal Permissive License
+# (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+# 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+# either license.
+#
+# If you elect to accept the software under the Apache License, Version 2.0,
+# the following applies:
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# bind_insert_async.py
+#
+# An asynchronous version of bind_insert.py
+#
+# Demonstrates how to insert rows into a table using bind variables.
+# -----------------------------------------------------------------------------
+
+import asyncio
+
+import oracledb
+import sample_env
+
+
+async def main():
+    connection = await oracledb.connect_async(
+        user=sample_env.get_main_user(),
+        password=sample_env.get_main_password(),
+        dsn=sample_env.get_connect_string(),
+    )
+
+    # -------------------------------------------------------------------------
+    # "Bind by position"
+    # -------------------------------------------------------------------------
+
+    rows = [
+        (1, "First"),
+        (2, "Second"),
+        (3, "Third"),
+        (4, "Fourth"),
+        (5, None),  # Insert a NULL value
+        (6, "Sixth"),
+        (7, "Seventh"),
+    ]
+
+    with connection.cursor() as cursor:
+        # predefine the maximum string size to avoid data scans and memory
+        # reallocations.  The value 'None' indicates that the default
+        # processing can take place
+        cursor.setinputsizes(None, 20)
+
+        await cursor.executemany(
+            "insert into mytab(id, data) values (:1, :2)", rows
+        )
+
+    # -------------------------------------------------------------------------
+    # "Bind by name"
+    # -------------------------------------------------------------------------
+
+    rows = [
+        {"d": "Eighth", "i": 8},
+        {"d": "Ninth", "i": 9},
+        {"d": "Tenth", "i": 10},
+        {"i": 11},  # Insert a NULL value
+    ]
+
+    with connection.cursor() as cursor:
+        # Predefine maximum string size to avoid data scans and memory
+        # reallocations
+        cursor.setinputsizes(d=20)
+
+        await cursor.executemany(
+            "insert into mytab(id, data) values (:i, :d)", rows
+        )
+
+    # -------------------------------------------------------------------------
+    # Inserting a single bind still needs tuples
+    # -------------------------------------------------------------------------
+
+    rows = [("Eleventh",), ("Twelth",)]
+
+    await connection.executemany(
+        "insert into mytab(id, data) values (12, :1)", rows
+    )
+
+    # Don't commit - this lets the demo be run multiple times
+    # await connection.commit()
+
+    # -------------------------------------------------------------------------
+    # Now query the results back
+    # -------------------------------------------------------------------------
+
+    for row in await connection.fetchall("select * from mytab order by id"):
+        print(row)
+
+
+asyncio.run(main())

@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # type_handlers_json_strings.py
 #
 # Demonstrates the use of input and output type handlers as well as variable
@@ -32,7 +32,7 @@
 # This script differs from type_handlers_objects.py in that it shows the
 # binding and querying of JSON strings as Python objects for both
 # python-oracledb thin and thick mode.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import json
 
@@ -43,8 +43,8 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-class Building:
 
+class Building:
     def __init__(self, building_id, description, num_floors):
         self.building_id = building_id
         self.description = description
@@ -55,9 +55,11 @@ class Building:
 
     def __eq__(self, other):
         if isinstance(other, Building):
-            return other.building_id == self.building_id \
-                    and other.description == self.description \
-                    and other.num_floors == self.num_floors
+            return (
+                other.building_id == self.building_id
+                and other.description == self.description
+                and other.num_floors == self.num_floors
+            )
         return NotImplemented
 
     def to_json(self):
@@ -70,53 +72,62 @@ class Building:
 
 
 def building_in_converter(value):
-        return value.to_json()
+    return value.to_json()
 
 
 def input_type_handler(cursor, value, num_elements):
     if isinstance(value, Building):
-        return cursor.var(oracledb.STRING, arraysize=num_elements,
-                          inconverter=building_in_converter)
+        return cursor.var(
+            oracledb.STRING,
+            arraysize=num_elements,
+            inconverter=building_in_converter,
+        )
 
 
 def output_type_handler(cursor, metadata):
     if metadata.type_code is oracledb.STRING:
-        return cursor.var(metadata.type_code, arraysize=cursor.arraysize,
-                          outconverter=Building.from_json)
+        return cursor.var(
+            metadata.type_code,
+            arraysize=cursor.arraysize,
+            outconverter=Building.from_json,
+        )
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 with connection.cursor() as cursor:
-
     buildings = [
         Building(1, "The First Building", 5),
         Building(2, "The Second Building", 87),
-        Building(3, "The Third Building", 12)
+        Building(3, "The Third Building", 12),
     ]
 
     # Insert building data (python object) as a JSON string
     cursor.inputtypehandler = input_type_handler
     for building in buildings:
-        cursor.execute("insert into BuildingsAsJsonStrings values (:1, :2)",
-                       (building.building_id, building))
+        cursor.execute(
+            "insert into BuildingsAsJsonStrings values (:1, :2)",
+            (building.building_id, building),
+        )
 
     # fetch the building data as a JSON string
     print("NO OUTPUT TYPE HANDLER:")
-    for row in cursor.execute("""
-            select * from BuildingsAsJsonStrings
-            order by BuildingId"""):
+    for row in cursor.execute(
+        "select * from BuildingsAsJsonStrings order by BuildingId"
+    ):
         print(row)
     print()
 
 with connection.cursor() as cursor:
-
     # fetch the building data as python objects
     cursor.outputtypehandler = output_type_handler
     print("WITH OUTPUT TYPE HANDLER:")
-    for row in cursor.execute("""
-            select * from BuildingsAsJsonStrings
-            order by BuildingId"""):
+    for row in cursor.execute(
+        "select * from BuildingsAsJsonStrings order by BuildingId"
+    ):
         print(row)
     print()

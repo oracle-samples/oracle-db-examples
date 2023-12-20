@@ -20,15 +20,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # query_strings_as_bytes.py
 #
 # Demonstrates how to query strings as bytes (bypassing decoding of the bytes
 # into a Python string). This can be useful when attempting to fetch data that
 # was stored in the database in the wrong encoding.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -37,21 +37,26 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-STRING_VAL = 'I bought a cafetière on the Champs-Élysées'
+STRING_VAL = "I bought a cafetière on the Champs-Élysées"
+
 
 def return_strings_as_bytes(cursor, metadata):
     if metadata.type_code is oracledb.DB_TYPE_VARCHAR:
         return cursor.var(str, arraysize=cursor.arraysize, bypass_decode=True)
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 # truncate table and populate with our data of choice
 with connection.cursor() as cursor:
     cursor.execute("truncate table TestTempTable")
-    cursor.execute("insert into TestTempTable values (1, :val)",
-                   val=STRING_VAL)
+    cursor.execute(
+        "insert into TestTempTable values (1, :val)", val=STRING_VAL
+    )
     connection.commit()
 
 # fetch the data normally and show that it is returned as a string

@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2018, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2018, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,15 +20,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # aq_notification.py
 #
 # Demonstrates using advanced queuing notification. Once this script is
 # running, run object_aq.py in another terminal to enqueue a few messages to
 # the "DEMO_BOOK_QUEUE" queue.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import time
 
@@ -39,6 +39,7 @@ import sample_env
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 registered = True
+
 
 def process_messages(message):
     global registered
@@ -51,14 +52,20 @@ def process_messages(message):
     print("Consumer name:", message.consumer_name)
     print("Message id:", message.msgid)
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string(),
-                              events=True)
 
-sub = connection.subscribe(namespace=oracledb.SUBSCR_NAMESPACE_AQ,
-                           name="DEMO_BOOK_QUEUE", callback=process_messages,
-                           timeout=300)
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+    events=True,
+)
+
+sub = connection.subscribe(
+    namespace=oracledb.SUBSCR_NAMESPACE_AQ,
+    name="DEMO_BOOK_QUEUE",
+    callback=process_messages,
+    timeout=300,
+)
 print("Subscription:", sub)
 print("--> Connection:", sub.connection)
 print("--> Callback:", sub.callback)

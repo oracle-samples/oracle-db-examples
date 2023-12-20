@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # batch_errors.py
 #
 # Demonstrates the use of the Oracle Database 12.1 feature that allows
@@ -31,7 +31,7 @@
 # executions. The parameter "batcherrors" must be set to True in the
 # call to cursor.executemany() after which cursor.getbatcherrors() can
 # be called, which will return a list of error objects.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -40,29 +40,28 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 with connection.cursor() as cursor:
-
     # retrieve the number of rows in the table
-    cursor.execute("""
-            select count(*)
-            from ChildTable""")
-    count, = cursor.fetchone()
+    cursor.execute("select count(*) from ChildTable")
+    (count,) = cursor.fetchone()
     print("Number of rows in child table:", int(count))
 
     # define data to insert
     data_to_insert = [
-        (1016, 10, 'Child B of Parent 10'),
-        (1017, 10, 'Child C of Parent 10'),
-        (1018, 20, 'Child D of Parent 20'),
-        (1018, 20, 'Child D of Parent 20'),       # duplicate key
-        (1019, 30, 'Child C of Parent 30'),
-        (1020, 30, 'Child D of Parent 40'),
-        (1021, 60, 'Child A of Parent 60'),       # parent does not exist
-        (1022, 40, 'Child F of Parent 40'),
+        (1016, 10, "Child B of Parent 10"),
+        (1017, 10, "Child C of Parent 10"),
+        (1018, 20, "Child D of Parent 20"),
+        (1018, 20, "Child D of Parent 20"),  # duplicate key
+        (1019, 30, "Child C of Parent 30"),
+        (1020, 30, "Child D of Parent 40"),
+        (1021, 60, "Child A of Parent 60"),  # parent does not exist
+        (1022, 40, "Child F of Parent 40"),
     ]
     print("Number of rows to insert:", len(data_to_insert))
 
@@ -70,18 +69,17 @@ with connection.cursor() as cursor:
     # first error takes place; the row count is updated to show how many rows
     # actually succeeded
     try:
-        cursor.executemany("insert into ChildTable values (:1, :2, :3)",
-                           data_to_insert)
+        cursor.executemany(
+            "insert into ChildTable values (:1, :2, :3)", data_to_insert
+        )
     except oracledb.DatabaseError as e:
-        error, = e.args
+        (error,) = e.args
         print("Failure with error:", error.message)
         print("Number of rows successfully inserted:", cursor.rowcount)
 
     # demonstrate that the row count is accurate
-    cursor.execute("""
-            select count(*)
-            from ChildTable""")
-    count, = cursor.fetchone()
+    cursor.execute("select count(*) from ChildTable")
+    (count,) = cursor.fetchone()
     print("Number of rows in child table after failed insert:", int(count))
 
     # roll back so we can perform the same work using the new method
@@ -89,9 +87,12 @@ with connection.cursor() as cursor:
 
     # new method: executemany() with batch errors enabled (and array DML row
     # counts also enabled) results in no immediate error being raised
-    cursor.executemany("insert into ChildTable values (:1, :2, :3)",
-                       data_to_insert, batcherrors=True,
-                       arraydmlrowcounts=True)
+    cursor.executemany(
+        "insert into ChildTable values (:1, :2, :3)",
+        data_to_insert,
+        batcherrors=True,
+        arraydmlrowcounts=True,
+    )
 
     # display the errors that have taken place
     errors = cursor.getbatcherrors()
@@ -106,9 +107,10 @@ with connection.cursor() as cursor:
 
     # demonstrate that all of the rows without errors have been successfully
     # inserted
-    cursor.execute("""
-            select count(*)
-            from ChildTable""")
-    count, = cursor.fetchone()
-    print("Number of rows in child table after insert with batcherrors "
-          "enabled:", int(count))
+    cursor.execute("select count(*) from ChildTable")
+    (count,) = cursor.fetchone()
+    print(
+        "Number of rows in child table after insert with batcherrors "
+        "enabled:",
+        int(count),
+    )

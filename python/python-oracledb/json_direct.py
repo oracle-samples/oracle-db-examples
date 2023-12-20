@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2020, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # json_direct.py
 #
 # Demonstrates the use of some JSON features with the JSON type that is
@@ -31,7 +31,7 @@
 # See https://www.oracle.com/pls/topic/lookup?ctx=dblatest&id=ADJSN
 #
 # For JSON with older databases see json_blob.py
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import json
 import sys
@@ -43,9 +43,11 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 if not connection.thin:
     client_version = oracledb.clientversion()[0]
@@ -53,12 +55,13 @@ db_version = int(connection.version.split(".")[0])
 
 # this script only works with Oracle Database 21
 if db_version < 21:
-    sys.exit("This example requires Oracle Database 21.1 or later. "
-             "Try json_blob.py instead")
+    sys.exit(
+        "This example requires Oracle Database 21.1 or later. "
+        "Try json_blob.py instead"
+    )
 
 # Insert JSON data
 with connection.cursor() as cursor:
-
     data = dict(name="Rod", dept="Sales", location="Germany")
     inssql = "insert into CustomersAsJson values (:1, :2)"
     if connection.thin or client_version >= 21:
@@ -71,13 +74,12 @@ with connection.cursor() as cursor:
 
 # Select JSON data
 with connection.cursor() as cursor:
-
     sql = "select c.json_data from CustomersAsJson c"
     if connection.thin or client_version >= 21:
-        for j, in cursor.execute(sql):
+        for (j,) in cursor.execute(sql):
             print(j)
     else:
-        for j, in cursor.execute(sql):
+        for (j,) in cursor.execute(sql):
             print(json.loads(j.read()))
 
     # Using JSON_VALUE to extract a value from a JSON column
@@ -94,10 +96,10 @@ with connection.cursor() as cursor:
              from CustomersAsJson c
              offset 0 rows fetch next 1 rows only"""
     if connection.thin or client_version >= 21:
-        for j, in cursor.execute(sql):
+        for (j,) in cursor.execute(sql):
             print(j)
     else:
-        for j, in cursor.execute(sql):
+        for (j,) in cursor.execute(sql):
             print(json.loads(j.read()))
 
     # Using JSON_OBJECT to extract relational data as JSON

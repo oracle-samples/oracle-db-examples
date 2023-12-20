@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2017, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2017, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -26,14 +26,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # universal_rowids.py
 #
 # Demonstrates the use of universal rowids. Universal rowids are used to
 # identify rows in index organized tables.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import datetime
 
@@ -47,15 +47,16 @@ if not sample_env.get_is_thin():
 DATA = [
     (1, "String #1", datetime.datetime(2017, 4, 4)),
     (2, "String #2", datetime.datetime(2017, 4, 5)),
-    (3, "A" * 250, datetime.datetime(2017, 4, 6))
+    (3, "A" * 250, datetime.datetime(2017, 4, 6)),
 ]
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 with connection.cursor() as cursor:
-
     # truncate table so sample can be rerun
     print("Truncating table...")
     cursor.execute("truncate table TestUniversalRowids")
@@ -64,8 +65,9 @@ with connection.cursor() as cursor:
     print("Populating table...")
     for row in DATA:
         print("Inserting", row)
-        cursor.execute("insert into TestUniversalRowids values (:1, :2, :3)",
-                       row)
+        cursor.execute(
+            "insert into TestUniversalRowids values (:1, :2, :3)", row
+        )
     connection.commit()
 
     # fetch the rowids from the table
@@ -76,11 +78,14 @@ with connection.cursor() as cursor:
     for rowid in rowids:
         print("-" * 79)
         print("Rowid:", rowid)
-        cursor.execute("""
-                select IntCol, StringCol, DateCol
-                from TestUniversalRowids
-                where rowid = :rid""",
-                {"rid": rowid})
+        cursor.execute(
+            """
+            select IntCol, StringCol, DateCol
+            from TestUniversalRowids
+            where rowid = :rid
+            """,
+            {"rid": rowid},
+        )
         int_col, string_col, dateCol = cursor.fetchone()
         print("IntCol:", int_col)
         print("StringCol:", string_col)
