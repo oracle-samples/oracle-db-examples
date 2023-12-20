@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2019, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2019, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,14 +25,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # bulk_aq.py
 #
 # Demonstrates how to use bulk enqueuing and dequeuing of messages with
 # advanced queuing. It makes use of a RAW queue created in the sample setup.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -50,16 +50,18 @@ PAYLOAD_DATA = [
     "The ninth message",
     "The tenth message",
     "The eleventh message",
-    "The twelfth and final message"
+    "The twelfth and final message",
 ]
 
 # this script is currently only supported in python-oracledb thick mode
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 # connect to database
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 # create a queue
 with connection.cursor() as cursor:

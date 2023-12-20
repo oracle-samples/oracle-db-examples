@@ -1,16 +1,16 @@
-# Python-oracledb  Examples
+# Python-oracledb Examples
 
 This directory contains samples for python-oracledb, the Python driver for
 Oracle Database.
 
+### Basic Examples
+
 1.  The schemas and SQL objects that are referenced in the samples can be
-    created by running the Python script
-    [create_schema.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/create_schema.py). The
-    script requires SYSDBA privileges and will prompt for these credentials as
-    well as the names of the schemas and edition that will be created, unless a
-    number of environment variables are set as documented in the Python script
-    [sample_env.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py). Run
-    the script using the following command:
+    created by running the Python script [create_schema.py][1]. The script
+    requires SYSDBA privileges and will prompt for these credentials as well as
+    the names of the schemas and edition that will be created, unless a number
+    of environment variables are set as documented in the Python script
+    [sample_env.py][2]. Run the script using the following command:
 
         python create_schema.py
 
@@ -19,15 +19,23 @@ Oracle Database.
         python query.py
 
 3.  After running python-oracledb samples, the schemas and SQL objects can be
-    dropped by running the Python script
-    [drop_schema.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/drop_schema.py). The
-    script requires SYSDBA privileges and will prompt for these credentials as
-    well as the names of the schemas and edition that will be dropped, unless a
-    number of environment variables are set as documented in the Python script
-    [sample_env.py](https://github.com/oracle-samples/oracle-db-examples/blob/main/python/sample_env.py). Run
-    the script using the following command:
+    dropped by running the Python script [drop_schema.py][3]. The script
+    requires SYSDBA privileges and will prompt for these credentials as well as
+    the names of the schemas and edition that will be dropped, unless a number
+    of environment variables are set as documented in the Python script
+    [sample_env.py][2]. Run the script using the following command:
 
         python drop_schema.py
+
+### Examples in a Container
+
+The [sample_container](./sample_container) directory has a Dockerfile that will
+build a container with the samples and a running Oracle Database.
+
+### Notebooks
+
+The [sample_notebooks](./sample_notebooks) directory has Jupyter notebooks with
+runnable examples.
 
 ## About python-oracledb
 
@@ -71,3 +79,8 @@ PyPI: [pypi.org/project/oracledb/](https://pypi.org/project/oracledb/)
 Source: [github.com/oracle/python-oracledb](https://github.com/oracle/python-oracledb)
 
 Upgrading: [Upgrading from cx_Oracle 8.3 to python-oracledb](https://python-oracledb.readthedocs.io/en/latest/user_guide/appendix_c.html#upgrading-from-cx-oracle-8-3-to-python-oracledb)
+
+
+[1]: https://github.com/oracle/python-oracledb/blob/main/samples/create_schema.py
+[2]: https://github.com/oracle/python-oracledb/blob/main/samples/sample_env.py
+[3]: https://github.com/oracle/python-oracledb/blob/main/samples/drop_schema.py

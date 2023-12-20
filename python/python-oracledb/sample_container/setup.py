@@ -26,12 +26,14 @@ c = None
 
 for i in range(30):
     try:
-        c = oracledb.connect(user="system",
-                             password=pw,
-                             dsn="localhost/xepdb1",
-                             tcp_connect_timeout=5)
+        c = oracledb.connect(
+            user="system",
+            password=pw,
+            dsn="localhost/freepdb1",
+            tcp_connect_timeout=5,
+        )
         break
-    except (OSError, oracledb.Error) as e:
+    except (OSError, oracledb.Error):
         print("Waiting for database to open")
         time.sleep(5)
 
@@ -48,7 +50,9 @@ print("Enabling per-PDB DRCP")
 c = oracledb.connect(mode=oracledb.SYSDBA)
 cursor = c.cursor()
 cursor.execute("alter pluggable database all close")
-cursor.execute("alter system set enable_per_pdb_drcp=true scope=spfile sid='*'")
+cursor.execute(
+    "alter system set enable_per_pdb_drcp=true scope=spfile sid='*'"
+)
 
 c = oracledb.connect(mode=oracledb.SYSDBA | oracledb.PRELIM_AUTH)
 c.startup(force=True)
@@ -58,10 +62,9 @@ cursor = c.cursor()
 cursor.execute("alter database mount")
 cursor.execute("alter database open")
 
-c = oracledb.connect(user="sys",
-                     password=pw,
-                     dsn="localhost/xepdb1",
-                     mode=oracledb.SYSDBA)
+c = oracledb.connect(
+    user="sys", password=pw, dsn="localhost/freepdb1", mode=oracledb.SYSDBA
+)
 cursor = c.cursor()
 cursor.callproc("dbms_connection_pool.start_pool")
 

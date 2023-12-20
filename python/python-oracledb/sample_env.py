@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2017, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Sets the environment used by the python-oracledb sample scripts. Production
 # applications should consider using External Authentication to avoid hard
 # coded credentials.
@@ -31,7 +31,7 @@
 # following environment variables are set:
 #
 #   PYO_SAMPLES_ORACLE_CLIENT_PATH: Oracle Client or Instant Client library dir
-#   PYO_SAMPLES_ADMIN_USER: privileged administrative user for setting up samples
+#   PYO_SAMPLES_ADMIN_USER: privileged admin user for setting up samples
 #   PYO_SAMPLES_ADMIN_PASSWORD: password of PYO_SAMPLES_ADMIN_USER
 #   PYO_SAMPLES_CONNECT_STRING: database connection string
 #   PYO_SAMPLES_DRCP_CONNECT_STRING: database connection string for DRCP
@@ -81,7 +81,7 @@
 # - PYO_SAMPLES_DRIVER_MODE should be "thin" or "thick".  It is used by samples
 #   that can run in both python-oracledb modes.
 #
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import getpass
 import os
@@ -102,6 +102,7 @@ DEFAULT_DRCP_CONNECT_STRING = "localhost/orclpdb1:pooled"
 # directly) and then stored so that a value is not requested more than once
 PARAMETERS = {}
 
+
 def get_value(name, label, default_value=None, password=False):
     value = PARAMETERS.get(name)
     if value is not None:
@@ -120,74 +121,122 @@ def get_value(name, label, default_value=None, password=False):
     PARAMETERS[name] = value
     return value
 
+
 def get_main_user():
-    return get_value("PYO_SAMPLES_MAIN_USER", "Main User Name",
-                     DEFAULT_MAIN_USER)
+    return get_value(
+        "PYO_SAMPLES_MAIN_USER", "Main User Name", DEFAULT_MAIN_USER
+    )
+
 
 def get_main_password():
-    return get_value("PYO_SAMPLES_MAIN_PASSWORD",
-                     f"Password for {get_main_user()}", password=True)
+    return get_value(
+        "PYO_SAMPLES_MAIN_PASSWORD",
+        f"Password for {get_main_user()}",
+        password=True,
+    )
+
 
 def get_edition_user():
-    return get_value("PYO_SAMPLES_EDITION_USER", "Edition User Name",
-                     DEFAULT_EDITION_USER)
+    return get_value(
+        "PYO_SAMPLES_EDITION_USER", "Edition User Name", DEFAULT_EDITION_USER
+    )
+
 
 def get_edition_password():
-    return get_value("PYO_SAMPLES_EDITION_PASSWORD",
-                     f"Password for {get_edition_user()}", password=True)
+    return get_value(
+        "PYO_SAMPLES_EDITION_PASSWORD",
+        f"Password for {get_edition_user()}",
+        password=True,
+    )
+
 
 def get_edition_name():
-    return get_value("PYO_SAMPLES_EDITION_NAME", "Edition Name",
-                     DEFAULT_EDITION_NAME)
+    return get_value(
+        "PYO_SAMPLES_EDITION_NAME", "Edition Name", DEFAULT_EDITION_NAME
+    )
+
 
 def get_connect_string():
-    return get_value("PYO_SAMPLES_CONNECT_STRING", "Connect String",
-                     DEFAULT_CONNECT_STRING)
+    return get_value(
+        "PYO_SAMPLES_CONNECT_STRING", "Connect String", DEFAULT_CONNECT_STRING
+    )
+
 
 def get_drcp_connect_string():
-    return get_value("PYO_SAMPLES_DRCP_CONNECT_STRING", "DRCP Connect String",
-                     DEFAULT_DRCP_CONNECT_STRING)
+    return get_value(
+        "PYO_SAMPLES_DRCP_CONNECT_STRING",
+        "DRCP Connect String",
+        DEFAULT_DRCP_CONNECT_STRING,
+    )
+
 
 def get_driver_mode():
-    return get_value("PYO_SAMPLES_DRIVER_MODE", "Driver mode (thin|thick)",
-                     "thin")
+    return get_value(
+        "PYO_SAMPLES_DRIVER_MODE", "Driver mode (thin|thick)", "thin"
+    )
+
 
 def get_is_thin():
     return get_driver_mode() == "thin"
 
-def get_edition_connect_string():
-    return "%s/%s@%s" % \
-            (get_edition_user(), get_edition_password(), get_connect_string())
 
-def get_admin_connect_string():
-    admin_user = get_value("PYO_SAMPLES_ADMIN_USER", "Administrative user",
-                           "admin")
-    admin_password = get_value("PYO_SAMPLES_ADMIN_PASSWORD",
-                               f"Password for {admin_user}", password=True)
-    return "%s/%s@%s" % (admin_user, admin_password, get_connect_string())
+def get_edition_connect_string():
+    return "%s/%s@%s" % (
+        get_edition_user(),
+        get_edition_password(),
+        get_connect_string(),
+    )
+
+
+def get_admin_connection():
+    admin_user = get_value(
+        "PYO_SAMPLES_ADMIN_USER", "Administrative user", "admin"
+    )
+    admin_password = get_value(
+        "PYO_SAMPLES_ADMIN_PASSWORD",
+        f"Password for {admin_user}",
+        password=True,
+    )
+    params = oracledb.ConnectParams()
+    if admin_user and admin_user.upper() == "SYS":
+        params.set(mode=oracledb.AUTH_MODE_SYSDBA)
+    return oracledb.connect(
+        dsn=get_connect_string(),
+        params=params,
+        user=admin_user,
+        password=admin_password,
+    )
+
 
 def get_oracle_client():
-    if ((platform.system() == "Darwin" and platform.machine() == "x86_64") or
-        platform.system() == "Windows"):
-        return get_value("PYO_SAMPLES_ORACLE_CLIENT_PATH",
-                         "Oracle Instant Client Path")
+    if (
+        platform.system() == "Darwin" and platform.machine() == "x86_64"
+    ) or platform.system() == "Windows":
+        return get_value(
+            "PYO_SAMPLES_ORACLE_CLIENT_PATH", "Oracle Instant Client Path"
+        )
+
 
 def get_server_version():
     name = "SERVER_VERSION"
     value = PARAMETERS.get(name)
     if value is None:
-        conn = oracledb.connect(user=get_main_user(),
-                                password=get_main_password(),
-                                dsn=get_connect_string())
+        conn = oracledb.connect(
+            user=get_main_user(),
+            password=get_main_password(),
+            dsn=get_connect_string(),
+        )
         value = tuple(int(s) for s in conn.version.split("."))[:2]
         PARAMETERS[name] = value
     return value
 
+
 def run_sql_script(conn, script_name, **kwargs):
     statement_parts = []
     cursor = conn.cursor()
-    replace_values = [("&" + k + ".", v) for k, v in kwargs.items()] + \
-                     [("&" + k, v) for k, v in kwargs.items()]
+    replace_values = [("&" + k + ".", v) for k, v in kwargs.items()] + [
+        ("&" + k, v) for k, v in kwargs.items()
+    ]
     script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     file_name = os.path.join(script_dir, "sql", script_name + ".sql")
     for line in open(file_name):
@@ -204,12 +253,15 @@ def run_sql_script(conn, script_name, **kwargs):
             statement_parts = []
         else:
             statement_parts.append(line)
-    cursor.execute("""
-            select name, type, line, position, text
-            from dba_errors
-            where owner = upper(:owner)
-            order by name, type, line, position""",
-            owner = get_main_user())
+    cursor.execute(
+        """
+        select name, type, line, position, text
+        from dba_errors
+        where owner = upper(:owner)
+        order by name, type, line, position
+        """,
+        owner=get_main_user(),
+    )
     prev_name = prev_obj_type = None
     for name, obj_type, line_num, position, text in cursor:
         if name != prev_name or obj_type != prev_obj_type:

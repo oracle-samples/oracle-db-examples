@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,14 +25,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # object_aq.py
 #
 # Demonstrates how to use advanced queuing with objects. It makes use of a
 # simple type and queue created in the sample setup.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import decimal
 
@@ -45,16 +45,24 @@ oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 BOOK_TYPE_NAME = "UDT_BOOK"
 QUEUE_NAME = "DEMO_BOOK_QUEUE"
 BOOK_DATA = [
-    ("The Fellowship of the Ring", "Tolkien, J.R.R.",
-            decimal.Decimal("10.99")),
-    ("Harry Potter and the Philosopher's Stone", "Rowling, J.K.",
-            decimal.Decimal("7.99"))
+    (
+        "The Fellowship of the Ring",
+        "Tolkien, J.R.R.",
+        decimal.Decimal("10.99"),
+    ),
+    (
+        "Harry Potter and the Philosopher's Stone",
+        "Rowling, J.K.",
+        decimal.Decimal("7.99"),
+    ),
 ]
 
 # connect to database
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 # create a queue
 books_type = connection.gettype(BOOK_TYPE_NAME)

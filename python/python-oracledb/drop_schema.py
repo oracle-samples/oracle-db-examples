@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2020, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2020, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # drop_schema.py
 #
 # Drops the database objects used by the python-oracledb samples.
@@ -30,19 +30,23 @@
 # This script is also executed by the Python script sample_setup.py for
 # dropping the existing users and editions, if applicable, before creating the
 # sample schemas and editions.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-import oracledb
 import sample_env
+
 
 def drop_schema(conn):
     print("Dropping sample schemas and edition...")
-    sample_env.run_sql_script(conn, "drop_schema",
-                              main_user=sample_env.get_main_user(),
-                              edition_user=sample_env.get_edition_user(),
-                              edition_name=sample_env.get_edition_name())
+    sample_env.run_sql_script(
+        conn,
+        "drop_schema",
+        main_user=sample_env.get_main_user(),
+        edition_user=sample_env.get_edition_user(),
+        edition_name=sample_env.get_edition_name(),
+    )
+
 
 if __name__ == "__main__":
-    conn = oracledb.connect(sample_env.get_admin_connect_string())
+    conn = sample_env.get_admin_connection()
     drop_schema(conn)
     print("Done.")

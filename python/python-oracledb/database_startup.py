@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,14 +25,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # database_startup.py
 #
 # Demonstrates starting up a database using Python. The connection used
 # assumes that the environment variable ORACLE_SID has been set.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env

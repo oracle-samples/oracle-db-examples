@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2019, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2019, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,13 +20,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # last_rowid.py
 #
 # Demonstrates the use of the cursor.lastrowid attribute.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -35,12 +35,13 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 with connection.cursor() as cursor:
-
     # insert a couple of rows and retain the rowid of each
     row1 = [1, "First"]
     row2 = [2, "Second"]
@@ -66,8 +67,9 @@ with connection.cursor() as cursor:
 
     # updating multiple rows only returns the rowid of the last updated row
     cursor.execute("update mytab set data = data || ' (Modified)'")
-    cursor.execute("select id, data from mytab where rowid = :1",
-                   [cursor.lastrowid])
+    cursor.execute(
+        "select id, data from mytab where rowid = :1", [cursor.lastrowid]
+    )
     print("Last updated row:", cursor.fetchone())
 
     # deleting multiple rows only returns the rowid of the last deleted row
@@ -79,4 +81,4 @@ with connection.cursor() as cursor:
     print("Rowid when no rows are deleted:", cursor.lastrowid)
 
     # Don't commit - this lets us run the demo multiple times
-    #connection.commit()
+    # connection.commit()

@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,15 +20,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # subclassing.py
 #
 # Demonstrates how to subclass connections and cursors in order to add
 # additional functionality (like logging) or create specialized interfaces for
 # particular applications.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -37,16 +37,19 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
+
 # sample subclassed Connection which overrides the constructor (so no
 # parameters are required) and the cursor() method (so that the subclassed
 # cursor is returned instead of the default cursor implementation)
 class Connection(oracledb.Connection):
-
     def __init__(self):
         print("CONNECT", sample_env.get_connect_string())
-        super().__init__(user=sample_env.get_main_user(),
-                         password=sample_env.get_main_password(),
-                         dsn=sample_env.get_connect_string())
+        super().__init__(
+            user=sample_env.get_main_user(),
+            password=sample_env.get_main_password(),
+            dsn=sample_env.get_connect_string(),
+        )
+
     def cursor(self):
         return Cursor(self)
 
@@ -54,7 +57,6 @@ class Connection(oracledb.Connection):
 # sample subclassed cursor which overrides the execute() and fetchone()
 # methods in order to perform some simple logging
 class Cursor(oracledb.Cursor):
-
     def execute(self, statement, args):
         print("EXECUTE", statement)
         print("ARGS:")
@@ -71,8 +73,9 @@ class Cursor(oracledb.Cursor):
 connection = Connection()
 
 with connection.cursor() as cursor:
-
     # demonstrate that the subclassed connection and cursor are being used
-    cursor.execute("select count(*) from ChildTable where ParentId = :1", (30,))
-    count, = cursor.fetchone()
+    cursor.execute(
+        "select count(*) from ChildTable where ParentId = :1", (30,)
+    )
+    (count,) = cursor.fetchone()
     print("COUNT:", int(count))

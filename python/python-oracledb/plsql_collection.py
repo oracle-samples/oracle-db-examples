@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -20,16 +20,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # plsql_collection.py
 #
 # Demonstrates how to get the value of a PL/SQL collection from a stored
 # procedure.
 #
 # This feature is only available in Oracle Database 12.1 and higher.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -38,9 +38,11 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 # create a new empty object of the correct type.
 # note the use of a PL/SQL type that is defined in a package
@@ -49,7 +51,6 @@ obj = type_obj.newobject()
 
 # call the stored procedure which will populate the object
 with connection.cursor() as cursor:
-
     cursor.callproc("pkg_Demo.DemoCollectionOut", (obj,))
 
     # show the indexes that are used by the collection

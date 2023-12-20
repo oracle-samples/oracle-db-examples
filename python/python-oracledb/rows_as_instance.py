@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,15 +25,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # rows_as_instance.py
 #
 # Returns rows as instances instead of tuples. See the ceDatabase.Row class
 # in the cx_PyGenLib project (http://cx-pygenlib.sourceforge.net) for a more
 # advanced example.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -42,44 +42,50 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-class Test:
 
+class Test:
     def __init__(self, a, b, c):
         self.a = a
         self.b = b
         self.c = c
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 with connection.cursor() as cursor:
-
     # create sample data
-    cursor.execute("""
+    cursor.execute(
+        """
         begin
-          begin
-            execute immediate 'drop table TestInstances';
-          exception
-          when others then
-            if sqlcode <> -942 then
-              raise;
-            end if;
-          end;
+            begin
+                execute immediate 'drop table TestInstances';
+            exception
+            when others then
+                if sqlcode <> -942 then
+                    raise;
+                end if;
+            end;
 
-          execute immediate 'create table TestInstances (
+            execute immediate 'create table TestInstances (
                                  a varchar2(60) not null,
                                  b number(9) not null,
                                  c date not null)';
 
-          execute immediate
-                 'insert into TestInstances values (''First'', 5, sysdate)';
+            execute immediate
+                    'insert into TestInstances values (''First'', 5, sysdate)';
 
-          execute immediate
-                 'insert into TestInstances values (''Second'', 25, sysdate)';
+            execute immediate
+                    'insert into TestInstances
+                    values (''Second'', 25, sysdate)';
 
-          commit;
-        end;""")
+            commit;
+        end;
+        """
+    )
 
     # retrieve the data and display it
     cursor.execute("select * from TestInstances")

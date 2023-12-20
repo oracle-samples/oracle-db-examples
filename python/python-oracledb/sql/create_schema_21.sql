@@ -23,9 +23,12 @@
  *---------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
- * create_schema.sql
+ * create_schema_21.sql
  *
- * Creates a table with the 21c JSON datatype
+ * Performs the actual work of creating and populating the schemas with the
+ * database objects used by the python-oracledb samples that require Oracle
+ * Database 21c or higher. It is executed by the Python script
+ * create_schema.py.
  *---------------------------------------------------------------------------*/
 
 create table &main_user..CustomersAsJson (

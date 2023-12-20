@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2017, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2017, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,14 +25,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # dml_returning_multiple_rows.py
 #
 # Demonstrates the use of DML returning with multiple rows being returned at
 # once.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -41,12 +41,13 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 with connection.cursor() as cursor:
-
     # truncate table first so that script can be rerun
     print("Truncating table...")
     cursor.execute("truncate table TestTempTable")
@@ -62,11 +63,14 @@ with connection.cursor() as cursor:
     int_col = cursor.var(int)
     string_col = cursor.var(str)
     print("Deleting data with DML returning...")
-    cursor.execute("""
-            delete from TestTempTable
-            returning IntCol, StringCol into :int_col, :string_col""",
-            int_col=int_col,
-            string_col=string_col)
+    cursor.execute(
+        """
+        delete from TestTempTable
+        returning IntCol, StringCol into :int_col, :string_col
+        """,
+        int_col=int_col,
+        string_col=string_col,
+    )
     print("Data returned:")
     for int_val, string_val in zip(int_col.getvalue(), string_col.getvalue()):
         print(tuple([int_val, string_val]))

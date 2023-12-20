@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2019, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2019, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,14 +25,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # raw_aq.py
 #
 # Demonstrates how to use advanced queuing with RAW data. It makes use of a
 # RAW queue created in the sample setup.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -45,16 +45,17 @@ PAYLOAD_DATA = [
     "The first message",
     "The second message",
     "The third message",
-    "The fourth and final message"
+    "The fourth and final message",
 ]
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 # create a queue
 with connection.cursor() as cursor:
-
     queue = connection.queue(QUEUE_NAME)
     queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
     queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
@@ -67,7 +68,6 @@ with connection.cursor() as cursor:
 # enqueue a few messages
 print("Enqueuing messages...")
 with connection.cursor() as cursor:
-
     for data in PAYLOAD_DATA:
         print(data)
         queue.enqone(connection.msgproperties(payload=data))
@@ -76,7 +76,6 @@ with connection.cursor() as cursor:
 # dequeue the messages
 print("\nDequeuing messages...")
 with connection.cursor() as cursor:
-
     while True:
         props = queue.deqone()
         if not props:

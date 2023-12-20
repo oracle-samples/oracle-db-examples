@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,9 +20,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # oracledb_upgrade.py
 #
 # Example module to assist upgrading large applications from cx_Oracle 8 to
@@ -111,7 +111,7 @@
 #           for r, in cursor.execute(sql):
 #               print(r)
 #
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import os
 import sys
@@ -134,7 +134,7 @@ ALLOW_POSITIONAL_CONNECT_ARGS = True
 # Python.
 lib_dir = None
 if platform.system() == "Darwin" and platform.machine() == "x86_64":
-    lib_dir = os.environ.get("HOME")+"/Downloads/instantclient_19_8"
+    lib_dir = os.environ.get("HOME") + "/Downloads/instantclient_19_8"
 elif platform.system() == "Windows":
     lib_dir = r"C:\oracle\instantclient_19_14"
 
@@ -143,23 +143,29 @@ elif platform.system() == "Windows":
 driver_type = os.environ.get("ORA_PYTHON_DRIVER_TYPE", "thin")
 
 if driver_type.lower() == "cx":
-    if MODE_TRACE: print("Using cx_Oracle")
-    from cx_Oracle import *
+    if MODE_TRACE:
+        print("Using cx_Oracle")
+    from cx_Oracle import *  # noqa: F403
+
     sys.modules["oracledb"] = cx_Oracle
     sys.modules["cx_Oracle"] = cx_Oracle
     oracledb.init_oracle_client(lib_dir=lib_dir)
 else:
-    from oracledb import *
+    from oracledb import *  # noqa: F403
+
     sys.modules["oracledb"] = oracledb
     sys.modules["cx_Oracle"] = oracledb
     if driver_type.lower() == "thick":
-        if MODE_TRACE: print("Using python-oracledb thick")
+        if MODE_TRACE:
+            print("Using python-oracledb thick")
         # For python-oracledb Thick mode, init_oracle_client() MUST be called
         # on all operating systems. Whether to use a lib_dir value depends on
         # how your system library search path is configured.
         oracledb.init_oracle_client(lib_dir=lib_dir)
     else:
-        if MODE_TRACE: print("Using python-oracledb thin")
+        if MODE_TRACE:
+            print("Using python-oracledb thin")
+
 
 # If your existing cx_Oracle code never used positional arguments for
 # connection and pool creation calls then inject_connect_shim() is not
@@ -171,50 +177,105 @@ def inject_connect_shim():
     """
 
     class ShimConnection(oracledb.Connection):
-
-        def __init__(self, user=None, password=None, dsn=None,
-                     mode=oracledb.DEFAULT_AUTH, handle=0, pool=None,
-                     threaded=False, events=False, cclass=None,
-                     purity=oracledb.ATTR_PURITY_DEFAULT,
-                     newpassword=None, encoding=None, nencoding=None,
-                     edition=None, appcontext=[], tag=None,
-                     matchanytag=False, shardingkey=[],
-                     supershardingkey=[], stmtcachesize=20):
+        def __init__(
+            self,
+            user=None,
+            password=None,
+            dsn=None,
+            mode=oracledb.DEFAULT_AUTH,
+            handle=0,
+            pool=None,
+            threaded=False,
+            events=False,
+            cclass=None,
+            purity=oracledb.ATTR_PURITY_DEFAULT,
+            newpassword=None,
+            encoding=None,
+            nencoding=None,
+            edition=None,
+            appcontext=[],
+            tag=None,
+            matchanytag=False,
+            shardingkey=[],
+            supershardingkey=[],
+            stmtcachesize=20,
+        ):
             if dsn is None and password is None:
                 dsn = user
                 user = None
-            super().__init__(dsn=dsn, user=user, password=password,
-                             mode=mode, handle=handle, pool=pool,
-                             threaded=threaded, events=events, cclass=cclass,
-                             purity=purity, newpassword=newpassword,
-                             edition=edition, appcontext=appcontext, tag=tag,
-                             matchanytag=matchanytag, shardingkey=shardingkey,
-                             supershardingkey=supershardingkey,
-                             stmtcachesize=stmtcachesize)
+            super().__init__(
+                dsn=dsn,
+                user=user,
+                password=password,
+                mode=mode,
+                handle=handle,
+                pool=pool,
+                threaded=threaded,
+                events=events,
+                cclass=cclass,
+                purity=purity,
+                newpassword=newpassword,
+                edition=edition,
+                appcontext=appcontext,
+                tag=tag,
+                matchanytag=matchanytag,
+                shardingkey=shardingkey,
+                supershardingkey=supershardingkey,
+                stmtcachesize=stmtcachesize,
+            )
 
     class ShimPool(oracledb.SessionPool):
-
-        def __init__(self, user=None, password=None, dsn=None, min=1, max=2,
-                     increment=1, connectiontype=oracledb.Connection,
-                     threaded=True, getmode=oracledb.SPOOL_ATTRVAL_NOWAIT,
-                     events=False, homogeneous=True, externalauth=False,
-                     encoding=None, nencoding=None, edition=None, timeout=0,
-                     wait_timeout=0, max_lifetime_session=0, session_callback=None,
-                     max_sessions_per_shard=0, soda_metadata_cache=False,
-                     stmtcachesize=20, ping_interval=60):
-
-            super().__init__(dsn=dsn, user=user, password=password,
-                             min=min, max=max, increment=increment,
-                             connectiontype=connectiontype, threaded=threaded,
-                             getmode=getmode, events=events, homogeneous=homogeneous,
-                             externalauth=externalauth, encoding=encoding,
-                             nencoding=nencoding, edition=edition, timeout=timeout,
-                             wait_timeout=wait_timeout,
-                             max_lifetime_session=max_lifetime_session,
-                             session_callback=session_callback,
-                             max_sessions_per_shard=max_sessions_per_shard,
-                             soda_metadata_cache=soda_metadata_cache,
-                             stmtcachesize=stmtcachesize, ping_interval=ping_interval)
+        def __init__(
+            self,
+            user=None,
+            password=None,
+            dsn=None,
+            min=1,
+            max=2,
+            increment=1,
+            connectiontype=oracledb.Connection,
+            threaded=True,
+            getmode=oracledb.SPOOL_ATTRVAL_NOWAIT,
+            events=False,
+            homogeneous=True,
+            externalauth=False,
+            encoding=None,
+            nencoding=None,
+            edition=None,
+            timeout=0,
+            wait_timeout=0,
+            max_lifetime_session=0,
+            session_callback=None,
+            max_sessions_per_shard=0,
+            soda_metadata_cache=False,
+            stmtcachesize=20,
+            ping_interval=60,
+        ):
+            super().__init__(
+                dsn=dsn,
+                user=user,
+                password=password,
+                min=min,
+                max=max,
+                increment=increment,
+                connectiontype=connectiontype,
+                threaded=threaded,
+                getmode=getmode,
+                events=events,
+                homogeneous=homogeneous,
+                externalauth=externalauth,
+                encoding=encoding,
+                nencoding=nencoding,
+                edition=edition,
+                timeout=timeout,
+                wait_timeout=wait_timeout,
+                max_lifetime_session=max_lifetime_session,
+                session_callback=session_callback,
+                max_sessions_per_shard=max_sessions_per_shard,
+                soda_metadata_cache=soda_metadata_cache,
+                stmtcachesize=stmtcachesize,
+                ping_interval=ping_interval,
+            )
 
     global connect
     connect = ShimConnection
@@ -222,6 +283,7 @@ def inject_connect_shim():
     Connection = ShimConnection
     global SessionPool
     SessionPool = ShimPool
+
 
 if ALLOW_POSITIONAL_CONNECT_ARGS and driver_type.lower() != "cx":
     inject_connect_shim()

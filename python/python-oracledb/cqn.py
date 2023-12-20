@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,16 +25,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # cqn.py
 #
 # Demonstrates using continuous query notification in Python, a feature that is
 # available in Oracle 11g and later. Once this script is running, use another
 # session to insert, update or delete rows from the table TestTempTable and you
 # will see the notification of that change.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import time
 
@@ -45,6 +45,7 @@ import sample_env
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 registered = True
+
 
 def callback(message):
     global registered
@@ -70,14 +71,18 @@ def callback(message):
                     print("-" * 60)
             print("=" * 60)
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string(),
-                              events=True)
+
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+    events=True,
+)
 
 qos = oracledb.SUBSCR_QOS_QUERY | oracledb.SUBSCR_QOS_ROWIDS
-sub = connection.subscribe(callback=callback, timeout=1800,
-                           qos=qos, client_initiated=True)
+sub = connection.subscribe(
+    callback=callback, timeout=1800, qos=qos, client_initiated=True
+)
 print("Subscription:", sub)
 print("--> Connection:", sub.connection)
 print("--> Callback:", sub.callback)

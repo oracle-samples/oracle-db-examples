@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
@@ -25,16 +25,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # type_handlers_objects.py
 #
 # Demonstrates the use of input and output type handlers as well as variable
 # input and output converters. These methods can be used to extend
 # python-oracledb in many ways. This script demonstrates the binding and
 # querying of SQL objects as Python objects.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import datetime
 
@@ -45,14 +45,16 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 
 obj_type = connection.gettype("UDT_BUILDING")
 
-class Building:
 
+class Building:
     def __init__(self, building_id, description, num_floors, date_built):
         self.building_id = building_id
         self.description = description
@@ -73,19 +75,26 @@ def building_in_converter(value):
 
 
 def building_out_converter(obj):
-    return Building(int(obj.BUILDINGID), obj.DESCRIPTION, int(obj.NUMFLOORS),
-                    obj.DATEBUILT)
+    return Building(
+        int(obj.BUILDINGID), obj.DESCRIPTION, int(obj.NUMFLOORS), obj.DATEBUILT
+    )
 
 
 def input_type_handler(cursor, value, num_elements):
     if isinstance(value, Building):
-        return cursor.var(obj_type, arraysize=num_elements,
-                          inconverter=building_in_converter)
+        return cursor.var(
+            obj_type, arraysize=num_elements, inconverter=building_in_converter
+        )
+
 
 def output_type_handler(cursor, metadata):
     if metadata.type_code is oracledb.DB_TYPE_OBJECT:
-        return cursor.var(metadata.type, arraysize=cursor.arraysize,
-                          outconverter=building_out_converter)
+        return cursor.var(
+            metadata.type,
+            arraysize=cursor.arraysize,
+            outconverter=building_out_converter,
+        )
+
 
 buildings = [
     Building(1, "The First Building", 5, datetime.date(2007, 5, 18)),
@@ -96,23 +105,31 @@ buildings = [
 with connection.cursor() as cursor:
     cursor.inputtypehandler = input_type_handler
     for building in buildings:
-        cursor.execute("insert into BuildingsAsObjects values (:1, :2)",
-                       (building.building_id, building))
+        cursor.execute(
+            "insert into BuildingsAsObjects values (:1, :2)",
+            (building.building_id, building),
+        )
 
     print("NO OUTPUT TYPE HANDLER:")
-    for row in cursor.execute("""
-            select *
-            from BuildingsAsObjects
-            order by BuildingId"""):
+    for row in cursor.execute(
+        """
+        select *
+        from BuildingsAsObjects
+        order by BuildingId
+        """
+    ):
         print(row)
     print()
 
 with connection.cursor() as cursor:
     cursor.outputtypehandler = output_type_handler
     print("WITH OUTPUT TYPE HANDLER:")
-    for row in cursor.execute("""
-            select *
-            from BuildingsAsObjects
-            order by BuildingId"""):
+    for row in cursor.execute(
+        """
+        select *
+        from BuildingsAsObjects
+        order by BuildingId
+        """
+    ):
         print(row)
     print()

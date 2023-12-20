@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2020, 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,36 +20,38 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # create_schema.py
 #
 # Creates users and populates their schemas with the tables and packages
 # necessary for running the python-oracledb sample scripts. An edition is also
 # created for the demonstration of PL/SQL editioning.
-#------------------------------------------------------------------------------
-
-import oracledb
+# -----------------------------------------------------------------------------
 
 import drop_schema
 import sample_env
 
 # connect as administrative user (usually SYSTEM or ADMIN)
-conn = oracledb.connect(sample_env.get_admin_connect_string())
+conn = sample_env.get_admin_connection()
 
 # drop existing users and editions, if applicable
 drop_schema.drop_schema(conn)
 
 # create sample schema and edition
 print("Creating sample schemas and edition...")
-sample_env.run_sql_script(conn, "create_schema",
-                          main_user=sample_env.get_main_user(),
-                          main_password=sample_env.get_main_password(),
-                          edition_user=sample_env.get_edition_user(),
-                          edition_password=sample_env.get_edition_password(),
-                          edition_name=sample_env.get_edition_name())
+sample_env.run_sql_script(
+    conn,
+    "create_schema",
+    main_user=sample_env.get_main_user(),
+    main_password=sample_env.get_main_password(),
+    edition_user=sample_env.get_edition_user(),
+    edition_password=sample_env.get_edition_password(),
+    edition_name=sample_env.get_edition_name(),
+)
 if sample_env.get_server_version() >= (21, 0):
-    sample_env.run_sql_script(conn, "create_schema_21",
-                              main_user=sample_env.get_main_user())
+    sample_env.run_sql_script(
+        conn, "create_schema_21", main_user=sample_env.get_main_user()
+    )
 print("Done.")

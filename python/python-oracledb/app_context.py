@@ -1,5 +1,5 @@
-#------------------------------------------------------------------------------
-# Copyright (c) 2016, 2022, Oracle and/or its affiliates.
+# -----------------------------------------------------------------------------
+# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -25,15 +25,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # app_context.py
 #
 # Demonstrates the use of application context. Application context is available
 # within logon triggers and can be retrieved by using the function
 # sys_context().
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -44,20 +44,22 @@ oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 # client context attributes to be set
 APP_CTX_NAMESPACE = "CLIENTCONTEXT"
 APP_CTX_ENTRIES = [
-    ( APP_CTX_NAMESPACE, "ATTR1", "VALUE1" ),
-    ( APP_CTX_NAMESPACE, "ATTR2", "VALUE2" ),
-    ( APP_CTX_NAMESPACE, "ATTR3", "VALUE3" )
+    (APP_CTX_NAMESPACE, "ATTR1", "VALUE1"),
+    (APP_CTX_NAMESPACE, "ATTR2", "VALUE2"),
+    (APP_CTX_NAMESPACE, "ATTR3", "VALUE3"),
 ]
 
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string(),
-                              appcontext=APP_CTX_ENTRIES)
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+    appcontext=APP_CTX_ENTRIES,
+)
 
 with connection.cursor() as cursor:
-
     for namespace, name, value in APP_CTX_ENTRIES:
-        cursor.execute("select sys_context(:1, :2) from dual",
-                       (namespace, name))
-        value, = cursor.fetchone()
+        cursor.execute(
+            "select sys_context(:1, :2) from dual", (namespace, name)
+        )
+        (value,) = cursor.fetchone()
         print("Value of context key", name, "is", value)

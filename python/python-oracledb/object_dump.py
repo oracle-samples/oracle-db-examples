@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (c) 2023, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
@@ -20,14 +20,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # object_dump.py
 #
 # Shows how to pretty-print an Oracle object or collection.
 # Also shows how to insert a Python object to an Oracle object column.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import oracledb
 import sample_env
@@ -37,14 +37,16 @@ if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 # Create Oracle connection and cursor objects
-connection = oracledb.connect(user=sample_env.get_main_user(),
-                              password=sample_env.get_main_password(),
-                              dsn=sample_env.get_connect_string())
+connection = oracledb.connect(
+    user=sample_env.get_main_user(),
+    password=sample_env.get_main_password(),
+    dsn=sample_env.get_connect_string(),
+)
 cursor = connection.cursor()
+
 
 # Create a Python class equivalent to an Oracle SDO object
 class MySDO(object):
-
     def __init__(self, gtype, elem_info, ordinates):
         self.gtype = gtype
         self.elem_info = elem_info
@@ -55,6 +57,7 @@ class MySDO(object):
 obj_type = connection.gettype("MDSYS.SDO_GEOMETRY")
 element_info_type_obj = connection.gettype("MDSYS.SDO_ELEM_INFO_ARRAY")
 ordinate_type_obj = connection.gettype("MDSYS.SDO_ORDINATE_ARRAY")
+
 
 # Convert a Python object to MDSYS.SDO_GEOMETRY
 def sdo_input_type_handler(cursor, value, num_elements):
@@ -68,8 +71,9 @@ def sdo_input_type_handler(cursor, value, num_elements):
         return obj
 
     if isinstance(value, MySDO):
-        return cursor.var(obj_type, arraysize=num_elements,
-                          inconverter=sdo_in_converter)
+        return cursor.var(
+            obj_type, arraysize=num_elements, inconverter=sdo_in_converter
+        )
 
 
 # Create and insert a Python object
@@ -99,6 +103,7 @@ def dump_object(obj, prefix=""):
             else:
                 print(f"{prefix}  {attr.name}: {repr(value)}")
         print(f"{prefix}}}")
+
 
 # Query the row back
 cursor.execute("select geometry from TestGeometry")
