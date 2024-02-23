@@ -1,17 +1,24 @@
-/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
- * You may not use the identified files except in compliance with the Apache
- * License, Version 2.0 (the "License.")
+ * This software is dual-licensed to you under the Universal Permissive License
+ * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+ * 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+ * either license.
  *
+ * If you elect to accept the software under the Apache License, Version 2.0,
+ * the following applies:
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -27,39 +34,54 @@
  *
  *   In some networks forced pool termination may hang unless you have
  *   'disable_oob=on' in sqlnet.ora, see
- *   https://oracle.github.io/node-oracledb/doc/api.html#tnsadmin
+ *   https://node-oracledb.readthedocs.io/en/latest/user_guide/connection_handling.html#limiting-the-time-taken-to-execute-statements
  *
  *   In production applications, set poolMin=poolMax (and poolIncrement=0)
  *
- *   This example uses Node 8's async/await syntax.
- *
  *****************************************************************************/
 
-// If you increase poolMax, you must increase UV_THREADPOOL_SIZE before Node.js
-// starts its thread pool.  If you set UV_THREADPOOL_SIZE too late, the value is
-// ignored and the default size of 4 is used.
-// Note on Windows you must set the UV_THREADPOOL_SIZE environment variable before
-// running your application.
-// process.env.UV_THREADPOOL_SIZE = 4;
+'use strict';
 
-const fs = require('fs');
+Error.stackTraceLimit = 50;
+
+// Note: if you use Thick mode, and you increase poolMax, then you must also
+// increase UV_THREADPOOL_SIZE before Node.js starts its thread pool.  If you
+// set UV_THREADPOOL_SIZE too late, the value is ignored and the default size
+// of 4 is used.
+//
+// On Windows you must set the UV_THREADPOOL_SIZE environment variable
+// externally before running your application.
+//
+// Increasing UV_THREADPOOL_SIZE is not needed if you use Thin mode.
+//
+// process.env.UV_THREADPOOL_SIZE = 10; // set threadpool size to 10 for 10 connections
+
+
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 
-// On Windows and macOS, you can specify the directory containing the Oracle
-// Client Libraries at runtime, or before Node.js starts.  On other platforms
-// the system library search path must always be set before Node.js is started.
-// See the node-oracledb installation documentation.
-// If the search path is not correct, you will get a DPI-1047 error.
-let libPath;
-if (process.platform === 'win32') {           // Windows
-  libPath = 'C:\\oracle\\instantclient_19_12';
-} else if (process.platform === 'darwin') {   // macOS
-  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+// This example runs in both node-oracledb Thin and Thick modes.
+//
+// Optionally run in node-oracledb Thick mode
+if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
+
+  // Thick mode requires Oracle Client or Oracle Instant Client libraries.
+  // On Windows and macOS Intel you can specify the directory containing the
+  // libraries at runtime or before Node.js starts.  On other platforms (where
+  // Oracle libraries are available) the system library search path must always
+  // include the Oracle library path before Node.js starts.  If the search path
+  // is not correct, you will get a DPI-1047 error.  See the node-oracledb
+  // installation documentation.
+  let clientOpts = {};
+  // On Windows and macOS Intel platforms, set the environment
+  // variable NODE_ORACLEDB_CLIENT_LIB_DIR to the Oracle Client library path
+  if (process.platform === 'win32' || (process.platform === 'darwin' && process.arch === 'x64')) {
+    clientOpts = { libDir: process.env.NODE_ORACLEDB_CLIENT_LIB_DIR };
+  }
+  oracledb.initOracleClient(clientOpts);  // enable node-oracledb Thick mode
 }
-if (libPath && fs.existsSync(libPath)) {
-  oracledb.initOracleClient({ libDir: libPath });
-}
+
+console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
 async function init() {
   try {
@@ -68,14 +90,14 @@ async function init() {
     await oracledb.createPool({
       user: dbConfig.user,
       password: dbConfig.password,
-      connectString: dbConfig.connectString
+      connectString: dbConfig.connectString,
       // edition: 'ORA$BASE', // used for Edition Based Redefintion
       // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
       // externalAuth: false, // whether connections should be established using External Authentication
       // homogeneous: true, // all connections in the pool have the same credentials
       // poolAlias: 'default', // set an alias to allow access to the pool via a name.
       // poolIncrement: 1, // only grow the pool by one connection at a time
-      // poolMax: 4, // maximum size of the pool. Increase UV_THREADPOOL_SIZE if you increase poolMax
+      // poolMax: 4, // maximum size of the pool. (Note: Increase UV_THREADPOOL_SIZE if you increase poolMax in Thick mode)
       // poolMin: 0, // start with no connections; let the pool shrink completely
       // poolPingInterval: 60, // check aliveness of connection if idle in the pool for 60 seconds
       // poolTimeout: 60, // terminate connections that are idle in the pool for 60 seconds
@@ -103,7 +125,7 @@ async function dostuff() {
   try {
     // Get a connection from the default pool
     connection = await oracledb.getConnection();
-    const sql = `SELECT sysdate FROM dual WHERE :b = 1`;
+    const sql = `SELECT CURRENT_DATE FROM dual WHERE :b = 1`;
     const binds = [1];
     const options = { outFormat: oracledb.OUT_FORMAT_OBJECT };
     const result = await connection.execute(sql, binds, options);

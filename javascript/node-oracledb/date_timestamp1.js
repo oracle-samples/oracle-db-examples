@@ -23,18 +23,25 @@
  * limitations under the License.
  *
  * NAME
- *   insert1.js
+ *   date_timestamp1.js
  *
  * DESCRIPTION
- *   Creates a table and inserts data.  Shows DDL and DML
+ *   Insert and query DATE and TIMESTAMP columns.
  *
- *   To insert many records at a time see em_insert1.js
+ *   When bound in an INSERT, JavaScript Dates are inserted using
+ *   TIMESTAMP unless explicitly bound as another type.
+ *   For queries, TIMESTAMP and DATE columns are fetched as is and
+ *   converted to a JavaScript date/time datatype in the JavaScript
+ *   timezone.
  *
- *****************************************************************************/
+ *****************************************************************************///
 
 'use strict';
 
 Error.stackTraceLimit = 50;
+
+// Using a fixed Oracle time zone helps avoid machine and deployment differences
+// process.env.ORA_SDTZ = 'UTC';
 
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
@@ -43,9 +50,8 @@ const dbConfig = require('./dbconfig.js');
 //
 // Optionally run in node-oracledb Thick mode
 if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
-
-  // Thick mode requires Oracle Client or Oracle Instant Client libraries.
-  // On Windows and macOS Intel you can specify the directory containing the
+  // Thick mode requires Oracle Client or Oracle Instant Client libraries.  On
+  // Windows and macOS Intel you can specify the directory containing the
   // libraries at runtime or before Node.js starts.  On other platforms (where
   // Oracle libraries are available) the system library search path must always
   // include the Oracle library path before Node.js starts.  If the search path
@@ -62,21 +68,28 @@ if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
 
 console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
+oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+
 async function run() {
 
   let connection;
 
   try {
+    let result, date;
+
     connection = await oracledb.getConnection(dbConfig);
 
-    //
-    // Create a table
-    //
+    console.log('Creating table');
 
     const stmts = [
-      `DROP TABLE no_tab1`,
+      `DROP TABLE no_datetab`,
 
-      `CREATE TABLE no_tab1 (id NUMBER, name VARCHAR2(20))`
+      `CREATE TABLE no_datetab(
+        id NUMBER,
+        timestampcol TIMESTAMP,
+        timestamptz  TIMESTAMP WITH TIME ZONE,
+        timestampltz TIMESTAMP WITH LOCAL TIME ZONE,
+        datecol DATE)`
     ];
 
     for (const s of stmts) {
@@ -88,33 +101,46 @@ async function run() {
       }
     }
 
-    //
-    // Show several examples of inserting
-    //
-
-    // 'bind by name' syntax
-    let result = await connection.execute(
-      `INSERT INTO no_tab1 VALUES (:id, :nm)`,
-      { id: {val: 1 }, nm: {val: 'Chris'} }
-    );
-    console.log("Rows inserted: " + result.rowsAffected);  // 1
-    console.log("ROWID of new row: " + result.lastRowid);
-
-    // 'bind by position' syntax
+    // When bound, JavaScript Dates are inserted using TIMESTAMP WITH LOCAL TIMEZONE
+    date = new Date(1995, 11, 17); // 17th Dec 1995
+    console.log('Inserting JavaScript date: ' + date);
     result = await connection.execute(
-      `INSERT INTO no_tab1 VALUES (:id, :nm)`,
-      [2, 'Alison']
-    );
-    console.log("Rows inserted: " + result.rowsAffected);  // 1
-    console.log("ROWID of new row: " + result.lastRowid);
+      `INSERT INTO no_datetab (id, timestampcol, timestamptz, timestampltz, datecol)
+        VALUES (1, :ts, :tstz, :tsltz, :td)`,
+      { ts: date, tstz: date, tsltz: date, td: date });
+    console.log('Rows inserted: ' + result.rowsAffected);
 
+    console.log('Query Results:');
     result = await connection.execute(
-      `UPDATE no_tab1 SET name = :nm`,
-      ['Bambi'],
-      { autoCommit: true }  // commit once for all DML in the script
-    );
-    console.log("Rows updated: " + result.rowsAffected); // 2
-    console.log("ROWID of final row updated: " + result.lastRowid);  // only gives one
+      `SELECT id, timestampcol, timestamptz, timestampltz, datecol,
+              TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') AS CD
+        FROM no_datetab
+        ORDER BY id`);
+    console.log(result.rows);
+
+    console.log('Altering session time zone');
+    await connection.execute(`ALTER SESSION SET TIME_ZONE='+5:00'`);  // resets ORA_SDTZ value
+
+    date = new Date(); // Current Date
+    console.log('Inserting JavaScript date: ' + date);
+    result = await connection.execute(
+      `INSERT INTO no_datetab (id, timestampcol, timestamptz, timestampltz, datecol)
+        VALUES (2, :ts, :tstz, :tsltz, :td)`,
+      { ts: date, tstz: date, tsltz: date, td: date });
+    console.log('Rows inserted: ' + result.rowsAffected);
+
+    console.log('Query Results:');
+    result = await connection.execute(
+      `SELECT id, timestampcol, timestamptz, timestampltz, datecol,
+              TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') AS CD
+        FROM no_datetab
+        ORDER BY id`);
+    console.log(result.rows);
+
+    // Show the queried dates are of type Date
+    const ts = result.rows[0]['TIMESTAMPCOL'];
+    ts.setDate(ts.getDate() + 5);
+    console.log('TIMESTAMP manipulation in JavaScript:', ts);
 
   } catch (err) {
     console.error(err);

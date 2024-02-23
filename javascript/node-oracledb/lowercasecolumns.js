@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2023, Oracle and/or its affiliates. */
+/* Copyright (c) 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
@@ -23,13 +23,10 @@
  * limitations under the License.
  *
  * NAME
- *   connect.js
+ *   lowercasecolumns.js
  *
  * DESCRIPTION
- *   Tests a basic connection to the database.
- *   See dbconfig.js for information on connectString formats.
- *
- *   For a connection pool example see connectionpool.js
+ *   Shows how a type handler can convert column names to lower case.
  *
  *****************************************************************************/
 
@@ -63,15 +60,29 @@ if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
 
 console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
-async function run() {
+// Fetch each row as an object
+oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
+// The fetch type handler is called once per column in the SELECT list.
+// It converts each column name to lowercase.
+function fth(metaData) {
+  metaData.name = metaData.name.toLowerCase();
+}
+
+async function run() {
   let connection;
 
   try {
-    // Get a non-pooled connection
     connection = await oracledb.getConnection(dbConfig);
 
-    console.log('Connection was successful!');
+    // Without the type handler the column names use the database casing
+    const sql = `SELECT 1 AS col1, 2 AS COL2 FROM dual`;
+    let result = await connection.execute(sql);
+    console.dir(result.rows, {depth: null});
+
+    // With the type handler the column names are converted to lowercase
+    result = await connection.execute(sql, [], { fetchTypeHandler: fth });
+    console.dir(result.rows, {depth: null});
 
   } catch (err) {
     console.error(err);
