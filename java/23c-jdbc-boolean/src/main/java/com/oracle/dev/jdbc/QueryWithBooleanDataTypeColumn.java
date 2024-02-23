@@ -1,0 +1,50 @@
+package com.oracle.dev.jdbc;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import oracle.jdbc.pool.OracleDataSource;
+
+public class QueryWithBooleanDataTypeColumn {
+
+	public static void main(String[] args) {
+
+		OracleDataSource ods = null;
+		Connection conn = null;
+
+		try {
+			
+			ods = new OracleDataSource();
+			
+			// jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
+			ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");			
+			ods.setUser("[Username]");
+		    ods.setPassword("[Password]");	
+						
+			conn = ods.getConnection();
+			
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");						
+			//PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE = ?");	
+			//stmt.setBoolean(1, true);				
+			//stmt.setInt(1, 1);
+			//stmt.setString(1, "1");
+					
+			ResultSet rslt = stmt.executeQuery();
+			StringBuilder sb = new StringBuilder();
+			while (rslt.next()) {
+				sb.append(rslt.getInt(1)).append("|").append(rslt.getString(2)).append("|").append(rslt.getString(3))
+						.append("|").append(rslt.getBoolean(4)).append("\n");
+
+			}
+
+			System.out.println(sb.toString());
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
