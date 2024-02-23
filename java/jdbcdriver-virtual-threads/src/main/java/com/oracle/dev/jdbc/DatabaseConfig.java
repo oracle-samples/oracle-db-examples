@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2021, 2022, Oracle and/or its affiliates.
+  Copyright (c) 2024, Oracle and/or its affiliates.
 
   This software is dual-licensed to you under the Universal Permissive License
   (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl or Apache License
@@ -21,9 +21,7 @@
 
 package com.oracle.dev.jdbc;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -36,13 +34,18 @@ public class DatabaseConfig {
 	private static final Properties CONFIG = new Properties();
 
 	static {
-		try {
-			var fileStream = Files.newInputStream(
-					Path.of("C:\\java-projects\\jdbcdriver-virtual-threads\\src\\main\\resources\\config.properties"));
-			CONFIG.load(fileStream);
-		} catch (IOException e) {
+
+		try (InputStream input = DatabaseConfig.class.getClassLoader().getResourceAsStream("config.properties")) {
+			if (input == null) {
+				System.out.println("Sorry, unable to find config.properties");
+				System.exit(1);
+			}
+			// load a properties file from class path, inside static method
+			CONFIG.load(input);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	private static final String DB_USER = CONFIG.getProperty("DB_USER");

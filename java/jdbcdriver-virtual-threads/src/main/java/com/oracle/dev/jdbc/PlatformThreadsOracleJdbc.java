@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2021, 2022, Oracle and/or its affiliates.
+  Copyright (c) 2024, Oracle and/or its affiliates.
 
   This software is dual-licensed to you under the Universal Permissive License
   (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl or Apache License
@@ -32,7 +32,8 @@ import java.util.Properties;
 import java.util.stream.IntStream;
 
 import oracle.jdbc.OracleConnection;
-import oracle.jdbc.pool.OracleDataSource;
+import oracle.ucp.jdbc.PoolDataSource;
+import oracle.ucp.jdbc.PoolDataSourceFactory;
 
 public class PlatformThreadsOracleJdbc {
 
@@ -43,15 +44,18 @@ public class PlatformThreadsOracleJdbc {
 
 	public static void main(String args[]) throws SQLException {
 
-		Properties info = new Properties();
-		info.put(OracleConnection.CONNECTION_PROPERTY_USER_NAME, DB_USER);
-		info.put(OracleConnection.CONNECTION_PROPERTY_PASSWORD, DB_PASSWORD);
-		info.put(OracleConnection.CONNECTION_PROPERTY_FAN_ENABLED, false);
-		OracleDataSource ods = new OracleDataSource();
-		ods.setURL(DB_URL);
-		ods.setConnectionProperties(info);
+		Properties props = new Properties();
+		props.put(OracleConnection.CONNECTION_PROPERTY_FAN_ENABLED, "false");
 
-		OracleConnection connection = (OracleConnection) ods.getConnection();
+		PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
+		pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
+		pds.setURL(DB_URL);
+		pds.setUser(DB_USER);
+		pds.setPassword(DB_PASSWORD);
+		pds.setConnectionPoolName("JDBC_UCP_POOL");
+		pds.setConnectionProperties(props);
+		OracleConnection connection = (OracleConnection) pds.getConnection();
+
 		DatabaseMetaData dbmd = connection.getMetaData();
 		System.out.println("Driver Name: " + dbmd.getDriverName());
 		System.out.println("Driver Version: " + dbmd.getDriverVersion());
