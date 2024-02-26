@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Oracle and/or its affiliates.
+ * Copyright (c) 2024 Oracle and/or its affiliates.
  *
  * The Universal Permissive License (UPL), Version 1.0
  *
@@ -81,8 +81,8 @@ public class CatalogDataSourceConfig {
         dataSource.setUser(user);
         dataSource.setPassword(password);
         dataSource.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
-        dataSource.setInitialPoolSize(5);
-        dataSource.setMinPoolSize(5);
+        dataSource.setInitialPoolSize(1);
+        dataSource.setMinPoolSize(1);
         dataSource.setMaxPoolSize(20);
 
 

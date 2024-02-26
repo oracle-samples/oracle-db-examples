@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Oracle and/or its affiliates.
+ * Copyright (c) 2024 Oracle and/or its affiliates.
  *
  * The Universal Permissive License (UPL), Version 1.0
  *
@@ -79,7 +79,9 @@ public class SecurityConfig {
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN")))
             return true;
 
-        return ((User) authentication.getPrincipal()).getId().equals(userId);
+        if (authentication.getPrincipal() instanceof User)
+            return ((User) authentication.getPrincipal()).getId().equals(userId);
+        return false;
     }
 
     private WebExpressionAuthorizationManager getWebExpressionAuthorizationManager(final String expression) {
