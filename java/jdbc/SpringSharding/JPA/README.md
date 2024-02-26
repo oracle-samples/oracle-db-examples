@@ -15,14 +15,27 @@ You can refer to the [Oracle Docs](https://docs.oracle.com/en/database/oracle/or
 to learn how to set up and deploy an Oracle sharded database.
 You can also refer to [Oracle Database Operator](https://github.com/oracle/oracle-database-operator) that makes deploying a sharded database on a Kubernetes Cluster an easy process.
 
-After your sharded database is set, run the following SQL script on the shard catalog to create your tables.
+After your sharded database is set, connect to the shard catalog as sysdba and create the demo application schema user.
 
 ~~~SQL
 ALTER SESSION ENABLE SHARD DDL;
 
+-- Create demo schema user
+CREATE USER demo_user IDENTIFIED BY demo_user;
+GRANT CONNECT, RESOURCE TO demo_user;
+GRANT CREATE TABLE TO demo_user;
+GRANT UNLIMITED TABLESPACE TO demo_user;
+
+-- Create tablespace
 CREATE TABLESPACE SET TS1 USING TEMPLATE (
-    DATAFILE SIZE 100M AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED
+    DATAFILE SIZE 10M AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED
     EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO);
+~~~
+
+On the shard catalog connect as demo_user and run the following SQL script to create your tables.
+
+~~~SQL
+ALTER SESSION ENABLE SHARD DDL;
 
 CREATE SHARDED TABLE users (
     user_id  NUMBER PRIMARY KEY,
@@ -47,8 +60,18 @@ CREATE SEQUENCE note_sequence INCREMENT BY 1 START WITH 1 MAXVALUE 2E9 SHARD;
 Make sure to insert a user or two in the database before testing the application.
 
 ~~~SQL
-INSERT INTO users VALUES (0, 'user1', standard_hash('user1', 'SHA256'), 'USER');
-INSERT INTO users VALUES (1, 'admin', standard_hash('admin', 'SHA256'), 'ADMIN');
+INSERT INTO users VALUES (0, 'user1', LOWER(STANDARD_HASH('user1', 'SHA256')), 'USER');
+INSERT INTO users VALUES (1, 'admin', LOWER(STANDARD_HASH('admin', 'SHA256')), 'ADMIN');
+COMMIT;
+~~~
+
+To uninstall and clean up the preceding setup, you can connect as sysdba and run the following SQL script.
+
+~~~SQL
+ALTER SESSION ENABLE SHARD DDL;
+
+DROP USER demo_user CASCADE;
+DROP TABLESPACE SET TS1;
 ~~~
 
 ## Building the application
@@ -64,11 +87,11 @@ Before running the application set the following environment variables or update
 
 ~~~shell
 export CATALOG_URL="the catalog url"
-export CATALOG_USER="username"
-export CATALOG_PASS="password"
+export CATALOG_USER="demo_user"
+export CATALOG_PASS="demo_user"
 export SHARD_DIRECTOR_URL="the shard director url"
-export SHARD_DIRECTOR_USER="username"
-export SHARD_DIRECTOR_PASS="password"
+export SHARD_DIRECTOR_USER="demo_user"
+export SHARD_DIRECTOR_PASS="demo_user"
 ~~~
 
 Then you can run the application using:
