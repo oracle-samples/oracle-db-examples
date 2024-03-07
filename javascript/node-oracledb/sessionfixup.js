@@ -1,17 +1,24 @@
-/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
- * You may not use the identified files except in compliance with the Apache
- * License, Version 2.0 (the "License.")
+ * This software is dual-licensed to you under the Universal Permissive License
+ * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+ * 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+ * either license.
  *
+ * If you elect to accept the software under the Apache License, Version 2.0,
+ * the following applies:
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -35,43 +42,61 @@
  *   The function initSession() will be called just once per connection
  *   in the pool.
  *
- *   This example requires node-oracledb 3.1 or later.
- *
- *   This example uses Node 8's async/await syntax.
- *
  *****************************************************************************/
 
-const fs = require('fs');
+'use strict';
+
+Error.stackTraceLimit = 50;
+
 const http = require('http');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+
 const httpPort = 7000;
 
-// On Windows and macOS, you can specify the directory containing the Oracle
-// Client Libraries at runtime, or before Node.js starts.  On other platforms
-// the system library search path must always be set before Node.js is started.
-// See the node-oracledb installation documentation.
-// If the search path is not correct, you will get a DPI-1047 error.
-let libPath;
-if (process.platform === 'win32') {           // Windows
-  libPath = 'C:\\oracle\\instantclient_19_12';
-} else if (process.platform === 'darwin') {   // macOS
-  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+// This example runs in both node-oracledb Thin and Thick modes.
+//
+// Optionally run in node-oracledb Thick mode
+if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
+
+  // Thick mode requires Oracle Client or Oracle Instant Client libraries.
+  // On Windows and macOS Intel you can specify the directory containing the
+  // libraries at runtime or before Node.js starts.  On other platforms (where
+  // Oracle libraries are available) the system library search path must always
+  // include the Oracle library path before Node.js starts.  If the search path
+  // is not correct, you will get a DPI-1047 error.  See the node-oracledb
+  // installation documentation.
+  let clientOpts = {};
+  // On Windows and macOS Intel platforms, set the environment
+  // variable NODE_ORACLEDB_CLIENT_LIB_DIR to the Oracle Client library path
+  if (process.platform === 'win32' || (process.platform === 'darwin' && process.arch === 'x64')) {
+    clientOpts = { libDir: process.env.NODE_ORACLEDB_CLIENT_LIB_DIR };
+  }
+  oracledb.initOracleClient(clientOpts);  // enable node-oracledb Thick mode
 }
-if (libPath && fs.existsSync(libPath)) {
-  oracledb.initOracleClient({ libDir: libPath });
-}
+
+console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
 // initSession() will be invoked internally when each brand new pooled
 // connection is first used.  Its callback function 'callbackFn' should be
-// invoked only when all desired session state has been set.
-// In this example, the requestedTag and actualTag parameters are
-// ignored.  They would be valid if connection tagging was being used.
-// If you have multiple SQL statements to execute, put them in a
-// single, anonymous PL/SQL block for efficiency.
+// invoked only when all desired session state has been set.  In this example,
+// the requestedTag parameter is ignored.  They would be valid if connection
+// tagging was being used.  If you have multiple SQL statements to execute, put
+// them in a single, anonymous PL/SQL block for efficiency.
 function initSession(connection, requestedTag, callbackFn) {
-  console.log('In initSession');
-  connection.execute(`ALTER SESSION SET TIME_ZONE = 'UTC'`, callbackFn);
+
+  // Your session initialization code would be here.  This example just queries
+  // the session id and serial number to show that the callback is invoked once
+  // per new session.
+  connection.execute(
+    `SELECT UNIQUE sid||'-'||serial#
+     FROM v$session_connect_info
+     WHERE sid = SYS_CONTEXT('USERENV', 'SID')`,
+    function(err, result) {
+      const sidSer = result.rows[0][0];  // session id and serial number
+      console.log(`initSession invoked for session and serial number: ${sidSer}`);
+      callbackFn();
+    });
 }
 
 async function init() {
@@ -106,8 +131,13 @@ async function handleRequest(request, response) {
   try {
     // Get a connection from the default connection pool
     connection = await oracledb.getConnection();
-    const result = await connection.execute(`SELECT TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') FROM DUAL`);
-    console.log(result.rows[0][0]);
+
+    const sql = `SELECT UNIQUE CURRENT_TIMESTAMP, sid||'-'||serial#
+                 FROM v$session_connect_info
+                 WHERE sid = SYS_CONTEXT('USERENV', 'SID')`;
+
+    const result = await connection.execute(sql);
+    console.log(`Query at ${result.rows[0][0]} used session and serial number ${result.rows[0][1]}`);
   } catch (err) {
     console.error(err.message);
   } finally {

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2023, Oracle and/or its affiliates. */
+/* Copyright (c) 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
@@ -23,16 +23,13 @@
  * limitations under the License.
  *
  * NAME
- *   selectjsonblob.js
+ *   typehandlernum.js
  *
  * DESCRIPTION
- *   Shows how to use a BLOB as a JSON column store.
- *
- *   Note: with Oracle Database 21c using the new JSON type is recommended
- *   instead, see selectjson.js
- *
- *   Requires Oracle Database 12.1.0.2 or later.
- *   See https://www.oracle.com/pls/topic/lookup?ctx=dblatest&id=ADJSN
+ *   Show how a type handler can alter queried numbers
+ *    - formating numbers in a locale-specific way.
+ *    - altering the conversion between Oracle's decimal format and Node.js's
+ *      binary format.
  *
  *****************************************************************************/
 
@@ -66,91 +63,90 @@ if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
 
 console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
-async function run() {
+// This fetch type handler is called once per column in the SELECT list of
+// example 1.  If the metadata name & type tests are satified, then the
+// returned converter function is enabled for that column.  Data in this column
+// will be processed by the converter function before it is returned to the
+// application.
 
+function fth(metaData) {
+  if (metaData.name == 'N_COL' && metaData.dbType === oracledb.DB_TYPE_NUMBER) {
+    return {converter: formatNumber};
+  }
+}
+
+// Format numbers using a German display format with "." as the thousands
+// separator and "," as the decimal separator
+function formatNumber(val) {
+  if (val !== null) {
+    val = val.toLocaleString('de-DE');
+  }
+  return val;
+}
+
+async function run() {
   let connection;
 
   try {
-
     connection = await oracledb.getConnection(dbConfig);
-
-    if (connection.oracleServerVersion < 1201000200) {
-      throw new Error('Using JSON requires Oracle Database 12.1.0.2 or later');
-    }
 
     console.log('1. Creating Table');
 
     try {
-      await connection.execute(`DROP TABLE no_purchaseorder_b`);
+      await connection.execute(`DROP TABLE no_typehandler_tab`);
     } catch (e) {
       if (e.errorNum != 942)
         console.error(e);
     }
 
     await connection.execute(
-      `CREATE TABLE no_purchaseorder_b
-           (po_document BLOB CHECK (po_document IS JSON)) LOB (po_document) STORE AS (CACHE)`);
+      `CREATE TABLE no_typehandler_tab (n_col NUMBER)`);
 
-    console.log('2. Inserting Data');
+    const data = 123456.78;
+    console.log('2. Inserting number ' + data);
 
-    const inssql = `INSERT INTO no_purchaseorder_b (po_document) VALUES (:bv)`;
-    const data = { "userId": 1, "userName": "Anna", "location": "Australia" };
+    const inssql = `INSERT INTO no_typehandler_tab (n_col) VALUES (:bv)`;
+    await connection.execute(inssql, { bv: data });
 
-    if ((connection.thin || oracledb.oracleClientVersion >= 2100000000)
-        && connection.oracleServerVersion >= 2100000000) {
-      // Take advantage of direct binding of JavaScript objects
-      await connection.execute(inssql, { bv: { val: data, type: oracledb.DB_TYPE_JSON } });
-    } else {
-      // Insert the data as a JSON string
-      const s = JSON.stringify(data);
-      const b = Buffer.from(s, 'utf8');
-      await connection.execute(inssql, { bv: { val: b } });
-    }
+    // Example 1
 
-    console.log('3. Selecting JSON stored in a BLOB column');
+    console.log('3. Selecting a formatted number');
 
-    let result;
+    let result = await connection.execute(
+      "select n_col from no_typehandler_tab",
+      [],
+      { fetchTypeHandler: fth }
+    );
+    console.log(`   Column ${result.metaData[0].name} is formatted as ${result.rows[0][0]}`);
+
+    // Example 2
+
+    // In Thick mode, the default conversion from Oracle's decimal number
+    // format to Node.js's binary format may not be desirable.  For example the
+    // number 0.94 may be fetched as 0.9400000000000001.  An alternative is to
+    // fetch numbers as strings from the database and then convert to floats in
+    // Node.js.  This example shows the type handler in-line in the execute()
+    // call.  Thin mode does not need the handler.
+
+    console.log('4. Selecting a number where the default Thick mode decimal-to-binary format conversion may not be desired');
 
     result = await connection.execute(
-      `SELECT po_document
-       FROM no_purchaseorder_b
-       WHERE JSON_EXISTS (po_document, '$.location')
-       OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY`
-    );
-    const d = await result.rows[0][0].getData();
-    const j = await JSON.parse(d);
-    console.log('Query results: ', j);
-
-    console.log('4. Using JSON_VALUE to extract a value from a JSON column');
-
-    result = await connection.execute(
-      `SELECT JSON_VALUE(po_document, '$.location')
-       FROM no_purchaseorder_b
-       OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY`
-    );
-    console.log('Query results: ', result.rows[0][0]);  // just show first record
-
-    if (connection.oracleServerVersion >= 1202000000) {
-
-      console.log('5. Using dot-notation to extract a value from a JSON column');
-
-      result = await connection.execute(
-        `SELECT po.po_document.location
-         FROM no_purchaseorder_b po
-         OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY`
-      );
-      console.log('Query results: ', result.rows[0][0]);
-
-      console.log('6. Using JSON_OBJECT to extract relational data as JSON');
-
-      result = await connection.execute(
-        `SELECT JSON_OBJECT('key' IS d.dummy) dummy
-         FROM dual d`
-      );
-      for (const row of result.rows) {
-        console.log('Query results: ', row[0]);
+      "SELECT 0.94 AS col1, 0.94 AS col2 FROM dual", [], {
+        fetchTypeHandler: function(metaData) {
+          if (metaData.name == 'COL2' && metaData.dbType == oracledb.DB_TYPE_NUMBER) {
+            const converter = (v) => {
+              if (v !== null)
+                v = parseFloat(v);
+              return v;
+            };
+            return {type: oracledb.DB_TYPE_VARCHAR, converter: converter};
+          }
+        }
       }
-    }
+    );
+
+    // In Thick mode, the two values will differ
+    console.log(`   Raw number is ${result.rows[0][0]}. Number converted is ${result.rows[0][1]}`);
 
   } catch (err) {
     console.error(err);
