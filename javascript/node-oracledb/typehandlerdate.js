@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, 2023, Oracle and/or its affiliates. */
+/* Copyright (c) 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
@@ -23,13 +23,11 @@
  * limitations under the License.
  *
  * NAME
- *   connect.js
+ *   typehandlerdate.js
  *
  * DESCRIPTION
- *   Tests a basic connection to the database.
- *   See dbconfig.js for information on connectString formats.
- *
- *   For a connection pool example see connectionpool.js
+ *   Show how a type handler can format a queried date in a locale-specific
+ *   way.
  *
  *****************************************************************************/
 
@@ -63,15 +61,58 @@ if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
 
 console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
-async function run() {
+// The fetch type handler is called once per column in the SELECT list.
+// If the metadata name & type tests are satified, then the returned
+// converter function is enabled for that column.  Data in this column will
+// be processed by the converter function before it is returned to the
+// application.
 
+function fth(metaData) {
+  if (metaData.name == 'D_COL' && metaData.dbType === oracledb.DB_TYPE_DATE) {
+    return {converter: formatDate};
+  }
+}
+
+// Format dates using a German display format
+function formatDate(val) {
+  if (val !== null) {
+    val = val.toLocaleString('de-DE');
+  }
+  return val;
+}
+
+async function run() {
   let connection;
 
   try {
-    // Get a non-pooled connection
     connection = await oracledb.getConnection(dbConfig);
 
-    console.log('Connection was successful!');
+    console.log('1. Creating Table');
+
+    try {
+      await connection.execute(`DROP TABLE no_typehandler_tab`);
+    } catch (e) {
+      if (e.errorNum != 942)
+        console.error(e);
+    }
+
+    await connection.execute(
+      `CREATE TABLE no_typehandler_tab (d_col DATE)`);
+
+    const data = new Date(1995, 11, 17); // 17th Dec 1995
+    console.log('2. Inserting date ' + data);
+
+    const inssql = `INSERT INTO no_typehandler_tab (d_col) VALUES (:bv)`;
+    await connection.execute(inssql, { bv: data });
+
+    console.log('3. Selecting the date');
+
+    const result = await connection.execute(
+      "select d_col from no_typehandler_tab",
+      [],
+      { fetchTypeHandler: fth }
+    );
+    console.log(`Column ${result.metaData[0].name} is formatted as ${result.rows[0][0]}`);
 
   } catch (err) {
     console.error(err);
