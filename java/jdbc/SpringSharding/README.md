@@ -3,7 +3,9 @@
 This project demonstrates the use of the latest sharding [feature](https://github.com/spring-projects/spring-framework/pull/31506) in Spring Framework with the Oracle Database.
 The feature is about supporting direct routing to sharded databases.
 
-This version uses Spring Data JPA (Hibernates), for data access.
+The demo project is a web service that manages user notes. Documentation for the service endpoints is provided in [api.yaml](./api.yaml).
+
+The project contains two versions, one that uses Spring Data JPA (Hibernates) for data access, and a second one that uses Spring JDBC (JdbcTemplate).
 
 You can use the datasource configurations provided in this project as a template for setting up the sharding feature in your own projects.
 
@@ -11,7 +13,7 @@ You can use the datasource configurations provided in this project as a template
 
 ### Database
 
-You can refer to the [Oracle Docs](https://docs.oracle.com/en/database/oracle/oracle-database/21/shard/sharding-deployment.html#GUID-F99B8742-4089-4E77-87D4-4691EA932207)
+You can refer to the [Oracle Docs](https://docs.oracle.com/en/database/oracle/oracle-database/21/shard/sharded-database-deployment1.html#GUID-F99B8742-4089-4E77-87D4-4691EA932207)
 to learn how to set up and deploy an Oracle sharded database.
 You can also refer to [Oracle Database Operator](https://github.com/oracle/oracle-database-operator) that makes deploying a sharded database on a Kubernetes Cluster an easy process.
 
