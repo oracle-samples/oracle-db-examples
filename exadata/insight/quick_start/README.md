@@ -10,7 +10,6 @@ Initial documentation is located on the Exadata Product Management Blog https://
 
 Please submit feedback, improvements, enhancements via GitHub.
 
-
 ## License
 
 You may not use the identified files except in compliance with the
