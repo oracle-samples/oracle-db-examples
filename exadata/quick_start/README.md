@@ -1,8 +1,15 @@
+![Oracle Exadata](../docs/Oracle_Exadata_cmyk.png)
+
 # Real-Time Insight - Quick Start
 
-These are assets to support the installation, configuration and use of Prometheus and Grafana as a quick start guide for Exadata Real-Time Insight.
-
 ## Overview
+
+This guide is a quick start to the installation, configuration and use of Prometheus and Grafana as a quick start guide for Exadata Real-Time Insight.
+
+Initial documentation is located on the Exadata Product Management Blog https://blogs.oracle.com/exadata/post/real-time-insight-quick-start
+
+Please submit feedback, improvements, enhancements via GitHub.
+
 
 ## License
 
