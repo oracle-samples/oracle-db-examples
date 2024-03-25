@@ -1,6 +1,6 @@
 ![Oracle Exadata](../../docs/Oracle_Exadata_cmyk.png)
 
-#Oracle Exadata Real-Time Insight
+# Oracle Exadata Real-Time Insight
 
 ## Prometheus and Grafana Requirements
 
