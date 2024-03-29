@@ -1,0 +1,784 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.4.2"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Network Information",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1652917392459,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 21,
+      "panels": [],
+      "title": "Network Throughput",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_rti_ds"
+      },
+      "description": "EXAREL: RoCE bytes received",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "MiBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "maxPerRow": 2,
+      "options": {
+        "legend": {
+          "calcs": ["min", "max", "mean", "last"],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "interface",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "constant": 6.5,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "EXW_ROCE_RX_BY_SEC{server=~\"$server\", objectName=~\"${interface}.*\"}",
+          "interval": "",
+          "legendFormat": "{{objectName}}-{{server}}",
+          "refId": "A",
+          "withStreaming": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "N_IB_MB_RCV_SEC{server=~\"$server\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{objectName}}-{{server}}",
+          "refId": "B"
+        }
+      ],
+      "title": "RX Bytes - ($interface)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_rti_ds"
+      },
+      "description": "EXAREL: RoCE bytes transmitted",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "MiBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "maxPerRow": 2,
+      "options": {
+        "legend": {
+          "calcs": ["min", "max", "mean", "last"],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "interface",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "constant": 6.5,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "EXW_ROCE_TX_BY_SEC{server=~\"$server\",objectName=~\"${interface}.*\"}",
+          "interval": "",
+          "legendFormat": "{{objectName}}-{{server}}",
+          "refId": "A",
+          "withStreaming": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "N_IB_MB_TRANS_SEC{server=~\"$server\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{objectName}}-{{server}}",
+          "refId": "B"
+        }
+      ],
+      "title": "TX Bytes - ($interface)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_rti_ds"
+      },
+      "description": "EXAREL: RoCE Pause Frames or IB Pauses",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 8,
+      "maxPerRow": 2,
+      "options": {
+        "legend": {
+          "calcs": ["min", "max", "mean", "last"],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "interface",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "constant": 6.5,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_ROCE_PAUSE{server=~\"$server\",objectName=~\"${interface}.*\"}[1m])",
+          "interval": "",
+          "legendFormat": "{{objectName}}-{{server}}",
+          "refId": "A",
+          "withStreaming": false
+        }
+      ],
+      "title": "Pauses ($interface)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 29,
+      "panels": [],
+      "title": "RDS",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_rti_ds"
+      },
+      "description": "EXAREL: RDS Ping on Lane Zero",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": ["min", "max", "mean", "last"],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "constant": 6.5,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "EXW_RDS_PING_0{server=~\"$server\"}",
+          "interval": "",
+          "legendFormat": "{{objectName}}",
+          "refId": "A",
+          "withStreaming": false
+        }
+      ],
+      "title": "RDS Ping (Lane 0)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_rti_ds"
+      },
+      "description": "EXAREL: rds-info counters",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": ["min", "max", "mean", "last"],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "constant": 6.5,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_RDS_CONG_SEND_BLOCKED{server=~\"$server\"}[5m])",
+          "interval": "",
+          "legendFormat": "RDS_CONG_SEND_BLKD-{{server}}",
+          "refId": "A",
+          "withStreaming": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_RDS_CONG_SEND_ERROR{server=~\"$server\"}[5m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "RDS_CONG_SEND_ERROR-{{server}}",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_RDS_IB_MR_1M_POOL_DEPLETED{server=~\"$server\"}[5m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "RDS_IB_MR_1M_POOL_DEPLETED-{{server}}",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_RDS_IB_RDMA_MR_8K_POOL_DEPLETED{server=~\"$server\"}[5m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "RDS_IB_RDMA_MR_8K_POOL_DEPLETED({{server}})",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_RDS_IB_TX_STALLED{server=~\"$server\"}[5m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "RDS_IB_TX_STALLED-{{server}}",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_ROCE_RNR_NAK_RETRY_ERR{server=~\"$server\"}[5m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "RNR_NAK_RETRY_ERR-{{server}}-{{objectName}}",
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_rti_ds"
+          },
+          "exemplar": true,
+          "expr": "delta(EXW_ROCE_LOCAL_ACK_TIMEOUT_ERR{server=~\"$server\"}[5m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "LOCAL_ACK_TIMEOUT_ERR-{{server}}-{{objectName}}",
+          "refId": "G"
+        }
+      ],
+      "title": "RDS Errors",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": ["exadata", "prometheus", "compute", "storage", "network"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus_rti_ds"
+        },
+        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\"}",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "fleet",
+        "options": [],
+        "query": {
+          "query": "{__name__=~\"CL_CPUT|DS_CPUT\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*[\\W|,]fleet=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus_rti_ds"
+        },
+        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"}",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "pod",
+        "options": [],
+        "query": {
+          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*[\\W|,]pod=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus_rti_ds"
+        },
+        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"}",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*[\\W|,]cluster=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus_rti_ds"
+        },
+        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\"}",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "server",
+        "options": [],
+        "query": {
+          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*[\\W|,]server=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus_rti_ds"
+        },
+        "definition": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "interface",
+        "options": [],
+        "query": {
+          "query": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*[\\W|,]objectName=\"([^:\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Network",
+  "uid": "exapNet",
+  "version": 25,
+  "weekStart": ""
+}

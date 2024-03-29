@@ -1,6 +1,6 @@
 ![Oracle Exadata](./docs/Oracle_Exadata_cmyk.png)
 
-#Oracle Exadata Examples
+# Oracle Exadata Examples
 
 This directory includes the supplemental materials and demo contents for Oracle Exadata Database Machine.
 
@@ -28,7 +28,7 @@ If you're interested in contributing to the Oracle Exadata demo project:
 You can get involved with Exadata. 
 
 - Reach out to the [ExadataPM](https://twitter.com/ExadataPM) team on twitter:
-  - [@GavinAtHQ](https://twitter.com/gavinathq)
+
   - [@Alex_Blyth](https://twitter.com/alex_blyth)
   - [@Seth_M_Miller](https://twitter.com/Seth_M_Miller)
 - Read and subscribe to the [Exadata Product Management blog](https://blogs.oracle.com/exadata/)

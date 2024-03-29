@@ -1,0 +1,1803 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## OML4Py Date and Time Classes\n\nOracle Machine Learning for Python (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automatic machine learning capabilities.\n\nOML4Py provides three classes for manipulating dates and times: `oml.Datetime`, `oml.Timezone`, and `oml.Timedelta`.\n\n- `oml.Datetime` represents a table column of dates to support DATE or TIMESTAMP in Oracle Database. \n- `oml.Timezone` represents a table column of time zone data to support TIMESTAMP WITH TIMEZONE.\n- `oml.Timedelta` represents a single column of differences between two dates or times to support INTERVAL DAY TO SECOND in Oracle Database.   \n\nThese classes are based on the <a href=\"https://docs.python.org/3.10/library/datetime.html\" onclick=\"return ! window.open('https://docs.python.org/3.10/library/datetime.html');\">Python datetime library.</a>\n\nIn this notebook, we highlight features of OML4Py's date and time functionality.\n\n---\nCopyright (c) 2023 Oracle Corporation \n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T19:59:57+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>OML4Py Date and Time Classes</h2>\n<p>Oracle Machine Learning for Python (OML4Py) makes the open source Python scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4Py integrates Python with Oracle Autonomous Database, allowing users to run Python commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using Python syntax. Many familiar Python functions are overloaded that translate Python behavior into SQL for running in-database, as well as new automatic machine learning capabilities.</p>\n<p>OML4Py provides three classes for manipulating dates and times: <code>oml.Datetime</code>, <code>oml.Timezone</code>, and <code>oml.Timedelta</code>.</p>\n<ul>\n<li><code>oml.Datetime</code> represents a table column of dates to support DATE or TIMESTAMP in Oracle Database.</li>\n<li><code>oml.Timezone</code> represents a table column of time zone data to support TIMESTAMP WITH TIMEZONE.</li>\n<li><code>oml.Timedelta</code> represents a single column of differences between two dates or times to support INTERVAL DAY TO SECOND in Oracle Database.</li>\n</ul>\n<p>These classes are based on the <a href=\"https: //docs.python.org/3.10/library/datetime.html\" onclick=\"return ! window.open('https://docs.python.org/3.10/library/datetime.html');\">Python datetime library.</a></p>\n<p>In this notebook, we highlight features of OML4Py's date and time functionality.</p>\n<hr />\n<p>Copyright (c) 2023 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n<hr />\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_768283012",
+      "id": "20230530-174125_1044487595",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T19:59:57+0000",
+      "dateFinished": "2023-05-31T19:59:58+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%python\n\nimport oml\n\nimport pandas as pd\nimport numpy as np\n\nimport datetime\nfrom datetime import datetime, timezone, timedelta\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T19:59:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1780518406",
+      "id": "20230530-174125_172791872",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T19:59:59+0000",
+      "dateFinished": "2023-05-31T20:00:21+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "View schema of SH.SALES table, which contains a DATE column TIME_ID",
+      "text": "%script\n\ndescribe SH.SALES\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Name          Null?    Type         \n------------- -------- ------------ \nPROD_ID NOT NULL NUMBER \nCUST_ID NOT NULL NUMBER \nTIME_ID  NOT NULL DATE     \nCHANNEL_ID NOT NULL NUMBER \nPROMO_ID NOT NULL NUMBER \nQUANTITY_SOLD NOT NULL NUMBER(10,2) \nAMOUNT_SOLD NOT NULL NUMBER(10,2) \n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_1916781688",
+      "id": "20230530-174125_181539864",
+      "dateCreated": "2023-05-25T18:10:20+0000",
+      "dateStarted": "2023-05-31T20:00:21+0000",
+      "dateFinished": "2023-05-31T20:00:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Create a proxy object from a table with DATE columns",
+      "text": "%python\n\nSALES = oml.sync(schema=\"SH\", table=\"SALES\")\nz.show(SALES.head())\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "optionOpen": false,
+              "commonSetting": {},
+              "height": 245.2,
+              "setting": {
+                "table": {
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "showAggregationFooter": false,
+                    "showPagination": false,
+                    "useFilter": false
+                  },
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "QUANTITY_SOLD": "number",
+                      "AMOUNT_SOLD": "number",
+                      "CHANNEL_ID": "number",
+                      "PROMO_ID": "number",
+                      "TIME_ID": "date",
+                      "PROD_ID": "number"
+                    }
+                  },
+                  "updated": false
+                }
+              }
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "PROD_ID\tCUST_ID\tTIME_ID\tCHANNEL_ID\tPROMO_ID\tQUANTITY_SOLD\tAMOUNT_SOLD\n35\t5020\t2001-04-16 00:00:00\t2\t999\t1.0\t53.77\n35\t5330\t2001-04-16 00:00:00\t2\t999\t1.0\t53.77\n35\t5649\t2001-04-16 00:00:00\t2\t999\t1.0\t53.77\n35\t5981\t2001-04-16 00:00:00\t2\t999\t1.0\t53.77\n35\t6730\t2001-04-16 00:00:00\t2\t999\t1.0\t53.77\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_2135658376",
+      "id": "20230530-174125_855317983",
+      "dateCreated": "2023-05-25T18:08:32+0000",
+      "dateStarted": "2023-05-31T20:00:25+0000",
+      "dateFinished": "2023-05-31T20:00:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "Compute statistics on table columns",
+      "text": "%python\n\npd.set_option('display.max_columns', 50)\npd.set_option('display.width', 1000)\n\nSALES.describe(include='all')\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "              PROD_ID        CUST_ID              TIME_ID     CHANNEL_ID       PROMO_ID  QUANTITY_SOLD    AMOUNT_SOLD\ncount   918843.000000  918843.000000               918843  918843.000000  918843.000000       918843.0  918843.000000\nunique            NaN            NaN                 1460            NaN            NaN            NaN            NaN\ntop               NaN            NaN  2001-10-18 00:00:00            NaN            NaN            NaN            NaN\nfreq              NaN            NaN                 2940            NaN            NaN            NaN            NaN\nmean        78.183945    7289.807720                  NaN       2.861603     976.396093            1.0     106.879882\nstd         49.008014    8948.653221                  NaN       0.686874     121.829887            0.0     259.780490\nmin         13.000000       2.000000                  NaN       2.000000      33.000000            1.0       6.400000\n25%         31.000000    3655.000000                  NaN       2.000000     999.000000            1.0      44.065000\n50%         48.000000    2383.000000                  NaN       3.000000     999.000000            1.0      53.890000\n75%        127.000000    9163.000000                  NaN       3.000000     999.000000            1.0      17.380000\nmax        148.000000  101000.000000                  NaN       9.000000     999.000000            1.0    1782.720000\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_2120063084",
+      "id": "20230530-174125_6644462",
+      "dateCreated": "2023-05-25T18:12:38+0000",
+      "dateStarted": "2023-05-31T20:00:27+0000",
+      "dateFinished": "2023-05-31T20:00:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Compute statistics on DATE column TIME_ID",
+      "text": "%python\n\nSALES['TIME_ID'].describe()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "count                  918843\nunique                   1460\ntop       2001-10-18 00:00:00\nfreq                     2940\nName: TIME_ID, dtype: object\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-145911853",
+      "id": "20230530-174125_1854235706",
+      "dateCreated": "2023-05-25T18:48:48+0000",
+      "dateStarted": "2023-05-31T20:00:30+0000",
+      "dateFinished": "2023-05-31T20:00:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Extract date-related features ",
+      "text": "%python\n\ndate = SALES['TIME_ID']\nSALES2 = SALES.concat({'YEAR': date.year, 'MONTH': date.month})\nSALES2.head()",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "   PROD_ID  CUST_ID    TIME_ID  CHANNEL_ID  PROMO_ID  QUANTITY_SOLD  AMOUNT_SOLD  YEAR  MONTH\n0       25     2809 1999-02-17           4       999            1.0       105.74  1999      2\n1       25     4157 1999-02-17           4       999            1.0       105.74  1999      2\n2       25     4202 1999-02-17           4       999            1.0       105.74  1999      2\n3       25     5419 1999-02-17           4       999            1.0       105.74  1999      2\n4       25    11719 1999-02-17           4       999            1.0       105.74  1999      2\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_1701337524",
+      "id": "20230530-174125_1961746214",
+      "dateCreated": "2023-05-25T18:11:34+0000",
+      "dateStarted": "2023-05-31T20:00:30+0000",
+      "dateFinished": "2023-05-31T20:00:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "text": "%md\n## oml.Datetime\n\nTo create a date in Python, we use the `datetime` class of the `datetime` module, which is included in Python. The `datetime` class requires three parameters: *year*, *month*, and *day*. It also contains optional parameters for time and timezone, including *hour*, *minute*, *second*, *microsecond*, and *tzone*.\n\nCreate a datetime object with the year, month, and day, then create a temporary proxy object using `oml.push`. The `oml.push `function requires a data frame or list as input, so we first convert the date object to a list. The resulting object is an object of class `oml.Datetime`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>oml.Datetime</h2>\n<p>To create a date in Python, we use the <code>datetime</code> class of the <code>datetime</code> module, which is included in Python. The <code>datetime</code> class requires three parameters: <em>year</em>, <em>month</em>, and <em>day</em>. It also contains optional parameters for time and timezone, including <em>hour</em>, <em>minute</em>, <em>second</em>, <em>microsecond</em>, and <em>tzone</em>.</p>\n<p>Create a datetime object with the year, month, and day, then create a temporary proxy object using <code>oml.push</code>. The <code>oml.push</code>function requires a data frame or list as input, so we first convert the date object to a list. The resulting object is an object of class <code>oml.Datetime</code>.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_406326776",
+      "id": "20230530-174125_512897409",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:31+0000",
+      "dateFinished": "2023-05-31T20:00:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "title": "datetime ",
+      "text": "%python\n\nd1 = datetime(year=2004, month=7, day=24)\n\nprint('d1:', d1)\nprint('type:', type(d1))\nprint('year:', d1.year)\nprint('month:', d1.month)\nprint('day:', d1.day)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "d1: 2004-07-24 00:00:00\ntype: <class 'datetime.datetime'>\nyear: 2004\nmonth: 7\nday: 24\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_789375252",
+      "id": "20230530-174125_894124719",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:32+0000",
+      "dateFinished": "2023-05-31T20:00:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "oml.Datetime",
+      "text": "%python\n\nd1_lst = [d1] \nD1 = oml.push(d1_lst)\n\nprint('D1:   ', D1)\nprint('type: ', type(D1))\nprint('year: ', D1.year)\nprint('month:', D1.month)\nprint('day:  ', D1.day)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "D1:    [datetime.datetime(2004, 7, 24, 0, 0)]\ntype:  <class 'oml.core.datetime.Datetime'>\nyear:  [2004]\nmonth: [7]\nday:   [24]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1180137439",
+      "id": "20230530-174125_1881822344",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:32+0000",
+      "dateFinished": "2023-05-31T20:00:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "text": "%md\n---\n\nThe datetime method `fromisoformat` constructs a date or datetime object from a string containing date in ISO format, e.g., yyyy-mm-dd. Create a datetime object with the year, month, day, and time, then create a temporary proxy object using `oml.push`. The resulting object is an object of class `oml.Datetime`.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:34+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>The datetime method <code>fromisoformat</code> constructs a date or datetime object from a string containing date in ISO format, e.g., yyyy-mm-dd. Create a datetime object with the year, month, day, and time, then create a temporary proxy object using <code>oml.push</code>. The resulting object is an object of class <code>oml.Datetime</code>.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-2048120669",
+      "id": "20230530-174125_1789178180",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:34+0000",
+      "dateFinished": "2023-05-31T20:00:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "text": "%python\n\nd2 = datetime.fromisoformat('2004-07-24 00:05:23+04:00')\nd2_lst=[d2]\n\nD2 = oml.push(d2_lst)\n\nprint('D2', D2)\nprint('type', type(D2))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "D2 [datetime.datetime(2004, 7, 24, 0, 5, 23, tzinfo=datetime.timezone(datetime.timedelta(seconds=14400)))]\ntype <class 'oml.core.datetime.Datetime'>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-224934155",
+      "id": "20230530-174125_1706400680",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:35+0000",
+      "dateFinished": "2023-05-31T20:00:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "text": "%python\n\ndatetime.now()",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "datetime.datetime(2023, 5, 31, 20, 0, 36, 89582)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1728765190",
+      "id": "20230530-174125_176485259",
+      "dateCreated": "2023-05-03T20:49:37+0000",
+      "dateStarted": "2023-05-31T20:00:36+0000",
+      "dateFinished": "2023-05-31T20:00:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "title": "",
+      "text": "%md\n---\n\nThe `strftime` method converts a datetime object to a string, and `strptime` converts a string to a datetime object. Dates have a default representation of: **YYYY-MM-DD:HH:MM:SS.mmmmmm**\nbut you may want to print them in a specific format. In that case, you can get a custom string representation using the available <a href=\"https://docs.python.org/3/library/datetime.html\" onclick=\"return ! window.open('https://docs.python.org/3/library/datetime.html');\">format codes.</a>\n\nThe format codes for the default date representation are shown in the table below.\n\n<table>\n  <tr>\n    <th>Code</th>\n    <th>Example</th>\n    <th>Description</th>\n  </tr>\n  <tr>\n    <td>%a</td>\n    <td>Sun</td>\n    <td>Day abbreviated</td>\n  </tr>\n  <tr>\n    <td>%b</td>\n    <td>Sep</td>\n    <td>Month abbreviated</td>\n  </tr>\n  <tr>\n    <td>%d</td>\n    <td>08</td>\n    <td>Decimal Month</td>\n  </tr>\n  <tr>\n    <td>%H</td>\n    <td>07</td>\n    <td>Decimal Hour</td>\n  </tr>\n  <tr>\n    <td>%M</td>\n    <td>06</td>\n    <td>Decimal Minute</td>\n  </tr>\n  <tr>\n    <td>%S</td>\n    <td>05</td>\n    <td>Decimal Second</td>\n  </tr>\n  <tr>\n    <td>%Y</td>\n    <td>2015</td>\n    <td>Decimal Year</td>\n  </tr>\n</table>\n<br>\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:36+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "title": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>The <code>strftime</code> method converts a datetime object to a string, and <code>strptime</code> converts a string to a datetime object. Dates have a default representation of: <strong>YYYY-MM-DD:HH:MM:SS.mmmmmm</strong>\n<br  />but you may want to print them in a specific format. In that case, you can get a custom string representation using the available <a href=\"https: //docs.python.org/3/library/datetime.html\" onclick=\"return ! window.open('https://docs.python.org/3/library/datetime.html');\">format codes.</a></p>\n<p>The format codes for the default date representation are shown in the table below.</p>\n<table>\n  <tr>\n    <th>Code</th>\n    <th>Example</th>\n    <th>Description</th>\n  </tr>\n  <tr>\n    <td>%a</td>\n    <td>Sun</td>\n    <td>Day abbreviated</td>\n  </tr>\n  <tr>\n    <td>%b</td>\n    <td>Sep</td>\n    <td>Month abbreviated</td>\n  </tr>\n  <tr>\n    <td>%d</td>\n    <td>08</td>\n    <td>Decimal Month</td>\n  </tr>\n  <tr>\n    <td>%H</td>\n    <td>07</td>\n    <td>Decimal Hour</td>\n  </tr>\n  <tr>\n    <td>%M</td>\n    <td>06</td>\n    <td>Decimal Minute</td>\n  </tr>\n  <tr>\n    <td>%S</td>\n    <td>05</td>\n    <td>Decimal Second</td>\n  </tr>\n  <tr>\n    <td>%Y</td>\n    <td>2015</td>\n    <td>Decimal Year</td>\n  </tr>\n</table>\n<p><br></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-997630022",
+      "id": "20230530-174125_682125383",
+      "dateCreated": "2023-05-02T03:19:36+0000",
+      "dateStarted": "2023-05-31T20:00:36+0000",
+      "dateFinished": "2023-05-31T20:00:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "Convert date to string",
+      "text": "%python\n\nD3 = D2.strftime()\n\nprint('D3', D3)\nprint('type', type(D3))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "D3 ['2004-07-24 00:05:23+04:00']\ntype <class 'oml.core.string.String'>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-2092290722",
+      "id": "20230530-174125_1741275783",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:36+0000",
+      "dateFinished": "2023-05-31T20:00:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "title": "Convert string to date",
+      "text": "%python\n\nd4 = \"14-Jul-05 20:01:01\"\nd4_lst = [d4]\n\n# create a temporary proxy object\nD4 = oml.push(d4_lst)\n\n# convert the string to an oml.Datetime object with the provided format\nD5 = oml.Datetime.strptime(D4, format=\"DD-Mon-RR HH24:MI:SS\")\n\nprint('D5', D5)\nprint('type', type(D5))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "D5 [datetime.datetime(2005, 7, 14, 20, 1, 1)]\ntype <class 'oml.core.datetime.Datetime'>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_2039345974",
+      "id": "20230530-174125_778595597",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:36+0000",
+      "dateFinished": "2023-05-31T20:00:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "text": "%md\n## oml.Timedelta\n\n`oml.Timedelta` objects represent a column of differences between two dates or times and can be used to perform simple arithmetic operations on `oml.Datetime` objects. `oml.Timedelta` objects can be multiplied by an integer value or a floating point value. Subtracting dates produces an `oml.Timedelta` object that can be added or subtracted by an `oml.Timedate` object to produce another date.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:37+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>oml.Timedelta</h2>\n<p><code>oml.Timedelta</code> objects represent a column of differences between two dates or times and can be used to perform simple arithmetic operations on <code>oml.Datetime</code> objects. <code>oml.Timedelta</code> objects can be multiplied by an integer value or a floating point value. Subtracting dates produces an <code>oml.Timedelta</code> object that can be added or subtracted by an <code>oml.Timedate</code> object to produce another date.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_69212534",
+      "id": "20230530-174125_56482784",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:37+0000",
+      "dateFinished": "2023-05-31T20:00:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%md\nCreate a time-based object using the current date and time, and create an `oml.Timedelta` object named DELT1 to determine a past and future dates.",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:37+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Create a time-based object using the current date and time, and create an <code>oml.Timedelta</code> object named DELT1 to determine a past and future dates.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1725210895",
+      "id": "20230530-174125_1750884764",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:37+0000",
+      "dateFinished": "2023-05-31T20:00:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "title": "timedelta",
+      "text": "%python\n\ntoday = datetime.now()\nprint('today:', today)\n\ndelt1 = timedelta(days=1, hours=2, seconds=5)\nprint('delt1:', delt1)\nprint('type:', type(delt1))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "today: 2023-05-31 20:00:38.154038\ndelt1: 1 day, 2:00:05\ntype: <class 'datetime.timedelta'>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1264699220",
+      "id": "20230530-174125_1093164010",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:38+0000",
+      "dateFinished": "2023-05-31T20:00:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "oml.Timedelta",
+      "text": "%python\n\ndat = pd.DataFrame({'datetime': [today], 'timedelta': [delt1]})\n\nDAT = oml.push(dat, dbtypes = ['TIMESTAMP', 'INTERVAL DAY TO SECOND'])\nprint(DAT)\n\nTODAY = DAT['datetime']\nDELT1 = DAT['timedelta']\n\nprint('TODAY:', today)\nprint('DELT1:', DELT1)\nprint('type:', type(DELT1))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                    datetime       timedelta\n0 2023-05-31 20:00:38.154038 1 days 02:00:05\nTODAY: 2023-05-31 20:00:38.154038\nDELT1: [datetime.timedelta(days=1, seconds=7205)]\ntype: <class 'oml.core.timedelta.Timedelta'>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1207731737",
+      "id": "20230530-174125_742741703",
+      "dateCreated": "2023-05-02T03:22:44+0000",
+      "dateStarted": "2023-05-31T20:00:38+0000",
+      "dateFinished": "2023-05-31T20:00:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "title": "timedelta operations",
+      "text": "%python\n\npast_date1 = today - delt1\nprint('past date 1:', past_date1)\n\npast_date2 = today - (delt1 *3)\nprint('past date 2:', past_date2)\n\nfuture_date1 = today + delt1\nprint('future date 1:', future_date1)\n\nfuture_date2 = today + (delt1 *3)\nprint('future date 2:', future_date2)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "past date 1: 2023-05-30 18:00:33.154038\npast date 2: 2023-05-28 14:00:23.154038\nfuture date 1: 2023-06-01 22:00:43.154038\nfuture date 2: 2023-06-04 02:00:53.154038\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_45112347",
+      "id": "20230530-174125_1093274228",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:38+0000",
+      "dateFinished": "2023-05-31T20:00:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "title": "oml.Timedelta operations",
+      "text": "%python\n\npast_date3 = TODAY - DELT1\nprint('past date 3:', past_date1)\n\npast_date4 = TODAY - (DELT1 *3)\nprint('past date 4:', past_date2)\n\nfuture_date3 = TODAY + DELT1\nprint('future date 3:', future_date1)\n\nfuture_date4 = TODAY + (DELT1 *3)\nprint('future date 4:', future_date2)\n\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "past date 3: 2023-05-30 18:00:33.154038\npast date 4: 2023-05-28 14:00:23.154038\nfuture date 3: 2023-06-01 22:00:43.154038\nfuture date 4: 2023-06-04 02:00:53.154038\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-931507883",
+      "id": "20230530-174125_1248969548",
+      "dateCreated": "2023-05-02T03:28:58+0000",
+      "dateStarted": "2023-05-31T20:00:38+0000",
+      "dateFinished": "2023-05-31T20:00:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%md\n## Value Comparison\n\nDates and datetime objects can be compared using standard arithmetic comparison operators (like <, >, <=, >=, != etc.). \n\nThe examples below compare `oml.Datetime` columns in a proxy object.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Value Comparison</h2>\n<p>Dates and datetime objects can be compared using standard arithmetic comparison operators (like <, >, <=, >=, != etc.).</p>\n<p>The examples below compare <code>oml.Datetime</code> columns in a proxy object.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_1239106230",
+      "id": "20230530-174125_1233463011",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:39+0000",
+      "dateFinished": "2023-05-31T20:00:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "title": "Create Proxy data frame with two oml.Datetime columns",
+      "text": "%python\n\nd1 = datetime(2005, 7, 14, 5, 10, 30)\nd2 = datetime(2004, 6, 30, 1, 22, 46)\nd3 = datetime(2003, 12, 10, 12, 50, 25)\nd4 = datetime(2002, 3, 20, 20, 42, 59)\n\nd3 = pd.DataFrame({'X': [d1, d2], 'Y': [d3, d4]})                                                              \nD3 = oml.push(d3, dbtypes = ['TIMESTAMP', 'TIMESTAMP'])\n\nprint(D3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                    X                   Y\n0 2005-07-14 05:10:30 2003-12-10 12:50:25\n1 2004-06-30 01:22:46 2002-03-20 20:42:59\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_998629662",
+      "id": "20230530-174125_1332781690",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:39+0000",
+      "dateFinished": "2023-05-31T20:00:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "\n%python\n\nD4 = D3['X']\nD5 = D3['Y']\n\nprint(\"D4:\", D4)\nprint(\"D4 type:\", type(D4))\n\nprint(\"D5:\", D5)\nprint(\"D5 type:\", type(D5))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:39+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "D4: [datetime.datetime(2005, 7, 14, 5, 10, 30), datetime.datetime(2004, 6, 30, 1, 22, 46)]\nD4 type: <class 'oml.core.datetime.Datetime'>\nD5: [datetime.datetime(2003, 12, 10, 12, 50, 25), datetime.datetime(2002, 3, 20, 20, 42, 59)]\nD5 type: <class 'oml.core.datetime.Datetime'>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_1148802708",
+      "id": "20230530-174125_1587046474",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:39+0000",
+      "dateFinished": "2023-05-31T20:00:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    },
+    {
+      "title": "equal to",
+      "text": "%python\n\n# equal to\nprint(D4 == D5)\n\n# not equal to\nprint(D4 != D5) \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[False, False]\n[True, True]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_89975089",
+      "id": "20230530-174125_448244598",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:40+0000",
+      "dateFinished": "2023-05-31T20:00:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:66"
+    },
+    {
+      "title": "greater than",
+      "text": "%python\n\n# greater than\nprint(D4 > D5) \n\n# greater than or equal to\nprint(D4 >= D5) ## \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[True, True]\n[True, True]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_294735336",
+      "id": "20230530-174125_2061837565",
+      "dateCreated": "2023-05-02T16:01:08+0000",
+      "dateStarted": "2023-05-31T20:00:40+0000",
+      "dateFinished": "2023-05-31T20:00:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "title": "less than",
+      "text": "%python\n\n# less than\nprint(D4 < D5)\n\n# less than or equal to\nprint(D4 <= D5)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:40+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[False, False]\n[False, False]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-416921028",
+      "id": "20230530-174125_818686633",
+      "dateCreated": "2023-05-02T16:01:04+0000",
+      "dateStarted": "2023-05-31T20:00:40+0000",
+      "dateFinished": "2023-05-31T20:00:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    },
+    {
+      "title": "max/min",
+      "text": "%python\n\nprint(\"max:\", D3['X'].max())\n\nprint(\"min:\", D3['Y'].min())\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 6,
+        "editorHide": false,
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "max: 2005-07-14 05:10:30\nmin: 2002-03-20 20:42:59\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1492666951",
+      "id": "20230530-174125_764141250",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:41+0000",
+      "dateFinished": "2023-05-31T20:00:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "%md\n## Value Replacement\n\nUpdate specific or all elements of an `oml.Datetime` object, such as year, month, and day.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:41+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "colWidth": 12,
+        "editorHide": true,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Value Replacement</h2>\n<p>Update specific or all elements of an <code>oml.Datetime</code> object, such as year, month, and day.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1022878003",
+      "id": "20230530-174125_180366366",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:41+0000",
+      "dateFinished": "2023-05-31T20:00:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%python\n\nD4 = D3['X'].replace(year=2000)\nprint(\"D4:\", D4)\n\nD5 = D3['X'].replace(month=11)\nprint(\"D5:\", D5)\n\nD6 = D3['X'].replace(day=6)\nprint(\"D6:\", D6)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined",
+        "colWidth": 12,
+        "editorHide": false,
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "D4: [datetime.datetime(2000, 7, 14, 5, 10, 30), datetime.datetime(2000, 6, 30, 1, 22, 46)]\nD5: [datetime.datetime(2005, 11, 14, 5, 10, 30), datetime.datetime(2004, 11, 30, 1, 22, 46)]\nD6: [datetime.datetime(2005, 7, 6, 5, 10, 30), datetime.datetime(2004, 6, 6, 1, 22, 46)]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_728218342",
+      "id": "20230530-174125_1506882423",
+      "dateCreated": "2023-04-11T18:27:23+0000",
+      "dateStarted": "2023-05-31T20:00:41+0000",
+      "dateFinished": "2023-05-31T20:00:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%md\n---\n## Date Exploration\n\nCreate an OML proxy object containing a datetime column and explore the object using the transparency layer functions `describe`, `nunique`, `min` and `max`.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:41+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<h2>Date Exploration</h2>\n<p>Create an OML proxy object containing a datetime column and explore the object using the transparency layer functions <code>describe</code>, <code>nunique</code>, <code>min</code> and <code>max</code>.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_259643819",
+      "id": "20230530-174125_144294790",
+      "dateCreated": "2023-05-04T21:53:28+0000",
+      "dateStarted": "2023-05-31T20:00:41+0000",
+      "dateFinished": "2023-05-31T20:00:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "%python\n\ndate_today = datetime.now()\nndays = 10\n\ndf = pd.DataFrame({'Date': [date_today + timedelta(days=x) for x in range(ndays)], \n                   'Val': pd.Series(np.random.randn(ndays))})\n\nDF = oml.push(df)\nDF.head()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                        Date       Val\n0 2023-05-31 20:00:42.184050 -0.204708\n1 2023-06-01 20:00:42.184050  0.478943\n2 2023-06-02 20:00:42.184050 -0.519439\n3 2023-06-03 20:00:42.184050 -0.555730\n4 2023-06-04 20:00:42.184050  1.965781\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1489386464",
+      "id": "20230530-174125_2073518489",
+      "dateCreated": "2023-05-04T19:37:23+0000",
+      "dateStarted": "2023-05-31T20:00:42+0000",
+      "dateFinished": "2023-05-31T20:00:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:73"
+    },
+    {
+      "title": "describe date column",
+      "text": "%python\n\nDF['Date'].describe()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "count                             10\nunique                            10\ntop       2023-06-09 20:00:42.184050\nfreq                               1\nName: Date, dtype: object\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-2082786348",
+      "id": "20230530-174125_1891369513",
+      "dateCreated": "2023-05-04T21:21:52+0000",
+      "dateStarted": "2023-05-31T20:00:42+0000",
+      "dateFinished": "2023-05-31T20:00:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:74"
+    },
+    {
+      "title": "number of unique dates",
+      "text": "%python\n\nDF['Date'].nunique()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "10\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_87076505",
+      "id": "20230530-174125_539413954",
+      "dateCreated": "2023-05-04T21:09:59+0000",
+      "dateStarted": "2023-05-31T20:00:42+0000",
+      "dateFinished": "2023-05-31T20:00:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:75"
+    },
+    {
+      "title": "earliest date",
+      "text": "%python\n\nDF['Date'].min()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Timestamp('2023-05-31 20:00:42.184050')\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_1430085646",
+      "id": "20230530-174125_1726328755",
+      "dateCreated": "2023-05-04T23:33:03+0000",
+      "dateStarted": "2023-05-31T20:00:43+0000",
+      "dateFinished": "2023-05-31T20:00:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:76"
+    },
+    {
+      "title": "latest date",
+      "text": "%python\n\nDF['Date'].max()\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Timestamp('2023-06-09 20:00:42.184050')\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-1550822923",
+      "id": "20230530-174125_641630559",
+      "dateCreated": "2023-05-04T23:28:34+0000",
+      "dateStarted": "2023-05-31T20:00:43+0000",
+      "dateFinished": "2023-05-31T20:00:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "%md\n---\n\nExplore the `sort_values`, `head`, and  `tail` functions by sorting values by Date in ascending and descending order.\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<hr />\n<p>Explore the <code>sort_values</code>, <code>head</code>, and  <code>tail</code> functions by sorting values by Date in ascending and descending order.</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-335434442",
+      "id": "20230530-174125_906195707",
+      "dateCreated": "2023-05-04T22:06:19+0000",
+      "dateStarted": "2023-05-31T20:00:43+0000",
+      "dateFinished": "2023-05-31T20:00:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:78"
+    },
+    {
+      "title": "ascending order - first five rows",
+      "text": "%python\n\nDF.sort_values(by = ['Date'], ascending=False).head(5)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                        Date       Val\n0 2023-06-09 20:00:42.184050  1.246435\n1 2023-06-08 20:00:42.184050  0.769023\n2 2023-06-07 20:00:42.184050  0.281746\n3 2023-06-06 20:00:42.184050  0.092908\n4 2023-06-05 20:00:42.184050  1.393406\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-617713805",
+      "id": "20230530-174125_551412004",
+      "dateCreated": "2023-05-04T20:51:26+0000",
+      "dateStarted": "2023-05-31T20:00:43+0000",
+      "dateFinished": "2023-05-31T20:00:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:79"
+    },
+    {
+      "title": "descending order - last 5 rows",
+      "text": "%python\n\nDF.sort_values(by = ['Date'], ascending=False).tail(5)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                        Date       Val\n0 2023-06-04 20:00:42.184050  1.965781\n1 2023-06-03 20:00:42.184050 -0.555730\n2 2023-06-02 20:00:42.184050 -0.519439\n3 2023-06-01 20:00:42.184050  0.478943\n4 2023-05-31 20:00:42.184050 -0.204708\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_-228252553",
+      "id": "20230530-174125_1804491451",
+      "dateCreated": "2023-05-04T21:12:29+0000",
+      "dateStarted": "2023-05-31T20:00:44+0000",
+      "dateFinished": "2023-05-31T20:00:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-05-31T20:00:46+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h1>End of Script</h1>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1685468485590_1643333339",
+      "id": "20230530-174125_971512556",
+      "dateCreated": "2023-05-04T22:00:00+0000",
+      "dateStarted": "2023-05-31T20:00:46+0000",
+      "dateFinished": "2023-05-31T20:00:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:81"
+    }
+  ],
+  "name": "OML4Py Date and Time Classes",
+  "id": "131315",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA7A60DC9B32:OMLUSER-131315": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "personalizedMode": "false",
+    "looknfeel": "default"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4Py Date and Time Classes_v2"
+}

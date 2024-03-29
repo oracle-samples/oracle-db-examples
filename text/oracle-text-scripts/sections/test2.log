@@ -1,0 +1,92 @@
+SQL> set echo on
+SQL> @test2
+SQL> drop table facility;
+
+Table dropped.
+
+SQL> 
+SQL> create table facility (
+  2    facility_id number,
+  3    name	   varchar2(2000)
+  4  );
+
+Table created.
+
+SQL> 
+SQL> insert into facility values (1, 'Furman University');
+
+1 row created.
+
+SQL> 
+SQL> create index facind on facility(name) indextype is ctxsys.context;
+
+Index created.
+
+SQL> 
+SQL> drop table test_match_weight;
+
+Table dropped.
+
+SQL> 
+SQL> create table test_match_weight (
+  2    group_id    number,
+  3    param_name  varchar2(200),
+  4    weight	   number
+  5  );
+
+Table created.
+
+SQL> 
+SQL> insert into test_match_weight values (1,'NAME', 0.5);
+
+1 row created.
+
+SQL> 
+SQL> set serveroutput on size 1000000
+SQL> 
+SQL> declare
+  2    CURSOR fac_fullname_cur(p_facilityName VARCHAR2) IS
+  3  	 SELECT DISTINCT f.facility_id AS facid, f.name,
+  4  			 case when score(1)>75 then w.weight*8
+  5  			      when score(1)>50 then w.weight*6
+  6  			      when score(1)>25 then w.weight*4
+  7  			      else w.weight*2 end weightedScore,
+  8  			 score(1) as scr
+  9  	 FROM facility f
+ 10  	    , test_match_weight w
+ 11  	 WHERE contains(f.name,
+ 12  	       '<query>
+ 13  		    <textquery>  '''''||p_facilityName||'''''
+ 14  		      <progression>
+ 15  			<seq><rewrite>transform((TOKENS, "{", "}", " "))</rewrite></seq>
+ 16  			<seq><rewrite>transform((TOKENS, "?{", "}", " "))</rewrite></seq>
+ 17  			<seq><rewrite>transform((TOKENS, "{", "}", "OR"))</rewrite></seq>
+ 18  			<seq><rewrite>transform((TOKENS, "?{", "}", "OR"))</rewrite></seq>
+ 19  		      </progression>
+ 20  		    </textquery>
+ 21  		 </query>', 1) > 0
+ 22  	   AND w.group_id = 1
+ 23  	   AND w.param_name = 'NAME'
+ 24  	   order by 3 desc;
+ 25    number_of_steps	integer := 4;
+ 26    score_range_size integer;      -- 33 for 3 steps, 25 for 4, 20 for 5 etc
+ 27    this_score_group integer;      -- final step is 1, penultimate step is 2 ...
+ 28    last_score_group integer := 0; -- to compare change
+ 29    var_FacName  VARCHAR2(2000);
+ 30  begin
+ 31  var_FacName := 'Furman University';
+ 32  	 for c in fac_fullname_cur(var_FacName) loop
+ 33  	     score_range_size := 100/number_of_steps;
+ 34  	     this_score_group := c.scr/score_range_size;
+ 35  
+ 36  	     exit when this_score_group < last_score_group;
+ 37  	     last_score_group := this_score_group;
+ 38  	     dbms_output.put_line(c.facid||', '||c.name||',  '||length(c.name)||',  '||c.scr);
+ 39  	 end loop;
+ 40  end;
+ 41  /
+1, Furman University,  17,  76                                                  
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off

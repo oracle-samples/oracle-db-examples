@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus_rti_ds
+    access: proxy
+    # Make sure you update the hostname below to that of the hostname your container is running on (and don't forget to remove the {{}}).
+    url: http://{{podman_hostname}}:9090/
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus
+      prometheusVersion: 2.50.0
+      cacheLevel: "High"
+      disableRecordingRules: false
+      incrementalQueryOverlapWindow: 10m

@@ -1,17 +1,24 @@
-/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
- * You may not use the identified files except in compliance with the Apache
- * License, Version 2.0 (the "License.")
+ * This software is dual-licensed to you under the Universal Permissive License
+ * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+ * 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+ * either license.
  *
+ * If you elect to accept the software under the Apache License, Version 2.0,
+ * the following applies:
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -38,32 +45,33 @@
  *   send 20 requests with a concurrency of 4:
  *     ab -n 20 -c 4 http://127.0.0.1:7000/
  *
- *   This example requires node-oracledb 3.1 or later.
- *
- *   This example uses Node 8's async/await syntax.
- *
  *****************************************************************************/
 
-const fs = require('fs');
+'use strict';
+
+Error.stackTraceLimit = 50;
+
 const http = require('http');
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 const httpPort = 7000;
 
-// On Windows and macOS, you can specify the directory containing the Oracle
-// Client Libraries at runtime, or before Node.js starts.  On other platforms
-// the system library search path must always be set before Node.js is started.
-// See the node-oracledb installation documentation.
-// If the search path is not correct, you will get a DPI-1047 error.
-let libPath;
-if (process.platform === 'win32') {           // Windows
-  libPath = 'C:\\oracle\\instantclient_19_12';
-} else if (process.platform === 'darwin') {   // macOS
-  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+// This example requires node-oracledb Thick mode.
+//
+// Thick mode requires Oracle Client or Oracle Instant Client libraries.  On
+// Windows and macOS Intel you can specify the directory containing the
+// libraries at runtime or before Node.js starts.  On other platforms (where
+// Oracle libraries are available) the system library search path must always
+// include the Oracle library path before Node.js starts.  If the search path
+// is not correct, you will get a DPI-1047 error.  See the node-oracledb
+// installation documentation.
+let clientOpts = {};
+// On Windows and macOS Intel platforms, set the environment
+// variable NODE_ORACLEDB_CLIENT_LIB_DIR to the Oracle Client library path
+if (process.platform === 'win32' || (process.platform === 'darwin' && process.arch === 'x64')) {
+  clientOpts = { libDir: process.env.NODE_ORACLEDB_CLIENT_LIB_DIR };
 }
-if (libPath && fs.existsSync(libPath)) {
-  oracledb.initOracleClient({ libDir: libPath });
-}
+oracledb.initOracleClient(clientOpts);  // enable node-oracledb Thick mode
 
 // initSession() will be invoked internally when each brand new pooled
 // connection is first used, or when a getConnection() call requests a
@@ -84,8 +92,8 @@ function initSession(connection, requestedTag, callbackFn) {
   console.log(`In initSession. requested tag: ${requestedTag}, actual tag: ${connection.tag}`);
 
   // Split the requested and actual tags into property components
-  let requestedProperties = [];
-  let actualProperties = [];
+  const requestedProperties = [];
+  const actualProperties = [];
   if (requestedTag) {
     requestedTag.split(";").map(y => y.split("=")).forEach(e => {
       if (e[0]) requestedProperties[e[0]] = e[1];
@@ -101,7 +109,7 @@ function initSession(connection, requestedTag, callbackFn) {
   // correctly; these are retained in requestedProperties.  Also
   // record the final, complete set of properties the connection will
   // have; these are retained in actualProperties.
-  for (let k in requestedProperties) {
+  for (const k in requestedProperties) {
     if (actualProperties[k] && actualProperties[k] === requestedProperties[k]) {
       delete requestedProperties[k]; // already set correctly
     } else {
@@ -113,7 +121,7 @@ function initSession(connection, requestedTag, callbackFn) {
   // injection issues.  Construct a string of valid options usable by
   // ALTER SESSION.
   let s = "";
-  for (let k in requestedProperties) {
+  for (const k in requestedProperties) {
     if (k === 'TIME_ZONE') {
       switch (requestedProperties[k]) {
         case 'Australia/Melbourne':
@@ -140,7 +148,7 @@ function initSession(connection, requestedTag, callbackFn) {
         // Store the tag representing the connection's full set of
         // properties
         connection.tag = "";
-        for (let k in actualProperties) {
+        for (const k in actualProperties) {
           connection.tag += `${k}=${actualProperties[k]};`;
         }
         callbackFn(err);

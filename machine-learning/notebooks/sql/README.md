@@ -10,17 +10,17 @@ Key Features:
 * Collaborative UI for data scientists
 * Enables sharing of notebooks and templates with permissions and execution scheduling 
 * Access to 30+ parallel, scalable in-Database implementations of machine learning algorithms
-* SQL, PL/SQL scripts and Python language supported
-* Enables and supports deployments of enterprise machine learning methodologies in both Autonomous Data Warehouse (ADW) and Autonomous Transactional Database (ATP)
+* SQL, PL/SQL scripts, R and Python language supported
+* Enables and supports deployments of enterprise machine learning methodologies in all versions of Autonomous Database
 
 The examples here cover a range of functionality and methods, from data preparation and data cleansing to machine learning algorithms and scoring.
 
-The specific denomination "DB21c" in the name of the file means that the algorithm that is is used in that demo is supported on that release only.
+The specific denomination "21c or 23c" in the name of the file means that the algorithm used in that demo is supported on that release only.
 
  See [Oracle Machine Learning Notebooks - Get Started](https://docs.oracle.com/en/database/oracle/machine-learning/oml-notebooks/) for more information.
 
-Last updated on: March 2022
+Last updated on: June 2023
 
-#### Copyright (c) 2022 Oracle Corporation and/or its affilitiates.
+#### Copyright (c) 2023 Oracle Corporation and/or its affilitiates.
 
 ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)

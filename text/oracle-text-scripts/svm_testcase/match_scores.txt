@@ -1,0 +1,135 @@
+SQL> 
+SQL> drop table test.brain_abstracts_with_pk;
+drop table test.brain_abstracts_with_pk
+                *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+Elapsed: 00:00:00.00
+SQL> drop table test.brain_match_scores;
+drop table test.brain_match_scores
+                *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+Elapsed: 00:00:00.01
+SQL> drop table test.match_scores;
+drop table test.match_scores
+                *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> create table test.brain_abstracts_with_pk ( docid number primary key, abstract CLOB );
+
+Table created.
+
+Elapsed: 00:00:00.00
+SQL> insert into test.brain_abstracts_with_pk (select test.abstract_seq.nextval, abstract from test.brain);
+
+66 rows created.
+
+Elapsed: 00:00:00.09
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> create table test.brain_match_scores as (
+  2  select distinct d.docid, cat_name, match_score(1) match_score
+  3  from test.restab r, test.testcategory t, test.brain_abstracts_with_pk d
+  4  where matches(rule, d.abstract ,1)>0
+  5    and r.cat_id = t.cat_id
+  6  )
+  7  ;
+
+Table created.
+
+Elapsed: 00:00:01.26
+SQL> 
+SQL> -- these should all be "brain" categories, since I am selecting ONLY "brain" abstracts
+SQL> select docid, cat_name, match_score from test.brain_match_scores m1 where match_score = (select max(match_score) from test.brain_match_scores m2 where m1.docid = m2.docid)
+  2  order by 1,2;
+
+     DOCID CAT_NAME        MATCH_SCORE
+---------- --------------- -----------
+       277 Brain                    81
+       278 Brain                    39
+       279 Brain                    81
+       280 Brain                    46
+       281 Brain                    87
+       282 Brain                    35
+       282 Cancer                   35
+       283 Brain                    81
+       284 Brain                    81
+       285 Brain                    95
+       286 Brain                    81
+       287 Brain                    79
+       288 Brain                    55
+       289 Brain                    46
+       290 Brain                    93
+       291 Brain                    94
+       292 Brain                    71
+       293 Brain                    71
+       294 Brain                    83
+       295 Brain                    83
+       296 Brain                    55
+       297 Brain                    66
+       298 Brain                    81
+       299 Brain                    81
+       300 Brain                    87
+       301 Brain                    73
+       302 Brain                    81
+       303 Brain                    81
+       304 Brain                    81
+       305 Brain                    38
+       306 Brain                    36
+       307 Brain                    77
+       308 Brain                    71
+       309 Microbes                 47
+       310 Brain                    49
+       311 Brain                    70
+       312 Brain                    73
+       313 Brain                    81
+       314 Brain                    81
+       315 Brain                    81
+       316 Brain                    81
+       317 Brain                    89
+       318 Brain                    44
+       319 Brain                    40
+       320 Cancer                   47
+       321 Brain                    81
+       322 Brain                    81
+       323 Brain                    63
+       324 Brain                    79
+       325 Brain                    81
+       326 Brain                    81
+       327 Brain                    35
+       328 Brain                    90
+       329 Brain                    40
+       330 Brain                    30
+       331 Brain                    64
+       332 Brain                    61
+       333 Brain                    75
+       334 Brain                    79
+       335 Brain                    39
+       336 Brain                    81
+       337 Brain                    70
+       338 Brain                    70
+       339 Brain                    84
+       340 Brain                    81
+       341 Brain                    87
+       342 Brain                    81
+
+67 rows selected.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> spool off
