@@ -1,0 +1,89 @@
+config:
+  target: "http://localhost:8080"
+  processor: "./processor.js"
+  http:
+    timeout: 30
+  phases:
+    - duration: 30
+      arrivalRate: 1
+      name: "Warming up"
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 3
+      name: "Ramping up"
+    - duration: 300
+      arrivalRate: 3
+      name: "Sustained load"
+
+  variables:
+    statusWait: 5
+    validationAfterWait: 30
+
+scenarios:
+  - name: "Create Booking with Commit"
+    flow:
+      - post:
+          url: "/travelagency/booking"
+          beforeRequest: generateData
+          json:
+            flight:
+              action: Booking
+              passengers: "{{ passengers }}"              
+            car:
+              action: Booking
+              customer: "{{ carCustomer }}"
+              phone: "{{carCustPhone}}"
+              driversLicense: "{{diversLicense}}"
+              birthdate: "{{carCustBirthDate}}"
+              startDate: "{{startDate}}"
+              endDate: "{{endDate}}"
+              carType: "{{carType}}"
+          capture:
+            - json: "$.id"
+              as: "id"
+      - loop:
+          - think: "{{statusWait}}"
+          - get:
+              url: "/travelagency/status/{{id}}"
+              afterResponse: "setStatusCode"
+        whileTrue: "transactionState"
+    weight: 4
+
+  - name: "Create Booking with Rollback"
+    flow:
+      - post:
+          url: "/travelagency/booking?invokeError=true"
+          beforeRequest: generateData
+          json:
+            flight:
+              action: Booking
+              passengers: "{{ passengers }}"              
+            car:
+              action: Booking
+              customer: "{{ carCustomer }}"
+              phone: "{{carCustPhone}}"
+              driversLicense: "{{diversLicense}}"
+              birthdate: "{{carCustBirthDate}}"
+              startDate: "{{startDate}}"
+              endDate: "{{endDate}}"
+              carType: "{{carType}}"
+          capture:
+            - json: "$.id"
+              as: "id"
+      - loop:
+          - think: "{{statusWait}}"
+          - get:
+              url: "/travelagency/status/{{id}}"
+              afterResponse: "setStatusCode"
+        whileTrue: "transactionState"
+    weight: 1
+
+after:
+  flow:
+    - log: "Saga Stats"
+    - get:
+        url: "/travelagency/stats"
+        capture:
+          - regexp: "(.|\n)*"
+            as: "statBody"
+    - log: "\n{{ statBody }}"

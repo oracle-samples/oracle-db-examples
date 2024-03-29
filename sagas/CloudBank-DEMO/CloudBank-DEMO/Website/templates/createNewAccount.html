@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CloudBank - Create New Account</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        function showErrorModal(reason) {
+            document.getElementById('generatedError').innerText = reason;
+            $('#errorModal').modal('show');
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+        
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 150px;
+        }
+        
+        .brand-logo {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .bank-brand-color {
+            background-color: #F80000;
+            border-color: #F80000;
+        }
+        
+        .btn-primary {
+            background-color: #F80000;
+            border-color: #D60000;
+        }
+        
+        .btn-primary:hover {
+            background-color: #D60000;
+        }
+        
+        .form-container {
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/oracle.png') }}" alt="Oracle Logo" class="brand-logo">
+                </div>
+                <h1 class="mt-5 text-center" style="color: #F80000;">CLOUDBANK</h1>
+                <h6 class="mt-5 text-center">**DEMO WEBAPP - IMPLEMENTED USING ORACLE SAGAS**</h6>
+            </div>
+            <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="errorModalLabel">!!!Account Creation Error!!!</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                        </div>
+                        <div class="modal-body">
+                            There was a problem creating account. Reason: <span id="generatedError"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if error %}
+            <script type="text/javascript">
+                showErrorModal('{{ error }}');
+            </script>
+            {% endif %}
+            <div class="col-md-8">
+                <div class="form-container">
+                    <h2 class="text-center">Create New Account</h2>
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control" id="address" name="address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ossn">OSSN</label>
+                            <input type="text" class="form-control" id="ossn" name="ossn" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bank">Bank</label>
+                            <select id="bank" name="bank" class="form-control">
+                                <option value="" disabled selected>Please choose one</option>
+                                <option value="BankA">Bank A</option>
+                                <option value="BankB">Bank B</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary bank-brand-color">Create Account</button>
+                            <a href="{{ url_for('login') }}" class="btn btn-primary bank-brand-color">Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudBank - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+        /* Oracle's primary color */
+        
+        .navbar-custom {
+            background-color: #f80000d0;
+        }
+        
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link,
+        .navbar-custom .btn-logout {
+            color: #ffffff;
+        }
+        
+        .account-card {
+            background-color: #ffffff;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
+        
+        .divider {
+            border-top: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        
+        .account-info {
+            font-size: 18px;
+        }
+        
+        .balance {
+            font-weight: bold;
+            font-size: 22px;
+        }
+        
+        .credit-score-card {
+            text-align: center;
+            background-color: #ffffff;
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
+        
+        .ml-auto {
+            margin-left: auto;
+        }
+        
+        .ossn-hidden {
+            -webkit-text-security: disc;
+        }
+        
+        .ossn-shown {
+            -webkit-text-security: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="#">
+            <img src="{{ url_for('static', filename='images/oracle-blk.png') }}" alt="Oracle Logo" style="height: 30px; margin-right: 20px;"> CLOUDBANK
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-arrow-down" style="color: black;"></i> 
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="{{ url_for('dashboard') }}">Home</a>
+                <a class="nav-item nav-link" href="{{ url_for('transfer') }}">Transfer</a>
+                <a class="nav-item nav-link" href="{{ url_for('account_details') }}">Account</a>
+            </div>
+            <button class="btn btn-outline-light btn-logout ml-auto" onclick="location.href='/logout'">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">User Details</h2>
+                <p class="card-text"><strong>Full Name:</strong> {{ user_data['fullName'] }}</p>
+                <p class="card-text"><strong>Email:</strong> {{ user_data['email'] }}</p>
+                <p class="card-text"><strong>Phone:</strong> {{ user_data['phone'] }}</p>
+                <p class="card-text"><strong>Address:</strong> {{ user_data['address'] }}</p>
+                <p class="card-text"><strong>UCID:</strong> {{ user_data['ucid'] }}</p>
+                <p class="card-text">
+                    <strong>OSSN:</strong>
+                    <span id="ossn" class="ossn-hidden">{{ user_data['ossn'] }}</span>
+                    <button id="toggleOssnVisibility" class="btn btn-light"><i class="fas fa-eye"></i></button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        document.getElementById('toggleOssnVisibility').addEventListener('click', function() {
+            var ossnElement = document.getElementById('ossn');
+            var classList = ossnElement.classList;
+            if (classList.contains('ossn-hidden')) {
+                classList.remove('ossn-hidden');
+                classList.add('ossn-shown');
+                this.innerHTML = '<i class="fas fa-eye-slash"></i>'; // Change icon to eye-slash
+            } else {
+                classList.add('ossn-hidden');
+                classList.remove('ossn-shown');
+                this.innerHTML = '<i class="fas fa-eye"></i>'; // Change icon back to eye
+            }
+        });
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
