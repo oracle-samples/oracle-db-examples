@@ -170,3 +170,10 @@ For creating new users, make sure to add their unique OSSN, Name and Credit Scor
 1. Exit the python flask application.
 2. Stop the tomcat server.
 3. To clean up the database, modify and execute the script cleanup.sh
+
+## License
+
+Copyright &copy; 2022,2024 Oracle and/or its associates.
+
+All content in this repository is distributed under the [Universal Permissive
+License 1.0](https://oss.oracle.com/licenses/upl/).

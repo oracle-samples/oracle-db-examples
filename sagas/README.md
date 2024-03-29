@@ -11,3 +11,10 @@ This project showcases a demo web application that demonstrates the power and fl
 ## Documentation
 
 You can find the online documentation of Oracle Sagas under https://bit.ly/SagaDocumentation
+
+## License
+
+Copyright &copy; 2022,2024 Oracle and/or its associates.
+
+All content in this repository is distributed under the [Universal Permissive
+License 1.0](https://oss.oracle.com/licenses/upl/).
