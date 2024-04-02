@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--
+ Copyright (c)2024 Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CloudBank - Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script type="text/javascript">
+        function showUsernameModal(username) {
+            document.getElementById('generatedUsername').innerText = username;
+            $('#usernameModal').modal('show');
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+        
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 150px;
+        }
+        
+        .brand-logo {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .bank-brand-color {
+            background-color: #F80000;
+            border-color: #F80000;
+        }
+        
+        .btn-primary {
+            background-color: #F80000;
+            border-color: #D60000;
+        }
+        
+        .btn-primary:hover {
+            background-color: #D60000;
+        }
+        
+        .btn-link {
+            color: #F80000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='images/oracle.png') }}" alt="CloudBank Logo" class="brand-logo">
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="usernameModal" tabindex="-1" aria-labelledby="usernameModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="usernameModalLabel">Account Created Successfully</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                            </div>
+                            <div class="modal-body">
+                                Your new username is: <span id="generatedUsername"></span>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if login_id %}
+                <script type="text/javascript">
+                    showUsernameModal('{{ login_id }}');
+                </script>
+                {% endif %}
+                <h1 class="mt-5 text-center" style="color: #F80000;">CLOUDBANK</h1>
+                <h6 class="mt-5 text-center">**DEMO WEBAPP - IMPLEMENTED USING ORACLE SAGAS**</h6>
+                <h2 class="mt-5 text-center">Customer Login</h2>
+                {% if error %}
+                <p style="color: red;">{{ error }}</p>
+                {% endif %}
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="username">ID</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary bank-brand-color">Login</button>
+                    <a href="{{ url_for('create_new_account') }}" class="btn btn-link">Create New Account</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
