@@ -1,4 +1,4 @@
-![Oracle Exadata](../../docs/Oracle_Exadata_cmyk.png)
+![Oracle Exadata](../../../../../docs/Oracle_Exadata_cmyk.png)
 
 # Oracle Exadata Real-Time Insight
 
@@ -7,7 +7,7 @@
 For the dashboards in this folder to work correctly, the following applications are required:
 
 - Grafana (minimum version 8.4.2), which includes the Prometheus plugin for Grafana.
-- Oracle Exadata System Software 22.1.0+. Follow the instructions for [Using Real-Time Insight](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-8448C324-784E-44F5-9D44-9CB5C697E436) in the *Oracle Exadata System Software User's Guide* to configure the metric collection and upload parameters.
+- Oracle Exadata System Software 22.1.0+. Follow the instructions for [Using Real-Time Insight](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-8448C324-784E-44F5-9D44-9CB5C697E436) in the _Oracle Exadata System Software User's Guide_ to configure the metric collection and upload parameters.
 
 ## Example Grafana Dashboard
 
@@ -49,12 +49,9 @@ When you import the dashboards into your Grafana installation, you are prompted 
 
 In addition, when importing the Exadata Cluster dashboard, you are prompted for the links for the Compute and Storage Server dashboards in the linkComputeDetails and linkCellDetails variables. These variables should already contain the correct dashboard UIDs. However, you may need to modify the links if you changed the UIDs when importing the other dashboards or if you have a different orgId value in Grafana. You can also modify these dashboard variables after importing. For more information, see the Grafana documentation on [dashboard variables](https://grafana.com/docs/grafana/latest/variables/).
 
-
-
 ## Documentation
 
 You can find the online documentation of Oracle Exadata at [docs.oracle.com/en/engineered-systems/exadata-database-machine/](https://docs.oracle.com/en/engineered-systems/exadata-database-machine)
-
 
 ## Contributing
 
