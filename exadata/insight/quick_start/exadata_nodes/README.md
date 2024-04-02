@@ -1,11 +1,10 @@
-![Oracle Exadata](../docs/Oracle_Exadata_cmyk.png)
+![Oracle Exadata](../../../docs/Oracle_Exadata_cmyk.png)
 
 # Real-Time Insight - Quick Start
 
 ## Exadata Nodes
 
-The files contained in the exadata_nodes directory are examples of dcli commands to create the required role/user to enable Promethues to connect to and collect metrics from your Exadata Database Machine.  
-
+The files contained in the exadata_nodes directory are examples of dcli commands to create the required role/user to enable Promethues to connect to and collect metrics from your Exadata Database Machine.
 
 ## License
 
