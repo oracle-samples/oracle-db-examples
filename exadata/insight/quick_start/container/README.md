@@ -1,4 +1,4 @@
-![Oracle Exadata](../docs/Oracle_Exadata_cmyk.png)
+![Oracle Exadata](../../../docs/Oracle_Exadata_cmyk.png)
 
 # Real-Time Insight - Quick Start
 
