@@ -10,10 +10,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 
-import oracle.ucp.UniversalConnectionPool;
-import oracle.ucp.admin.UniversalConnectionPoolManager;
-import oracle.ucp.admin.UniversalConnectionPoolManagerImpl;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -28,19 +24,10 @@ public class HibernateUCPSample {
     SessionFactory factory = meta.getSessionFactoryBuilder().build();
     Session session = factory.openSession();
 
-    try{
-    	UniversalConnectionPoolManager mgr = UniversalConnectionPoolManagerImpl.getUniversalConnectionPoolManager();
-    	UniversalConnectionPool pool = mgr.getConnectionPool("testucppool");
-    	System.out.println(pool.getName());
-    	System.out.println(pool.getAvailableConnectionsCount());
-    }
-    catch(Exception e) {
-    	e.printStackTrace();
-    }
-    
     session.doWork(new Work() {
       public void execute(Connection con) throws SQLException {
-        System.out.println("Connection class: " + con.getClass());
+        // Prints the UCP proxy class, indicating that UCP is configured as a datasource
+	System.out.println("Connection class: " + con.getClass());
       }
     });
 
