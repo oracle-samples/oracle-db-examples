@@ -27,102 +27,94 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 public class TeamManager {
 
-	public static void retrieveTeam(DatabaseConfig pds) {
-		retrieveAllTeams(pds, -1);
-	}
+  public static void retrieveTeam(DatabaseConfig pds) {
+    retrieveAllTeams(pds, -1);
+  }
 
-	public static void retrieveTeam(DatabaseConfig pds, int withTeamId) {
-		retrieveAllTeams(pds, withTeamId);
-	}
+  public static void retrieveTeam(DatabaseConfig pds, int withTeamId) {
+    retrieveAllTeams(pds, withTeamId);
+  }
 
-	public static void insertNewTeam(DatabaseConfig pds, OracleJsonObject data) {
-		try (
-			Connection connection = pds.getDatabaseConnection();
-			PreparedStatement stmt = connection.prepareStatement(
-				"insert into team_info_dv values (?)"
-			)
-		) {
-			stmt.setObject(1, data, OracleType.JSON);
+  public static void insertNewTeam(DatabaseConfig pds, OracleJsonObject data) {
+    try (
+        Connection connection = pds.getDatabaseConnection();
+        PreparedStatement stmt = connection.prepareStatement(
+            "insert into team_info_dv values (?)")) {
+      stmt.setObject(1, data, OracleType.JSON);
 
-			int created = stmt.executeUpdate();
-			if (created > 0) System.out.println("New Team created");
+      int created = stmt.executeUpdate();
+      if (created > 0)
+        System.out.println("New Team created");
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
+  public static void insertNewPlayer(DatabaseConfig pds, OracleJsonObject data, int teamId) {
+    try (
+        Connection connection = pds.getDatabaseConnection();
+        PreparedStatement stmt = connection.prepareStatement(
+            "insert into player_team_info_dv values (?)")) {
+      stmt.setObject(1, data, OracleType.JSON);
 
-	public static void insertNewPlayer(DatabaseConfig pds, OracleJsonObject data, int teamId) {
-		try (
-			Connection connection = pds.getDatabaseConnection();
-			PreparedStatement stmt = connection.prepareStatement(
-			"insert into player_team_info_dv values (?)"
-			)
-		) {
-			stmt.setObject(1, data, OracleType.JSON);
+      int created = stmt.executeUpdate();
+      if (created > 0)
+        System.out.println("New Player created and added to team.");
 
-			int created = stmt.executeUpdate();
-			if (created > 0) System.out.println("New Player created and added to team.");
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
+  private static void retrieveAllTeams(DatabaseConfig pds, int withTeamId) {
+    String query = withTeamId == -1 ? "SELECT data FROM team_info_dv"
+        : "SELECT data FROM team_info_dv WHERE json_value(data, '$._id') = ?";
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    try (
+        Connection connection = pds.getDatabaseConnection();
+        PreparedStatement stmt = connection.prepareStatement(query)) {
+      if (withTeamId > -1) {
+        stmt.setInt(1, withTeamId);
+      }
 
-	private static void retrieveAllTeams(DatabaseConfig pds, int withTeamId) {
-		String query = withTeamId == -1 ? "SELECT data FROM team_info_dv" :
-			"SELECT data FROM team_info_dv WHERE json_value(data, '$._id') = ?";
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          OracleJsonObject team = rs.getObject(1, OracleJsonObject.class);
+          System.out.println(team.toString());
+        }
+      }
 
-		try (
-			Connection connection = pds.getDatabaseConnection();
-			PreparedStatement stmt = connection.prepareStatement(query)
-		) {
-			if (withTeamId > -1) {
-				stmt.setInt(1, withTeamId);
-			}
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
-			try (ResultSet rs = stmt.executeQuery()) {
-				while (rs.next()) {
-					OracleJsonObject team = rs.getObject(1, OracleJsonObject.class);
-					System.out.println(team.toString());
-				}
-			}
+  public static OracleJsonObject retrieveAndReferenceTeam(DatabaseConfig pds, int withTeamId) {
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    try (
+        Connection connection = pds.getDatabaseConnection();
+        PreparedStatement stmt = connection
+            .prepareStatement("SELECT data FROM team_info_dv WHERE json_value(data, '$._id') = ?")) {
+      if (withTeamId > -1) {
+        stmt.setInt(1, withTeamId);
+      }
 
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) {
+          return rs.getObject(1, OracleJsonObject.class);
+        }
+      }
 
-	public static OracleJsonObject retrieveAndReferenceTeam(DatabaseConfig pds, int withTeamId) {
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
 
-		try (
-			Connection connection = pds.getDatabaseConnection();
-			PreparedStatement stmt = connection.prepareStatement("SELECT data FROM team_info_dv WHERE json_value(data, '$._id') = ?")
-		) {
-			if (withTeamId > -1) {
-				stmt.setInt(1, withTeamId);
-			}
-
-			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next()) {
-					return rs.getObject(1, OracleJsonObject.class);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-
-	public static void updateTeam(DatabaseConfig pds, OracleJsonObject data, int withTeamId) {
+  public static void updateTeam(DatabaseConfig pds, OracleJsonObject data, int withTeamId) {
 
 		try (
 			Connection connection = pds.getDatabaseConnection();
@@ -139,21 +131,21 @@ public class TeamManager {
 		}
 	}
 
+  public static void updateTeamAsAWhole(DatabaseConfig pds, OracleJsonObject data, int withTeamId) {
+    try (
+        Connection connection = pds.getDatabaseConnection();
+        PreparedStatement stmt = connection
+            .prepareStatement("UPDATE team_info_dv t SET t.data = ? where JSON_VALUE(t.data, '$._id') = ?")) {
+      stmt.setObject(1, data, OracleType.JSON);
+      stmt.setInt(2, withTeamId);
 
-	public static void updateTeamAsAWhole(DatabaseConfig pds, OracleJsonObject data, int withTeamId) {
-		try (
-			Connection connection = pds.getDatabaseConnection();
-			PreparedStatement stmt = connection.prepareStatement("UPDATE team_info_dv t SET t.data = ? where JSON_VALUE(t.data, '$._id') = ?")
-		) {
-			stmt.setObject(1, data, OracleType.JSON);
-			stmt.setInt(2, withTeamId);
+      int i = stmt.executeUpdate();
+      if (i > 0)
+        System.out.println("Updated team with new players");
 
-			int i = stmt.executeUpdate();
-			if (i > 0) System.out.println("Updated team with new players");
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
 }
