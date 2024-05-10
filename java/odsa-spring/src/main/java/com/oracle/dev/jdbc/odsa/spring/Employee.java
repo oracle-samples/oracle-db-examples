@@ -29,7 +29,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "EMPLOYEE", schema = "ADMIN")
+@Table(name = "EMPLOYEE", schema = "<DB_SCHEMA>")
 public class Employee {
 
 	private @Id @GeneratedValue Long id;
