@@ -118,7 +118,7 @@ import {
           resolve: (book) => {
               const result = session.execute('select stock from inventory where id = :id', [book.id]);
               if (result.rows.length > 0) {
-                  return result.rows[0][0];
+                  return result.rows[0].STOCK;
               } else {
                   return 0;
               }
