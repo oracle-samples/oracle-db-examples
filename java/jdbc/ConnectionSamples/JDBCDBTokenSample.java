@@ -37,13 +37,14 @@ public class JDBCDBTokenSample {
   final static String DB_URL="jdbc:oracle:thin:@dbname_high?TNS_ADMIN=/Users/user/wallet/Wallet_dbname&oracle.jdbc.tokenAuthentication=OCI_TOKEN";
   // If mutual TLS(mTLS) is disabled then, ADB connection does not require wallets. 
   // Copy the connection string from "DB Connection" tab from "Connection Strings" section choosing "TLS" in the dropdown
-  //final static String DB_URL="jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gebqqeredfsozhjbqbs_dbname_medium.adb.oraclecloud.com)))?oracle.jdbc.tokenAuthentication=OCI_TOKEN";
+
   // Another way to enable token authentication in the long form connection string. 
-  final static String DB_URL="jdbc:oracle:thin:@(description="
-           + "(retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))"
+  /* 
+	  final static String DB_URL="jdbc:oracle:thin:@(description="
+          + "(retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))"
            + "(security=(token_auth=OCI_TOKEN))"
            + "(connect_data=(service_name=gebqqeredfsozhjbqbs_dbname_medium.adb.oraclecloud.com)))";
-
+  */
 
   public static void main(String args[]) throws SQLException {
 
