@@ -104,8 +104,7 @@ public class Employee {
 			return false;
 		Employee other = (Employee) obj;
 		return Objects.equals(commission, other.commission) && Objects.equals(id, other.id)
-				&& Objects.equals(job, other.job) && Objects.equals(name, other.name)
-				&& Objects.equals(salary, other.salary);
+				&& Objects.equals(job, other.job) && Objects.equals(name, other.name) && Objects.equals(salary, other.salary);
 	}
 
 	public String toString() {
