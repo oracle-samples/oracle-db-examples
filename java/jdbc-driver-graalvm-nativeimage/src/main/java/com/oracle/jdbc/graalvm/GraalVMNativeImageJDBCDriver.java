@@ -29,7 +29,7 @@ import java.sql.SQLException;
 import oracle.jdbc.pool.OracleDataSource;
 
 public class GraalVMNativeImageJDBCDriver {
-	
+
 	public static void main(String[] args) {
 		OracleDataSource ods;
 		try {
@@ -38,7 +38,7 @@ public class GraalVMNativeImageJDBCDriver {
 			ods.setURL("jdbc:oracle:thin@[hostname]:[port]/[DB service/name]");
 			ods.setUser("[Username]");
 			ods.setPassword("[Password]");
-			
+
 			Connection conn = ods.getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT 'Hello World!' FROM dual");
 			ResultSet rslt = stmt.executeQuery();
