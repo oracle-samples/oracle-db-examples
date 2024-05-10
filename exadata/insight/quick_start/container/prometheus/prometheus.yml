@@ -1,0 +1,84 @@
+# my global config
+global:
+  scrape_interval: 2s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  scrape_timeout: 2s
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "exadata"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+    metrics_path: metricstream/list
+
+    scheme: https
+
+    params:
+      stream: [true]
+
+    basic_auth:
+      username: realtime_collector
+      password: Sup3rS3cr3tP@ssword
+
+    file_sd_configs:
+      - files:
+          - "all_exadata_nodes.json"
+
+    tls_config:
+      insecure_skip_verify: true
+
+    # remove cumulative metrics and limit exc metrics
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: "(CD_IO_BY_R_LG|CD_IO_BY_R_SM|CD_IO_BY_W_LG|CD_IO_BY_W_SM|CD_IO_RQ_R_LG|CD_IO_RQ_R_SM|CD_IO_RQ_W_LG|CD_IO_RQ_W_SM|CD_IO_TM_R_SM|CD_IO_TM_R_LG|CD_IO_TM_W_SM|CD_IO_TM_W_LG)"
+        action: drop
+      - source_labels: [__name__]
+        regex: "(FC_COL_IO_BY_R|FC_COL_IO_BY_R_ELIGIBLE|FC_COL_IO_BY_SAVED|FC_COL_IO_RQ_W_POPULATE|FC_COL_IO_BY_W_POPULATE)"
+        action: drop
+      - source_labels: [__name__]
+        regex: "(SIO_IO_EL_OF|SIO_IO_OF_RE|SIO_IO_PA_TH|SIO_IO_RV_OF|SIO_IO_RD_FC|SIO_IO_RD_HD|SIO_IO_RD_FC_HD|SIO_SIO_SI_SV)"
+        action: drop
+      - source_labels: [__name__]
+        regex: "(FC_IO_BY_R|FC_IO_BY_R_DISK_WRITER|FC_IO_BY_R_DW|FC_IO_BY_R_MISS|FC_IO_BY_R_SKIP|FC_IO_RQ_R|FC_IO_RQ_R_DISK_WRITER|FC_IO_RQ_R_DW|FC_IO_RQ_R_MISS|FC_IO_RQ_R_MISS_DW|FC_IO_RQ_R_SKIP)"
+        action: drop
+      - source_labels: [__name__]
+        regex: "(FC_IO_RQ_W_DISK_WRITER|FC_IO_RQ_W_METADATA|FC_IO_RQ_W_POPULATE|FC_IO_RQ_W_SKIP|FC_IO_BY_W|FC_IO_BY_W_DISK_WRITER|FC_IO_BY_W_METADATA|FC_IO_BY_W_POPULATE|FC_IO_BY_W_SKIP)"
+        action: drop
+      - source_labels: [objectName]
+        regex: '(exc\/esvol[[:digit:]]{2,}|exc\/edvf_[[:digit:]]{2,}.*|exc\/edvfile_[[:digit:]]{2,}.*|exc\/vol[[:digit:]]{2,}|exc\/edv[[:digit:]]{2,}.*|exc\/edvvol[[:digit:]]{2,}|exc\/edsvol[[:digit:]]{2,})'
+        action: drop
+
+      # add device type for iostat devices - disk and flash
+      - source_labels: [objectName]
+        regex: "(^nvme.*)"
+        replacement: "flash:$1"
+        target_label: objectName
+        action: replace
+      - source_labels: [objectName]
+        regex: "(^sd.*)"
+        replacement: "disk:$1"
+        target_label: objectName
+        action: replace
+
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]

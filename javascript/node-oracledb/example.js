@@ -1,17 +1,24 @@
-/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
- * You may not use the identified files except in compliance with the Apache
- * License, Version 2.0 (the "License.")
+ * This software is dual-licensed to you under the Universal Permissive License
+ * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+ * 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+ * either license.
  *
+ * If you elect to accept the software under the Apache License, Version 2.0,
+ * the following applies:
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -19,37 +26,43 @@
  *   example.js
  *
  * DESCRIPTION
- *   A basic node-oracledb example using Node.js 8's async/await syntax.
+ *   A basic node-oracledb example.
  *
  *   For connection pool examples see connectionpool.js and webapp.js
  *   For a ResultSet example see resultset1.js
  *   For a query stream example see selectstream.js
  *
- *   This example requires node-oracledb 5 or later.
- *
  *****************************************************************************/
 
-// Using a fixed Oracle time zone helps avoid machine and deployment differences
-process.env.ORA_SDTZ = 'UTC';
+'use strict';
 
-const fs = require('fs');
+Error.stackTraceLimit = 50;
+
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 
-// On Windows and macOS, you can specify the directory containing the Oracle
-// Client Libraries at runtime, or before Node.js starts.  On other platforms
-// the system library search path must always be set before Node.js is started.
-// See the node-oracledb installation documentation.
-// If the search path is not correct, you will get a DPI-1047 error.
-let libPath;
-if (process.platform === 'win32') {           // Windows
-  libPath = 'C:\\oracle\\instantclient_19_12';
-} else if (process.platform === 'darwin') {   // macOS
-  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+// This example runs in both node-oracledb Thin and Thick modes.
+//
+// Optionally run in node-oracledb Thick mode
+if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
+
+  // Thick mode requires Oracle Client or Oracle Instant Client libraries.
+  // On Windows and macOS Intel you can specify the directory containing the
+  // libraries at runtime or before Node.js starts.  On other platforms (where
+  // Oracle libraries are available) the system library search path must always
+  // include the Oracle library path before Node.js starts.  If the search path
+  // is not correct, you will get a DPI-1047 error.  See the node-oracledb
+  // installation documentation.
+  let clientOpts = {};
+  // On Windows and macOS Intel platforms, set the environment
+  // variable NODE_ORACLEDB_CLIENT_LIB_DIR to the Oracle Client library path
+  if (process.platform === 'win32' || (process.platform === 'darwin' && process.arch === 'x64')) {
+    clientOpts = { libDir: process.env.NODE_ORACLEDB_CLIENT_LIB_DIR };
+  }
+  oracledb.initOracleClient(clientOpts);  // enable node-oracledb Thick mode
 }
-if (libPath && fs.existsSync(libPath)) {
-  oracledb.initOracleClient({ libDir: libPath });
-}
+
+console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
 async function run() {
   let connection;
@@ -116,26 +129,17 @@ async function run() {
     // For a complete list of options see the documentation.
     options = {
       outFormat: oracledb.OUT_FORMAT_OBJECT,   // query result format
-      // extendedMetaData: true,               // get extra metadata
-      // prefetchRows:     100,                // internal buffer allocation size for tuning
       // fetchArraySize:   100                 // internal buffer allocation size for tuning
     };
 
     result = await connection.execute(sql, binds, options);
 
-    console.log("Metadata: ");
-    console.dir(result.metaData, { depth: null });
+    // Column metadata can be shown, if desired
+    // console.log("Metadata: ");
+    // console.dir(result.metaData, { depth: null });
+
     console.log("Query results: ");
     console.dir(result.rows, { depth: null });
-
-    //
-    // Show the date.  The value of ORA_SDTZ affects the output
-    //
-
-    sql = `SELECT TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') AS CD FROM DUAL`;
-    result = await connection.execute(sql, binds, options);
-    console.log("Current date query results: ");
-    console.log(result.rows[0]['CD']);
 
   } catch (err) {
     console.error(err);
