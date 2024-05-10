@@ -31,8 +31,6 @@ import oracle.jdbc.pool.OracleDataSource;
 
 public class JDBCStoredProcHqEmployee {
 
-	
-
 	private final static String DB_URL = "jdbc:oracle:thin:@<DB_HOST>:<DB_PORT>/<DB_NAME>";
 	private final static String DB_USER = "<DB_USER>";
 	private final static String DB_PASSWORD = "<DB_PASSWORD>";
@@ -44,7 +42,7 @@ public class JDBCStoredProcHqEmployee {
 		System.out.println("--------------------");
 		System.out.println("Input parameters");
 		System.out.println("--------------------");
-		
+
 		int id = ThreadLocalRandom.current().nextInt();
 		System.out.println("ID: " + id);
 
@@ -53,9 +51,6 @@ public class JDBCStoredProcHqEmployee {
 
 		String role = "Mascott";
 		System.out.println("Role: " + role);
-
-//		boolean active = true;		
-//		System.out.println("Active: " + active);
 
 		try {
 
@@ -79,13 +74,14 @@ public class JDBCStoredProcHqEmployee {
 			// set IN parameters
 			stmt.setInt(1, id);
 			stmt.setString(2, name);
-			stmt.setString(3, role);			
+			stmt.setString(3, role);
 
-			//stmt.setBoolean(4, true);	
-			
-			//stmt.setInt(4, 1);	
-			
-			stmt.setString(4, "1");	
+			/*
+			 * Please note that there was a PLSQL BOOLEAN type before 23c. What's new in 23c
+			 * is the BOOLEAN type in SQL. What's interesting here is that we're using a
+			 * BOOLEAN table column type as a parameter type in a PLSQL procedure
+			 */
+			stmt.setBoolean(4, true);
 
 			// register OUT parameter
 			stmt.registerOutParameter(5, java.sql.Types.VARCHAR);
