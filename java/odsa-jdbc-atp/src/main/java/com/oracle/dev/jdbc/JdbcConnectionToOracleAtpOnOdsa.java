@@ -23,9 +23,9 @@ package com.oracle.dev.jdbc;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 import java.util.stream.IntStream;
 
@@ -37,9 +37,12 @@ public class JdbcConnectionToOracleAtpOnOdsa {
 	private final static String DB_URL = DatabaseConfig.getDbUrl();
 	private final static String DB_USER = DatabaseConfig.getDbUser();
 	private final static String DB_PASSWORD = DatabaseConfig.getDbPassword();
-	private static String queryStatement = "SELECT * FROM SH.CUSTOMERS WHERE CUST_ID = 49671";
+	private final String queryStatement = "SELECT * FROM SH.CUSTOMERS WHERE SH.CUSTOMERS.CUST_ID = ?";
+	private final Integer id = 49671;
 
 	public static void main(String args[]) throws SQLException {
+
+		JdbcConnectionToOracleAtpOnOdsa jdbc = new JdbcConnectionToOracleAtpOnOdsa();
 
 		Properties info = new Properties();
 		info.put(OracleConnection.CONNECTION_PROPERTY_USER_NAME, DB_USER);
@@ -58,7 +61,7 @@ public class JdbcConnectionToOracleAtpOnOdsa {
 		// virtual threads
 		var threads = IntStream.range(0, 10).mapToObj(i -> Thread.startVirtualThread(() -> {
 			try {
-				doSQLWork(connection, queryStatement);
+				jdbc.doSQLWork(connection);
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
@@ -74,18 +77,20 @@ public class JdbcConnectionToOracleAtpOnOdsa {
 
 	}
 
-	private static void doSQLWork(Connection conn, String queryStatement) throws SQLException {
+	private void doSQLWork(Connection conn) throws SQLException {
 		conn.setAutoCommit(false);
-		try (Statement statement = conn.createStatement();
-				ResultSet resultSet = statement.executeQuery(queryStatement)) {
-			while (resultSet.next()) {
-				System.out.println(new StringBuilder(resultSet.getString(1)).append(" ").append(resultSet.getString(2))
-						.append(" ").append(resultSet.getString(3)).append(" ").append(resultSet.getString(4))
-						.append(" ").append(resultSet.getInt(5)).toString());
-			}
-			statement.close();
-			resultSet.close();
+
+		PreparedStatement statement = conn.prepareStatement(queryStatement);
+		statement.setInt(1, id);
+		ResultSet resultSet = statement.executeQuery();
+		while (resultSet.next()) {
+			System.out.println(new StringBuilder(resultSet.getString(1)).append(" ").append(resultSet.getString(2))
+					.append(" ").append(resultSet.getString(3)).append(" ").append(resultSet.getString(4)).append(" ")
+					.append(resultSet.getInt(5)).toString());
 		}
+		statement.close();
+		resultSet.close();
+
 	}
 
 }
