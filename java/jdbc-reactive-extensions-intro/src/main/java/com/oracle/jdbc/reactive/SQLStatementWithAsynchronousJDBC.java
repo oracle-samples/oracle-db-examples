@@ -69,8 +69,8 @@ public class SQLStatementWithAsynchronousJDBC {
 	private Flow.Publisher<Boolean> createTable(OracleConnection connection) throws SQLException {
 
 		OraclePreparedStatement createTableStatement = (OraclePreparedStatement) connection
-				.prepareStatement("CREATE TABLE employee_names (" + "id NUMBER PRIMARY KEY, "
-						+ "first_name VARCHAR(50), " + "last_name VARCHAR2(50))");
+				.prepareStatement("CREATE TABLE employee_names (" + "id NUMBER PRIMARY KEY, " + "first_name VARCHAR(50), "
+						+ "last_name VARCHAR2(50))");
 
 		Flow.Publisher<Boolean> createTablePublisher = createTableStatement.unwrap(OraclePreparedStatement.class)
 				.executeAsyncOracle();
