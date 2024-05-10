@@ -36,22 +36,23 @@ public class QueryWithBooleanDataTypeColumn {
 		Connection conn = null;
 
 		try {
-			
+
 			ods = new OracleDataSource();
-			
+
 			// jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
-			ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");			
+			ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
 			ods.setUser("[Username]");
-		    ods.setPassword("[Password]");	
-						
+			ods.setPassword("[Password]");
+
 			conn = ods.getConnection();
-			
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");						
-			//PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE = ?");	
-			//stmt.setBoolean(1, true);				
-			//stmt.setInt(1, 1);
-			//stmt.setString(1, "1");
-					
+
+			/*
+			 * CREATE TABLE HQ_EMPLOYEE ( "EMP_ID" NUMBER NOT NULL ENABLE, "NAME"
+			 * VARCHAR2(20 BYTE) DEFAULT NULL, "ROLE" VARCHAR2(20 BYTE) DEFAULT NULL,
+			 * "ACTIVE" BOOLEAN DEFAULT NULL, PRIMARY KEY ("EMP_ID") );
+			 */
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");
+
 			ResultSet rslt = stmt.executeQuery();
 			StringBuilder sb = new StringBuilder();
 			while (rslt.next()) {
