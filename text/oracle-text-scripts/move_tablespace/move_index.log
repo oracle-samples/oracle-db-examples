@@ -1,0 +1,314 @@
+
+SQL> @move_index
+SQL> -- script to check moving of text index to new tablespace works, and requires index rebuild
+SQL> 
+SQL> -- set system password in line below
+SQL> -- this scripts drops any existing user called TESTUSER and tablespace NEWTBSP
+SQL> -- expects a USERS tablespace. Change that to sysaux if you're in ADE and haven't added a USERS tablespace
+SQL> 
+SQL> connect system/welcome1
+Connected.
+SQL> 
+SQL> set echo on
+SQL> set timing on
+SQL> 
+SQL> -- expected to give error on first run
+SQL> drop user testuser cascade;
+
+User dropped.
+
+Elapsed: 00:00:00.15
+SQL> -- expected to give error on first run
+SQL> drop tablespace newtbsp including contents and datafiles;
+
+Tablespace dropped.
+
+Elapsed: 00:00:04.27
+SQL> 
+SQL> -- following procedure creates a tablespace NEWTBSP in the same directory as SYSTEM
+SQL> -- replace with hard-coded CREATE TABLESPACE if you don't trust this!
+SQL> 
+SQL> declare
+  2    filename_prefix varchar2(256);
+  3  begin
+  4    select regexp_substr(file_name, '.*[\\/]')
+  5  	 into filename_prefix from sys.dba_data_files
+  6  	 where tablespace_name = 'SYSTEM';
+  7    execute immediate ('create tablespace newtbsp datafile '''
+  8  	    || filename_prefix ||
+  9  	    'NEWTBSP.DBF'' size 100m autoextend on segment space management auto');
+ 10  end;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.25
+SQL> 
+SQL> column tablespace_name format a20
+SQL> column file_name format a40
+SQL> 
+SQL> -- check we've created new tablespace OK
+SQL> select tablespace_name, file_name from sys.dba_data_files;
+
+TABLESPACE_NAME      FILE_NAME
+-------------------- ----------------------------------------
+SYSTEM		     C:\APP\ORADATA\ORCL\SYSTEM01.DBF
+SYSAUX		     C:\APP\ORADATA\ORCL\SYSAUX01.DBF
+UNDOTBS1	     C:\APP\ORADATA\ORCL\UNDOTBS01.DBF
+USERS		     C:\APP\ORADATA\ORCL\USERS01.DBF
+EXAMPLE 	     C:\APP\ORADATA\ORCL\EXAMPLE01.DBF
+APEX_259272528148170 C:\APP\ORADATA\ORCL\APEX_259272528148170
+7		     7.DBF
+
+NEWTBSP 	     C:\APP\ORADATA\ORCL\NEWTBSP.DBF
+
+7 rows selected.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- create user
+SQL> create user testuser identified by testuser default tablespace users temporary tablespace temp
+  2  quota unlimited on users quota unlimited on newtbsp;
+
+User created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> grant connect,resource,ctxapp,dba to testuser;
+
+Grant succeeded.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> connect testuser/testuser
+Connected.
+SQL> 
+SQL> create table foo(bar varchar2(50));
+
+Table created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- insert 100k rows into the table, just so we can see whether rebuild is instant or not
+SQL> -- (it isn't)
+SQL> 
+SQL> begin
+  2    for i in 1..100000 loop
+  3  	 insert into foo values ('hello world'||to_char(i));
+  4    end loop;
+  5  end;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:04.90
+SQL> 
+SQL> exec ctx_ddl.create_preference('store1', 'BASIC_STORAGE')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store1', 'I_TABLE_CLAUSE', 'tablespace users')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store1', 'I_INDEX_CLAUSE', 'tablespace users')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store1', 'R_TABLE_CLAUSE', 'tablespace users')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store1', 'K_TABLE_CLAUSE', 'tablespace users')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store1', 'N_TABLE_CLAUSE', 'tablespace users')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- create the index
+SQL> 
+SQL> create index fooindex on foo(bar) indextype is ctxsys.context
+  2  parameters ('storage store1');
+
+Index created.
+
+Elapsed: 00:00:03.56
+SQL> 
+SQL> set linesize 160
+SQL> column owner format a20
+SQL> column segment_name format a30
+SQL> column tablespace_name format a20
+SQL> 
+SQL> -- check all objects are in USERS tablespace
+SQL> 
+SQL> select owner, segment_name, tablespace_name from dba_segments
+  2  where segment_name like '%FOOINDEX%'
+  3  and owner = 'TESTUSER';
+
+OWNER		     SEGMENT_NAME		    TABLESPACE_NAME
+-------------------- ------------------------------ --------------------
+TESTUSER	     DRC$FOOINDEX$R		    USERS
+TESTUSER	     DR$FOOINDEX$X		    USERS
+TESTUSER	     DR$FOOINDEX$R		    USERS
+TESTUSER	     DR$FOOINDEX$I		    USERS
+
+Elapsed: 00:00:00.05
+SQL> 
+SQL> select table_name, tablespace_name from user_tables;
+
+TABLE_NAME															 TABLESPACE_NAME
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+FOO																 USERS
+DR$FOOINDEX$I															 USERS
+DR$FOOINDEX$K
+DR$FOOINDEX$R															 USERS
+DR$FOOINDEX$N
+
+Elapsed: 00:00:00.10
+SQL> select index_name, tablespace_name from user_indexes;
+
+INDEX_NAME															 TABLESPACE_NAME
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+FOOINDEX
+SYS_IL0000094197C00006$$													 USERS
+SYS_IOT_TOP_94200														 USERS
+SYS_IL0000094202C00002$$													 USERS
+DRC$FOOINDEX$R															 USERS
+SYS_IOT_TOP_94206														 USERS
+DR$FOOINDEX$X															 USERS
+
+7 rows selected.
+
+Elapsed: 00:00:00.10
+SQL> select segment_name, tablespace_name from user_segments;
+
+SEGMENT_NAME		       TABLESPACE_NAME
+------------------------------ --------------------
+DR$FOOINDEX$I		       USERS
+DR$FOOINDEX$R		       USERS
+DR$FOOINDEX$X		       USERS
+DRC$FOOINDEX$R		       USERS
+FOO			       USERS
+SYS_IL0000094197C00006$$       USERS
+SYS_IL0000094202C00002$$       USERS
+SYS_IOT_TOP_94200	       USERS
+SYS_IOT_TOP_94206	       USERS
+SYS_LOB0000094197C00006$$      USERS
+SYS_LOB0000094202C00002$$      USERS
+
+11 rows selected.
+
+Elapsed: 00:00:00.03
+SQL> 
+SQL> -- now create new storage preference using NEWTBSP tablespace
+SQL> 
+SQL> exec ctx_ddl.create_preference('store2', 'BASIC_STORAGE')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store2', 'I_TABLE_CLAUSE', 'tablespace newtbsp')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store2', 'I_INDEX_CLAUSE', 'tablespace newtbsp')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store2', 'R_TABLE_CLAUSE', 'tablespace newtbsp')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store2', 'K_TABLE_CLAUSE', 'tablespace newtbsp')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.set_attribute('store2', 'N_TABLE_CLAUSE', 'tablespace newtbsp')
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- alter the index.  We expect this to take at least as long as the create index
+SQL> 
+SQL> alter index fooindex rebuild parameters('replace storage store2');
+
+Index altered.
+
+Elapsed: 00:00:03.31
+SQL> 
+SQL> -- check all objects (except the base table FOO) are in the NEWTBSP tablespace
+SQL> 
+SQL> select owner, segment_name, tablespace_name from dba_segments
+  2  where segment_name like '%FOOINDEX%'
+  3  and owner = 'TESTUSER';
+
+OWNER		     SEGMENT_NAME		    TABLESPACE_NAME
+-------------------- ------------------------------ --------------------
+TESTUSER	     DRC$FOOINDEX$R		    NEWTBSP
+TESTUSER	     DR$FOOINDEX$X		    NEWTBSP
+TESTUSER	     DR$FOOINDEX$R		    NEWTBSP
+TESTUSER	     DR$FOOINDEX$I		    NEWTBSP
+
+Elapsed: 00:00:00.06
+SQL> 
+SQL> select table_name, tablespace_name from user_tables;
+
+TABLE_NAME															 TABLESPACE_NAME
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+DR$FOOINDEX$I															 NEWTBSP
+DR$FOOINDEX$R															 NEWTBSP
+FOO																 USERS
+DR$FOOINDEX$K
+DR$FOOINDEX$N
+
+Elapsed: 00:00:00.07
+SQL> select index_name, tablespace_name from user_indexes;
+
+INDEX_NAME															 TABLESPACE_NAME
+-------------------------------------------------------------------------------------------------------------------------------- --------------------
+FOOINDEX
+DR$FOOINDEX$X															 NEWTBSP
+SYS_IOT_TOP_94218														 NEWTBSP
+DRC$FOOINDEX$R															 NEWTBSP
+SYS_IL0000094214C00002$$													 NEWTBSP
+SYS_IOT_TOP_94212														 NEWTBSP
+SYS_IL0000094209C00006$$													 NEWTBSP
+
+7 rows selected.
+
+Elapsed: 00:00:00.06
+SQL> select segment_name, tablespace_name from user_segments;
+
+SEGMENT_NAME		       TABLESPACE_NAME
+------------------------------ --------------------
+FOO			       USERS
+SYS_LOB0000094214C00002$$      NEWTBSP
+SYS_LOB0000094209C00006$$      NEWTBSP
+SYS_IOT_TOP_94218	       NEWTBSP
+SYS_IOT_TOP_94212	       NEWTBSP
+SYS_IL0000094214C00002$$       NEWTBSP
+SYS_IL0000094209C00006$$       NEWTBSP
+DRC$FOOINDEX$R		       NEWTBSP
+DR$FOOINDEX$X		       NEWTBSP
+DR$FOOINDEX$R		       NEWTBSP
+DR$FOOINDEX$I		       NEWTBSP
+
+11 rows selected.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> 

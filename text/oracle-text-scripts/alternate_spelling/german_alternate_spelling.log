@@ -1,0 +1,86 @@
+SQL> 
+SQL> drop table altspell;
+
+Tabelle wurde gelöscht.
+
+SQL> 
+SQL> create table altspell (text varchar2(2000));
+
+Tabelle wurde erstellt.
+
+SQL> 
+SQL> insert into altspell values (unistr('Die Katze ist auf der Strasse'));
+
+1 Zeile wurde erstellt.
+
+SQL> insert into altspell values ('Ich liebe Muenchen');
+
+1 Zeile wurde erstellt.
+
+SQL> 
+SQL> select * from altspell;
+
+TEXT                                                                            
+--------------------------------------------------------------------------------
+Die Katze ist auf der Strasse                                                   
+Ich liebe Muenchen                                                              
+
+SQL> 
+SQL> exec ctx_ddl.drop_preference('mylex')
+
+PL/SQL-Prozedur erfolgreich abgeschlossen.
+
+SQL> exec ctx_ddl.create_preference('mylex', 'BASIC_LEXER')
+
+PL/SQL-Prozedur erfolgreich abgeschlossen.
+
+SQL> 
+SQL> exec ctx_ddl.set_attribute('mylex', 'ALTERNATE_SPELLING', 'GERMAN')
+
+PL/SQL-Prozedur erfolgreich abgeschlossen.
+
+SQL> exec ctx_ddl.set_attribute('mylex', 'MIXED_CASE', 'TRUE')
+
+PL/SQL-Prozedur erfolgreich abgeschlossen.
+
+SQL> 
+SQL> create index altspellindex on altspell (text)
+  2  indextype is ctxsys.context
+  3  parameters ('lexer mylex');
+
+Index wurde erstellt.
+
+SQL> 
+SQL> select * from altspell where contains (text, 'Straẞe') > 0;
+
+TEXT                                                                            
+--------------------------------------------------------------------------------
+Die Katze ist auf der Strasse                                                   
+
+SQL> select * from altspell where contains (text, 'München') > 0;
+
+TEXT                                                                            
+--------------------------------------------------------------------------------
+Ich liebe Muenchen                                                              
+
+SQL> 
+SQL> -- check what tokens were indexed
+SQL> select token_text from dr$altspellindex$i;
+
+TOKEN_TEXT                                                                      
+--------------------------------------------------------------------------------
+Die                                                                             
+Ich                                                                             
+Katze                                                                           
+Muenchen                                                                        
+München                                                                         
+Strasse                                                                         
+auf                                                                             
+der                                                                             
+ist                                                                             
+liebe                                                                           
+
+10 Zeilen ausgewählt.
+
+SQL> 
+SQL> spool off

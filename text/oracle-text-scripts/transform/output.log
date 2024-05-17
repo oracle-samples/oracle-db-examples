@@ -1,0 +1,25 @@
+SQL> l
+  1  SELECT
+  2   score(1), text
+  3  FROM foo
+  4  WHERE CONTAINS (text, '
+  5  <query>
+  6    <textquery>{hello world}
+  7      <progression>
+  8        <seq>' || mytransform(:TOKENS, '{', '}', '(', ') INPATH (//level[@value="10"]/item1/name1)', 'ACCUM') || '</seq>
+  9        <seq>' || mytransform(:TOKENS, '{', '}', '(', ') INPATH (//level[@value="99"]/item1/name1)', 'OR') || '</seq>
+ 10        <seq>' || mytransform(:TOKENS, '{', '}', '', '', 'AND') || '</seq>
+ 11      </progression>
+ 12    </textquery>
+ 13  </query>'
+ 14* ,1) > 0 order by score(1) desc
+SQL> /
+
+  SCORE(1) TEXT                                                                 
+---------- ---------------------------------------------------------------------
+        84 <level value="10"><item1><name1>hello world</name1></item1></level>  
+        67 <level value="10"><item1><name1>hello</name1></item1></level>        
+        34 <level value="99"><item1><name1>hello world</name1></item1></level>  
+         1 <level><item1><name1>hello world</name1></item1></level>             
+
+SQL> spool off

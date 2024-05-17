@@ -49,7 +49,7 @@ Files on the current folder:
  * oml4sql-time-series-exponential-smoothing.sql - Time Series - Exponential Smoothing Algorithm
  * oml4sql-time-series-mset.sql - Time Series - MSET Multivariate State Estimation Technique Algorithm
 
-#### Copyright (c) 2021 Oracle Corporation and its affiliates
+#### Copyright (c) 2023 Oracle Corporation and its affiliates
 
 ##### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
 

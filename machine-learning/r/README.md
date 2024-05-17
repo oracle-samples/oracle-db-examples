@@ -7,6 +7,6 @@ That includes an Apache Zeppelin running on a server that can connect to an Orac
 
 The OML4R notebooks can be used with an on-premise Oracle Database and also a Database Cloud Service (with the exception of the Autonomous Database, which runs its own Oracle Machine Learning Notebooks environment for R and Python).
 
-#### Copyright (c) 2022 Oracle Corporation and/or its affilitiates.
+#### Copyright (c) 2023 Oracle Corporation and/or its affilitiates.
 
 ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)

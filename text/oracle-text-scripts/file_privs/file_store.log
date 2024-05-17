@@ -1,0 +1,214 @@
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+f:\Documents\Work\Code\sql\file_privs>sqlplus /nolog
+sqlplus /nolog
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Sep 12 10:18:31 2017
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+SQL> set echo on
+SQL> @file_store_sync_on_commit
+SQL> --
+SQL> -- where the files will be found
+SQL> --
+SQL> define LOCATION = c:\Docs
+SQL> 
+SQL> conn / as sysdba
+Connected.
+SQL> 
+SQL> --
+SQL> -- two users: "dba_text_user" - owns the table and index.
+SQL> -- 	   "normal_user"   - will get basic privs on the table
+SQL> --
+SQL> 
+SQL> exec begin execute immediate 'drop user dba_text_user cascade'; exception when others then null; end;
+
+PL/SQL procedure successfully completed.
+
+SQL> grant dba to dba_text_user identified by dba_text_user;
+
+Grant succeeded.
+
+SQL> exec begin execute immediate 'drop user normal_user cascade'; exception when others then null; end;
+
+PL/SQL procedure successfully completed.
+
+SQL> create user normal_user identified by normal_user;
+create user normal_user identified by normal_user
+            *
+ERROR at line 1:
+ORA-01920: user name 'NORMAL_USER' conflicts with another user or role name
+
+
+SQL> grant create session to normal_user;
+
+Grant succeeded.
+
+SQL> exec begin execute immediate 'drop role CAN_USE_FILESTORE_INDEX'; exception when others then null; end;
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> --
+SQL> -- role: CAN_USE_FILESTORE_INDEX for the file access privs
+SQL> --
+SQL> create role CAN_USE_FILESTORE_INDEX;
+
+Role created.
+
+SQL> exec ctxsys.ctx_adm.set_parameter('FILE_ACCESS_ROLE', 'CAN_USE_FILESTORE_INDEX')
+
+PL/SQL procedure successfully completed.
+
+SQL> grant CAN_USE_FILESTORE_INDEX to dba_text_user;
+
+Grant succeeded.
+
+SQL> 
+SQL> --
+SQL> -- create our preferences, table and index
+SQL> -- preference: TABLE1_FILE_DATASTORE
+SQL> --
+SQL> 
+SQL> conn dba_text_user/dba_text_user
+Connected.
+SQL> 
+SQL> begin
+  2    begin ctx_ddl.drop_preference('TABLE1_FILE_DATASTORE '); exception when others then null; end;
+  3    ctx_ddl.create_preference('TABLE1_FILE_DATASTORE ', 'FILE_DATASTORE');
+  4    ctx_ddl.set_attribute('TABLE1_FILE_DATASTORE ', 'PATH', '&&LOCATION');
+  5  end;
+  6  /
+old   4:   ctx_ddl.set_attribute('TABLE1_FILE_DATASTORE ', 'PATH', '&&LOCATION');
+new   4:   ctx_ddl.set_attribute('TABLE1_FILE_DATASTORE ', 'PATH', 'c:\Docs');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> exec begin execute immediate 'drop table table1 purge'; exception when others then null; end;
+
+PL/SQL procedure successfully completed.
+
+SQL> create table table1(filename varchar2(20));
+
+Table created.
+
+SQL> CREATE INDEX CTX_RR_TABLE1 ON TABLE1 (FILENAME)
+  2  INDEXTYPE IS "CTXSYS"."CONTEXT" PARAMETERS ('datastore TABLE1_FILE_DATASTORE sync (on commit)');
+
+Index created.
+
+SQL> 
+SQL> --
+SQL> -- add a row as index owner, sync on commit works fine
+SQL> --
+SQL> 
+SQL> INSERT INTO TABLE1(FILENAME) VALUES('junk.txt');
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> SELECT FILENAME FROM TABLE1 WHERE CONTAINS(FILENAME, 'junk',1) > 0;
+
+FILENAME
+--------------------
+junk.txt
+
+SQL> 
+SQL> --
+SQL> -- now we'll repeat as a different user
+SQL> --
+SQL> 
+SQL> grant select, insert, update, delete on table1 to normal_user;
+
+Grant succeeded.
+
+SQL> 
+SQL> conn normal_user/normal_user
+Connected.
+SQL> 
+SQL> --
+SQL> -- query to existing rows works fine
+SQL> --
+SQL> 
+SQL> SELECT FILENAME FROM dba_text_user.TABLE1 WHERE CONTAINS(FILENAME, 'junk',1) > 0;
+
+FILENAME
+--------------------
+junk.txt
+
+SQL> 
+SQL> --
+SQL> -- but new rows are not added to index
+SQL> --
+SQL> 
+SQL> INSERT INTO dba_text_user.TABLE1(FILENAME) VALUES('connor.txt');
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT FILENAME FROM dba_text_user.TABLE1 WHERE CONTAINS(FILENAME, 'connor',1) > 0;
+
+FILENAME
+--------------------
+connor.txt
+
+SQL> 
+SQL> --
+SQL> -- I have to issue an explicit sync to see them
+SQL> --
+SQL> 
+SQL> conn dba_text_user/dba_text_user
+Connected.
+SQL> SELECT FILENAME FROM dba_text_user.TABLE1 WHERE CONTAINS(FILENAME, 'connor',1) > 0;
+
+FILENAME
+--------------------
+connor.txt
+
+SQL> exec ctx_ddl.sync_index('CTX_RR_TABLE1')
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT FILENAME FROM dba_text_user.TABLE1 WHERE CONTAINS(FILENAME, 'connor',1) > 0;
+
+FILENAME
+--------------------
+connor.txt
+
+SQL> 
+SQL> --
+SQL> -- I thought it might be the file access role being needed...but it wasnt
+SQL> --
+SQL> 
+SQL> -- grant CAN_USE_FILESTORE_INDEX to normal_user;
+SQL> 
+SQL> conn normal_user/normal_user
+Connected.
+SQL> 
+SQL> INSERT INTO dba_text_user.TABLE1(FILENAME) VALUES('oracle.txt');
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> SELECT FILENAME FROM dba_text_user.TABLE1 WHERE CONTAINS(FILENAME, 'oracle',1) > 0;
+
+FILENAME
+--------------------
+oracle.txt
+
+SQL> 
+SQL> 

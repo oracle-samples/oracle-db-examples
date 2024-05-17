@@ -1,0 +1,63 @@
+SQL> 
+SQL> drop user user2 cascade;
+
+User dropped.
+
+SQL> create user user2 identified by user2 default tablespace users temporary tablespace temp quota unlimited on users;
+
+User created.
+
+SQL> grant connect,resource to user2;
+
+Grant succeeded.
+
+SQL> BEGIN
+  2  	     CTX_DDL.CREATE_PREFERENCE ('USER2.NO_ACCENT_LEXER', 'BASIC_LEXER');
+  3  	     CTX_DDL.SET_ATTRIBUTE ('USER2.NO_ACCENT_LEXER', 'base_letter', 'YES');
+  4  END;
+  5  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> connect user2/user2
+Connected.
+SQL> create table TEST(a number,b varchar2(100));
+
+Table created.
+
+SQL> insert into TEST(a,b) values (1,'Stephane');
+
+1 row created.
+
+SQL> insert into TEST(a,b) values (2,'Stéphane');
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> column B format a40
+SQL> select * from test;
+
+         A B                                                                    
+---------- ----------------------------------------                             
+         1 Stephane                                                             
+         2 Stéphane                                                             
+
+SQL> 
+SQL> CREATE INDEX USER2.IT_TEST on USER2.TEST(b) INDEXTYPE IS CTXSYS.CONTEXT PARAMETERS('STOPLIST CTXSYS.EMPTY_STOPLIST SYNC(ON COMMIT) LEXER NO_ACCENT_LEXER TRANSACTIONAL');
+
+Index created.
+
+SQL> 
+SQL> select * from user2.TEST where contains(b,'STEPHANE')>0;
+
+         A B                                                                    
+---------- ----------------------------------------                             
+         1 Stephane                                                             
+         2 Stéphane                                                             
+
+SQL> spool off

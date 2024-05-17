@@ -1,0 +1,40 @@
+name: Cleanup feature branch deletion
+
+on:
+  delete:
+    branches: 
+      - 'feature/**'
+jobs:
+  cleanup:
+    name: Cleanup Resources on OKE
+    runs-on: ubuntu-latest
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      BRANCH_REF: ${{ github.event.ref }}
+
+    steps:
+      # checkout
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Retrieve DBName
+        id: getname
+        run: echo "idname=$(python scripts/run_util.py id "$BRANCH_REF")" >> "$GITHUB_OUTPUT"
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Configure Kubectl
+        uses: oracle-actions/configure-kubectl-oke@v1.3.2
+        id: configure-kubectl-oke-action
+        with:
+          cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+
+      # Run Kubectl commands to delete adb and namespace
+      - name: Delete resources
+        run: |-
+          kubectl delete singleinstancedatabase db-${{ steps.getname.outputs.idname }} -n feature-${{ steps.getname.outputs.idname }}
+          kubectl delete namespace feature-${{ steps.getname.outputs.idname }}
+          
