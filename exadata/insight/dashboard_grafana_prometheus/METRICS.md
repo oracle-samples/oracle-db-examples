@@ -5,9 +5,11 @@
 #
 # $ COMPUTE_METRICS=$(grep "^compute" METRICS.md |awk -F"|" ' { printf $NF"," }' |sed 's/.$//')
 # $ dbmcli -e "alter metricdefinition ${COMPUTE_METRICS} finegrained=enabled
+# $ dbmcli -e "alter metricdefinition ${COMPUTE_METRICS} streaming=enabled
 #
 # $ STORAGE_METRICS=$(grep "^storage" METRICS.md |awk -F"|" ' { printf $NF"," }' |sed 's/.$//')
 # $ cellcli -e "alter metricdefinition ${STORAGE_METRICS} finegrained=enabled
+# $ cellcli -e "alter metricdefinition ${STORAGE_METRICS} streaming=enabled
 
 #CellDisk.json
 storage|CD_IO_BY_R_LG_SEC
@@ -29,11 +31,19 @@ storage|CD_IO_TM_W_SM_RQ
 compute|DS_CPUT
 compute|DS_MEMUT
 compute|DS_MEMUT_MS
-compute|EXW_RDS_PING_0
 compute|N_IB_MB_RCV_SEC
 compute|N_IB_MB_TRANS_SEC
 compute|OS_NET_RX_BY_SEC
 compute|OS_NET_TX_BY_SEC
+compute|EXW_ROCE_TX_BY_SEC
+compute|EXW_ROCE_TX_BY_SEC
+compute|OS_IO_RQ_R_SEC
+compute|OS_IO_RQ_W_SEC
+compute|OS_IO_BY_R_SEC
+compute|OS_IO_BY_W_SEC
+compute|OS_IO_UTIL_PCT
+compute|OS_IO_WT_R_RQ
+compute|OS_IO_WT_W_RQ
 
 #ExadataCluster.json
 compute|DS_CPUT
@@ -65,7 +75,7 @@ storage|FC_BY_ALLOCATED
 storage|FC_BY_ALLOCATED_OLTP
 storage|FC_COL_BY_USED
 storage|FC_COL_IO_BY_R_ELIGIBLE_SEC
-storage|FC_COL_IO_RQ_R_SEC
+storage|FC_COL_IO_BY_R_SEC
 storage|FC_IO_BY_R_DISK_WRITER_SEC
 storage|FC_IO_BY_R_DW_SEC
 storage|FC_IO_BY_R_MISS_DW_SEC
@@ -90,15 +100,51 @@ storage|FC_IO_RQ_W_METADATA_SEC
 storage|FC_IO_RQ_W_OVERWRITE_SEC
 storage|FC_IO_RQ_W_POPULATE_SEC
 storage|FC_IO_RQ_W_SEC
+storage|FC_IO_RQ_W_SKIP_SEC
+
+#IORMDatabase.json
+storage|DB_CF_IO_RQ_LG_SEC
+storage|DB_CF_IO_RQ_LG_SEC
+storage|DB_CF_IO_RQ_SM_SEC
+storage|DB_CF_IO_RQ_SM_SEC
+storage|DB_CF_IO_TM_LG_RQ
+storage|DB_CF_IO_TM_SM_RQ
+storage|DB_CF_IO_WT_LG_RQ
+storage|DB_CF_IO_WT_SM_RQ
+storage|DB_FC_BY_ALLOCATED
+storage|DB_FD_IO_RQ_LG_SEC
+storage|DB_FD_IO_RQ_LG_SEC
+storage|DB_FD_IO_RQ_SM_SEC
+storage|DB_FD_IO_RQ_SM_SEC
+storage|DB_FD_IO_TM_LG_RQ
+storage|DB_FD_IO_TM_SM_RQ
+storage|DB_FD_IO_WT_LG_RQ
+storage|DB_FD_IO_WT_SM_RQ
+storage|DB_IO_RQ_LG_SEC
+storage|DB_IO_RQ_LG_SEC
+storage|DB_IO_RQ_SM_SEC
+storage|DB_IO_RQ_SM_SEC
+storage|DB_IO_TM_LG_RQ
+storage|DB_IO_TM_SM_RQ
+storage|DB_IO_WT_LG_RQ
+storage|DB_IO_WT_SM_RQ
 
 #Network.json
 compute|EXW_RDS_CONG_SEND_BLOCKED
 compute|EXW_RDS_CONG_SEND_ERROR
+compute|EXW_RDS_CONN_RESET
 compute|EXW_RDS_IB_MR_1M_POOL_DEPLETED
 compute|EXW_RDS_IB_RDMA_MR_8K_POOL_DEPLETED
 compute|EXW_RDS_IB_TX_STALLED
 compute|EXW_ROCE_LOCAL_ACK_TIMEOUT_ERR
+compute|EXW_ROCE_NP_CNP_SENT
+compute|EXW_ROCE_NP_ECN_MARKED_ROCE_PACKETS
+compute|EXW_ROCE_PAUSE
 compute|EXW_ROCE_RNR_NAK_RETRY_ERR
+compute|EXW_ROCE_RP_CNP_HANDLED
+compute|EXW_ROCE_RP_CNP_IGNORED
+compute|EXW_ROCE_RX_BY_SEC
+compute|EXW_ROCE_TX_BY_SEC
 compute|N_IB_MB_RCV_SEC
 compute|N_IB_MB_TRANS_SEC
 storage|EXW_RDS_CONG_SEND_BLOCKED
@@ -107,8 +153,12 @@ storage|EXW_RDS_IB_MR_1M_POOL_DEPLETED
 storage|EXW_RDS_IB_RDMA_MR_8K_POOL_DEPLETED
 storage|EXW_RDS_IB_TX_STALLED
 storage|EXW_ROCE_LOCAL_ACK_TIMEOUT_ERR
+storage|EXW_ROCE_NP_CNP_SENT
+storage|EXW_ROCE_NP_ECN_MARKED_ROCE_PACKETS
 storage|EXW_ROCE_PAUSE
 storage|EXW_ROCE_RNR_NAK_RETRY_ERR
+storage|EXW_ROCE_RP_CNP_HANDLED
+storage|EXW_ROCE_RP_CNP_IGNORED
 storage|EXW_ROCE_RX_BY_SEC
 storage|EXW_ROCE_TX_BY_SEC
 storage|N_IB_MB_RCV_SEC
@@ -125,9 +175,12 @@ storage|EXW_CELLMEM_OS_AVAIL_PCT
 storage|EXW_CELLMEM_OS_KNL
 storage|EXW_CELLMEM_OS_TOTAL
 storage|EXW_CELLMEM_OS_USR
+storage|EXW_CELLMEM_OTHER_SERV
 storage|FC_COL_IO_BY_R_ELIGIBLE_SEC
 storage|FC_COL_IO_BY_R_SEC
 storage|FC_COL_IO_BY_SAVED_SEC
+storage|SIO_BG_CPU_SEC
+storage|SIO_FG_CPU_SEC
 storage|SIO_IO_EL_OF_SEC
 storage|SIO_IO_OF_RE_SEC
 storage|SIO_IO_PA_TH_SEC
@@ -151,6 +204,12 @@ storage|CD_IO_TM_R_SM_RQ
 storage|CD_IO_TM_W_LG_RQ
 storage|CD_IO_TM_W_SM_RQ
 storage|CL_CPUT
+storage|DB_CF_IO_WT_LG_RQ
+storage|DB_CF_IO_WT_SM_RQ
+storage|DB_FD_IO_WT_LG_RQ
+storage|DB_FD_IO_WT_SM_RQ
+storage|DB_IO_WT_LG_RQ
+storage|DB_IO_WT_SM_RQ
 storage|EXW_CELLMEM_CELL_AVAIL_PCT
 storage|EXW_CELLMEM_CELL_CELLSRV
 storage|EXW_CELLMEM_CELL_KNL
@@ -159,6 +218,7 @@ storage|EXW_CELLMEM_OS_AVAIL_PCT
 storage|EXW_CELLMEM_OS_KNL
 storage|EXW_CELLMEM_OS_TOTAL
 storage|EXW_CELLMEM_OS_USR
+storage|EXW_CELLMEM_OTHER_SERV
 storage|EXW_ROCE_RX_BY_SEC
 storage|EXW_ROCE_TX_BY_SEC
 storage|FC_COL_IO_BY_R_ELIGIBLE_SEC
