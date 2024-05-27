@@ -25,6 +25,12 @@
     },
     {
       "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
       "version": ""
@@ -52,6 +58,7 @@
       }
     ]
   },
+  "description": "IO Statistics",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -73,161 +80,29 @@
   "liveNow": false,
   "panels": [
     {
-      "collapsed": true,
       "datasource": {
         "type": "prometheus",
-        "uid": "oe75iKL7k"
+        "uid": "${DS_PROMETHEUS}"
       },
       "gridPos": {
-        "h": 1,
-        "w": 24,
+        "h": 2,
+        "w": 15,
         "x": 0,
         "y": 0
       },
-      "id": 12,
-      "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "description": "EXAREL: Flash Cache space utilization",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "mbytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 24,
-            "x": 0,
-            "y": 1
-          },
-          "id": 2,
-          "options": {
-            "legend": {
-              "calcs": ["min", "max", "mean", "last"],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_BY_ALLOCATED{server=~\"$server\"}",
-              "interval": "",
-              "legendFormat": "Allocated-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_BY_ALLOCATED_OLTP{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "OLTP-{{server}}",
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_COL_BY_USED{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "CC-{{server}}",
-              "refId": "C"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_BYKEEP_OLTP{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "KEEP-{{server}}",
-              "refId": "D"
-            }
-          ],
-          "title": "Space Utilization",
-          "type": "timeseries"
-        }
-      ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "oe75iKL7k"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "Space Uitlization",
-      "type": "row"
+      "id": 63,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "The diskType is based on the diskName (sd.* and nvme.*).  For systems prior to X-5, the flash devices will be incorrectly categorized as 'disk'.\n\nSimilarly, for X10M-EF, all devices will be 'flash'\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.0.2",
+      "title": "Note",
+      "type": "text"
     },
     {
       "collapsed": true,
@@ -239,16 +114,15 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 2
       },
-      "id": 14,
+      "id": 4,
       "panels": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "EXAREL: Flash Cache Hit percentage",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -285,7 +159,6 @@
                 }
               },
               "mappings": [],
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -299,22 +172,22 @@
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "reqps"
             },
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
-            "w": 24,
+            "h": 9,
+            "w": 12,
             "x": 0,
-            "y": 2
+            "y": 3
           },
-          "id": 24,
+          "id": 29,
           "options": {
             "legend": {
               "calcs": ["min", "max", "mean", "last"],
               "displayMode": "table",
-              "placement": "right",
+              "placement": "bottom",
               "showLegend": true
             },
             "tooltip": {
@@ -329,46 +202,15 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "editorMode": "code",
               "exemplar": true,
-              "expr": "100*FC_IO_RQ_R_SEC{server=~\"$server\"}/(FC_IO_RQ_R_SEC{server=~\"$server\"}+FC_IO_RQ_R_MISS_SEC{server=~\"$server\"}) > 0",
+              "expr": "sum by (objectName,server) ({__name__ =~\"OS_IO_RQ_R_SEC|OS_IO_RQ_W_SEC\", server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"})",
               "interval": "",
-              "legendFormat": "%OLTP Hit-{{server}}",
-              "range": true,
+              "legendFormat": "{{objectName}}-{{server}}",
               "refId": "A",
               "withStreaming": false
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "100*FC_IO_RQ_R_DW_SEC{server=~\"$server\"}/(FC_IO_RQ_R_DW_SEC{server=~\"$server\"}+FC_IO_RQ_R_MISS_DW_SEC{server=\"$server\"}) > 0",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "%Scan Hit-{{server}}",
-              "range": true,
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "100*FC_COL_IO_BY_R_SEC{server=~\"$server\"}/FC_COL_IO_BY_R_ELIGIBLE_SEC{server=~\"$server\"} > 0",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "%CC Hit-{{server}}",
-              "range": true,
-              "refId": "C"
             }
           ],
-          "title": "Flash Cache Hit%",
-          "transformations": [],
+          "title": "IOPs",
           "type": "timeseries"
         },
         {
@@ -376,7 +218,101 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "EXAREL: Flash cache user read requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "MiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 3
+          },
+          "id": 30,
+          "options": {
+            "legend": {
+              "calcs": ["min", "max", "mean", "last"],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "sum by (objectName,server) ({__name__ =~\"OS_IO_BY_R_SEC|OS_IO_BY_W_SEC\", server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"})",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            }
+          ],
+          "title": "MiB/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -431,12 +367,12 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 6,
             "x": 0,
-            "y": 10
+            "y": 12
           },
-          "id": 4,
+          "id": 2,
           "options": {
             "legend": {
               "calcs": ["min", "max", "mean", "last"],
@@ -451,66 +387,20 @@
           },
           "targets": [
             {
+              "constant": 6.5,
               "datasource": {
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
               "exemplar": true,
-              "expr": "FC_IO_RQ_R_SEC{server=~\"$server\"}",
+              "expr": "OS_IO_RQ_R_SEC{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
               "interval": "",
-              "legendFormat": "OLTP Hits-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_R_MISS_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "OLTP Misses-{{server}}",
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_R_SKIP_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Skips-{{server}}",
-              "refId": "C"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_R_DW_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Scan Hits-{{server}}",
-              "refId": "D"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_R_MISS_DW_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Scan Misses-{{server}}",
-              "refId": "E"
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
             }
           ],
-          "title": "Flash Cache User Read Requests",
+          "title": "r/s",
           "type": "timeseries"
         },
         {
@@ -518,7 +408,6 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "EXAREL: Flash Cache user write requests",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -573,141 +462,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 6,
             "x": 6,
-            "y": 10
-          },
-          "id": 6,
-          "options": {
-            "legend": {
-              "calcs": ["min", "max", "mean", "last"],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_W_SEC{server=~\"$server\"}",
-              "interval": "",
-              "legendFormat": "Writes-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_W_FIRST_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "First Writes-{{server}}",
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_W_OVERWRITE_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Overwrites-{{$server}}",
-              "refId": "C"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "expr": "FC_IO_RQ_W_SKIP_SEC{server=~\"$server\"}",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "Skips-{{server}}",
-              "range": true,
-              "refId": "D"
-            }
-          ],
-          "title": "Flash Cache User Write Requests",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "description": "EXAREL: Flash Cache disk writer IO requests",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "reqps"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 6,
-            "x": 12,
-            "y": 10
+            "y": 12
           },
           "id": 10,
           "options": {
@@ -724,30 +482,20 @@
           },
           "targets": [
             {
+              "constant": 6.5,
               "datasource": {
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
               "exemplar": true,
-              "expr": "FC_IO_RQ_W_DISK_WRITER_SEC{server=~\"$server\"}",
+              "expr": "OS_IO_RQ_W_SEC{server=~\"$server\",objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
               "interval": "",
-              "legendFormat": "Writes-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_R_DISK_WRITER_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Reads-{{server}}",
-              "refId": "B"
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
             }
           ],
-          "title": "Flash Cache Disk Writer Requests",
+          "title": "w/s",
           "type": "timeseries"
         },
         {
@@ -755,7 +503,6 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "EXAREL: Flash Cache internal write requests",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -805,397 +552,17 @@
                   }
                 ]
               },
-              "unit": "reqps"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 6,
-            "x": 18,
-            "y": 10
-          },
-          "id": 8,
-          "options": {
-            "legend": {
-              "calcs": ["min", "max", "mean", "last"],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_W_POPULATE_SEC{server=~\"$server\"}",
-              "interval": "",
-              "legendFormat": "Population-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_RQ_W_METADATA_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Metadata-{{server}}",
-              "refId": "B"
-            }
-          ],
-          "title": "Flash Cache Internal Write Requests",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "description": "EXAREL: Flash Cache user read MiB/s",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
               "unit": "MiBs"
             },
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
-            "w": 6,
-            "x": 0,
-            "y": 18
-          },
-          "id": 16,
-          "options": {
-            "legend": {
-              "calcs": ["min", "max", "mean", "last"],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_BY_R_SEC{server=~\"$server\"}",
-              "interval": "",
-              "legendFormat": "OLTP Hits-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_BY_R_MISS_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "OLTP Misses-{{server}}",
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_BY_R_DW_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Scan Hits-{{server}}",
-              "refId": "C"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_BY_R_MISS_DW_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Scan Misses-{{server}}",
-              "refId": "D"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_BY_R_SKIP_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Skips-{{server}}",
-              "refId": "E"
-            }
-          ],
-          "title": "Flash Cache User Read MiB/s",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "description": "EXAREL: Flash Cache user write MiB/s",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "MiBs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 6,
-            "x": 6,
-            "y": 18
-          },
-          "id": 18,
-          "options": {
-            "legend": {
-              "calcs": ["min", "max", "mean", "last"],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_BY_W_SEC{server=~\"$server\"}",
-              "interval": "",
-              "legendFormat": "Writes-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "FC_IO_BY_W_FIRST_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "First Writes-{{server}}",
-              "range": true,
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "FC_IO_BY_W_OVERWRITE_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Overwrites-{{server}}",
-              "range": true,
-              "refId": "C"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "expr": "FC_IO_BY_W_SKIP_SEC{server=~\"$server\"}",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "Skips-{{server}}",
-              "range": true,
-              "refId": "D"
-            }
-          ],
-          "title": "Flash Cache User Writes MiB/s",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "description": "EXAREL: Flash Cache disk writer IO MiB/s",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "MiBs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 6,
             "x": 12,
-            "y": 18
+            "y": 12
           },
-          "id": 20,
+          "id": 12,
           "options": {
             "legend": {
               "calcs": ["min", "max", "mean", "last"],
@@ -1210,30 +577,20 @@
           },
           "targets": [
             {
+              "constant": 6.5,
               "datasource": {
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
               "exemplar": true,
-              "expr": "FC_IO_BY_W_DISK_WRITER_SEC{server=~\"$server\"}",
+              "expr": "OS_IO_BY_R_SEC{server=~\"$server\",objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
               "interval": "",
-              "legendFormat": "Writes-{{server}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": true,
-              "expr": "FC_IO_BY_R_DISK_WRITER_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Reads-{{server}}",
-              "refId": "B"
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
             }
           ],
-          "title": "Flash Cache Disk Writer MiB/s",
+          "title": "Read MiB/s",
           "type": "timeseries"
         },
         {
@@ -1241,7 +598,199 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "EXAREL: Flash Cache internal write MiB/s",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "MiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 12
+          },
+          "id": 14,
+          "options": {
+            "legend": {
+              "calcs": ["min", "max", "mean", "last"],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "OS_IO_BY_W_SEC{server=~\"$server\",objectName=~\"${diskType}.*\",objectName=~\"$diskName\"}",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            }
+          ],
+          "title": "Write MiB/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "dashed+area"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 60
+                  },
+                  {
+                    "color": "red",
+                    "value": 90
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 21
+          },
+          "id": 52,
+          "options": {
+            "legend": {
+              "calcs": ["min", "max", "mean", "last"],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "OS_IO_UTIL_PCT{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            }
+          ],
+          "title": "Utilization",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1290,17 +839,297 @@
                   }
                 ]
               },
-              "unit": "MiBs"
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 21
+          },
+          "id": 31,
+          "options": {
+            "legend": {
+              "calcs": ["min", "max", "mean", "last"],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "OS_IO_WT_R_RQ{server=~\"$server\",objectName=~\"${diskType}.*\",objectName=~\"$diskName\"}",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            }
+          ],
+          "title": "r_await",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 21
+          },
+          "id": 32,
+          "options": {
+            "legend": {
+              "calcs": ["min", "max", "mean", "last"],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "OS_IO_WT_W_RQ{server=~\"$server\",objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            }
+          ],
+          "title": "w_await",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
             },
             "overrides": []
           },
           "gridPos": {
             "h": 8,
-            "w": 6,
-            "x": 18,
-            "y": 18
+            "w": 12,
+            "x": 0,
+            "y": 30
           },
-          "id": 22,
+          "id": 76,
+          "options": {
+            "legend": {
+              "calcs": ["min", "max", "mean", "last"],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "expr": "OS_IO_AQU_SZ{server=~\"$server\",objectName=~\"${diskType}.*\",objectName=~\"$diskName\"}",
+              "instant": false,
+              "legendFormat": "{{objectName}}-{{server}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "aqu-sz",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "kbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 30
+          },
+          "id": 74,
           "options": {
             "legend": {
               "calcs": ["min", "max", "mean", "last"],
@@ -1319,29 +1148,112 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "exemplar": true,
-              "expr": "FC_IO_BY_W_POPULATE_SEC{server=~\"$server\"}",
-              "interval": "",
-              "legendFormat": "Population-{{server}}",
+              "editorMode": "code",
+              "expr": "OS_IO_RQ_R_SZ{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "instant": false,
+              "legendFormat": "{{objectName}}-{{server}}",
+              "range": true,
               "refId": "A"
+            }
+          ],
+          "title": "rareq-sz",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "kbytes"
             },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 30
+          },
+          "id": 75,
+          "options": {
+            "legend": {
+              "calcs": ["min", "max", "mean", "last"],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
             {
               "datasource": {
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "exemplar": true,
-              "expr": "FC_IO_BY_W_METADATA_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Metadata-{{server}}",
-              "refId": "B"
+              "editorMode": "code",
+              "expr": "OS_IO_RQ_W_SZ{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "instant": false,
+              "legendFormat": "{{objectName}}-{{server}}",
+              "range": true,
+              "refId": "A"
             }
           ],
-          "title": "Flash Cache Internal Write MiB/s",
+          "title": "wareq-sz",
           "type": "timeseries"
         }
       ],
+      "repeat": "diskType",
       "targets": [
         {
           "datasource": {
@@ -1351,14 +1263,14 @@
           "refId": "A"
         }
       ],
-      "title": "Flash Cache IO Activity",
+      "title": "$diskType",
       "type": "row"
     }
   ],
   "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["flashcache", "exadata", "storage", "prometheus"],
+  "tags": ["iostat", "exadata", "storage", "prometheus"],
   "templating": {
     "list": [
       {
@@ -1450,6 +1362,50 @@
         "type": "query"
       },
       {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "query_result(label_replace(label_replace({__name__=~\"OS_IO_RQ_R_SEC|OS_IO_W_R_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\"},\"diskType\",\"${1}\",\"objectName\",\"(.*):.*\"),\"diskType\",\"$1\",\"objectName\",\"([a-z][a-z])[^:]*\"))",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "diskType",
+        "options": [],
+        "query": {
+          "query": "query_result(label_replace(label_replace({__name__=~\"OS_IO_RQ_R_SEC|OS_IO_W_R_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\"},\"diskType\",\"${1}\",\"objectName\",\"(.*):.*\"),\"diskType\",\"$1\",\"objectName\",\"([a-z][a-z])[^:]*\"))",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*[\\W|,]diskType=\"([^:\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 2,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "{__name__ =~ \"OS_IO_RQ_R_SEC|OS_IO_RQ_R_W_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\",objectName=~\"$diskType.*\"}",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "diskName",
+        "options": [],
+        "query": {
+          "query": "{__name__ =~ \"OS_IO_RQ_R_SEC|OS_IO_RQ_R_W_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\",objectName=~\"$diskType.*\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*[\\W|,]objectName=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
         "current": {
           "selected": false,
           "text": "Prometheus",
@@ -1474,8 +1430,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Flash Cache",
-  "uid": "exapFC",
-  "version": 24,
+  "title": "IO Statistics",
+  "uid": "exapIO",
+  "version": 22,
   "weekStart": ""
 }
