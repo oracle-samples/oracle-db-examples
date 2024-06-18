@@ -46,11 +46,7 @@ public class QueryWithBooleanDataTypeColumn {
 
 			conn = ods.getConnection();
 
-			/*
-			 * CREATE TABLE HQ_EMPLOYEE ( "EMP_ID" NUMBER NOT NULL ENABLE, "NAME"
-			 * VARCHAR2(20 BYTE) DEFAULT NULL, "ROLE" VARCHAR2(20 BYTE) DEFAULT NULL,
-			 * "ACTIVE" BOOLEAN DEFAULT NULL, PRIMARY KEY ("EMP_ID") );
-			 */
+			// please check hq_employee.sql under the /sql directory
 			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");
 
 			ResultSet rslt = stmt.executeQuery();
