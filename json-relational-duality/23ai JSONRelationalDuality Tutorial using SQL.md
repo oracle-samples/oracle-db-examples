@@ -35,8 +35,8 @@
   Duality Views using Oracle Database API for MongoDB) tutorials.
 
 ## ADDITIONAL RESOURCE:
-   [JSON Relational Duality: The Revolutionary Unification of Document, Object, and Relational Models](https://blogs.oracle.com/database/post/json-relational-duality-app-dev)
-  [Oracle CloudWorld 2022 keynote] (https://www.youtube.com/watch?v=e8-jBkO1NqY&t=17s)
+  *[JSON Relational Duality: The Revolutionary Unification of Document, Object, and Relational Models](https://blogs.oracle.com/database/post/json-relational-duality-app-dev)
+  *[Oracle CloudWorld 2022 keynote](https://www.youtube.com/watch?v=e8-jBkO1NqY&t=17s)
 
 ## RUNNING THE TUTORIAL
 
