@@ -66,9 +66,7 @@
 ## DOCUMENTATION
   (https://docs.oracle.com/en/database/oracle/oracle-database/23/jsnvu/index.html)
   to learn more about duality views and their advantages.
-  This tutorial is analogous to the REST (Working with JSON Relational
-  Duality Views using REST) and MongoAPI (Working with JSON Relational
-  Duality Views using Oracle Database API for MongoDB) tutorials.
+
 
 ## ADDITIONAL RESOURCE:
   1. [JSON Relational Duality: The Revolutionary Unification of Document, Object, and Relational Models](https://blogs.oracle.com/database/post/json-relational-duality-app-dev)
