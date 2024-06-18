@@ -1,77 +1,50 @@
-/*
-** Copyright (c) 2023, 2024 Oracle and/or its affiliates
-** The Universal Permissive License (UPL), Version 1.0
-**
-** Subject to the condition set forth below, permission is hereby granted to any
-** person obtaining a copy of this software, associated documentation and/or data
-** (collectively the "Software"), free of charge and under any and all copyright
-** rights in the Software, and any and all patent rights owned or freely
-** licensable by each licensor hereunder covering either (i) the unmodified
-** Software as contributed to or provided by such licensor, or (ii) the Larger
-** Works (as defined below), to deal in both
-**
-** (a) the Software, and
-** (b) any piece of software and/or hardware listed in the lrgrwrks.txt file if
-** one is included with the Software (each a "Larger Work" to which the Software
-** is contributed by such licensors),
-**
-** without restriction, including without limitation the rights to copy, create
-** derivative works of, display, perform, and distribute the Software and make,
-** use, sell, offer for sale, import, export, have made, and have sold the
-** Software and the Larger Work(s), and to sublicense the foregoing rights on
-** either these or other terms.
-**
-** This license is subject to the following condition:
-** The above copyright notice and either this complete permission notice or at
-** a minimum a reference to the UPL must be included in all copies or
-** substantial portions of the Software.
-**
-** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-** AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-** OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-** SOFTWARE.
-*/
+#  Working with JSON Relational Duality Views using SQL.
 
---    TITLE
---      Working with JSON Relational Duality Views using SQL.
---
---    DESCRIPTION
---      This tutorial script walks you through examples of working with
---      JSON Relational Duality Views using Formula-1 (auto-racing) season data
---      through SQL.
---
---    PREREQUISITES
---      Ensure that you have Oracle database 23c installed and running on a
---      port. Ensure that the compatible parameter is set to 23.0.0.0.
---
---    USAGE
---      Connect to the database as a regular (non-SYS) user and run this
---      script. The user must have create session and resource privileges.
---      A demo user (janus) can be created using this statement:
---       GRANT CTXAPP, CONNECT, RESOURCE, UNLIMITED TABLESPACE, CREATE ANY
---         DIRECTORY, DROP ANY DIRECTORY, DBA TO janus IDENTIFIED BY janus;
---
---    NOTES
---      Oracle Database 23c Free - Developer Release is the first release of
---      the next-generation Oracle Database, allowing developers a head-start
---      on building applications with innovative 23c features that simplify
---      development of modern data-driven apps. The entire feature set of
---      Oracle Database 23c is planned to be generally available within the
---      next 12 months.
---
---      Please go through the duality view documentation
---      (https://docs.oracle.com/en/database/oracle/oracle-database/23/jsnvu/index.html)
---      to learn more about duality views and their advantages.
---      This tutorial is analogous to the REST (Working with JSON Relational
---      Duality Views using REST) and MongoAPI (Working with JSON Relational
---      Duality Views using Oracle Database API for MongoDB) tutorials.
---      Additional resources:
---      Duality Views blog (posted October 2022): https://blogs.oracle.com/database/post/json-relational-duality-app-dev?source=:so:ch:or:awr::::OCW23cbeta
---      Oracle CloudWorld 2022 keynote - https://www.youtube.com/watch?v=e8-jBkO1NqY&t=17s
+## DESCRIPTION
+  This tutorial script walks you through examples of working with
+  **JSON Relational Duality Views** using Formula-1 (auto-racing) season data
+  through SQL.
 
+## PREREQUISITES
+  Ensure that you have Oracle database 23c installed and running on a
+  port. Ensure that the compatible parameter is set to `23.0.0.0.`
+
+## USAGE
+  Connect to the database as a regular (non-SYS) user and run this
+  script. The user must have `create session` and `resource` privileges.
+  A demo user (janus) can be created using this statement:
+  
+  ```sql
+  GRANT CTXAPP, CONNECT, RESOURCE, UNLIMITED TABLESPACE, CREATE ANY
+     DIRECTORY, DROP ANY DIRECTORY, DBA TO janus IDENTIFIED BY janus;
+  ```
+
+## NOTES
+  Oracle Database 23c Free - Developer Release is the first release of
+  the next-generation Oracle Database, allowing developers a head-start
+  on building applications with innovative 23c features that simplify
+  development of modern data-driven apps. The entire feature set of
+  Oracle Database 23c is planned to be generally available within the
+  next 12 months.
+
+## DOCUMENTATION
+  (https://docs.oracle.com/en/database/oracle/oracle-database/23/jsnvu/index.html)
+  to learn more about duality views and their advantages.
+  This tutorial is analogous to the REST (Working with JSON Relational
+  Duality Views using REST) and MongoAPI (Working with JSON Relational
+  Duality Views using Oracle Database API for MongoDB) tutorials.
+
+## ADDITIONAL RESOURCE:
+  Duality Views blog (posted October 2022): https://blogs.oracle.com/database/post/json-relational-duality-app-dev?source=:so:ch:or:awr::::OCW23cbeta
+  Oracle CloudWorld 2022 keynote - https://www.youtube.com/watch?v=e8-jBkO1NqY&t=17s
+
+## RUNNING THE TUTORIAL
+
+### Step 0
+
+Do cleanup for previous run (if any).
+
+```sql  
 SET ECHO ON
 SET FEEDBACK 1
 SET NUMWIDTH 10
@@ -80,6 +53,7 @@ SET TRIMSPOOL ON
 SET TAB OFF
 SET PAGESIZE 100
 SET LONG 20000
+
 
 prompt
 prompt ** Working with JSON Relational Duality Views using SQL **
@@ -94,7 +68,12 @@ drop table if exists driver_race_map;
 drop table if exists race;
 drop table if exists driver;
 drop table if exists team;
+```
+### Step 1
 
+Create JSON Relational Duality Views
+
+```sql  
 
 --------------------------------------------------
 -- Step 1: Create JSON Relational Duality Views --
@@ -317,6 +296,10 @@ CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW team_dv AS
   };
 */
 
+```
+### Step 2: List all documents in a duality view
+
+```sql  
 
 --------------------------------------------------
 -- Step 2: List all documents in a duality view --
@@ -326,6 +309,10 @@ SELECT json_serialize(data PRETTY) FROM driver_dv;
 SELECT json_serialize(data PRETTY) FROM race_dv;
 SELECT json_serialize(data PRETTY) FROM team_dv;
 
+```
+### Step 3: Populate the duality views
+
+```sql  
 
 ----------------------------------------
 -- Step 3: Populate the duality views --
@@ -388,7 +375,10 @@ INSERT INTO race_dv VALUES ('{"_id"    : 203,
 
 COMMIT;
 
+```
+### Step 4: See the effects of populating a duality view
 
+```sql  
 ----------------------------------------------------------
 -- Step 4: See the effects of populating a duality view --
 ----------------------------------------------------------
@@ -404,6 +394,10 @@ COMMIT;
 SELECT json_serialize(data PRETTY) FROM driver_dv;
 SELECT json_serialize(data PRETTY) FROM race_dv;
 
+```
+### Step 5: Find documents matching a filter (predicate) with optional projection of fields and sorting
+
+```sql
 
 ----------------------------------------------------------
 -- Step 5: Find documents matching a filter (predicate) --
@@ -433,6 +427,10 @@ SELECT json_serialize(json_transform(data, KEEP '$.name', '$.team') PRETTY)
 SELECT json_serialize(json_transform(data, KEEP '$.name', '$.team') PRETTY)
   FROM driver_dv ORDER BY json_value(data, '$.team');
 
+```
+### Step 6: Replace a document by ID
+
+```sql
 
 --------------------------------------
 -- Step 6: Replace a document by ID --
@@ -490,6 +488,10 @@ COMMIT;
 SELECT json_serialize(data PRETTY)
   FROM race_dv dv WHERE dv.data."_id" = 201;
 
+```
+### Step 7: Update specific fields in the document identified by a predicate
+
+```sql
 
 ------------------------------------------------------------------------------
 -- Step 7: Update specific fields in the document identified by a predicate --
@@ -526,7 +528,10 @@ COMMIT;
 SELECT json_serialize(data PRETTY)
   FROM race_dv WHERE json_value(data, '$.name') LIKE 'Blue Air Bahrain%';
 
+```
+### Step 8: Re-parenting of sub-objects between two documents 
 
+```sql
 ---------------------------------------------------------------
 -- Step 8: Re-parenting of sub-objects between two documents --
 ---------------------------------------------------------------
@@ -589,6 +594,10 @@ SELECT json_serialize(data PRETTY) FROM driver_dv dv
 SELECT json_serialize(data PRETTY) FROM driver_dv dv
   WHERE dv.data.name LIKE 'George Russell%';
   
+```
+### Step 9: Update a non-updateable field
+
+```sql
 
 -------------------------------------------
 -- Step 9: Update a non-updateable field --
@@ -616,6 +625,10 @@ UPDATE driver_dv dv
             }')
   WHERE dv.data."_id" = 103;
 
+```
+### Step 10: Delete by predicate
+
+```sql
 
 ----------------------------------
 -- Step 10: Delete by predicate --
@@ -634,3 +647,4 @@ SELECT json_serialize(data PRETTY) FROM race_dv;
 SELECT json_serialize(data PRETTY) FROM driver_dv;
 
 COMMIT;
+```
