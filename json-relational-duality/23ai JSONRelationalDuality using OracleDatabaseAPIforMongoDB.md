@@ -1,10 +1,11 @@
 ## Working with JSON Relational Duality Views using Oracle Database API for MongoDB
 
-06/23/24, Version 1.2
+06/23/24, Version 2
 Copyright (c) 2024, Oracle and/or its affiliates
 
-## Purpose statement
-This document provides a tutorial on using Oracle Database API for MongoDB with Oracle Database 23ai Free feature JSON Relational Duality.
+## DESCRIPTION
+  This tutorial script walks you through examples of working with
+  **JSON Relational Duality Views** using Oracle Database API for MongoDB. In the tutorial we use the Formula-1 (auto-racing) season data.
 
 
 ## License
