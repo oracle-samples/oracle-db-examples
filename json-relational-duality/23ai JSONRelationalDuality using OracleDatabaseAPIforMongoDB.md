@@ -1,4 +1,4 @@
-## Working with JSON Relational Duality Views using Oracle Database API for MongoDB
+# Working with JSON Relational Duality Views using Oracle Database API for MongoDB
 
 06/23/24, Version 2
 Copyright (c) 2024, Oracle and/or its affiliates
