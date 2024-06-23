@@ -1,4 +1,4 @@
-## Working with JSON-Relational Duality Views using Oracle Database API for MongoDB
+## Working with JSON Relational Duality Views using Oracle Database API for MongoDB
 
 06/23/24, Version 1.2
 Copyright (c) 2024, Oracle and/or its affiliates
@@ -56,17 +56,30 @@ A Duality View can be read-only or completely or partially updatable, depending 
 
 A JSON Relational Duality View is essentially a fully updatable and transactional JSON view over data. When documents in a Duality View are updated or deleted, the relevant relational (table) data underlying the view is automatically updated. 
 
-Check out the [README](https://github.com/oracle-samples/oracle-db-examples/blob/main/json-relational-duality/README.md) for a list of resources to learn the features and benefits of JSON Relational Duality
+Check out the [README](https://github.com/oracle-samples/oracle-db-examples/blob/main/json-relational-duality/README.md) for a list of resources to learn the features and benefits of JSON Relational Duality.
+
+## Some key resources (more in README):
+  1. [JSON Relational Duality: The Revolutionary Unification of Document, Object, and Relational Models](https://blogs.oracle.com/database/post/json-relational-duality-app-dev)
+  2. [Oracle Announces General Availability of JSON Relational Duality in Oracle Database 23ai](https://blogs.oracle.com/database/post/oracle-announces-general-availability-of-json-relational-duality-in-oracle-database-23ai)
+  3. [Oracle CloudWorld 2022 keynote](https://www.youtube.com/watch?v=e8-jBkO1NqY&t=17s)
+
+
+## DOCUMENTATION
+  * (https://docs.oracle.com/en/database/oracle/oracle-database/23/jsnvu/index.html)
+  to learn more about duality views and their advantages.
+  * (https://docs.oracle.com/en/database/oracle/mongodb-api/mgapi/overview-oracle-database-api-mongodb.html) to learn about MongoDB API
+
 
 ## Tutorial Overview
 
 This tutorial walks you through examples of working with JSON-Relational duality views using Formula-1 car-racing season data. Specifically, it focuses on using the Oracle Database API for MongoDB to work with JSON-Relational duality views. Note that after duality views are created and exposed as collections, you work with such collections normally, as you would with regular collections (not based on duality views)1, while reaping all of the additional benefits of duality views. And of course, standard MongoDB drivers and tools can be used. This tutorial uses the Mongo shell, and shows a subset of the full breadth of operations possible, such as inserts, finds, updates, replaces, deletes, projections, and so on.
 
-It is recommended that you read the Introduction to Car-Racing Duality Views Example chapter in JSON Relational Duality Developer's Guide. It describes the use-case and duality views you work with in this document.
+It is recommended that you read the Introduction to Car-Racing Duality Views Example chapter in [JSON Relational Duality Developer's Guide](https://docs.oracle.com/en/database/oracle/oracle-database/23/jsnvu/index.html). It describes the use-case and duality views you work with in this document.
 
-For more information on Oracle Database API for MongoDB, refer to Oracle Database API for MongoDB. Within that guide, Using the Mongo DB API with JSON-Relational Duality Views section is particularly relevant for this tutorial.
+For more information on Oracle Database API for MongoDB, refer to [Oracle Database API for MongoDB](https://docs.oracle.com/en/database/oracle/mongodb-api/mgapi/overview-oracle-database-api-mongodb.html). Within that guide, Using the Mongo DB API with JSON-Relational Duality Views section is particularly relevant for this tutorial.
 
 Duality Views can be defined using SQL with standard JSON extensions, but GraphQL provides a simpler and more intuitive shorthand syntax.  The tutorial uses the SQL syntax to create the Duality views and GraphQL syntax is provided in the appendix below.
+
 
 ## Prerequisites
 
