@@ -1,17 +1,18 @@
 ![Oracle Exadata](../../../../../docs/Oracle_Exadata_cmyk.png)
 
-# Oracle Exadata Real-Time Insight
+#Oracle Exadata Real-Time Insight
 
 ## Prometheus and Grafana Requirements
 
 For the dashboards in this folder to work correctly, the following applications are required:
 
-- Grafana (minimum version 8.4.2), which includes the Prometheus plugin for Grafana.
+- Grafana (minimum version 10.0.2), which includes the Prometheus plugin for Grafana.
+- Prometheus (minimum version 2.45.0)
 - Oracle Exadata System Software 22.1.0+. Follow the instructions for [Using Real-Time Insight](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-8448C324-784E-44F5-9D44-9CB5C697E436) in the _Oracle Exadata System Software User's Guide_ to configure the metric collection and upload parameters.
 
 ## Example Grafana Dashboard
 
-![Exadata Real-Time Insight Dashboard](../../docs/grafana_dashboard.png)
+![Exadata Real-Time Insight Dashboard](../../../../../docs/grafana_dashboard.png)
 
 ## Grafana Dashboards for Exadata Monitoring
 

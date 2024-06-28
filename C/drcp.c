@@ -98,9 +98,9 @@ int main(int argc, char **argv)
     checkerr(errhp, rc);
 
     printf("Enter the DB username: ");
-    scanf("%s", userName);
+    scanf("%128s", userName);
     printf("Enter the DB password: ");
-    scanf("%s", userPassword);
+    scanf("%128s", userPassword);
 
     rc = OCISessionPoolCreate(envhp, errhp, spoolhp, &poolName, &poolNameLen,
                               connectString, strlen((char *)connectString), 0, UB4MAXVAL, 1,
