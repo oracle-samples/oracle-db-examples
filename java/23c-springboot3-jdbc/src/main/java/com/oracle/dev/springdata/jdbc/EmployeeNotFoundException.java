@@ -23,9 +23,9 @@ package com.oracle.dev.springdata.jdbc;
 
 class EmployeeNotFoundException extends RuntimeException {
 
-	private static final long serialVersionUID = 7768215094663842819L;
+  private static final long serialVersionUID = 7768215094663842819L;
 
-	EmployeeNotFoundException(Long id) {
-		super("Could not find employee " + id);
-	}
+  EmployeeNotFoundException(Long id) {
+    super("Could not find employee " + id);
+  }
 }

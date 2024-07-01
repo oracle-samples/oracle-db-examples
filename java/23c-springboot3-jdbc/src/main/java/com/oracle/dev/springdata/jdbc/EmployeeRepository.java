@@ -29,11 +29,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 interface EmployeeRepository extends CrudRepository<Employee, Long> {
-	
-	List<Employee> findByName(String name);
 
-    @Modifying
-    @Query("UPDATE employee SET name = :name WHERE id = :id")
-    boolean updateByName(@Param("id") Long id, @Param("name") String name);
+  List<Employee> findByName(String name);
+
+  @Modifying
+  @Query("UPDATE employee SET name = :name WHERE id = :id")
+  boolean updateByName(@Param("id") Long id, @Param("name") String name);
 
 }
