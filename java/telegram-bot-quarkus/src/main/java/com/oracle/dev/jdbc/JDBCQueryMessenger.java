@@ -39,65 +39,63 @@ import oracle.jdbc.pool.OracleDataSource;
 @ApplicationScoped
 public class JDBCQueryMessenger {
 
-	private static final Logger logger = LoggerFactory.getLogger(JDBCQueryMessenger.class);
+  private static final Logger logger = LoggerFactory
+      .getLogger(JDBCQueryMessenger.class);
 
-	@ConfigProperty(name = "jdbc.url")
-	private String jdbcUrl;
+  @ConfigProperty(name = "jdbc.url")
+  private String jdbcUrl;
 
-	@ConfigProperty(name = "jdbc.username")
-	private String jdbcUserName;
+  @ConfigProperty(name = "jdbc.username")
+  private String jdbcUserName;
 
-	@ConfigProperty(name = "jdbc.password")
-	private String jdbcPassword;
+  @ConfigProperty(name = "jdbc.password")
+  private String jdbcPassword;
 
-	@ConfigProperty(name = "jdbc.query")
-	private String jdbcQuery;
+  @ConfigProperty(name = "jdbc.query")
+  private String jdbcQuery;
 
-	@Inject
-	private OracleTelegramBot bot;
+  @Inject
+  private OracleTelegramBot bot;
 
-	private OracleDataSource ods;
-	private Connection conn;
+  private OracleDataSource ods;
 
-	@Scheduled(every = "10s")
-	public void sendQueryResults() {
-		if (conn == null) {
-			initConnection();
-		}
-		bot.sendMessage(query());
-	}
+  @Scheduled(every = "10s")
+  public void sendQueryResults() {
+    initDatasource();
+    bot.sendMessage(query());
+  }
 
-	private String query() {
-		StringBuilder queryResults = new StringBuilder();
-		try {
-			PreparedStatement stmt = conn.prepareStatement(jdbcQuery);
-			stmt.setInt(1, randomize());
-			ResultSet rslt = stmt.executeQuery();
-			while (rslt.next()) {
-				queryResults.append(rslt.getString("TIP"));
-				logger.info(queryResults.toString());
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return queryResults.toString();
-	}
+  private String query() {
+    StringBuilder queryResults = new StringBuilder();
+    ResultSet rslt = null;
+    try (Connection conn = ods.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(jdbcQuery);) {
+      stmt.setInt(1, randomize());
+      rslt = stmt.executeQuery();
+      while (rslt.next()) {
+        queryResults.append(rslt.getString("TIP"));
+        logger.info(queryResults.toString());
+      }
+      rslt.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return queryResults.toString();
+  }
 
-	private void initConnection() {
-		try {
-			ods = new OracleDataSource();
-			ods.setURL(jdbcUrl);
-			ods.setUser(jdbcUserName);
-			ods.setPassword(jdbcPassword);
-			conn = ods.getConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
+  private void initDatasource() {
+    try {
+      ods = new OracleDataSource();
+      ods.setURL(jdbcUrl);
+      ods.setUser(jdbcUserName);
+      ods.setPassword(jdbcPassword);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
-		}
-	}
-
-	private int randomize() {
-		return ThreadLocalRandom.current().nextInt(1, 13 + 1);
-	}
+  private int randomize() {
+    return ThreadLocalRandom.current().nextInt(1, 13 + 1);
+  }
 
 }

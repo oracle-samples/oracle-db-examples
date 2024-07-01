@@ -37,36 +37,39 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class OracleTelegramBot {
 
-	private static final Logger logger = LoggerFactory.getLogger(OracleTelegramBot.class);
+  private static final Logger logger = LoggerFactory
+      .getLogger(OracleTelegramBot.class);
 
-	@ConfigProperty(name = "telegram.token")
-	private String token;
+  @ConfigProperty(name = "telegram.token")
+  private String token;
 
-	@ConfigProperty(name = "telegram.chatId")
-	private String chatId;
+  @ConfigProperty(name = "telegram.chatId")
+  private String chatId;
 
-	private Client client;
-	private WebTarget baseTarget;
+  private Client client;
+  private WebTarget baseTarget;
 
-	public void sendMessage(String message) {
-		Response response = baseTarget.path("sendMessage").queryParam("chat_id", chatId).queryParam("text", message)
-				.request().get();
-		JsonObject json = response.readEntity(JsonObject.class);
-		boolean ok = json.getBoolean("ok", false);
-		if (!ok) {
-			logger.error("Send message failed!");
-		}
-	}
+  public void sendMessage(String message) {
+    Response response = baseTarget.path("sendMessage")
+        .queryParam("chat_id", chatId).queryParam("text", message).request()
+        .get();
+    JsonObject json = response.readEntity(JsonObject.class);
+    boolean ok = json.getBoolean("ok", false);
+    if (!ok) {
+      logger.error("Send message failed!");
+    }
+  }
 
-	@PostConstruct
-	void initClient() {
-		client = ClientBuilder.newClient();
-		baseTarget = client.target("https://api.telegram.org/bot{token}").resolveTemplate("token", this.token);
-	}
+  @PostConstruct
+  void initClient() {
+    client = ClientBuilder.newClient();
+    baseTarget = client.target("https://api.telegram.org/bot{token}")
+        .resolveTemplate("token", this.token);
+  }
 
-	@PreDestroy
-	private void closeClient() {
-		client.close();
-	}
+  @PreDestroy
+  private void closeClient() {
+    client.close();
+  }
 
 }
