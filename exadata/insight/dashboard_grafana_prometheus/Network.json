@@ -9,13 +9,13 @@
       "pluginName": "Prometheus"
     }
   ],
-  "__elements": [],
+  "__elements": {},
   "__requires": [
     {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.4.2"
+      "version": "10.0.2"
     },
     {
       "type": "datasource",
@@ -34,7 +34,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -54,12 +57,14 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1652917392459,
-  "links": [],
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
+      "collapsed": true,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oe75iKL7k"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -67,619 +72,730 @@
         "y": 0
       },
       "id": 21,
-      "panels": [],
-      "title": "Network Throughput",
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "EXAREL: RoCE bytes received",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "MiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 1
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "EXW_ROCE_RX_BY_SEC{server=~\"$server\", objectName=~\"${interface}.*\"}",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "N_IB_MB_RCV_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "B"
+            }
+          ],
+          "title": "RX Bytes - ($interface)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "EXAREL: RoCE bytes transmitted",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "MiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 1
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "EXW_ROCE_TX_BY_SEC{server=~\"$server\",objectName=~\"${interface}.*\"}",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "N_IB_MB_TRANS_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "refId": "B"
+            }
+          ],
+          "title": "TX Bytes - ($interface)",
+          "type": "timeseries"
+        }
+      ],
+      "repeat": "interface",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "oe75iKL7k"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "RDMA Network ${interface}",
       "type": "row"
     },
     {
+      "collapsed": true,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "oe75iKL7k"
       },
-      "description": "EXAREL: RoCE bytes received",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "MiBs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 1
-      },
-      "id": 2,
-      "maxPerRow": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "repeat": "interface",
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "constant": 6.5,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "EXW_ROCE_RX_BY_SEC{server=~\"$server\", objectName=~\"${interface}.*\"}",
-          "interval": "",
-          "legendFormat": "{{objectName}}-{{server}}",
-          "refId": "A",
-          "withStreaming": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "N_IB_MB_RCV_SEC{server=~\"$server\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{objectName}}-{{server}}",
-          "refId": "B"
-        }
-      ],
-      "title": "RX Bytes - ($interface)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "EXAREL: RoCE bytes transmitted",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "MiBs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 4,
-      "maxPerRow": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "repeat": "interface",
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "constant": 6.5,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "EXW_ROCE_TX_BY_SEC{server=~\"$server\",objectName=~\"${interface}.*\"}",
-          "interval": "",
-          "legendFormat": "{{objectName}}-{{server}}",
-          "refId": "A",
-          "withStreaming": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "N_IB_MB_TRANS_SEC{server=~\"$server\"}",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{objectName}}-{{server}}",
-          "refId": "B"
-        }
-      ],
-      "title": "TX Bytes - ($interface)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "EXAREL: RoCE Pause Frames or IB Pauses",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 15
-      },
-      "id": 8,
-      "maxPerRow": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "repeat": "interface",
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "constant": 6.5,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_ROCE_PAUSE{server=~\"$server\",objectName=~\"${interface}.*\"}[1m])",
-          "interval": "",
-          "legendFormat": "{{objectName}}-{{server}}",
-          "refId": "A",
-          "withStreaming": false
-        }
-      ],
-      "title": "Pauses ($interface)",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 1
       },
-      "id": 29,
-      "panels": [],
-      "title": "RDS",
+      "id": 99,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "EXAREL: RoCE Pause Frames or IB Pauses",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 4
+          },
+          "id": 8,
+          "maxPerRow": 2,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "repeat": "interface",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "rate(EXW_ROCE_PAUSE{server=~\"$server\",objectName=~\"${interface}.*\"}[1m])",
+              "interval": "",
+              "legendFormat": "{{objectName}}-{{server}}",
+              "range": true,
+              "refId": "A",
+              "withStreaming": false
+            }
+          ],
+          "title": "Pauses ($interface)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 18
+          },
+          "id": 37,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "rate(EXW_ROCE_NP_CNP_SENT{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "interval": "",
+              "legendFormat": "np_cnp_sent-{{objectName}}-{{server}}",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "rate(EXW_ROCE_NP_ECN_MARKED_ROCE_PACKETS{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "np_ecn_marked_roce_packets-{{objectName}}-{{server}}",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "rate(EXW_ROCE_RP_CNP_HANDLED{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "rp_cnp_handled-{{objectName}}-{{server}}",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "rate(EXW_ROCE_RP_CNP_IGNORED{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "rp_cnp_ignored-{{objectName}}-{{server}}",
+              "range": true,
+              "refId": "D"
+            }
+          ],
+          "title": "RoCE Congestion",
+          "type": "timeseries"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "oe75iKL7k"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Pauses and RoCE Congestion",
       "type": "row"
     },
     {
+      "collapsed": true,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "EXAREL: RDS Ping on Lane Zero",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
+        "uid": "oe75iKL7k"
       },
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 2
       },
-      "id": 19,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
+      "id": 29,
+      "panels": [
         {
-          "constant": 6.5,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "exemplar": true,
-          "expr": "EXW_RDS_PING_0{server=~\"$server\"}",
-          "interval": "",
-          "legendFormat": "{{objectName}}",
-          "refId": "A",
-          "withStreaming": false
-        }
-      ],
-      "title": "RDS Ping (Lane 0)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "EXAREL: rds-info counters",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "description": "EXAREL: rds-info counters",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ops"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 3
+          },
+          "id": 6,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
             }
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
               },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 31
-      },
-      "id": 6,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean",
-            "last"
+              "exemplar": true,
+              "expr": "rate(EXW_RDS_CONG_SEND_BLOCKED{server=~\"$server\"}[1m])",
+              "interval": "",
+              "legendFormat": "RDS_CONG_SEND_BLKD-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "rate(EXW_RDS_CONG_SEND_ERROR{server=~\"$server\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "RDS_CONG_SEND_ERROR-{{server}}",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "rate(EXW_RDS_IB_MR_1M_POOL_DEPLETED{server=~\"$server\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "RDS_IB_MR_1M_POOL_DEPLETED-{{server}}",
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "rate(EXW_RDS_IB_RDMA_MR_8K_POOL_DEPLETED{server=~\"$server\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "RDS_IB_RDMA_MR_8K_POOL_DEPLETED({{server}})",
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "rate(EXW_RDS_IB_TX_STALLED{server=~\"$server\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "RDS_IB_TX_STALLED-{{server}}",
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "rate(EXW_ROCE_RNR_NAK_RETRY_ERR{server=~\"$server\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "RNR_NAK_RETRY_ERR-{{server}}-{{objectName}}",
+              "refId": "F"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "rate(EXW_ROCE_LOCAL_ACK_TIMEOUT_ERR{server=~\"$server\"}[1m])",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "LOCAL_ACK_TIMEOUT_ERR-{{server}}-{{objectName}}",
+              "refId": "G"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": true,
+              "expr": "EXW_RDS_CONN_RESET{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "EXW_RDS_CONN_RESET-{{server}}",
+              "refId": "H"
+            }
           ],
-          "displayMode": "table",
-          "placement": "right"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "constant": 6.5,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_RDS_CONG_SEND_BLOCKED{server=~\"$server\"}[5m])",
-          "interval": "",
-          "legendFormat": "RDS_CONG_SEND_BLKD-{{server}}",
-          "refId": "A",
-          "withStreaming": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_RDS_CONG_SEND_ERROR{server=~\"$server\"}[5m])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "RDS_CONG_SEND_ERROR-{{server}}",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_RDS_IB_MR_1M_POOL_DEPLETED{server=~\"$server\"}[5m])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "RDS_IB_MR_1M_POOL_DEPLETED-{{server}}",
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_RDS_IB_RDMA_MR_8K_POOL_DEPLETED{server=~\"$server\"}[5m])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "RDS_IB_RDMA_MR_8K_POOL_DEPLETED({{server}})",
-          "refId": "D"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_RDS_IB_TX_STALLED{server=~\"$server\"}[5m])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "RDS_IB_TX_STALLED-{{server}}",
-          "refId": "E"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_ROCE_RNR_NAK_RETRY_ERR{server=~\"$server\"}[5m])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "RNR_NAK_RETRY_ERR-{{server}}-{{objectName}}",
-          "refId": "F"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "delta(EXW_ROCE_LOCAL_ACK_TIMEOUT_ERR{server=~\"$server\"}[5m])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "LOCAL_ACK_TIMEOUT_ERR-{{server}}-{{objectName}}",
-          "refId": "G"
+          "title": "RDS Errors",
+          "type": "timeseries"
         }
       ],
-      "title": "RDS Errors",
-      "type": "timeseries"
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "oe75iKL7k"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "RDS",
+      "type": "row"
     }
   ],
-  "refresh": "5s",
-  "schemaVersion": 35,
+  "refresh": "",
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "exadata",
@@ -696,18 +812,18 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\"}",
+        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\"},fleet)",
         "hide": 0,
         "includeAll": false,
-        "multi": false,
+        "multi": true,
         "name": "fleet",
         "options": [],
         "query": {
-          "query": "{__name__=~\"CL_CPUT|DS_CPUT\"}",
-          "refId": "StandardVariableQuery"
+          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\"},fleet)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*[\\W|,]fleet=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
@@ -718,18 +834,18 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"}",
+        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\"},pod)",
         "hide": 0,
         "includeAll": false,
-        "multi": false,
+        "multi": true,
         "name": "pod",
         "options": [],
         "query": {
-          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"}",
-          "refId": "StandardVariableQuery"
+          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\"},pod)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*[\\W|,]pod=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
@@ -740,18 +856,18 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"}",
+        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\"},cluster)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "cluster",
         "options": [],
         "query": {
-          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"}",
-          "refId": "StandardVariableQuery"
+          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\"},cluster)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*[\\W|,]cluster=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
@@ -762,18 +878,18 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\"}",
+        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\"},server)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "server",
         "options": [],
         "query": {
-          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\"}",
-          "refId": "StandardVariableQuery"
+          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\"},server)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*[\\W|,]server=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
@@ -784,14 +900,14 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
+        "definition": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "interface",
         "options": [],
         "query": {
-          "query": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
+          "query": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -810,6 +926,6 @@
   "timezone": "",
   "title": "Network",
   "uid": "exapNet",
-  "version": 25,
+  "version": 32,
   "weekStart": ""
 }
