@@ -40,7 +40,6 @@ class EmployeeController {
     this.repository = repository;
   }
 
-
   // Aggregate root
   // tag::get-aggregate-root[]
   @GetMapping("/employees")
@@ -55,27 +54,26 @@ class EmployeeController {
   }
 
   // Single item
-  
+
   @GetMapping("/employees/{id}")
   Employee one(@PathVariable Long id) {
-    
+
     return repository.findById(id)
-      .orElseThrow(() -> new EmployeeNotFoundException(id));
+        .orElseThrow(() -> new EmployeeNotFoundException(id));
   }
 
   @PutMapping("/employees/{id}")
-  Employee replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
-    
-    return repository.findById(id)
-      .map(employee -> {
-        employee.setName(newEmployee.getName());
-        employee.setJob(newEmployee.getJob());
-        return repository.save(employee);
-      })
-      .orElseGet(() -> {
-        newEmployee.setId(id);
-        return repository.save(newEmployee);
-      });
+  Employee replaceEmployee(@RequestBody Employee newEmployee,
+      @PathVariable Long id) {
+
+    return repository.findById(id).map(employee -> {
+      employee.setName(newEmployee.getName());
+      employee.setJob(newEmployee.getJob());
+      return repository.save(employee);
+    }).orElseGet(() -> {
+      newEmployee.setId(id);
+      return repository.save(newEmployee);
+    });
   }
 
   @DeleteMapping("/employees/{id}")
