@@ -30,52 +30,32 @@ import oracle.jdbc.pool.OracleDataSource;
 
 public class QueryWithBooleanDataTypeColumn {
 
-  public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 
-    OracleDataSource ods = null;
-    Connection conn = null;
-    PreparedStatement stmt = null;
-    ResultSet rslt = null;
+		OracleDataSource ods = new OracleDataSource();
 
-    try {
+		// jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
+		ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
+		ods.setUser("[Username]");
+		ods.setPassword("[Password]");
 
-      ods = new OracleDataSource();
+		try (Connection conn = ods.getConnection();
+				// please check hq_employee.sql under the /sql directory
+				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");
+				ResultSet rslt = stmt.executeQuery();) {
 
-      // jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
-      ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
-      ods.setUser("[Username]");
-      ods.setPassword("[Password]");
+			StringBuilder sb = new StringBuilder();
+			while (rslt.next()) {
+				sb.append(rslt.getInt(1)).append("|").append(rslt.getString(2)).append("|").append(rslt.getString(3))
+						.append("|").append(rslt.getBoolean(4)).append("\n");
 
-      conn = ods.getConnection();
+			}
+			System.out.println(sb.toString());
 
-      // please check hq_employee.sql under the /sql directory
-      stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-      rslt = stmt.executeQuery();
-
-      StringBuilder sb = new StringBuilder();
-      while (rslt.next()) {
-        sb.append(rslt.getInt(1)).append("|").append(rslt.getString(2))
-            .append("|").append(rslt.getString(3)).append("|")
-            .append(rslt.getBoolean(4)).append("\n");
-
-      }
-      System.out.println(sb.toString());
-      rslt.close();
-      stmt.close();
-      conn.close();
-
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    finally {
-      rslt = null;
-      stmt = null;
-      conn = null;
-      ods = null;
-    }
-
-  }
+	}
 
 }
