@@ -30,43 +30,50 @@ import oracle.rsi.ReactiveStreamsIngestion;
 
 public class SimplePushPublisher {
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		ExecutorService workerThreadPool = Executors.newFixedThreadPool(2);
+    ExecutorService workerThreadPool = Executors.newFixedThreadPool(2);
 
-		// Reference for JDBC URL formats at
-		// https://docs.oracle.com/en/database/oracle/oracle-database/21/jajdb/
-		ReactiveStreamsIngestion rsi = ReactiveStreamsIngestion.builder()
-				.useDataLoadMode()
-				.url(DatabaseConfig.getJdbcConnectionUrl())
-				.username(DatabaseConfig.USER).password(DatabaseConfig.PASSWORD).schema(DatabaseConfig.SCHEMA)
-				.executor(workerThreadPool).bufferRows(10).bufferInterval(Duration.ofSeconds(20)).entity(Customer.class)
-				.build();
+    // Reference for JDBC URL formats at
+    // https://docs.oracle.com/en/database/oracle/oracle-database/21/jajdb/
+    ReactiveStreamsIngestion rsi = ReactiveStreamsIngestion.builder()
+        .useDataLoadMode().url(DatabaseConfig.getJdbcConnectionUrl())
+        .username(DatabaseConfig.USER).password(DatabaseConfig.PASSWORD)
+        .schema(DatabaseConfig.SCHEMA).executor(workerThreadPool).bufferRows(10)
+        .bufferInterval(Duration.ofSeconds(20)).entity(Customer.class).build();
 
-		// RSI publisher
-		PushPublisher<Object[]> firstPublisher = ReactiveStreamsIngestion.pushPublisher();
-		firstPublisher.subscribe(rsi.subscriber());
-		firstPublisher.accept(new Object[] { RsiHelper.randomize(), "Juarez Junior", "South" });
-		firstPublisher.accept(new Object[] { RsiHelper.randomize(), "Jane Melina", "North" });
-		firstPublisher.accept(new Object[] { RsiHelper.randomize(), "John Gosling", "South" });
+    // RSI publisher
+    PushPublisher<Object[]> firstPublisher = ReactiveStreamsIngestion
+        .pushPublisher();
+    firstPublisher.subscribe(rsi.subscriber());
+    firstPublisher
+        .accept(new Object[]{RsiHelper.randomize(), "Juarez Junior", "South"});
+    firstPublisher
+        .accept(new Object[]{RsiHelper.randomize(), "Jane Melina", "North"});
+    firstPublisher
+        .accept(new Object[]{RsiHelper.randomize(), "John Gosling", "South"});
 
-		// Another RSI publisher
-		PushPublisher<Object[]> secondPublisher = ReactiveStreamsIngestion.pushPublisher();
-		secondPublisher.subscribe(rsi.subscriber());
-		secondPublisher.accept(new Object[] { RsiHelper.randomize(), "Gupta Folk", "North" });
-		secondPublisher.accept(new Object[] { RsiHelper.randomize(), "Jack Doe", "North" });
-		secondPublisher.accept(new Object[] { RsiHelper.randomize(), "Steff Cazado", "South" });
+    // Another RSI publisher
+    PushPublisher<Object[]> secondPublisher = ReactiveStreamsIngestion
+        .pushPublisher();
+    secondPublisher.subscribe(rsi.subscriber());
+    secondPublisher
+        .accept(new Object[]{RsiHelper.randomize(), "Gupta Folk", "North"});
+    secondPublisher
+        .accept(new Object[]{RsiHelper.randomize(), "Jack Doe", "North"});
+    secondPublisher
+        .accept(new Object[]{RsiHelper.randomize(), "Steff Cazado", "South"});
 
-		try {
-			firstPublisher.close();
-			secondPublisher.close();
-			rsi.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			workerThreadPool.shutdown();
-		}
+    try {
+      firstPublisher.close();
+      secondPublisher.close();
+      rsi.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      workerThreadPool.shutdown();
+    }
 
-	}
+  }
 
 }

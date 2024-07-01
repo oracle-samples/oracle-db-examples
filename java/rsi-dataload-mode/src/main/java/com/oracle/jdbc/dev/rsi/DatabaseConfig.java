@@ -33,53 +33,54 @@ import java.util.Properties;
  */
 public class DatabaseConfig {
 
-	private static final Properties CONFIG = new Properties();
+  private static final Properties CONFIG = new Properties();
 
-	static {
-		try {
-			var fileStream = Files.newInputStream(
-					Path.of("C:\\java-projects\\rsi-dataload-mode\\src\\main\\resources\\config.properties"));
-			CONFIG.load(fileStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+  static {
+    try {
+      var fileStream = Files.newInputStream(Path.of(
+          "C:\\java-projects\\rsi-dataload-mode\\src\\main\\resources\\config.properties"));
+      CONFIG.load(fileStream);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
-	/** Host name where an Oracle Database instance is running */
-	static final String HOST = CONFIG.getProperty("HOST");
+  /** Host name where an Oracle Database instance is running */
+  static final String HOST = CONFIG.getProperty("HOST");
 
-	/** Port number where an Oracle Database instance is listening */
-	static final int PORT = Integer.parseInt(CONFIG.getProperty("PORT"));
+  /** Port number where an Oracle Database instance is listening */
+  static final int PORT = Integer.parseInt(CONFIG.getProperty("PORT"));
 
-	/** Service name of an Oracle Database */
-	static final String SERVICE_NAME = CONFIG.getProperty("DATABASE");
+  /** Service name of an Oracle Database */
+  static final String SERVICE_NAME = CONFIG.getProperty("DATABASE");
 
-	/** User name that connects to an Oracle Database */
-	static final String USER = CONFIG.getProperty("USER");
+  /** User name that connects to an Oracle Database */
+  static final String USER = CONFIG.getProperty("USER");
 
-	/** Password of the user that connects to an Oracle Database */
-	static final String PASSWORD = CONFIG.getProperty("PASSWORD");
+  /** Password of the user that connects to an Oracle Database */
+  static final String PASSWORD = CONFIG.getProperty("PASSWORD");
 
-	/** Database schema */
-	static final String SCHEMA = CONFIG.getProperty("SCHEMA");
+  /** Database schema */
+  static final String SCHEMA = CONFIG.getProperty("SCHEMA");
 
-	/** The file system path of a wallet directory */
-	static final String WALLET_LOCATION = CONFIG.getProperty("WALLET_LOCATION");
+  /** The file system path of a wallet directory */
+  static final String WALLET_LOCATION = CONFIG.getProperty("WALLET_LOCATION");
 
-	/** Colon for URL composition */
-	static final String COLON = ":";
-	
-	/** Forward slash for URL composition */
-	static final String FORWARD_SLASH = "/";
+  /** Colon for URL composition */
+  static final String COLON = ":";
 
-	/** JDBC EZConnect URL format */
-	static final String JDBC_EZ_CONNECT_FORMAT = "jdbc:oracle:thin:@";
+  /** Forward slash for URL composition */
+  static final String FORWARD_SLASH = "/";
 
-	/** Helper method to get the JDBC URL */
-	static final String getJdbcConnectionUrl() {
-		StringBuilder url = new StringBuilder(JDBC_EZ_CONNECT_FORMAT).append(DatabaseConfig.HOST).append(COLON)
-				.append(PORT).append(FORWARD_SLASH).append(SERVICE_NAME);		
-		return url.toString();
-	}
+  /** JDBC EZConnect URL format */
+  static final String JDBC_EZ_CONNECT_FORMAT = "jdbc:oracle:thin:@";
+
+  /** Helper method to get the JDBC URL */
+  static final String getJdbcConnectionUrl() {
+    StringBuilder url = new StringBuilder(JDBC_EZ_CONNECT_FORMAT)
+        .append(DatabaseConfig.HOST).append(COLON).append(PORT)
+        .append(FORWARD_SLASH).append(SERVICE_NAME);
+    return url.toString();
+  }
 
 }
