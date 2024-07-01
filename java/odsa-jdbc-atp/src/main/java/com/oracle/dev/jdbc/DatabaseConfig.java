@@ -33,34 +33,36 @@ import java.util.Properties;
  */
 public class DatabaseConfig {
 
-	private static final Properties JDBC_CONFIG = new Properties();
-	private static final String JDBC_CONFIG_FILE = System.getenv("JDBC_CONFIG_FILE");
+  private static final Properties JDBC_CONFIG = new Properties();
+  private static final String JDBC_CONFIG_FILE = System
+      .getenv("JDBC_CONFIG_FILE");
 
-	static {
-		try {
-			var fileStream = Files.newInputStream(Path.of(JDBC_CONFIG_FILE));
-			JDBC_CONFIG.load(fileStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+  static {
+    try {
+      var fileStream = Files.newInputStream(Path.of(JDBC_CONFIG_FILE));
+      JDBC_CONFIG.load(fileStream);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
-	private static final String DB_USER = JDBC_CONFIG.getProperty("DB_USER");
+  private static final String DB_USER = JDBC_CONFIG.getProperty("DB_USER");
 
-	private static final String DB_URL = JDBC_CONFIG.getProperty("DB_URL");
+  private static final String DB_URL = JDBC_CONFIG.getProperty("DB_URL");
 
-	private static final String DB_PASSWORD = JDBC_CONFIG.getProperty("DB_PASSWORD");
+  private static final String DB_PASSWORD = JDBC_CONFIG
+      .getProperty("DB_PASSWORD");
 
-	public static String getDbUser() {
-		return DB_USER;
-	}
+  public static String getDbUser() {
+    return DB_USER;
+  }
 
-	public static String getDbUrl() {
-		return DB_URL;
-	}
+  public static String getDbUrl() {
+    return DB_URL;
+  }
 
-	public static String getDbPassword() {
-		return DB_PASSWORD;
-	}
+  public static String getDbPassword() {
+    return DB_PASSWORD;
+  }
 
 }
