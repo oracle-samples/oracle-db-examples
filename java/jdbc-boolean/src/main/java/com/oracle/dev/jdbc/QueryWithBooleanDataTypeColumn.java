@@ -30,32 +30,32 @@ import oracle.jdbc.pool.OracleDataSource;
 
 public class QueryWithBooleanDataTypeColumn {
 
-	public static void main(String[] args) throws SQLException {
+  public static void main(String[] args) throws SQLException {
 
-		OracleDataSource ods = new OracleDataSource();
+    OracleDataSource ods = new OracleDataSource();
 
-		// jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
-		ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
-		ods.setUser("[Username]");
-		ods.setPassword("[Password]");
+    // jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
+    ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
+    ods.setUser("[Username]");
+    ods.setPassword("[Password]");
 
-		try (Connection conn = ods.getConnection();
-				// please check hq_employee.sql under the /sql directory
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");
-				ResultSet rslt = stmt.executeQuery();) {
+    try (Connection conn = ods.getConnection();
+        // please check hq_employee.sql under the /sql directory
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM HQ_EMPLOYEE WHERE ACTIVE");
+        ResultSet rslt = stmt.executeQuery();) {
 
-			StringBuilder sb = new StringBuilder();
-			while (rslt.next()) {
-				sb.append(rslt.getInt(1)).append("|").append(rslt.getString(2)).append("|").append(rslt.getString(3))
-						.append("|").append(rslt.getBoolean(4)).append("\n");
+      StringBuilder sb = new StringBuilder();
+      while (rslt.next()) {
+        sb.append(rslt.getInt(1)).append("|").append(rslt.getString(2)).append("|").append(rslt.getString(3))
+            .append("|").append(rslt.getBoolean(4)).append("\n");
 
-			}
-			System.out.println(sb.toString());
+      }
+      System.out.println(sb.toString());
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
 
-	}
+  }
 
 }
