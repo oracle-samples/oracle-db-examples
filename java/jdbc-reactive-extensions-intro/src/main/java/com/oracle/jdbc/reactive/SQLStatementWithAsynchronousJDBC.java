@@ -30,97 +30,68 @@ import oracle.jdbc.pool.OracleDataSource;
 
 public class SQLStatementWithAsynchronousJDBC {
 
-	private OracleDataSource ods = null;
-	private OracleConnection conn = null;
+  public static void main(String[] args) throws SQLException {
+    OracleDataSource ods = new OracleDataSource();
+    // jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
+    ods.setURL("jdbc:oracle:thin@[hostname]:[port]/[DB service/name");
+    ods.setUser("[Username]");
+    ods.setPassword("[Password]");
+    OracleConnection conn = (OracleConnection) ods.getConnection();
+    SQLStatementWithAsynchronousJDBC asyncSQL = new SQLStatementWithAsynchronousJDBC();
+    // Execute a SQL DDL statement to create a database table
+    // asynchronously
+    asyncSQL.createTable(conn);
+  }
 
-	public SQLStatementWithAsynchronousJDBC() {
-		try {
-			ods = new OracleDataSource();
-			// jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
-			ods.setURL("jdbc:oracle:thin@[hostname]:[port]/[DB service/name");
-			ods.setUser("[Username]");
-			ods.setPassword("[Password]");
+  /**
+   * Asynchronously creates a new table by executing a DDL SQL statement
+   * 
+   * @param connection
+   *          Connection to a database where the table is created
+   * @return A Publisher that emits the result of executing DDL SQL
+   * @throws SQLException
+   *           If a database access error occurs before the DDL SQL can be
+   *           executed
+   */
+  private Flow.Publisher<Boolean> createTable(OracleConnection connection)
+      throws SQLException {
 
-			conn = (OracleConnection) ods.getConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    OraclePreparedStatement createTableStatement = (OraclePreparedStatement) connection
+        .prepareStatement(
+            "CREATE TABLE employee_names (" + "id NUMBER PRIMARY KEY, "
+                + "first_name VARCHAR(50), " + "last_name VARCHAR2(50))");
 
-	public static void main(String[] args) {
-		SQLStatementWithAsynchronousJDBC asyncSQL = new SQLStatementWithAsynchronousJDBC();
-		try {
-			// Execute a SQL DDL statement to create a database table
-			// asynchronously
-			asyncSQL.createTable(asyncSQL.getConn());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    Flow.Publisher<Boolean> createTablePublisher = createTableStatement
+        .unwrap(OraclePreparedStatement.class).executeAsyncOracle();
 
-	/**
-	 * Asynchronously creates a new table by executing a DDL SQL statement
-	 * 
-	 * @param connection Connection to a database where the table is created
-	 * @return A Publisher that emits the result of executing DDL SQL
-	 * @throws SQLException If a database access error occurs before the DDL SQL can
-	 *                      be executed
-	 */
-	private Flow.Publisher<Boolean> createTable(OracleConnection connection) throws SQLException {
+    createTablePublisher.subscribe(
+        // This subscriber will close the PreparedStatement
+        new Flow.Subscriber<Boolean>() {
+          public void onSubscribe(Flow.Subscription subscription) {
+            subscription.request(1L);
+          }
 
-		OraclePreparedStatement createTableStatement = (OraclePreparedStatement) connection
-				.prepareStatement("CREATE TABLE employee_names (" + "id NUMBER PRIMARY KEY, " + "first_name VARCHAR(50), "
-						+ "last_name VARCHAR2(50))");
+          public void onNext(Boolean item) {
+          }
 
-		Flow.Publisher<Boolean> createTablePublisher = createTableStatement.unwrap(OraclePreparedStatement.class)
-				.executeAsyncOracle();
+          public void onError(Throwable throwable) {
+            closeStatement();
+          }
 
-		createTablePublisher.subscribe(
+          public void onComplete() {
+            closeStatement();
+          }
 
-				// This subscriber will close the PreparedStatement
-				new Flow.Subscriber<Boolean>() {
-					public void onSubscribe(Flow.Subscription subscription) {
-						subscription.request(1L);
-					}
+          void closeStatement() {
+            try {
+              createTableStatement.close();
+            } catch (SQLException closeException) {
+              closeException.printStackTrace();
+            }
+          }
+        });
 
-					public void onNext(Boolean item) {
-					}
-
-					public void onError(Throwable throwable) {
-						closeStatement();
-					}
-
-					public void onComplete() {
-						closeStatement();
-					}
-
-					void closeStatement() {
-						try {
-							createTableStatement.close();
-						} catch (SQLException closeException) {
-							closeException.printStackTrace();
-							;
-						}
-					}
-				});
-
-		return createTablePublisher;
-	}
-
-	public OracleDataSource getOds() {
-		return ods;
-	}
-
-	public void setOds(OracleDataSource ods) {
-		this.ods = ods;
-	}
-
-	public OracleConnection getConn() {
-		return conn;
-	}
-
-	public void setConn(OracleConnection conn) {
-		this.conn = conn;
-	}
+    return createTablePublisher;
+  }
 
 }
