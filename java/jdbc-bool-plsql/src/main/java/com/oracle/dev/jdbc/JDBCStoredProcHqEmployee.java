@@ -34,10 +34,8 @@ public class JDBCStoredProcHqEmployee {
   private final static String DB_URL = "jdbc:oracle:thin:@<DB_HOST>:<DB_PORT>/<DB_NAME>";
   private final static String DB_USER = "<DB_USER>";
   private final static String DB_PASSWORD = "<DB_PASSWORD>";
-  private static OracleConnection con;
-  private static CallableStatement stmt;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws SQLException {
 
     System.out.println("--------------------");
     System.out.println("Input parameters");
@@ -52,24 +50,23 @@ public class JDBCStoredProcHqEmployee {
     String role = "Mascott";
     System.out.println("Role: " + role);
 
-    try {
+    Properties info = new Properties();
+    info.put(OracleConnection.CONNECTION_PROPERTY_USER_NAME, DB_USER);
+    info.put(OracleConnection.CONNECTION_PROPERTY_PASSWORD, DB_PASSWORD);
+    info.put(OracleConnection.CONNECTION_PROPERTY_FAN_ENABLED, false);
 
-      Properties info = new Properties();
-      info.put(OracleConnection.CONNECTION_PROPERTY_USER_NAME, DB_USER);
-      info.put(OracleConnection.CONNECTION_PROPERTY_PASSWORD, DB_PASSWORD);
-      info.put(OracleConnection.CONNECTION_PROPERTY_FAN_ENABLED, false);
+    // JDBC datasource
+    OracleDataSource ods = new OracleDataSource();
+    ods.setURL(DB_URL);
+    ods.setConnectionProperties(info);
 
-      // JDBC datasource
-      OracleDataSource ods = new OracleDataSource();
-      ods.setURL(DB_URL);
-      ods.setConnectionProperties(info);
+    // JDBC connection
+    try (OracleConnection con = (OracleConnection) ods.getConnection();
 
-      // JDBC connection
-      con = (OracleConnection) ods.getConnection();
-
-      // CallableStatement
-      // https://docs.oracle.com/en/java/javase/19/docs/api/java.sql/java/sql/CallableStatement.html
-      stmt = con.prepareCall("{call INSERT_HQ_EMPLOYEE_PRC(?,?,?,?,?)}");
+        // CallableStatement
+        // https://docs.oracle.com/en/java/javase/19/docs/api/java.sql/java/sql/CallableStatement.html
+        CallableStatement stmt = con
+            .prepareCall("{call INSERT_HQ_EMPLOYEE_PRC(?,?,?,?,?)}");) {
 
       // set IN parameters
       stmt.setInt(1, id);
@@ -99,14 +96,7 @@ public class JDBCStoredProcHqEmployee {
 
     } catch (Exception e) {
       e.printStackTrace();
-    } finally {
-      try {
-        stmt.close();
-        con.close();
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
     }
-  }
 
+  }
 }
