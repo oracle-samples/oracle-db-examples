@@ -26,14 +26,14 @@ import java.util.Optional;
 
 public interface EmployeeService {
 
-	void create(Employee employee);
+  void create(Employee employee);
 
-	List<Employee> findAll();
+  List<Employee> findAll();
 
-	Optional<Employee> findById(String id);
+  Optional<Employee> findById(String id);
 
-	void update(Employee employee, String id);
+  void update(Employee employee, String id);
 
-	void delete(String id);
+  void delete(String id);
 
 }
