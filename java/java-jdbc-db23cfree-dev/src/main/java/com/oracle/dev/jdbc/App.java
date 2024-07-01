@@ -29,22 +29,21 @@ import java.sql.SQLException;
 import oracle.jdbc.pool.OracleDataSource;
 
 public class App {
-	public static void main(String[] args) {
-		OracleDataSource ods;
-		try {
-			ods = new OracleDataSource();
-		    // jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
-			ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
-			ods.setUser("[Username]");
-			ods.setPassword("[Password]");
-			Connection conn = ods.getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT 'Hello World!' FROM dual");
-			ResultSet rslt = stmt.executeQuery();
-			while (rslt.next()) {
-				System.out.println(rslt.getString(1));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+  public static void main(String[] args) throws SQLException {
+    OracleDataSource ods = new OracleDataSource();
+    // jdbc:oracle:thin@[hostname]:[port]/[DB service/name]
+    ods.setURL("jdbc:oracle:thin:@localhost:1521/FREEPDB1");
+    ods.setUser("[Username]");
+    ods.setPassword("[Password]");
+    try (Connection conn = ods.getConnection();
+        PreparedStatement stmt = conn
+            .prepareStatement("SELECT 'Hello World!' FROM dual");
+        ResultSet rslt = stmt.executeQuery();) {
+      while (rslt.next()) {
+        System.out.println(rslt.getString(1));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 }
