@@ -9,12 +9,12 @@
 --     WHERE CONTAINS (colname, parser.progRelax('+oracle "release date"')) > 0;
 
 -- This package is designed to process an "end-user" query into Oracle Text syntax
--- it should be largely unbreakable, unless the user types something really silly
+-- it should be largely unbreakable: unless the user types something really silly
 -- like 5000 'x' characters without a space, we should be able to generate a working
--- query. The only exception is if the section searching syntax is used, and the section
+-- query. The only exception is if the 'section searching' syntax is used, and the section
 -- specified does not exist.
 
--- Query syntax modelled loosely on Google/Alta Vista:
+-- Query syntax modelled loosely on early Google/Alta Vista:
 --   word : score will be improved if word exists
 --   +word : word must exist
 --   -word : word CANNOT exist
@@ -32,15 +32,15 @@
 --     Section names are NOT CHECKED. This may produce errors. This is perhaps a
 --     "to do" feature for a future version.
 
+-- Join characters are quoted as necessary. All non-wildcarded words are
+-- quoted with braces to avoid keyword problems (eg NT).
+
 -- All other punctuation will be removed, breaking words when appropriate
 -- eg. "don't" will be changed to "don t" which is consistent with normal
 -- query semantics.
 
--- Join characters are quoted as necessary. All non-wildcarded words are
--- quoted with braces to avoid keyword problems (eg NT).
-
 -- Query Generators
---   Each of the following functions takes a user-entered query string as an argumen
+--   Each of the following functions takes a user-entered query string as an argument
 --   (varchar2) and returns a CLOB value for the translated query string. It is expected
 --   that simpleSearch and progRelax will be the most-used functions
 --     simpleSearch :  generate a simple search string 
@@ -65,18 +65,18 @@
 
 --   setIndexName     (indexName   varchar2 )
 --     Specifies the index name for which we want to generate a query. This allows
---     the system to find the JOINCHAR for the index, for more accurate query generation
+--     the system to find the JOINCHARS for the index, for more accurate query generation
 --     and the stopwords for the index which makes for a more efficient proximSearch
 --   SetWildcard      (wildcard    varchar2 )
 --     The default wildcard is "*".  You can change it to "%" by calling this function
 --     with an argument of '%'
 --   SetScoreType     (scoreType   integer  )
 --     The default scoretype for progRelax queries is FLOAT. Since the queries generated 
---     are complex, fine grained differences are frequently if integer scoring is used. 
+--     are complex, fine grained differences are frequently lost if integer scoring is used. 
 --     Setting  scoreType to scoreTypeInteger (0) will revert to integer scoring.
 --   UseNEAR2         (near2Option integer  )
 --     Calling this with optionTrue (1) will use the NEAR2 operator rather than NEAR.
---     NEAR2 is a hidden feature in 11.2, and production in the next major release
+--     NEAR2 is a hidden feature in 11.2, and production in later releases
 --   SetMinusOnlyFail (failOption  integer  )
 --     If the query resolves to only a single negative term (eg. -cat) this cannot
 --     generate a valid Oracle Text query. Normally an empty string will be returned,
@@ -91,28 +91,35 @@
 -- ORA-20704: Cannot have a NOT term on its own: you must have other terms
 -- ORA-20705: Invalid score type: use 0 for integer, 1 for float
 -- ORA-20706: Invalid option for failing on minus only: use 0 for no, 1 for yes
+-- ORA-20707, Invalid option for all words required: use 0 for no, 1 for yes
+-- ORA-20708: Schema specified but cannot access CTXSYS.<tablename> to validate
 
 -- Note ORA-20704 is the only error which can be returned by a query function,
 -- if a "unary minus" is used, eg [ -cat ] rather than [ dog -cat ]
 -- and will only be returned if "setMinusOnlyFail" is call with OptionTrue.
 
--- NOTE: As supplied, the index specified must be owned by the user calling the
+-- NOTE: Normally, the index specified must be owned by the user calling the
 -- code. If you're querying an index owned by another user, you will be able to 
--- specify "schema.indexname" as the argument by doing the following:
---   1/ Uncomment the three sections of code preceded by the comment "uncomment next..."
---   2/ Run the following as either CTXSYS or a DBA user:
+-- specify "schema.indexname" as the argument to setIndexName by running the
+-- following as either CTXSYS or a DBA user:
 --   GRANT SELECT ON ctxsys.ctx_indexes TO <username>
 --   GRANT SELECT ON ctxsys.ctx_index_values TO <username>
 -- where <username> is the user who will compile and call the package
+-- If schema.indexname is used when calling setIndexName, if the access above have
+-- not been granted, then ORA-20708 will be issued with the table details
 
 -- LIMITATIONS: This is designed for space-separated languages and is unlikely to
 -- produce good results with Chinese, Japanese, Korean, etc.
 
--- MAY NOT WORK FULLY with:
+-- MAY NOT WORK FULLY OR AT ALL with:
 --    AUTO_LEXER
 --    MULTI_LEXER
+--    'Exotic' index names which need double-quotes to be recognized, such as
+--    "MyMixedCaseIndex", "My.Indexname"
 
 -- Version history:
+--   Version 1.00  2024-01-06  Fixed all PL/SQL warnings. Time to make this 1.00
+--                             Also allow for schema.indexname without changing code
 --   Version 0.991:2017-11-07  Fixed regexp bug with repeated quoted phrases
 --   Version 0.99: 2015-02-24  Remove hyphens when not preceded by space, prevents
 --                             "coca-cola" being treated as "coca NOT cola"
@@ -132,18 +139,22 @@
 -- must own it and fix any bugs yourself.  The author welcomes feedback and bug
 -- reports but makes no commitment to respond in a timely manner.
 
--- Please send feedback and comments to roger.ford@oracle.com
+-- Please send feedback and comments to roger.ford@gmail.com
+-- I am now retired from Oracle but still intend to support this package.
 
 set serverout on size 1000000
 set define off
 
-create or replace package parser is
+-- Turn on PL/SQL warnings.
+alter session set plsql_warnings = 'ENABLE:ALL';
 
-scoreTypeInteger integer := 0;
-scoreTypeFloat   integer := 1;
+create or replace package parser authid definer is
 
-optionFalse      integer := 0;
-optionTrue       integer := 1;
+scoreTypeInteger           constant number := 0;
+scoreTypeFloat             constant integer := 1;
+
+optionFalse                constant integer := 0;
+optionTrue                 constant integer := 1;
 
 function  simpleSearch     ( inStr      varchar2 ) return clob;
 function  phraseSearch     ( inStr      varchar2 ) return clob;
@@ -153,16 +164,16 @@ function  andSearch        ( inStr      varchar2 ) return clob;
 function  accumSearch      ( inStr      varchar2 ) return clob;
 function  progRelax        ( inStr      varchar2 ) return clob;
 
-procedure setIndexName     (indexName   varchar2 );
-procedure SetWildcard      (wildcard    varchar2 );
-procedure SetScoreType     (scoreType   integer  );
-procedure UseNEAR2         (near2Option integer  );
-procedure SetMinusOnlyFail (failOption  integer  );
-procedure SetAllWordsReq   (allOption    integer  );
+procedure setIndexName     ( indexName   varchar2 );
+procedure SetWildcard      ( wildcard    varchar2 );
+procedure SetScoreType     ( scoreType   integer  );
+procedure UseNEAR2         ( near2Option integer  );
+procedure SetMinusOnlyFail ( failOption  integer  );
+procedure SetAllWordsReq   ( allOption   integer  );
 
 end parser;
 /
---list
+-- list
 show errors
 
 create or replace package body parser is
@@ -193,17 +204,17 @@ global_joinChars varchar2(64) default '';
 
 -- for debugging purposes. Can modify this to write to a log file or whatever
 
-procedure p( text varchar2 )
- is
-begin
-  dbms_output.put_line( text );
-end;
+--procedure p( text varchar2 )
+--  is
+-- begin
+--   dbms_output.put_line( text );
+--end;
 
 -- find the first regexp in a string, return string with that 
 -- regexp removed, and the match itself
 
 procedure regexp_next_match 
-  (str in out varchar2, match out varchar2, pattern varchar2) 
+  (str in out nocopy varchar2, match out nocopy varchar2, pattern varchar2) 
 is
   rest    varchar2(32767) := str;
   newstart integer;
@@ -250,7 +261,7 @@ end;
 
 procedure reParse (
    userStr   in  clob, 
-   words     out wordListType, 
+   words     out nocopy wordListType, 
    joinChars in  varchar2 default '',
    leadChars in  varchar2 default '+-',
    userWild  in  varchar2 default '*',
@@ -461,12 +472,9 @@ end parseSection;
 -- Will find all required segments and accumulate over remaining segments
 
 procedure simpleQuery(  
-     query    in             queryTerms,
+     q        in             queryTerms,
      retStr   in out nocopy  clob 
 ) is
-  reqList      exprList;
-  optList      exprList; 
-  negList      exprList; 
   conj         varchar2(3)    := '';
   joiner       varchar2(3)    := '';
   secName      varchar2(30);
@@ -476,25 +484,22 @@ procedure simpleQuery(
   sectionRE    varchar2(30);
   sectionName  varchar2(30);
 begin
-  reqList  := query.reqTerms;
-  optList  := query.optTerms;
-  negList  := query.negTerms;
 
   retStr := '';
 
   sectionRE := '[+-]?[[:alnum:]_]+:\(';
 
-    if reqList.count > 0 then
+    if q.reqTerms.count > 0 then
 
     retStr := retStr || '(';
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         simpleQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
           
       else
-        retStr := retStr || conj || reqList(i);
+        retStr := retStr || conj || q.reqTerms(i);
       end if;
       conj := '&';
     end loop;
@@ -504,33 +509,33 @@ begin
    
   end if;
 
-  if optList.count > 0 then
+  if q.optTerms.count > 0 then
 
     conj := '';
     retStr := retStr || joiner || '(';
 
-    if reqList.count > 0 then
+    if q.reqTerms.count > 0 then
 
-      for i in 1..reqList.last loop
-        if regexp_instr( reqList(i), sectionRE ) = 1 then
-          parseSection( reqList(i), sectionTerms, secName );
+      for i in 1..q.reqTerms.last loop
+        if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+          parseSection( q.reqTerms(i), sectionTerms, secName );
           simpleQuery( sectionTerms, str );
           retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
         else
-          retStr := retStr || conj || reqList(i);
+          retStr := retStr || conj || q.reqTerms(i);
         end if;
         conj := ',';
       end loop;
 
     end if;
 
-    for i in 1..optList.last loop
-      if regexp_instr( optList(i), sectionRE ) = 1 then
-        parseSection( optList(i), sectionTerms, secName );
+    for i in 1..q.optTerms.last loop
+      if regexp_instr( q.optTerms(i), sectionRE ) = 1 then
+        parseSection( q.optTerms(i), sectionTerms, secName );
         simpleQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       else
-        retStr := retStr || conj || optList(i);
+        retStr := retStr || conj || q.optTerms(i);
       end if;
       conj := ',';
     end loop;
@@ -539,14 +544,14 @@ begin
 
   end if;
 
-  if negList.count > 0 then
-    for i in 1..negList.last loop
-      if regexp_instr( negList(i), sectionRE ) = 1 then
-        parseSection( negList(i), sectionTerms, secName );
+  if q.negTerms.count > 0 then
+    for i in 1..q.negTerms.last loop
+      if regexp_instr( q.negTerms(i), sectionRE ) = 1 then
+        parseSection( q.negTerms(i), sectionTerms, secName );
         simpleQuery( sectionTerms, str );
         retStr := retStr || ' ~' || '((' || str || ') WITHIN '|| secName || ')';
       else
-        retStr := retStr || ' ~' || negList(i);
+        retStr := retStr || ' ~' || q.negTerms(i);
       end if;
     end loop; 
   end if;
@@ -561,13 +566,9 @@ end simpleQuery;
 -- then we return "( a & b & f ) & ( (d & e) WITHIN c )
 
 procedure andQuery(  
-     query    in             queryTerms,
+     q        in             queryTerms,
      retStr   in out nocopy  clob 
 ) is
-  allList      exprList;
-  reqList      exprList;
-  optList      exprList; 
-  negList      exprList; 
   conj         varchar2(3)    := '';
   joiner       varchar2(3)    := '';
   secName      varchar2(30);
@@ -577,10 +578,6 @@ procedure andQuery(
   sectionRE    varchar2(30);
   sectionName  varchar2(30);
 begin
-  allList  := query.allTerms;
-  reqList  := query.reqTerms;
-  optList  := query.optTerms;
-  negList  := query.negTerms;
 
   retStr := '';
 
@@ -590,10 +587,10 @@ begin
 
   conj := '';
 
-  if allList.count > 0 then
+  if q.allTerms.count > 0 then
     retStr := retStr || '(';
-    for i in 1..allList.last loop
-      retStr := retStr || conj || allList(i);
+    for i in 1..q.allTerms.last loop
+      retStr := retStr || conj || q.allTerms(i);
       conj := '&';
     end loop;
     retStr := retStr || ')';
@@ -604,10 +601,10 @@ begin
 
   -- Any sections in required or optional list have to be added
   -- section contents recursively submitted to this function
-  if reqList.count > 0 then
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+  if q.reqTerms.count > 0 then
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         andQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -615,10 +612,10 @@ begin
     end loop;
   end if;
 
-  if optList.count > 0 then
-    for i in 1..optList.last loop
-      if regexp_instr( optList(i), sectionRE ) = 1 then
-        parseSection( optList(i), sectionTerms, secName );
+  if q.optTerms.count > 0 then
+    for i in 1..q.optTerms.last loop
+      if regexp_instr( q.optTerms(i), sectionRE ) = 1 then
+        parseSection( q.optTerms(i), sectionTerms, secName );
         andQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -629,18 +626,18 @@ begin
   -- finally any negative terms (sections or single terms) must be added
   -- note that -a:(b +c) should only be subtracted if c is present TODO: is this right?
 
-  if negList.count > 0 then
-    if reqList.count = 0 and optList.count = 0 then 
+  if q.negTerms.count > 0 then
+    if q.reqTerms.count = 0 and q.optTerms.count = 0 then 
       handleUnaryMinus();
       retStr := '';
     else
-      for i in 1..negList.last loop
-        if regexp_instr( negList(i), sectionRE ) = 1 then
-          parseSection( negList(i), sectionTerms, secName );
+      for i in 1..q.negTerms.last loop
+        if regexp_instr( q.negTerms(i), sectionRE ) = 1 then
+          parseSection( q.negTerms(i), sectionTerms, secName );
           simpleQuery( sectionTerms, str );
           retStr := retStr || ' ~' || '((' || str || ') WITHIN '|| secName || ')';
         else
-          retStr := retStr || ' ~' || negList(i);
+          retStr := retStr || ' ~' || q.negTerms(i);
         end if;
       end loop; 
     end if;
@@ -662,13 +659,9 @@ end andQuery;
 ---(x, y, a, b, f) , ( (d, e) WITHIN c) & x & y ~z
 
 procedure accumQuery(  
-     query    in             queryTerms,
+     q        in             queryTerms,
      retStr   in out nocopy  clob 
 ) is
-  allList      exprList;
-  reqList      exprList;
-  optList      exprList; 
-  negList      exprList; 
   conj         varchar2(3)    := '';
   joiner       varchar2(3)    := '';
   secName      varchar2(30);
@@ -678,10 +671,6 @@ procedure accumQuery(
   sectionRE    varchar2(30);
   sectionName  varchar2(30);
 begin
-  allList  := query.allTerms;
-  reqList  := query.reqTerms;
-  optList  := query.optTerms;
-  negList  := query.negTerms;
 
   retStr := '';
 
@@ -693,10 +682,10 @@ begin
 
   retStr := retStr || '((';
 
-  if allList.count > 0 then
+  if q.allTerms.count > 0 then
     retStr := retStr || '(';
-    for i in 1..allList.last loop
-      retStr := retStr || conj || allList(i);
+    for i in 1..q.allTerms.last loop
+      retStr := retStr || conj || q.allTerms(i);
       conj := ',';
     end loop;
     retStr := retStr || ')';
@@ -708,10 +697,10 @@ begin
 
   -- Any sections in required or optional list have to be added
   -- section contents recursively submitted to this function
-  if reqList.count > 0 then
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+  if q.reqTerms.count > 0 then
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         accumQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -719,10 +708,10 @@ begin
     end loop;
   end if;
 
-  if optList.count > 0 then
-    for i in 1..optList.last loop
-      if regexp_instr( optList(i), sectionRE ) = 1 then
-        parseSection( optList(i), sectionTerms, secName );
+  if q.optTerms.count > 0 then
+    for i in 1..q.optTerms.last loop
+      if regexp_instr( q.optTerms(i), sectionRE ) = 1 then
+        parseSection( q.optTerms(i), sectionTerms, secName );
         accumQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -734,15 +723,15 @@ begin
 
   -- now add any required terms
 
-  if reqList.count > 0 then
+  if q.reqTerms.count > 0 then
     conj := '&';
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         simpleQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       else
-        retStr := retStr || conj || reqList(i);
+        retStr := retStr || conj || q.reqTerms(i);
       end if;
     end loop;
    
@@ -751,18 +740,18 @@ begin
   -- finally any negative terms (sections or single terms) must be added
   -- note that -a:(b +c) should only be subtracted if c is present TODO: is this right?
 
-  if negList.count > 0 then
-    if reqList.count = 0 and optList.count = 0 then 
+  if q.negTerms.count > 0 then
+    if q.reqTerms.count = 0 and q.optTerms.count = 0 then 
       handleUnaryMinus();
       retStr := '';
     else
-      for i in 1..negList.last loop
-        if regexp_instr( negList(i), sectionRE ) = 1 then
-          parseSection( negList(i), sectionTerms, secName );
+      for i in 1..q.negTerms.last loop
+        if regexp_instr( q.negTerms(i), sectionRE ) = 1 then
+          parseSection( q.negTerms(i), sectionTerms, secName );
           simpleQuery( sectionTerms, str );
           retStr := retStr || ' ~' || '((' || str || ') WITHIN '|| secName || ')';
         else
-          retStr := retStr || ' ~' || negList(i);
+          retStr := retStr || ' ~' || q.negTerms(i);
         end if;
       end loop; 
     end if;
@@ -780,13 +769,9 @@ end accumQuery;
 -- => NEAR((a,b,c,d)) & (NEAR((f,g)) WITHIN e) 
 
 procedure nearQuery(  
-     query    in             queryTerms,
+     q        in             queryTerms,
      retStr   in out nocopy  clob 
 ) is
-  allList      exprList;
-  reqList      exprList;
-  optList      exprList; 
-  negList      exprList; 
   conj         varchar2(3)    := '';
   joiner       varchar2(3)    := '';
   secName      varchar2(30);
@@ -796,10 +781,6 @@ procedure nearQuery(
   sectionRE    varchar2(30);
   sectionName  varchar2(30);
 begin
-  allList  := query.allTerms;
-  reqList  := query.reqTerms;
-  optList  := query.optTerms;
-  negList  := query.negTerms;
 
   retStr := '';
 
@@ -809,10 +790,10 @@ begin
 
   conj := '';
 
-  if allList.count > 0 then
+  if q.allTerms.count > 0 then
     retStr := retStr || global_nearOper||'((';
-    for i in 1..allList.last loop
-      retStr := retStr || conj || allList(i);
+    for i in 1..q.allTerms.last loop
+      retStr := retStr || conj || q.allTerms(i);
       conj := ',';
     end loop;
     retStr := retStr || '))';
@@ -823,10 +804,10 @@ begin
 
   -- Any sections in required or optional list have to be added
   -- section contents recursively submitted to this function
-  if reqList.count > 0 then
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+  if q.reqTerms.count > 0 then
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         nearQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -834,10 +815,10 @@ begin
     end loop;
   end if;
 
-  if optList.count > 0 then
-    for i in 1..optList.last loop
-      if regexp_instr( optList(i), sectionRE ) = 1 then
-        parseSection( optList(i), sectionTerms, secName );
+  if q.optTerms.count > 0 then
+    for i in 1..q.optTerms.last loop
+      if regexp_instr( q.optTerms(i), sectionRE ) = 1 then
+        parseSection( q.optTerms(i), sectionTerms, secName );
         nearQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -848,18 +829,18 @@ begin
   -- finally any negative terms (sections or single terms) must be added
   -- note that -a:(b +c) should only be subtracted if c is present TODO: is this right?
 
-  if negList.count > 0 then
-    if reqList.count = 0 and optList.count = 0 then 
+  if q.negTerms.count > 0 then
+    if q.reqTerms.count = 0 and q.optTerms.count = 0 then 
       handleUnaryMinus();
       retStr := '';
     else
-      for i in 1..negList.last loop
-        if regexp_instr( negList(i), sectionRE ) = 1 then
-          parseSection( negList(i), sectionTerms, secName );
+      for i in 1..q.negTerms.last loop
+        if regexp_instr( q.negTerms(i), sectionRE ) = 1 then
+          parseSection( q.negTerms(i), sectionTerms, secName );
           simpleQuery( sectionTerms, str );
           retStr := retStr || ' ~' || '((' || str || ') WITHIN '|| secName || ')';
         else
-          retStr := retStr || ' ~' || negList(i);
+          retStr := retStr || ' ~' || q.negTerms(i);
         end if;
       end loop; 
     end if;
@@ -872,13 +853,9 @@ end nearQuery;
 -- => NEAR((a,b,c,d)) & (NEAR((f,g)) WITHIN e) ~h
 
 procedure proximQuery(  
-     query    in             queryTerms,
+     q        in             queryTerms,
      retStr   in out nocopy  clob 
 ) is
-  allList      exprList;
-  reqList      exprList;
-  optList      exprList; 
-  negList      exprList; 
   conj         varchar2(3)    := '';
   joiner       varchar2(3)    := '';
   secName      varchar2(30);
@@ -888,10 +865,6 @@ procedure proximQuery(
   sectionRE    varchar2(30);
   sectionName  varchar2(30);
 begin
-  allList  := query.allTerms;
-  reqList  := query.reqTerms;
-  optList  := query.optTerms;
-  negList  := query.negTerms;
 
   retStr := '';
 
@@ -901,18 +874,18 @@ begin
 
   conj := '';
 
-  if allList.count > 0 then
+  if q.allTerms.count > 0 then
 
-    if allList.count < 2 then
+    if q.allTerms.count < 2 then
       -- if only one term just specify it, don't try to use NEAR
-      retStr := retStr || allList(1);
+      retStr := retStr || q.allTerms(1);
     else
       retStr := retStr || '(';
-      for i in 1..allList.last loop
-        for k in i+1..(allList.last) loop
+      for i in 1..q.allTerms.last loop
+        for k in i+1..(q.allTerms.last) loop
           if i != k then
-            if notStopWord(allList(i)) and notStopWord(allList(k)) then 
-              retStr := retStr || conj ||global_nearOper||'(('||allList(i)||','||allList(k)||'))';
+            if notStopWord(q.allTerms(i)) and notStopWord(q.allTerms(k)) then 
+              retStr := retStr || conj ||global_nearOper||'(('||q.allTerms(i)||','||q.allTerms(k)||'))';
               conj := ',';
             end if;
           end if;
@@ -926,10 +899,10 @@ begin
 
   -- Any sections in required or optional list have to be added
   -- section contents recursively submitted to this function
-  if reqList.count > 0 then
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+  if q.reqTerms.count > 0 then
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         proximQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -937,10 +910,10 @@ begin
     end loop;
   end if;
 
-  if optList.count > 0 then
-    for i in 1..optList.last loop
-      if regexp_instr( optList(i), sectionRE ) = 1 then
-        parseSection( optList(i), sectionTerms, secName );
+  if q.optTerms.count > 0 then
+    for i in 1..q.optTerms.last loop
+      if regexp_instr( q.optTerms(i), sectionRE ) = 1 then
+        parseSection( q.optTerms(i), sectionTerms, secName );
         proximQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -950,15 +923,15 @@ begin
 
   -- now add any required terms
 
-  if reqList.count > 0 then
+  if q.reqTerms.count > 0 then
     conj := '&';
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         simpleQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       else
-        retStr := retStr || conj || reqList(i);
+        retStr := retStr || conj || q.reqTerms(i);
       end if;
     end loop;
    
@@ -967,18 +940,18 @@ begin
   -- finally any negative terms (sections or single terms) must be added
   -- note that -a:(b +c) should only be subtracted if c is present TODO: is this right?
 
-  if negList.count > 0 then
-    if reqList.count = 0 and optList.count = 0 then 
+  if q.negTerms.count > 0 then
+    if q.reqTerms.count = 0 and q.optTerms.count = 0 then 
       handleUnaryMinus();
       retStr := '';
     else
-      for i in 1..negList.last loop
-        if regexp_instr( negList(i), sectionRE ) = 1 then
-          parseSection( negList(i), sectionTerms, secName );
+      for i in 1..q.negTerms.last loop
+        if regexp_instr( q.negTerms(i), sectionRE ) = 1 then
+          parseSection( q.negTerms(i), sectionTerms, secName );
           simpleQuery( sectionTerms, str );
           retStr := retStr || ' ~' || '((' || str || ') WITHIN '|| secName || ')';
         else
-          retStr := retStr || ' ~' || negList(i);
+          retStr := retStr || ' ~' || q.negTerms(i);
         end if;
       end loop; 
     end if;
@@ -993,13 +966,9 @@ end proximQuery;
 -- then we return "( a b f ) & ( (d e) WITHIN c )
 
 procedure phraseQuery(  
-     query    in             queryTerms,
+     q        in             queryTerms,
      retStr   in out nocopy  clob 
 ) is
-  allList      exprList;
-  reqList      exprList;
-  optList      exprList; 
-  negList      exprList; 
   conj         varchar2(3)    := '';
   joiner       varchar2(3)    := '';
   secName      varchar2(30);
@@ -1009,10 +978,6 @@ procedure phraseQuery(
   sectionRE    varchar2(30);
   sectionName  varchar2(30);
 begin
-  allList  := query.allTerms;
-  reqList  := query.reqTerms;
-  optList  := query.optTerms;
-  negList  := query.negTerms;
 
   retStr := '';
 
@@ -1022,10 +987,10 @@ begin
 
   conj := '';
 
-  if allList.count > 0 then
+  if q.allTerms.count > 0 then
     retStr := retStr || '(';
-    for i in 1..allList.last loop
-      retStr := retStr || conj || allList(i);
+    for i in 1..q.allTerms.last loop
+      retStr := retStr || conj || q.allTerms(i);
       conj := ' ';
     end loop;
     retStr := retStr || ')';
@@ -1036,10 +1001,10 @@ begin
 
   -- Any sections in required or optional list have to be added
   -- section contents recursively submitted to this function
-  if reqList.count > 0 then
-    for i in 1..reqList.last loop
-      if regexp_instr( reqList(i), sectionRE ) = 1 then
-        parseSection( reqList(i), sectionTerms, secName );
+  if q.reqTerms.count > 0 then
+    for i in 1..q.reqTerms.last loop
+      if regexp_instr( q.reqTerms(i), sectionRE ) = 1 then
+        parseSection( q.reqTerms(i), sectionTerms, secName );
         phraseQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -1047,10 +1012,10 @@ begin
     end loop;
   end if;
 
-  if optList.count > 0 then
-    for i in 1..optList.last loop
-      if regexp_instr( optList(i), sectionRE ) = 1 then
-        parseSection( optList(i), sectionTerms, secName );
+  if q.optTerms.count > 0 then
+    for i in 1..q.optTerms.last loop
+      if regexp_instr( q.optTerms(i), sectionRE ) = 1 then
+        parseSection( q.optTerms(i), sectionTerms, secName );
         phraseQuery( sectionTerms, str );
         retStr := retStr || conj || '((' || str || ') WITHIN '|| secName || ')';
       end if;
@@ -1061,18 +1026,18 @@ begin
   -- finally any negative terms (sections or single terms) must be added
   -- note that -a:(b +c) should only be subtracted if c is present TODO: is this right?
 
-  if negList.count > 0 then
-    if reqList.count = 0 and optList.count = 0 then 
+  if q.negTerms.count > 0 then
+    if q.reqTerms.count = 0 and q.optTerms.count = 0 then 
       handleUnaryMinus();
       retStr := '';
     else
-      for i in 1..negList.last loop
-        if regexp_instr( negList(i), sectionRE ) = 1 then
-          parseSection( negList(i), sectionTerms, secName );
+      for i in 1..q.negTerms.last loop
+        if regexp_instr( q.negTerms(i), sectionRE ) = 1 then
+          parseSection( q.negTerms(i), sectionTerms, secName );
           simpleQuery( sectionTerms, str );
           retStr := retStr || ' ~' || '((' || str || ') WITHIN '|| secName || ')';
         else
-          retStr := retStr || ' ~' || negList(i);
+          retStr := retStr || ' ~' || q.negTerms(i);
         end if;
       end loop; 
     end if;
@@ -1089,29 +1054,21 @@ end phraseQuery;
 -- STEP 5 : accum
 
 procedure progQuery (
-     query    in             queryTerms,
+     q        in             queryTerms,
      retStr   in out nocopy  clob 
 ) is
-  allList  exprList;
-  reqList  exprList;
-  optList  exprList; 
-  negList  exprList; 
   andStr   varchar2(5)     := '';
   joiner   varchar2(5)     := '';
   str      varchar2(32767) := '';
   str2     varchar2(32767) := '';
   re       varchar2(30);
 begin
-  allList := query.allTerms;
-  reqList := query.reqTerms;
-  optList := query.optTerms;
-  negList := query.negTerms;
 
   -- return an empty query if nothing specified
   -- fail if required if only a negative term specified
 
-  if reqList.count = 0 and optList.count = 0 then
-    if negList.count > 0 then
+  if q.reqTerms.count = 0 and q.optTerms.count = 0 then
+    if q.negTerms.count > 0 then
       handleUnaryMinus();
     end if;
     retStr := '';
@@ -1127,8 +1084,8 @@ begin
   --          do a phrase search but boost with simple query
   --          then scores higher for multiple terms
 
-  phraseQuery( query, str );
-  simpleQuery( query, str2 );
+  phraseQuery( q, str );
+  simpleQuery( q, str2 );
 
   retStr := retStr || chr(10) || '      <seq>';
   retStr := retStr || 'DEFINEMERGE( ( (' || str || '),('|| str2 || ') ), AND, ADD )';
@@ -1136,8 +1093,8 @@ begin
 
   -- STEP 2 : near
 
-  nearQuery   ( query, str );
-  simpleQuery ( query, str2 );
+  nearQuery   ( q, str );
+  simpleQuery ( q, str2 );
 
   retStr := retStr || chr(10) || '      <seq>';
   retStr := retStr || 'DEFINEMERGE( ( (' || str || '),('|| str2 || ') ), AND, ADD )';
@@ -1145,8 +1102,8 @@ begin
 
   -- STEP 3 : and
 
-  andQuery    ( query, str );
-  simpleQuery ( query, str2 );
+  andQuery    ( q, str );
+  simpleQuery ( q, str2 );
 
   retStr := retStr || chr(10) || '      <seq>';
   retStr := retStr || 'DEFINEMERGE( ( (' || str || '),('|| str2 || ') ), AND, ADD )';
@@ -1154,8 +1111,8 @@ begin
 
   -- STEP 4 : some near (proxim)
 
-  proximQuery( query, str );
-  simpleQuery ( query, str2 );
+  proximQuery ( q, str );
+  simpleQuery ( q, str2 );
 
   retStr := retStr || chr(10) || '      <seq>';
   retStr := retStr || 'DEFINEMERGE( ( (' || str || '),('|| str2 || ') ), AND, ADD )';
@@ -1163,7 +1120,7 @@ begin
 
   -- STEP 5 : accum
 
-  accumQuery( query, str );
+  accumQuery( q, str );
   retStr := retStr || chr(10) || '      <seq>' || str || '</seq>';
 
   retStr := retStr || '
@@ -1173,39 +1130,6 @@ begin
 </query>';
 
 end progQuery;
-
-procedure strToQuery (
-  queryStr      in varchar2, 
-  simpleQry     in out nocopy clob
-) is
-  qTerms queryTerms;
-
-begin
-
-  createQueryTerms (queryStr, qTerms, true);
-  simpleQuery( qTerms, simpleQry);
-
-end strToQuery;
-
--- find the first regexp in a string, return string with that 
--- regexp removed, and the match itself. Also return any 
--- preceding string
-
-procedure regexp_split 
-  (str in out varchar2, match out varchar2, pattern varchar2, preceed in out varchar2) 
-is
-  rest     varchar2(32767) := str;
-  newstart integer;
-  reStart  integer;
-begin
-     match := regexp_substr(rest, pattern, 1, 1, 'n');
-     -- find start of re
-     reStart := regexp_instr(rest, pattern, 1, 1, 0, 'n');
-     -- find end of re
-     newStart := regexp_instr(rest, pattern, 1, 1, 1, 'n');
-     preceed := substr(str, 1, reStart-1);
-     str := substr(rest, newstart, length(rest)-newstart+1);
-end;
 
 -- Find end of a parenthesised string
 -- start points at first open paren, we track until we reach a corresponding close
@@ -1328,8 +1252,8 @@ end sectionSplitter;
 
 procedure getSchemaAndIndex(
   fullIndexName in     varchar2, 
-  schemaName    in out varchar2, 
-  indexName     in out varchar2
+  schemaName    in out nocopy varchar2, 
+  indexName     in out nocopy varchar2
 ) is
    p integer;
 begin
@@ -1347,34 +1271,44 @@ end;
 
 -- Check that the index name (and possibly schema) are valid
 
-procedure validateIndexName(schemaName in varchar2, indexName in varchar2) is
-  ixName varchar2(64);
+procedure validateIndexName(schemaName in varchar2, indexName in out nocopy varchar2) is
+  ixName   varchar2(64);
+  dSQL     varchar2(4000);
+  no_table exception;
+  PRAGMA EXCEPTION_INIT(no_table, -942);
 begin
   if schemaName is null then
     begin
-      select indexName into ixName from ctx_user_indexes
+      select idx_name into indexName from ctx_user_indexes
       where upper(indexName) = idx_name;
     exception 
       when no_data_found then
-        raise_application_error (-20700, 'Index does not exist: '|| indexName);
+      raise_application_error (-20700, 'Index does not exist: '|| indexName);
     end;
-  -- uncomment next 9 lines if you want to be able to specify "schema.indexname"
-  -- user will have to be granted select access on ctxsys.ctx_indexes
-  --else 
-  --  begin
-  --    select indexName into ixName from ctxsys.ctx_indexes
-  --    where upper(indexName) = idx_name
-  --    and upper(schemaName) = idx_owner;
-  --  exception 
-  --    when no_data_found then
-  --      raise_application_error (-20700, 'Index does not exist: '|| schemaName || '.' || indexName);
-  --  end;
-  -- end of section to uncomment    
+  else
+    begin
+      dSQL := '
+        select idx_name from ctxsys.ctx_indexes
+        where idx_name = upper(:idx)
+        and idx_owner = upper(:sch)';
+      execute immediate dSQL into ixName using indexName, schemaName;
+    exception 
+      when no_data_found then
+        raise_application_error (-20700, 'Index does not exist: '|| schemaName || '.' || indexName);
+      when no_table then
+        raise_application_error (-20708,
+	   'Schema specified but cannot access CTXSYS.CTX_INDEXES to validate');
+    end;
+   -- end of section to uncomment    
   end if;
 end;
 
 procedure getStopWords(schemaName in varchar2, indexName in varchar2) is
-  type stopword is table of varchar2(64);
+  csr      sys_refcursor;
+  stopwd   varchar2(128);
+  dSQL     varchar2(4000);
+  no_table exception;
+  PRAGMA EXCEPTION_INIT(no_table, -942);
 begin
   -- Initialize stopList
   global_stopList := wordListType();
@@ -1390,23 +1324,35 @@ begin
       global_stopList.extend(1);
       global_stopList(global_stopList.last) := c.ixv_value;
     end loop;
-  -- uncomment next 9 lines if you wish to be able to specify "schema.indexname"
-  -- user will have to be granted select access on ctxsys.ctx_index_values
-  --else -- schema name is specified
-  --  for c in (select ixv_value from ctxsys.ctx_index_values
-  --       where ixv_index_name = upper(indexName)
-  --       and ixv_index_owner  = upper(schemaName)
-  --       and ixv_class        = 'STOPLIST'
-  --       and ixv_attribute    = 'STOP_WORD') loop
-  --    global_stopList.extend(1);
-  --    global_stopList(global_stopList.last) := c.ixv_value;
-  --  end loop;
-  -- end of section to uncomment
+  else -- schema name is specified
+    dSQL := 'select ixv_value from ctxsys.ctx_index_values
+       where ixv_index_name = upper(:idx)
+         and ixv_index_owner  = upper(:sch)
+         and ixv_class        = ''STOPLIST''
+         and ixv_attribute    = ''STOP_WORD''';
+
+    begin
+      open csr for dSQL using indexName, schemaName;
+      loop
+        fetch csr into stopwd;
+      exit when csr%NOTFOUND;
+        global_stopList.extend(1);
+        global_stopList(global_stopList.last) := stopwd;
+      end loop;	
+    exception
+      when no_table then
+        raise_application_error(-20708,
+	   'Schema specified but cannot access CTXSYS.CTX_INDEX_VALUES');
+    end;
   end if;
 end;
 
-
 procedure getJoinChars(schemaName in varchar2, indexName in varchar2) is
+  csr      sys_refcursor;
+  joinc    varchar2(64);
+  dSQL     varchar2(4000);
+  no_table exception;
+  PRAGMA EXCEPTION_INIT(no_table, -942);
 begin
   global_joinChars := '';
   -- empty indexName => Clear the set of join characters
@@ -1421,95 +1367,102 @@ begin
             or ixv_attribute  = 'SKIPJOINS' ) ) loop
       global_joinchars := global_joinchars || c.ixv_value;
     end loop;
-  -- uncomment next 9 lines if you wish to be able to specify "schema.indexname"
-  -- user will have to be granted select access on ctxsys.ctx_index_values
-  --else
-  --  for c in (select ixv_value from ctxsys.ctx_index_values
-  --       where ixv_index_name = upper(indexName)
-  --       and ixv_index_owner  = upper(schemaName)
-  --       and ixv_class        = 'LEXER'
-  --       and ( ixv_attribute  = 'PRINTJOINS'
-  --          or ixv_attribute  = 'SKIPJOINS' ) ) loop
-  --    global_joinchars := global_joinchars || c.ixv_value;
-  --  end loop;
-  -- end of section to uncomment
+  else
+    begin
+      dSQL := 'select ixv_value from ctxsys.ctx_index_values
+           where ixv_index_name = upper(:idxname)
+           and ixv_index_owner  = upper(:schname)
+           and ixv_class        = ''LEXER''
+           and ( ixv_attribute  = ''PRINTJOINS''
+              or ixv_attribute  = ''SKIPJOINS'' )';
+      open csr for dSQL using indexName, schemaName;
+      loop
+        fetch csr into joinc;
+      exit when csr%NOTFOUND;
+        global_joinchars := global_joinchars || joinc;
+      end loop;
+    exception
+      when no_table then
+        raise_application_error(-20708,
+	   'Schema specified but cannot access CTXSYS.CTX_INDEX_VALUES');
+    end;
   end if;
 end;
 
 function simpleSearch( inStr varchar2 ) return clob is
   query  queryTerms;
-  final  clob;
+  finalc clob;
 begin
 
   sectionSplitter ( inStr, query );
-  simpleQuery     ( query, final );
-  return final;
+  simpleQuery     ( query, finalc );
+  return finalc;
 
 end simpleSearch;
 
 function phraseSearch( inStr varchar2 ) return clob is
   query  queryTerms;
-  final  clob;
+  finalc  clob;
 begin
 
   sectionSplitter ( inStr, query );
-  phraseQuery     ( query, final );
-  return final;
+  phraseQuery     ( query, finalc );
+  return finalc;
 
 end phraseSearch;
 
 function andSearch( inStr varchar2 ) return clob is
   query  queryTerms;
-  final  clob;
+  finalc  clob;
 begin
 
   sectionSplitter ( inStr, query );
-  andQuery        ( query, final );
-  return final;
+  andQuery        ( query, finalc );
+  return finalc;
 
 end andSearch;
 
 function nearSearch( inStr varchar2 ) return clob is
   query  queryTerms;
-  final  clob;
+  finalc clob;
 begin
 
   sectionSplitter ( inStr, query );
-  nearQuery       ( query, final );
-  return final;
+  nearQuery       ( query, finalc );
+  return finalc;
 
 end nearSearch;
 
 function proximSearch( inStr varchar2 ) return clob is
   query  queryTerms;
-  final  clob;
+  finalc clob;
 begin
 
   sectionSplitter ( inStr, query );
-  proximQuery     ( query, final );
-  return final;
+  proximQuery     ( query, finalc );
+  return finalc;
 
 end proximSearch;
 
 function accumSearch( inStr varchar2 ) return clob is
   query  queryTerms;
-  final  clob;
+  finalc clob;
 begin
 
   sectionSplitter ( inStr, query );
-  accumQuery      ( query, final );
-  return final;
+  accumQuery      ( query, finalc );
+  return finalc;
 
 end accumSearch;
 
 function progRelax( inStr varchar2 ) return clob is
   query  queryTerms;
-  final  clob;
+  finalc clob;
 begin
 
   sectionSplitter ( inStr, query );
-  progQuery       ( query, final );
-  return final;
+  progQuery       ( query, finalc );
+  return finalc;
 
 end progrelax;
 

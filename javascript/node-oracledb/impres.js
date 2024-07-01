@@ -1,17 +1,24 @@
-/* Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2019, 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
- * You may not use the identified files except in compliance with the Apache
- * License, Version 2.0 (the "License.")
+ * This software is dual-licensed to you under the Universal Permissive License
+ * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+ * 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+ * either license.
  *
+ * If you elect to accept the software under the Apache License, Version 2.0,
+ * the following applies:
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -22,32 +29,46 @@
  *   Shows PL/SQL 'Implict Results' returning multiple query results
  *   from PL/SQL code.
  *
- *   This example requires node-oracledb 4.0 or later, Oracle Database
- *   12c or later, and Oracle Client 12c libraries or later.
- *
- *   This example uses Node 8's async/await syntax.
+ *   This example requires Oracle Database 12c or later.  When using
+ *   node-oracledb Thick mode, Oracle Client 12c libraries or later are also
+ *   required.
  *
  *****************************************************************************/
 
-const fs = require('fs');
+'use strict';
+
+Error.stackTraceLimit = 50;
+
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
 const demoSetup = require('./demosetup.js');
 
-// On Windows and macOS, you can specify the directory containing the Oracle
-// Client Libraries at runtime, or before Node.js starts.  On other platforms
-// the system library search path must always be set before Node.js is started.
-// See the node-oracledb installation documentation.
-// If the search path is not correct, you will get a DPI-1047 error.
-let libPath;
-if (process.platform === 'win32') {           // Windows
-  libPath = 'C:\\oracle\\instantclient_19_12';
-} else if (process.platform === 'darwin') {   // macOS
-  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+// This example runs in both node-oracledb Thin and Thick modes.
+//
+// Optionally run in node-oracledb Thick mode
+if (process.env.NODE_ORACLEDB_DRIVER_MODE === 'thick') {
+
+  // Thick mode requires Oracle Client or Oracle Instant Client libraries.
+  // On Windows and macOS Intel you can specify the directory containing the
+  // libraries at runtime or before Node.js starts.  On other platforms (where
+  // Oracle libraries are available) the system library search path must always
+  // include the Oracle library path before Node.js starts.  If the search path
+  // is not correct, you will get a DPI-1047 error.  See the node-oracledb
+  // installation documentation.
+  let clientOpts = {};
+  // On Windows and macOS Intel platforms, set the environment
+  // variable NODE_ORACLEDB_CLIENT_LIB_DIR to the Oracle Client library path
+  if (process.platform === 'win32' || (process.platform === 'darwin' && process.arch === 'x64')) {
+    clientOpts = { libDir: process.env.NODE_ORACLEDB_CLIENT_LIB_DIR };
+  }
+  oracledb.initOracleClient(clientOpts);  // enable node-oracledb Thick mode
+
+  if (oracledb.oracleClientVersion < 1200000000) {
+    throw new Error('Implicit Results requires Oracle Client libraries 12c or greater');
+  }
 }
-if (libPath && fs.existsSync(libPath)) {
-  oracledb.initOracleClient({ libDir: libPath });
-}
+
+console.log(oracledb.thin ? 'Running in thin mode' : 'Running in thick mode');
 
 oracledb.outFormat =  oracledb.OUT_FORMAT_OBJECT;
 
@@ -57,6 +78,9 @@ async function run() {
   try {
 
     connection = await oracledb.getConnection(dbConfig);
+    if (connection.oracleServerVersion < 1200000000) {
+      throw new Error('Implicit Results requires Oracle Database 12c or greater');
+    }
 
     await demoSetup.setupBf(connection);  // create the demo table
 
