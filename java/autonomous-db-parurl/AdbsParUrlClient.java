@@ -55,7 +55,7 @@ import java.util.List;
  * This class provides a basic example of how to read the data from Autonomous Database pre-authenticated URL.
  *
  * <p>The example has some constraints. This is a single threaded example & cannot be used to fetch
- * data from same AdbsParUrlExample class instance in multiple threads.
+ * the data from same AdbsParUrlClient instance in multiple threads.
  *
  * <p>This example will do the following things:
  *
@@ -148,7 +148,7 @@ public class AdbsParUrlClient {
                 String responseStr = EntityUtils.toString(response.getEntity());
                 return mapper.readValue(responseStr, ParUrlResponse.class);
             } else {
-                System.out.println(response.getStatusLine().toString());
+                //System.out.println(response.getStatusLine().toString());
                 throw new RuntimeException("Error while fetching data for the par Url.");
             }
 
