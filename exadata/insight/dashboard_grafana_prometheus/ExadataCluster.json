@@ -23,13 +23,13 @@
       "description": ""
     }
   ],
-  "__elements": [],
+  "__elements": {},
   "__requires": [
     {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.4.2"
+      "version": "10.0.2"
     },
     {
       "type": "datasource",
@@ -48,7 +48,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -67,7 +70,6 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1652918017540,
   "links": [
     {
       "asDropdown": true,
@@ -90,6 +92,10 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oe75iKL7k"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -98,6 +104,15 @@
       },
       "id": 26,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "oe75iKL7k"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Compute Server",
       "type": "row"
     },
@@ -113,6 +128,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -137,7 +154,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "links": [
@@ -156,8 +173,12 @@
                 "value": null
               },
               {
-                "color": "red",
+                "color": "yellow",
                 "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
               }
             ]
           },
@@ -181,10 +202,11 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "right"
+          "placement": "right",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -217,6 +239,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -278,10 +302,11 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -327,6 +352,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -388,10 +415,11 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -451,6 +479,10 @@
     },
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oe75iKL7k"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -459,6 +491,15 @@
       },
       "id": 2,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "oe75iKL7k"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "CPU Utilization (Storage)",
       "type": "row"
     },
@@ -474,6 +515,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -498,7 +541,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "displayName": "${__field.labels.server}",
@@ -514,12 +557,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 80
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 90
               }
             ]
           },
@@ -543,16 +589,21 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "right"
+          "placement": "right",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
       "pluginVersion": "8.2.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "CL_CPUT{nodeType=\"STORAGE\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\"}",
           "interval": "",
@@ -565,6 +616,10 @@
     },
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "oe75iKL7k"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -573,6 +628,15 @@
       },
       "id": 41,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "oe75iKL7k"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "IO",
       "type": "row"
     },
@@ -588,6 +652,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -627,8 +693,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -642,7 +707,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 30
       },
@@ -657,10 +722,11 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -696,6 +762,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -735,8 +803,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -750,7 +817,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 38
       },
@@ -765,10 +832,11 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -804,6 +872,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -843,8 +913,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -858,7 +927,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 46
       },
@@ -873,10 +942,11 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -912,6 +982,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -951,8 +1023,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -966,7 +1037,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 54
       },
@@ -981,10 +1052,11 @@
             "last"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1010,7 +1082,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 35,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "cluster",
@@ -1025,18 +1097,18 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\"}",
+        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\"},fleet)",
         "hide": 0,
         "includeAll": false,
         "multi": false,
         "name": "fleet",
         "options": [],
         "query": {
-          "query": "{__name__=~\"CL_CPUT|DS_CPUT\"}",
-          "refId": "StandardVariableQuery"
+          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\"},fleet)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*[\\W|,]fleet=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
@@ -1047,18 +1119,18 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"}",
+        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"},pod)",
         "hide": 0,
         "includeAll": false,
         "multi": false,
         "name": "pod",
         "options": [],
         "query": {
-          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"}",
-          "refId": "StandardVariableQuery"
+          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\"},pod)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*[\\W|,]pod=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
@@ -1069,23 +1141,27 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"}",
+        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"},cluster)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "cluster",
         "options": [],
         "query": {
-          "query": "{__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"}",
-          "refId": "StandardVariableQuery"
+          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=\"$fleet\",pod=\"$pod\"},cluster)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*[\\W|,]cluster=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
       },
       {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "oe75iKL7k"
+        },
         "filters": [],
         "hide": 0,
         "name": "filter",
@@ -1176,6 +1252,6 @@
   "timezone": "",
   "title": "Exadata Cluster",
   "uid": "exapClu",
-  "version": 32,
+  "version": 15,
   "weekStart": ""
 }
