@@ -70,7 +70,6 @@ mvn dependency:copy-dependencies
 java --enable-preview -Doracle.jdbc.disablePipeline=false -cp "target/classes:target/dependency/*" com.oracle.dev.jdbc.PipelineVectorDemo
 ```
 A few notes:
-- The code requires JDK 22. Run `java -version` to check your version.
+- The code requires JDK 22. Run `java -version` to check your version. The code may also work with future JDK versions, but only if the Structured Concurrency API remains unchanged.
 - The `oracle.jdbc.disablePipeline=false` setting is required for Mac OS users. [Find more details about this here](https://github.com/oracle/oracle-r2dbc?tab=readme-ov-file#out-of-band-breaks)
-
-
+- Pipelining and VECTOR support are introduced in Oracle JDBC 23.4. The ojdbc11 dependency must be of version 23.4 or newer.

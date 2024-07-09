@@ -53,7 +53,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Flow;
 import java.util.concurrent.StructuredTaskScope;
-import java.util.concurrent.StructuredTaskScope.ShutdownOnFailure;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -83,8 +82,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  *   Oracle Database to perform a similarity search against vector embeddings.
  * </li></ol>
  * </p><p>
- * These methods use the Structured Concurrency API, which is a preview feature
- * in JDK 22. The "--enable-preview" option must be provided when compiling and
+ * These methods use the 
+ * <a href="https://openjdk.org/jeps/480">
+ * Structured Concurrency API
+ * </a>
+ * , which is a preview feature since JDK 21, and continues to be previewed as 
+ * of JDK 23. The "--enable-preview" option must be provided when compiling and
  * running this code.
  * </p><p>
  * For Mac OS Users: Run with -Doracle.jdbc.disablePipeline=false to enable
@@ -218,7 +221,7 @@ public class PipelineVectorDemo {
       "https://www.gutenberg.org/cache/epub/37959/pg37959.txt";
     try (
       Stream<String> paragraphStream = streamParagraphs(bookUrl);
-      ShutdownOnFailure taskScope = new ShutdownOnFailure()) {
+      var taskScope = new StructuredTaskScope.ShutdownOnFailure()) {
 
       // For every 100 paragraphs of text, execute a pipelined batch insert
       paragraphStream.gather(Gatherers.windowFixed(100))
@@ -277,10 +280,10 @@ public class PipelineVectorDemo {
   private record TextRecord(int id, String text) { }
 
   /**
-   * Updates the example table with embeddings for it's text data. This method
+   * Updates the example table with embeddings for its text data. This method
    * uses the structured concurrency API (preview feature in JDK 22). Calls to
    * {@link StructuredTaskScope#fork(Callable)} execute concurrent batch UPDATEs
-   * into Oracle Database. The batch UPDATEs are pipelined: This allows for
+   * into Oracle Database. The batch UPDATEs are pipelined: this allows for
    * concurrent progress of MANY statements from ONE JDBC connection. The
    * UPDATEs store a vector embedding requested from Oracle Cloud's Generative
    * AI service.
@@ -289,7 +292,7 @@ public class PipelineVectorDemo {
     throws SQLException, InterruptedException, ExecutionException {
 
     long start = System.currentTimeMillis();
-    try (ShutdownOnFailure taskScope = new ShutdownOnFailure()) {
+    try (var taskScope = new StructuredTaskScope.ShutdownOnFailure()) {
 
      // Stream rows from pipelined fetches
      pipelineQuery(connection)
@@ -402,7 +405,7 @@ public class PipelineVectorDemo {
    * Searches the example table for facts about animals. This method uses
    * the structured concurrency API (preview feature in JDK 22). Calls to
    * {@link StructuredTaskScope#fork(Callable)} execute concurrent SELECT
-   * queries against Oracle Database. The queries are pipelined: This allows for
+   * queries against Oracle Database. The queries are pipelined: this allows for
    * concurrent progress of MANY statements from ONE JDBC connection.
    * </p><p>
    * The input search terms are converted into vector embeddings using Oracle
@@ -413,7 +416,7 @@ public class PipelineVectorDemo {
     Connection connection, List<String> searchTerms)
     throws ExecutionException, InterruptedException {
 
-    try (ShutdownOnFailure taskScope = new ShutdownOnFailure()) {
+    try (var taskScope = new StructuredTaskScope.ShutdownOnFailure()) {
 
       List<Subtask<List<String>>> searchTasks =
         searchTerms.stream()
@@ -441,14 +444,14 @@ public class PipelineVectorDemo {
    * Searches the example table for facts about animals. This method uses
    * the structured concurrency API (preview feature in JDK 22). Calls to
    * {@link StructuredTaskScope#fork(Callable)} execute concurrent SELECT
-   * queries against Oracle Database. The queries are pipelined: This allows for
+   * queries against Oracle Database. The queries are pipelined: this allows for
    * concurrent progress of MANY statements from ONE JDBC connection.
    */
   static List<String> searchTableEmbeddings(
     Connection connection, List<float[]> embeddings)
     throws InterruptedException, ExecutionException {
 
-    try (ShutdownOnFailure taskScope = new ShutdownOnFailure()) {
+    try (var taskScope = new StructuredTaskScope.ShutdownOnFailure()) {
 
       List<Subtask<String>> searchTasks =
         embeddings.stream()
