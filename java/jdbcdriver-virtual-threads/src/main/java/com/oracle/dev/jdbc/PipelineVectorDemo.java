@@ -77,7 +77,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  *   the text data. The embeddings are requested from Oracle Cloud's Generative
  *   AI service.
  * </li><li>
- *   The {@link #searchTableText(Connection, List)} method executed pipelined SELECT
+ *   The {@link #searchTableText(Connection, List)} method executes pipelined SELECT
  *   queries on virtual threads. The queries use the VECTOR_DISTANCE function of
  *   Oracle Database to perform a similarity search against vector embeddings.
  * </li></ol>
@@ -95,10 +95,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * </p><p>
  * A key thing to note about this demo is how many threads all share one JDBC
  * connection, and use it to execute SQL operations concurrently. Normally, that
- * would not be possible: Synchronous APIs like
- * {@link PreparedStatement#execute()} block the calling the thread until all
- * previous SQL opeations have completed. Concurrent SQL is possible because
- * this demo uses pipelined database calls. Pipelined calls only available
+ * would not be possible: synchronous APIs like
+ * {@link PreparedStatement#execute()} block the calling thread until all
+ * previous SQL operations have completed. Concurrent SQL is possible because
+ * this demo uses pipelined database calls. Pipelined calls are only available
  * through Oracle JDBC's Reactive Extensions API, with methods like
  * {@link OraclePreparedStatement#executeAsyncOracle()}.
  * </p>
