@@ -260,7 +260,7 @@ public class BooksManager {
     String query = """
                 SELECT bc.BOOK_COPY_ID, bc.BOOK_ID, b.BOOK_NAME,  bc.YEAR_PUBLISHED, cs.STATUS_NAME 
                 FROM book_copy bc, copy_status_lu cs, books b 
-                WHERE bc.STATUS=cs.STATUS_ID and bc.BOOK_ID=b.BOOK_ID
+                WHERE bc.STATUS_ID=cs.STATUS_ID and bc.BOOK_ID=b.BOOK_ID
                 """;
     
     try (
@@ -275,7 +275,7 @@ public class BooksManager {
           String bookName = rs.getString(3);
           int publishedYear = rs.getInt(4);
           String status = rs.getString(5);
-          System.out.println("ID:" + bookId + " " + bookCopyId + " - " + bookName + ", " + publishedYear + " [" +status+ "]x");
+          System.out.println("ID:" + bookId + " " + bookCopyId + " - " + bookName + ", " + publishedYear + " [" +status+ "]");
         }
       }
       

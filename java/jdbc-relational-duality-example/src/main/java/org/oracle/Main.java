@@ -43,7 +43,6 @@ public class Main {
     example6();
 
     // BooksExample
-    setLookUp();
     example7();
     example8();
     example9();

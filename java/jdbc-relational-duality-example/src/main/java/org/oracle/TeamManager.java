@@ -126,7 +126,7 @@ public class TeamManager {
 			int i = stmt.executeUpdate();
 			if (i > 0) System.out.println("New Player created and added to team");
 
-		} cat(SQLException e) {
+		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
