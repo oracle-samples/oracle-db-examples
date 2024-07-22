@@ -1,5 +1,5 @@
 # SQL Interceptor
-![oveview](/assets/img/overview.png)
+![oveview](assets/img/overview.png)
 
 This project demonstrates how the _TraceEventListener_ feature can be used for security
 enhancement of user applications. The idea here is being able to intercept any SQL statement
