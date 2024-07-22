@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.1'
+    id 'io.spring.dependency-management' version '1.1.5'
+    id 'com.oracle.database.jdbc.java-conventions' version '1.2-SNAPSHOT'
+    id 'maven-publish'
+}
+
+
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+
+repositories {
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+    implementation("org.webjars:jquery:3.7.1")
+    implementation("org.webjars:bootstrap:5.3.3")
+    implementation("org.webjars.npm:htmx.org:2.0.0")
+
+    implementation("org.webjars:webjars-locator:0.52")
+
+    implementation 'com.oracle.database.jdbc:ojdbc11:23.4.0.24.05'
+    implementation 'com.oracle.database.jdbc:ucp11:23.4.0.24.05'
+
+    compileOnly 'org.projectlombok:lombok'
+
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'com.oracle.database.jdbc:JDBCInterceptor:0.2-SNAPSHOT'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.remove("-Werror")
+}

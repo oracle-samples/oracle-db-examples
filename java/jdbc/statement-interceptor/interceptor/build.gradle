@@ -1,0 +1,55 @@
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.oracle.database.jdbc.java-conventions' version '1.2-SNAPSHOT'
+    id 'maven-publish'
+}
+
+group = 'com.oracle.sample.interceptor'
+version = '0.2-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.remove("-Werror")
+}
+
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation 'com.oracle.database.jdbc:ojdbc11:23.4.0.24.05'
+
+    implementation 'com.google.code.gson:gson:2.11.0'
+}
+
+application {
+    mainClass = 'com.oracle.jdbc.samples.Main'
+
+    applicationDefaultJvmArgs = ['-Dcom.oracle.jdbc.samples.url='+project.property('jdbc.url')]
+    applicationDefaultJvmArgs += ['-Dcom.oracle.jdbc.samples.user='+project.property('jdbc.user')]
+    applicationDefaultJvmArgs += ['-Dcom.oracle.jdbc.samples.password='+project.property('jdbc.password')]
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.oracle.database.jdbc'
+            artifactId = rootProject.name
+            version = version
+            from components.java
+        }
+    }
+}
+
+
