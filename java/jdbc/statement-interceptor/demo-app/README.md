@@ -9,7 +9,7 @@ to oracle database server.
 
 =================================================================================================
 
-![Screenshot of a demo application](/assets/img/demoapp.png)
+![Screenshot of a demo application](assets/img/demoapp.png)
 
 =================================================================================================
 
@@ -77,18 +77,18 @@ An example is a search like
 When the interceptor is not enabled you will see that this search return all 
 employees including the ones that are not supposed to be visible 
 
-![SQL injection not intercepted](/assets/img/injection_1.png)
+![SQL injection not intercepted](assets/img/injection_1.png)
 
 When the interceptor is enabled you will see the security error thrown
 by the interceptor and that the request do not reach the server.
 
-![SQL injection not intercepted](/assets/img/injection_2.png)
+![SQL injection not intercepted](assets/img/injection_2.png)
 
 #### fixed token example
 
 By issuing "BabEmployee" as search criteria you will see how security log record  can be intercepted.
 
-![token sample](/assets/img/token_1.png)
+![token sample](assets/img/token_1.png)
 
 ### From intelliJ 
 _Run_ > _Run statement-interceptor-demo [bootRun]_ 
