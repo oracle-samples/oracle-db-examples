@@ -2,11 +2,10 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.oracle.database.jdbc.java-conventions' version '1.2-SNAPSHOT'
     id 'maven-publish'
 }
 
-group = 'com.oracle.sample.interceptor'
+group = 'com.oracle.database.jdbc'
 version = '0.2-SNAPSHOT'
 
 java {
@@ -15,10 +14,9 @@ java {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs.remove("-Werror")
+repositories {
+    mavenCentral()
 }
-
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
@@ -44,7 +42,7 @@ test {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'com.oracle.database.jdbc'
+            groupId = group
             artifactId = rootProject.name
             version = version
             from components.java

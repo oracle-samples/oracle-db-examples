@@ -5,17 +5,30 @@ import lombok.extern.java.Log;
 import oracle.ucp.jdbc.PoolDataSource;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ResourceUtils;
 
 import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @Configuration
 @PropertySource("classpath:oracle-pooled-ds.properties")
@@ -30,7 +43,8 @@ import java.util.logging.Level;
  * set by the user in the UI.
  * This class also take care of creating the JdbcTemplate instance used by the
  * application.
- */ public class TracedDataSourceConfig {
+ */
+public class TracedDataSourceConfig {
 
   private final Environment env;
 
@@ -76,6 +90,19 @@ import java.util.logging.Level;
   }
 
   /**
+   * Grabs rule configuration from JSON resource file
+   * @return the JSON content
+   * @throws IOException error occurred while trying to read the resource
+   */
+  private String getStatemenRulesAsJSONString() throws IOException {
+    InputStream resource =
+      new ClassPathResource("demoStatementRules.json").getInputStream();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(resource));
+    String rules = reader.lines().collect(Collectors.joining());
+    return rules;
+  }
+
+  /**
    * Create a pool datasource with the interceptor plugged in.
    *
    * @return the datasource
@@ -88,11 +115,19 @@ import java.util.logging.Level;
 
     dataSource.setConnectionProperty("oracle.jdbc.provider.traceEventListener",
                                      "com.oracle.jdbc.samples.interceptor.SQLStatementInterceptorProvider");
+
+
+
+    String rules;
+    try {
+      rules = getStatemenRulesAsJSONString();
+    } catch (IOException e) {
+      throw new SQLException("Failed to load rules",e);
+    }
     dataSource.setConnectionProperty(
-      "oracle.jdbc.provider.traceEventListener.configuration",
-      TracedDataSourceConfig.class.getClassLoader()
-                                  .getResource("statementRules.json")
-                                  .getPath());
+      "oracle.jdbc.provider.traceEventListener.JSONConfiguration",
+      rules);
+    log.fine("Loading rules from : " + rules);
 
     return dataSource;
   }

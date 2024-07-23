@@ -8,6 +8,7 @@ import com.oracle.jdbc.samples.statementinterceptordemo.services.EmployeeService
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ResourceUtils;
@@ -16,11 +17,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * main app controller
@@ -50,18 +56,27 @@ public class StatementInterceptorDemoController {
     log.entering("StatementInterceptorDemoController", "grabRules");
 
     try {
-      final File file = ResourceUtils.getFile("classpath:statementRules.json");
-      log.exiting("StatementInterceptorDemoController", "grabRules");
       Gson gson = new Gson();
-      Type listType = new TypeToken<List<Rule>>() {
-      }.getType();
-      List<Rule> ruleList =
-        gson.fromJson(Files.readString(file.toPath()), listType);
+      Type listType = new TypeToken<List<Rule>>() {}.getType();
+      List<Rule> ruleList = gson.fromJson(getStatemenRulesAsJSONString(), listType);
+      log.exiting("StatementInterceptorDemoController", "grabRules",ruleList);
       return ruleList;
     } catch (Exception e) {
       log.log(Level.WARNING, "error reading rules", e);
       return null;
     }
+  }
+
+  /**
+   * Grabs rule configuration from JSON resource file
+   * @return the JSON content
+   * @throws IOException error occurred while trying to read the resource
+   */
+  private String getStatemenRulesAsJSONString() throws IOException {
+    InputStream resource =
+      new ClassPathResource("demoStatementRules.json").getInputStream();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(resource));
+    return reader.lines().collect(Collectors.joining());
   }
 
   @GetMapping("/")

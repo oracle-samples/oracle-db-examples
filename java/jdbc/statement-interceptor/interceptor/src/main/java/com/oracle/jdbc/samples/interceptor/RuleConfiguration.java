@@ -31,15 +31,14 @@ public class RuleConfiguration {
   }
 
   /**
-   * Create rule configuration form JSON file
+   * Create rule configuration form JSON array
    *
-   * @param pathname path to the json file
+   * @param jsonContent JSON rule definition
    * @return a new configuration
    */
-  public static RuleConfiguration fromJSONFile(String pathname) throws IOException {
+  public static RuleConfiguration fromJSON(final String jsonContent) throws IOException {
     Map<StatementRule, List<StatementViolationAction>> rules = new HashMap<>();
-    final String jsonString = Files.readString(Path.of(pathname));
-    JsonArray rulesArray = JsonParser.parseString(jsonString).getAsJsonArray();
+    JsonArray rulesArray = JsonParser.parseString(jsonContent).getAsJsonArray();
 
     for (JsonElement element : rulesArray) {
       JsonObject rule = element.getAsJsonObject();
@@ -55,7 +54,7 @@ public class RuleConfiguration {
         StatementRule statementRule;
         if (rule.has("parameter"))
           statementRule = clazz.getConstructor(String.class)
-            .newInstance(rule.get("parameter").getAsString());
+                               .newInstance(rule.get("parameter").getAsString());
         else
           statementRule = clazz.getConstructor().newInstance();
 
@@ -72,6 +71,22 @@ public class RuleConfiguration {
     }
 
     return new RuleConfiguration(rules);
+  }
+
+
+  /**
+   * Create rule configuration form JSON file
+   *
+   * @param pathname path to the json file
+   * @return a new configuration
+   */
+  public static RuleConfiguration fromJSONFile(String pathname) throws IOException {
+    Map<StatementRule, List<StatementViolationAction>> rules = new HashMap<>();
+
+    final String jsonString = Files.readString(Path.of(pathname));
+
+    return fromJSON(jsonString);
+
   }
 
   /**
