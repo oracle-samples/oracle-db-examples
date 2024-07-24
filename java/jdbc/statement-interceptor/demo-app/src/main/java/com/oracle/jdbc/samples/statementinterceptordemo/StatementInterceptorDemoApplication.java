@@ -52,8 +52,6 @@ public class StatementInterceptorDemoApplication {
       // add our handler to violation logger
       Logger.getLogger(SQLStatementInterceptor.ACTION_LOGGER_NAME)
             .addHandler(new WebViolationHandler());
-
-
     };
   }
 

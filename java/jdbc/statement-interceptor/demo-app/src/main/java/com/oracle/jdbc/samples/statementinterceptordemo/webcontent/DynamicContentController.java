@@ -31,12 +31,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -48,7 +44,7 @@ import java.util.stream.Collectors;
 @Log
 public class DynamicContentController {
 
-  public static Exception receivedException = null;
+  public static Exception receivedInterceptorError = null;
 
   private final StatisticService statService;
   private  WebViolationHandler violationHandler;
@@ -77,17 +73,18 @@ public class DynamicContentController {
   }
 
   @GetMapping("interceptor/errors")
-  public ModelAndView errors() {
-    log.entering("DynamicContentController", "errors");
+  public ModelAndView getSQLInterceptorErrors() {
+    log.entering("DynamicContentController", "getSQLInterceptorErrors");
     // actually we known that never be null
-    if (receivedException != null) {
-      final var stacktrace = Arrays.stream(receivedException.getStackTrace())
+    if (receivedInterceptorError != null) {
+      final var stacktrace = Arrays.stream(receivedInterceptorError.getStackTrace())
                                    .map(StackTraceElement::toString)
                                    .collect(Collectors.joining(
                                      System.lineSeparator()));
 
       ModelAndView modelAndView = new ModelAndView("fragments/error");
-      modelAndView.addObject("errorMessage", receivedException.getMessage());
+      modelAndView.addObject("errorTitle", "SQL statement rule violation intercepted");
+      modelAndView.addObject("errorMessage", receivedInterceptorError.getMessage());
       modelAndView.addObject("stacktrace", stacktrace);
 
       return modelAndView;

@@ -28,13 +28,13 @@ import com.google.gson.reflect.TypeToken;
 import com.oracle.jdbc.samples.statementinterceptordemo.models.Employee;
 import com.oracle.jdbc.samples.statementinterceptordemo.models.Rule;
 import com.oracle.jdbc.samples.statementinterceptordemo.services.EmployeeService;
+import com.oracle.jdbc.samples.statementinterceptordemo.utils.InterceptorError;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -116,7 +116,7 @@ public class StatementInterceptorDemoController {
     @RequestParam(name = "useInterceptor", defaultValue = "false")
     boolean useInterceptor, Model model, HttpServletResponse response) {
 
-    log.finer("userlist called for query: " + query);
+    log.finer("userlist called for query: [" + query + "]");
     log.finer("userlist called interceptor requested ? : " + useInterceptor);
 
     // according to flag set by user we use the simple datasource
@@ -124,7 +124,7 @@ public class StatementInterceptorDemoController {
     final var serviceToUse =
       useInterceptor ? this.interceptedEmployeeService : this.employeeService;
     List<Employee> employees = List.of();
-    DynamicContentController.receivedException = null;
+    DynamicContentController.receivedInterceptorError = null;
     try {
       if (query == null || query.isEmpty()) {
         employees = serviceToUse.findAll();
@@ -136,7 +136,7 @@ public class StatementInterceptorDemoController {
       log.log(Level.FINEST, "SecurityException exception raised", e);
       // this will wakes up HTMX listener to show exception raised
       response.addHeader("HX-Trigger", "exception-raised");
-      DynamicContentController.receivedException = e;
+      DynamicContentController.receivedInterceptorError = new InterceptorError(e);
     }
     model.addAttribute("employees", employees);
 

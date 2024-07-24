@@ -45,11 +45,7 @@ public class ExceptionHandlerController {
 
     log.finest("ExceptionHandler triggered for " + e.getClass().getCanonicalName());
 
-    if (e instanceof SecurityException) {
-      model.addAttribute("errorTitle", "Security exception raised by SQL Statemnt interceptor");
-    } else {
-      model.addAttribute("errorTitle", "An Error Has Occurred");
-    }
+    model.addAttribute("errorTitle", "Previous request triggered an error");
     model.addAttribute("errorMessage", e.getMessage());
     model.addAttribute("stacktrace", stacktrace);
 
