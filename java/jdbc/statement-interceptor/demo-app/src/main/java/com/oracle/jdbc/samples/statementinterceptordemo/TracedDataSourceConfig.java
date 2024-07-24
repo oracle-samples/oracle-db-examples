@@ -71,23 +71,31 @@ public class TracedDataSourceConfig {
    */
   private PoolDataSource getPoolDataSource() throws SQLException {
     PoolDataSource dataSource = PoolDataSourceFactory.getPoolDataSource();
+
     dataSource.setURL(env.getProperty("url"));
 
     dataSource.setUser(env.getProperty("username"));
     dataSource.setPassword(env.getProperty("password"));
 
+    log.finest("New datasource on url " + dataSource.getURL());
+    log.finest("New datasource for user " + dataSource.getUser());
+
     dataSource.setConnectionFactoryClassName(
       env.getProperty("connection-factory-class-name"));
+
     dataSource.setValidateConnectionOnBorrow(false);
-    dataSource.setSQLForValidateConnection(
-      env.getProperty("sql-for-validate-connection"));
-    dataSource.setDataSourceName(env.getProperty("connection-pool-name"));
+    if (env.getProperty("sql-for-validate-connection") != null) {
+      dataSource.setSQLForValidateConnection(
+        env.getProperty("sql-for-validate-connection"));
+    }
+    dataSource.setDataSourceName(env.getProperty("connection-pool-name","interceptorDemoPool"));
+
     dataSource.setInitialPoolSize(
-      Integer.parseInt(env.getProperty("initial-pool-size")));
+      Integer.parseInt(env.getProperty("initial-pool-size","1")));
     dataSource.setMinPoolSize(
-      Integer.parseInt(env.getProperty("min-pool-size")));
+      Integer.parseInt(env.getProperty("min-pool-size","1")));
     dataSource.setMaxPoolSize(
-      Integer.parseInt(env.getProperty("max-pool-size")));
+      Integer.parseInt(env.getProperty("max-pool-size","5")));
 
     return dataSource;
   }

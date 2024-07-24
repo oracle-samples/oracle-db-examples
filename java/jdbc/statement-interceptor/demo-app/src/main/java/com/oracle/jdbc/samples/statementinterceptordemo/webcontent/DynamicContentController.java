@@ -76,7 +76,7 @@ public class DynamicContentController {
     }
   }
 
-  @GetMapping("/interceptor/errors")
+  @GetMapping("interceptor/errors")
   public ModelAndView errors() {
     log.entering("DynamicContentController", "errors");
     // actually we known that never be null
@@ -95,7 +95,7 @@ public class DynamicContentController {
     return null;
   }
 
-  @GetMapping("/interceptor/stats")
+  @GetMapping("interceptor/stats")
   public ModelAndView getStats() {
     ModelAndView modelAndView = new ModelAndView("fragments/demo_stats");
     modelAndView.addObject("opsStats",
@@ -105,7 +105,7 @@ public class DynamicContentController {
     return modelAndView;
   }
 
-  @GetMapping("/interceptor/logs")
+  @GetMapping("interceptor/logs")
   public ModelAndView getLogs() {
     grabHandler();
     ModelAndView modelAndView = new ModelAndView("fragments/violationLogs");

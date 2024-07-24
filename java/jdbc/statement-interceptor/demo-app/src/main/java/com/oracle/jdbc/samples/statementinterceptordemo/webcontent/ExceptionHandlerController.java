@@ -23,27 +23,37 @@
 
 package com.oracle.jdbc.samples.statementinterceptordemo.webcontent;
 
+import lombok.extern.java.Log;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLSyntaxErrorException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
+@Log
 public class ExceptionHandlerController {
 
-  @ExceptionHandler(SecurityException.class)
-  public String handleException(SecurityException e, Model model) {
+  @ExceptionHandler
+  public String handleException(Exception e, Model model) {
     final var stacktrace = Arrays.stream(e.getStackTrace())
                                  .map(StackTraceElement::toString)
                                  .collect(
                                    Collectors.joining(System.lineSeparator()));
 
-    model.addAttribute("error", e);
+    log.finest("ExceptionHandler tiggered for " + e.getClass().getCanonicalName());
+
+    if (e instanceof SecurityException) {
+      model.addAttribute("errorTitle", "Security exception raised by SQL Statemnt interceptor");
+    } else {
+      model.addAttribute("errorTitle", "An Error Has Occurred");
+    }
+    model.addAttribute("errorMessage", e.getMessage());
     model.addAttribute("stacktrace", stacktrace);
 
-    return "error";
+    return "fragments/error";
 
   }
 

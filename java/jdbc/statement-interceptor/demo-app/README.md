@@ -51,17 +51,31 @@ The interceptor rules are defined in
 
 ## build 
 
-We require the following dependency
+We require the following dependency to be available
 
-dependencies {
-    implementation 'com.oracle.database.jdbc:JDBCInterceptor:0.1-SNAPSHOT'
-}
+>dependencies {
+>    implementation 'com.oracle.database.jdbc:JDBCInterceptor:0.1-SNAPSHOT'
+>}
 
 ## Running the application
 
-Make sure properties are correctly set in oracle-pooled-ds.properties file 
+Information for the remote datasource must be correctly set.
+By default, the following environment variables are used
+> DATABASE_USER
+> DATABASE_PASSWORD 
+> DATABASE_URL
+
+You can change this behavior by setting correct values in oracle-pooled-ds.properties file 
+
+You can then start the application by running
+> ./gradlew bootRun
+
 Once the application is started, open a web browser and go to
 http://localhost:8080/
+
+Note: 
+    To change the default port number, change server.port value in the 
+    application.properties file.
 
 ### Testing the interceptor
 This application host two datasources, one with an interceptor in place.
