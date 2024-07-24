@@ -43,7 +43,7 @@ public class ExceptionHandlerController {
                                  .collect(
                                    Collectors.joining(System.lineSeparator()));
 
-    log.finest("ExceptionHandler tiggered for " + e.getClass().getCanonicalName());
+    log.finest("ExceptionHandler triggered for " + e.getClass().getCanonicalName());
 
     if (e instanceof SecurityException) {
       model.addAttribute("errorTitle", "Security exception raised by SQL Statemnt interceptor");

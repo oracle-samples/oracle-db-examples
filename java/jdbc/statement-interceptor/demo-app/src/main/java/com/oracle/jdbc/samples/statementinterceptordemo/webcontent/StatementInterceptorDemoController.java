@@ -116,6 +116,9 @@ public class StatementInterceptorDemoController {
     @RequestParam(name = "useInterceptor", defaultValue = "false")
     boolean useInterceptor, Model model, HttpServletResponse response) {
 
+    log.finer("userlist called for query: " + query);
+    log.finer("userlist called interceptor requested ? : " + useInterceptor);
+
     // according to flag set by user we use the simple datasource
     // or the one that have the interceptor enabled
     final var serviceToUse =
@@ -130,11 +133,14 @@ public class StatementInterceptorDemoController {
       }
       response.addHeader("HX-Trigger", "operation-ended");
     } catch (SecurityException e) {
+      log.log(Level.FINEST, "SecurityException exception raised", e);
       // this will wakes up HTMX listener to show exception raised
       response.addHeader("HX-Trigger", "exception-raised");
       DynamicContentController.receivedException = e;
     }
     model.addAttribute("employees", employees);
+
+    log.finest("normal return to view");
 
     return "fragments/userlist";
   }
