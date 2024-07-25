@@ -133,7 +133,7 @@ ALLOW_POSITIONAL_CONNECT_ARGS = True
 # set lib_dir; instead set LD_LIBRARY_PATH or configure ldconfig before running
 # Python.
 lib_dir = None
-if platform.system() == "Darwin" and platform.machine() == "x86_64":
+if platform.system() == "Darwin":
     lib_dir = os.environ.get("HOME") + "/Downloads/instantclient_19_8"
 elif platform.system() == "Windows":
     lib_dir = r"C:\oracle\instantclient_19_14"
