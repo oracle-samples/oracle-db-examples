@@ -29,6 +29,7 @@ import com.oracle.jdbc.samples.statementinterceptordemo.models.Employee;
 import com.oracle.jdbc.samples.statementinterceptordemo.models.Rule;
 import com.oracle.jdbc.samples.statementinterceptordemo.services.EmployeeService;
 import com.oracle.jdbc.samples.statementinterceptordemo.utils.InterceptorError;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,6 +39,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.BufferedReader;
@@ -114,10 +117,18 @@ public class StatementInterceptorDemoController {
   public String userlist(
     @RequestParam(name = "q", required = false) String query,
     @RequestParam(name = "useInterceptor", defaultValue = "false")
-    boolean useInterceptor, Model model, HttpServletResponse response) {
+    boolean useInterceptor, Model model, HttpServletResponse response,
+    HttpServletRequest request) {
 
-    log.finer("userlist called for query: [" + query + "]");
-    log.finer("userlist called interceptor requested ? : " + useInterceptor);
+    log.fine("userlist called for query: [" + query + "]");
+    log.fine("userlist called interceptor requested ? : " + useInterceptor);
+
+    // for the sack of the demo we need to identify the client while logging
+    // SQL violation. As the best effort let's compute a unique id
+
+    RequestContextHolder.currentRequestAttributes().setAttribute("demo.client.uid",
+                                                                 String.valueOf(request.getRemoteHost().hashCode()),
+                                                                 RequestAttributes.SCOPE_REQUEST);
 
     // according to flag set by user we use the simple datasource
     // or the one that have the interceptor enabled

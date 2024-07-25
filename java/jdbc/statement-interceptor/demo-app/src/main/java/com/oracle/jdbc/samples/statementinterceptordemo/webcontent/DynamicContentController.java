@@ -26,9 +26,12 @@ package com.oracle.jdbc.samples.statementinterceptordemo.webcontent;
 import com.oracle.jdbc.samples.interceptor.SQLStatementInterceptor;
 import com.oracle.jdbc.samples.statementinterceptordemo.services.StatisticService;
 import com.oracle.jdbc.samples.statementinterceptordemo.utils.WebViolationHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.java.Log;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -103,13 +106,14 @@ public class DynamicContentController {
   }
 
   @GetMapping("interceptor/logs")
-  public ModelAndView getLogs() {
+  public ModelAndView getLogs(HttpServletRequest request) {
     grabHandler();
+    String uuid = String.valueOf(request.getRemoteHost().hashCode());
     ModelAndView modelAndView = new ModelAndView("fragments/violationLogs");
     if (this.violationHandler == null) {
       modelAndView.addObject("violationHandler", new ArrayList<>());
     } else {
-      modelAndView.addObject("logs", this.violationHandler.getAll());
+      modelAndView.addObject("logs", this.violationHandler.getAll(uuid));
     }
     return modelAndView;
   }
