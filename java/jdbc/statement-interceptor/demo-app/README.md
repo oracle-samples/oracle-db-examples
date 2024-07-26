@@ -51,6 +51,8 @@ The interceptor rules are defined in
 
 ## build 
 
+Be sure that you use gradle 8.5 or above.
+
 We require the following dependency to be available
 
 >dependencies {
@@ -68,7 +70,7 @@ By default, the following environment variables are used
 You can change this behavior by setting correct values in oracle-pooled-ds.properties file 
 
 You can then start the application by running
-> ./gradlew bootRun
+> gradle bootRun
 
 Once the application is started, open a web browser and go to
 http://localhost:8080/
@@ -86,7 +88,7 @@ You can issue some search that will be intercepted by the listener
 
 #### SQL injection example
 An example is a search like 
->_' or 'a'='a_. 
+>_' or 'a'='a_
 
 When the interceptor is not enabled you will see that this search return all 
 employees including the ones that are not supposed to be visible 
@@ -107,4 +109,4 @@ By issuing "BabEmployee" as search criteria you will see how security log record
 ### From intelliJ 
 _Run_ > _Run statement-interceptor-demo [bootRun]_ 
 ### From command line
-#./gradlew bootRun
+#gradle bootRun

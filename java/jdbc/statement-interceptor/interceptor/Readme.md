@@ -21,6 +21,8 @@ statements to reach the RDBMS.
 
 ## Running the application
 
+Be sure that you use gradle 8.5 or above.
+
 A demonstration usage is provided by this other project
 https://orahub.oci.oraclecorp.com/ora-jdbc-dev/jdbc-statement-interceptor-webdemo
 
@@ -37,6 +39,8 @@ In order to run it the following System properties must be set:
 Select the Main.java in source tree and activate 'run Main.main()'
 
 ### Running from Gradle
+
+Be sure that you use gradle 8.5 or above.
 
 provide the following property to the gradle build (command lien or using gradle.properties file)
 

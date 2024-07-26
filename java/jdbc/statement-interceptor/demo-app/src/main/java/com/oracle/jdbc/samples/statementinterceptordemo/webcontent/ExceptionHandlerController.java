@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.sql.SQLSyntaxErrorException;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -43,8 +44,9 @@ public class ExceptionHandlerController {
                                  .collect(
                                    Collectors.joining(System.lineSeparator()));
 
-    log.finest("ExceptionHandler triggered for " + e.getClass().getCanonicalName());
-
+    if (log.isLoggable(Level.FINEST)) {
+      log.log(Level.FINEST, "ExceptionHandler triggered",e);
+    }
     model.addAttribute("errorTitle", "Previous request triggered an error");
     model.addAttribute("errorMessage", e.getMessage());
     model.addAttribute("stacktrace", stacktrace);

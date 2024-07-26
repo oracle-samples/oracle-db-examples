@@ -29,6 +29,7 @@ import com.oracle.jdbc.samples.statementinterceptordemo.utils.WebViolationHandle
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.java.Log;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -47,6 +48,8 @@ import java.util.stream.Collectors;
 @Log
 public class DynamicContentController {
 
+  // That's not correct for consurrent acces the endpoints
+  // but that's enough for the sake of a demo.
   public static Exception receivedInterceptorError = null;
 
   private final StatisticService statService;
@@ -106,9 +109,10 @@ public class DynamicContentController {
   }
 
   @GetMapping("interceptor/logs")
-  public ModelAndView getLogs(HttpServletRequest request) {
+  public ModelAndView getLogs(HttpServletRequest request,
+                              @RequestParam(name = "uuid", required = true) String uuid) {
     grabHandler();
-    String uuid = String.valueOf(request.getRemoteHost().hashCode());
+
     ModelAndView modelAndView = new ModelAndView("fragments/violationLogs");
     if (this.violationHandler == null) {
       modelAndView.addObject("violationHandler", new ArrayList<>());

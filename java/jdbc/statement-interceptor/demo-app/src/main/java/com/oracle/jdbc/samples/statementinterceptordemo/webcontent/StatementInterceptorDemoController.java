@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -115,19 +116,23 @@ public class StatementInterceptorDemoController {
 
   @GetMapping("/userlist")
   public String userlist(
+    @RequestParam(name = "uuid", required = true) String clientUuid,
     @RequestParam(name = "q", required = false) String query,
     @RequestParam(name = "useInterceptor", defaultValue = "false")
     boolean useInterceptor, Model model, HttpServletResponse response,
     HttpServletRequest request) {
 
+    log.fine("client id : [" + clientUuid + "]");
+
     log.fine("userlist called for query: [" + query + "]");
+
     log.fine("userlist called interceptor requested ? : " + useInterceptor);
 
     // for the sack of the demo we need to identify the client while logging
     // SQL violation. As the best effort let's compute a unique id
 
     RequestContextHolder.currentRequestAttributes().setAttribute("demo.client.uid",
-                                                                 String.valueOf(request.getRemoteHost().hashCode()),
+                                                                 clientUuid,
                                                                  RequestAttributes.SCOPE_REQUEST);
 
     // according to flag set by user we use the simple datasource
