@@ -1,30 +1,25 @@
 # SQL Interceptor
 ![oveview](assets/img/overview.png)
 
-This project demonstrates how the _TraceEventListener_ feature can be used for security
-enhancement of user applications. The idea here is being able to intercept any SQL statement
-issued by an Oracle JDBC client application and, based on given rules, to allow or not this statement
-to proceed and reach the remote server. 
+This project demonstrates how the new 23ai Oracle JDBC feature [TraceEventListener](https://docs.oracle.com/en/database/oracle/oracle-database/23/jajdb/oracle/jdbc/TraceEventListener.html) can be used for security enhancement of Java applications.
+The [TraceEventListener](https://docs.oracle.com/en/database/oracle/oracle-database/23/jajdb/oracle/jdbc/TraceEventListener.html) is a callback that can be registered for every roundtrip made to the Database. This particular implementation can intercept any SQL statement issued by an Oracle JDBC client application and, based on given rules, allow the statement to proceed and reach the remote server.
 
-The feature is delivered as part of a _TraceEventListenerProvider_. This provider
-puts in place a listener who listens to connection round-trips to the remote server.
-Any statement are then analysed by a set of "statement rules" that "authorize" or not 
-the request to go on. 
+This TraceEventListenerProvider registers a listener that analyzes all round-trips made to the remote server.
+All statements are then analysed by a set of "statement rules" that "authorize" or not the request to go on.
 
-A statement rule (_StatementRule_) is a class that receives a SQL statement as input
-and take action if that statement represents a risk.
+A statement rule _StatementRule_ is a class that processes a SQL statement as input and executes an action if that statement matches a rule.
+Rules can be used to identify security risks, such as a SQL injection attacks.
 
-This advantage of such interceptor is that it can be plugged transparently to 
-any existing application without any code change, it does not require any extra layer of software (like 
-by setting up a firewall o proxy), it may help to prevent some DOS by just forbidding
-statements to reach the RDBMS. 
+The advantage of such interceptor is that it can be plugged-in transparently to any existing application without any code change. 
+It does not require any extra layer of software (like etting up a firewall or proxy), it may help to prevent some DOS by just forbidding statements to reach the Oracle Database server.
 
 ## Running the application
 
 Be sure that you use gradle 8.5 or above.
 
 A demonstration usage is provided by this other project
-https://orahub.oci.oraclecorp.com/ora-jdbc-dev/jdbc-statement-interceptor-webdemo
+
+[Interceptor Demo App](https://github.com/ejannett/oracle-db-examples/tree/a2f38857d8cf63a41559a2e8143c7919d61331c8/java/jdbc/statement-interceptor/demo-app)
 
 As a quick test program you can choose to use the small main application of this project.
 
@@ -36,7 +31,7 @@ In order to run it the following System properties must be set:
 
 ### Running from IntelliJ project
 
-Select the Main.java in source tree and activate 'run Main.main()'
+Select the Main.java in test source tree and activate 'run Main.main()'
 
 ### Running from Gradle
 
@@ -64,6 +59,20 @@ This interceptor is published on jdbc-dev-local maven repository as
 ### Rule
 
 A statement rule is a class that implements the _com.oracle.jdbc.samples.interceptor.StatementRule_ interface, it takes a parameter as input.
+This project comes with three sample implementations.
+#### RegExpStatementRule
+This implementation of _com.oracle.jdbc.samples.interceptor.StatementRule_ matches
+the SQL statement against a regular expression. See resource/rules.json for example.
+
+#### AttackStatementRule
+This implementation of _com.oracle.jdbc.samples.interceptor.StatementRule_ matches
+the SQL statement against wellknown form of attack. This implementation is empty as we speak 
+and only serve demonstration purpose.
+
+#### TokenStatementRule
+This implementation of _com.oracle.jdbc.samples.interceptor.StatementRule_ matches
+the SQL statement against a given string. See resource/rules.json for example.
+We can see this rule as a simplify version of RegExpStatementRule
 
 ### Actions
 
@@ -92,7 +101,7 @@ The configuration of rules and actions as a JSON file, the latter should contain
 - "parameter": Parameter of that rule. (Optional)
 - "actions": List of action to execute when this rule matches.
 
-#### Example
+#### Interceptor configuration example
 
 ```json
 [

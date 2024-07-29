@@ -21,10 +21,9 @@
  *
  */
 
-package com.oracle.jdbc.samples;
+package com.oracle.jdbc.samples.interceptor;
 
 
-import com.oracle.jdbc.samples.interceptor.SQLStatementInterceptor;
 import oracle.jdbc.datasource.impl.OracleDataSource;
 
 import java.sql.Connection;
