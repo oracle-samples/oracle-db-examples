@@ -66,13 +66,13 @@ the SQL statement against a regular expression. See resource/rules.json for exam
 
 #### AttackStatementRule
 This implementation of _com.oracle.jdbc.samples.interceptor.StatementRule_ matches
-the SQL statement against wellknown form of attack. This implementation is empty as we speak 
+the SQL statement against wellknown SQL attack. This implementation is empty as we speak 
 and only serve demonstration purpose.
 
 #### TokenStatementRule
 This implementation of _com.oracle.jdbc.samples.interceptor.StatementRule_ matches
 the SQL statement against a given string. See resource/rules.json for example.
-We can see this rule as a simplify version of RegExpStatementRule
+We can see this rule as a simplified version of RegExpStatementRule
 
 ### Actions
 
