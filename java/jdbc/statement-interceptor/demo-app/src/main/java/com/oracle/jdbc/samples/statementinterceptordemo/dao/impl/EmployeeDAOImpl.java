@@ -73,7 +73,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     try {
       jdbcTemplate.execute("""
                              CREATE TABLE employees (
-                               id CHAR(32) DEFAULT SYS_GUID() PRIMARY KEY,
+                               id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                full_name VARCHAR2(60),
                                visible NUMBER(1) DEFAULT 0
                              )

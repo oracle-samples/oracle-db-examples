@@ -20,7 +20,7 @@ on an employee table. This simple table contains 5 employees like
 
 ```oracle-sql
 CREATE TABLE employees (
-        id CHAR(32) DEFAULT SYS_GUID() PRIMARY KEY,
+        id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         full_name VARCHAR2(60),
         visible NUMBER(1) DEFAULT 0
        )
