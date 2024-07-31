@@ -1,0 +1,53 @@
+<!--
+  ~ Copyright (c) 2024, Oracle and/or its affiliates.
+  ~
+  ~   This software is dual-licensed to you under the Universal Permissive License
+  ~   (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl or Apache License
+  ~   2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+  ~   either license.
+  ~
+  ~   Licensed under the Apache License, Version 2.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~      https://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  ~
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="demo_stats" class="border p-1">
+    <div th:if="*{opsStats}">
+        <span class="fs-4 fw-bold" th:text="*{opsStats.count}"/>
+        <span class="fs-6 fw-lighter">Untraced operation(s)</span>
+    <p>
+        <span class="fs-6 fw-lighter">operation avg time</span>
+        <span class="fs-6 fw-medium"
+              th:text="${#numbers.formatDecimal(opsStats.averageTime, 1, 1)}"/>
+        <span class="fs-6 fw-lighter">ms</span>
+    </p>
+    </div>
+    <div th:if="${tracedOpsStats}">
+        <span class="fs-4 fw-bold" th:text="*{tracedOpsStats.count}"/>
+        <span class="fs-6 fw-lighter">Traced operation(s)</span>
+        <p>
+            <span class="fs-6 fw-lighter">operation avg time</span>
+            <span class="fs-6 fw-medium"
+                  th:text="${#numbers.formatDecimal(tracedOpsStats.averageTime, 1, 1)}"/>
+            <span class="fs-6 fw-lighter">ms</span>
+        </p>
+    </div>
+</div>
+</body>
+</html>
