@@ -25,8 +25,10 @@ package com.oracle.jdbc.samples.statementinterceptordemo;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import oracle.ucp.UniversalConnectionPool;
 import oracle.ucp.jdbc.PoolDataSource;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
+import oracle.ucp.jdbc.PoolDataSourceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -139,8 +141,6 @@ public class TracedDataSourceConfig {
     dataSource.setConnectionProperty("oracle.jdbc.provider.traceEventListener",
                                      "com.oracle.jdbc.samples.interceptor.SQLStatementInterceptorProvider");
 
-
-
     String rules;
     try {
       rules = getStatementRulesAsJSONString();
@@ -168,10 +168,7 @@ public class TracedDataSourceConfig {
   public JdbcTemplate getInterceptedJdbcTemplate() throws SQLException {
     long start = System.currentTimeMillis();
     InstrumentedJdbcTemplate t = new InstrumentedJdbcTemplate(getInterceptedDataSource(), "traced");
-    // be sure the pool is warm
-    t.execute("SELECT 1 FROM DUAL");
     log.log(Level.INFO,"traced template init time " + (System.currentTimeMillis() - start) + "ms");
-    t.getStatistic().clear();
     return t;
   }
 
@@ -186,10 +183,7 @@ public class TracedDataSourceConfig {
   public JdbcTemplate getJdbcTemplate() throws SQLException {
     long start = System.currentTimeMillis();
     InstrumentedJdbcTemplate t = new InstrumentedJdbcTemplate(getDataSource(), "untraced");
-    // be sure the pool is warm
-    t.execute("SELECT 1 FROM DUAL");
     log.log(Level.INFO,"untraced template init time " + (System.currentTimeMillis() - start) + "ms");
-    t.getStatistic().clear();
     return t;
 
   }

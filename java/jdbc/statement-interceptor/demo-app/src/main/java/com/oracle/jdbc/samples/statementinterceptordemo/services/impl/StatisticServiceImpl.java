@@ -55,4 +55,10 @@ public class StatisticServiceImpl implements StatisticService {
                    .findFirst()
                    .orElse(null);
   }
+
+  @Override
+  public void resetAllStatistics() {
+    allStats.stream().forEach(s->{s.clear();});
+  }
+
 }

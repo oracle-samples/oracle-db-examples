@@ -27,16 +27,26 @@ import com.oracle.jdbc.samples.interceptor.SQLStatementInterceptor;
 import com.oracle.jdbc.samples.statementinterceptordemo.services.EmployeeService;
 import com.oracle.jdbc.samples.statementinterceptordemo.utils.WebViolationHandler;
 import lombok.extern.java.Log;
+import oracle.ucp.jdbc.PoolDataSourceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
 import java.util.logging.Logger;
 
 @SpringBootApplication
 @Log
 public class StatementInterceptorDemoApplication {
+
+  @Autowired @Qualifier("interceptedDataSource") DataSource DataSource1;
+  @Autowired DataSource DataSource2;
 
   public static void main(String[] args) {
     SpringApplication.run(StatementInterceptorDemoApplication.class, args);
@@ -48,6 +58,13 @@ public class StatementInterceptorDemoApplication {
       log.info("Initializing employees data ...");
       service.initialize();
       log.info("Employees data Initialized");
+
+      log.info("starting connection pools ...");
+      // That's ususally not needed but for the sake of the demo
+      // we forcefully start the pool
+      ((PoolDataSourceImpl)DataSource1).startPool();
+      ((PoolDataSourceImpl)DataSource2).startPool();
+      log.info("Pools started...");
 
       // add our handler to violation logger
       Logger.getLogger(SQLStatementInterceptor.ACTION_LOGGER_NAME)

@@ -44,11 +44,11 @@ public class Statistic {
   /**
    * minimum operation time in milliseconds
    */
-  private double minTime;
+  private double minTime = -1.0;
   /**
    * maximum operation time in milliseconds
    */
-  private double maxTime;
+  private double maxTime = -1.0;;
   /**
    * total operation time in milliseconds
    */
@@ -61,10 +61,11 @@ public class Statistic {
    */
   public void accumulate(long l) {
     if (l < minTime || minTime == -1.0) {
+      minTime = l;
     }
-    minTime = l;
-    if (l > maxTime)
+    if (l > maxTime) {
       maxTime = l;
+    }
     count++;
     totalTime += l;
   }

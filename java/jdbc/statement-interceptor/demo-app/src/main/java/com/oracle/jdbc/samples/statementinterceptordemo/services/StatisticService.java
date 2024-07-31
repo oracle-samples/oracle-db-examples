@@ -37,4 +37,10 @@ public interface StatisticService {
    * @return the statistic or null if no such statistic for this tag is found
    */
   Statistic getRequestStatistics(String tag);
+
+  /**
+   * Resets all registered statistics.
+   * All counters will be set ot zero
+   */
+  void resetAllStatistics();
 }

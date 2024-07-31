@@ -28,11 +28,13 @@ import com.oracle.jdbc.samples.statementinterceptordemo.services.StatisticServic
 import com.oracle.jdbc.samples.statementinterceptordemo.utils.WebViolationHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.java.Log;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -106,6 +108,12 @@ public class DynamicContentController {
     modelAndView.addObject("tracedOpsStats",
                            statService.getRequestStatistics("traced"));
     return modelAndView;
+  }
+
+  @DeleteMapping("interceptor/stats")
+  public @ResponseBody ResponseEntity<String> delete() {
+    statService.resetAllStatistics();
+    return new ResponseEntity<String>("DELETE Response", HttpStatus.OK);
   }
 
   @GetMapping("interceptor/logs")
