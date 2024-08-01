@@ -14,7 +14,7 @@ to oracle database server.
 =================================================================================================
 
 In this application we leverage the event listener (aka interceptor) delivered by project
-https://orahub.oci.oraclecorp.com/ora-jdbc-dev/jdbc-interceptor
+https://github.com/oracle-samples/oracle-db-examples/tree/7aaa7ae05d36a7127cd5bd4bb84e66301f45908c/java/jdbc/statement-interceptor/interceptor
 That is a simple standalone SpringBoot application that performs search
 on an employee table. This simple table contains 5 employees like
 

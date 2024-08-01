@@ -19,7 +19,7 @@ Be sure that you use gradle 8.5 or above.
 
 A demonstration usage is provided by this other project
 
-[Interceptor Demo App](https://github.com/ejannett/oracle-db-examples/tree/a2f38857d8cf63a41559a2e8143c7919d61331c8/java/jdbc/statement-interceptor/demo-app)
+[Interceptor Demo App](https://github.com/oracle-samples/oracle-db-examples/tree/7aaa7ae05d36a7127cd5bd4bb84e66301f45908c/java/jdbc/statement-interceptor/demo-app)
 
 As a quick test program you can choose to use the small main application of this project.
 
