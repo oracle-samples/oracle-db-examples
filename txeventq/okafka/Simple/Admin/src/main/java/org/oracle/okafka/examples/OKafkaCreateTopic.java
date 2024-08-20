@@ -7,8 +7,10 @@
 
 package org.oracle.okafka.examples;
 
-import java.util.Arrays;
-import java.util.Properties;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.admin.Admin;
@@ -21,29 +23,36 @@ import org.oracle.okafka.clients.admin.AdminClient;
 public class OKafkaCreateTopic {
 
     public static void main(String[] args) {
-        Properties props = new Properties();
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
 
-        //IP or Host name where Oracle Database 23c is running and Database Listener's Port
-        props.put("bootstrap.servers", "localhost:1521");
-        //name of the service running on the database instance
-        props.put("oracle.service.name", "FREEPDB1");
-        props.put("security.protocol","PLAINTEXT");
-        // location for ojdbc.properties file where user and password properties are saved
-        props.put("oracle.net.tns_admin",".");
+        // Get application properties
+        Properties appProperties = null;
+        try {
+            appProperties = getProperties();
+            if (appProperties == null) {
+                System.out.println("Application properties not found!");
+                System.exit(-1);
+            }
+        } catch (Exception e) {
+            System.out.println("Application properties not found!");
+            System.out.println("Exception: " + e);
+            System.exit(-1);
+        }
 
-		/*
-		//Option 2: Connect to Oracle Autonomous Database using Oracle Wallet
-		//This option to be used when connecting to Oracle autonomous database instance on OracleCloud
-		props.put("security.protocol","SSL");
-		// location for Oracle Wallet, tnsnames.ora file and ojdbc.properties file
-		props.put("oracle.net.tns_admin",".");
-		props.put("tns.alias","Oracle23ai_high");
-		 */
+    }
 
-        try (Admin admin = AdminClient.create(props)) {
-            //Create Topic named TXEQ and TXEQ_2 with 10 Partitions.
-            CreateTopicsResult result = admin.createTopics(
-                    Arrays.asList(new NewTopic("TXEQ", 10, (short)0),  new NewTopic("TXEQ_2", 10, (short)0)));
+    private static void createTopic(Properties appProperties, ArrayList<String> topicsName) {
+        try (Admin admin = AdminClient.create(appProperties)) {
+            //Create Topic named TXEQ_1 and TXEQ_2 with 10 Partitions.
+
+            Collection<NewTopic> topics = List.of();
+
+            for (String topicName : topicsName) {
+                topics.add(new NewTopic(topicName, 10, (short)0));
+
+            }
+
+            CreateTopicsResult result = admin.createTopics(topics);
             try {
                 KafkaFuture<Void> ftr =  result.all();
                 ftr.get();
@@ -58,5 +67,48 @@ public class OKafkaCreateTopic {
             System.out.println("Exception while creating topic " + e);
             e.printStackTrace();
         }
+    }
+
+    private static void deleteTopic(Properties appProperties, ArrayList<String> topicsName) {
+        try (Admin admin = AdminClient.create(appProperties)) {
+            //Delete Topic named TXEQ_1 and TXEQ_2 with 10 Partitions.
+            
+            org.apache.kafka.clients.admin.DeleteTopicsResult delResult = admin.deleteTopics(topicsName);
+//            org.apache.kafka.clients.admin.DeleteTopicsResult delResult = admin.deleteTopics(Collections.singletonList("TXEQ"));
+
+            //DeleteTopicsResult delResult = kAdminClient.deleteTopics(Collections.singletonList("TEQ2"), new org.oracle.okafka.clients.admin.DeleteTopicsOptions());
+
+            Thread.sleep(5000);
+            System.out.println("Closing  OKafka admin now");
+        }
+        catch(Exception e)
+        {
+            System.out.println("Exception while creating topic " + e);
+            e.printStackTrace();
+        }
+    }
+
+    private static Properties getProperties()  throws IOException {
+        InputStream inputStream = null;
+        Properties appProperties = null;
+
+        try {
+            Properties prop = new Properties();
+            String propFileName = "config.properties";
+            inputStream = OKafkaCreateTopic.class.getClassLoader().getResourceAsStream(propFileName);
+            if (inputStream != null) {
+                prop.load(inputStream);
+            } else {
+                throw new FileNotFoundException("property file '" + propFileName + "' not found.");
+            }
+            appProperties = prop;
+
+        } catch (Exception e) {
+            System.out.println("Exception: " + e);
+            throw e;
+        } finally {
+            inputStream.close();
+        }
+        return appProperties;
     }
 }
