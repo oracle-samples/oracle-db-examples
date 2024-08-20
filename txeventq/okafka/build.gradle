@@ -167,6 +167,44 @@ project(':Simple:Admin') {
     }
 }
 
+project(':Simple:Producer') {
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
+
+    dependencies {
+        // These dependencies are used by the application.
+        // implementation project(':clients')
+        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
+        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.8.1'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.6'
+    }
+
+    tasks.named('jar') {
+        description('Generates okafka client simple producer jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'producer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes('Implementation-Title': 'okafka producer',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client simple producer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.ProducerOKafka'
+        }
+    }
+}
+
 project(':Simple:Consumer') {
     apply plugin : 'java'
     apply plugin : 'application'
@@ -179,7 +217,7 @@ project(':Simple:Consumer') {
         // https://mvnrepository.com/artifact/com.oracle.database.messaging/okafka
         implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
         implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
-        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.7.1'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.8.1'
         implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.6'
     }
 
@@ -206,45 +244,6 @@ project(':Simple:Consumer') {
     }
 }
 
-project(':Simple:Producer') {
-    apply plugin: 'java'
-    apply plugin: 'application'
-
-    sourceCompatibility = minJavaVersion
-    targetCompatibility = minJavaVersion
-
-    dependencies {
-        // These dependencies are used by the application.
-        // implementation project(':clients')
-        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
-        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
-        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.7.1'
-        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.6'
-    }
-
-    tasks.named('jar') {
-        description('Generates okafka client simple producer jar ')
-        archiveBaseName = 'okafka'
-        archiveClassifier = 'producer'
-
-        from "${rootProject.projectDir}/LICENSE.txt"
-        from "${rootProject.projectDir}/NOTICE"
-
-        manifest {
-            attributes('Implementation-Title': 'okafka producer',
-                    'Implementation-Version': project.version)
-        }
-    }
-
-    tasks.named('run') {
-        description('Run okafka client simple consumer')
-        application {
-            mainClass = 'org.oracle.okafka.examples.ConsumerOKafka'
-        }
-    }
-}
-
-
 project(':Transactional:Consumer') {
     apply plugin : 'java'
     apply plugin : 'application'
@@ -257,7 +256,7 @@ project(':Transactional:Consumer') {
         // https://mvnrepository.com/artifact/com.oracle.database.messaging/okafka
         implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
         implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
-        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.7.1'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.8.1'
         implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.6'
     }
 

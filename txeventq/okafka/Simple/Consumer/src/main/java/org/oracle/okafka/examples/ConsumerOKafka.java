@@ -21,7 +21,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 public class ConsumerOKafka {
 	public static void main(String[] args) {
-		System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+		System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
 
 		// Get application properties
 		Properties appProperties = null;
