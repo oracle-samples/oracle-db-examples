@@ -15,12 +15,13 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
+import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.KafkaFuture;
 
 import org.oracle.okafka.clients.admin.AdminClient;
 
-public class OKafkaCreateTopic {
+public class OKafkaAdminTopic {
 
     public static void main(String[] args) {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
@@ -39,17 +40,41 @@ public class OKafkaCreateTopic {
             System.exit(-1);
         }
 
+        if (args.length < 2) {
+            System.out.println("Usage: java OKafkaAdminTopic [CREATE|DELETE] topic1 ... topicN");
+            return;
+        }
+
+        ArrayList<String> topicsName = new ArrayList<>();
+        for (int i = 1; i < args.length; i++) {
+            topicsName.add(args[i]);
+        }
+
+        String operation = args[0].toUpperCase();
+        switch (operation) {
+            case "CREATE":
+                createTopic(appProperties, topicsName);
+                break;
+
+            case "DELETE":
+                deleteTopic(appProperties, topicsName);
+                break;
+
+            default:
+                System.out.println("Error: Invalid operation.");
+        }
+
     }
 
     private static void createTopic(Properties appProperties, ArrayList<String> topicsName) {
         try (Admin admin = AdminClient.create(appProperties)) {
             //Create Topic named TXEQ_1 and TXEQ_2 with 10 Partitions.
 
-            Collection<NewTopic> topics = List.of();
+            ArrayList<NewTopic> topics = new ArrayList<>();
 
             for (String topicName : topicsName) {
-                topics.add(new NewTopic(topicName, 10, (short)0));
-
+                NewTopic nt = new NewTopic(topicName, 10, (short)0);
+                topics.add(nt);
             }
 
             CreateTopicsResult result = admin.createTopics(topics);
@@ -57,10 +82,10 @@ public class OKafkaCreateTopic {
                 KafkaFuture<Void> ftr =  result.all();
                 ftr.get();
             } catch ( InterruptedException | ExecutionException e ) {
-
                 throw new IllegalStateException(e);
             }
-            System.out.println("Closing  OKafka admin now");
+
+            System.out.println("Topic(s) created. Closing OKafka admin now");
         }
         catch(Exception e)
         {
@@ -71,19 +96,13 @@ public class OKafkaCreateTopic {
 
     private static void deleteTopic(Properties appProperties, ArrayList<String> topicsName) {
         try (Admin admin = AdminClient.create(appProperties)) {
-            //Delete Topic named TXEQ_1 and TXEQ_2 with 10 Partitions.
-            
-            org.apache.kafka.clients.admin.DeleteTopicsResult delResult = admin.deleteTopics(topicsName);
-//            org.apache.kafka.clients.admin.DeleteTopicsResult delResult = admin.deleteTopics(Collections.singletonList("TXEQ"));
-
-            //DeleteTopicsResult delResult = kAdminClient.deleteTopics(Collections.singletonList("TEQ2"), new org.oracle.okafka.clients.admin.DeleteTopicsOptions());
-
+            DeleteTopicsResult delResult = admin.deleteTopics(topicsName);
             Thread.sleep(5000);
             System.out.println("Closing  OKafka admin now");
         }
         catch(Exception e)
         {
-            System.out.println("Exception while creating topic " + e);
+            System.out.println("Exception while deleting topic " + e);
             e.printStackTrace();
         }
     }
@@ -95,7 +114,7 @@ public class OKafkaCreateTopic {
         try {
             Properties prop = new Properties();
             String propFileName = "config.properties";
-            inputStream = OKafkaCreateTopic.class.getClassLoader().getResourceAsStream(propFileName);
+            inputStream = OKafkaAdminTopic.class.getClassLoader().getResourceAsStream(propFileName);
             if (inputStream != null) {
                 prop.load(inputStream);
             } else {

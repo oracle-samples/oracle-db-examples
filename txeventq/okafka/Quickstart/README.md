@@ -1,150 +1,242 @@
 
-# Kafka Java Client for Oracle Transactional Event Queues 
+# Kafka Client for Oracle Transactional Event Queues Quickstart Guide
 
-## Building the Kafka Java Client for Oracle TxEventQ distribution
+> ### What you'll build
+>
+> In this quickstart guide, you will learn: 
+>  - How to create a Topic to store events using Oracle Transactional Event Queues (TxEventQ)
+>  - Build producers and consumers applications of Oracle Transactional Event Queues (TxEventQ)
+> using Kafka Client (a.k.a. OKafka). 
+>
+> > ### What you’ll need
+> > **An Integrated Developer Environment (IDE)**
+> > - Popular choices include IntelliJ IDEA, Visual Studio Code, or Eclipse, and many more.
+> > 
+> > **A Java™ Development Kit (JDK)**
+> > - We recommend Oracle JDK or GraalVM version 17.
+> > 
+> > **Oracle Database 23ai Free - Developer release** 
+> >
+> > **sqlplus or sqlcl**
+> > 
+> > A tool to **work with containers** from your local environment. 
+> > - Popular choices include Podman, or Docker, and many more.
+> > - On this quickstart we will use Podman 
+> > 
+> > **Git**
+> > - To clone the quickstart repository.
+> > 
+> > **Gradle**
+> > - To build and run the applications.
 
-This distribution contains Java source code to provide Kafka Java client compatibility to Oracle Transactional Event Queues. Some Kafka Java producer and consumer applications can migrate seamlessly to Oracle Transactional Event Queues for scalable event streaming directly built into the Oracle Database.
 
-You need to have [Gradle 7.3 or above](http://www.gradle.org/installation) and [Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html) installed.
+## Step 1: Install Oracle Database 23ai Free
 
-This distribution contains version 23.4.0.0 of the `Kafka Java Client for Oracle Transactional Event Queues` project. It will be referred as OKafka-23.4.0.0 henceforth. This is tested with JDK 11.0.22 but we recommend using the latest version.
+We will use Oracle Database 23ai Free image that is available at [Oracle Container Registry](https://container-registry.oracle.com)
 
-The Kafka Java Client works with Oracle Database 23ai Free version as well as Oracle Database 23ai available on Oracle Autonomous Cloud platform. 
+```shell
+# Podman Secrets Support:
+echo "<Your Password>" | podman secret create oracle_pwd -
 
-To test this distribution in free Oracle Cloud environment create [Oracle Cloud account](https://docs.cloud.oracle.com/en-us/iaas/Content/FreeTier/freetier.htm) then create [Oracle Autonomous Transaction Processing Database instance](https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/tutorial-getting-started-autonomous-db/index.html) in cloud.   
-
-A database user should be created and should be granted the privileges mentioned in Database user configuration section. Then create a Transactional Event Queue to produce and consume messages.
-
-
-### Database user configuration ###
-
-To run `OKafka application` against Oracle Database, a database user must be created and must be granted below privileges.
-
-```roomsql
-create user <user> identified by <password>
-GRANT AQ_USER_ROLE to user;
-GRANT CONNECT, RESOURCE, unlimited tablespace to user;
-GRANT EXECUTE on DBMS_AQ to user;
-GRANT EXECUTE on DBMS_AQADM to user;
-GRANT EXECUTE on DBMS_AQIN to user;
-GRANT EXECUTE on DBMS_TEQK to user;
-GRANT SELECT on GV_$SESSION to user;
-GRANT SELECT on V_$SESSION to user;
-GRANT SELECT on GV_$INSTANCE to user;
-GRANT SELECT on GV_$LISTENER_NETWORK to user;
-GRANT SELECT on GV_$PDBS to user;
-GRANT SELECT on USER_QUEUE_PARTITION_ASSIGNMENT_TABLE to user;
-GRANT SELECT on SYS.DBA_RSRC_PLAN_DIRECTIVES to user;
-EXEC DBMS_AQADM.GRANT_PRIV_FOR_RM_PLAN('user');
+podman run --name=db23aifree   \
+           --secret=oracle_pwd \
+           --publish 1521:1521 \
+           --detach \
+           container-registry.oracle.com/database/free:latest
 ```
 
-Once user is created and above privileges are granted, connect to Oracle Database as this user and create a Transactional Event Queue using below PL/SQL script. One can also use `KafkaAdmin` interface as shown in `CreateTopic.java` in `examples` directory to create a Transactional Event Queue. 
+## Step 2: Setting database user password
+
+All the steps in this lab can either be completed in sqlplus or sqlcl. The instructions refer to sqlcl but apart from the initial connection the two options 
+are identical. 
+
+1. Start by *sql* and connect to the database PDB **FREEPDB1** as SYS
+
+    ```shell
+    sql /nolog
+   ```
+    ```roomsql
+    CONNECT sys/"<Your Password>"@localhost:1521/FREEPDB1 as sysdba
+   ```
+
+2. Create a new user in FREEPDB1 with the necessary privileges to create the Topic.
+
+    ```roomsql
+    CREATE user okafka_user identified by <User Password>;
+    GRANT resource, connect, unlimited tablespace to okafka_user;
+    GRANT aq_user_role to okafka_user;
+    GRANT EXECUTE on DBMS_AQ to okafka_user;
+    GRANT EXECUTE ON DBMS_AQIN to okafka_user;
+    GRANT EXECUTE on DBMS_AQADM to okafka_user;
+    GRANT SELECT on GV_$SESSION to okafka_user;
+    GRANT SELECT on V_$SESSION to okafka_user;
+    GRANT SELECT on GV_$INSTANCE to okafka_user;
+    GRANT SELECT on GV_$LISTENER_NETWORK to okafka_user;
+    GRANT SELECT on GV_$PDBS to okafka_user;
+    GRANT SELECT on USER_QUEUE_PARTITION_ASSIGNMENT_TABLE to okafka_user;
+    GRANT select on SYS.DBA_RSRC_PLAN_DIRECTIVES to okafka_user;
+    EXEC DBMS_AQADM.GRANT_PRIV_FOR_RM_PLAN('okafka_user');
+    COMMIT;
+   ```
+
+## Step 3: Create OKafka Topic
+
+Once user is created and above privileges are granted, connect to Oracle Database as this user and create a Transactional Event Queue using below PL/SQL script. 
+
+```roomsql
+-- connect to Oracle Database as the new user
+CONNECT okafka_user/"<Your Password>"@localhost:1521/FREEPDB1
+```
 
 ```roomsql
 -- Create an OKafka topic named 'TXEQ' with 5 partition and retention time of 7 days. 
-begin
-    dbms_aqadm.create_database_kafka_topic( topicname=> 'TXEQ', partition_num=>5, retentiontime => 7*24*3600);
-end;
+BEGIN
+    dbms_aqadm.create_database_kafka_topic( topicname=> 'topic_1', partition_num=>5, retentiontime => 7*24*3600);
+END;
+/
 ```
 
-#### Connection configuration ####
+> TIP:
+> - One can also use `KafkaAdmin` interface as shown in `OKafkaAdminTopic.java` in `Simple/Admin` directory to create a Transactional Event Queue.
+
+## Step 4: Investigate and Try Simple Producer and Consumer
+
+The repository contains 2 common OKafka application examples in `Simple` folder.
+
+1. The Producer `ProducerOKafka.java`
+
+   - Produces 10 messages into `topic_1` topic.
+
+2. The Consumer `ConsumerOKafka.java`
+
+   - Consumes 10 messages from `topic_1` topic.
+
+
+### Task 1: Connection Configuration
 
 `OKafka` uses JDBC(thin driver) connection to connect to Oracle Database instance using any one of two security protocols.
- 
-1. PLAINTEXT 
-2. SSL
 
+      1. PLAINTEXT
+      2. SSL
 
-1.PLAINTEXT: In this protocol a JDBC connection is setup by providing username and password in plain text in ojdbc.prperties file. To use PLAINTEXT protocol user must provide following properties through application.
+For this quickstart we will use PLAINTEXT.
+
+1.PLAINTEXT: In this protocol a JDBC connection is setup by providing username and password in plain text in ojdbc.prperties file. 
+To use PLAINTEXT protocol user must provide following properties through application. Edit file `config.properties` at `<Quickstart Directory>/Simple/[Producer|Consumer]/src/main/resources`
 
 		security.protocol = "PLAINTEXT"
 		bootstrap.servers  = "host:port"
 		oracle.service.name = "name of the service running on the instance"        
 		oracle.net.tns_admin = "location of ojdbc.properties file"  
-		
+
 `ojdbc.properties` file must have below properties
-  
+
         user(in lowercase)=DatabaseUserName
         password(in lowercase)=Password
 
-2.SSL: This protocol requires that, while connecting to Oracle Database, the JDBC driver authenticates database user using Oracle Wallet or Java KeyStore(JKS) files. This protocol is typically used to o connect to Oracle database 23ai instance in Oracle Autonomous cloud. To use this protocol `Okafka` application must specify following properties.
 
-	    security.protocol = "SSL"
-        oracle.net.tns_admin = "location containing Oracle Wallet, tnsname.ora and ojdbc.properties file"
-        tns.alias = "alias of connection string in tnsnames.ora"        
+### Task 2: Try the Producer
 
-Directory location provided in `oracle.net.tns_admin` property should have 
-1. Oracle Wallet
-2. tnsnames.ora file
-3. ojdbc.properties file (optional) 
-This depends on how the Oracle Wallet is configured.
+et’s build and run the Producer. Use your IDE or ppen a command line (or terminal) and navigate to the folder where you have the project 
+files `<Quickstart Directory>/`. We can build and run the application by issuing the following command:
 
-Learn more about [JDBC Thin Connections with a Wallet (mTLS)](https://docs.oracle.com/en/cloud/paas/atp-cloud/atpug/connect-jdbc-thin-wallet.html#GUID-5ED3C08C-1A84-4E5A-B07A-A5114951AA9E) to establish secured JDBC connections.
-              
-Note: tnsnames.ora file in wallet downloaded from Oracle Autonomous Database contains JDBC connection string which is used for establishing JDBC connection.
-            
-### Building okafka.jar
-
-Simplest way to build the `okafka.jar` file is by using Gradle build tool.
-This distribution contains gradle build files which will work for Gradle 7.3 or higher.
-
-```
-./gradle jar
-```
-This generates `okafka-23.4.0.0.jar` in `okafka_source_dir/clients/build/libs`.
-
-**Project Dependency:**
-
-Mandatory jar files for this project to work.
-
-* `ojdbc11-<version>.jar`
-* `aqapi-<version>.jar`
-* `oraclepki-<version>.jar`
-* `osdt_core-<version>.jar`
-* `osdt_cert-<version>.jar`
-* `javax.jms-api-<version>.jar`
-* `jta-<version>.jar`
-* `slf4j-api-<version>.jar`
-* `kafka-clients-3.7.1.jar`
-
-All these jars are downloaded from Maven Repository during gradle build.
-
-To build the `okafka.jar` file which includes all the dependent jar files in itself.
-
-```
-./gradle fullJar 
-```
-This generates `okafka-full-23.4.0.0.jar` in `okafka_source_dir/clients/build/libs`.
-
-  
-## Build javadoc
-
-
-This command generates javadoc in `okafka_source_dir/clients/build/docs/javadoc`
-
-```
-gradle javadoc
+```cmd
+gradle Simple:Producer:run
 ```
 
-## Examples
+You should see some output that looks very similar to this:
 
-Repository contains 2 common OKafka application examples in `examples` folder.
+```cmd
+❯ gradle :Simple:Producer:run
 
-`1. ProducerOKafka.java`
-Produces 10 messages into TxEQ topic.
+> Task :Simple:Producer:run
+13:33:31.776 [main] INFO org.oracle.okafka.clients.producer.ProducerConfig -- ProducerConfig values:
+        acks = 1
+        batch.size = 200
+        bootstrap.servers = [localhost:1521]
+        buffer.memory = 335544
+        client.dns.lookup = use_all_dns_ips
+        client.id =
+        compression.type = none
+        connections.max.idle.ms = 540000
+        delivery.timeout.ms = 120000
+        enable.idempotence = true
+        interceptor.classes = []
+        key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+        linger.ms = 100
+        max.block.ms = 60000
+        max.in.flight.requests.per.connection = 5
+        max.request.size = 1048576
+        metadata.max.age.ms = 300000
+        metadata.max.idle.ms = 300000
+         .....
+        value.serializer = class org.apache.kafka.common.serialization.StringSerializer
 
-`2. ConsumerOKafka.java`
-Consumes 10 messages from TxEQ topic. 
+13:33:31.791 [main] DEBUG org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Transactioal Producer set to false
+13:33:31.856 [main] DEBUG org.oracle.okafka.clients.Metadata -- Update Metadata. isBootstap? true
+13:33:31.856 [main] DEBUG org.oracle.okafka.clients.Metadata -- Updated cluster metadata version 1 to Cluster(id = null, nodes = [0:localhost:1521:FREEPDB1::], partitions = [], controller = null)
+13:33:31.862 [main] INFO org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Overriding the default acks to all since idempotence is enabled.
+13:33:31.862 [main] INFO org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Overriding the default retries config to the recommended value of 2147483647 since the idempotent producer is enabled.
+13:33:31.865 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Starting Kafka producer I/O thread.
+13:33:31.866 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Sender waiting for 100
+13:33:31.866 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka version: 2.8.1
+13:33:31.867 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka commitId: 839b886f9b732b15
+13:33:31.867 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka startTimeMs: 1724258011865
+13:33:31.867 [main] DEBUG org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Kafka producer started
+13:33:31.871 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Sender waiting for 100
+13:33:31.972 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.NetworkClient -- [Producer clientId=] Available Nodes 1
+13:33:31.972 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.NetworkClient -- [Producer clientId=] 0:localhost:1521:FREEPDB1::
+13:33:31.972 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.NetworkClient -- [Producer clientId=] All Known nodes are disconnected. Try one time to connect.
+13:33:31.972 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.NetworkClient -- [Producer clientId=] Initiating connection to node 0:localhost:1521:FREEPDB1::
+.....
+.....
+13:33:42.413 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.NetworkClient -- [Producer clientId=] Sending Request: Produce
+13:33:42.413 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.AQKafkaProducer -- [Producer clientId=] Publish request for node 0:localhost:1521:FREEPDB1::
+13:33:42.413 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.AQKafkaProducer -- [Producer clientId=] Found a publisher Session_Info:37,53002. Process Id:49814. Instance Name:FREE. Acknowledge_mode:0. for node 0:localhost:1521:FREEPDB1::
+13:33:43.125 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.AQKafkaProducer -- [Producer clientId=] In BulkSend: #messages = 1
+13:33:43.711 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.NetworkClient -- [Producer clientId=] Response Received Produce
+13:33:43.712 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Batch Send complete, evaluating response topic_1-0
+.....
+.....
+13:33:48.192 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Batch Send complete, evaluating response topic_1-0
+13:33:48.192 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Sender waiting for 100
+Last record placed in 0 Offset 9
+Initiating close
+13:33:48.195 [main] INFO org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Closing the Kafka producer with timeoutMillis = 9223372036854775807 ms.
+13:33:48.293 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Beginning shutdown of Kafka producer I/O thread, sending remaining records.
+13:33:48.737 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Shutdown of Kafka producer I/O thread has completed.
+13:33:48.737 [main] INFO org.apache.kafka.common.metrics.Metrics -- Metrics scheduler closed
+13:33:48.738 [main] INFO org.apache.kafka.common.metrics.Metrics -- Closing reporter org.apache.kafka.common.metrics.JmxReporter
+13:33:48.738 [main] INFO org.apache.kafka.common.metrics.Metrics -- Metrics reporters closed
+13:33:48.738 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- App info kafka.producer for  unregistered
+13:33:48.738 [main] DEBUG org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Kafka producer has been closed
 
-## Kafka Java Client APIs supported
+BUILD SUCCESSFUL in 17s
+3 actionable tasks: 3 executed
+```
 
-For detailed documentation of OKafka please refer to [Kafka API for Oracle Transactional Event Queues](https://docs.oracle.com/en/database/oracle/oracle-database/23/adque/Kafka_cient_interface_TEQ.html) documentation.
+And, querying the topic `topic_1` at the Database, you should see some output that looks very similar to this:
 
-For list of APIs supported with Oracle 23.4.0.0 version of OKafka please refer to [OKafka 23ai javadoc](https://docs.oracle.com/en/database/oracle/oracle-database/23/okjdc/). 
+```roomsql
 
-## Contributing
+SQL> select MSGID, ENQUEUE_TIME from topic_1;
 
-This project is not accepting external contributions at this time. For bugs or enhancement requests, please file a GitHub issue unless it’s security related. When filing a bug remember that the better written the bug is, the more likely it is to be fixed. If you think you’ve found a security vulnerability, do not raise a GitHub issue and follow the instructions in our [security policy](./SECURITY.md).
+MSGID                               ENQUEUE_TIME
+___________________________________ __________________________________
+00000000000000000000000000660000    21/08/24 16:33:43,266359000 GMT
+00000000000000000000000000660100    21/08/24 16:33:43,802624000 GMT
+00000000000000000000000000660200    21/08/24 16:33:44,249193000 GMT
+00000000000000000000000000660300    21/08/24 16:33:44,694872000 GMT
+00000000000000000000000000660400    21/08/24 16:33:45,138653000 GMT
+00000000000000000000000000660500    21/08/24 16:33:45,590157000 GMT
+00000000000000000000000000660600    21/08/24 16:33:46,101399000 GMT
+00000000000000000000000000660700    21/08/24 16:33:46,699642000 GMT
+00000000000000000000000000660800    21/08/24 16:33:47,314182000 GMT
+00000000000000000000000000660900    21/08/24 16:33:47,841574000 GMT
+
+10 rows selected.
+```
+
 
 ## Security
 
