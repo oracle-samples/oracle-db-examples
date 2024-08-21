@@ -137,7 +137,7 @@ To use PLAINTEXT protocol user must provide following properties through applica
 
 ### Task 2: Try the Producer
 
-et’s build and run the Producer. Use your IDE or ppen a command line (or terminal) and navigate to the folder where you have the project 
+Let’s build and run the Producer. Use your IDE or open a command line (or terminal) and navigate to the folder where you have the project 
 files `<Quickstart Directory>/`. We can build and run the application by issuing the following command:
 
 ```cmd
@@ -237,6 +237,61 @@ ___________________________________ __________________________________
 10 rows selected.
 ```
 
+### Task 3: Try the Consumer
+
+Let’s now build and run the Consumer. Use your IDE or open a command line (or terminal) and navigate to the folder where you have the project
+files `<Quickstart Directory>/`. We can build and run the application by issuing the following command:
+
+```cmd
+gradle Simple:Consumer:run
+```
+
+You should see some output that looks very similar to this:
+
+```cmd
+gradle :Simple:Consumer:run
+
+> Task :Simple:Consumer:run
+[main] INFO org.oracle.okafka.clients.consumer.ConsumerConfig - ConsumerConfig values:
+        allow.auto.create.topics = true
+        auto.commit.interval.ms = 5000
+        auto.offset.reset = latest
+        bootstrap.servers = [localhost:1521]
+        check.crcs = true
+        client.dns.lookup = use_all_dns_ips
+        client.id = consumer-consumer_grp_1-1
+        client.rack =
+        connections.max.idle.ms = 540000
+        default.api.timeout.ms = 180000
+        enable.auto.commit = true
+        exclude.internal.topics = true
+        fetch.max.bytes = 52428800
+        fetch.max.wait.ms = 500
+        fetch.min.bytes = 1
+        group.id = consumer_grp_1
+        .....
+        value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+[main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka version: 2.8.1
+[main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 839b886f9b732b15
+[main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1724268189943
+[main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Available Nodes 1
+[main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] All Known nodes are disconnected. Try one time to connect.
+[main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Initiating connection to node 0:localhost:1521:FREEPDB1::
+[main] INFO org.oracle.okafka.clients.consumer.internals.AQKafkaConsumer - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Connecting to Oracle Database : jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(PORT=1521)(HOST=localhost))(CONNECT_DATA=(SERVICE_NAME=FREEPDB1)))
+[main] INFO org.oracle.okafka.clients.consumer.internals.AQKafkaConsumer - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Database Consumer Session Info: 212,32257. Process Id 55849 Instance Name FREE
+[main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Reconnect successful to node 1:localhost:1521:FREEPDB1:FREE:OKAFKA_USER
+[main] INFO org.oracle.okafka.clients.Metadata - Cluster ID: FREE
+[main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Available Nodes 1
+
+.....
+```
+
+## Want to Learn More?
+
+- [Kafka APIs for Oracle Transactional Event Queues](https://docs.oracle.com/en/database/oracle/oracle-database/19/adque/)
+- [Introduction to Transactional Event Queues and Advanced Queuing](https://docs.oracle.com/en/database/oracle/oracle-database/23/adque/aq-introduction.html#GUID-95868022-ECDA-4685-9D0A-52ED7663C84B)
+- [https://developer.oracle.com/](https://developer.oracle.com/)
 
 ## Security
 

@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 public class ProducerOKafka {
 	
 	public static void main(String[] args) {
-		System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+		System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
 
 		// Get application properties
 		Properties appProperties = null;

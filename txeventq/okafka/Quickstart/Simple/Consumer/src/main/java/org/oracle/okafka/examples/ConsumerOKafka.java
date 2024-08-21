@@ -18,6 +18,7 @@ import org.oracle.okafka.clients.consumer.KafkaConsumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.slf4j.Logger;
 
 public class ConsumerOKafka {
 	public static void main(String[] args) {
