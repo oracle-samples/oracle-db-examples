@@ -1,0 +1,339 @@
+/*
+** OKafka Java Client version 23.4.
+**
+** Copyright (c) 2019, 2024 Oracle and/or its affiliates.
+** Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+*/
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+allprojects {
+
+    repositories {
+        mavenCentral()
+    }
+
+    group = 'org.oracle.okafka'
+    version = '23.4.0.0'
+
+    tasks.withType(Javadoc) {
+        // disable the crazy super-strict doclint tool in Java 8
+        // noinspection SpellCheckingInspection
+        title ="Kafka Java Client for Oracle Transactional Event Queues 23.4.0.0"
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.windowTitle = "Oracle Database Transactional Event Queues Java API Reference"
+        options.header = """<b>Oracle&reg; Database Transactional Event Queues Java API Reference<br>23ai</b><br>FF46992-04<br>"""
+        options.bottom = """<center><small>Copyright &copy; 2001, 2024, Oracle and/or its affiliates. All rights reserved.<small></center><p><small><br></small></p>"""
+    }
+}
+
+ext {
+    gradleVersion = '8.10'
+    minJavaVersion = JavaVersion.VERSION_17
+
+    mavenUrl = project.hasProperty('mavenUrl') ? project.mavenUrl : ''
+    mavenUsername = project.hasProperty('mavenUsername') ? project.mavenUsername : ''
+    mavenPassword = project.hasProperty('mavenPassword') ? project.mavenPassword : ''
+}
+
+//project(':clients') {
+//    apply plugin : 'java-library'
+//
+//    sourceCompatibility = minJavaVersion
+//    targetCompatibility = minJavaVersion
+//
+//    sourceSets {
+//        main {
+//            java {
+//                srcDir 'src/main/java'
+//                exclude 'tests/**'
+//                exclude 'test/**'
+//            }
+//        }
+//    }
+//
+//    println 'Building okafka 23.4.0.0 Java API jar'
+//
+//    dependencies {
+//
+//        // These dependencies are used by the application.
+//        implementation group: 'com.oracle.database.jdbc', name: 'ojdbc11', version: '23.4.0.24.05'
+//        implementation group: 'com.oracle.database.messaging', name: 'aqapi', version: '23.3.0.0'
+//        implementation group: 'javax.transaction', name: 'jta', version: '1.1'
+//        implementation group: 'javax.jms', name: 'javax.jms-api', version: '2.0'
+//        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+//        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha0'
+//        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.7.1'
+//        // Use JUnit test framework
+//        implementation group: 'junit', name: 'junit', version: '4.12'
+//
+//        // Test dependencies
+//        testImplementation group: 'org.easymock', name: 'easymock', version: '3.6'
+//        testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.0-beta.5'
+//        testImplementation group: 'org.powermock', name: 'powermock-api-support', version: '2.0.5'
+//        testImplementation group: 'org.powermock', name: 'powermock-api-easymock', version: '2.0.0-beta.5'
+//
+//    }
+//
+//    javadoc {
+//        include "org/oracle/okafka/clients/admin/*"
+//        include "org/oracle/okafka/clients/consumer/*"
+//        include "org/oracle/okafka/clients/producer/*"
+//        include "org/oracle/okafka/common/errors/*"
+//    }
+//
+//    tasks.named('jar') {
+//        description('Generates okafka 23.4.0.0 API jar ')
+//        archiveBaseName = 'okafka'
+//        archiveVersion = '23.4.0.0'
+//
+//        from "${rootProject.projectDir}/LICENSE.txt"
+//        from "${rootProject.projectDir}/NOTICE"
+//
+//        manifest {
+//            attributes (
+//                    'Implementation-Title'  : 'okafka',
+//                    'Implementation-Version': project.version,
+//                    'Version': '23.4.0.0',
+//                    'Build-Time-ISO-8601':new Date().format("yyyy-MM-dd HH:mm:ss")
+//            )
+//        }
+//    }
+//
+//    tasks.register('fullJar', Jar) {
+//        archiveBaseName = 'okafka'
+//        archiveClassifier = 'full'
+//
+//        manifest {
+//            attributes( 'Implementation-Title'  : 'okafka',
+//                    'Implementation-Version': project.version)
+//        }
+//
+//        from "${rootProject.projectDir}/LICENSE.txt"
+//        from "${rootProject.projectDir}/NOTICE"
+//
+//        from sourceSets.main.output
+//
+//        dependsOn configurations.runtimeClasspath
+//        from {
+//            configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+//        }
+//
+//        duplicatesStrategy 'exclude'
+//    }
+//}
+//
+
+project(':Simple:Admin') {
+    apply plugin : 'java'
+    apply plugin : 'application'
+
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
+
+    dependencies {
+        // These dependencies are used by the application.
+        // https://mvnrepository.com/artifact/com.oracle.database.messaging/okafka
+        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
+        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.8.1'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.7'
+    }
+
+
+    tasks.named('jar') {
+        description('Generates okafka client admin jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'admin'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka admin',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client admin create topic')
+        application {
+            mainClass = 'org.oracle.okafka.examples.OKafkaCreateTopic'
+        }
+    }
+}
+
+project(':Simple:Producer') {
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
+
+    dependencies {
+        // These dependencies are used by the application.
+        // implementation project(':clients')
+        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
+        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.8.1'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.7'
+    }
+
+    tasks.named('jar') {
+        description('Generates okafka client simple producer jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'producer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes('Implementation-Title': 'okafka producer',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client simple producer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.ProducerOKafka'
+        }
+    }
+}
+
+project(':Simple:Consumer') {
+    apply plugin : 'java'
+    apply plugin : 'application'
+
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
+
+    dependencies {
+        // These dependencies are used by the application.
+        // https://mvnrepository.com/artifact/com.oracle.database.messaging/okafka
+        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
+        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.8.1'
+        implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.16'
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
+
+    }
+
+
+    tasks.named('jar') {
+        description('Generates okafka client admin jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'consumer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka admin',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client simple consumer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.ConsumerOKafka'
+        }
+    }
+}
+
+project(':Transactional:Consumer') {
+    apply plugin : 'java'
+    apply plugin : 'application'
+
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
+
+    dependencies {
+        // These dependencies are used by the application.
+        // https://mvnrepository.com/artifact/com.oracle.database.messaging/okafka
+        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
+        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.8.1'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.7'
+    }
+
+
+    tasks.named('jar') {
+        description('Generates okafka client consumer jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'consumer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka consumer',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client Transactional consumer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.ConsumerOKafka'
+        }
+    }
+}
+
+project(':Transactional:Producer') {
+    apply plugin : 'java'
+    apply plugin : 'application'
+
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
+
+    dependencies {
+        // These dependencies are used by the application.
+        // implementation project(':clients')
+        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: '23.4.0.0'
+        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.7.1'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.7'
+    }
+
+    tasks.named('jar') {
+        description('Generates okafka client Transactional producer jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'producer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka producer',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client Transactional producer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.ProducerOKafka'
+        }
+    }
+}
+
+configurations {
+    childJar
+}
+
+dependencies {
+    subprojects.each {
+        childJar project(it.path)
+    }
+}
+
+task multiProjectJar (type: Jar,  dependsOn: configurations.childJar) {
+    description 'Generates a jar containing okafka client, all its dependencies and examples for okafka demo'
+    from { configurations.childJar.collect { zipTree(it) } }
+}
