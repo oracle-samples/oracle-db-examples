@@ -47,9 +47,9 @@
 #
 #     python session_callback.py
 #
-#  4. Run this script and experiment sending web requests.  For example
+#  4. Run this script and experiment sending web requests.  For example to
 #     send 20 requests with a concurrency of 4:
-#         ab -n 20 -c 4 http://127.0.0.1:7000/
+#         ab -n 20 -c 4 http://127.0.0.1:8080/
 #
 #  The application console output will show that queries are executed multiple
 #  times for each session created, but the initialization function for each
@@ -65,7 +65,7 @@ import oracledb
 import sample_env
 
 # Port to listen on
-port = int(os.environ.get("PORT", "8080"))
+PORT = int(os.environ.get("PORT", "8080"))
 
 # determine whether to use python-oracledb thin mode or thick mode
 if not sample_env.get_is_thin():
@@ -76,14 +76,19 @@ if not sample_env.get_is_thin():
 
 # init_session(): The session callback. The requested_tag parameter is not used
 # in this example.
-def init_session(conn, requested_tag):
+def init_session(connection, requested_tag):
     # Your session initialization code would be here.  This example just
     # queries the session id to show that the callback is invoked once per
     # session.
-    for (r,) in conn.cursor().execute(
-        "SELECT SYS_CONTEXT('USERENV','SID') FROM DUAL"
-    ):
-        print(f"init_session() invoked for session {r}")
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            select current_timestamp, sid || '-' || serial#
+            from v$session
+            where sid = sys_context('userenv','sid')"""
+        )
+        t, s = cursor.fetchone()
+        print(f"init_session() at time {t} was invoked for session {s}")
 
 
 # start_pool(): starts the connection pool with a session callback defined
@@ -110,10 +115,12 @@ app = Flask(__name__)
 def index():
     with pool.acquire() as connection:
         with connection.cursor() as cursor:
-            sql = """
-                SELECT CURRENT_TIMESTAMP, SYS_CONTEXT('USERENV','SID')
-                FROM DUAL"""
-            cursor.execute(sql)
+            cursor.execute(
+                """
+                select current_timestamp, sid || '-' || serial#
+                from v$session
+                where sid = sys_context('userenv','sid')"""
+            )
             t, s = cursor.fetchone()
             r = f"Query at time {t} used session {s}"
             print(r)
@@ -126,8 +133,8 @@ if __name__ == "__main__":
     # Start a pool of connections
     pool = start_pool()
 
-    m = f"\nTry loading http://127.0.0.1:{port}/ in a browser\n"
+    m = f"\nTry loading http://127.0.0.1:{PORT}/ in a browser\n"
     sys.modules["flask.cli"].show_server_banner = lambda *x: print(m)
 
     # Start a webserver
-    app.run(port=port)
+    app.run(port=PORT)

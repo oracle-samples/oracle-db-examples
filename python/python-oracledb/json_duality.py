@@ -48,13 +48,12 @@ connection = oracledb.connect(
     dsn=sample_env.get_connect_string(),
 )
 
+# this script only works with Oracle Database 23.5 or later
+if sample_env.get_server_version() < (23, 5):
+    sys.exit("This example requires Oracle Database 23.5 or later")
+
 if not connection.thin:
     client_version = oracledb.clientversion()[0]
-db_version = int(connection.version.split(".")[0])
-
-# this script only works with Oracle Database 23ai
-if db_version < 23:
-    sys.exit("This example requires Oracle Database 23 or later. ")
 
 with connection.cursor() as cursor:
 
