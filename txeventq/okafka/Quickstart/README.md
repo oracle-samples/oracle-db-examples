@@ -48,14 +48,15 @@ podman run --name=db23aifree   \
 ## Step 2: Setting database user password
 
 All the steps in this lab can either be completed in sqlplus or sqlcl. The instructions refer to sqlcl but apart from the initial connection the two options 
-are identical. 
+are identical.
 
 1. Start by *sql* and connect to the database PDB **FREEPDB1** as SYS
 
     ```shell
     sql /nolog
    ```
-    ```roomsql
+
+   ```roomsql
     CONNECT sys/"<Your Password>"@localhost:1521/FREEPDB1 as sysdba
    ```
 
@@ -91,13 +92,16 @@ CONNECT okafka_user/"<Your Password>"@localhost:1521/FREEPDB1
 ```roomsql
 -- Create an OKafka topic named 'TXEQ' with 5 partition and retention time of 7 days. 
 BEGIN
-    dbms_aqadm.create_database_kafka_topic( topicname=> 'topic_1', partition_num=>5, retentiontime => 7*24*3600);
+    dbms_aqadm.create_database_kafka_topic( topicname=> 'TOPIC_1', partition_num=>5, retentiontime => 7*24*3600);
 END;
 /
 ```
 
 > TIP:
-> - One can also use `KafkaAdmin` interface as shown in `OKafkaAdminTopic.java` in `Simple/Admin` directory to create a Transactional Event Queue.
+>
+> A Topic can also be created using OKAFKA Administration methods. Or, through the Producer interface which creates a new topic if it was not previously created.
+>
+> - You can also use `KafkaAdmin` interface as shown in `OKafkaAdminTopic.java` in `Simple/Admin` directory to create a Transactional Event Queue.
 
 ## Step 4: Investigate and Try Simple Producer and Consumer
 
@@ -105,35 +109,49 @@ The repository contains 2 common OKafka application examples in `Simple` folder.
 
 1. The Producer `ProducerOKafka.java`
 
-   - Produces 10 messages into `topic_1` topic.
+   - Produces 10 messages into `TOPIC_1` topic.
 
 2. The Consumer `ConsumerOKafka.java`
 
-   - Consumes 10 messages from `topic_1` topic.
+   - Consumes 10 messages from `TOPIC_1` topic.
 
+### Task 1: Applications Configurations
 
-### Task 1: Connection Configuration
+#### Connection Configuration
 
 `OKafka` uses JDBC(thin driver) connection to connect to Oracle Database instance using any one of two security protocols.
 
-      1. PLAINTEXT
-      2. SSL
+1. PLAINTEXT
+2. SSL
 
 For this quickstart we will use PLAINTEXT.
 
 1.PLAINTEXT: In this protocol a JDBC connection is setup by providing username and password in plain text in ojdbc.prperties file. 
 To use PLAINTEXT protocol user must provide following properties through application. Edit file `config.properties` at `<Quickstart Directory>/Simple/[Producer|Consumer]/src/main/resources`
 
-		security.protocol = "PLAINTEXT"
-		bootstrap.servers  = "host:port"
-		oracle.service.name = "name of the service running on the instance"        
-		oracle.net.tns_admin = "location of ojdbc.properties file"  
+```text
+security.protocol = "PLAINTEXT"
+bootstrap.servers  = "host:port"
+oracle.service.name = "name of the service running on the instance"
+oracle.net.tns_admin = "location of ojdbc.properties file"  
+```
 
 `ojdbc.properties` file must have below properties
 
-        user(in lowercase)=DatabaseUserName
-        password(in lowercase)=Password
+```text
+user(in lowercase)=DatabaseUserName
+password(in lowercase)=Password
+```
 
+#### APIs configuration
+
+You can get a detailed description of the Producer, Consumer and Administration APIs in the [Kafka APIs for Oracle Transactional Event Queues Documentation](https://docs.oracle.com/en/database/oracle/oracle-database/23/adque/Kafka_cient_interface_TEQ.html#GUID-5549915E-6509-4065-B05E-E96338F4742C).
+
+> Note: Topic name property should be provided in UPPERCASE.
+>
+>> ```text
+>> topic.name=<Oracle Database TxEventQ Topic, use uppercase>
+>> ```
 
 ### Task 2: Try the Producer
 
@@ -195,10 +213,10 @@ You should see some output that looks very similar to this:
 13:33:42.413 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.AQKafkaProducer -- [Producer clientId=] Found a publisher Session_Info:37,53002. Process Id:49814. Instance Name:FREE. Acknowledge_mode:0. for node 0:localhost:1521:FREEPDB1::
 13:33:43.125 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.AQKafkaProducer -- [Producer clientId=] In BulkSend: #messages = 1
 13:33:43.711 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.NetworkClient -- [Producer clientId=] Response Received Produce
-13:33:43.712 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Batch Send complete, evaluating response topic_1-0
+13:33:43.712 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Batch Send complete, evaluating response TOPIC_1-0
 .....
 .....
-13:33:48.192 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Batch Send complete, evaluating response topic_1-0
+13:33:48.192 [kafka-producer-network-thread | ] INFO org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Batch Send complete, evaluating response TOPIC_1-0
 13:33:48.192 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Sender waiting for 100
 Last record placed in 0 Offset 9
 Initiating close
@@ -215,11 +233,11 @@ BUILD SUCCESSFUL in 17s
 3 actionable tasks: 3 executed
 ```
 
-And, querying the topic `topic_1` at the Database, you should see some output that looks very similar to this:
+And, querying the topic `TOPIC_1` at the Database, you should see some output that looks very similar to this:
 
 ```roomsql
 
-SQL> select MSGID, ENQUEUE_TIME from topic_1;
+SQL> select MSGID, ENQUEUE_TIME from TOPIC_1;
 
 MSGID                               ENQUEUE_TIME
 ___________________________________ __________________________________
