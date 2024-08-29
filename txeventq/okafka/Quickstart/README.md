@@ -305,6 +305,48 @@ gradle :Simple:Consumer:run
 .....
 ```
 
+## Step 5: Investigate and Try Administration API
+
+With Administration API it is possible create and delete Topics. 
+
+### Task 1: Try the Producer
+
+Let’s build and run the Admin Example Class. Use your IDE or open a command line (or terminal) and navigate to the folder 
+where you have the project files `<Quickstart Directory>/`. We can build and run the application by issuing the following command:
+
+```cmd
+gradle Simple:Admin:run 
+Usage: java OKafkaAdminTopic [CREATE|DELETE] topic1 ... topicN
+```
+
+This command requires at least two parameters. The first is specify if you wants to create or delete the topics informed 
+in sequence. For example:
+
+```shell
+gradle Simple:Admin:run --args="CREATE TOPIC_ADMIN_2 TOPIC_ADMIN_3"
+```
+
+As a result you will see the two new topics created.
+
+```sql
+SQL> select name, queue_table, dequeue_enabled,enqueue_enabled, sharded, queue_category, recipients
+  2    from all_queues
+  3   where OWNER='OKAFKA_USER'
+  4*    and QUEUE_TYPE<>'EXCEPTION_QUEUE';
+
+NAME             QUEUE_TABLE      DEQUEUE_ENABLED    ENQUEUE_ENABLED    SHARDED    QUEUE_CATEGORY               RECIPIENTS
+________________ ________________ __________________ __________________ __________ ____________________________ _____________
+......
+TOPIC_ADMIN_2    TOPIC_ADMIN_2      YES                YES              TRUE       Sharded Queue                MULTIPLE
+TOPIC_ADMIN_3    TOPIC_ADMIN_3      YES                YES              TRUE       Sharded Queue                MULTIPLE
+```
+
+
+## Transaction Examples 
+
+
+[Transactional Examples](./Transactional/TRANSACTIONAL_EXAMPLES.MD)
+
 ## Want to Learn More?
 
 - [Kafka APIs for Oracle Transactional Event Queues](https://docs.oracle.com/en/database/oracle/oracle-database/19/adque/)
