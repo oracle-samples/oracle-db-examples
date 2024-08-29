@@ -105,7 +105,7 @@ END;
 
 ## Step 4: Investigate and Try Simple Producer and Consumer
 
-The repository contains 2 common OKafka application examples in `Simple` folder.
+The repository contains two common OKafka application examples in `Simple` folder.
 
 1. The Producer `ProducerOKafka.java`
 
@@ -229,8 +229,6 @@ Initiating close
 13:33:48.738 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- App info kafka.producer for  unregistered
 13:33:48.738 [main] DEBUG org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Kafka producer has been closed
 
-BUILD SUCCESSFUL in 17s
-3 actionable tasks: 3 executed
 ```
 
 And, querying the topic `TOPIC_1` at the Database, you should see some output that looks very similar to this:
@@ -342,10 +340,15 @@ TOPIC_ADMIN_3    TOPIC_ADMIN_3      YES                YES              TRUE    
 ```
 
 
-## Transaction Examples 
+## Transaction in OKafka Examples 
 
+Kafka Client for Oracle Transactional Event Queues allow developers use the transaction API effectively.
 
-[Transactional Examples](./Transactional/TRANSACTIONAL_EXAMPLES.MD)
+Transactions allow for atomic writes across multiple TxEventQ topics and partitions, ensuring that either all messages
+within the transaction are successfully written, or none are. For instance, if an error occurs during processing, the 
+transaction may be aborted, preventing any of the messages from being committed to the topic or accessed by consumers.
+
+You can now build and run the [Transactional Examples](./Transactional/TRANSACTIONAL_EXAMPLES.MD).
 
 ## Want to Learn More?
 
