@@ -19,7 +19,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TransactionalProducerOKafka {
 
@@ -40,6 +42,12 @@ public class TransactionalProducerOKafka {
             System.exit(-1);
         }
 
+
+        boolean failProcessing = false;
+        if ((args != null) && (args.length == 1)) {
+            failProcessing = args[0].equals("FAIL");
+        }
+
         String topicName = appProperties.getProperty("topic.name", "TXEQ");
         appProperties.remove("topic.name"); // Pass props to build OKafkaProducer
 
@@ -49,6 +57,8 @@ public class TransactionalProducerOKafka {
             producer = new KafkaProducer<String, String>(appProperties);
 
             int msgCnt = 100;
+            int limitMessages = 33;
+
             String jsonPayload = "{\"name\":\"Programmer"+msgCnt+"\",\"status\":\"classy\",\"catagory\":\"general\"," +
                     "\"region\":\"north\",\"title\":\"programmer\"}";
 
@@ -60,34 +70,44 @@ public class TransactionalProducerOKafka {
             // Produce 100 records in a transaction and commit.
             try {
                 producer.beginTransaction();
-                boolean fail = false;
-                for( int i=0;i<msgCnt;i++) {
+                AtomicBoolean fail = new AtomicBoolean(false);
+                int messagesProduced = 0;
+                while (messagesProduced < msgCnt) {
                     //Optionally set RecordHeaders
                     RecordHeader rH1 = new RecordHeader("CLIENT_ID", "FIRST_CLIENT".getBytes());
                     RecordHeader rH2 = new RecordHeader("REPLY_TO", (topicName.concat("_RETURN")).getBytes());
 
                     ProducerRecord<String, String> producerRecord =
-                            new ProducerRecord<String, String>(topicName, String.valueOf(i), jsonPayload);
+                            new ProducerRecord<String, String>(topicName, String.valueOf(messagesProduced), jsonPayload);
                     producerRecord.headers().add(rH1).add(rH2);
+
                     try {
-                        processRecord(conn, producerRecord);
+                        processRecord(conn, producerRecord, failProcessing, messagesProduced, limitMessages);
                     } catch(Exception e) {
-                        //Retry processRecord or abort the Okafka transaction and close the producer
-                        fail = true;
+                        System.out.println(e.getMessage());
+                        //Retry processRecord or abort the OKafka transaction and close the producer
+                        fail.set(true);
                         break;
                     }
+
                     producer.send(producerRecord);
+                    messagesProduced++;
                 }
 
-                if(fail) // Failed to process the records. Abort Okafka transaction
-                    producer.abortTransaction();
-                else // Successfully process all the records. Commit OKafka transaction
-                    producer.commitTransaction();
+                String returnMsg = String.format("Produced %d messages.", messagesProduced);
 
-                System.out.println("Produced 100 messages.");
-            }catch( DisconnectException dcE) {
+                if(fail.get()) {   // Failed to process the records. Abort Okafka transaction
+                    producer.abortTransaction();
+                    System.out.println(returnMsg.concat(" Process aborted and not committed."));
+
+                } else {          // Successfully process all the records. Commit OKafka transaction
+                    producer.commitTransaction();
+                    System.out.println(returnMsg);
+                }
+
+            } catch( DisconnectException dcE) {
                 producer.close();
-            }catch (KafkaException e) {
+            } catch (KafkaException e) {
                 producer.abortTransaction();
             }
         }
@@ -108,9 +128,15 @@ public class TransactionalProducerOKafka {
         }
     }
 
-    private static void processRecord(Connection conn, ProducerRecord<String, String> record) throws Exception
+    private static void processRecord(Connection conn, ProducerRecord<String, String> record,
+                                      boolean failProcessing,
+                                      int messagesProduced, int limitMessages) throws Exception
     {
         //Application specific logic
+
+        // Samples logic to fail during execution and abort the transaction
+        if ((failProcessing) && (messagesProduced == limitMessages))
+            throw new Exception("Exception while processing record");
     }
 
     private static java.util.Properties getProperties()  throws IOException {
