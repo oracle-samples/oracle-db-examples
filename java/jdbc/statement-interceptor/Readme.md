@@ -11,9 +11,9 @@ Please see subprojects Readme.md files for further details.
 ## Build the projects.
 
 Both subprojects are included here. You can choose to run tasks from here or to 
-go one level down to subproject you ae interested in. 
+go one level down to subproject you are interested in. 
 
-To run the demo application form here, simply issue the following command
+To run the demo application from here, issue the following command
 > ./gradlew :demo-app:bootRun
  
 Before doing that, make sure you have properly specified datasource information (see *Running the application* section in demo-app readme file)

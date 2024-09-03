@@ -1,7 +1,7 @@
 # SQL Interceptor
 ![oveview](assets/img/overview.png)
 
-This project demonstrates how the new 23ai Oracle JDBC feature [TraceEventListener](https://docs.oracle.com/en/database/oracle/oracle-database/23/jajdb/oracle/jdbc/TraceEventListener.html) can be used for security enhancement of Java applications.
+This project demonstrates how the new 23ai Oracle JDBC feature [TraceEventListener](https://docs.oracle.com/en/database/oracle/oracle-database/23/jajdb/oracle/jdbc/TraceEventListener.html) can be used to improve the security of Java applications.
 The [TraceEventListener](https://docs.oracle.com/en/database/oracle/oracle-database/23/jajdb/oracle/jdbc/TraceEventListener.html) is a callback that can be registered for every roundtrip made to the Database. This particular implementation can intercept any SQL statement issued by an Oracle JDBC client application and, based on given rules, allow the statement to proceed and reach the remote server.
 
 This TraceEventListenerProvider registers a listener that analyzes all round-trips made to the remote server.
@@ -95,7 +95,7 @@ When an SQL statement is intercepted, the listener will loop through all defined
 
 ### Configuration
 
-The configuration of rules and actions as a JSON file, the latter should contain an array of simple objects with the following attributes:
+Rules and actions are configured in a JSON file that contains an array of objects with the following attributes:
 
 - "className": Fully qualified class name of the rule type.
 - "parameter": Parameter of that rule. (Optional)
