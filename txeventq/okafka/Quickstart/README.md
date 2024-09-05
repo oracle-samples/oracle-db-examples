@@ -197,7 +197,7 @@ You should see some output that looks very similar to this:
 13:33:31.862 [main] INFO org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Overriding the default retries config to the recommended value of 2147483647 since the idempotent producer is enabled.
 13:33:31.865 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Starting Kafka producer I/O thread.
 13:33:31.866 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Sender waiting for 100
-13:33:31.866 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka version: 2.8.1
+13:33:31.866 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka version: 3.7.1
 13:33:31.867 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka commitId: 839b886f9b732b15
 13:33:31.867 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka startTimeMs: 1724258011865
 13:33:31.867 [main] DEBUG org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Kafka producer started
@@ -288,7 +288,7 @@ gradle :Simple:Consumer:run
         .....
         value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
 
-[main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka version: 2.8.1
+[main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
 [main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 839b886f9b732b15
 [main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1724268189943
 [main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Available Nodes 1
@@ -299,8 +299,19 @@ gradle :Simple:Consumer:run
 [main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Reconnect successful to node 1:localhost:1521:FREEPDB1:FREE:OKAFKA_USER
 [main] INFO org.oracle.okafka.clients.Metadata - Cluster ID: FREE
 [main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Available Nodes 1
-
-.....
+No Record Fetched. Retrying in 1 second
+partition = 0, offset = 0, key = Just some key for OKafka0, value =0This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 1, key = Just some key for OKafka1, value =1This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 2, key = Just some key for OKafka2, value =2This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 3, key = Just some key for OKafka3, value =3This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 4, key = Just some key for OKafka4, value =4This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 5, key = Just some key for OKafka5, value =5This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 6, key = Just some key for OKafka6, value =6This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 7, key = Just some key for OKafka7, value =7This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 8, key = Just some key for OKafka8, value =8This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 9, key = Just some key for OKafka9, value =9This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  Committing records10
+No Record Fetched. Retrying in 1 second
 ```
 
 ## Step 5: Investigate and Try Administration API
