@@ -105,7 +105,7 @@ END;
 
 ## Step 4: Investigate and Try Simple Producer and Consumer
 
-The repository contains 2 common OKafka application examples in `Simple` folder.
+The repository contains two common OKafka application examples in `Simple` folder.
 
 1. The Producer `ProducerOKafka.java`
 
@@ -197,7 +197,7 @@ You should see some output that looks very similar to this:
 13:33:31.862 [main] INFO org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Overriding the default retries config to the recommended value of 2147483647 since the idempotent producer is enabled.
 13:33:31.865 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Starting Kafka producer I/O thread.
 13:33:31.866 [kafka-producer-network-thread | ] DEBUG org.oracle.okafka.clients.producer.internals.SenderThread -- [Producer clientId=] Sender waiting for 100
-13:33:31.866 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka version: 2.8.1
+13:33:31.866 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka version: 3.7.1
 13:33:31.867 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka commitId: 839b886f9b732b15
 13:33:31.867 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka startTimeMs: 1724258011865
 13:33:31.867 [main] DEBUG org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Kafka producer started
@@ -229,8 +229,6 @@ Initiating close
 13:33:48.738 [main] INFO org.apache.kafka.common.utils.AppInfoParser -- App info kafka.producer for  unregistered
 13:33:48.738 [main] DEBUG org.oracle.okafka.clients.producer.KafkaProducer -- [Producer clientId=] Kafka producer has been closed
 
-BUILD SUCCESSFUL in 17s
-3 actionable tasks: 3 executed
 ```
 
 And, querying the topic `TOPIC_1` at the Database, you should see some output that looks very similar to this:
@@ -290,7 +288,7 @@ gradle :Simple:Consumer:run
         .....
         value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
 
-[main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka version: 2.8.1
+[main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
 [main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 839b886f9b732b15
 [main] INFO org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1724268189943
 [main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Available Nodes 1
@@ -301,9 +299,67 @@ gradle :Simple:Consumer:run
 [main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Reconnect successful to node 1:localhost:1521:FREEPDB1:FREE:OKAFKA_USER
 [main] INFO org.oracle.okafka.clients.Metadata - Cluster ID: FREE
 [main] INFO org.oracle.okafka.clients.NetworkClient - [Consumer clientId=consumer-consumer_grp_1-1, groupId=consumer_grp_1] Available Nodes 1
-
-.....
+No Record Fetched. Retrying in 1 second
+partition = 0, offset = 0, key = Just some key for OKafka0, value =0This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 1, key = Just some key for OKafka1, value =1This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 2, key = Just some key for OKafka2, value =2This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 3, key = Just some key for OKafka3, value =3This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 4, key = Just some key for OKafka4, value =4This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 5, key = Just some key for OKafka5, value =5This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 6, key = Just some key for OKafka6, value =6This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 7, key = Just some key for OKafka7, value =7This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 8, key = Just some key for OKafka8, value =8This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  partition = 0, offset = 9, key = Just some key for OKafka9, value =9This is test with 128 characters Payload used to test Oracle Kafka. Read https://github.com/oracle/okafka/blob/master/README.md
+  Committing records10
+No Record Fetched. Retrying in 1 second
 ```
+
+## Step 5: Investigate and Try Administration API
+
+With Administration API it is possible create and delete Topics. 
+
+### Task 1: Try the Producer
+
+Let’s build and run the Admin Example Class. Use your IDE or open a command line (or terminal) and navigate to the folder 
+where you have the project files `<Quickstart Directory>/`. We can build and run the application by issuing the following command:
+
+```cmd
+gradle Simple:Admin:run 
+Usage: java OKafkaAdminTopic [CREATE|DELETE] topic1 ... topicN
+```
+
+This command requires at least two parameters. The first is specify if you wants to create or delete the topics informed 
+in sequence. For example:
+
+```shell
+gradle Simple:Admin:run --args="CREATE TOPIC_ADMIN_2 TOPIC_ADMIN_3"
+```
+
+As a result you will see the two new topics created.
+
+```sql
+SQL> select name, queue_table, dequeue_enabled,enqueue_enabled, sharded, queue_category, recipients
+  2    from all_queues
+  3   where OWNER='OKAFKA_USER'
+  4*    and QUEUE_TYPE<>'EXCEPTION_QUEUE';
+
+NAME             QUEUE_TABLE      DEQUEUE_ENABLED    ENQUEUE_ENABLED    SHARDED    QUEUE_CATEGORY               RECIPIENTS
+________________ ________________ __________________ __________________ __________ ____________________________ _____________
+......
+TOPIC_ADMIN_2    TOPIC_ADMIN_2      YES                YES              TRUE       Sharded Queue                MULTIPLE
+TOPIC_ADMIN_3    TOPIC_ADMIN_3      YES                YES              TRUE       Sharded Queue                MULTIPLE
+```
+
+
+## Transaction in OKafka Examples 
+
+Kafka Client for Oracle Transactional Event Queues allow developers use the transaction API effectively.
+
+Transactions allow for atomic writes across multiple TxEventQ topics and partitions, ensuring that either all messages
+within the transaction are successfully written, or none are. For instance, if an error occurs during processing, the 
+transaction may be aborted, preventing any of the messages from being committed to the topic or accessed by consumers.
+
+You can now build and run the [Transactional Examples](./Transactional/TRANSACTIONAL_EXAMPLES.MD).
 
 ## Want to Learn More?
 
