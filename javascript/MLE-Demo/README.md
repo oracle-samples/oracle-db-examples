@@ -8,4 +8,4 @@ For more information, please refer to our [blog post](https://medium.com/@salma.
 ## Acknowledgements
 
 - Author/Contributors - Lucas Braun, Principal Program Manager, Salma Elbekraoui, MLE team intern
-- Last Updated By/Date - Lucas Braun, Principal Program Manager, Salma Elbekraoui, MLE team intern, July 2023
+- Last Updated By/Date - Lucas Braun, Principal Program Manager, Salma Elbekraoui, MLE developer, June 2024
