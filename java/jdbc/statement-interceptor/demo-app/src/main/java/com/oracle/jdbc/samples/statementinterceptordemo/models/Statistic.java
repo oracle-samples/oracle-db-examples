@@ -44,10 +44,12 @@ public class Statistic {
   /**
    * minimum operation time in milliseconds
    */
+  @Builder.Default
   private double minTime = -1.0;
   /**
    * maximum operation time in milliseconds
    */
+  @Builder.Default
   private double maxTime = -1.0;;
   /**
    * total operation time in milliseconds
