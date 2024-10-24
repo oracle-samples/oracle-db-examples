@@ -78,13 +78,9 @@ ORDER BY setting_name;
 -- COMPUTED SETTINGS AND OTHER GLOBAL STATISTICS
 --
 
-SELECT TYPE, name, nval, sval 
-FROM   DM$PPESM_SALES_FORECAST_1
-ORDER BY TYPE, name;
-
-SELECT global_detail_name, ROUND(global_detail_value,3) global_detail_value
-FROM   table(dbms_data_mining.get_model_details_global('ESM_SALES_FORECAST_1'))
-ORDER BY global_detail_name;
+SELECT name, ROUND(numeric_value,3) numeric_value, string_value 
+FROM DM$VGESM_SALES_FORECAST_1
+ORDER BY name;
 /
 
 -----------------------------------------------------------------------
