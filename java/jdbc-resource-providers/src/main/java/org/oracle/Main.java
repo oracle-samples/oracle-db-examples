@@ -38,10 +38,12 @@
 
 package org.oracle;
 
+import oracle.jdbc.pool.OracleDataSource;
+
 import java.sql.*;
 
 public class Main {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws SQLException {
 
     // Retrieve credentials, if needed
     // comment out if username, password not required
@@ -50,9 +52,16 @@ public class Main {
     // Set custom location for the config properties file with the property oracle.jdbc.config.file
     System.setProperty("oracle.jdbc.config.file", "properties/demo-1.properties");
 
+    // Configure OracleDataSource
+    OracleDataSource ods = new OracleDataSource();
+    ods.setURL("jdbc:oracle:thin:@");
+    // comment out if username, password not required
+    ods.setUser(USERNAME);
+    ods.setPassword(PASSWORD);
+
     // try-with: establish a connection and retrieve database version
     // remove arguments if USERNAME, PASSWORD not required
-    try (Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@", USERNAME, PASSWORD);
+    try (Connection connection = ods.getConnection();
          PreparedStatement ps = connection.prepareStatement("select BANNER from v$version");
          ResultSet rs = ps.executeQuery()
     ) {
