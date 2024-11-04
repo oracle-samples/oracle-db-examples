@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<!--
+ Copyright (c)2024 Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudBank - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        function showSuccessModal(sagaId, reason) {
+            document.getElementById('generatedSagaId').innerText = sagaId;
+            document.getElementById('generatedReason').innerText = reason;
+            $('#usernameModal').modal('show');
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+        /* Oracle's primary color */
+        
+        .navbar-custom {
+            background-color: #f80000d0;
+        }
+        
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link,
+        .navbar-custom .btn-logout,
+        .navbar-text {
+            color: #ffffff;
+        }
+        
+        .account-card {
+            background-color: #ffffff;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
+        
+        .divider {
+            border-top: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        
+        .account-info {
+            font-size: 18px;
+        }
+        
+        .balance {
+            font-weight: bold;
+            font-size: 22px;
+        }
+        
+        .credit-score-card {
+            text-align: center;
+            background-color: #ffffff;
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
+        
+        .ml-auto {
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="#">
+            <img src="{{ url_for('static', filename='images/oracle-blk.png') }}" alt="Oracle Logo" style="height: 30px; margin-right: 20px;"> CLOUDBANK
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-arrow-down" style="color: black;"></i> 
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="{{ url_for('dashboard') }}">Home</a>
+                <a class="nav-item nav-link" href="{{ url_for('transfer') }}">Transfer</a>
+                <a class="nav-item nav-link" href="{{ url_for('account_details') }}">Account</a>
+            </div>
+        </div>
+        <div id="notificationBell" class="navbar-nav nav-item ml-auto" style="color: #fff; cursor: pointer;">
+            <i class="fas fa-bell"></i>
+            <span class="badge badge-danger" id="notificationBadge" style="position: absolute; top: -10px; right: -10px; display: none; color: white;">!</span>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup1">
+            <span class="navbar-brand ml-auto" id="navbarBank">
+                {{ user_data.bank }}
+            </span>
+            <button class="btn btn-outline-light btn-logout ml-auto" onclick="location.href='/logout'">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Modal -->
+    <div class="modal fade" id="usernameModal" tabindex="-1" aria-labelledby="usernameModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="usernameModalLabel">SAGA INITIATED SUCCESSFULLY</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                </div>
+                <div class="modal-body">
+                    Request ID: <span id="generatedSagaId"></span>.<br>
+                    <span id="generatedReason"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if saga_id and reason %}
+    <script type="text/javascript">
+        showSuccessModal('{{ saga_id }}', '{{ reason }}');
+    </script>
+    {% endif %}
+
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                </div>
+                <div class="modal-body">
+                    <div id="notificationsContainer">No new notifications.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mt-4">Good {{ "morning" if datetime.now().hour
+                < 12 else "evening" }}, {{ user_data[ 'fullName'] }}!</h2>
+                    <form action="{{ url_for('refresh_dashboard') }}" method="POST">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </form>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+            <div class="col">
+                {% for account_type, accounts in user_data.items() %} {% if account_type in ['CHECKING', 'SAVING', 'CREDIT_CARD'] %}
+                <div class="account-card">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="d-inline">
+                            {{ 'Credit Card' if account_type == 'CREDIT_CARD' else account_type.title() }}
+                        </h4>
+                        <div>
+                            <form action="{{ url_for('create_bank_account') }}" method="get">
+                                <button type="submit" class="btn btn-sm btn-outline-primary mr-2">+ Create New</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    {% for account in accounts %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="account-info">Account:</span>
+                            <span class="account-info">{{ account['account_number'] }}</span>
+                        </div>
+                        <span class="balance">$ {{ account['balance_amount'] }}</span>
+                    </div>
+                    {% if not loop.last %}
+                    <div class="divider"></div>{% endif %} {% endfor %}
+                </div>
+                {% endif %} {% endfor %}
+            </div>
+            <div class="col">
+                <div class="credit-score-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3>Credit Score</h3>
+                    </div>
+                    <div class="divider"></div>
+                    <p class="balance" id="credit-score-display">{{ user_data['credit_score'] }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+    <script>
+        $(document).ready(function() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+            socket.on('connect', function() {
+                console.log('Websocket connected!');
+            });
+
+            socket.on('new_notification', function(data) {
+                $('#notificationBell i').css('color', 'yellow');
+                $('#notificationBadge').show();
+                console.log('Notification UPDATED');
+
+                var notificationContent = $('#notificationsContainer').html();
+                if (notificationContent == "No new notifications.") {
+                    $('#notificationsContainer').html('');
+                }
+                $('#notificationsContainer').append('<p>' + data.message + '</p><div class = "divider"> </div>');
+
+                //Automatic modal
+                $('#notificationModal').modal('show');
+            });
+
+
+            $('#notificationBell').click(function() {
+                $('#notificationBadge').hide();
+                $('#notificationBell i').css('color', '#fff');
+                $('#notificationModal').modal('show');
+            });
+        });
+    </script>
+
+</body>
+
+</html>
