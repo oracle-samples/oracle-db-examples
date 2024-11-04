@@ -23,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.concurrent.ThreadLocalRandom;
 
 import oracle.jdbc.OracleType;
 import oracle.ucp.jdbc.PoolDataSource;
@@ -31,13 +30,13 @@ import oracle.ucp.jdbc.PoolDataSourceFactory;
 
 public class OracleAIVectorSearchWithJava {
 
-  private final static String URL = "<JDBC_CONNECTION_URL>";
-  private final static String USERNAME = "<ORACLE_DATABASE_USERNAME>";
-  private final static String PASSWORD = "<ORACLE_DATABASE_PASSWORD>";
+  private final static String URL = "jdbc:oracle:thin:@localhost:1521/FREEPDB1";
+  private final static String USERNAME = System.getenv("DB_23AI_USERNAME");
+  private final static String PASSWORD = System.getenv("DB_23AI_PASSWORD");
 
-  private String insertSql = "INSERT INTO ORACLE_AI_VECTOR_SEARCH_DEMO (ID, VECTOR_DATA) VALUES (?, ?)";
+  private String insertSql = "INSERT INTO ORACLE_AI_VECTOR_SEARCH_DEMO (VECTOR_DATA) VALUES (?)";
   private String querySql = "SELECT ID, VECTOR_DATA FROM ORACLE_AI_VECTOR_SEARCH_DEMO";
-  private String querySqlWithBind = "SELECT ID, VECTOR_DATA FROM ORACLE_AI_VECTOR_SEARCH_DEMO ORDER BY VECTOR_DISTANCE(VECTOR_DATA, ?, DOT)";
+  private String querySqlWithBind = "SELECT ID, VECTOR_DATA FROM ORACLE_AI_VECTOR_SEARCH_DEMO ORDER BY VECTOR_DISTANCE(VECTOR_DATA, ?, COSINE)";
 
   public static void main(String[] args) throws SQLException {
     OracleAIVectorSearchWithJava oracleAIVectorSearch = new OracleAIVectorSearchWithJava();
@@ -83,43 +82,39 @@ public class OracleAIVectorSearchWithJava {
   }
 
   private void insertVector(Connection connection) throws SQLException {
-    try (PreparedStatement insertStatement = connection
-        .prepareStatement(insertSql);) {
-      double[] vector = {1.1, 2.2, 3.3};
-      System.out.println("SQL DML: " + insertSql);
-      System.out.println("VECTOR to be inserted: " + Arrays.toString(vector));
-      insertStatement.setInt(1, randomize());
-      insertStatement.setObject(2, vector, OracleType.VECTOR);
-      insertStatement.executeUpdate();
-    }
+    PreparedStatement insertStatement = connection.prepareStatement(insertSql,
+        new String[]{"ID"});
+    float[] vector = {1.1f, 2.2f, 3.3f};
+    System.out.println("SQL DML: " + insertSql);
+    System.out.println("VECTOR to be inserted: " + Arrays.toString(vector));
+    insertStatement.setObject(1, vector, OracleType.VECTOR_FLOAT64);
+    insertStatement.executeUpdate();
   }
 
   private void insertVectorWithVarChar2(Connection connection)
       throws SQLException {
-    try (PreparedStatement insertStatement = connection
-        .prepareStatement(insertSql);) {
-      double[] vector = {1.1, 2.2, 3.3};
-      System.out.println("SQL DML: " + insertSql);
-      System.out.println("VECTOR to be inserted: " + Arrays.toString(vector));
-      insertStatement.setInt(1, randomize());
-      insertStatement.setObject(2, Arrays.toString(vector),
-          OracleType.VARCHAR2);
-      insertStatement.executeUpdate();
-    }
+    PreparedStatement insertStatement = connection.prepareStatement(insertSql,
+        new String[]{"ID"});
+    float[] vector = {1.1f, 2.2f, 3.3f};
+    System.out.println("SQL DML: " + insertSql);
+    System.out.println("VECTOR to be inserted: " + Arrays.toString(vector));
+    insertStatement.setObject(1, Arrays.toString(vector), OracleType.VARCHAR2);
+    insertStatement.executeUpdate();
   }
 
   private void insertVectorWithBatchAPI(Connection connection)
       throws SQLException {
-    double[][] vectors = {{1.1, 2.2, 3.3}, {1.3, 7.2, 4.3}, {5.9, 5.2, 7.3}};
+
+    float[][] vectors = {{1.1f, 2.2f, 3.3f}, {1.3f, 7.2f, 4.3f},
+        {5.9f, 5.2f, 7.3f}};
     System.out.println("SQL DML: " + insertSql);
     System.out.println("VECTORs to be inserted as a batch: "
         + Arrays.toString(vectors[0]) + ", " + Arrays.toString(vectors[1])
         + ", " + Arrays.toString(vectors[2]));
     try (PreparedStatement insertStatement = connection
-        .prepareStatement(insertSql)) {
-      for (double[] vector : vectors) {
-        insertStatement.setInt(1, randomize());
-        insertStatement.setObject(2, vector, OracleType.VECTOR);
+        .prepareStatement(insertSql, new String[]{"ID"})) {
+      for (float[] vector : vectors) {
+        insertStatement.setObject(1, vector, OracleType.VECTOR_FLOAT64);
         insertStatement.addBatch();
       }
       insertStatement.executeBatch();
@@ -128,46 +123,40 @@ public class OracleAIVectorSearchWithJava {
 
   private void retrieveVectorAsArray(Connection connection)
       throws SQLException {
-    try (PreparedStatement queryStatement = connection
-        .prepareStatement(querySql);) {
-      System.out.println("SQL DML: " + querySql);
-      ResultSet resultSet = queryStatement.executeQuery();
-      double[] vector = null;
-      while (resultSet.next()) {
-        vector = resultSet.getObject(2, double[].class);
-      }
-      System.out.println("Retrieved VECTOR: " + Arrays.toString(vector));
+    PreparedStatement queryStatement = connection.prepareStatement(querySql);
+    System.out.println("SQL DML: " + querySql);
+    ResultSet resultSet = queryStatement.executeQuery();
+    float[] vector = null;
+    while (resultSet.next()) {
+      vector = resultSet.getObject(2, float[].class);
     }
+    System.out.println("Retrieved VECTOR: " + Arrays.toString(vector));
   }
 
   private void retrieveVectorAsString(Connection connection)
       throws SQLException {
-    try (PreparedStatement queryStatement = connection
-        .prepareStatement(querySql);) {
-      System.out.println("SQL DML: " + querySql);
-      ResultSet resultSet = queryStatement.executeQuery();
-      String vector = null;
-      while (resultSet.next()) {
-        vector = (String) resultSet.getObject(2);
-      }
-      System.out.println("Retrieved VECTOR: " + vector);
+    PreparedStatement queryStatement = connection.prepareStatement(querySql);
+    System.out.println("SQL DML: " + querySql);
+    ResultSet resultSet = queryStatement.executeQuery();
+    String vector = null;
+    while (resultSet.next()) {
+      vector = (String) resultSet.getObject(2);
     }
+    System.out.println("Retrieved VECTOR: " + vector);
   }
 
   private void retrieveVectorWithBoundVector(Connection connection)
       throws SQLException {
-    // Bind a Vector to a select
-    try (PreparedStatement queryStatement = connection
-        .prepareStatement(querySqlWithBind);) {
-      double[] inputVector = {1.0, 2.2, 3.3};
-      System.out.println("SQL DML: " + querySqlWithBind);
-      System.out.println("Bound VECTOR: " + Arrays.toString(inputVector));
-      queryStatement.setObject(1, inputVector, OracleType.VECTOR);
-      ResultSet resultSet = queryStatement.executeQuery();
-      resultSet.next();
-      double[] outputVector = resultSet.getObject(2, double[].class);
-      System.out.println("Retrieved VECTOR: " + Arrays.toString(outputVector));
-    }
+    PreparedStatement queryStatement = connection
+        .prepareStatement(querySqlWithBind);
+    float[] inputVector = {1.0f, 2.2f, 3.3f};
+    System.out.println("SQL DML: " + querySqlWithBind);
+    System.out.println("Bound VECTOR: " + Arrays.toString(inputVector));
+    queryStatement.setObject(1, inputVector, OracleType.VECTOR_FLOAT64);
+    ResultSet resultSet = queryStatement.executeQuery();
+    resultSet.next();
+    float[] outputVector = resultSet.getObject(2, float[].class);
+    System.out.println("Retrieved VECTOR: " + Arrays.toString(outputVector));
   }
 
   private Connection getConnectionFromPooledDataSource() throws SQLException {
@@ -187,10 +176,6 @@ public class OracleAIVectorSearchWithJava {
     // Get a database connection from the pool-enabled data source
     Connection conn = pds.getConnection();
     return conn;
-  }
-
-  private int randomize() {
-    return ThreadLocalRandom.current().nextInt();
   }
 
 }
