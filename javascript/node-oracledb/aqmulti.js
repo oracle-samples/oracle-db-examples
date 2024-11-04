@@ -1,17 +1,24 @@
-/* Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2019, 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
- * You may not use the identified files except in compliance with the Apache
- * License, Version 2.0 (the "License.")
+ * This software is dual-licensed to you under the Universal Permissive License
+ * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+ * 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+ * either license.
  *
+ * If you elect to accept the software under the Apache License, Version 2.0,
+ * the following applies:
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -21,45 +28,80 @@
  * DESCRIPTION
  *   Oracle Advanced Queuing (AQ) example passing multiple messages.
  *
- *   Before running this, a queue allowing RAW payloads must be
- *   created, see https://oracle.github.io/node-oracledb/doc/api.html#aqrawexample
- *
- *   This example requires node-oracledb 4 or later.
- *
- *   This example uses Node 8's async/await syntax.
+ *   Warning: Creates and drops a new user for running AQ operations.
+ *   Requires NODE_ORACLEDB_DBA_USER and NODE_ORACLE_DBA_PASSWORD env variables
+ *   to be set for the AQ user to be created and dropped.
  *
  *****************************************************************************/
 
-const fs = require('fs');
+'use strict';
+
+Error.stackTraceLimit = 50;
+
 const oracledb = require('oracledb');
 const dbConfig = require('./dbconfig.js');
+const aqUtil = require('./aqutil.js');
 
-// On Windows and macOS, you can specify the directory containing the Oracle
-// Client Libraries at runtime, or before Node.js starts.  On other platforms
-// the system library search path must always be set before Node.js is started.
-// See the node-oracledb installation documentation.
-// If the search path is not correct, you will get a DPI-1047 error.
-let libPath;
-if (process.platform === 'win32') {           // Windows
-  libPath = 'C:\\oracle\\instantclient_19_12';
-} else if (process.platform === 'darwin') {   // macOS
-  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+// This example requires node-oracledb Thick mode.
+//
+// Thick mode requires Oracle Client or Oracle Instant Client libraries.  On
+// Windows and macOS Intel you can specify the directory containing the
+// libraries at runtime or before Node.js starts.  On other platforms (where
+// Oracle libraries are available) the system library search path must always
+// include the Oracle library path before Node.js starts.  If the search path
+// is not correct, you will get a DPI-1047 error.  See the node-oracledb
+// installation documentation.
+let clientOpts = {};
+// On Windows and macOS Intel platforms, set the environment
+// variable NODE_ORACLEDB_CLIENT_LIB_DIR to the Oracle Client library path
+if (process.platform === 'win32' || (process.platform === 'darwin' && process.arch === 'x64')) {
+  clientOpts = { libDir: process.env.NODE_ORACLEDB_CLIENT_LIB_DIR };
 }
-if (libPath && fs.existsSync(libPath)) {
-  oracledb.initOracleClient({ libDir: libPath });
-}
+oracledb.initOracleClient(clientOpts);  // enable node-oracledb Thick mode
 
 const queueName = "DEMO_RAW_QUEUE";
+const RAW_TABLE = "NODB_RAW_QUEUE_TAB";
+const AQ_USER = "NODB_SCHEMA_AQTEST1";
+const AQ_USER_PWD = aqUtil.generateRandomPassword();
+
+let connection;
+
+const credentials = {
+  user: AQ_USER,
+  password: AQ_USER_PWD,
+  connectString: dbConfig.connectString
+};
+
+async function aqSetup() {
+  await aqUtil.createAQtestUser(AQ_USER, AQ_USER_PWD);
+  connection = await oracledb.getConnection(credentials);
+
+  const plsql = `
+    BEGIN
+      DBMS_AQADM.CREATE_QUEUE_TABLE(
+        QUEUE_TABLE        =>  '${AQ_USER}.${RAW_TABLE}',
+        QUEUE_PAYLOAD_TYPE =>  'RAW'
+      );
+      DBMS_AQADM.CREATE_QUEUE(
+        QUEUE_NAME         =>  '${AQ_USER}.${queueName}',
+        QUEUE_TABLE        =>  '${AQ_USER}.${RAW_TABLE}'
+      );
+      DBMS_AQADM.START_QUEUE(
+        QUEUE_NAME         => '${AQ_USER}.${queueName}'
+      );
+    END;
+  `;
+  await connection.execute(plsql);
+  await connection.close();
+}
 
 async function enq() {
-  let connection;
-
   try {
-    connection = await oracledb.getConnection(dbConfig);
+    connection = await oracledb.getConnection(credentials);
     const queue = await connection.getQueue(queueName);
     queue.enqOptions.visibility = oracledb.AQ_VISIBILITY_IMMEDIATE; // Send a message without requiring a commit
 
-    console.log('Enqueuing messages');
+    console.log('Enqueuing 4 messages');
 
     const messages = [
       "Message 1",
@@ -86,10 +128,9 @@ async function enq() {
 }
 
 async function deq() {
-  let connection;
 
   try {
-    connection = await oracledb.getConnection(dbConfig);
+    connection = await oracledb.getConnection(credentials);
     const queue = await connection.getQueue(queueName);
     queue.deqOptions.visibility = oracledb.AQ_VISIBILITY_IMMEDIATE; // Change the visibility so no explicit commit is required
 
@@ -114,5 +155,11 @@ async function deq() {
   }
 }
 
-enq();
-deq();
+async function run() {
+  await aqSetup();
+  await enq();
+  await deq();
+  await aqUtil.dropAQtestUser(AQ_USER);
+}
+
+run();

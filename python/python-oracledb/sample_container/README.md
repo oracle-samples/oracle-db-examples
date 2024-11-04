@@ -1,10 +1,11 @@
 # python-oracledb Samples in a Container
 
-This Dockerfile creates a container with python-oracledb samples and a running
-Oracle Database.
+This Dockerfile creates a container with the python-oracledb samples and a
+running Oracle Database 23ai Free database so you can quickly try
+python-oracledb.
 
-It has been tested in an Oracle Linux 8 environment using 'podman', but
-'docker' should work too.
+It has been tested on Oracle Linux 8 using 'podman', and on Apple Silicon with
+'docker' under colima.
 
 ## Usage
 
@@ -42,6 +43,9 @@ It has been tested in an Oracle Linux 8 environment using 'podman', but
   ```
   python setup.py
   ```
+
+  If this times out, wait a few minutes for the database to finish initializing
+  and then rerun it.
 
   The schema used can be seen in `sql/create_schema.sql`
 
