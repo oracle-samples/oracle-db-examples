@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2018, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2018, 2024, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -85,7 +85,7 @@ print("The key of the new SODA document is: ", key)
 
 # Fetch the document back
 doc = collection.find().key(key).getOne()  # A SodaDocument
-content = doc.getContent()  # A JavaScript object
+content = doc.getContent()
 print("Retrieved SODA document dictionary is:")
 print(content)
 content = doc.getContentAsString()  # A JSON string

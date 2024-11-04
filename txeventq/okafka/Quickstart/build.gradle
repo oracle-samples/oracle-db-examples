@@ -1,0 +1,174 @@
+/*
+** OKafka Java Client version 23.4.
+**
+** Copyright (c) 2019, 2024 Oracle and/or its affiliates.
+** Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+*/
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+ext {
+    gradleVersion = '8.10'
+    minJavaVersion = JavaVersion.VERSION_17
+
+    mavenUrl = project.hasProperty('mavenUrl') ? project.mavenUrl : ''
+    mavenUsername = project.hasProperty('mavenUsername') ? project.mavenUsername : ''
+    mavenPassword = project.hasProperty('mavenPassword') ? project.mavenPassword : ''
+}
+
+
+allprojects {
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin : 'java'
+    apply plugin : 'application'
+
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
+
+    group = 'org.oracle.okafka'
+    version = '23.5.0.0'
+
+    dependencies {
+        // These dependencies are used by the application.
+        implementation group: 'com.oracle.database.messaging', name: 'okafka', version: version
+        implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '23.4.0.24.05'
+        implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.7.1'
+        implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.16'
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
+    }
+
+    tasks.withType(Javadoc) {
+        // disable the crazy super-strict doclint tool in Java 8
+        // noinspection SpellCheckingInspection
+        title ="Kafka Java Client for Oracle Transactional Event Queues ${rootProject.version}"
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.windowTitle = "Oracle Database Transactional Event Queues Java API Reference"
+        options.header = """<b>Oracle&reg; Database Transactional Event Queues Java API Reference<br>23ai</b><br>FF46992-04<br>"""
+        options.bottom = """<center><small>Copyright &copy; 2001, 2024, Oracle and/or its affiliates. All rights reserved.<small></center><p><small><br></small></p>"""
+    }
+}
+
+project(':Simple:Admin') {
+
+    tasks.named('jar') {
+        description('Generates okafka client admin jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'admin'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka admin',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client admin create topic')
+        application {
+            mainClass = 'org.oracle.okafka.examples.OKafkaAdminTopic'
+        }
+    }
+}
+
+project(':Simple:Producer') {
+
+    tasks.named('jar') {
+        description('Generates okafka client simple producer jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'producer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes('Implementation-Title': 'okafka producer',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client simple producer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.ProducerOKafka'
+        }
+    }
+}
+
+project(':Simple:Consumer') {
+    tasks.named('jar') {
+        description('Generates okafka client admin jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'consumer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka admin',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client simple consumer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.ConsumerOKafka'
+        }
+    }
+}
+
+project(':Transactional:Producer') {
+    tasks.named('jar') {
+        description('Generates okafka client Transactional producer jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'producer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka producer',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client Transactional producer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.TransactionalProducerOKafka'
+        }
+    }
+}
+
+project(':Transactional:Consumer') {
+    tasks.named('jar') {
+        description('Generates okafka client consumer jar ')
+        archiveBaseName = 'okafka'
+        archiveClassifier = 'consumer'
+
+        from "${rootProject.projectDir}/LICENSE.txt"
+        from "${rootProject.projectDir}/NOTICE"
+
+        manifest {
+            attributes( 'Implementation-Title'  : 'okafka consumer',
+                    'Implementation-Version': project.version)
+        }
+    }
+
+    tasks.named('run') {
+        description('Run okafka client Transactional consumer')
+        application {
+            mainClass = 'org.oracle.okafka.examples.TransactionalConsumerOKafka'
+        }
+    }
+}
