@@ -5,7 +5,7 @@
 
 CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW "STUDENT_SCHEDULE" AS -- <1>
 SELECT JSON{
-        'studentId': s."ID", -- <2>
+        '_id': s."ID", -- <2>
         'student': s."NAME" WITH UPDATE, -- <3>
         'averageGrade': s."AVERAGE_GRADE" WITH UPDATE,
         'schedule': [SELECT JSON{'id': sc."ID", -- <4>

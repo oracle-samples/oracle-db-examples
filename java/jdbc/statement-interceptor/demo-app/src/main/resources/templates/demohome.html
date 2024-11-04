@@ -1,0 +1,130 @@
+<!--
+  ~ Copyright (c) 2024, Oracle and/or its affiliates.
+  ~
+  ~   This software is dual-licensed to you under the Universal Permissive License
+  ~   (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl or Apache License
+  ~   2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+  ~   either license.
+  ~
+  ~   Licensed under the Apache License, Version 2.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~      https://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  ~
+  -->
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet"
+          th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"/>
+
+
+</head>
+<body onload="setupCleanerAndListener()">
+<div id="homeland" class="container-fluid d-flex flex-column">
+    <div class="d-flex" id="homeland-banner" >
+
+        <div class="p-1 border border-bottom flex-fill">
+            <h1 class="text-center">Welcome to JDBC Statement interceptor
+                demonstration.</h1>
+            <p class="lh-1 text-center">
+                This simple application demonstrates the use of <a
+                    href="https://docs.oracle.com/en/database/oracle/oracle-database/23/jajdb/oracle/jdbc/spi/TraceEventListenerProvider.html">
+                Oracle JDBC trace event listener</a>
+                to analyse outgoing SQL statements.
+            </p>
+            <p class="lh-1 text-center">
+                This application's datasource uses the <a
+                    href="https://github.com/ejannett/oracle-db-examples/tree/375-interceptor/java/jdbc/statement-interceptor/interceptor" target="_blank">JDBC Interceptor</a> to monitor and intercept SQL
+            </p>
+            <p class="lh-1 text-center">
+                Source code and detailed information about this demonstration can be found in
+                <a href="https://github.com/ejannett/oracle-db-examples/tree/375-interceptor/java/jdbc/statement-interceptor/demo-app" target="_blank">JDBCInterceptor
+                    demo project</a>
+            </p>
+        </div>
+    </div>
+    <div id="homeland_top" class="p-1">
+        <div class="align-self-center">
+            <button class="btn btn-primary" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#offcanvasParams"
+                    aria-expanded="false" aria-controls="collapseExample">
+                Show rules...
+            </button>
+        </div>
+        <div class="collapse" id="offcanvasParams">
+            <div class="card card-body"
+                 th:insert="~{fragments/demo_params :: demo_params}">
+
+            </div>
+        </div>
+    </div>
+    <div id="homeland_center"  class="d-flex flex-column justify-content-center">
+      <div class="d-flex flex-row">
+                <div class="align-self-center flex-grow-1 lh-1 p-1 fs-6 text-center">
+                    <p>
+                        Use the input below to search employees by their names.
+                        Click the submit button to get all.
+                    </p>
+                    <p>
+                        To trigger a SQL injection, you can try the following search criteria
+                    </p>
+                    <p class="font-monospace">' or 'a'='a</p>
+                </div>
+                <div id="stats" class="p-1 align-self-center"
+                     hx-trigger="operation-ended from:body" hx-get="/interceptor/stats">
+                    <div th:insert="~{fragments/demo_stats :: demo_stats}"></div>
+                </div>
+      </div>
+      <div id="wks" class="p-1"
+                 th:insert="~{fragments/workshop :: workshop_main}"></div>
+    </div>
+    <div id="notifs"
+         th:insert="~{fragments/notificationArea :: notif_area}"></div>
+</div>
+
+
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/htmx.org/2.0.0/dist/htmx.js}"></script>
+<script>
+
+    let demoAppUuid = crypto.randomUUID();
+
+    function setupCleanerAndListener() {
+        document.getElementById("searchsubmit").setAttribute("onclick", "startSubmition()");
+        document.body.addEventListener('htmx:afterSwap', event=>{
+            if (event.target.id === 'emplist') {
+                // That means we just finish a search request to the server
+                document.getElementById("requestSpinner").classList.toggle("d-none");
+
+            }
+        })
+    }
+    function startSubmition() {
+        clearErrorArea();
+        document.getElementById("requestSpinner").classList.toggle("d-none");
+    }
+
+    function clearErrorArea() {
+        document.getElementById('exceptioncontainer').innerHTML = "";
+    }
+
+</script>
+<div class="footer fixed-bottom p-2">
+    <div class="fs-5 text-center bg-secondary-subtle">
+        Happily deployed using the <a class="link-primary" target="_blank" href="https://cloudmarketplace.oracle.com/marketplace/en_US/listing/149023331">App Stack for Java</a> in the Oracle Cloud Infrastructure &#127882; &#127873;.
+    </div>
+</div>
+</body>
+
+</html>
