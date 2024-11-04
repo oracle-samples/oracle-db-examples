@@ -209,9 +209,7 @@ def get_admin_connection():
 
 
 def get_oracle_client():
-    if (
-        platform.system() == "Darwin" and platform.machine() == "x86_64"
-    ) or platform.system() == "Windows":
+    if platform.system() == "Darwin" or platform.system() == "Windows":
         return get_value(
             "PYO_SAMPLES_ORACLE_CLIENT_PATH", "Oracle Instant Client Path"
         )
