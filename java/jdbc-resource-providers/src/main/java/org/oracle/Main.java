@@ -40,7 +40,11 @@ package org.oracle;
 
 import oracle.jdbc.pool.OracleDataSource;
 
-import java.sql.*;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Connection;
+
 
 public class Main {
   public static void main(String[] args) throws SQLException {
@@ -60,7 +64,6 @@ public class Main {
     ods.setPassword(PASSWORD);
 
     // try-with: establish a connection and retrieve database version
-    // remove arguments if USERNAME, PASSWORD not required
     try (Connection connection = ods.getConnection();
          PreparedStatement ps = connection.prepareStatement("select BANNER from v$version");
          ResultSet rs = ps.executeQuery()
