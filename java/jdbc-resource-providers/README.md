@@ -50,11 +50,14 @@ referenced in the following lines, as user credentials are required.
     String PASSWORD = System.getenv("ORACLE_PASSWORD");
     String USERNAME = System.getenv("ORACLE_USERNAME");
 ```
-Make sure the following arguments exist.
+Make sure the User and Password are set:
 ```java
-Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@", USERNAME, PASSWORD);
+OracleDataSource ods = new OracleDataSource();
+ods.setURL("jdbc:oracle:thin:@");
+ods.setUser(USERNAME);
+ods.setPassword(PASSWORD);
 ```
-Set the following system property to the demo-1.properties.
+Set the following system property to the demo-1.properties file.
 ```bash
     System.setProperty("oracle.jdbc.config.file", "properties/demo-1.properties");
 ```
@@ -70,18 +73,19 @@ Refer to the following documentations in regard to authentication and further co
 
 ### Example 2: OCI Connection TLS + OCI Connection String + OCI Access Token Providers
 
-To run this example, in [main.java](src/main/java/org/oracle/Main.java), __remove__ the following lines as user credentials are not required.
+To run this example, in [main.java](src/main/java/org/oracle/Main.java), __remove__ or __comment out__ the following lines as user credentials are not required.
 ```java
     String PASSWORD = System.getenv("ORACLE_PASSWORD");
     String USERNAME = System.getenv("ORACLE_USERNAME");
 ```
 
-Make sure the following lines are replaced.
+Make sure the credentials are NOT set:
 ```java
-Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@");
+OracleDataSource ods = new OracleDataSource();
+ods.setURL("jdbc:oracle:thin:@");
 ```
 
-Set the following system property to the demo-2.properties.
+Set the following system property to the demo-2.properties file.
 
 ```bash
     System.setProperty("oracle.jdbc.config.file", "properties/demo-2.properties");
@@ -101,18 +105,19 @@ Refer to the following documentations in regard to authentication and further co
 
 ### Example 3: OCI Connection TLS + OCI Connection String Providers
 
-To run this example, in [main.java](src/main/java/org/oracle/Main.java), __remove__ the following lines as user credentials are not required.
+To run this example, in [main.java](src/main/java/org/oracle/Main.java),  __remove__ or __comment out__ the following lines as user credentials are not required.
 ```java
     String PASSWORD = System.getenv("ORACLE_PASSWORD");
     String USERNAME = System.getenv("ORACLE_USERNAME");
 ```
-Make sure the following arguments exist.
 
+Make sure the credentials are NOT set:
 ```java
-Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@");
+OracleDataSource ods = new OracleDataSource();
+ods.setURL("jdbc:oracle:thin:@");
 ```
 
-Set the following system property to the demo-3.properties.
+Set the following system property to the demo-3.properties file.
 
 ```bash
     System.setProperty("oracle.jdbc.config.file", "properties/demo-3.properties");
