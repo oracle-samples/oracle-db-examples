@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2024, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -23,18 +23,25 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# insert_geometry_async.py
+# pipelining_parallel.py
 #
-# An asynchronous version of insert_geometry.py
-#
-# Demonstrates the ability to create Oracle objects (this example uses
-# SDO_GEOMETRY) and insert them into a table.
+# Demonstrates Oracle Database Pipelining running local and database operations
+# concurrently.
+# True pipelining is only available when connected to Oracle Database 23ai
 # -----------------------------------------------------------------------------
 
 import asyncio
 
 import oracledb
 import sample_env
+
+
+async def run_thing_one():
+    return "thing_one"
+
+
+async def run_thing_two():
+    return "thing_two"
 
 
 async def main():
@@ -45,28 +52,28 @@ async def main():
         params=sample_env.get_connect_params(),
     )
 
-    # create and populate Oracle objects
-    type_obj = await connection.gettype("MDSYS.SDO_GEOMETRY")
-    element_info_type_obj = await connection.gettype(
-        "MDSYS.SDO_ELEM_INFO_ARRAY"
-    )
-    ordinate_type_obj = await connection.gettype("MDSYS.SDO_ORDINATE_ARRAY")
-    obj = type_obj.newobject()
-    obj.SDO_GTYPE = 2003
-    obj.SDO_ELEM_INFO = element_info_type_obj.newobject()
-    obj.SDO_ELEM_INFO.extend([1, 1003, 3])
-    obj.SDO_ORDINATES = ordinate_type_obj.newobject()
-    obj.SDO_ORDINATES.extend([1, 1, 5, 7])
-    print("Created object", obj)
+    pipeline = oracledb.create_pipeline()
+    pipeline.add_fetchone("select user from dual")
+    pipeline.add_fetchone("select sysdate from dual")
 
-    with connection.cursor() as cursor:
-        await cursor.execute("truncate table TestGeometry")
-        print("Adding row to table...")
-        await cursor.execute(
-            "insert into TestGeometry values (1, :objbv)", objbv=obj
-        )
-        await connection.commit()
-        print("Success!")
+    # Run the pipeline and non-database operations concurrently.
+    # Note although the database receives all the operations at the same time,
+    # it will execute each operation sequentially. It is the local and
+    # database tasks that execute concurrently.
+    return_values = await asyncio.gather(
+        run_thing_one(), run_thing_two(), connection.run_pipeline(pipeline)
+    )
+
+    for r in return_values:
+        if isinstance(r, list):  # the pipeline return list
+            for result in r:
+                if result.rows:
+                    for row in result.rows:
+                        print(*row, sep="\t")
+        else:
+            print(r)  # a local operation result
+
+    await connection.close()
 
 
 asyncio.run(main())

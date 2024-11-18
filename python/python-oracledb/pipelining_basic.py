@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2024, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -23,12 +23,10 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# insert_geometry_async.py
+# pipelining_basic.py
 #
-# An asynchronous version of insert_geometry.py
-#
-# Demonstrates the ability to create Oracle objects (this example uses
-# SDO_GEOMETRY) and insert them into a table.
+# Demonstrates Oracle Database Pipelining.
+# True pipelining is only available when connected to Oracle Database 23ai
 # -----------------------------------------------------------------------------
 
 import asyncio
@@ -45,28 +43,50 @@ async def main():
         params=sample_env.get_connect_params(),
     )
 
-    # create and populate Oracle objects
-    type_obj = await connection.gettype("MDSYS.SDO_GEOMETRY")
-    element_info_type_obj = await connection.gettype(
-        "MDSYS.SDO_ELEM_INFO_ARRAY"
-    )
-    ordinate_type_obj = await connection.gettype("MDSYS.SDO_ORDINATE_ARRAY")
-    obj = type_obj.newobject()
-    obj.SDO_GTYPE = 2003
-    obj.SDO_ELEM_INFO = element_info_type_obj.newobject()
-    obj.SDO_ELEM_INFO.extend([1, 1003, 3])
-    obj.SDO_ORDINATES = ordinate_type_obj.newobject()
-    obj.SDO_ORDINATES.extend([1, 1, 5, 7])
-    print("Created object", obj)
+    # ------------------------------------------------------------
 
-    with connection.cursor() as cursor:
-        await cursor.execute("truncate table TestGeometry")
-        print("Adding row to table...")
-        await cursor.execute(
-            "insert into TestGeometry values (1, :objbv)", objbv=obj
-        )
-        await connection.commit()
-        print("Success!")
+    # Create a pipeline and define the operations
+    pipeline = oracledb.create_pipeline()
+
+    pipeline.add_fetchone("select user from dual")
+
+    pipeline.add_fetchone("select sysdate from dual")
+
+    rows = [
+        (1, "First"),
+        (2, "Second"),
+        (3, "Third"),
+        (4, "Fourth"),
+        (5, "Fifth"),
+        (6, "Sixth"),
+    ]
+    pipeline.add_executemany(
+        "insert into mytab(id, data) values (:1, :2)", rows
+    )
+
+    # pipeline.add_commit()  # uncomment to persist data
+
+    pipeline.add_fetchall("select * from mytab")
+
+    # Run the operations in the pipeline.
+    # Note although the database receives all the operations at the same time,
+    # it will execute each operation sequentially
+    results = await connection.run_pipeline(pipeline)
+
+    # Print the query results
+    for i, result in enumerate(results):
+        if result.rows:
+            statement = pipeline.operations[i].statement
+            print(f"\nRows from operation {i+1} '{statement}':\n")
+            headings = [col.name for col in result.columns]
+            print(*headings, sep="\t")
+            print("--")
+            for row in result.rows:
+                print(*row, sep="\t")
+
+    # ------------------------------------------------------------
+
+    await connection.close()
 
 
 asyncio.run(main())
