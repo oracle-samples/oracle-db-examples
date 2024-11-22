@@ -1,0 +1,1138 @@
+
+SQL> @advanced2
+
+Table dropped.
+
+
+Table created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Index created.
+
+
+Procedure created.
+
+  1  CREATE OR REPLACE procedure set_stock_levels IS
+  2    rowids	      SYS.odciRidList;
+  3    facets	      SYS.odciNumberList;
+  4    stock_facet    INTEGER;
+  5  BEGIN
+  6    -- initialize collections
+  7    rowids := SYS.odciRidList();
+  8    facets := SYS.odciNumberList();
+  9
+ 10    FOR c IN ( SELECT rowid, stock FROM products ) LOOP
+ 11	 CASE c.stock
+ 12	   WHEN 0 THEN stock_facet := 12;
+ 13	   WHEN 1 THEN stock_facet := 13;
+ 14	   WHEN 2 THEN stock_facet := 14;
+ 15	   WHEN 3 THEN stock_facet := 15;
+ 16	   WHEN 4 THEN stock_facet := 16;
+ 17	   WHEN 5 THEN stock_facet := 17;
+ 18	   ELSE        stock_facet := 18;
+ 19	 END CASE;
+ 20
+ 21	 facets.EXTEND(1);
+ 22	 facets(facets.LAST) := stock_facet;
+ 23
+ 24	 rowids.EXTEND(1);
+ 25	 rowids(rowids.LAST) := c.rowid;
+ 26
+ 27	 ctx_ddl.insert_mvdata_values (
+ 28	   idx_name	  => 'productsindex',
+ 29	   section_name   => 'stockfacets',
+ 30	   mvdata_values  => facets,
+ 31	   mvdata_rowids  => rowids );
+ 32
+ 33	 rowids.DELETE;
+ 34	 facets.DELETE;
+ 35
+ 36    END LOOP;
+ 37* END set_stock_levels;
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Trigger created.
+
+  1  CREATE OR REPLACE TRIGGER stock_facet_trigger
+  2  AFTER UPDATE ON products
+  3  FOR EACH ROW
+  4  DECLARE
+  5    rowids	      SYS.odciRidList;
+  6    facets	      SYS.odciNumberList;
+  7    stock_facet    INTEGER;
+  8  BEGIN
+  9    -- initialize collections
+ 10    rowids := SYS.odciRidList(1);
+ 11    facets := SYS.odciNumberList(1);
+ 12
+ 13    CASE :OLD.stock
+ 14	 WHEN 0 THEN stock_facet := 12;
+ 15	 WHEN 1 THEN stock_facet := 13;
+ 16	 WHEN 2 THEN stock_facet := 14;
+ 17	 WHEN 3 THEN stock_facet := 15;
+ 18	 WHEN 4 THEN stock_facet := 16;
+ 19	 WHEN 5 THEN stock_facet := 17;
+ 20	 ELSE	     stock_facet := 18;
+ 21    END CASE;
+ 22
+ 23    rowids(1) := :OLD.rowid;
+ 24    facets(1) := stock_facet;
+ 25
+ 26    ctx_ddl.delete_mvdata_values (
+ 27	   idx_name	  => 'productsindex',
+ 28	   section_name   => 'stockfacets',
+ 29	   mvdata_values  => facets,
+ 30	   mvdata_rowids  => rowids );
+ 31
+ 32    CASE :NEW.stock
+ 33	 WHEN 0 THEN stock_facet := 12;
+ 34	 WHEN 1 THEN stock_facet := 13;
+ 35	 WHEN 2 THEN stock_facet := 14;
+ 36	 WHEN 3 THEN stock_facet := 15;
+ 37	 WHEN 4 THEN stock_facet := 16;
+ 38	 WHEN 5 THEN stock_facet := 17;
+ 39	 ELSE	     stock_facet := 18;
+ 40    END CASE;
+ 41
+ 42    rowids(1) := :NEW.rowid;
+ 43    facets(1) := stock_facet;
+ 44
+ 45    ctx_ddl.insert_mvdata_values (
+ 46	   idx_name	  => 'productsindex',
+ 47	   section_name   => 'stockfacets',
+ 48	   mvdata_values  => facets,
+ 49	   mvdata_rowids  => rowids );
+ 50
+ 51* END stock_facet_trigger;
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+FACET_NAME				 FACET_VALUE	      FACET_COUNT
+---------------------------------------- -------------------- -----------
+Stock Level				 > 5				1
+Stock Level				 5				1
+Stock Level				 2				1
+Stock Level				 0				1
+
+
+1 row updated.
+
+
+PL/SQL procedure successfully completed.
+
+
+FACET_NAME				 FACET_VALUE	      FACET_COUNT
+---------------------------------------- -------------------- -----------
+Stock Level				 > 5				1
+Stock Level				 5				2
+Stock Level				 0				1
+
+SQL> @advanced
+
+Table dropped.
+
+
+Table created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Index created.
+
+
+Procedure created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+XMLTYPE(:RSOUT)
+--------------------------------------------------------------------------------
+<ctx_result_set>
+  <hitlist>
+    <hit>
+      <score>6</score>
+      <rowid>AAAcseAABAAAXSxAAB</rowid>
+      <sdata name="MODEL">Nikon C401 (Nikon USA)</sdata>
+      <sdata name="PRICE">149</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAAcseAABAAAXSxAAA</rowid>
+      <sdata name="MODEL">Nikon C400</sdata>
+      <sdata name="PRICE">129</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAAcseAABAAAXSxAAC</rowid>
+      <sdata name="MODEL">Nikon B40</sdata>
+      <sdata name="PRICE">190</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAAcseAABAAAXSxAAD</rowid>
+      <sdata name="MODEL">Nikon SLRX</sdata>
+      <sdata name="PRICE">445</sdata>
+    </hit>
+  </hitlist>
+  <count>4</count>
+  <groups mvdata="DATEFACETS">
+    <group value="21">
+      <count>2</count>
+    </group>
+    <group value="19">
+      <count>1</count>
+    </group>
+    <group value="20">
+      <count>1</count>
+    </group>
+  </groups>
+</ctx_result_set>
+
+
+insert into res_output values (xmltype(:rsout))
+                               *
+ERROR at line 1:
+ORA-00932: inconsistent datatypes: expected CLOB got -
+
+
+PASSING r.res
+        *
+ERROR at line 4:
+ORA-00932: inconsistent datatypes: expected - got CLOB
+
+
+SQL> 
+SQL> @advanced
+
+Table dropped.
+
+
+Table created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Index created.
+
+
+Procedure created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+XMLTYPE(:RSOUT)
+--------------------------------------------------------------------------------
+<ctx_result_set>
+  <hitlist>
+    <hit>
+      <score>6</score>
+      <rowid>AAAcs6AABAAAXSxAAB</rowid>
+      <sdata name="MODEL">Nikon C401 (Nikon USA)</sdata>
+      <sdata name="PRICE">149</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAAcs6AABAAAXSxAAA</rowid>
+      <sdata name="MODEL">Nikon C400</sdata>
+      <sdata name="PRICE">129</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAAcs6AABAAAXSxAAC</rowid>
+      <sdata name="MODEL">Nikon B40</sdata>
+      <sdata name="PRICE">190</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAAcs6AABAAAXSxAAD</rowid>
+      <sdata name="MODEL">Nikon SLRX</sdata>
+      <sdata name="PRICE">445</sdata>
+    </hit>
+  </hitlist>
+  <count>4</count>
+  <groups mvdata="DATEFACETS">
+    <group value="21">
+      <count>2</count>
+    </group>
+    <group value="19">
+      <count>1</count>
+    </group>
+    <group value="20">
+      <count>1</count>
+    </group>
+  </groups>
+</ctx_result_set>
+
+
+
+1 row created.
+
+
+FACET_NAME				 FACET_VALUE	      FACET_COUNT
+---------------------------------------- -------------------- -----------
+Release Date				 Last week			2
+					 This week			1
+					 Today				1
+
+
+SQL> @advanced
+
+Table dropped.
+
+
+Table created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Index created.
+
+
+Procedure created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+XMLTYPE(:RSOUT)
+--------------------------------------------------------------------------------
+<ctx_result_set>
+  <hitlist>
+    <hit>
+      <score>6</score>
+      <rowid>AAActWAABAAAXSxAAB</rowid>
+      <sdata name="MODEL">Nikon C401 (Nikon USA)</sdata>
+      <sdata name="PRICE">149</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAActWAABAAAXSxAAA</rowid>
+      <sdata name="MODEL">Nikon C400</sdata>
+      <sdata name="PRICE">129</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAActWAABAAAXSxAAC</rowid>
+      <sdata name="MODEL">Nikon B40</sdata>
+      <sdata name="PRICE">190</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAActWAABAAAXSxAAD</rowid>
+      <sdata name="MODEL">Nikon SLRX</sdata>
+      <sdata name="PRICE">445</sdata>
+    </hit>
+  </hitlist>
+  <count>4</count>
+  <groups mvdata="DATEFACETS">
+    <group value="21">
+      <count>2</count>
+    </group>
+    <group value="19">
+      <count>1</count>
+    </group>
+    <group value="20">
+      <count>1</count>
+    </group>
+  </groups>
+</ctx_result_set>
+
+
+
+1 row created.
+
+
+FACET_NAME				 FACET_VALUE	      FACET_COUNT
+---------------------------------------- -------------------- -----------
+Release Date				 Last week			2
+					 This week			1
+					 Today				1
+
+
+SQL> quit
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.1.0.0.1 - 64bit Beta
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@localhost:/mnt/h/auser/Work/Code/sql/mvdata$ sqlplus demo/demo
+
+SQL*Plus: Release 12.1.0.0.1 Beta on Tue Jul 10 11:26:21 2012
+
+Copyright (c) 1982, 2012, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.1.0.0.1 - 64bit Beta
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> @advanced
+
+Table dropped.
+
+
+Table created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Table dropped.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Index created.
+
+
+Procedure created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+XMLTYPE(:RSOUT)
+--------------------------------------------------------------------------------
+<ctx_result_set>
+  <hitlist>
+    <hit>
+      <score>6</score>
+      <rowid>AAActyAABAAAXSxAAB</rowid>
+      <sdata name="MODEL">Nikon C401 (Nikon USA)</sdata>
+      <sdata name="PRICE">149</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAActyAABAAAXSxAAA</rowid>
+      <sdata name="MODEL">Nikon C400</sdata>
+      <sdata name="PRICE">129</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAActyAABAAAXSxAAC</rowid>
+      <sdata name="MODEL">Nikon B40</sdata>
+      <sdata name="PRICE">190</sdata>
+    </hit>
+    <hit>
+      <score>3</score>
+      <rowid>AAActyAABAAAXSxAAD</rowid>
+      <sdata name="MODEL">Nikon SLRX</sdata>
+      <sdata name="PRICE">445</sdata>
+    </hit>
+  </hitlist>
+  <count>4</count>
+  <groups mvdata="DATEFACETS">
+    <group value="21">
+      <count>2</count>
+    </group>
+    <group value="19">
+      <count>1</count>
+    </group>
+    <group value="20">
+      <count>1</count>
+    </group>
+  </groups>
+</ctx_result_set>
+
+
+
+1 row created.
+
+
+FACET_NAME				 FACET_VALUE	      FACET_COUNT
+---------------------------------------- -------------------- -----------
+Release Date				 Last week			2
+Release Date				 This week			1
+Release Date				 Today				1
+
+SQL> 

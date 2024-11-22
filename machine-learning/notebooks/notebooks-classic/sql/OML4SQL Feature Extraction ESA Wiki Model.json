@@ -1,0 +1,1389 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## Explicit Semantic Analysis (ESA) for Text Analytics\n\nExplicit Semantic Analysis (ESA) supports unsupervised learning for feature extraction of explicit features based on an existing knowledge base, and supervised learning for classification. It is the process of understanding the meaning of a section of text as a combination of the concepts found in  text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA offers some unique benefits. Most notably, it improves text document categorization by calculating *semantic relatedness* (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.\n\nOracle Machine Learning for SQL ESA extracts text-based features from a corpus of documents and performs document similarity comparisons. In this notebook, we\u0027ll use the Wikipedia Model as an example:\n\n- Create an OML4Py proxy ESA model object for the pre-loaded Wikipedia model \n- Examples of using the Wiki ESA model\n- Basic ESA Wiki model features for words\n- Basic ESA Wiki model features for phrases\n- ESA Wiki Model document similarity on phrases\n- ESA Wiki Model document similarity on long phrases\n\nCopyright (c) 2023 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eExplicit Semantic Analysis (ESA) for Text Analytics\u003c/h2\u003e\n\u003cp\u003eExplicit Semantic Analysis (ESA) supports unsupervised learning for feature extraction of explicit features based on an existing knowledge base, and supervised learning for classification. It is the process of understanding the meaning of a section of text as a combination of the concepts found in  text. Compared to other techniques such as Latent Dirichlet Association (LDA) or Term Frequency-Inverse Document Frequency (TF-IDF), ESA offers some unique benefits. Most notably, it improves text document categorization by calculating \u003cem\u003esemantic relatedness\u003c/em\u003e (how similar in meaning two words or pieces of text are to each other) between the documents and a set of topics that are explicitly defined and described by humans.\u003c/p\u003e\n\u003cp\u003eOracle Machine Learning for SQL ESA extracts text-based features from a corpus of documents and performs document similarity comparisons. In this notebook, we\u0027ll use the Wikipedia Model as an example:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eCreate an OML4Py proxy ESA model object for the pre-loaded Wikipedia model\u003c/li\u003e\n\u003cli\u003eExamples of using the Wiki ESA model\u003c/li\u003e\n\u003cli\u003eBasic ESA Wiki model features for words\u003c/li\u003e\n\u003cli\u003eBasic ESA Wiki model features for phrases\u003c/li\u003e\n\u003cli\u003eESA Wiki Model document similarity on phrases\u003c/li\u003e\n\u003cli\u003eESA Wiki Model document similarity on long phrases\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-1823181305",
+      "id": "20220124-201424_1474185781",
+      "dateCreated": "2021-07-26T17:54:53+0000",
+      "dateStarted": "2023-02-17T00:37:10+0000",
+      "dateFinished": "2023-02-17T00:37:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md\n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nOML Explicit Semantic Analysis: \u003ca href\u003d\"https://www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-explicit-semantic-analysis\u0027);\"\u003ehttps://www.oracle.com/goto/ml-explicit-semantic-analysis\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Explicit Semantic Analysis: \u003ca href\u003d\"https: //www.oracle.com/goto/ml-explicit-semantic-analysis\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-explicit-semantic-analysis\u0027);\"\u003ehttps://www.oracle.com/goto/ml-explicit-semantic-analysis\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-956361986",
+      "id": "20220124-201424_260928435",
+      "dateCreated": "2021-07-26T18:02:52+0000",
+      "dateStarted": "2023-02-17T00:37:10+0000",
+      "dateFinished": "2023-02-17T00:37:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Using the Wikipedia model as an example\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eUsing the Wikipedia model as an example\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-1854329596",
+      "id": "20220124-201424_1062409408",
+      "dateCreated": "2021-07-26T17:55:37+0000",
+      "dateStarted": "2023-02-17T00:37:11+0000",
+      "dateFinished": "2023-02-17T00:37:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### The following example shows the results of a model that was pre-loaded to the Oracle Autonomous Database.\n#### You have to load the Wiki Model to your Schema **first** before you can run the examples below.\n\n#### You can do it in two ways:\n1. Easy way: Go to the OML UI Main Menu -\u003e Templates -\u003e Examples and make sure to import and fully run the \"OML Import Wiki ESA Model\" notebook.\n\n2. Follow the Setup from Oracle blogs:\n    1. \u003ca href\u003d\"https://blogs.oracle.com/machinelearning/post/wiki-esa-model-available-for-database-19c\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/machinelearning/post/wiki-esa-model-available-for-database-19c\u0027);\"\u003e Wiki ESA Model Available for Database 19c \u003c/a\u003e blog post\n    2. \u003ca href\u003d\"https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\u0027);\"\u003e Text Analytics using a pre-built Wikipedia-based Topic Model \u003c/a\u003e blog post\n    3. \u003ca href\u003d\"https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\u0027);\"\u003e Explicit Semantic Analysis (ESA) for Text Analytics using R \u003c/a\u003e blog post",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eThe following example shows the results of a model that was pre-loaded to the Oracle Autonomous Database.\u003c/h3\u003e\n\u003ch4\u003eYou have to load the Wiki Model to your Schema \u003cstrong\u003efirst\u003c/strong\u003e before you can run the examples below.\u003c/h4\u003e\n\u003ch4\u003eYou can do it in two ways:\u003c/h4\u003e\n\u003col\u003e\n\u003cli\u003e\u003cp\u003eEasy way: Go to the OML UI Main Menu -\u003e Templates -\u003e Examples and make sure to import and fully run the \u0026ldquo;OML Import Wiki ESA Model\u0026rdquo; notebook.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\u003cp\u003eFollow the Setup from Oracle blogs:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //blogs.oracle.com/machinelearning/post/wiki-esa-model-available-for-database-19c\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/machinelearning/post/wiki-esa-model-available-for-database-19c\u0027);\"\u003e Wiki ESA Model Available for Database 19c \u003c/a\u003e blog post\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/text-analytics-using-a-pre-built-wikipedia-based-topic-model\u0027);\"\u003e Text Analytics using a pre-built Wikipedia-based Topic Model \u003c/a\u003e blog post\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https: //blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\" onclick\u003d\"return ! window.open(\u0027https://blogs.oracle.com/r/explicit-semantic-analysis-esa-for-text-analytics\u0027);\"\u003e Explicit Semantic Analysis (ESA) for Text Analytics using R \u003c/a\u003e blog post\u003c/li\u003e\n\u003c/ol\u003e\n\u003c/li\u003e\n\u003c/ol\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-444063931",
+      "id": "20220124-201424_1835609544",
+      "dateCreated": "2021-07-26T18:07:52+0000",
+      "dateStarted": "2023-02-17T00:37:11+0000",
+      "dateFinished": "2023-02-17T00:37:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Delete existing policies and create new policies for the Wiki Lexer",
+      "text": "%script\n\nBEGIN  \n    CTX_DDL.DROP_POLICY(\u0027WIKI_TXTPOL\u0027); \n    EXCEPTION WHEN OTHERS THEN NULL; \nEND;\n/\n\nBEGIN \n    CTX_DDL.DROP_PREFERENCE( \u0027WIKI_LEXER\u0027); \n    EXCEPTION WHEN OTHERS THEN NULL; \nEND;\n/\n\nBEGIN \n     CTX_DDL.CREATE_PREFERENCE(\u0027WIKI_LEXER\u0027, \n                               \u0027BASIC_LEXER\u0027); \nEND;\n/\n\nBEGIN \n     CTX_DDL.SET_ATTRIBUTE(\u0027WIKI_LEXER\u0027, \n                           \u0027INDEX_STEMS\u0027,  \n                           \u0027ENGLISH\u0027); \nEND;\n/\n\nBEGIN \n     CTX_DDL.CREATE_POLICY(POLICY_NAME \u003d\u003e \u0027WIKI_TXTPOL\u0027, \n                           LEXER       \u003d\u003e \u0027WIKI_LEXER\u0027); \nEND;\n/",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:11+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_446240172",
+      "id": "20220124-201424_1220757767",
+      "dateCreated": "2021-07-26T18:06:50+0000",
+      "dateStarted": "2023-02-17T00:37:11+0000",
+      "dateFinished": "2023-02-17T00:37:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Check to see if the pre-loaded model is available",
+      "text": "%sql\n\n-- We should expect one row with the model WIKI_MODEL\nSELECT MODEL_NAME, MINING_FUNCTION, ALGORITHM, ALGORITHM_TYPE, CREATION_DATE FROM USER_MINING_MODELS WHERE MODEL_NAME\u003d\u0027WIKI_MODEL\u0027\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 105.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "MODEL_NAME": "string",
+                      "MINING_FUNCTION": "string",
+                      "ALGORITHM": "string",
+                      "ALGORITHM_TYPE": "string",
+                      "CREATION_DATE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "MODEL_NAME\tMINING_FUNCTION\tALGORITHM\tALGORITHM_TYPE\tCREATION_DATE\nWIKI_MODEL\tFEATURE_EXTRACTION\tEXPLICIT_SEMANTIC_ANALYS\tNATIVE\t2023-02-09 20:57:46\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-15170937",
+      "id": "20220124-201424_152951613",
+      "dateCreated": "2021-07-26T18:10:21+0000",
+      "dateStarted": "2023-02-17T00:37:21+0000",
+      "dateFinished": "2023-02-17T00:37:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display model settings",
+      "text": "%sql\n\nSELECT SETTING_NAME, SETTING_VALUE, SETTING_TYPE AS TYPE\n  FROM USER_MINING_MODEL_SETTINGS\n WHERE MODEL_NAME \u003d \u0027WIKI_MODEL\u0027\nORDER BY SETTING_NAME;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SETTING_NAME": "string",
+                      "SETTING_VALUE": "string",
+                      "TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SETTING_NAME\tSETTING_VALUE\tTYPE\nALGO_NAME\tALGO_EXPLICIT_SEMANTIC_ANALYS\tINPUT\nESAS_MIN_ITEMS\t25\tINPUT\nESAS_TOPN_FEATURES\t1000\tINPUT\nESAS_VALUE_THRESHOLD\t.00000001\tDEFAULT\nODMS_DETAILS\tODMS_ENABLE\tDEFAULT\nODMS_MISSING_VALUE_TREATMENT\tODMS_MISSING_VALUE_AUTO\tDEFAULT\nODMS_SAMPLING\tODMS_SAMPLING_DISABLE\tDEFAULT\nODMS_TEXT_MAX_FEATURES\t200000\tINPUT\nODMS_TEXT_MIN_DOCUMENTS\t5\tINPUT\nODMS_TEXT_POLICY_NAME\twiki_txtpol\tINPUT\nPREP_AUTO\tON\tDEFAULT\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_1184370639",
+      "id": "20220124-201424_776944586",
+      "dateCreated": "2021-07-26T19:00:55+0000",
+      "dateStarted": "2023-02-17T00:37:21+0000",
+      "dateFinished": "2023-02-17T00:37:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Get a list of model views",
+      "text": "%sql\n\nSELECT VIEW_NAME, VIEW_TYPE FROM USER_MINING_MODEL_VIEWS\nWHERE MODEL_NAME\u003d\u0027WIKI_MODEL\u0027\nORDER BY VIEW_NAME;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "VIEW_NAME": "string",
+                      "VIEW_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "VIEW_NAME\tVIEW_TYPE\nDM$VAWIKI_MODEL\tExplicit Semantic Analysis Matrix\nDM$VFWIKI_MODEL\tExplicit Semantic Analysis Features\nDM$VGWIKI_MODEL\tGlobal Name-Value Pairs\nDM$VNWIKI_MODEL\tNormalization and Missing Value Handling\nDM$VSWIKI_MODEL\tComputed Settings\nDM$VWWIKI_MODEL\tModel Build Alerts\nDM$VXWIKI_MODEL\tText Features\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_944278767",
+      "id": "20220124-201424_2090259573",
+      "dateCreated": "2021-07-26T19:03:09+0000",
+      "dateStarted": "2023-02-17T00:37:21+0000",
+      "dateFinished": "2023-02-17T00:37:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Examples using the Wiki ESA model\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eExamples using the Wiki ESA model\u003c/h1\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-1222105467",
+      "id": "20220124-201424_1488298306",
+      "dateCreated": "2021-07-26T18:16:38+0000",
+      "dateStarted": "2023-02-17T00:37:22+0000",
+      "dateFinished": "2023-02-17T00:37:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Basic example of ESA features for the word \u0027Bank\u0027  using the Wikipedia model",
+      "text": "%sql\n\nSELECT S.FEATURE_ID, S.VALUE FROM\n  (SELECT FEATURE_SET(WIKI_MODEL, 10 USING *) FSET FROM \n  (SELECT \u0027BANK\u0027 AS TEXT FROM DUAL)) T,\n  TABLE(T.FSET) S ORDER BY S.VALUE DESC\n  FETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nBanking in India\t0.12073074740513993\nBanking in Australia\t0.1186153932769802\nBank of America\t0.11307155411695473\nBank\t0.10994163646234326\nCentral bank\t0.10780307790446561\nNational Bank Act\t0.10647042777456947\nStandard Bank\t0.10502497981253221\nBankBoston\t0.10474436983267525\nOnline banking\t0.10250315951850819\nBank of England\t0.09610674490262502\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-1911156562",
+      "id": "20220124-201424_1066814810",
+      "dateCreated": "2021-07-26T18:17:19+0000",
+      "dateStarted": "2023-02-17T00:37:22+0000",
+      "dateFinished": "2023-02-17T00:37:30+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA features for the words \u0027NFL games\u0027  using the Wikipedia model",
+      "text": "%sql\n\nSELECT S.FEATURE_ID, S.VALUE FROM (\n      SELECT FEATURE_SET(WIKI_MODEL, 10 USING *) FSET FROM (\n             SELECT \u0027NFL Games\u0027 AS TEXT FROM DUAL)\n      ) T,\nTABLE(T.FSET) S \nORDER BY S.VALUE DESC\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nNational Football League\t0.1448362549796241\nNFL International Series\t0.13968414188865144\nThursday Night Football\t0.11436240954509867\nHistory of the National Football League championship\t0.11272129823985683\nChicago College All-Star Game\t0.11121297109987173\nNFL Network\t0.11007694516545648\nNFL Films\t0.10627056953318934\nThe NFL Today\t0.10292445567064071\nNational Football League Christmas games\t0.10104092801135917\nPlayoff Bowl\t0.09258723455526119\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-678344224",
+      "id": "20220124-201424_1758507017",
+      "dateCreated": "2021-07-26T18:18:54+0000",
+      "dateStarted": "2023-02-17T00:37:30+0000",
+      "dateFinished": "2023-02-17T00:37:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA Features for text about Astronomy  using the Wikipedia model",
+      "text": "%sql\n\nSELECT S.FEATURE_ID, S.VALUE FROM (\n       SELECT FEATURE_SET(WIKI_MODEL, 10 USING *) FSET FROM (\n              SELECT \u0027A group of European-led astronomers has made a photograph of what appears to be a planet orbiting another star. If so, it would be the first confirmed picture of a world beyond our solar system.\u0027 AS TEXT FROM DUAL)\n       ) T, \nTABLE(T.FSET) S \nORDER BY S.VALUE DESC\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nSolar System\t0.1783977405440812\nPlanets beyond Neptune\t0.16384415493902063\nPlanet Nine\t0.1556042629299215\nPlanet\t0.14360577141174127\nExoplanet\t0.14146374523098973\nFormation and evolution of the Solar System\t0.1380857932488385\nTerrestrial planet\t0.12349262676588602\nAstronomer\t0.11968229035028131\nSolar analog\t0.11919958268012823\nPlanetary habitability\t0.11168273107745952\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_558464791",
+      "id": "20220124-201424_581952538",
+      "dateCreated": "2021-07-26T18:14:47+0000",
+      "dateStarted": "2023-02-17T00:37:35+0000",
+      "dateFinished": "2023-02-17T00:37:35+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA Features for a text about diet and health using the Wikipedia model",
+      "text": "%sql\n\nSELECT S.FEATURE_ID, S.VALUE FROM (\n       SELECT FEATURE_SET(WIKI_MODEL, 10 USING *) FSET FROM (\n              SELECT \u0027Nearly 70 percent of Americans say they are careful about what they eat, and even more say diet is essential to good health, according to a new nationwide health poll in which obesity ranked second among the biggest health concerns.\u0027 AS TEXT FROM DUAL)\n     ) T,\nTABLE(T.FSET) S \nORDER BY S.VALUE DESC\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nObesity\t0.2381281204952319\nChildhood obesity\t0.21566128131005566\nRobert Wood Johnson Foundation\t0.1790547081969936\nHealth\t0.1723830168425817\nHealthy diet\t0.16671289147333318\nDieting\t0.142162115212373\nPaleolithic diet\t0.1386597097885653\nHealth education\t0.12498303889516335\nHealth equity\t0.1149008443204024\nPlant-based diet\t0.11425470702731559\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-2054690918",
+      "id": "20220124-201424_1466302140",
+      "dateCreated": "2021-07-26T18:20:16+0000",
+      "dateStarted": "2023-02-17T00:37:35+0000",
+      "dateFinished": "2023-02-17T00:37:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "ESA Features for a long text on stocks and the Fed using the Wikipedia model",
+      "text": "%sql\n\nSELECT S.FEATURE_ID, S.VALUE FROM (\n       SELECT FEATURE_SET(WIKI_MODEL, 10 USING *) FSET FROM (\n              SELECT \u0027The more things change... Yes, I\u0027\u0027m inclined to agree, especially with regards to the historical relationship between stock prices and bond yields. The two have generally traded together, rising during periods of economic growth and falling during periods of contraction. Consider the period from 1998 through 2010, during which the U.S. economy experienced two expansions as well as two recessions: Then central banks came to the rescue. Fed Chairman Ben Bernanke led from Washington with the help of the bank\u0027\u0027s current $3.6T balance sheet. He\u0027\u0027s accompanied by Mario Draghi at the European Central Bank and an equally forthright Shinzo Abe in Japan. Their coordinated monetary expansion has provided all the sugar needed for an equities moonshot, while they vowed to hold global borrowing costs at record lows\u0027 AS TEXT FROM DUAL)\n       ) T,\nTABLE(T.FSET) S \nORDER BY S.VALUE DESC\nFETCH FIRST 10 ROWS ONLY",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "FEATURE_ID": "string",
+                      "VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "FEATURE_ID\tVALUE\nBen Bernanke\t0.17064524253160657\nRecession\t0.15889239754197812\nMario Draghi\t0.1491065027348536\nCOVID-19 recession\t0.145309094406638\nGreat Recession\t0.1290856902681663\nLong Depression\t0.12204405109050054\nGreat Depression in the United States\t0.11521859419773026\nMonetary policy\t0.1034355579106447\nGreat Recession in the United States\t0.10193175875567674\nGroup of Thirty\t0.09912373068492472\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_577444837",
+      "id": "20220124-201424_1511294359",
+      "dateCreated": "2021-07-26T18:21:28+0000",
+      "dateStarted": "2023-02-17T00:37:36+0000",
+      "dateFinished": "2023-02-17T00:37:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# Comparing Strings for Similarity of Text using the Wikipedia Model\n---\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eComparing Strings for Similarity of Text using the Wikipedia Model\u003c/h1\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-685033168",
+      "id": "20220124-201424_925443620",
+      "dateCreated": "2021-07-26T18:22:12+0000",
+      "dateStarted": "2023-02-17T00:37:36+0000",
+      "dateFinished": "2023-02-17T00:37:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Comparison of \u0027street\u0027 vs. \u0027avenue\u0027 using the ESA Wikipedia model",
+      "text": "%sql\n\nSELECT 1-FEATURE_COMPARE(WIKI_MODEL USING \u0027street\u0027 AS TEXT \n                         AND USING \u0027avenue\u0027 AS TEXT) SIMILARITY \nFROM DUAL",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.1936898590428866\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_1657329465",
+      "id": "20220124-201424_1786485743",
+      "dateCreated": "2021-07-26T18:32:14+0000",
+      "dateStarted": "2023-02-17T00:37:36+0000",
+      "dateFinished": "2023-02-17T00:37:36+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Simple comparison of \u0027street\u0027 vs. \u0027farm\u0027 using the ESA Wikipedia model",
+      "text": "%sql\n\nSELECT 1-FEATURE_COMPARE(WIKI_MODEL USING \u0027street\u0027 AS TEXT \n                         AND USING \u0027farm\u0027 AS TEXT) SIMILARITY \nFROM DUAL\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.007127425352303707\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_1834454099",
+      "id": "20220124-201424_303237122",
+      "dateCreated": "2021-07-26T18:33:05+0000",
+      "dateStarted": "2023-02-17T00:37:37+0000",
+      "dateFinished": "2023-02-17T00:37:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Comparison of two simple texts about Golf using the ESA Wikipedia model",
+      "text": "%sql\n\nSELECT 1-FEATURE_COMPARE(WIKI_MODEL USING \u0027There are several PGA tour golfers from South Africa\u0027 TEXT \n                         AND USING \u0027Nick Price won the 2002 Mastercard Colonial Open\u0027 TEXT) \n                         SIMILARITY \nFROM DUAL",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 114.167,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.10969292803597186\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_767065391",
+      "id": "20220124-201424_1825902570",
+      "dateCreated": "2021-07-26T18:34:00+0000",
+      "dateStarted": "2023-02-17T00:37:37+0000",
+      "dateFinished": "2023-02-17T00:37:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Comparison of texts about Golf and Football using the ESA Wikipedia model",
+      "text": "%sql\n\nSELECT 1-FEATURE_COMPARE(WIKI_MODEL USING \u0027There are several PGA tour golfers from South Africa\u0027 TEXT \n                         AND USING \u0027John Elway played quarterback for the Denver Broncos\u0027 TEXT) SIMILARITY\nFROM DUAL",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.003917419745909201\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-1182669676",
+      "id": "20220124-201424_313723986",
+      "dateCreated": "2021-07-26T18:34:46+0000",
+      "dateStarted": "2023-02-17T00:37:37+0000",
+      "dateFinished": "2023-02-17T00:37:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "News on Nasa Rover and SpaceX Moon Gateway using ESA Wikipedia model",
+      "text": "%sql\n\nSELECT 1-FEATURE_COMPARE(WIKI_MODEL USING \n\u0027NASA Perseverance Mars rover closed in on the red planet after a journey of 293 million miles, hurtling toward a nail-biting seven-minute descent to touchdown Thursday. The mission is an unprecedented attempt to find signs of past microbial life at the site of an ancient martian river, delta and lakebed. Mission managers at NASA Jet Propulsion Laboratory in Pasadena, California, said Wednesday that the spacecraft, still attached to its interplanetary cruise stage, is healthy and flawlessly executing its final approach to Jezero Crater.\u0027 AS TEXT\n                         AND USING \n\u0027NASA has selected SpaceX to deliver the first two segments of the moon-orbiting Gateway space station for its upcoming Artemis program, which aims to put astronauts back on the moon. The elements will launch atop a Falcon Heavy rocket, sometime in 2024. The flight, which is the second to be awarded to SpaceX this week will carry the Gateway\u0027\u0027s power and habitation modules.  Once deposited in lunar orbit, the Gateway will serve as an outpost for astronauts and equipment heading to the moon as part of NASA Artemis program. Roughly one-sixth the size of the International Space Station, the Gateway will support research investigations, crew, and expeditions to the lunar surface.\u0027 AS TEXT) SIMILARITY \nFROM DUAL",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:37+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.48847744577133123\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-640438965",
+      "id": "20220124-201424_606165256",
+      "dateCreated": "2021-07-26T18:35:33+0000",
+      "dateStarted": "2023-02-17T00:37:37+0000",
+      "dateFinished": "2023-02-17T00:37:37+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "News on Nasa Rover and Tennis Naomi Osaka using ESA Wikipedia model",
+      "text": "%sql\n\nSELECT 1-FEATURE_COMPARE(WIKI_MODEL USING \n\u0027NASA Perseverance Mars rover closed in on the red planet after a journey of 293 million miles, hurtling toward a nail-biting seven-minute descent to touchdown Thursday. The mission is an unprecedented attempt to find signs of past microbial life at the site of an ancient martian river, delta and lakebed. Mission managers at NASA Jet Propulsion Laboratory in Pasadena, California, said Wednesday that the spacecraft, still attached to its interplanetary cruise stage, is healthy and flawlessly executing its final approach to Jezero Crater.\u0027 AS TEXT\n                         AND USING \n\u0027Naomi Osaka, who hasnt lost an official match since last February, put together a dominating performance in the Australian Open semifinals, beating Williams 6-3, 6-4 and ending hopes that the 39-year old American would tie Margaret Court all-time Slam record at this tournament. Osaka, seeking her fourth major title and second Australian Open championship, will play the winner of the second semifinal between American Jennifer Brady, the No. 22 seed, and No. 25 seed Karolina Muchova.\u0027 AS TEXT) SIMILARITY \nFROM DUAL",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:38:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 184.667,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "SIMILARITY": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "SIMILARITY\n0.026660806390262026\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-929667699",
+      "id": "20220124-201424_788006550",
+      "dateCreated": "2021-07-26T18:36:12+0000",
+      "dateStarted": "2023-02-17T00:37:38+0000",
+      "dateFinished": "2023-02-17T00:37:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-1456188666",
+      "id": "20220124-201424_1779889916",
+      "dateCreated": "2021-07-26T18:36:48+0000",
+      "dateStarted": "2023-02-17T00:37:38+0000",
+      "dateFinished": "2023-02-17T00:37:38+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T00:37:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055264407_-627445559",
+      "id": "20220124-201424_1624094320",
+      "dateCreated": "2021-07-26T18:43:12+0000",
+      "dateStarted": "2023-02-17T00:37:38+0000",
+      "dateFinished": "2023-02-17T00:37:38+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Feature Extraction ESA Wiki Model",
+  "id": "101053",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA7A60DC9B32:OMLUSER-101053": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4SQL Feature Extraction ESA Wiki Model"
+}

@@ -1,0 +1,53 @@
+create or replace procedure create_ps_index(tablename varchar2, colname varchar2, key varchar2) is
+  p             number;
+  gram_size     number := 3;
+  gram	        varchar2(255);
+  sqlq	        varchar2(4000);
+  csr 	        sys_refcursor;
+  v_id	        number;
+  v_text        clob;
+  tab_not_exist exception;
+  pragma        exception_init(tab_not_exist, -942);
+begin
+  -- none of this is SQL injection safe
+  begin
+     execute immediate ('drop table '||tablename||'$'||colname||'$tmp');
+  exception when tab_not_exist then null;
+  end;
+  execute immediate ('create table '||tablename||'$'||colname||'$tmp (gram varchar2('||to_char(gram_size*4)||'), id number, pos number)');
+  sqlq := 'select '||key||' as id, '||colname||' as text from '||tablename; 
+  open csr for sqlq;
+  loop
+    fetch csr into v_id, v_text;
+    exit when csr%NOTFOUND;
+    p := 1;
+    while p <= ( length(v_text) ) loop
+      gram := substr(v_text, p, gram_size);
+      dbms_output.put_line('text: "'||v_text||'" p: '||p||' gram: '||gram);
+      execute immediate 'insert into '||tablename||'$'||colname||'$tmp values (:1, :2, :3)' using gram, v_id, p;
+      p := p + 1;
+    end loop;
+  end loop;
+  begin
+     execute immediate ('drop table '||tablename||'$'||colname||'$grams');
+  exception when tab_not_exist then null;
+  end;
+  execute immediate ('create table '||tablename||'$'||colname||'$grams (data blob check (data is json format oson))'); 
+  sqlq := '
+insert into '||tablename||'$'||colname||'$grams 
+    select json_object(gram,
+        ''posting'' : json_arrayagg(
+            json_object(''id'' : id, ''pos'' : parray returning json)
+        )  
+    returning json)
+    from (
+        select gram, id, json_arrayagg(pos) parray
+        from '||tablename||'$'||colname||'$tmp
+        group by gram, id
+        )
+  group by gram';
+  execute immediate sqlq;
+  execute immediate 'drop table '||tablename||'$'||colname||'$tmp';
+  execute immediate 'create index '||tablename||'$'||colname||'$gidx on '||tablename||'$'||colname||'$grams g(g.data.gram)';
+end;
+/

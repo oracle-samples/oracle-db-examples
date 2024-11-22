@@ -1,0 +1,960 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n#OML4SQL Partitioned Model\nOracle Machine Learning enables automatically building an ensemble model comprised of multiple sub-models, one for each data partition. Sub-models exist and are used as one model, which results in simplified scoring using top-level model only. The proper sub-model is chosen by system based on row of data to be scored. Partitioned models achieve potentially better accuracy through multiple targeted models. \n\nIn this notebook, we build an SVM model to predict the number of years a customer resides at their residence but partitioned on customer gender. The model is then used to predict the target first, then predicting the target with prediction details. \n\n\nCopyright (c) 2023 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eOML4SQL Partitioned Model\u003c/h1\u003e\n\u003cp\u003eOracle Machine Learning enables automatically building an ensemble model comprised of multiple sub-models, one for each data partition. Sub-models exist and are used as one model, which results in simplified scoring using top-level model only. The proper sub-model is chosen by system based on row of data to be scored. Partitioned models achieve potentially better accuracy through multiple targeted models.\u003c/p\u003e\n\u003cp\u003eIn this notebook, we build an SVM model to predict the number of years a customer resides at their residence but partitioned on customer gender. The model is then used to predict the target first, then predicting the target with prediction details.\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_-1303934145",
+      "id": "20220124-201423_1945571606",
+      "dateCreated": "2020-04-27T13:55:25+0000",
+      "dateStarted": "2023-02-17T22:30:09+0000",
+      "dateFinished": "2023-02-17T22:30:09+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md\r\n\r\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\r\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\r\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\r\nOML Partitioned Models: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmcon/intro-oracle-machine-learning-SQL.html#GUID-02417CD8-80E8-4324-9E5E-2BE2DCE29527\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmcon/intro-oracle-machine-learning-SQL.html#GUID-02417CD8-80E8-4324-9E5E-2BE2DCE29527\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmcon/intro-oracle-machine-learning-SQL.html#GUID-02417CD8-80E8-4324-9E5E-2BE2DCE29527\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Partitioned Models: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmcon/intro-oracle-machine-learning-SQL.html#GUID-02417CD8-80E8-4324-9E5E-2BE2DCE29527\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmcon/intro-oracle-machine-learning-SQL.html#GUID-02417CD8-80E8-4324-9E5E-2BE2DCE29527\u0027);\"\u003ehttps://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/21/dmcon/intro-oracle-machine-learning-SQL.html#GUID-02417CD8-80E8-4324-9E5E-2BE2DCE29527\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_24294555",
+      "id": "20220124-201423_23871298",
+      "dateCreated": "2020-06-10T19:18:18+0000",
+      "dateStarted": "2023-02-17T22:30:09+0000",
+      "dateFinished": "2023-02-17T22:30:09+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create dataset with data from SH schema",
+      "text": "%script\n\nBEGIN EXECUTE IMMEDIATE \u0027DROP TABLE CUSTOMERS_DEMO\u0027;\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nCREATE TABLE CUSTOMERS_DEMO AS \n  SELECT A.CUST_ID, A.CUST_GENDER, A.CUST_MARITAL_STATUS, A.CUST_YEAR_OF_BIRTH, A.CUST_INCOME_LEVEL, A.CUST_CREDIT_LIMIT, \n         B.EDUCATION, B.AFFINITY_CARD, B.HOUSEHOLD_SIZE, B.OCCUPATION, B.YRS_RESIDENCE, B.Y_BOX_GAMES\n  FROM SH.CUSTOMERS A, SH.SUPPLEMENTARY_DEMOGRAPHICS B\n  WHERE A.CUST_ID \u003d B.CUST_ID;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 8.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nTable CUSTOMERS_DEMO created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_-1888703265",
+      "id": "20220124-201423_1637776992",
+      "dateCreated": "2020-06-11T02:09:40+0000",
+      "dateStarted": "2023-02-17T22:30:09+0000",
+      "dateFinished": "2023-02-17T22:30:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display number of rows",
+      "text": "%sql\n\nSELECT COUNT(*) FROM CUSTOMERS_DEMO;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 4.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 84.0057,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "COUNT(*)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "COUNT(*)\n4500\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_1204678332",
+      "id": "20220124-201423_1235717333",
+      "dateCreated": "2020-04-06T14:34:53+0000",
+      "dateStarted": "2023-02-17T22:30:16+0000",
+      "dateFinished": "2023-02-17T22:30:16+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View training data CUSTOMERS_DEMO",
+      "text": "%sql\n\nSELECT * \nFROM CUSTOMERS_DEMO\nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "string",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "string",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "string",
+                      "HOUSEHOLD_SIZE": "string",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "string",
+                      "Y_BOX_GAMES": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\n104088\tM\tNeverM\t1980\tL: 300,000 and above\t11000\tBach.\t0\t1\tExec.\t1\t1\n104089\tM\tMarried\t1970\tH: 150,000 - 169,999\t5000\t\u003c Bach.\t0\t3\tCrafts\t3\t0\n104090\tM\tMarried\t1953\tG: 130,000 - 149,999\t7000\tMasters\t1\t3\tProf.\t6\t0\n104091\tM\tMarried\t1964\tJ: 190,000 - 249,999\t15000\tHS-grad\t0\t3\tCrafts\t5\t0\n104092\tF\tNeverM\t1958\tL: 300,000 and above\t15000\tBach.\t0\t2\tSales\t5\t0\n104093\tM\tMarried\t1956\tF: 110,000 - 129,999\t1500\tBach.\t1\t3\tProf.\t7\t0\n104094\tM\tMarried\t1970\tI: 170,000 - 189,999\t9000\t\u003c Bach.\t1\t3\tTransp.\t3\t0\n104095\tM\tNeverM\t1981\tK: 250,000 - 299,999\t11000\tHS-grad\t0\t2\tOther\t2\t1\n104096\tM\tNeverM\t1982\tJ: 190,000 - 249,999\t15000\t\u003c Bach.\t0\t1\tOther\t2\t1\n104097\tM\tMabsent\t1981\tL: 300,000 and above\t11000\tHS-grad\t0\t2\tSales\t3\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_2147471723",
+      "id": "20220124-201423_34822998",
+      "dateCreated": "2020-03-10T17:34:18+0000",
+      "dateStarted": "2023-02-17T22:30:17+0000",
+      "dateFinished": "2023-02-17T22:30:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n\n### Examples of possible setting overrides for Partitioning (Shared Settings)\n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm.\n\nA complete list of settings can be found in the Documentation link:\n\n-- Algorithm Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\u0027);\"\u003eSupport Vector Machine\u003c/a\u003e\n\n-- Shared Settings: \u003ca href\u003d\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\u0027);\"\u003eAll algorithms\u003c/a\u003e\n\n-- Requests the building of a partitioned model. \n   The setting value is a comma-separated list of the machine learning attributes to be used to determine the in-list partition key values. These attributes are taken from the input columns, unless an XFORM_LIST parameter is passed to the model. \n   If `XFORM_LIST` parameter is passed to the model, then the attributes are taken from the attributes produced by these transformations.  \n      v_setlst(\u0027ODMS_PARTITION_COLUMNS\u0027) :\u003d \u0027\u003cComma separated list of attributes\u003e\u0027\n     \n-- Controls the parallel building of partitioned models.     \n   `ODMS_PARTITION_BUILD_INTRA` builds each partition in parallel using all slaves.\n   `ODMS_PARTITION_BUILD_INTER` builds each partition entirely in a single slave, but multiple partitions may be built at the same time because multiple slaves are active.\n   `ODMS_PARTITION_BUILD_HYBRID` combines the other two types and is recommended for most situations to adapt to dynamic environments. This is the default value.\n      v_setlst(\u0027ODMS_PARTITION_BUILD_TYPE\u0027) :\u003d \u0027ODMS_PARTITION_BUILD_HYBRID\u0027",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003eExamples of possible setting overrides for Partitioning (Shared Settings)\u003c/h3\u003e\n\u003cp\u003eIf the user does not override the default settings, then relevant settings are determined by the algorithm.\u003c/p\u003e\n\u003cp\u003eA complete list of settings can be found in the Documentation link:\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Algorithm Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\u0027);\"\u003eSupport Vector Machine\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Shared Settings: \u003ca href\u003d\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\u0027);\"\u003eAll algorithms\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003e\u0026ndash; Requests the building of a partitioned model.\n\u003cbr  /\u003eThe setting value is a comma-separated list of the machine learning attributes to be used to determine the in-list partition key values. These attributes are taken from the input columns, unless an XFORM_LIST parameter is passed to the model.\n\u003cbr  /\u003eIf \u003ccode\u003eXFORM_LIST\u003c/code\u003e parameter is passed to the model, then the attributes are taken from the attributes produced by these transformations.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e  v_setlst(\u0027ODMS_PARTITION_COLUMNS\u0027) :\u003d \u0027\u0026lt;Comma separated list of attributes\u0026gt;\u0027\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u0026ndash; Controls the parallel building of partitioned models.\n\u003cbr  /\u003e\u003ccode\u003eODMS_PARTITION_BUILD_INTRA\u003c/code\u003e builds each partition in parallel using all slaves.\n\u003cbr  /\u003e\u003ccode\u003eODMS_PARTITION_BUILD_INTER\u003c/code\u003e builds each partition entirely in a single slave, but multiple partitions may be built at the same time because multiple slaves are active.\n\u003cbr  /\u003e\u003ccode\u003eODMS_PARTITION_BUILD_HYBRID\u003c/code\u003e combines the other two types and is recommended for most situations to adapt to dynamic environments. This is the default value.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e  v_setlst(\u0027ODMS_PARTITION_BUILD_TYPE\u0027) :\u003d \u0027ODMS_PARTITION_BUILD_HYBRID\u0027\n\u003c/code\u003e\u003c/pre\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_-2001942105",
+      "id": "20220124-201423_1659236985",
+      "dateCreated": "2021-08-18T06:19:23+0000",
+      "dateStarted": "2023-02-17T22:30:17+0000",
+      "dateFinished": "2023-02-17T22:30:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build SVM Linear Partitioned Model on CUST_GENDER to predict YRS_RESIDENCE",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027SVM_MOD_PARTITIONED\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\nBEGIN\n    v_setlst(\u0027ALGO_NAME\u0027)              :\u003d \u0027ALGO_SUPPORT_VECTOR_MACHINES\u0027; -- choose SVM algorithm\n    v_setlst(\u0027SVMS_KERNEL_FUNCTION\u0027)   :\u003d \u0027SVMS_LINEAR\u0027;      -- choose linear kernel, which provides coefficients\n    v_setlst(\u0027ODMS_PARTITION_COLUMNS\u0027) :\u003d \u0027CUST_GENDER\u0027;      -- choose column on which to partition the data, gender\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027SVM_MOD_PARTITIONED\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027REGRESSION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027SELECT * FROM CUSTOMERS_DEMO\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e \u0027YRS_RESIDENCE\u0027);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_-110999769",
+      "id": "20220124-201423_1880816955",
+      "dateCreated": "2020-03-09T23:44:45+0000",
+      "dateStarted": "2023-02-17T22:30:17+0000",
+      "dateFinished": "2023-02-17T22:30:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View sub-models of the partitioned model",
+      "text": "%sql\n\nSELECT * \nFROM ALL_MINING_MODEL_PARTITIONS\nWHERE MODEL_NAME \u003d \u0027SVM_MOD_PARTITIONED\u0027;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 114.006,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "OWNER",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "MODEL_NAME",
+                        "visible": true,
+                        "width": 205.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PARTITION_NAME",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "POSITION",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "COLUMN_NAME",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "COLUMN_VALUE",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "OWNER": "string",
+                      "MODEL_NAME": "string",
+                      "PARTITION_NAME": "string",
+                      "POSITION": "string",
+                      "COLUMN_NAME": "string",
+                      "COLUMN_VALUE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "OWNER\tMODEL_NAME\tPARTITION_NAME\tPOSITION\tCOLUMN_NAME\tCOLUMN_VALUE\nOMLUSER\tSVM_MOD_PARTITIONED\tM\t1\tCUST_GENDER\tM\nOMLUSER\tSVM_MOD_PARTITIONED\tF\t1\tCUST_GENDER\tF\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_2037553928",
+      "id": "20220124-201423_95295177",
+      "dateCreated": "2020-03-10T17:21:37+0000",
+      "dateStarted": "2023-02-17T22:30:19+0000",
+      "dateFinished": "2023-02-17T22:30:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "List model views",
+      "text": "%sql\n\nSELECT VIEW_NAME, VIEW_TYPE \n  FROM USER_MINING_MODEL_VIEWS\n  WHERE MODEL_NAME\u003d\u0027SVM_MOD_PARTITIONED\u0027\n  ORDER BY VIEW_NAME;\n  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 234.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "VIEW_NAME": "string",
+                      "VIEW_TYPE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "VIEW_NAME\tVIEW_TYPE\nDM$VGSVM_MOD_PARTITIONED\tGlobal Name-Value Pairs\nDM$VLSVM_MOD_PARTITIONED\tSVM Linear Coefficients\nDM$VNSVM_MOD_PARTITIONED\tNormalization and Missing Value Handling\nDM$VSSVM_MOD_PARTITIONED\tComputed Settings\nDM$VWSVM_MOD_PARTITIONED\tModel Build Alerts\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1673457085902_2081293644",
+      "id": "paragraph_1673457085902_2081293644",
+      "dateCreated": "2023-01-11T17:11:25+0000",
+      "dateStarted": "2023-02-17T22:30:19+0000",
+      "dateFinished": "2023-02-17T22:30:19+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View model details - coefficients per partition",
+      "text": "%sql\n\nSELECT PARTITION_NAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE, round(COEFFICIENT,3) COEFFICIENT, round(REVERSED_COEFFICIENT,3) REVERSED_COEFFICIENT \nFROM DM$VLSVM_MOD_PARTITIONED;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "PARTITION_NAME": "string",
+                      "ATTRIBUTE_NAME": "string",
+                      "ATTRIBUTE_VALUE": "string",
+                      "COEFFICIENT": "number",
+                      "REVERSED_COEFFICIENT": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "PARTITION_NAME\tATTRIBUTE_NAME\tATTRIBUTE_VALUE\tCOEFFICIENT\tREVERSED_COEFFICIENT\nF\tCUST_MARITAL_STATUS\tDivorc.\t0.131\t0.131\nF\tCUST_MARITAL_STATUS\tMabsent\t-0.145\t-0.145\nF\tCUST_MARITAL_STATUS\tMar-AF\t0.177\t0.177\nF\tCUST_MARITAL_STATUS\tMarried\t-0.037\t-0.037\nF\tCUST_MARITAL_STATUS\tNeverM\t0.004\t0.004\nF\tCUST_MARITAL_STATUS\tSepar.\t0.077\t0.077\nF\tCUST_MARITAL_STATUS\tWidowed\t-0.206\t-0.206\nF\tOCCUPATION\t?\t-0.103\t-0.103\nF\tOCCUPATION\tCleric.\t0.077\t0.077\nF\tOCCUPATION\tCrafts\t0.23\t0.23\nF\tOCCUPATION\tExec.\t0.106\t0.106\nF\tOCCUPATION\tFarming\t-0.422\t-0.422\nF\tOCCUPATION\tHandler\t-0.037\t-0.037\nF\tOCCUPATION\tHouse-s\t-0.258\t-0.258\nF\tOCCUPATION\tMachine\t0.136\t0.136\nF\tOCCUPATION\tOther\t-0.089\t-0.089\nF\tOCCUPATION\tProf.\t0.073\t0.073\nF\tOCCUPATION\tProtec.\t0.072\t0.072\nF\tOCCUPATION\tSales\t0.018\t0.018\nF\tOCCUPATION\tTechSup\t0.071\t0.071\nF\tOCCUPATION\tTransp.\t0.127\t0.127\nF\tCUST_INCOME_LEVEL\tA: Below 30,000\t0.111\t0.111\nF\tCUST_INCOME_LEVEL\tB: 30,000 - 49,999\t-0.154\t-0.154\nF\tCUST_INCOME_LEVEL\tC: 50,000 - 69,999\t0.022\t0.022\nF\tCUST_INCOME_LEVEL\tD: 70,000 - 89,999\t-0.012\t-0.012\nF\tCUST_INCOME_LEVEL\tE: 90,000 - 109,999\t-0.022\t-0.022\nF\tCUST_INCOME_LEVEL\tF: 110,000 - 129,999\t-0.004\t-0.004\nF\tCUST_INCOME_LEVEL\tG: 130,000 - 149,999\t-0.057\t-0.057\nF\tCUST_INCOME_LEVEL\tH: 150,000 - 169,999\t0.05\t0.05\nF\tCUST_INCOME_LEVEL\tI: 170,000 - 189,999\t0.011\t0.011\nF\tCUST_INCOME_LEVEL\tJ: 190,000 - 249,999\t-0.025\t-0.025\nF\tCUST_INCOME_LEVEL\tK: 250,000 - 299,999\t0.022\t0.022\nF\tCUST_INCOME_LEVEL\tL: 300,000 and above\t0.056\t0.056\nF\tEDUCATION\t10th\t-0.23\t-0.23\nF\tEDUCATION\t11th\t-0.31\t-0.31\nF\tEDUCATION\t12th\t0.098\t0.098\nF\tEDUCATION\t1st-4th\t-0.464\t-0.464\nF\tEDUCATION\t5th-6th\t0.108\t0.108\nF\tEDUCATION\t7th-8th\t-0.287\t-0.287\nF\tEDUCATION\t9th\t-0.138\t-0.138\nF\tEDUCATION\t\u003c Bach.\t-0.079\t-0.079\nF\tEDUCATION\tAssoc-A\t0.041\t0.041\nF\tEDUCATION\tAssoc-V\t0.058\t0.058\nF\tEDUCATION\tBach.\t0.02\t0.02\nF\tEDUCATION\tHS-grad\t0.026\t0.026\nF\tEDUCATION\tMasters\t0.182\t0.182\nF\tEDUCATION\tPhD\t0.355\t0.355\nF\tEDUCATION\tPresch.\t0.23\t0.23\nF\tEDUCATION\tProfsc\t0.39\t0.39\nF\tHOUSEHOLD_SIZE\t1\t-0.057\t-0.057\nF\tHOUSEHOLD_SIZE\t2\t0.106\t0.106\nF\tHOUSEHOLD_SIZE\t4-5\t-0.05\t-0.05\nF\tHOUSEHOLD_SIZE\t6-8\t-0.004\t-0.004\nF\tHOUSEHOLD_SIZE\t9+\t0.006\t0.006\nF\tCUST_YEAR_OF_BIRTH\t\t-0.796\t-0.057\nM\tHOUSEHOLD_SIZE\t1\t-0.074\t-0.074\nM\tHOUSEHOLD_SIZE\t2\t0.073\t0.073\nM\tHOUSEHOLD_SIZE\t3\t0.044\t0.044\nM\tHOUSEHOLD_SIZE\t6-8\t-0.018\t-0.018\nM\tHOUSEHOLD_SIZE\t9+\t-0.026\t-0.026\nM\tY_BOX_GAMES\t\t-0.043\t-0.097\nM\tAFFINITY_CARD\t\t0.039\t0.084\nM\tCUST_MARITAL_STATUS\tDivorc.\t0.127\t0.127\nM\tCUST_MARITAL_STATUS\tMabsent\t-0.024\t-0.024\nM\tCUST_MARITAL_STATUS\tMarried\t0.075\t0.075\nM\tCUST_MARITAL_STATUS\tNeverM\t0.001\t0.001\nM\tCUST_MARITAL_STATUS\tSepar.\t0.059\t0.059\nM\tCUST_MARITAL_STATUS\tWidowed\t-0.238\t-0.238\nM\tCUST_YEAR_OF_BIRTH\t\t-0.646\t-0.048\nF\tCUST_CREDIT_LIMIT\t\t0\t0\nM\tCUST_INCOME_LEVEL\tA: Below 30,000\t0.164\t0.164\nM\tCUST_INCOME_LEVEL\tB: 30,000 - 49,999\t0.063\t0.063\nM\tCUST_INCOME_LEVEL\tC: 50,000 - 69,999\t-0.048\t-0.048\nM\tCUST_INCOME_LEVEL\tD: 70,000 - 89,999\t-0.079\t-0.079\nM\tCUST_INCOME_LEVEL\tE: 90,000 - 109,999\t0.032\t0.032\nM\tCUST_INCOME_LEVEL\tF: 110,000 - 129,999\t-0.098\t-0.098\nM\tCUST_INCOME_LEVEL\tG: 130,000 - 149,999\t-0.006\t-0.006\nM\tCUST_INCOME_LEVEL\tH: 150,000 - 169,999\t0.053\t0.053\nM\tCUST_INCOME_LEVEL\tI: 170,000 - 189,999\t-0.043\t-0.043\nM\tCUST_INCOME_LEVEL\tJ: 190,000 - 249,999\t-0.023\t-0.023\nM\tCUST_INCOME_LEVEL\tK: 250,000 - 299,999\t0.009\t0.009\nM\tCUST_INCOME_LEVEL\tL: 300,000 and above\t-0.024\t-0.024\nF\tAFFINITY_CARD\t\t0.048\t0.155\nF\tY_BOX_GAMES\t\t0.012\t0.025\nM\tEDUCATION\t10th\t-0.058\t-0.058\nM\tEDUCATION\t11th\t-0.113\t-0.113\nM\tEDUCATION\t12th\t-0.138\t-0.138\nM\tEDUCATION\t1st-4th\t0.185\t0.185\nM\tEDUCATION\t5th-6th\t0.046\t0.046\nM\tEDUCATION\t7th-8th\t-0.168\t-0.168\nM\tEDUCATION\t9th\t-0.029\t-0.029\nM\tEDUCATION\t\u003c Bach.\t-0.019\t-0.019\nM\tEDUCATION\tAssoc-A\t0.051\t0.051\nM\tEDUCATION\tAssoc-V\t0.044\t0.044\nM\tEDUCATION\tBach.\t0.031\t0.031\nM\tEDUCATION\tHS-grad\t0.002\t0.002\nM\tEDUCATION\tMasters\t0.033\t0.033\nM\tEDUCATION\tPhD\t0.214\t0.214\nM\tEDUCATION\tPresch.\t-0.495\t-0.495\nM\tEDUCATION\tProfsc\t0.415\t0.415\nM\tOCCUPATION\t?\t-0.045\t-0.045\nM\tOCCUPATION\tArmed-F\t-0.034\t-0.034\nM\tOCCUPATION\tCleric.\t0.041\t0.041\nM\tOCCUPATION\tCrafts\t0.046\t0.046\nM\tOCCUPATION\tExec.\t0.254\t0.254\nM\tOCCUPATION\tFarming\t0.16\t0.16\nM\tOCCUPATION\tHandler\t-0.065\t-0.065\nM\tOCCUPATION\tHouse-s\t-0.463\t-0.463\nM\tOCCUPATION\tMachine\t-0.001\t-0.001\nM\tOCCUPATION\tOther\t-0.072\t-0.072\nM\tOCCUPATION\tProf.\t0.009\t0.009\nM\tOCCUPATION\tProtec.\t0.025\t0.025\nM\tOCCUPATION\tSales\t0.158\t0.158\nM\tOCCUPATION\tTechSup\t-0.156\t-0.156\nM\tOCCUPATION\tTransp.\t0.141\t0.141\nM\tCUST_CREDIT_LIMIT\t\t0.012\t0\nM\t\t\t-0.19\t94.488\nF\t\t\t0.025\t111.124\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1673457006870_193483908",
+      "id": "paragraph_1673457006870_193483908",
+      "dateCreated": "2023-01-11T17:10:06+0000",
+      "dateStarted": "2023-02-17T22:30:19+0000",
+      "dateFinished": "2023-02-17T22:30:20+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Score data using partitioned model SVM_MOD_PARTITIONED",
+      "text": "%sql\n\nSELECT CUST_ID, YRS_RESIDENCE,\n       ROUND(PREDICTION(SVM_MOD_PARTITIONED USING *),2) PRED_YRS_RESIDENCE\nFROM CUSTOMERS_DEMO\nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "YRS_RESIDENCE": "string",
+                      "PRED_YRS_RESIDENCE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tYRS_RESIDENCE\tPRED_YRS_RESIDENCE\n104088\t1\t2.63\n104089\t3\t3.73\n104090\t6\t5.39\n104091\t5\t4.24\n104092\t5\t4.64\n104093\t7\t4.9\n104094\t3\t3.91\n104095\t2\t2.2\n104096\t2\t1.75\n104097\t3\t2.53\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_-1508674917",
+      "id": "20220124-201423_494875841",
+      "dateCreated": "2020-04-06T14:36:18+0000",
+      "dateStarted": "2023-02-17T22:30:20+0000",
+      "dateFinished": "2023-02-17T22:30:20+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Score data using partitioned model SVM_MOD_PARTITIONED with prediction details",
+      "text": "%sql\n\nSELECT CUST_ID, YRS_RESIDENCE,\n       ROUND(PREDICTION(SVM_MOD_PARTITIONED USING *),2) PRED_YRS_RESIDENCE,\n       PREDICTION_DETAILS(SVM_MOD_PARTITIONED USING *) PRED_DET  -- XML WITH TOP ATTRIBUTE NAME, ACTUAL VALUE, WEIGHT, RANK\nFROM CUSTOMERS_DEMO\nFETCH FIRST 10 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID",
+                        "visible": true,
+                        "width": 150.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "YRS_RESIDENCE",
+                        "visible": true,
+                        "width": 150.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PRED_YRS_RESIDENCE",
+                        "visible": true,
+                        "width": 180.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PRED_DET",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "YRS_RESIDENCE": "string",
+                      "PRED_YRS_RESIDENCE": "string",
+                      "PRED_DET": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tYRS_RESIDENCE\tPRED_YRS_RESIDENCE\tPRED_DET\n104088\t1\t2.63\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"OCCUPATION\" actualValue\u003d\"Exec.\" weight\u003d\".158\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"EDUCATION\" actualValue\u003d\"Bach.\" weight\u003d\".022\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"11000\" weight\u003d\".007\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"CUST_INCOME_LEVEL\" actualValue\u003d\"L: 300,000 and above\" weight\u003d\"-.001\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.02\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104089\t3\t3.73\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"CUST_INCOME_LEVEL\" actualValue\u003d\"H: 150,000 - 169,999\" weight\u003d\".165\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".059\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"5000\" weight\u003d\"-.02\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"EDUCATION\" actualValue\u003d\"\u0026lt; Bach.\" weight\u003d\"-.043\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.057\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104090\t6\t5.39\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1953\" weight\u003d\".749\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".085\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"EDUCATION\" actualValue\u003d\"Masters\" weight\u003d\".045\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".039\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"CUST_INCOME_LEVEL\" actualValue\u003d\"G: 130,000 - 149,999\" weight\u003d\".025\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104091\t5\t4.24\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".314\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"15000\" weight\u003d\".244\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1964\" weight\u003d\"-.14\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.302\" rank\u003d\"4\"/\u003e \u003c/Details\u003e \n104092\t5\t4.64\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1958\" weight\u003d\".733\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"CUST_INCOME_LEVEL\" actualValue\u003d\"L: 300,000 and above\" weight\u003d\".126\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"EDUCATION\" actualValue\u003d\"Bach.\" weight\u003d\"-.009\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\"-.014\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.025\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104093\t7\t4.9\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1956\" weight\u003d\".602\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".095\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"EDUCATION\" actualValue\u003d\"Bach.\" weight\u003d\".047\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".043\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"1500\" weight\u003d\"-.032\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104094\t3\t3.91\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"OCCUPATION\" actualValue\u003d\"Transp.\" weight\u003d\".181\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"1\" weight\u003d\".112\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"0\" weight\u003d\".051\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"9000\" weight\u003d\".006\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"EDUCATION\" actualValue\u003d\"\u0026lt; Bach.\" weight\u003d\"-.038\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104095\t2\t2.2\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"CUST_INCOME_LEVEL\" actualValue\u003d\"K: 250,000 - 299,999\" weight\u003d\".027\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".025\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"11000\" weight\u003d\".008\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.022\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"1\" weight\u003d\"-.059\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104096\t2\t1.75\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"15000\" weight\u003d\".016\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"EDUCATION\" actualValue\u003d\"\u0026lt; Bach.\" weight\u003d\"-.015\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.02\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"Y_BOX_GAMES\" actualValue\u003d\"1\" weight\u003d\"-.053\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"CUST_MARITAL_STATUS\" actualValue\u003d\"NeverM\" weight\u003d\"-.056\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n104097\t3\t2.53\t\u003cDetails algorithm\u003d\"Support Vector Machines\"\u003e \u003cAttribute name\u003d\"OCCUPATION\" actualValue\u003d\"Sales\" weight\u003d\".094\" rank\u003d\"1\"/\u003e \u003cAttribute name\u003d\"HOUSEHOLD_SIZE\" actualValue\u003d\"2\" weight\u003d\".025\" rank\u003d\"2\"/\u003e \u003cAttribute name\u003d\"CUST_CREDIT_LIMIT\" actualValue\u003d\"11000\" weight\u003d\".008\" rank\u003d\"3\"/\u003e \u003cAttribute name\u003d\"CUST_INCOME_LEVEL\" actualValue\u003d\"L: 300,000 and above\" weight\u003d\"-.001\" rank\u003d\"4\"/\u003e \u003cAttribute name\u003d\"AFFINITY_CARD\" actualValue\u003d\"0\" weight\u003d\"-.022\" rank\u003d\"5\"/\u003e \u003c/Details\u003e \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_-1094674188",
+      "id": "20220124-201423_1355053869",
+      "dateCreated": "2020-03-10T17:26:10+0000",
+      "dateStarted": "2023-02-17T22:30:20+0000",
+      "dateFinished": "2023-02-17T22:30:20+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# End of Script\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_-101230084",
+      "id": "20220124-201423_2005972779",
+      "dateCreated": "2020-03-10T17:29:03+0000",
+      "dateStarted": "2023-02-17T22:30:21+0000",
+      "dateFinished": "2023-02-17T22:30:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-17T22:30:21+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055263847_106347071",
+      "id": "20220124-201423_50200398",
+      "dateCreated": "2020-06-10T20:08:24+0000",
+      "dateStarted": "2023-02-17T22:30:21+0000",
+      "dateFinished": "2023-02-17T22:30:21+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Partitioned Model SVM",
+  "id": "101047",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "MDW381939C745:shared_process": [],
+    "ORA7A60DC9B32:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

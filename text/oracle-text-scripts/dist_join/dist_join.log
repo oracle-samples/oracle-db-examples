@@ -1,0 +1,103 @@
+SQL> @dist_join
+SQL> --  Assumes we have two databases, r192 and r193, and that both are known
+SQL> --  to the SQL Net listener
+SQL> 
+SQL> connect system/oracle@localhost:1523/r192
+Connected.
+SQL> 
+SQL> drop user distuser cascade;
+
+User dropped.
+
+SQL> 
+SQL> grant connect,resource,ctxapp,unlimited tablespace,create database link to distuser identified by distuser;
+
+Grant succeeded.
+
+SQL> 
+SQL> connect system/oracle@localhost:1523/r193
+Connected.
+SQL> 
+SQL> drop user distuser cascade;
+
+User dropped.
+
+SQL> 
+SQL> grant connect,resource,ctxapp,unlimited tablespace,create database link to distuser identified by distuser;
+
+Grant succeeded.
+
+SQL> 
+SQL> connect distuser/distuser@localhost:1523/r192
+Connected.
+SQL> create table tab2 (id2 number primary key, text2 varchar2(200));
+
+Table created.
+
+SQL> 
+SQL> insert into tab2 values (1, 'hello world');
+
+1 row created.
+
+SQL> 
+SQL> create index tab2index on tab2(text2) indextype is ctxsys.context;
+
+Index created.
+
+SQL> 
+SQL> connect distuser/distuser@localhost:1523/r193
+Connected.
+SQL> create table tab3 (id3 number primary key, text3 varchar2(200));
+
+Table created.
+
+SQL> 
+SQL> insert into tab3 values (1, 'foo bar');
+
+1 row created.
+
+SQL> 
+SQL> create database link db2 connect to distuser identified by distuser using 'localhost:1523/r192';
+
+Database link created.
+
+SQL> 
+SQL> -- works
+SQL> select * from tab2@db2 t2
+  2  where contains@db2 (text2, 'hello') > 0;
+
+       ID2                                                                      
+----------                                                                      
+TEXT2                                                                           
+--------------------------------------------------------------------------------
+         1                                                                      
+hello world                                                                     
+                                                                                
+
+SQL> 
+SQL> -- works if we use a sub-query
+SQL> select * from tab3 t3
+  2  where t3.id3 in
+  3    (select t2.id2 from tab2@db2 t2);
+
+       ID3                                                                      
+----------                                                                      
+TEXT3                                                                           
+--------------------------------------------------------------------------------
+         1                                                                      
+foo bar                                                                         
+                                                                                
+
+SQL> 
+SQL> -- doesn't work if we use a join
+SQL> select * from tab3 t3, tab2@db2 t2
+  2  where contains@db2 (text2, 'hello') > 0
+  3  and t3.id3 = t2.id2;
+where contains@db2 (text2, 'hello') > 0
+      *
+ERROR at line 2:
+ORA-00949: illegal reference to remote database 
+
+
+SQL> 
+SQL> spool off

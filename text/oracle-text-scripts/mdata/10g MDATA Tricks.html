@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>MDATA Tricks</title>
+  <meta content="Garrett Kaminaga" name="author">
+</head>
+<body>
+<p><a name="appx"></a></p>
+<h1>MDATA Tricks<br>
+</h1>
+My idea was to have a document of ideas, so not actually fully fleshed
+out.&nbsp; Some of these things would take a lot of code really. In
+general I don't like to go overboard with complete code samples in the
+text. I like broad sketches of techniques instead of step-by-step
+instructions. Sometimes I have code available separately. But it's up
+to your style.<br>
+<br>
+people aren't very smart so you might want to start with simple uses of
+mdata -- a simple one-to-many like author name searching, then maybe a
+many-to-many like user folders (eadh document can be assigned to
+multiple folders, each folder can hold multiple documents)<br>
+<br>
+The assumption in many of these techniques is that there is application
+query rewrite. In most apps that are using MDATA, that's going to be
+the case anyways.<br>
+<h2>1. getting around mdata limitations</h2>
+MDATA has equality semantics which might not work for all people.&nbsp;
+This section is about how to get around that.<br>
+<h3>1.1 length limits</h3>
+MDATA values are stored in token_text so limited to 64 bytes. To get
+around length limits the idea is to simply use a<br>
+lookup table.&nbsp; So you have a section<br>
+&nbsp; &lt;title&gt;This is a really long value here&lt;/title&gt;<br>
+you set up a lookup table:<br>
+id number<br>
+value varchar2(256)<br>
+user datastore does a select on lookup table, insert if not there (in
+auto. transaction, of course)<br>
+and transform section to id:<br>
+&nbsp; &lt;title&gt;12345&lt;/title&gt;<br>
+slap a b-tree index on the lookup table value, then at query time you
+need to rewrite your queries to<br>
+take text value to id, then query MDATA(title, 12345).<br>
+<h3>1.2 normalization</h3>
+MDATA values don't go through the lexer so I was going to point out how
+to go simple normalization yourself. uppercasing is obvious, base
+lettering is pretty simple with a TRANSLATE call. The point is that the
+normalization has to be symmetric, done on index side (user datastore,
+perhaps) and query side (application code)<br>
+<h3>1.3 supporting word and equality search</h3>
+Idea is to duplicate the mdata section in the datastore, so instead of<br>
+&lt;author&gt;william shakespeare&lt;/author&gt;<br>
+you get <br>
+&lt;author&gt;william shakespeare&lt;/author&gt;<br>
+&lt;authorf&gt;william shakespeare&lt;/authorf&gt;<br>
+and use an mdata and a field section.<br>
+Alternately you can use the lookup table technique in 1.1 and slap a
+context index on the lookup table, with appropriate application code.<br>
+<h3>1.4 expansion</h3>
+Using the lookup table from 1.1 you can also do expansions by
+application code at query time. So users can search for subject COOKIN%
+etc<br>
+<h3>1.5 multiplexing</h3>
+If you want to get around the 100 section limit, you can use
+multiplexing.&nbsp; Instead of<br>
+&lt;SEC1&gt;value&lt;/SEC1&gt;<br>
+&lt;SEC2&gt;value&lt;/SEC2&gt;<br>
+&lt;SEC3&gt;value&lt;/SEC3&gt;<br>
+you use<br>
+&lt;SEC&gt;1 value&lt;/SEC&gt;<br>
+&lt;SEC&gt;2 value&lt;/SEC&gt;<br>
+&lt;SEC&gt;3 value&lt;/SEC&gt;<br>
+This works out much better with mdata than with field sections because
+of equality semantics<br>
+<h2>2. dynamic token normalization</h2>
+The idea here is to <span style="font-weight: bold;">leverage</span>
+the fact that mdata does not go through the lexer. So you can do things
+like case-specific case sensitivity.&nbsp; For instance, you can have
+an author section which is case-sensitive but the rest of the document
+is not.<br>
+Then you can actually use multiple mdata sections to do query-time
+normalization.&nbsp; Let your user datastore do something like this:<br>
+&lt;upper&gt;THE V&Auml;LUE&lt;/upper&gt;<br>
+&lt;lower&gt;The V&auml;lue&lt;/upper&gt;<br>
+&lt;upperbase&gt;THE VALUE&lt;/upperbase&gt;<br>
+...<br>
+and you can do query-time base letter or case sensitivity, by varying
+the section.<br>
+<h2>3. logical partitioning</h2>
+The idea with logical partitioning is that you can use MDATA to do a
+primary filter by simulating partitioning.&nbsp; Say you have a date
+field.&nbsp; You can index an mdata section with the month:<br>
+&lt;DATEPART&gt;022004&lt;/DATEPART&gt;<br>
+<h3>3.1 mixed range</h3>
+Given a range, you can translate to the partitions that must be
+hit.&nbsp; Then you use the context index as a primary filter.&nbsp;
+For instance, range 12-JAN-2004 - 03-FEB-2004:<br>
+select .. where contains(text, 'blah blah blah and
+(MDATA(012004,datepart) or MDATA(022004,datepart))')&gt;0<br>
+and date between '12-JAN-2004' and '03-FEB-2004'<br>
+Since each mdata operator uses a cursor, you don't want too many of
+those, though.&nbsp; So for large ranges you can do one of two things:
+a) run more than one query, using different subsets of partitions or b)
+use multi-resolution partitioning:<br>
+&lt;DP&gt;2004&lt;/DP&gt;&nbsp; (year)<br>
+&lt;DP&gt;1H2004&lt;/DP&gt; (half)<br>
+&lt;DP&gt;1Q2004&lt;/DP&gt; (quarter)<br>
+&lt;DP&gt;02M2004&lt;/DP&gt; (month)<br>
+etc.<br>
+<h3>3.2 sort order by</h3>
+Given logical partitioning, it is not hard to see how to do a sort
+order by -- mimic real partitioning.&nbsp; So given a query DOG, first
+you do <br>
+DOG and MDATA(022004,dp)&nbsp; (current month)<br>
+then if you don't get enough hits move on to<br>
+DOG and MDATA(012004,dp) (last month)<br>
+etc. each invocation needs an ORDER BY to do the fine-grain sorting,
+but the number of rows being sorted is minimal.<br>
+In the lab this performs relatively well. it is optimal when you only
+need one partition, so if the user knows the average date spread of
+rows returned, they can size the partitions correctly. The following
+strategy is even better:<br>
+1. issue query without any sorting criteria, first 50 rows<br>
+2. if you don't get 50 rows, sort what you have and return.&nbsp;
+Otherwise, <br>
+3. iterative partition scanning as above<br>
+You can use a similar technique with multi-resolution partitions to
+improve partition scanning: <br>
+1. get first 50 rows of first, largest grain partition (i.e. YEAR), no
+sort<br>
+2. if got 50 rows, try next smallest partition (i.e. HALF), no sort<br>
+... etc.&nbsp; This minimizes the number of invocations of the same
+query.<br>
+But the text part still gets invoked multiple times. So I also tried
+the following technique: use MDATA for sorting by weighting the
+operator.<br>
+MDATA is supposed to return score 100.&nbsp; So, with different weights
+and mutually exclusive values, you can distinguish between a finite set
+of mdata values.&nbsp; For instance, let's talk months:<br>
+dog*0.01 &amp; (MDATA(JAN,dp)*.9 | MDATA(FEB,dp)*.8|MDATA(MAR,dp)*.7)<br>
+if the query gets score of 90, it is january. if 80, february.&nbsp; so
+order by score desc gets you inverse month sorting, while text part is
+executed just once.<br>
+there may be a bug in 10gR1 where MDATA returns 1 instead of 100,
+though -- check it.<br>
+</body>
+</html>

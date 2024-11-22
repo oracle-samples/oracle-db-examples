@@ -1,0 +1,27 @@
+SQL> 
+SQL> create table test.match_scores as (
+  2  select distinct d.docid, cat_name, match_score(1) match_score
+  3  from test.restab r, test.testcategory t, test.abstracts_with_pk d
+  4  where matches(rule, d.abstract ,1)>0
+  5    and r.cat_id = t.cat_id
+  6  )
+  7  ;
+from test.restab r, test.testcategory t, test.abstracts_with_pk d
+                                              *
+ERROR at line 3:
+ORA-00942: table or view does not exist
+
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> select docid, cat_name, match_score from test.match_scores m1 where match_score = (select max(match_score) from test.match_scores m2 where m1.docid = m2.docid)
+  2  order by 1,2;
+select docid, cat_name, match_score from test.match_scores m1 where match_score = (select max(match_score) from test.match_scores m2 where m1.docid = m2.docid)
+                                              *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> spool off

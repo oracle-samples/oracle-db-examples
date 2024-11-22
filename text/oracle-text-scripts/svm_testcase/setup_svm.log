@@ -1,0 +1,188 @@
+SQL> 
+SQL> drop sequence test.abstract_seq;
+
+Sequence dropped.
+
+Elapsed: 00:00:00.03
+SQL> -- drop index test.training_abstracts_idx;
+SQL> drop table test.training_abstracts;
+
+Table dropped.
+
+Elapsed: 00:00:00.01
+SQL> drop table test.testcategory;
+drop table test.testcategory
+                *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+Elapsed: 00:00:00.00
+SQL> drop table test.restab;
+drop table test.restab
+                *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+Elapsed: 00:00:00.01
+SQL> exec ctx_ddl.drop_preference('my_classifier');
+BEGIN ctx_ddl.drop_preference('my_classifier'); END;
+
+*
+ERROR at line 1:
+ORA-20000: Oracle Text error:
+DRG-10700: preference does not exist: my_classifier
+ORA-06512: at "CTXSYS.DRUE", line 160
+ORA-06512: at "CTXSYS.DRVLSB", line 47
+ORA-06512: at "CTXSYS.CTX_DDL", line 40
+ORA-06512: at line 1
+
+
+Elapsed: 00:00:00.00
+SQL> exec ctx_ddl.drop_preference('my_filter');
+BEGIN ctx_ddl.drop_preference('my_filter'); END;
+
+*
+ERROR at line 1:
+ORA-20000: Oracle Text error:
+DRG-10700: preference does not exist: my_filter
+ORA-06512: at "CTXSYS.DRUE", line 160
+ORA-06512: at "CTXSYS.DRVLSB", line 47
+ORA-06512: at "CTXSYS.CTX_DDL", line 40
+ORA-06512: at line 1
+
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> create table test.testcategory (
+  2  	     doc_id number,
+  3  	     cat_id number,
+  4  	     cat_name varchar2(100)
+  5  	      );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> create table test.training_abstracts ( docid number primary key, abstract CLOB );
+
+Table created.
+
+Elapsed: 00:00:00.00
+SQL> create sequence test.abstract_seq start with 1;
+
+Sequence created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> insert into test.training_abstracts (select test.abstract_seq.nextval, abstract from test.brain);
+
+66 rows created.
+
+Elapsed: 00:00:00.09
+SQL> insert into test.testcategory ( select docid, 1, 'Brain' from test.training_abstracts );
+
+66 rows created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> insert into test.training_abstracts (select test.abstract_seq.nextval, abstract from test.cancer);
+
+105 rows created.
+
+Elapsed: 00:00:00.04
+SQL> insert into test.testcategory ( select docid, 2, 'Cancer' from test.training_abstracts where docid > (select max(doc_id) from test.testcategory) );
+
+105 rows created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> insert into test.training_abstracts (select test.abstract_seq.nextval, abstract from test.maternal);
+
+40 rows created.
+
+Elapsed: 00:00:00.01
+SQL> insert into test.testcategory ( select docid, 3, 'Maternal' from test.training_abstracts where docid > (select max(doc_id) from test.testcategory) );
+
+40 rows created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> insert into test.training_abstracts (select test.abstract_seq.nextval, abstract from test.microbes);
+
+43 rows created.
+
+Elapsed: 00:00:00.01
+SQL> insert into test.testcategory ( select docid, 4, 'Microbes' from test.training_abstracts where docid > (select max(doc_id) from test.testcategory) );
+
+43 rows created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> insert into test.training_abstracts (select test.abstract_seq.nextval, abstract from test.synmed);
+
+22 rows created.
+
+Elapsed: 00:00:00.01
+SQL> insert into test.testcategory ( select docid, 5, 'SynMed' from test.training_abstracts where docid > (select max(doc_id) from test.testcategory) );
+
+22 rows created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> create index test.training_abstracts_idx on test.training_abstracts(abstract) indextype is ctxsys.context parameters('nopopulate');
+
+Index created.
+
+Elapsed: 00:00:00.10
+SQL> 
+SQL> 
+SQL> exec ctx_ddl.create_preference('my_classifier','SVM_CLASSIFIER');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL> exec ctx_ddl.set_attribute('my_classifier','MAX_FEATURES','100');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> create table test.restab (
+  2    cat_id number,
+  3    type number(3) not null,
+  4    rule blob
+  5   );
+
+Table created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> exec ctx_cls.train('training_abstracts_idx', 'docid','testcategory','doc_id','cat_id', 'restab','my_classifier');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.98
+SQL> 
+SQL> exec ctx_ddl.create_preference('my_filter','NULL_FILTER');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> create index restabx on test.restab (rule)
+  2  	    indextype is ctxsys.ctxrule
+  3  	    parameters ('filter my_filter classifier my_classifier');
+
+Index created.
+
+Elapsed: 00:00:00.15
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> spool off

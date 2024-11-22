@@ -28,7 +28,7 @@ ORAAH's custom LM/GLM/MLP NN algorithms on Spark scale better and run faster tha
 
 [1]:https://www.oracle.com/database/technologies/datawarehouse-bigdata/oml4spark.html
 
-#### Copyright (c) 2022 Oracle Corporation and its affiliates
+#### Copyright (c) 2023 Oracle Corporation and its affiliates
 
 ##### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
 

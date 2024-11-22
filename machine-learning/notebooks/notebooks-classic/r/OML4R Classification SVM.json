@@ -1,0 +1,1665 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n## Classification modeling to predict Target Customers using Support Vector Machine Model\nOracle Machine Learning for R (OML4R) makes the open source R scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior into SQL for running in-database.\n\nIn this notebook, we predict customers most likely to be positive responders to an Affinity Card loyalty program. \n\nHigh Affinity Card responders (target value = 1) are defined as those customers who, when given a loyalty or affinity card, hyper-respond, that is, increase purchases more than the Affinity Card program's offered discount. \n\nThis notebook builds and applies a classification support vector machine model using the Sales History (SH) schema data. All processing occurs inside Oracle Autonomous Database.\n\nCopyright (c) 2023 Oracle Corporation\n###### <a href=\"https://oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a>\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 9,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Classification modeling to predict Target Customers using Support Vector Machine Model</h2>\n<p>Oracle Machine Learning for R (OML4R) makes the open source R scripting language and environment ready for the enterprise and big data. Designed for problems involving both large and small data volumes, OML4R integrates R with Oracle Autonomous Database, allowing users to run R commands and scripts for statistical, machine learning, and visualization analyses on database tables and views using R syntax. Many familiar R functions are overloaded that translate R behavior into SQL for running in-database.</p>\n<p>In this notebook, we predict customers most likely to be positive responders to an Affinity Card loyalty program.</p>\n<p>High Affinity Card responders (target value = 1) are defined as those customers who, when given a loyalty or affinity card, hyper-respond, that is, increase purchases more than the Affinity Card program's offered discount.</p>\n<p>This notebook builds and applies a classification support vector machine model using the Sales History (SH) schema data. All processing occurs inside Oracle Autonomous Database.</p>\n<p>Copyright (c) 2023 Oracle Corporation</p>\n<h6><a href=\"https: //oss.oracle.com/licenses/upl/\" onclick=\"return ! window.open('https://oss.oracle.com/licenses/upl/');\">The Universal Permissive License (UPL), Version 1.0</a></h6>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-2028859225",
+      "id": "20221005-171849_1403356452",
+      "dateCreated": "2022-04-26T21:22:07+0000",
+      "dateStarted": "2023-03-09T07:19:16+0000",
+      "dateFinished": "2023-03-09T07:19:17+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:41"
+    },
+    {
+      "text": "%md\n<dl>\n<img src=\"http://www.oracle.com/technetwork/database/options/advanced-analytics/classification-5663162.jpg\" alt=\"OML Notebooks\" width=\"250\"/>\n</dl>",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:17+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 3,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<dl>\n<img src=\"http://www.oracle.com/technetwork/database/options/advanced-analytics/classification-5663162.jpg\" alt=\"OML Notebooks\" width=\"250\"/>\n</dl>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1976564286",
+      "id": "20221005-171849_1705480064",
+      "dateCreated": "2022-06-27T22:35:07+0000",
+      "dateStarted": "2023-03-09T07:19:18+0000",
+      "dateFinished": "2023-03-09T07:19:18+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:42"
+    },
+    {
+      "title": "For more information ...",
+      "text": "%md\nOracle ADW Documentation: <a href=\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\nOML folder on Oracle Github : <a href=\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning');\">https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning</a>\nOML web page: <a href=\"https://www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\nOML Classification: <a href=\"https://www.oracle.com/goto/ml-classification\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-classification');\">https://www.oracle.com/goto/ml-classification</a>\nOML Support Vector Machine: <a href=\"https://oracle.com/goto/ml-support-vector-machine\" onclick=\"return ! window.open('https://oracle.com/goto/ml-support-vector-machine');\">https://oracle.com/goto/ml-support-vector-machine</a>",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<p>Oracle ADW Documentation: <a href=\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick=\"return ! window.open('https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html');\">https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html</a>\n<br  />OML folder on Oracle Github : <a href=\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick=\"return ! window.open('https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning');\">https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning</a>\n<br  />OML web page: <a href=\"https: //www.oracle.com/machine-learning\" onclick=\"return ! window.open('https://www.oracle.com/machine-learning');\">https://www.oracle.com/machine-learning</a>\n<br  />OML Classification: <a href=\"https: //www.oracle.com/goto/ml-classification\" onclick=\"return ! window.open('https://www.oracle.com/goto/ml-classification');\">https://www.oracle.com/goto/ml-classification</a>\n<br  />OML Support Vector Machine: <a href=\"https: //oracle.com/goto/ml-support-vector-machine\" onclick=\"return ! window.open('https://oracle.com/goto/ml-support-vector-machine');\">https://oracle.com/goto/ml-support-vector-machine</a></p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1651017084",
+      "id": "20221005-171849_84938174",
+      "dateCreated": "2022-06-14T17:42:22+0000",
+      "dateStarted": "2023-03-09T07:19:18+0000",
+      "dateFinished": "2023-03-09T07:19:18+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:43"
+    },
+    {
+      "title": "Import libraries",
+      "text": "%r\n\nlibrary(ORE)\noptions(ore.warn.order=FALSE)\nore.sync(query = c(\"SUP_DEM\" = \"select * from SH.SUPPLEMENTARY_DEMOGRAPHICS\"))\nore.attach()",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:18+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_500594779",
+      "id": "20221005-171849_1185972969",
+      "dateCreated": "2022-04-26T21:22:53+0000",
+      "dateStarted": "2023-03-09T07:19:18+0000",
+      "dateFinished": "2023-03-09T07:19:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:44"
+    },
+    {
+      "title": "Display a few rows from SUPPLEMENTARY_DEMOGRAPHICS",
+      "text": "%r\n\nz.show(head(SUP_DEM))",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "EDUCATION": "string",
+                      "OCCUPATION": "string",
+                      "HOUSEHOLD_SIZE": "number",
+                      "YRS_RESIDENCE": "number",
+                      "AFFINITY_CARD": "number",
+                      "BULK_PACK_DISKETTES": "number",
+                      "FLAT_PANEL_MONITOR": "number",
+                      "HOME_THEATER_PACKAGE": "number",
+                      "BOOKKEEPING_APPLICATION": "number",
+                      "PRINTER_SUPPLIES": "number",
+                      "Y_BOX_GAMES": "number",
+                      "OS_DOC_SET_KANJI": "number",
+                      "COMMENTS": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tEDUCATION\tOCCUPATION\tHOUSEHOLD_SIZE\tYRS_RESIDENCE\tAFFINITY_CARD\tBULK_PACK_DISKETTES\tFLAT_PANEL_MONITOR\tHOME_THEATER_PACKAGE\tBOOKKEEPING_APPLICATION\tPRINTER_SUPPLIES\tY_BOX_GAMES\tOS_DOC_SET_KANJI\tCOMMENTS\n102547\t10th\tOther\t1\t0\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n101050\t10th\tOther\t1\t0\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n100040\t11th\tSales\t1\t0\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n102117\tHS-grad\tFarming\t1\t0\t0\t0\t0\t0\t1\t1\t1\t0\tNA\n101074\t10th\tHandler\t1\t1\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n104179\t10th\tHandler\t1\t1\t0\t1\t1\t0\t0\t1\t1\t0\tNA\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_1635809498",
+      "id": "20221005-171849_969122750",
+      "dateCreated": "2022-04-26T21:23:24+0000",
+      "dateStarted": "2023-03-09T07:19:29+0000",
+      "dateFinished": "2023-03-09T07:19:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:45"
+    },
+    {
+      "title": "Display number of rows and columns",
+      "text": "%r\n\nz.show(dim(SUP_DEM))",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "4500 14"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1243622182",
+      "id": "20221005-171849_1614930057",
+      "dateCreated": "2022-06-02T22:35:46+0000",
+      "dateStarted": "2023-03-09T07:19:29+0000",
+      "dateFinished": "2023-03-09T07:19:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:46"
+    },
+    {
+      "title": "Show distribution of AFFINITY_CARD responders",
+      "text": "%r\n\nz.show(ore.crosstab(~AFFINITY_CARD,SUP_DEM))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "AFFINITY_CARD": "number",
+                      "ORE.FREQ": "number",
+                      "ORE.STRATA": "number",
+                      "ORE.GROUP": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "AFFINITY_CARD",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "ORE.FREQ",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "AFFINITY_CARD": "number",
+                      "ORE.FREQ": "number",
+                      "ORE.STRATA": "number",
+                      "ORE.GROUP": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "AFFINITY_CARD\tORE.FREQ\tORE.STRATA\tORE.GROUP\n0\t3428\t1\t1\n1\t1072\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-72751730",
+      "id": "20221005-171849_1698266306",
+      "dateCreated": "2022-06-02T22:38:41+0000",
+      "dateStarted": "2023-03-09T07:19:30+0000",
+      "dateFinished": "2023-03-09T07:19:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:47"
+    },
+    {
+      "title": "Graph HOUSEHOLD_SIZE grouped by AFFINITY_CARD responders",
+      "text": "%r\n\nz.show(ore.crosstab(AFFINITY_CARD~HOUSEHOLD_SIZE,SUP_DEM))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "AFFINITY_CARD": "number",
+                      "ORE$FREQ": "number",
+                      "ORE$STRATA": "number",
+                      "ORE$GROUP": "number"
+                    }
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": true
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "HOUSEHOLD_SIZE",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [
+                {
+                  "name": "AFFINITY_CARD",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "values": [
+                {
+                  "name": "ORE.FREQ",
+                  "index": 2,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "AFFINITY_CARD\tHOUSEHOLD_SIZE\tORE.FREQ\tORE.STRATA\tORE.GROUP\n0\t1\t681\t1\t1\n0\t2\t1040\t1\t1\n0\t3\t973\t1\t1\n0\t4-5\t112\t1\t1\n0\t6-8\t146\t1\t1\n0\t9+\t476\t1\t1\n1\t1\t11\t1\t1\n1\t2\t109\t1\t1\n1\t3\t814\t1\t1\n1\t4-5\t107\t1\t1\n1\t6-8\t2\t1\t1\n1\t9+\t29\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_441648327",
+      "id": "20221005-171849_660344134",
+      "dateCreated": "2022-04-26T21:24:19+0000",
+      "dateStarted": "2023-03-09T07:19:30+0000",
+      "dateFinished": "2023-03-09T07:19:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:48"
+    },
+    {
+      "text": "%r\n\nDEMO_DF <- SUP_DEM[,c(\"CUST_ID\", 'AFFINITY_CARD', \"BOOKKEEPING_APPLICATION\", \"BULK_PACK_DISKETTES\", \"EDUCATION\", \"FLAT_PANEL_MONITOR\", \"HOME_THEATER_PACKAGE\", \n                      \"HOUSEHOLD_SIZE\", \"OCCUPATION\", \"OS_DOC_SET_KANJI\", \"PRINTER_SUPPLIES\", \"YRS_RESIDENCE\", \"Y_BOX_GAMES\")]\n                      ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:30+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1401337051",
+      "id": "20221005-171849_52855872",
+      "dateCreated": "2022-06-23T01:23:16+0000",
+      "dateStarted": "2023-03-09T07:19:31+0000",
+      "dateFinished": "2023-03-09T07:19:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:49"
+    },
+    {
+      "title": "Create train and test data (60/40 split)",
+      "text": "%r\n\nsampleSize <- .4 * nrow(DEMO_DF)\nindex <- sample(1:nrow(DEMO_DF),sampleSize)\ngroup <- as.integer(1:nrow(DEMO_DF) %in% index)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-603330044",
+      "id": "20221005-171849_1821145349",
+      "dateCreated": "2022-06-23T01:32:38+0000",
+      "dateStarted": "2023-03-09T07:19:31+0000",
+      "dateFinished": "2023-03-09T07:19:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:50"
+    },
+    {
+      "title": "Create train and test data sets",
+      "text": "%r\n\nrownames(DEMO_DF) <- DEMO_DF$CUST_ID\nDEMO_DF.train <- DEMO_DF[group==FALSE,]\nclass(DEMO_DF.train)\ncat(\"\\nTraining data: \")\ndim(DEMO_DF.train)\n\nDEMO_DF.test <- DEMO_DF[group==TRUE,]\nclass(DEMO_DF.test)\ncat(\"\\nTest data: \")\ndim(DEMO_DF.test)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:31+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "'ore.frame'\nTraining data: \n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>2700</li><li>13</li></ol>\n\n"
+          },
+          {
+            "type": "HTML",
+            "data": "'ore.frame'\nTest data: \n"
+          },
+          {
+            "type": "HTML",
+            "data": "<style>\n.list-inline {list-style: none; margin:0; padding: 0}\n.list-inline>li {display: inline-block}\n.list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n</style>\n<ol class=list-inline><li>1800</li><li>13</li></ol>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-468034670",
+      "id": "20221005-171849_1115539258",
+      "dateCreated": "2022-06-23T01:33:11+0000",
+      "dateStarted": "2023-03-09T07:19:31+0000",
+      "dateFinished": "2023-03-09T07:19:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:51"
+    },
+    {
+      "text": "%md\n## Build a Support Vector Machine Model for Predicting AFFINITY_CARD",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:32+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Build a Support Vector Machine Model for Predicting AFFINITY_CARD</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1737436109",
+      "id": "20221005-171849_93111310",
+      "dateCreated": "2022-06-02T22:43:03+0000",
+      "dateStarted": "2023-03-09T07:19:33+0000",
+      "dateFinished": "2023-03-09T07:19:33+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:52"
+    },
+    {
+      "title": "Build a SVM Model using default settings",
+      "text": "%r\n\nore.exec(\"BEGIN DBMS_DATA_MINING.DROP_MODEL(model_name=> 'SVM_CLASSIFICATION_MODEL'); EXCEPTION WHEN others THEN null; END;\")\n\nMOD <- ore.odmSVM(AFFINITY_CARD~., DEMO_DF.train, \"classification\", kernel.function = \"system.determined\",odm.settings=list(model_name=\"SVM_CLASSIFICATION_MODEL\"))    \n\nRES <- predict(MOD, DEMO_DF.test, \n               type= c(\"raw\",\"class\"), norm.votes=TRUE, cache.model=TRUE, \n               supplemental.cols=c(\"CUST_ID\", \"AFFINITY_CARD\", \"EDUCATION\", \"HOUSEHOLD_SIZE\", \"OCCUPATION\", \"YRS_RESIDENCE\")) \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:33+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Warning message:\n“The default kernel function is linear.”\nWarning message:\n“The created mining model SVM_CLASSIFICATION_MODEL is explicitly named. ORE does not manage this mining model's life cycle.”\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-96482027",
+      "id": "20221005-171849_843011195",
+      "dateCreated": "2022-06-02T22:43:14+0000",
+      "dateStarted": "2023-03-09T07:19:33+0000",
+      "dateFinished": "2023-03-09T07:19:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:53"
+    },
+    {
+      "title": "Confusion Matrix",
+      "text": "%r\n\nCMATRIX <- with(RES, table(AFFINITY_CARD,PREDICTION))   \nCMATRIX\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:35+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "             PREDICTION\nAFFINITY_CARD    0    1\n            0 1240  135\n            1  157  268"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_1369638296",
+      "id": "20221005-171849_1031030632",
+      "dateCreated": "2022-06-02T22:42:48+0000",
+      "dateStarted": "2023-03-09T07:19:35+0000",
+      "dateFinished": "2023-03-09T07:19:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:54"
+    },
+    {
+      "title": "Show model accuracy",
+      "text": "%r\n\nACCURACY <- CMATRIX/sum(CMATRIX)\nround(sum(diag(ACCURACY)),3)\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "0.838"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_1767664577",
+      "id": "20221005-171849_295441387",
+      "dateCreated": "2022-06-02T22:44:37+0000",
+      "dateStarted": "2023-03-09T07:19:36+0000",
+      "dateFinished": "2023-03-09T07:19:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:55"
+    },
+    {
+      "text": "%md\n\n### Examples of possible setting overrides for SVM \n\nIf the user does not override the default settings, then relevant settings are determined by the algorithm\n\nA complete list of settings can be found in the Documentation link:\n\n-- Algorithm Settings: <a href=\"https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB');\">Support Vector Machine</a>\n\n-- Shared Settings: <a href=\"https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B');\">All Algorithms</a>\n\n-- Specify a row weight column \n    'ODMS_ROW_WEIGHT_COLUMN_NAME' = '<row_weight_column_name>'\n   \n-- Specify a missing value treatment method.  The default is to replace with mean (numeric features), mode (categorical features) or delete the row\n    'ODMS_MISSING_VALUE_TREATMENT' = 'ODMS_MISSING_VALUE_DELETE_ROW'\n   \n-- Switch between Kernel Types - Linear or Gaussian\n   By default the system uses the Linear Kernel. The linear kernel also is able to return the coefficients, while this is not available on the Gaussian\n    'SVMS_KERNEL_FUNCTION' = 'SVMS_LINEAR'\n    'SVMS_KERNEL_FUNCTION' = 'SVMS_GAUSSIAN'\n   \n-- Value of complexity factor for SVM algorithm (both classification and regression).\n   Default value estimated from the data by the algorithm.\n    'SVMS_COMPLEXITY_FACTOR' = '0.1'\n\n-- Type of regularization that the SGD SVM solver uses (only available for linear SVM models). The default is system determined because it depends on the potential model size.    \n    'SVMS_REGULARIZER' = 'SVMS_REGULARIZER_L1'\n    'SVMS_REGULARIZER' = 'SVMS_REGULARIZER_L2'\n    \n-- Specify a regularization setting for regression, similar to complexity factor. Epsilon specifies the allowable residuals, or noise, in the data. It takes a value larger than 0.  The default is 0.1. \n    'SVMS_EPSILON' = '0.1'   \n     \n-- Batch rows sets the size of the batch for the SGD solver (linear kernel only). An input of 0 triggers a data driven batch size estimate. The default is 20000. \n    'SVMS_BATCH_ROWS' = '20000'\n   \n-- Solver type, which cannot be selected if the kernel is non-linear. The default value is system determined.    \n    'SVMS_SOLVER' = 'SVMS_SOLVER_SGD'\n    'SVMS_SOLVER' = 'SVMS_SOLVER_IPM'\n\n-- Specify the convergence tolerance for SVM algorithm. It requires a number larger than 0. Default is 0.0001. \n    'SVMS_CONV_TOLERANCE' = '0.001'\n\n-- Specify an upper limit on the number of pivots used in the Incomplete Cholesky decomposition. It can be set only for non-linear kernels. It requires a value from a range of 1 to 10,000 (inclusive of the edges). The default value is 200.     \n    'SVMS_NUM_PIVOTS' = '200' ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>Examples of possible setting overrides for SVM</h3>\n<p>If the user does not override the default settings, then relevant settings are determined by the algorithm</p>\n<p>A complete list of settings can be found in the Documentation link:</p>\n<p>&ndash; Algorithm Settings: <a href=\"https: //docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/oracle-database/21/arpls/DBMS_DATA_MINING.html#GUID-12408982-E738-4D0F-A2BC-84D895E07ABB');\">Support Vector Machine</a></p>\n<p>&ndash; Shared Settings: <a href=\"https: //docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B\" onclick=\"return ! window.open('https://docs.oracle.com/en/database/oracle/machine-learning/oml4py/1/mlpug/shared-settings.html#GUID-2EFF3880-F2E2-4449-A8CC-2CF516DD096B');\">All Algorithms</a></p>\n<p>&ndash; Specify a row weight column</p>\n<pre><code>'ODMS_ROW_WEIGHT_COLUMN_NAME' = '&lt;row_weight_column_name&gt;'\n</code></pre>\n<p>&ndash; Specify a missing value treatment method.  The default is to replace with mean (numeric features), mode (categorical features) or delete the row</p>\n<pre><code>'ODMS_MISSING_VALUE_TREATMENT' = 'ODMS_MISSING_VALUE_DELETE_ROW'\n</code></pre>\n<p>&ndash; Switch between Kernel Types - Linear or Gaussian\n<br  />By default the system uses the Linear Kernel. The linear kernel also is able to return the coefficients, while this is not available on the Gaussian</p>\n<pre><code>'SVMS_KERNEL_FUNCTION' = 'SVMS_LINEAR'\n'SVMS_KERNEL_FUNCTION' = 'SVMS_GAUSSIAN'\n</code></pre>\n<p>&ndash; Value of complexity factor for SVM algorithm (both classification and regression).\n<br  />Default value estimated from the data by the algorithm.</p>\n<pre><code>'SVMS_COMPLEXITY_FACTOR' = '0.1'\n</code></pre>\n<p>&ndash; Type of regularization that the SGD SVM solver uses (only available for linear SVM models). The default is system determined because it depends on the potential model size.</p>\n<pre><code>'SVMS_REGULARIZER' = 'SVMS_REGULARIZER_L1'\n'SVMS_REGULARIZER' = 'SVMS_REGULARIZER_L2'\n</code></pre>\n<p>&ndash; Specify a regularization setting for regression, similar to complexity factor. Epsilon specifies the allowable residuals, or noise, in the data. It takes a value larger than 0.  The default is 0.1.</p>\n<pre><code>'SVMS_EPSILON' = '0.1'   \n</code></pre>\n<p>&ndash; Batch rows sets the size of the batch for the SGD solver (linear kernel only). An input of 0 triggers a data driven batch size estimate. The default is 20000.</p>\n<pre><code>'SVMS_BATCH_ROWS' = '20000'\n</code></pre>\n<p>&ndash; Solver type, which cannot be selected if the kernel is non-linear. The default value is system determined.</p>\n<pre><code>'SVMS_SOLVER' = 'SVMS_SOLVER_SGD'\n'SVMS_SOLVER' = 'SVMS_SOLVER_IPM'\n</code></pre>\n<p>&ndash; Specify the convergence tolerance for SVM algorithm. It requires a number larger than 0. Default is 0.0001.</p>\n<pre><code>'SVMS_CONV_TOLERANCE' = '0.001'\n</code></pre>\n<p>&ndash; Specify an upper limit on the number of pivots used in the Incomplete Cholesky decomposition. It can be set only for non-linear kernels. It requires a value from a range of 1 to 10,000 (inclusive of the edges). The default value is 200.</p>\n<pre><code>'SVMS_NUM_PIVOTS' = '200' \n</code></pre>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_1407184981",
+      "id": "20221005-171849_1926437218",
+      "dateCreated": "2022-06-02T22:45:46+0000",
+      "dateStarted": "2023-03-09T07:19:36+0000",
+      "dateFinished": "2023-03-09T07:19:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:56"
+    },
+    {
+      "title": "Build a SVM Model using Linear kernel",
+      "text": "%r\n\nMOD2 <- ore.odmSVM(AFFINITY_CARD~., DEMO_DF.train,\"classification\", kernel.function = \"linear\")   \n\nRES2 <- predict(MOD2, DEMO_DF.test, type=\"class\", supplemental.cols=\"AFFINITY_CARD\") \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:36+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_319709898",
+      "id": "20221005-171849_981927887",
+      "dateCreated": "2022-06-14T17:49:58+0000",
+      "dateStarted": "2023-03-09T07:19:36+0000",
+      "dateFinished": "2023-03-09T07:19:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:57"
+    },
+    {
+      "title": "Show model accuracy",
+      "text": "%r\n\nCMATRIX2 <- with(RES2, table(AFFINITY_CARD,PREDICTION)) \nACCURACY2 <- CMATRIX2/sum(CMATRIX2)\n\nz.show(round(sum(diag(ACCURACY2)),3))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "0.838"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1560161575",
+      "id": "20221005-171849_626481392",
+      "dateCreated": "2022-06-14T17:51:34+0000",
+      "dateStarted": "2023-03-09T07:19:38+0000",
+      "dateFinished": "2023-03-09T07:19:38+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "title": "Build a SVM Model using Gaussian kernel",
+      "text": "%r\n\nMOD3 <- ore.odmSVM(AFFINITY_CARD~., DEMO_DF.train, \"classification\", kernel.function = \"gaussian\") \n\nRES3 <- predict(MOD3, DEMO_DF.test, type=\"class\", supplemental.cols=\"AFFINITY_CARD\") \n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_1346383923",
+      "id": "20221005-171849_1411716346",
+      "dateCreated": "2022-06-14T17:51:02+0000",
+      "dateStarted": "2023-03-09T07:19:38+0000",
+      "dateFinished": "2023-03-09T07:19:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "title": "Show model accuracy",
+      "text": "%r\n\nCMATRIX3 <- table(RES3$AFFINITY_CARD, RES3$PREDICTION)\nACCURACY3 <- CMATRIX3/sum(CMATRIX3)\nz.show(round(sum(diag(ACCURACY3)),3))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "0.837"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_1499677911",
+      "id": "20221005-171849_1054281493",
+      "dateCreated": "2022-06-14T17:51:33+0000",
+      "dateStarted": "2023-03-09T07:19:42+0000",
+      "dateFinished": "2023-03-09T07:19:42+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "title": "Display prediction results",
+      "text": "%r\n\nz.show(ore.sort(RES[(RES$\"'1'\" > 0.5),], by = c(\"'1'\")))\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "CUST_ID0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "AFFINITY_CARD1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "'0'13",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "'1'14",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "BOOKKEEPING_APPLICATION2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "BULK_PACK_DISKETTES3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "EDUCATION4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "FLAT_PANEL_MONITOR5",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "HOME_THEATER_PACKAGE6",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "HOUSEHOLD_SIZE7",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OCCUPATION8",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "OS_DOC_SET_KANJI9",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PRINTER_SUPPLIES10",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "YRS_RESIDENCE11",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "Y_BOX_GAMES12",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "AFFINITY_CARD": "number",
+                      "EDUCATION": "string",
+                      "HOUSEHOLD_SIZE": "number",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "number",
+                      "X.0.": "number",
+                      "X.1.": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "AFFINITY_CARD": "number",
+                      "BOOKKEEPING_APPLICATION": "number",
+                      "BULK_PACK_DISKETTES": "number",
+                      "EDUCATION": "string",
+                      "FLAT_PANEL_MONITOR": "number",
+                      "HOME_THEATER_PACKAGE": "number",
+                      "HOUSEHOLD_SIZE": "number",
+                      "OCCUPATION": "string",
+                      "OS_DOC_SET_KANJI": "number",
+                      "PRINTER_SUPPLIES": "number",
+                      "YRS_RESIDENCE": "number",
+                      "Y_BOX_GAMES": "number",
+                      "'0'": "number",
+                      "'1'": "number"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "X.0.\tX.1.\tCUST_ID\tAFFINITY_CARD\tEDUCATION\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tPREDICTION\n0.0293122560631538\t0.970687743936846\t103506\t0\tHS-grad\t4-5\tCleric.\t2\t1\n0.0293122557803139\t0.970687744219686\t101897\t0\tHS-grad\t3\tProtec.\t3\t1\n0.0293122553734271\t0.970687744626573\t100772\t0\tHS-grad\t4-5\tCleric.\t2\t1\n0.0293122545152409\t0.970687745484759\t103663\t0\tHS-grad\t4-5\tCleric.\t2\t1\n0.029312254493545\t0.970687745506455\t103577\t0\tHS-grad\t4-5\tCleric.\t2\t1\n0.0293122536822207\t0.970687746317779\t100361\t0\tHS-grad\t4-5\tCleric.\t2\t1\n0.0293122534320632\t0.970687746567937\t102792\t0\tHS-grad\t3\tCleric.\t3\t1\n0.0293122532804445\t0.970687746719555\t102191\t0\tHS-grad\t3\tCleric.\t3\t1\n0.0293122530776135\t0.970687746922386\t104459\t0\t7th-8th\t3\tSales\t4\t1\n0.0293122525633113\t0.970687747436689\t102243\t1\tHS-grad\t4-5\tCleric.\t3\t1\n0.0293122519604082\t0.970687748039592\t103216\t1\tHS-grad\t3\tProtec.\t4\t1\n0.0293122517915868\t0.970687748208413\t102450\t0\tHS-grad\t3\tSales\t1\t1\n0.0293122517360385\t0.970687748263962\t102790\t1\tHS-grad\t4-5\tCleric.\t2\t1\n0.0293122513995004\t0.9706877486005\t101456\t0\tHS-grad\t4-5\tCleric.\t2\t1\n0.0293122511934847\t0.970687748806515\t100176\t1\tHS-grad\t3\tProtec.\t4\t1\n0.029312251011541\t0.970687748988459\t101849\t0\tHS-grad\t3\tSales\t3\t1\n0.0293122509460618\t0.970687749053938\t103765\t0\tHS-grad\t3\tTechSup\t3\t1\n0.0293122506156624\t0.970687749384338\t101803\t0\t11th\t3\tExec.\t6\t1\n0.0293122503634698\t0.97068774963653\t103691\t1\tHS-grad\t4-5\tCleric.\t4\t1\n0.0293122502828181\t0.970687749717182\t100397\t1\t< Bach.\t3\tProtec.\t3\t1\n0.0293122502423767\t0.970687749757623\t103211\t1\tHS-grad\t4-5\tCleric.\t4\t1\n0.0293122502285963\t0.970687749771404\t102693\t0\tHS-grad\t3\tProtec.\t6\t1\n0.029312250219383\t0.970687749780617\t104056\t0\t< Bach.\t3\tCleric.\t3\t1\n0.0293122501092574\t0.970687749890743\t100448\t0\tHS-grad\t3\tTechSup\t3\t1\n0.0293122500651982\t0.970687749934802\t103585\t1\t10th\t4-5\tSales\t4\t1\n0.029312249788025\t0.970687750211975\t101410\t1\tHS-grad\t4-5\tCleric.\t4\t1\n0.0293122496614836\t0.970687750338516\t104331\t0\tHS-grad\t3\tCleric.\t5\t1\n0.0293122494754533\t0.970687750524547\t100171\t1\tHS-grad\t4-5\tCleric.\t4\t1\n0.0293122494630916\t0.970687750536908\t100122\t0\tHS-grad\t4-5\tCleric.\t4\t1\n0.0293122493068522\t0.970687750693148\t100579\t1\t10th\t4-5\tSales\t4\t1\n0.0293122493043317\t0.970687750695668\t100152\t0\tHS-grad\t4-5\tTechSup\t3\t1\n0.0293122489235721\t0.970687751076428\t101406\t0\tHS-grad\t3\tCleric.\t5\t1\n0.0293122487983291\t0.970687751201671\t103244\t0\tHS-grad\t3\tSales\t4\t1\n0.0293122487640012\t0.970687751235999\t100749\t0\tHS-grad\t3\tCleric.\t4\t1\n0.0293122487584693\t0.970687751241531\t103086\t0\tHS-grad\t3\tSales\t4\t1\n0.0293122485503403\t0.97068775144966\t102261\t0\tHS-grad\t3\tSales\t4\t1\n0.0293122485122465\t0.970687751487754\t102110\t0\tHS-grad\t3\tSales\t4\t1\n0.0293122483508257\t0.970687751649174\t102942\t0\t< Bach.\t3\tCleric.\t3\t1\n0.029312248122683\t0.970687751877317\t101126\t1\tHS-grad\t4-5\tCleric.\t5\t1\n0.0293122480942952\t0.970687751905705\t102162\t0\tAssoc-V\t4-5\tCleric.\t2\t1\n0.0293122480546153\t0.970687751945385\t100296\t0\tHS-grad\t3\tSales\t4\t1\n0.0293122479071063\t0.970687752092894\t100247\t0\tHS-grad\t4-5\tCleric.\t4\t1\n0.0293122476955474\t0.970687752304453\t102831\t0\tHS-grad\t3\tCleric.\t5\t1\n0.0293122475695408\t0.970687752430459\t102204\t1\t< Bach.\t3\tSales\t3\t1\n0.0293122470354621\t0.970687752964538\t104010\t1\t< Bach.\t3\tProtec.\t5\t1\n0.0293122467144588\t0.970687753285541\t101301\t0\tHS-grad\t3\tSales\t5\t1\n0.0293122465111781\t0.970687753488822\t104326\t0\t< Bach.\t3\tSales\t4\t1\n0.0293122462445725\t0.970687753755427\t100875\t1\t< Bach.\t3\tProtec.\t5\t1\n0.0293122461380596\t0.97068775386194\t102999\t1\tHS-grad\t3\tCleric.\t7\t1\n0.0293122461347234\t0.970687753865277\t103095\t0\tHS-grad\t3\tExec.\t4\t1\n0.029312246087651\t0.970687753912349\t100943\t1\tHS-grad\t3\tTechSup\t3\t1\n0.0293122460840721\t0.970687753915928\t102785\t0\tHS-grad\t3\tCleric.\t7\t1\n0.0293122460508265\t0.970687753949174\t101899\t0\t7th-8th\t3\tSales\t9\t1\n0.0293122458649636\t0.970687754135036\t101892\t1\tHS-grad\t3\tCleric.\t6\t1\n0.0293122457215937\t0.970687754278406\t103239\t0\tAssoc-A\t3\tProtec.\t4\t1\n0.0293122454907088\t0.970687754509291\t104204\t0\t< Bach.\t3\tProtec.\t6\t1\n0.0293122454361828\t0.970687754563817\t100593\t1\tHS-grad\t3\tProf.\t4\t1\n0.0293122454308695\t0.97068775456913\t100305\t0\tHS-grad\t3\tExec.\t4\t1\n0.0293122453426359\t0.970687754657364\t102156\t0\tHS-grad\t3\tSales\t5\t1\n0.0293122450932464\t0.970687754906754\t103343\t1\tHS-grad\t3\tTechSup\t5\t1\n0.0293122450907237\t0.970687754909276\t103333\t0\tHS-grad\t3\tTechSup\t5\t1\n0.0293122450322142\t0.970687754967786\t100950\t1\tHS-grad\t3\tSales\t6\t1\n0.0293122450202625\t0.970687754979737\t100459\t0\tAssoc-A\t3\tProtec.\t4\t1\n0.0293122448954798\t0.97068775510452\t100408\t0\tHS-grad\t3\tSales\t6\t1\n0.0293122447443791\t0.970687755255621\t104168\t1\tHS-grad\t3\tProf.\t5\t1\n0.0293122447036034\t0.970687755296397\t101084\t0\t< Bach.\t3\tProtec.\t6\t1\n0.0293122446051809\t0.970687755394819\t100966\t0\tAssoc-V\t4-5\tCleric.\t4\t1\n0.0293122444829881\t0.970687755517012\t104071\t0\t< Bach.\t3\tCleric.\t4\t1\n0.0293122444089708\t0.970687755591029\t102814\t1\tHS-grad\t3\tProf.\t4\t1\n0.0293122443256468\t0.970687755674353\t104442\t1\tHS-grad\t3\tSales\t6\t1\n0.0293122443112671\t0.970687755688733\t104385\t1\tHS-grad\t3\tSales\t6\t1\n0.0293122442632539\t0.970687755736746\t100053\t0\tHS-grad\t3\tTechSup\t5\t1\n0.0293122441349037\t0.970687755865096\t100884\t1\t< Bach.\t3\tTechSup\t2\t1\n0.0293122441069225\t0.970687755893078\t103575\t1\tHS-grad\t3\tSales\t6\t1\n0.0293122440550483\t0.970687755944952\t103034\t1\t< Bach.\t3\tTechSup\t3\t1\n0.0293122440310388\t0.970687755968961\t102304\t0\t< Bach.\t3\tCleric.\t5\t1\n0.0293122440207753\t0.970687755979225\t103258\t1\tHS-grad\t3\tSales\t7\t1\n0.0293122439610579\t0.970687756038942\t101063\t1\tHS-grad\t3\tProf.\t5\t1\n0.0293122437531047\t0.970687756246895\t104045\t1\t< Bach.\t3\tProf.\t3\t1\n0.029312243459208\t0.970687756540792\t102633\t0\tHS-grad\t3\tExec.\t4\t1\n0.0293122433137274\t0.970687756686273\t103889\t1\tBach.\t3\tProtec.\t4\t1\n0.0293122432657208\t0.970687756734279\t102165\t1\t< Bach.\t4-5\tCleric.\t5\t1\n0.0293122432583931\t0.970687756741607\t100236\t0\tHS-grad\t3\tSales\t7\t1\n0.0293122431027968\t0.970687756897203\t100959\t1\t< Bach.\t3\tSales\t4\t1\n0.0293122430278071\t0.970687756972193\t101170\t1\t< Bach.\t3\tProf.\t3\t1\n0.0293122429550063\t0.970687757044994\t102416\t1\tAssoc-A\t3\tProtec.\t4\t1\n0.0293122428271004\t0.9706877571729\t100653\t1\tHS-grad\t3\tTechSup\t5\t1\n0.0293122427794191\t0.970687757220581\t101637\t0\tAssoc-V\t3\tTechSup\t3\t1\n0.0293122427511973\t0.970687757248803\t102560\t0\tHS-grad\t3\tProf.\t5\t1\n0.0293122427451409\t0.970687757254859\t100077\t0\t< Bach.\t4-5\tCleric.\t4\t1\n0.0293122427131627\t0.970687757286837\t104392\t0\tHS-grad\t3\tSales\t8\t1\n0.029312242641408\t0.970687757358592\t101224\t1\tBach.\t3\tProtec.\t4\t1\n0.0293122425436324\t0.970687757456368\t103720\t0\tHS-grad\t3\tSales\t8\t1\n0.0293122422162923\t0.970687757783708\t101537\t0\t< Bach.\t3\tExec.\t3\t1\n0.0293122420442459\t0.970687757955754\t103317\t1\tHS-grad\t3\tExec.\t4\t1\n0.0293122420342435\t0.970687757965756\t101219\t1\t< Bach.\t4-5\tExec.\t1\t1\n0.0293122420296138\t0.970687757970386\t103259\t1\tHS-grad\t3\tExec.\t4\t1\n0.0293122420125482\t0.970687757987452\t104485\t0\tHS-grad\t4-5\tSales\t7\t1\n0.02931224174156\t0.97068775825844\t103902\t0\tBach.\t3\tSales\t3\t1\n0.0293122416783799\t0.97068775832162\t101630\t0\t< Bach.\t3\tSales\t5\t1\n0.0293122416548612\t0.970687758345139\t101798\t1\tHS-grad\t3\tExec.\t5\t1\n0.0293122415781627\t0.970687758421837\t101741\t1\t< Bach.\t3\tProf.\t4\t1\n0.029312241496132\t0.970687758503868\t101577\t1\t< Bach.\t4-5\tExec.\t3\t1\n0.0293122414893251\t0.970687758510675\t102411\t0\tHS-grad\t4-5\tSales\t7\t1\n0.0293122413391306\t0.970687758660869\t100522\t1\tHS-grad\t3\tExec.\t4\t1\n0.0293122413347249\t0.970687758665275\t101620\t1\tHS-grad\t3\tCleric.\t7\t1\n0.0293122412478177\t0.970687758752182\t102918\t0\tHS-grad\t3\tProf.\t6\t1\n0.0293122412127396\t0.97068775878726\t100021\t0\tHS-grad\t3\tExec.\t4\t1\n0.0293122410692408\t0.970687758930759\t101237\t0\tBach.\t3\tSales\t3\t1\n0.0293122407767742\t0.970687759223226\t104036\t1\tBach.\t3\tCleric.\t4\t1\n0.0293122407144897\t0.97068775928551\t104102\t1\t< Bach.\t3\tSales\t5\t1\n0.0293122407120421\t0.970687759287958\t104378\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122406362838\t0.970687759363716\t103792\t0\t< Bach.\t3\tSales\t5\t1\n0.0293122406172995\t0.9706877593827\t101516\t0\t< Bach.\t3\tExec.\t4\t1\n0.0293122405039318\t0.970687759496068\t100106\t0\tHS-grad\t4-5\tExec.\t4\t1\n0.0293122404772101\t0.97068775952279\t100827\t1\t< Bach.\t3\tCleric.\t6\t1\n0.0293122404521963\t0.970687759547804\t103348\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122404164172\t0.970687759583583\t104221\t0\tAssoc-V\t3\tCleric.\t5\t1\n0.0293122403451077\t0.970687759654892\t100704\t1\t< Bach.\t3\tProf.\t4\t1\n0.0293122403338602\t0.97068775966614\t100368\t1\t< Bach.\t3\tExec.\t3\t1\n0.0293122402380127\t0.970687759761987\t102499\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122401756065\t0.970687759824393\t104117\t1\t< Bach.\t3\tTechSup\t4\t1\n0.0293122401528731\t0.970687759847127\t102436\t1\t< Bach.\t4-5\tCleric.\t6\t1\n0.0293122401151596\t0.97068775988484\t104257\t0\tAssoc-A\t4-5\tCleric.\t4\t1\n0.0293122400514768\t0.970687759948523\t101161\t1\tBach.\t3\tCleric.\t4\t1\n0.0293122400500663\t0.970687759949934\t101754\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122400491775\t0.970687759950822\t101726\t0\tHS-grad\t3\tExec.\t5\t1\n0.0293122400472912\t0.970687759952709\t101743\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122399980121\t0.970687760001988\t103308\t1\tBach.\t3\tSales\t4\t1\n0.0293122399741307\t0.970687760025869\t101453\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122399638766\t0.970687760036123\t101422\t1\tAssoc-A\t3\tTechSup\t3\t1\n0.029312239962057\t0.970687760037943\t103141\t0\tBach.\t3\tSales\t3\t1\n0.0293122398959603\t0.97068776010404\t102879\t0\tBach.\t3\tSales\t3\t1\n0.0293122398797039\t0.970687760120296\t100793\t1\t< Bach.\t3\tSales\t5\t1\n0.0293122398631855\t0.970687760136814\t100752\t1\t< Bach.\t3\tSales\t6\t1\n0.0293122398209235\t0.970687760179077\t100560\t0\t< Bach.\t3\tSales\t5\t1\n0.0293122398185287\t0.970687760181471\t104440\t0\tBach.\t3\tProf.\t0\t1\n0.0293122398173358\t0.970687760182664\t103049\t1\tAssoc-A\t3\tProf.\t3\t1\n0.0293122397756241\t0.970687760224376\t102402\t1\tBach.\t3\tSales\t3\t1\n0.0293122397232731\t0.970687760276727\t102324\t1\t< Bach.\t3\tTechSup\t4\t1\n0.0293122396293118\t0.970687760370688\t101101\t0\tAssoc-V\t3\tCleric.\t5\t1\n0.0293122396247266\t0.970687760375273\t100068\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122395231292\t0.970687760476871\t103763\t1\t< Bach.\t3\tProf.\t5\t1\n0.0293122392928971\t0.970687760707103\t100513\t1\tBach.\t3\tSales\t4\t1\n0.0293122390579811\t0.970687760942019\t100039\t1\tAssoc-A\t3\tProf.\t3\t1\n0.0293122390534993\t0.970687760946501\t103923\t1\tBach.\t3\tProf.\t3\t1\n0.0293122390223508\t0.970687760977649\t101054\t0\tAssoc-V\t3\tSales\t5\t1\n0.0293122388772904\t0.97068776112271\t103398\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122387713339\t0.970687761228666\t102978\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122386677047\t0.970687761332295\t102306\t1\t< Bach.\t3\tSales\t6\t1\n0.029312238606896\t0.970687761393104\t104111\t0\tBach.\t3\tSales\t5\t1\n0.0293122386017838\t0.970687761398216\t104112\t1\tAssoc-A\t3\tProtec.\t7\t1\n0.0293122385919647\t0.970687761408035\t102267\t1\tHS-grad\t3\tExec.\t6\t1\n0.0293122385654632\t0.970687761434537\t100045\t0\tAssoc-A\t3\tSales\t5\t1\n0.0293122385497496\t0.97068776145025\t103860\t1\tBach.\t3\tSales\t4\t1\n0.0293122385373523\t0.970687761462648\t102075\t1\tHS-grad\t3\tExec.\t7\t1\n0.0293122385039843\t0.970687761496016\t103652\t1\tAssoc-A\t3\tSales\t5\t1\n0.029312238496913\t0.970687761503087\t101629\t1\t< Bach.\t3\tSales\t6\t1\n0.0293122384779921\t0.970687761522008\t101554\t0\t< Bach.\t3\tSales\t6\t1\n0.0293122383791942\t0.970687761620806\t100243\t1\tAssoc-A\t4-5\tProf.\t3\t1\n0.0293122382418037\t0.970687761758196\t100879\t0\tHS-grad\t3\tExec.\t6\t1\n0.029312238234714\t0.970687761765286\t104103\t1\tBach.\t3\tCleric.\t4\t1\n0.0293122381811989\t0.970687761818801\t102573\t1\tMasters\t3\tProtec.\t5\t1\n0.0293122381584311\t0.970687761841569\t104455\t1\tAssoc-V\t3\tProf.\t5\t1\n0.0293122381359849\t0.970687761864015\t102729\t1\tAssoc-A\t4-5\tCleric.\t5\t1\n0.0293122380498207\t0.970687761950179\t100118\t1\tHS-grad\t3\tExec.\t6\t1\n0.029312237874673\t0.970687762125327\t103052\t1\tBach.\t3\tProf.\t1\t1\n0.0293122378401168\t0.970687762159883\t100651\t0\t< Bach.\t3\tExec.\t4\t1\n0.029312237823575\t0.970687762176425\t101006\t0\tBach.\t3\tSales\t5\t1\n0.0293122378184627\t0.970687762181537\t101007\t1\tAssoc-A\t3\tProtec.\t7\t1\n0.0293122377876198\t0.97068776221238\t100839\t1\tBach.\t3\tSales\t4\t1\n0.0293122377749679\t0.970687762225032\t103813\t1\t< Bach.\t4-5\tTechSup\t5\t1\n0.0293122376581466\t0.970687762341853\t104152\t1\tBach.\t3\tSales\t3\t1\n0.029312237624227\t0.970687762375773\t104487\t0\t< Bach.\t3\tSales\t7\t1\n0.0293122376157431\t0.970687762384257\t101292\t1\tHS-grad\t4-5\tExec.\t6\t1\n0.0293122374513927\t0.970687762548607\t100998\t1\tBach.\t3\tCleric.\t4\t1\n0.0293122373093155\t0.970687762690684\t103302\t0\tBach.\t3\tProf.\t3\t1\n0.0293122372948276\t0.970687762705172\t103467\t1\tHS-grad\t3\tExec.\t8\t1\n0.0293122372649839\t0.970687762735016\t103063\t1\t< Bach.\t3\tSales\t7\t1\n0.0293122372604188\t0.970687762739581\t100241\t1\tBach.\t3\tCleric.\t4\t1\n0.0293122371919573\t0.970687762808043\t104399\t0\t< Bach.\t3\tExec.\t5\t1\n0.0293122371525356\t0.970687762847464\t102708\t1\tBach.\t4-5\tCleric.\t4\t1\n0.0293122371353609\t0.970687762864639\t100378\t0\tAssoc-A\t3\tTechSup\t4\t1\n0.0293122371153183\t0.970687762884682\t100042\t1\tBach.\t3\tProf.\t1\t1\n0.0293122369619802\t0.97068776303802\t104013\t1\t< Bach.\t3\tTechSup\t6\t1\n0.0293122368531489\t0.970687763146851\t103056\t1\t< Bach.\t3\tExec.\t5\t1\n0.0293122367753078\t0.970687763224692\t100677\t1\tBach.\t3\tSales\t4\t1\n0.0293122367662259\t0.970687763233774\t100641\t1\tBach.\t3\tSales\t4\t1\n0.0293122367570805\t0.97068776324292\t101113\t1\tBach.\t3\tProf.\t3\t1\n0.0293122367532472\t0.970687763246753\t102660\t1\t< Bach.\t3\tExec.\t5\t1\n0.0293122367012548\t0.970687763298745\t102850\t1\tBach.\t3\tSales\t5\t1\n0.029312236651867\t0.970687763348133\t104146\t0\tBach.\t3\tCleric.\t5\t1\n0.0293122365311113\t0.970687763468889\t101755\t1\t< Bach.\t3\tExec.\t4\t1\n0.0293122365260896\t0.97068776347391\t102741\t1\tMasters\t3\tProf.\t2\t1\n0.029312236426674\t0.970687763573326\t101735\t1\tAssoc-A\t3\tSales\t6\t1\n0.0293122363865679\t0.970687763613432\t103940\t0\t< Bach.\t3\tProf.\t6\t1\n0.0293122362084367\t0.970687763791563\t100921\t0\tBach.\t3\tSales\t6\t1\n0.0293122360937942\t0.970687763906206\t100046\t1\t< Bach.\t3\tExec.\t5\t1\n0.0293122359389681\t0.970687764061032\t100232\t1\tBach.\t4-5\tSales\t3\t1\n0.0293122359047603\t0.97068776409524\t103519\t1\tBach.\t3\tSales\t4\t1\n0.0293122357883877\t0.970687764211612\t103179\t1\tBach.\t3\tProtec.\t8\t1\n0.0293122357639896\t0.97068776423601\t102961\t1\tBach.\t3\tSales\t4\t1\n0.0293122356766329\t0.970687764323367\t102553\t1\tAssoc-V\t3\tTechSup\t5\t1\n0.0293122356339462\t0.970687764366054\t102470\t1\tBach.\t3\tSales\t5\t1\n0.0293122355889901\t0.97068776441101\t102998\t1\tHS-grad\t3\tExec.\t8\t1\n0.0293122355400992\t0.970687764459901\t102098\t1\tBach.\t3\tSales\t5\t1\n0.0293122354886345\t0.970687764511366\t101894\t0\tBach.\t3\tSales\t5\t1\n0.0293122354496015\t0.970687764550399\t103069\t0\t< Bach.\t3\tTechSup\t5\t1\n0.0293122353999914\t0.970687764600009\t100166\t1\t< Bach.\t4-5\tExec.\t4\t1\n0.02931223538975\t0.97068776461025\t103548\t1\t< Bach.\t3\tExec.\t5\t1\n0.0293122353853349\t0.970687764614665\t103900\t0\tAssoc-A\t3\tSales\t6\t1\n0.0293122352894732\t0.970687764710527\t101574\t0\t< Bach.\t3\tSales\t9\t1\n0.029312235246277\t0.970687764753723\t101664\t1\tHS-grad\t3\tExec.\t9\t1\n0.0293122351133647\t0.970687764886635\t104474\t1\tBach.\t3\tExec.\t3\t1\n0.0293122350655466\t0.970687764934453\t102368\t1\tBach.\t3\tTechSup\t4\t1\n0.0293122350125928\t0.970687764987407\t102699\t1\tBach.\t3\tCleric.\t4\t1\n0.0293122349733507\t0.970687765026649\t103919\t1\tBach.\t3\tExec.\t3\t1\n0.0293122349705301\t0.97068776502947\t100376\t1\tBach.\t4-5\tCleric.\t5\t1\n0.0293122348386027\t0.970687765161397\t102588\t1\t< Bach.\t3\tExec.\t5\t1\n0.0293122347972764\t0.970687765202724\t101569\t0\tAssoc-A\t3\tSales\t6\t1\n0.029312234797162\t0.970687765202838\t103957\t1\t< Bach.\t3\tProf.\t7\t1\n0.0293122347757985\t0.970687765224202\t104009\t1\t< Bach.\t4-5\tExec.\t5\t1\n0.0293122347534968\t0.970687765246503\t103072\t1\tBach.\t3\tExec.\t4\t1\n0.0293122346836312\t0.970687765316369\t103062\t1\tBach.\t3\tProf.\t4\t1\n0.0293122343515435\t0.970687765648456\t101345\t1\tBach.\t3\tCleric.\t6\t1\n0.0293122342902106\t0.970687765709789\t102849\t0\tAssoc-V\t3\tExec.\t5\t1\n0.0293122341318607\t0.970687765868139\t103745\t1\tBach.\t4-5\tProf.\t3\t1\n0.0293122341031373\t0.970687765896863\t103252\t0\tBach.\t3\tProf.\t6\t1\n0.0293122340496429\t0.970687765950357\t100282\t1\tBach.\t3\tExec.\t4\t1\n0.0293122340107357\t0.970687765989264\t102468\t1\t< Bach.\t4-5\tProf.\t5\t1\n0.0293122339943567\t0.970687766005643\t101530\t1\tBach.\t3\tProf.\t3\t1\n0.0293122339868414\t0.970687766013159\t100300\t1\tBach.\t3\tProf.\t4\t1\n0.0293122339849092\t0.970687766015091\t100874\t1\t< Bach.\t4-5\tExec.\t5\t1\n0.0293122339675487\t0.970687766032451\t102742\t0\tBach.\t4-5\tCleric.\t7\t1\n0.0293122338432231\t0.970687766156777\t101689\t1\tBach.\t3\tSales\t6\t1\n0.029312233764008\t0.970687766235992\t101375\t0\tBach.\t3\tSales\t6\t1\n0.0293122337278845\t0.970687766272116\t100620\t0\tAssoc-V\t3\tExec.\t5\t1\n0.0293122336014291\t0.970687766398571\t102801\t0\t< Bach.\t3\tExec.\t7\t1\n0.0293122335478144\t0.970687766452186\t102564\t1\t< Bach.\t3\tExec.\t6\t1\n0.0293122334976113\t0.970687766502389\t102365\t0\t< Bach.\t3\tExec.\t6\t1\n0.0293122333908711\t0.970687766609129\t102047\t1\tBach.\t3\tTechSup\t5\t1\n0.0293122333234156\t0.970687766676584\t103645\t1\tAssoc-A\t3\tExec.\t4\t1\n0.0293122332773973\t0.970687766722603\t102498\t0\tMasters\t3\tProf.\t4\t1\n0.0293122331978141\t0.970687766802186\t102210\t1\tMasters\t4-5\tCleric.\t5\t1\n0.0293122331969081\t0.970687766803092\t103931\t1\t< Bach.\t3\tProf.\t8\t1\n0.029312233186942\t0.970687766813058\t104114\t1\tBach.\t3\tSales\t4\t1\n0.0293122331427428\t0.970687766857257\t103408\t1\tBach.\t4-5\tExec.\t3\t1\n0.0293122331323193\t0.970687766867681\t103230\t0\tBach.\t3\tProf.\t5\t1\n0.029312233052957\t0.970687766947043\t102624\t1\tBach.\t3\tExec.\t4\t1\n0.0293122330317831\t0.970687766968217\t102489\t1\tAssoc-A\t3\tExec.\t4\t1\n0.0293122329386909\t0.970687767061309\t102438\t1\tBach.\t3\tProf.\t4\t1\n0.0293122329253201\t0.97068776707468\t102385\t1\tBach.\t3\tProf.\t4\t1\n0.0293122328877155\t0.970687767112285\t101969\t1\tBach.\t3\tExec.\t4\t1\n0.0293122325771888\t0.970687767422811\t102376\t1\tAssoc-V\t3\tExec.\t6\t1\n0.029312232490396\t0.970687767509604\t100343\t1\tAssoc-A\t3\tExec.\t4\t1\n0.0293122324301612\t0.970687767569839\t104006\t1\tBach.\t3\tExec.\t4\t1\n0.0293122324036209\t0.970687767596379\t101009\t1\tBach.\t3\tSales\t4\t1\n0.0293122323152734\t0.970687767684727\t100128\t1\tBach.\t4-5\tExec.\t3\t1\n0.0293122322699653\t0.970687767730035\t103371\t0\tBach.\t3\tExec.\t4\t1\n0.0293122322474257\t0.970687767752574\t102266\t1\tMasters\t3\tProf.\t4\t1\n0.029312232212476\t0.970687767787524\t102454\t0\tBach.\t4-5\tProf.\t4\t1\n0.0293122322058001\t0.9706877677942\t102101\t1\tMasters\t3\tProf.\t4\t1\n0.0293122320712055\t0.970687767928795\t100173\t1\tAssoc-A\t3\tProf.\t4\t1\n0.0293122320575477\t0.970687767942452\t102529\t0\tBach.\t3\tExec.\t4\t1\n0.0293122320242472\t0.970687767975753\t102397\t1\tBach.\t3\tExec.\t4\t1\n0.029312231877674\t0.970687768122326\t101816\t1\tBach.\t3\tExec.\t4\t1\n0.0293122318658304\t0.97068776813417\t104209\t1\tAssoc-A\t3\tExec.\t6\t1\n0.0293122317704176\t0.970687768229582\t102309\t1\tMasters\t3\tSales\t5\t1\n0.0293122317694519\t0.970687768230548\t103266\t1\tMasters\t4-5\tProf.\t4\t1\n0.029312231702605\t0.970687768297395\t103880\t1\tBach.\t3\tProf.\t6\t1\n0.0293122316869825\t0.970687768313018\t100371\t1\tBach.\t4-5\tProf.\t4\t1\n0.0293122315335183\t0.970687768466482\t102821\t1\tPhD\t3\tProf.\t4\t1\n0.0293122314424957\t0.970687768557504\t100091\t0\tBach.\t3\tExec.\t4\t1\n0.029312231415097\t0.970687768584903\t100508\t0\tBach.\t3\tTechSup\t5\t1\n0.0293122312932566\t0.970687768706743\t100035\t1\tBach.\t4-5\tProf.\t4\t1\n0.0293122312556902\t0.97068776874431\t102084\t1\tBach.\t3\tProf.\t5\t1\n0.0293122312380945\t0.970687768761906\t100980\t1\tAssoc-A\t3\tTechSup\t5\t1\n0.0293122311208641\t0.970687768879136\t102881\t1\tProfsc\t3\tProf.\t4\t1\n0.0293122310787253\t0.970687768921275\t101089\t1\tAssoc-A\t3\tExec.\t6\t1\n0.0293122310681211\t0.970687768931879\t100486\t1\tMasters\t4-5\tProf.\t4\t1\n0.0293122310479639\t0.970687768952036\t104023\t0\t< Bach.\t3\tExec.\t6\t1\n0.0293122310317614\t0.970687768968239\t103773\t1\tAssoc-A\t4-5\tExec.\t5\t1\n0.029312231030286\t0.970687768969714\t101215\t1\tBach.\t3\tProf.\t6\t1\n0.0293122310134787\t0.970687768986521\t103692\t1\tMasters\t3\tProf.\t5\t1\n0.0293122308503418\t0.970687769149658\t104061\t1\tBach.\t3\tExec.\t5\t1\n0.0293122308160324\t0.970687769183968\t103925\t1\tBach.\t3\tExec.\t5\t1\n0.0293122307607836\t0.970687769239216\t103706\t1\tBach.\t3\tExec.\t5\t1\n0.0293122307508581\t0.970687769249142\t102651\t1\tMasters\t3\tProf.\t5\t1\n0.0293122306886663\t0.970687769311334\t102380\t1\tMasters\t3\tProf.\t4\t1\n0.0293122305988215\t0.970687769401179\t103064\t0\tBach.\t3\tExec.\t5\t1\n0.0293122305555504\t0.97068776944445\t102868\t1\tBach.\t3\tExec.\t4\t1\n0.0293122305444503\t0.97068776945555\t102824\t1\tBach.\t3\tExec.\t4\t1\n0.0293122305192203\t0.97068776948078\t101123\t0\tBach.\t3\tSales\t7\t1\n0.0293122303241777\t0.970687769675822\t101878\t1\tPhD\t3\tProf.\t4\t1\n0.0293122303063457\t0.970687769693654\t100889\t1\tMasters\t3\tProf.\t5\t1\n0.0293122302702248\t0.970687769729775\t101737\t1\tBach.\t3\tExec.\t4\t1\n0.0293122302106924\t0.970687769789308\t103380\t1\tMasters\t4-5\tProf.\t4\t1\n0.0293122301837706\t0.970687769816229\t101633\t1\tProfsc\t3\tProf.\t5\t1\n0.0293122301804593\t0.970687769819541\t100390\t1\tMasters\t3\tProf.\t5\t1\n0.029312230172089\t0.970687769827911\t101348\t0\tBach.\t3\tExec.\t4\t1\n0.0293122301437133\t0.970687769856287\t101260\t1\tBach.\t3\tExec.\t5\t1\n0.0293122300165716\t0.970687769983428\t101201\t0\t< Bach.\t3\tExec.\t8\t1\n0.0293122299803698\t0.97068777001963\t103346\t1\tBach.\t3\tProf.\t6\t1\n0.0293122299277639\t0.970687770072236\t100404\t1\tBach.\t3\tExec.\t5\t1\n0.0293122298923134\t0.970687770107687\t100239\t0\tBach.\t3\tExec.\t4\t1\n0.029312229846915\t0.970687770153085\t102817\t1\tBach.\t3\tProf.\t6\t1\n0.0293122298283772\t0.970687770171623\t101317\t0\tProfsc\t3\tExec.\t3\t1\n0.0293122296401794\t0.970687770359821\t102022\t1\tBach.\t3\tProf.\t7\t1\n0.0293122296084406\t0.970687770391559\t103830\t1\tBach.\t3\tSales\t8\t1\n0.0293122295412501\t0.97068777045875\t104149\t1\tMasters\t3\tProf.\t5\t1\n0.0293122294558128\t0.970687770544187\t103225\t1\tBach.\t3\tSales\t8\t1\n0.029312229421751\t0.970687770578249\t103812\t1\tMasters\t4-5\tExec.\t3\t1\n0.0293122293832229\t0.970687770616777\t100100\t1\tMasters\t4-5\tProf.\t4\t1\n0.0293122293793248\t0.970687770620675\t100988\t1\tBach.\t3\tProf.\t7\t1\n0.0293122293754248\t0.970687770624575\t104410\t0\tPhD\t3\tProf.\t4\t1\n0.0293122293023906\t0.970687770697609\t101990\t0\tProfsc\t3\tProf.\t5\t1\n0.0293122292244852\t0.970687770775515\t103615\t1\tProfsc\t3\tSales\t6\t1\n0.0293122292053846\t0.970687770794615\t101581\t1\tProfsc\t3\tProf.\t4\t1\n0.0293122291942738\t0.970687770805726\t100230\t0\tBach.\t3\tProf.\t6\t1\n0.0293122291087676\t0.970687770891232\t103353\t1\tPhD\t3\tProf.\t4\t1\n0.029312229082358\t0.970687770917642\t102330\t0\tMasters\t3\tProf.\t5\t1\n0.0293122290573031\t0.970687770942697\t103149\t1\tPhD\t3\tProf.\t4\t1\n0.0293122289868294\t0.970687771013171\t101366\t1\tBach.\t3\tSales\t8\t1\n0.0293122289198914\t0.970687771080109\t101686\t1\tMasters\t3\tProf.\t5\t1\n0.0293122288676421\t0.970687771132358\t102964\t0\t< Bach.\t3\tExec.\t9\t1\n0.0293122288494723\t0.970687771150528\t102447\t0\tBach.\t3\tExec.\t6\t1\n0.029312228846311\t0.970687771153689\t100809\t1\tBach.\t3\tSales\t8\t1\n0.0293122287579293\t0.970687771242071\t101044\t1\tMasters\t3\tProf.\t5\t1\n0.02931222868889\t0.97068777131111\t100185\t1\tBach.\t3\tSales\t8\t1\n0.0293122286596215\t0.970687771340379\t100791\t1\tMasters\t4-5\tExec.\t3\t1\n0.029312228644623\t0.970687771355377\t101635\t0\tBach.\t3\tExec.\t6\t1\n0.0293122286402199\t0.97068777135978\t102087\t1\t< Bach.\t3\tExec.\t10\t1\n0.0293122285326121\t0.970687771467388\t101191\t0\tBach.\t3\tExec.\t6\t1\n0.0293122285256687\t0.970687771474331\t101139\t1\tBach.\t3\tExec.\t5\t1\n0.0293122284661397\t0.97068777153386\t100609\t1\tProfsc\t3\tSales\t6\t1\n0.029312228421453\t0.970687771578547\t103294\t1\tMasters\t3\tExec.\t5\t1\n0.0293122283949889\t0.970687771605011\t100621\t0\tBach.\t3\tExec.\t5\t1\n0.0293122283407493\t0.970687771659251\t100406\t1\tBach.\t3\tExec.\t5\t1\n0.0293122283122421\t0.970687771687758\t100293\t1\tBach.\t3\tExec.\t5\t1\n0.0293122282861006\t0.970687771713899\t102733\t1\tMasters\t3\tExec.\t4\t1\n0.0293122282812981\t0.970687771718702\t100073\t1\tPhD\t3\tProf.\t4\t1\n0.0293122281968445\t0.970687771803155\t101721\t1\tPhD\t3\tSales\t7\t1\n0.0293122280397575\t0.970687771960242\t101781\t1\tMasters\t3\tExec.\t5\t1\n0.0293122278568206\t0.970687772143179\t103204\t1\tBach.\t3\tSales\t9\t1\n0.0293122278343636\t0.970687772165636\t103837\t1\tMasters\t4-5\tExec.\t4\t1\n0.0293122277883576\t0.970687772211642\t100760\t1\tMasters\t3\tExec.\t4\t1\n0.0293122277668406\t0.970687772233159\t102196\t1\tProfsc\t3\tProf.\t5\t1\n0.0293122277348523\t0.970687772265148\t104346\t1\tBach.\t3\tExec.\t7\t1\n0.0293122277267286\t0.970687772273271\t102037\t1\tProfsc\t3\tProf.\t5\t1\n0.0293122276339952\t0.970687772366005\t101641\t1\tPhD\t3\tTechSup\t6\t1\n0.0293122275997523\t0.970687772400248\t103786\t0\tBach.\t3\tExec.\t6\t1\n0.0293122275956949\t0.970687772404305\t104320\t1\tBach.\t3\tTechSup\t8\t1\n0.0293122275725871\t0.970687772427413\t101426\t1\tProfsc\t3\tProf.\t5\t1\n0.0293122275151528\t0.970687772484847\t102435\t1\tMasters\t3\tProf.\t6\t1\n0.0293122274863594\t0.970687772513641\t103361\t1\tBach.\t3\tExec.\t7\t1\n0.0293122273257792\t0.970687772674221\t102700\t0\tBach.\t3\tExec.\t6\t1\n0.0293122272470686\t0.970687772752931\t102388\t1\tBach.\t3\tExec.\t6\t1\n0.0293122272033903\t0.97068777279661\t102142\t1\tPhD\t3\tProf.\t6\t1\n0.0293122271670969\t0.970687772832903\t102071\t0\tBach.\t3\tExec.\t6\t1\n0.0293122271460711\t0.970687772853929\t100972\t1\tMasters\t3\tProf.\t6\t1\n0.0293122270495355\t0.970687772950464\t101605\t1\tBach.\t3\tExec.\t6\t1\n0.0293122269165855\t0.970687773083414\t101078\t1\tBach.\t3\tExec.\t6\t1\n0.0293122268765689\t0.970687773123431\t103463\t1\tMasters\t3\tExec.\t5\t1\n0.0293122267518275\t0.970687773248172\t100975\t1\tBach.\t3\tTechSup\t8\t1\n0.0293122266740485\t0.970687773325951\t104206\t1\tProfsc\t3\tProf.\t7\t1\n0.0293122266200452\t0.970687773379955\t100372\t1\t< Bach.\t3\tExec.\t10\t1\n0.029312226522251\t0.970687773477749\t102083\t1\tMasters\t3\tExec.\t6\t1\n0.0293122264678062\t0.970687773532194\t102749\t0\tBach.\t3\tSales\t8\t1\n0.0293122264401291\t0.970687773559871\t101733\t0\tMasters\t3\tExec.\t5\t1\n0.0293122261838302\t0.97068777381617\t103127\t1\tPhD\t3\tProf.\t4\t1\n0.0293122261526312\t0.970687773847369\t104367\t1\tBach.\t3\tExec.\t7\t1\n0.0293122260647407\t0.970687773935259\t100245\t1\tMasters\t3\tExec.\t5\t1\n0.0293122260072693\t0.970687773992731\t100256\t1\tBach.\t3\tProf.\t9\t1\n0.0293122260065231\t0.970687773993477\t101560\t1\tProfsc\t3\tProf.\t7\t1\n0.0293122257457079\t0.970687774254292\t102754\t1\tBach.\t3\tExec.\t7\t1\n0.0293122257428126\t0.970687774257187\t102767\t1\tBach.\t3\tExec.\t8\t1\n0.0293122256944958\t0.970687774305504\t102551\t1\tBach.\t3\tExec.\t7\t1\n0.0293122255940551\t0.970687774405945\t102080\t0\tPhD\t3\tProf.\t7\t1\n0.0293122254920828\t0.970687774507917\t100733\t1\tMasters\t3\tProf.\t7\t1\n0.0293122254702212\t0.970687774529779\t101662\t1\tBach.\t3\tExec.\t7\t1\n0.0293122254147202\t0.97068777458528\t101442\t1\tBach.\t3\tExec.\t7\t1\n0.0293122253979865\t0.970687774602013\t100012\t1\tPhD\t3\tProf.\t4\t1\n0.0293122253291983\t0.970687774670802\t101103\t0\tBach.\t3\tExec.\t7\t1\n0.0293122250982077\t0.970687774901792\t102731\t1\tMasters\t3\tExec.\t6\t1\n0.0293122250100049\t0.970687774989995\t103873\t1\tMasters\t3\tProf.\t6\t1\n0.0293122250010809\t0.970687774998919\t102346\t1\tMasters\t3\tExec.\t6\t1\n0.0293122248775121\t0.970687775122488\t100644\t1\tProfsc\t3\tExec.\t6\t1\n0.029312224694743\t0.970687775305257\t102653\t1\tProfsc\t3\tProf.\t7\t1\n0.029312224294803\t0.970687775705197\t103320\t0\tBach.\t3\tExec.\t8\t1\n0.029312223829443\t0.970687776170557\t104370\t0\tBach.\t4-5\tExec.\t8\t1\n0.0293122237045602\t0.97068777629544\t100883\t1\tPhD\t3\tProf.\t7\t1\n0.029312223589688\t0.970687776410312\t100525\t0\tBach.\t3\tExec.\t8\t1\n0.0293122232674253\t0.970687776732575\t102734\t1\tPhD\t3\tExec.\t7\t1\n0.0293122231396369\t0.970687776860363\t101499\t1\tBach.\t3\tProf.\t10\t1\n0.0293122228955748\t0.970687777104425\t101863\t1\tProfsc\t3\tProf.\t9\t1\n0.0293122225840178\t0.970687777415982\t102783\t1\tPhD\t3\tProf.\t9\t1\n0.0293122224927385\t0.970687777507262\t103801\t1\tProfsc\t3\tExec.\t7\t1\n0.0293122223819038\t0.970687777618096\t103332\t1\tMasters\t3\tExec.\t6\t1\n0.0293122220081034\t0.970687777991897\t100573\t1\tBach.\t3\tExec.\t9\t1\n0.029312221730609\t0.970687778269391\t100780\t1\tProfsc\t3\tExec.\t7\t1\n0.0293122191834903\t0.97068778081651\t102011\t0\tBach.\t3\tExec.\t11\t1\n0.029312215869312\t0.970687784130688\t104307\t1\tProfsc\t3\tProf.\t11\t1\n0.0293122146935372\t0.970687785306463\t103165\t0\tBach.\t3\tExec.\t14\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_374971522",
+      "id": "20221005-171849_1022156415",
+      "dateCreated": "2022-06-27T20:27:13+0000",
+      "dateStarted": "2023-03-09T07:19:42+0000",
+      "dateFinished": "2023-03-09T07:19:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%md\n## Display ROC Curve, Lift Chart, and Distribution Chart",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>Display ROC Curve, Lift Chart, and Distribution Chart</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_631202449",
+      "id": "20221005-171849_602116554",
+      "dateCreated": "2022-06-02T22:49:25+0000",
+      "dateStarted": "2023-03-09T07:19:43+0000",
+      "dateFinished": "2023-03-09T07:19:43+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%r\n\n# BAR PLOT\nres <- ore.pull(RES)\nsensitivity <- res[order(res$\"'1'\",decreasing = TRUE), ]\nsens <- sum(sensitivity$\"'0'\")/sum(sensitivity$\"'0'\") - cumsum(sensitivity$\"'0'\")/sum(sensitivity$\"'0'\")\nspec <- cumsum(sensitivity$\"'1'\")/sum(sensitivity$\"'1'\")\n\n# LIFT CHART\ndecile2 <- quantile(sensitivity$\"'1'\", probs = seq(.1, .9, by = .1))\ndf_sens <- as.data.frame(sensitivity$\"'1'\", col.names = c(\"sens\"))\ndf_sens$decile = as.numeric(cut(1-cumsum(df_sens$sens), breaks=10))\n\n# DISTRIBUTION CHART\ndx <- density(res$\"'0'\")\ndx2 <- density(res$\"'1'\")\n\n# PLOTS 3 in 1 , with specific width and height \npar(mfrow=c(1,3))\noptions(repr.plot.width=8, repr.plot.height=3)\n\nplot(1 - spec, sens, type = \"l\", col = \"darkred\", ylab = \"Sensitivity\", xlab = \"1 - Specificity\", main = 'ROC Curve')\nabline(c(0,0),c(1,1))\ntext(0.6, 0.2, paste(\" AUC = \", round(sum(spec*diff(c(0, 1 - sens))),3)))\n\nbarplot(table(df_sens$decile), xlab = 'Decile', ylab = 'Actual Targets', main = 'Lift Chart', col = \"darkred\")\n\npar(mar = c(6, 4, 4, 2))\nplot(dx, lwd = 2, col = \"darkgreen\",\n     main = \"Probability Densities\")\nlines(dx2, lwd = 2, col = \"darkred\")\nlegend(x = \"bottom\", legend = c(\"Negative\",\"Positive\"), \n       col = c(\"darkred\",\"darkgreen\"), \n       lwd = 1, bty = \"n\",\n       xpd = TRUE,inset = c(0, -0.36),\n       horiz = TRUE)  ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:43+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "IMG",
+            "data": "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\nUCicM2dOeHj4Z599lp6eXlte2AylpqbWVpKhpaW1du1aNccD0GyVl5e3atVK9KOZmVlZWRmH\n8QA0Uhwk0OvWrfPx8YmJiXFwcDA3NyeEFBYWnjt3TiAQhIeHqz8eAKWgKMrHx+fQoUOjR4/e\ns2dP165duY5Igzg4OMTGxkqMQKenpwcHB3fv3p2rqACaFVtbW0IITdOJiYmTJ09mGjMzM5l2\nAJAJBwn0zJkz27Ztu2PHjtWrVzNffI2MjGxtbQUCgbOzs/rjAVBcVVXV9OnTo6OjXV1dT5w4\n8fr1a64j0ix8Pl/q9Ibg4GAtLaxGD6BymzZtYg5cXV3fvHkjat+9e/e6detqe1Vt6+Fcv36d\nEFJdXc38eGHDhodxcX0XLOjt7a3kuAFYit8Wz/5p9os3L3ZN2dWvE2elktysA+3s7Ozs7EzT\ndElJCSHExMREdQv1AahaVVXVlClTTp06NWXKlJ9//llHR4friAAA3lFbodSJEyfqeFUdxVeE\nkEOHDn3yyScvb9y4EBBACEmaN6/H5Mk6RkaKRQpQj32/7ztx9QQh5P+i/y/5q2SuwuByIxUe\nj9eiRYsGPrm2SUhv3rzhZClrAEZ5efnEiRMTExM///zzQ4cOaWtjcyIAaCKkFl8RQkJCQtLS\n0jp16kQIKX36lGmkqqqq3rxBAg2qVlhayBw8L37OYRga9GFvampKCGEWqmSr43twfn6+CsNq\n8mi6Qtq/ubCmprqkhN1eU1FRI22lsOqyMqqqqoGd17x9S0nbI6OqtFT43z1BcZVFReyvSbRQ\nWPnfwkzvRF5VVS1tTkzN27c1rJPSNF0pLUKqsrK6vFxKJ+XlVGXl/wKm6R/Ly+9WVc2ZM2fv\n3r2oRgAAjZWQkHDp0iVXV1cbG5vY2NjQ0FAejzdr1ix3d/faXlJb8VVMTExaWhpz67iqtFTU\nTkn7Aw6gXNU1/77NSitL636mSmlQAu3n51fHo3VMQjIwMJD1XFVv3jy/epX+bxvSyuJimrUl\nKS0UVknLz6TmYYSQCmllrzRFVYpVm4nUluRVv5uf/S/gkhIhez3wWtLT6rIyITuXreXXbD50\nW7TQYu1Rx+PzdaXdBtE1NtYXm6guoteli6jcqKym5tu//rpXVTV75kzmo0jpMQMAKMVPP/3k\n7e1tYWGxffv2ffv2eXt7u7i4VFdXT548OS4ubvTo0XL3XC2WQEsdAQFQrhrhv+kQEuh/BQQE\n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\nkpS/v//Lly9TU1P79u378uXLY8eOHThwQB6jiIQvpjx9+rRHjx5k9izOdZb2fC0GgPaAuB4q\nEAjevn178eLFFStWHD16NDs7m8FgSHdA+NKBL3qVm5s2dqxcQ/jm5Ji6ukpai1w5PDU1lSys\nra2Njo4+deoUsVCfo6Pj/PnzExISJk+ezOPx4uPjk5OTiSX6oqOjU1JSmh+WWIWbxWI9ePCg\nf//+Ihqgra3t4eFx5MgRImlLS0tTU1MbM2aMiDZI+hrFl/s4d+wu+Z6mnMU5rn0kPk0IocbG\nxuvXrx86dGjq1Km1tbVxcXHx8fH29vYIocjIyNOnT+/YsWP79u1v376tqakZO3Ysk8k0MzPb\nsGGD+CHa1bkgQAKtfG28qFpXV5eVlZWQkEAs8t67d+81a9aQW11dXc3MzDgcTm5uLp/PDwoK\n2rhxI4VCQQjhOB4bG7t79+5//vnH3Nx88eLF5KUuHMe3b9++Z8+e169f9+vXLyYmxsHBAQnd\nD+vj43PixAmEEIZhFhYWT58+Fb5V9ovVics0CCFiJtGlS5cePHjwzZs35MJLkyZNamhoOHny\nZFveGQBUFIVCMTQ0nDZt2pAhQ/r27RsXF0cs/NaW72yTECIOBToaE2fncenpcu2BNnF2lq7u\n5s2bBw8eLLxy+MOHD7lcLpFFkROKEYvPvXjxor6+nvhTiBCiUqnCvZv/+9//VqxYkZ+f/+7d\nO2L+sVevXolOoBFCfn5+M2fO5PF4TCbzyJEjPj4+DAajqKiotTbIj7OVc/r8dLn2QDtbSXya\nrly5gmGYmppa9+7dZ82a9fPPPz9//ryurs7Ozo7cx97e/sGDBwihHj16eHh4DBkyZPLkyc7O\nzi4uLq0t3N2i9nMuCJBAqzwajcZisXJzc6dMmdLiyp8JCQmbN2/et2/f3bt3fXx8DAwMFi9e\njERe9fjpp5/27t27f/9+Z2fnx48fJyYmEn+MSampqZs2bUpNTb19+3bziF+s3uQyDZfL3bt3\nb0ZGBjFJ/ocPH06fPi3c5QBAx2Rubu7h4XHixAkigW7Ld7YJZV30BO0QRqVajBmj7Fa0jFw5\nfP369UQJsd7en3/+2bdv3yY7E2lxk8ULyQeenp6enp4FBQVGRkZUKpXBYAgPqG3N6NGjqVTq\n6dOnXVxcLly4kJ2dLboN8kOlUMf8v3Z3moiLZsIlzSdHxnGcOCnEGt15eXk5OTmrVq364Ycf\n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\nYII="
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_81945911",
+      "id": "20221005-171849_1595786120",
+      "dateCreated": "2022-06-02T22:49:57+0000",
+      "dateStarted": "2023-03-09T07:19:43+0000",
+      "dateFinished": "2023-03-09T07:19:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%md\n\n### Use SQL interface for prediction details",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>Use SQL interface for prediction details</h3>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1168037010",
+      "id": "20221005-171849_1505022169",
+      "dateCreated": "2022-07-29T16:54:55+0000",
+      "dateStarted": "2023-03-09T07:19:44+0000",
+      "dateFinished": "2023-03-09T07:19:44+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:64"
+    },
+    {
+      "title": "Create table for use in SQL query",
+      "text": "%r\n\nore.drop(table = \"SVM_TEST_TABLE\")\nore.create(DEMO_DF, table =\"SVM_TEST_TABLE\")\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:44+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_705572975",
+      "id": "20221005-171849_66187958",
+      "dateCreated": "2022-06-28T20:19:36+0000",
+      "dateStarted": "2023-03-09T07:19:44+0000",
+      "dateFinished": "2023-03-09T07:19:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:65"
+    },
+    {
+      "title": "Demonstrate using the SQL interface so score data and display prediction details",
+      "text": "%sql\n\nSELECT CUST_ID,\n    round(PREDICTION_YRS_RES,3) PRED_YRS_RES,\n    RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),'rank=\"1\"/>') FIRST_ATTRIBUTE,\n    RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),'rank=\"2\"/>') SECOND_ATTRIBUTE,\n    RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),'rank=\"3\"/>') THIRD_ATTRIBUTE\nFROM (SELECT CUST_ID,\n             PREDICTION(SVM_CLASSIFICATION_MODEL USING *) PREDICTION_YRS_RES,\n             PREDICTION_DETAILS(SVM_CLASSIFICATION_MODEL USING *) PD\n      FROM SVM_TEST_TABLE\n      WHERE rownum < 20\n      ORDER BY CUST_ID) OUT,\n               XMLTABLE('/Details'\n                        PASSING OUT.PD\n                        COLUMNS \n                        \"Attribute1\" XMLType PATH 'Attribute[1]',\n                        \"Attribute2\" XMLType PATH 'Attribute[2]',\n                        \"Attribute3\" XMLType PATH 'Attribute[3]')  OUTPRED\n                        ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:45+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/osql",
+        "fontSize": 9,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "number",
+                      "PRED_YRS_RES": "number",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPRED_YRS_RES\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\n100100\t1\t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\".182\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\".005\" \t\n100200\t0\t\t\t\n100300\t1\t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\".182\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\".005\" \t\n100400\t0\t\t\t\n100500\t0\t\t\t\n100600\t0\t\"OCCUPATION\" actualValue=\"Transp.\" weight=\".029\" \t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\".003\" \t\n100700\t0\t\"OCCUPATION\" actualValue=\"Crafts\" weight=\".941\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\"-.004\" \t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\"-.026\" \n100800\t1\t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\".182\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\".005\" \t\n100900\t1\t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\".182\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\".005\" \t\n101000\t0\t\"OCCUPATION\" actualValue=\"Crafts\" weight=\".941\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"0\" weight=\".062\" \t\"EDUCATION\" actualValue=\"7th-8th\" weight=\"-.022\" \n101100\t0\t\"OCCUPATION\" actualValue=\"Other\" weight=\".029\" \t\"HOUSEHOLD_SIZE\" actualValue=\"2\" weight=\".029\" \t\n101200\t0\t\t\t\n101300\t1\t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\".182\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\".005\" \t\n101400\t0\t\"OCCUPATION\" actualValue=\"Machine\" weight=\".941\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"0\" weight=\".062\" \t\"EDUCATION\" actualValue=\"9th\" weight=\"-.022\" \n101500\t0\t\"HOUSEHOLD_SIZE\" actualValue=\"1\" weight=\".029\" \t\"Y_BOX_GAMES\" actualValue=\"1\" weight=\".003\" \t\n101600\t1\t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\".182\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\".005\" \t\n101700\t0\t\"OCCUPATION\" actualValue=\"Machine\" weight=\".029\" \t\"HOUSEHOLD_SIZE\" actualValue=\"9+\" weight=\".029\" \t\n101800\t0\t\"OCCUPATION\" actualValue=\"Crafts\" weight=\".941\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\"-.004\" \t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\"-.026\" \n101900\t0\t\"OCCUPATION\" actualValue=\"Transp.\" weight=\".941\" \t\"BOOKKEEPING_APPLICATION\" actualValue=\"1\" weight=\"-.004\" \t\"Y_BOX_GAMES\" actualValue=\"0\" weight=\"-.026\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1416723470",
+      "id": "20221005-171849_1008946883",
+      "dateCreated": "2022-06-14T17:03:43+0000",
+      "dateStarted": "2023-03-09T07:19:45+0000",
+      "dateFinished": "2023-03-09T07:19:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:66"
+    },
+    {
+      "title": "Clean up model",
+      "text": "%script\r\rBEGIN\rDBMS_DATA_MINING.DROP_MODEL(model_name => 'SVM_CLASSIFICATION_MODEL');\rEXCEPTION WHEN others THEN null;\rEND;\r",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:47+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "plsql",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/plsql",
+        "fontSize": 9,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-96506023",
+      "id": "20221005-171849_219401036",
+      "dateCreated": "2022-06-28T20:18:24+0000",
+      "dateStarted": "2023-03-09T07:19:47+0000",
+      "dateFinished": "2023-03-09T07:19:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%md\n## End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-03-09T07:19:49+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h2>End of Script</h2>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1664990329878_-1468706653",
+      "id": "20221005-171849_1918820399",
+      "dateCreated": "2022-06-14T17:04:02+0000",
+      "dateStarted": "2023-03-09T07:19:49+0000",
+      "dateFinished": "2023-03-09T07:19:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    }
+  ],
+  "name": "OML4R Classification SVM",
+  "id": "123851",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/OML4R Classification SVM"
+}

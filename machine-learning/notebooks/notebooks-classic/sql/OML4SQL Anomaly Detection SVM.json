@@ -1,0 +1,1090 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## Anomaly Detection to Detect Unusual or Rare Occurrences\n\nOracle Machine Learning supports anomaly detection to identify rare or unusual records (customers, transactions, etc.) in the data using the semi-supervised learning algorithm One-Class Support Vector Machine. In this notebook, you will build a 1Class-SVM model and then use it to flag unusual or suspicious records. The data used in this example is from the SH schema. The entire machine learning methodology runs inside Oracle Autonomous Database (ADB).\n\nCopyright (c) 2023 Oracle Corporation \n###### \u003ca href\u003d\"https://oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\n---",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 9.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch2\u003eAnomaly Detection to Detect Unusual or Rare Occurrences\u003c/h2\u003e\n\u003cp\u003eOracle Machine Learning supports anomaly detection to identify rare or unusual records (customers, transactions, etc.) in the data using the semi-supervised learning algorithm One-Class Support Vector Machine. In this notebook, you will build a 1Class-SVM model and then use it to flag unusual or suspicious records. The data used in this example is from the SH schema. The entire machine learning methodology runs inside Oracle Autonomous Database (ADB).\u003c/p\u003e\n\u003cp\u003eCopyright (c) 2023 Oracle Corporation\u003c/p\u003e\n\u003ch6\u003e\u003ca href\u003d\"https: //oss.oracle.com/licenses/upl/\" onclick\u003d\"return ! window.open(\u0027https://oss.oracle.com/licenses/upl/\u0027);\"\u003eThe Universal Permissive License (UPL), Version 1.0\u003c/a\u003e\u003c/h6\u003e\n\u003chr /\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-334891384",
+      "id": "20220124-201434_1191659355",
+      "dateCreated": "2018-02-05T23:20:46+0000",
+      "dateStarted": "2023-02-16T18:16:10+0000",
+      "dateFinished": "2023-02-16T18:16:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md \n\u003cdl\u003e\n\u003cimg src\u003d\"http://www.oracle.com/technetwork/database/options/advanced-analytics/anomalydetection-5663169.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"250\"/\u003e\n\u003c/dl\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 3.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdl\u003e\n\u003cimg src\u003d\"http://www.oracle.com/technetwork/database/options/advanced-analytics/anomalydetection-5663169.jpg\" alt\u003d\"OML Notebooks\" width\u003d\"250\"/\u003e\n\u003c/dl\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_88449615",
+      "id": "20220124-201434_1132446882",
+      "dateCreated": "2018-02-05T23:20:54+0000",
+      "dateStarted": "2023-02-16T18:16:10+0000",
+      "dateFinished": "2023-02-16T18:16:10+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "For more information...",
+      "text": "%md \n\nOracle ADW Documentation \u003ca href\u003d\"https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\nOML folder on Oracle Github : \u003ca href\u003d\"https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\nOML web page: \u003ca href\u003d\"https://www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\nOML Anomaly Detection: \u003ca href\u003d\"https://www.oracle.com/goto/ml-anomaly-detection\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-anomaly-detection\u0027);\"\u003ehttps://www.oracle.com/goto/ml-anomaly-detection\u003c/a\u003e",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cp\u003eOracle ADW Documentation \u003ca href\u003d\"https: //docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\" onclick\u003d\"return ! window.open(\u0027https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u0027);\"\u003ehttps://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/index.html\u003c/a\u003e\n\u003cbr  /\u003eOML folder on Oracle Github : \u003ca href\u003d\"https: //github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u0027);\"\u003ehttps://github.com/oracle-samples/oracle-db-examples/tree/main/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML web page: \u003ca href\u003d\"https: //www.oracle.com/machine-learning\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/machine-learning\u0027);\"\u003ehttps://www.oracle.com/machine-learning\u003c/a\u003e\n\u003cbr  /\u003eOML Anomaly Detection: \u003ca href\u003d\"https: //www.oracle.com/goto/ml-anomaly-detection\" onclick\u003d\"return ! window.open(\u0027https://www.oracle.com/goto/ml-anomaly-detection\u0027);\"\u003ehttps://www.oracle.com/goto/ml-anomaly-detection\u003c/a\u003e\u003c/p\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-499876735",
+      "id": "20220124-201434_714928658",
+      "dateCreated": "2018-02-06T14:12:12+0000",
+      "dateStarted": "2023-02-16T18:16:11+0000",
+      "dateFinished": "2023-02-16T18:16:11+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create view DEMOGRAPHICS_V with columns of interest",
+      "text": "%sql\n\nCREATE OR REPLACE VIEW DEMOGRAPHICS_V AS\n  SELECT CUST_ID, YRS_RESIDENCE, EDUCATION, AFFINITY_CARD, \n         HOUSEHOLD_SIZE, OCCUPATION, BOOKKEEPING_APPLICATION, \n         BULK_PACK_DISKETTES, FLAT_PANEL_MONITOR, HOME_THEATER_PACKAGE,\n         OS_DOC_SET_KANJI, PRINTER_SUPPLIES, Y_BOX_GAMES\n  FROM SH.SUPPLEMENTARY_DEMOGRAPHICS;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/osql",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_1534716595",
+      "id": "20220124-201434_744005229",
+      "dateCreated": "2018-02-05T23:29:40+0000",
+      "dateStarted": "2023-02-16T18:16:11+0000",
+      "dateFinished": "2023-02-16T18:16:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display DEMOGRAPHICS_V data",
+      "text": "%sql\n\nSELECT * \nFROM DEMOGRAPHICS_V\nFETCH FIRST 20 ROWS ONLY;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "AFFINITY_CARD": "string",
+                      "BOOKKEEPING_APPLICATION": "string",
+                      "BULK_PACK_DISKETTES": "string",
+                      "CUST_ID": "string",
+                      "EDUCATION": "string",
+                      "FLAT_PANEL_MONITOR": "string",
+                      "HOME_THEATER_PACKAGE": "string",
+                      "HOUSEHOLD_SIZE": "string",
+                      "OCCUPATION": "string",
+                      "OS_DOC_SET_KANJI": "string",
+                      "PRINTER_SUPPLIES": "string",
+                      "YRS_RESIDENCE": "string",
+                      "Y_BOX_GAMES": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "AFFINITY_CARD",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "BOOKKEEPING_APPLICATION",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "BOOKKEEPING_APPLICATION",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "AFFINITY_CARD",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tYRS_RESIDENCE\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tBOOKKEEPING_APPLICATION\tBULK_PACK_DISKETTES\tFLAT_PANEL_MONITOR\tHOME_THEATER_PACKAGE\tOS_DOC_SET_KANJI\tPRINTER_SUPPLIES\tY_BOX_GAMES\n102547\t0\t10th\t0\t1\tOther\t0\t1\t1\t0\t0\t1\t1\n101050\t0\t10th\t0\t1\tOther\t0\t1\t1\t0\t0\t1\t1\n100040\t0\t11th\t0\t1\tSales\t0\t1\t1\t0\t0\t1\t1\n102117\t0\tHS-grad\t0\t1\tFarming\t1\t0\t0\t0\t0\t1\t1\n101074\t1\t10th\t0\t1\tHandler\t0\t1\t1\t0\t0\t1\t1\n104179\t1\t10th\t0\t1\tHandler\t0\t1\t1\t0\t0\t1\t1\n100417\t1\t11th\t0\t1\tHandler\t0\t0\t0\t0\t0\t1\t1\n101146\t1\t\u003c Bach.\t0\t1\t?\t1\t1\t1\t0\t0\t1\t1\n103420\t1\t\u003c Bach.\t0\t1\t?\t1\t1\t1\t0\t0\t1\t1\n101987\t1\t\u003c Bach.\t0\t1\tOther\t1\t1\t1\t0\t0\t1\t1\n101279\t1\t\u003c Bach.\t0\t1\tOther\t1\t0\t0\t0\t0\t1\t1\n102106\t1\t\u003c Bach.\t0\t1\tCleric.\t1\t0\t0\t0\t0\t1\t1\n102591\t1\tHS-grad\t0\t1\t?\t1\t1\t1\t0\t0\t1\t1\n101869\t1\tHS-grad\t0\t1\tOther\t1\t1\t1\t0\t0\t1\t1\n103169\t1\tHS-grad\t0\t1\tSales\t1\t0\t0\t0\t0\t1\t1\n103552\t1\tHS-grad\t0\t1\tHandler\t1\t1\t1\t0\t0\t1\t1\n101616\t2\tBach.\t0\t1\tTechSup\t1\t0\t0\t0\t0\t1\t1\n104096\t2\t\u003c Bach.\t0\t1\tOther\t1\t1\t1\t0\t0\t1\t1\n102171\t2\t\u003c Bach.\t0\t1\tCleric.\t1\t0\t0\t0\t0\t1\t1\n100846\t2\t\u003c Bach.\t0\t1\tHandler\t1\t1\t1\t0\t0\t1\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_1545981866",
+      "id": "20220124-201434_1360537890",
+      "dateCreated": "2018-02-06T13:14:22+0000",
+      "dateStarted": "2023-02-16T18:16:17+0000",
+      "dateFinished": "2023-02-16T18:16:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display CUSTOMERS table",
+      "text": "%sql\n\nSELECT * \nFROM SH.CUSTOMERS \nFETCH FIRST 20 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CUST_FIRST_NAME": "string",
+                      "CUST_LAST_NAME": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_YEAR_OF_BIRTH": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_STREET_ADDRESS": "string",
+                      "CUST_POSTAL_CODE": "string",
+                      "CUST_CITY": "string",
+                      "CUST_CITY_ID": "string",
+                      "CUST_STATE_PROVINCE": "string",
+                      "CUST_STATE_PROVINCE_ID": "string",
+                      "COUNTRY_ID": "string",
+                      "CUST_MAIN_PHONE_NUMBER": "string",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "string",
+                      "CUST_EMAIL": "string",
+                      "CUST_TOTAL": "string",
+                      "CUST_TOTAL_ID": "string",
+                      "CUST_SRC_ID": "string",
+                      "CUST_EFF_FROM": "string",
+                      "CUST_EFF_TO": "string",
+                      "CUST_VALID": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_FIRST_NAME\tCUST_LAST_NAME\tCUST_GENDER\tCUST_YEAR_OF_BIRTH\tCUST_MARITAL_STATUS\tCUST_STREET_ADDRESS\tCUST_POSTAL_CODE\tCUST_CITY\tCUST_CITY_ID\tCUST_STATE_PROVINCE\tCUST_STATE_PROVINCE_ID\tCOUNTRY_ID\tCUST_MAIN_PHONE_NUMBER\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tCUST_EMAIL\tCUST_TOTAL\tCUST_TOTAL_ID\tCUST_SRC_ID\tCUST_EFF_FROM\tCUST_EFF_TO\tCUST_VALID\n48809\tAzalea\tJanney\tM\t1973\t\t27 West Vega Alta Boulevard\t69776\tHiseville\t51663\tKY\t52632\t52790\t504-306-7004\tE: 90,000 - 109,999\t9000\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n2365\tAzalea\tJanney\tM\t1971\tmarried\t37 East La Salle Street\t86990\tVictoria\t52440\tKS\t52630\t52790\t350-499-4703\tE: 90,000 - 109,999\t1500\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n5920\tAzalea\tJanney\tM\t1937\t\t47 Anderson Road\t73216\tFrederick\t51519\tCO\t52569\t52790\t324-239-9046\tE: 90,000 - 109,999\t7000\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n9475\tAzalea\tJanney\tM\t1945\t\t47 North Mingo Road\t55787\tMontara\t51919\tCA\t52567\t52790\t196-478-4515\tE: 90,000 - 109,999\t9000\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n13031\tAzalea\tJanney\tM\t1963\tmarried\t57 West Cabo Rojo Drive\t54845\tHaswell\t51651\tCO\t52569\t52790\t695-329-2727\tE: 90,000 - 109,999\t1500\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n16587\tAzalea\tJanney\tM\t1948\t\t67 Pike Avenue\t57128\tBarry\t51166\tWales - South Glamorgan\t52764\t52789\t645-103-8904\tE: 90,000 - 109,999\t7000\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n20142\tAzalea\tJanney\tM\t1969\t\t67 South De Soto Avenue\t64852\tHelmond\t51657\tNoord-Brabant\t52682\t52770\t609-353-7437\tE: 90,000 - 109,999\t9000\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n23698\tAzalea\tJanney\tM\t1951\tmarried\t77 West Sanilac Avenue\t82590\tWarstein\t52497\tNordrhein-Westfalen\t52684\t52776\t574-306-7921\tE: 90,000 - 109,999\t1500\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n27253\tAzalea\tJanney\tM\t1972\t\t87 East Guaynabo Avenue\t75917\tMolino\t51917\tFL\t52595\t52790\t338-499-9243\tE: 90,000 - 109,999\t7000\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n30808\tAzalea\tJanney\tM\t1965\t\t87 South Vega Alta Avenue\t61035\tFerrals-les-Montagnes\t51502\tLanguedoc-Roussillon\t52645\t52779\t687-239-2426\tE: 90,000 - 109,999\t9000\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n34365\tAzalea\tJanney\tM\t1945\tmarried\t97 North La Salle Avenue\t67843\tArbuckle\t51069\tCA\t52567\t52790\t320-478-2643\tE: 90,000 - 109,999\t1500\tJanney@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n38809\tAzalea\tKish\tM\t1941\t\t107 West Vega Alta Avenue\t41847\tEdgewood\t51443\tKY\t52632\t52790\t448-353-6320\tE: 90,000 - 109,999\t9000\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n42364\tAzalea\tKish\tM\t1949\tmarried\t117 East La Salle Avenue\t44581\tMoerdijk\t51916\tNoord-Brabant\t52682\t52770\t235-306-3738\tE: 90,000 - 109,999\t1500\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n16836\tAzalea\tKish\tM\t1962\t\t17 East Pike Court\t90517\tMuenster\t51929\tNordrhein-Westfalen\t52684\t52776\t170-306-4311\tE: 90,000 - 109,999\t7000\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n46142\tAzalea\tKish\tM\t1934\t\t27 De Soto Boulevard\t44931\tBad Homburg\t51153\tHessen\t52617\t52776\t332-499-7689\tE: 90,000 - 109,999\t9000\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n49697\tAzalea\tKish\tM\t1975\tmarried\t27 North Sanilac Boulevard\t38082\tGreenwich\t51591\tEngland - Greater London\t52589\t52789\t551-239-7155\tE: 90,000 - 109,999\t1500\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n3254\tAzalea\tKish\tM\t1943\t\t37 West Guaynabo Street\t52602\tBlountstown\t51200\tFL\t52595\t52790\t187-478-2363\tE: 90,000 - 109,999\t7000\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n6809\tAzalea\tKish\tM\t1946\t\t47 Vega Alta Road\t78558\tLos Angeles\t51806\tCA\t52567\t52790\t446-329-1573\tE: 90,000 - 109,999\t9000\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tA\n10364\tAzalea\tKish\tM\t1940\tmarried\t47 South La Salle Road\t85057\tCardiff\t51316\tWales - South Glamorgan\t52764\t52789\t122-103-8461\tE: 90,000 - 109,999\t1500\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n13920\tAzalea\tKish\tM\t1976\t\t57 North Anderson Drive\t64852\tHelmond\t51657\tNoord-Brabant\t52682\t52770\t383-353-3731\tE: 90,000 - 109,999\t7000\tKish@company.example.com\tCustomer total\t52772\t\t1998-01-01 00:00:00\t\tI\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-1022294532",
+      "id": "20220124-201434_1828699511",
+      "dateCreated": "2018-02-06T13:15:54+0000",
+      "dateStarted": "2023-02-16T18:16:17+0000",
+      "dateFinished": "2023-02-16T18:16:17+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Create view joining CUSTOMERS and DEMOGRAPHICS_V ",
+      "text": "%script\n\nCREATE OR REPLACE VIEW CUSTOMERS360_V AS\n   SELECT a.CUST_ID, a.CUST_GENDER, a.CUST_MARITAL_STATUS, a.CUST_YEAR_OF_BIRTH, \n          a.CUST_INCOME_LEVEL, a.CUST_CREDIT_LIMIT, b.EDUCATION, b.AFFINITY_CARD, \n          b.HOUSEHOLD_SIZE, b.OCCUPATION, b.YRS_RESIDENCE, b.Y_BOX_GAMES\n   FROM SH.CUSTOMERS a, DEMOGRAPHICS_V b\n   WHERE a.CUST_ID \u003d b.CUST_ID;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 5.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nView CUSTOMERS360_V created.\n\n\n---------------------------\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-167818948",
+      "id": "20220124-201434_557768344",
+      "dateCreated": "2020-02-04T23:01:17+0000",
+      "dateStarted": "2023-02-16T18:16:17+0000",
+      "dateFinished": "2023-02-16T18:16:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display CUSTOMERS360_V",
+      "text": "%sql\n\nSELECT * \nFROM CUSTOMERS360_V\nFETCH FIRST 20 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 7.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "CUST_YEAR_OF_BIRTH": "string",
+                      "CUST_INCOME_LEVEL": "string",
+                      "CUST_CREDIT_LIMIT": "string",
+                      "EDUCATION": "string",
+                      "AFFINITY_CARD": "string",
+                      "HOUSEHOLD_SIZE": "string",
+                      "OCCUPATION": "string",
+                      "YRS_RESIDENCE": "string",
+                      "Y_BOX_GAMES": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tCUST_GENDER\tCUST_MARITAL_STATUS\tCUST_YEAR_OF_BIRTH\tCUST_INCOME_LEVEL\tCUST_CREDIT_LIMIT\tEDUCATION\tAFFINITY_CARD\tHOUSEHOLD_SIZE\tOCCUPATION\tYRS_RESIDENCE\tY_BOX_GAMES\n102547\tF\tNeverM\t1986\tI: 170,000 - 189,999\t1500\t10th\t0\t1\tOther\t0\t1\n101050\tM\tNeverM\t1986\tL: 300,000 and above\t11000\t10th\t0\t1\tOther\t0\t1\n100040\tF\tNeverM\t1986\tJ: 190,000 - 249,999\t9000\t11th\t0\t1\tSales\t0\t1\n102117\tM\tNeverM\t1984\tB: 30,000 - 49,999\t7000\tHS-grad\t0\t1\tFarming\t0\t1\n101074\tM\tNeverM\t1986\tJ: 190,000 - 249,999\t9000\t10th\t0\t1\tHandler\t1\t1\n104179\tM\tNeverM\t1986\tJ: 190,000 - 249,999\t11000\t10th\t0\t1\tHandler\t1\t1\n100417\tM\tNeverM\t1985\tB: 30,000 - 49,999\t1500\t11th\t0\t1\tHandler\t1\t1\n101146\tF\tNeverM\t1981\tJ: 190,000 - 249,999\t9000\t\u003c Bach.\t0\t1\t?\t1\t1\n103420\tM\tNeverM\t1983\tJ: 190,000 - 249,999\t7000\t\u003c Bach.\t0\t1\t?\t1\t1\n101987\tF\tNeverM\t1984\tJ: 190,000 - 249,999\t9000\t\u003c Bach.\t0\t1\tOther\t1\t1\n101279\tM\tNeverM\t1983\tB: 30,000 - 49,999\t1500\t\u003c Bach.\t0\t1\tOther\t1\t1\n102106\tF\tNeverM\t1983\tG: 130,000 - 149,999\t10000\t\u003c Bach.\t0\t1\tCleric.\t1\t1\n102591\tF\tNeverM\t1982\tL: 300,000 and above\t11000\tHS-grad\t0\t1\t?\t1\t1\n101869\tF\tNeverM\t1979\tJ: 190,000 - 249,999\t9000\tHS-grad\t0\t1\tOther\t1\t1\n103169\tF\tNeverM\t1984\tD: 70,000 - 89,999\t10000\tHS-grad\t0\t1\tSales\t1\t1\n103552\tF\tNeverM\t1985\tJ: 190,000 - 249,999\t9000\tHS-grad\t0\t1\tHandler\t1\t1\n101616\tF\tNeverM\t1980\tE: 90,000 - 109,999\t7000\tBach.\t0\t1\tTechSup\t2\t1\n104096\tM\tNeverM\t1982\tJ: 190,000 - 249,999\t15000\t\u003c Bach.\t0\t1\tOther\t2\t1\n102171\tF\tNeverM\t1978\tC: 50,000 - 69,999\t11000\t\u003c Bach.\t0\t1\tCleric.\t2\t1\n100846\tM\tNeverM\t1982\tJ: 190,000 - 249,999\t11000\t\u003c Bach.\t0\t1\tHandler\t2\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_1472019234",
+      "id": "20220124-201434_1241356068",
+      "dateCreated": "2018-02-06T13:30:31+0000",
+      "dateStarted": "2023-02-16T18:16:18+0000",
+      "dateFinished": "2023-02-16T18:16:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Evaluate distribution of CUST_YEAR_BIRTH vs. CUST_MARITAL_STATUS from CUSTOMERS360_V",
+      "text": "%sql\n\n-- Click the bar chart icon and expand settings. Drag CUST_YEAR_OF_BIRTH to Keys, CUST_MARITAL_STATUS to Groups,\n-- and COUNT to Values \n\nSELECT CUST_YEAR_OF_BIRTH, CUST_MARITAL_STATUS, COUNT(*) COUNT\nFROM CUSTOMERS360_V\nGROUP BY CUST_YEAR_OF_BIRTH, CUST_MARITAL_STATUS;",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "title": true,
+        "results": [
+          {
+            "graph": {
+              "mode": "multiBarChart",
+              "optionOpen": false,
+              "keys": [
+                {
+                  "name": "CUST_YEAR_OF_BIRTH",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "values": [
+                {
+                  "name": "COUNT",
+                  "index": 2.0,
+                  "aggr": "sum"
+                }
+              ],
+              "scatter": {
+                "yAxis": {
+                  "name": "YRS_RESIDENCE",
+                  "index": 10.0,
+                  "aggr": "sum"
+                },
+                "xAxis": {
+                  "name": "CUST_YEAR_OF_BIRTH",
+                  "index": 3.0,
+                  "aggr": "sum"
+                },
+                "group": {
+                  "name": "CUST_MARITAL_STATUS",
+                  "index": 2.0,
+                  "aggr": "sum"
+                }
+              },
+              "groups": [
+                {
+                  "name": "CUST_MARITAL_STATUS",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ],
+              "height": 300.0,
+              "setting": {
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": true
+                }
+              },
+              "commonSetting": {}
+            },
+            "helium": {}
+          }
+        ],
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_YEAR_OF_BIRTH\tCUST_MARITAL_STATUS\tCOUNT\n1960\tDivorc.\t21\n1976\tNeverM\t74\n1929\tMarried\t3\n1967\tSepar.\t3\n1947\tDivorc.\t5\n1952\tMabsent\t1\n1982\tNeverM\t85\n1973\tNeverM\t34\n1952\tSepar.\t6\n1959\tMarried\t74\n1961\tDivorc.\t19\n1950\tDivorc.\t15\n1969\tMabsent\t4\n1977\tMarried\t44\n1954\tDivorc.\t18\n1978\tMarried\t23\n1954\tSepar.\t11\n1977\tSepar.\t2\n1949\tNeverM\t2\n1947\tNeverM\t7\n1960\tNeverM\t8\n1972\tNeverM\t28\n1980\tSepar.\t3\n1936\tDivorc.\t4\n1981\tDivorc.\t1\n1965\tSepar.\t2\n1986\tNeverM\t52\n1942\tMarried\t24\n1941\tMarried\t14\n1972\tSepar.\t3\n1956\tDivorc.\t16\n1968\tDivorc.\t17\n1924\tMarried\t4\n1956\tSepar.\t8\n1933\tWidowed\t3\n1937\tWidowed\t5\n1946\tWidowed\t5\n1939\tDivorc.\t3\n1946\tDivorc.\t12\n1959\tWidowed\t2\n1953\tMabsent\t3\n1955\tMabsent\t3\n1948\tDivorc.\t10\n1976\tSepar.\t1\n1966\tDivorc.\t15\n1953\tSepar.\t2\n1954\tMarried\t46\n1921\tMarried\t1\n1943\tMarried\t22\n1977\tNeverM\t62\n1943\tWidowed\t10\n1980\tMarried\t14\n1940\tSepar.\t1\n1955\tMarried\t57\n1946\tMarried\t24\n1970\tNeverM\t26\n1947\tMarried\t27\n1953\tDivorc.\t7\n1946\tSepar.\t2\n1970\tSepar.\t1\n1940\tWidowed\t8\n1949\tSepar.\t2\n1948\tMarried\t32\n1979\tSepar.\t8\n1935\tWidowed\t4\n1966\tSepar.\t4\n1927\tWidowed\t3\n1963\tMarried\t57\n1975\tNeverM\t59\n1971\tSepar.\t5\n1913\tMarried\t3\n1945\tWidowed\t4\n1929\tDivorc.\t1\n1939\tWidowed\t3\n1964\tMabsent\t2\n1938\tMarried\t12\n1926\tWidowed\t2\n1982\tMarried\t3\n1942\tWidowed\t2\n1932\tWidowed\t1\n1973\tDivorc.\t9\n1944\tMarried\t27\n1935\tMarried\t10\n1959\tNeverM\t12\n1923\tMarried\t3\n1934\tDivorc.\t2\n1931\tWidowed\t4\n1954\tNeverM\t13\n1959\tSepar.\t4\n1982\tSepar.\t2\n1944\tWidowed\t4\n1964\tMarried\t55\n1963\tNeverM\t22\n1976\tMarried\t28\n1941\tDivorc.\t4\n1931\tMarried\t2\n1923\tNeverM\t1\n1964\tWidowed\t1\n1938\tDivorc.\t3\n1975\tMarried\t62\n1955\tDivorc.\t22\n1948\tWidowed\t3\n1967\tDivorc.\t30\n1962\tMarried\t55\n1958\tDivorc.\t33\n1972\tDivorc.\t8\n1928\tWidowed\t5\n1955\tWidowed\t2\n1967\tNeverM\t25\n1979\tNeverM\t85\n1943\tDivorc.\t8\n1956\tMabsent\t3\n1968\tNeverM\t38\n1974\tDivorc.\t14\n1925\tWidowed\t1\n1953\tWidowed\t1\n1966\tNeverM\t28\n1981\tMarried\t8\n1979\tMarried\t26\n1967\tWidowed\t5\n1949\tDivorc.\t13\n1926\tMabsent\t2\n1956\tNeverM\t10\n1951\tDivorc.\t2\n1949\tMabsent\t1\n1975\tDivorc.\t10\n1978\tNeverM\t96\n1981\tNeverM\t105\n1969\tDivorc.\t22\n1970\tDivorc.\t17\n1941\tNeverM\t5\n1940\tDivorc.\t1\n1975\tSepar.\t5\n1932\tSepar.\t1\n1965\tDivorc.\t17\n1960\tSepar.\t5\n1964\tSepar.\t1\n1983\tNeverM\t114\n1926\tMarried\t7\n1971\tNeverM\t24\n1924\tMabsent\t2\n1971\tDivorc.\t31\n1958\tMabsent\t5\n1928\tMar-AF\t1\n1951\tMabsent\t1\n1949\tMarried\t32\n1968\tMarried\t79\n1947\tSepar.\t4\n1934\tMarried\t14\n1935\tNeverM\t2\n1954\tWidowed\t2\n1956\tMarried\t57\n1955\tNeverM\t9\n1951\tSepar.\t2\n1970\tWidowed\t3\n1948\tSepar.\t2\n1937\tMarried\t7\n1958\tMarried\t51\n1964\tNeverM\t19\n1950\tNeverM\t5\n1982\tDivorc.\t2\n1974\tMarried\t51\n1932\tMarried\t9\n1961\tWidowed\t4\n1983\tMarried\t8\n1968\tSepar.\t1\n1926\tNeverM\t1\n1939\tSepar.\t1\n1957\tWidowed\t3\n1913\tNeverM\t2\n1947\tMabsent\t2\n1960\tMabsent\t3\n1972\tMarried\t51\n1953\tMarried\t43\n1944\tMabsent\t2\n1974\tNeverM\t42\n1976\tDivorc.\t16\n1941\tWidowed\t8\n1969\tSepar.\t5\n1973\tSepar.\t4\n1949\tWidowed\t1\n1928\tNeverM\t1\n1980\tNeverM\t106\n1960\tMarried\t63\n1945\tMarried\t31\n1922\tDivorc.\t2\n1930\tWidowed\t2\n1950\tMabsent\t3\n1957\tDivorc.\t23\n1968\tMar-AF\t2\n1942\tDivorc.\t2\n1974\tSepar.\t2\n1975\tMabsent\t1\n1978\tDivorc.\t8\n1936\tNeverM\t2\n1945\tDivorc.\t11\n1951\tWidowed\t3\n1944\tSepar.\t3\n1981\tMabsent\t6\n1931\tDivorc.\t1\n1946\tMabsent\t2\n1961\tNeverM\t21\n1978\tSepar.\t5\n1944\tNeverM\t5\n1962\tSepar.\t8\n1956\tWidowed\t2\n1952\tWidowed\t4\n1932\tNeverM\t2\n1985\tNeverM\t65\n1969\tMarried\t74\n1962\tNeverM\t25\n1964\tDivorc.\t27\n1965\tNeverM\t13\n1922\tWidowed\t4\n1943\tNeverM\t2\n1943\tMabsent\t1\n1959\tDivorc.\t27\n1962\tDivorc.\t21\n1934\tWidowed\t2\n1933\tMarried\t7\n1951\tMarried\t39\n1965\tMarried\t71\n1969\tNeverM\t30\n1929\tWidowed\t3\n1958\tSepar.\t4\n1972\tMabsent\t1\n1948\tNeverM\t3\n1928\tMarried\t4\n1974\tMabsent\t2\n1958\tNeverM\t12\n1944\tDivorc.\t11\n1930\tMarried\t2\n1973\tMabsent\t5\n1939\tMarried\t16\n1938\tSepar.\t2\n1955\tSepar.\t1\n1939\tNeverM\t2\n1980\tDivorc.\t4\n1952\tDivorc.\t19\n1973\tMarried\t40\n1925\tMarried\t7\n1961\tMarried\t71\n1935\tMabsent\t2\n1948\tMabsent\t2\n1950\tWidowed\t2\n1984\tNeverM\t96\n1957\tMarried\t66\n1967\tMarried\t60\n1936\tMarried\t14\n1950\tMarried\t35\n1979\tDivorc.\t4\n1970\tMabsent\t5\n1957\tSepar.\t8\n1952\tMarried\t51\n1963\tDivorc.\t23\n1970\tMarried\t64\n1940\tMarried\t20\n1962\tWidowed\t4\n1957\tMabsent\t5\n1977\tDivorc.\t2\n1936\tWidowed\t2\n1971\tMabsent\t2\n1954\tMabsent\t3\n1971\tMarried\t59\n1957\tNeverM\t14\n1945\tNeverM\t3\n1928\tDivorc.\t2\n1951\tNeverM\t4\n1966\tMarried\t71\n1938\tWidowed\t9\n1928\tMabsent\t1\n1952\tNeverM\t2\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-322133484",
+      "id": "20220124-201434_1505551872",
+      "dateCreated": "2018-02-06T13:44:53+0000",
+      "dateStarted": "2023-02-16T18:16:18+0000",
+      "dateFinished": "2023-02-16T18:16:18+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Build an anomaly detection model using the 1-Class SVM algorithm",
+      "text": "%script\n\nBEGIN DBMS_DATA_MINING.DROP_MODEL(\u0027CUSTOMERS360MODEL\u0027);\nEXCEPTION WHEN OTHERS THEN NULL; END;\n/\nDECLARE\n    v_setlst DBMS_DATA_MINING.SETTING_LIST;\nBEGIN\n    v_setlst(\u0027ALGO_NAME\u0027)   :\u003d \u0027ALGO_SUPPORT_VECTOR_MACHINES\u0027;\n    V_setlst(\u0027PREP_AUTO\u0027)   :\u003d \u0027ON\u0027;\n\n    DBMS_DATA_MINING.CREATE_MODEL2(\n        MODEL_NAME          \u003d\u003e \u0027CUSTOMERS360MODEL\u0027,\n        MINING_FUNCTION     \u003d\u003e \u0027CLASSIFICATION\u0027,\n        DATA_QUERY          \u003d\u003e \u0027select * from CUSTOMERS360_V\u0027,\n        SET_LIST            \u003d\u003e v_setlst,\n        CASE_ID_COLUMN_NAME \u003d\u003e \u0027CUST_ID\u0027,\n        TARGET_COLUMN_NAME  \u003d\u003e NULL);\nEND;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nPL/SQL procedure successfully completed.\n\n\n---------------------------\n\nPL/SQL procedure successfully completed.\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_1100637045",
+      "id": "20220124-201434_1211755589",
+      "dateCreated": "2018-02-05T23:20:57+0000",
+      "dateStarted": "2023-02-16T18:16:19+0000",
+      "dateFinished": "2023-02-16T18:16:21+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display customers in descending order of anomaly probability",
+      "text": "%sql\n\n-- Hint: In anomaly detection, known amomalies should be removed from the training dataset\n\nSELECT * \nFROM (SELECT CUST_ID, anomalous, round(prob_anomalous,2) prob_anomalous, \n             YRS_RESIDENCE, HOUSEHOLD_SIZE, CUST_GENDER,\n             CUST_MARITAL_STATUS, \n             rank() over (ORDER BY prob_anomalous DESC) rnk \n      FROM (SELECT CUST_ID, HOUSEHOLD_SIZE, YRS_RESIDENCE, \n                   CUST_GENDER, CUST_MARITAL_STATUS, \n                   prediction(CUSTOMERS360MODEL using *) anomalous,\n                   prediction_probability(CUSTOMERS360MODEL, \u00270\u0027 using *) prob_anomalous\n            FROM CUSTOMERS360_V))\nORDER BY prob_anomalous DESC\nFETCH FIRST 20 ROWS ONLY;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 194.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "ANOMALOUS": "string",
+                      "PROB_ANOMALOUS": "string",
+                      "YRS_RESIDENCE": "string",
+                      "HOUSEHOLD_SIZE": "string",
+                      "CUST_GENDER": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "RNK": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "HOUSEHOLD_SIZE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "yAxis": {
+              "name": "HOUSEHOLD_SIZE",
+              "index": 1.0,
+              "aggr": "sum"
+            },
+            "xAxis": {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tANOMALOUS\tPROB_ANOMALOUS\tYRS_RESIDENCE\tHOUSEHOLD_SIZE\tCUST_GENDER\tCUST_MARITAL_STATUS\tRNK\n103154\t0\t0.76\t2\t2\tF\tWidowed\t1\n100199\t0\t0.76\t2\t2\tF\tWidowed\t1\n102948\t0\t0.73\t2\t9+\tF\tWidowed\t3\n101137\t0\t0.67\t3\t9+\tF\tWidowed\t4\n104359\t0\t0.66\t6\t2\tF\tWidowed\t5\n100170\t0\t0.63\t3\t9+\tF\tWidowed\t6\n100646\t0\t0.63\t2\t9+\tF\tWidowed\t8\n101434\t0\t0.63\t6\t2\tF\tWidowed\t7\n104275\t0\t0.62\t0\t2\tF\tWidowed\t9\n103702\t0\t0.61\t6\t6-8\tM\tDivorc.\t10\n103132\t0\t0.59\t5\t9+\tF\tMabsent\t11\n100373\t0\t0.58\t6\t2\tF\tSepar.\t12\n101128\t0\t0.58\t6\t9+\tM\tMabsent\t15\n103313\t0\t0.58\t6\t9+\tF\tWidowed\t14\n103675\t0\t0.58\t6\t2\tF\tSepar.\t12\n102419\t0\t0.57\t2\t9+\tF\tWidowed\t16\n101539\t0\t0.57\t2\t2\tF\tWidowed\t18\n102329\t0\t0.57\t4\t2\tF\tWidowed\t17\n102837\t0\t0.56\t2\t2\tF\tSepar.\t19\n103971\t0\t0.56\t6\t2\tM\tMabsent\t20\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-704917594",
+      "id": "20220124-201434_530854340",
+      "dateCreated": "2018-02-06T14:01:30+0000",
+      "dateStarted": "2023-02-16T18:16:22+0000",
+      "dateFinished": "2023-02-16T18:16:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Display the top 5 most anomalous customers",
+      "text": "%sql\n\nSELECT * \nFROM (SELECT CUST_ID, round(prob_anomalous,2) prob_anomalous,  \n             YRS_RESIDENCE, CUST_MARITAL_STATUS, \n             rank() over (ORDER BY prob_anomalous DESC) rnk \n      FROM (SELECT CUST_ID, HOUSEHOLD_SIZE, YRS_RESIDENCE, CUST_GENDER, CUST_MARITAL_STATUS, \n                   prediction_probability(CUSTOMERS360MODEL, \u00270\u0027 using *) prob_anomalous\n            FROM CUSTOMERS360_V))\nWHERE rnk \u003c\u003d 5\nORDER BY prob_anomalous DESC;\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 242.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "PROB_ANOMALOUS": "string",
+                      "YRS_RESIDENCE": "string",
+                      "CUST_MARITAL_STATUS": "string",
+                      "RNK": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "HOUSEHOLD_SIZE",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "scatter": {
+            "xAxis": {
+              "name": "CUST_ID",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          },
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tPROB_ANOMALOUS\tYRS_RESIDENCE\tCUST_MARITAL_STATUS\tRNK\n103154\t0.76\t2\tWidowed\t1\n100199\t0.76\t2\tWidowed\t1\n102948\t0.73\t2\tWidowed\t3\n101137\t0.67\t3\tWidowed\t4\n104359\t0.66\t6\tWidowed\t5\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-287487580",
+      "id": "20220124-201434_74951709",
+      "dateCreated": "2018-02-05T23:20:59+0000",
+      "dateStarted": "2023-02-16T18:16:22+0000",
+      "dateFinished": "2023-02-16T18:16:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "title": "View Prediction Details of top 3 attributes to explain prediction",
+      "text": "%sql\n-- Select customers with OCCUPATION \u0027TechSup\u0027 and more than 50% probability of being anomalous \n\nSELECT CUST_ID, \n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute1\",17,100)),\u0027rank\u003d\"1\"/\u003e\u0027) FIRST_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute2\",17,100)),\u0027rank\u003d\"2\"/\u003e\u0027) SECOND_ATTRIBUTE,\n       RTRIM(TRIM(SUBSTR(OUTPRED.\"Attribute3\",17,100)),\u0027rank\u003d\"3\"/\u003e\u0027) THIRD_ATTRIBUTE\n       FROM (SELECT CUST_ID, PREDICTION_DETAILS(CUSTOMERS360MODEL, \u00270\u0027 USING *) PREDICTION_DETAILS FROM CUSTOMERS360_V\n           WHERE PREDICTION_PROBABILITY(CUSTOMERS360MODEL, \u00270\u0027 USING *) \u003e 0.50\n           AND OCCUPATION \u003d \u0027TechSup\u0027\n           ORDER BY CUST_ID) OUT,\n           XMLTABLE(\u0027/Details\u0027\n                PASSING OUT.PREDICTION_DETAILS\n                COLUMNS \n                   \"Attribute1\" XMLType PATH \u0027Attribute[1]\u0027,\n                   \"Attribute2\" XMLType PATH \u0027Attribute[2]\u0027,\n                   \"Attribute3\" XMLType PATH \u0027Attribute[3]\u0027) OUTPRED\nFETCH FIRST 20 ROWS ONLY;\n       ",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/text",
+        "editorHide": false,
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "CUST_ID": "string",
+                      "FIRST_ATTRIBUTE": "string",
+                      "SECOND_ATTRIBUTE": "string",
+                      "THIRD_ATTRIBUTE": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "CUST_ID\tFIRST_ATTRIBUTE\tSECOND_ATTRIBUTE\tTHIRD_ATTRIBUTE\n100646\t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Widowed\" weight\u003d\".226\" \t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1941\" weight\u003d\".118\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"1500\" weight\u003d\".115\" \n102922\t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Widowed\" weight\u003d\".222\" \t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1931\" weight\u003d\".169\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"1500\" weight\u003d\".115\" \n103441\t\"CUST_MARITAL_STATUS\" actualValue\u003d\"Widowed\" weight\u003d\".222\" \t\"CUST_YEAR_OF_BIRTH\" actualValue\u003d\"1941\" weight\u003d\".117\" \t\"EDUCATION\" actualValue\u003d\"Bach.\" weight\u003d\".076\" \n104286\t\"EDUCATION\" actualValue\u003d\"9th\" weight\u003d\".165\" \t\"HOUSEHOLD_SIZE\" actualValue\u003d\"4-5\" weight\u003d\".146\" \t\"CUST_CREDIT_LIMIT\" actualValue\u003d\"1500\" weight\u003d\".112\" \n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-550438537",
+      "id": "20220124-201434_61551378",
+      "dateCreated": "2019-08-10T01:00:44+0000",
+      "dateStarted": "2023-02-16T18:16:22+0000",
+      "dateFinished": "2023-02-16T18:16:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n# End of Script",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "graph": {
+          "mode": "table",
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "scatter": {},
+          "groups": [],
+          "height": 300.0
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch1\u003eEnd of Script\u003c/h1\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_1646099209",
+      "id": "20220124-201434_1035933874",
+      "dateCreated": "2018-02-05T23:21:02+0000",
+      "dateStarted": "2023-02-16T18:16:22+0000",
+      "dateFinished": "2023-02-16T18:16:22+0000",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n",
+      "user": "OMLUSER",
+      "dateUpdated": "2023-02-16T18:16:23+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "md",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "interrupted": false,
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1643055274974_-1594939128",
+      "id": "20220124-201434_694361727",
+      "dateCreated": "2020-06-10T20:26:57+0000",
+      "dateStarted": "2023-02-16T18:16:22+0000",
+      "dateFinished": "2023-02-16T18:16:22+0000",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "OML4SQL Anomaly Detection SVM",
+  "id": "101129",
+  "defaultInterpreterGroup": "spark",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "ORA7A60DC9B32:OMLDEMOUSER02-101129": [],
+    "MDW381939C745:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  }
+}

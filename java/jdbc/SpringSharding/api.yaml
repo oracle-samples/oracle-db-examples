@@ -1,0 +1,256 @@
+openapi: 3.0.3
+info:
+  title: Notes
+  description: This API keeps track of user notes.
+  license:
+    name: The Universal Permissive License (UPL), version 1.0
+    url: https://www.oracle.com/downloads/licenses/upl-license.html
+  version: 0.0.1
+paths:
+  /users:
+    get:
+      description: Lists all users if authenticated user is admin, otherwise gets current authenticated user
+      operationId: getUsers
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDTO"
+        "401":
+          description: unauthorized, invalid authentication credentials
+  /users/{userId}/notes:
+    post:
+      description: Adds a note to a user
+      operationId: addNote
+      parameters:
+        - name: userId
+          in: path
+          description: the user identifier
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestNoteDTO"
+      responses:
+        "201":
+          description: user added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseNoteDTO"
+        "401":
+          description: unauthorized, invalid authentication credentials
+        "403":
+          description: access forbidden
+        "404":
+          description: user not found
+
+    get:
+      description: Lists all notes for a given user
+      operationId: getNotesForUser
+      parameters:
+        - name: userId
+          in: path
+          description: the user identifier
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RequestNoteDTO"
+        "401":
+          description: unauthorized, invalid authentication credentials
+        "403":
+          description: access forbidden
+        "404":
+          description: user not found
+
+  /users/{userId}/notes/{noteId}:
+    get:
+      description: Gets a note for a user
+      operationId: getNote
+      parameters:
+        - name: userId
+          in: path
+          description: the user identifier
+          required: true
+          schema:
+            type: integer
+        - name: noteId
+          in: path
+          description: the note identifier
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: user added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseNoteDTO"
+        "401":
+          description: unauthorized, invalid authentication credentials
+        "403":
+          description: access forbidden
+        "404":
+          description: user or note not found
+
+    put:
+      description: Updates a note for a user
+      operationId: updateNote
+      parameters:
+        - name: userId
+          in: path
+          description: the user identifier
+          required: true
+          schema:
+            type: integer
+        - name: noteId
+          in: path
+          description: the note identifier
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestNoteDTO"
+      responses:
+        "200":
+          description: user added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseNoteDTO"
+        "401":
+          description: unauthorized, invalid authentication credentials
+        "403":
+          description: access forbidden
+        "404":
+          description: user or note not found
+
+    delete:
+      description: deletes a note for a user
+      operationId: deleteNote
+      parameters:
+        - name: userId
+          in: path
+          description: the user identifier
+          required: true
+          schema:
+            type: integer
+        - name: noteId
+          in: path
+          description: the note identifier
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: user added successfully
+        "401":
+          description: unauthorized, invalid authentication credentials
+        "403":
+          description: access forbidden
+        "404":
+          description: user or note not found
+
+  /users/all/notes:
+    get:
+      description: Lists all notes for all users (admin only)
+      operationId: getAllNotes
+      security:
+        - basicAuth: [ ]
+        - cookieAuth: [ ]
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RequestNoteDTO"
+        "401":
+          description: unauthorized, invalid authentication credentials
+        "403":
+          description: access forbidden
+
+components:
+  schemas:
+    RequestNoteDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title of the note
+          example: Title of my first note
+        content:
+          type: string
+          description: content of the note
+          example: Contents of my first note
+    ResponseNoteDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: user identifier
+          example: 3
+        noteId:
+          type: integer
+          description: note identifier
+          example: 108
+        title:
+          type: string
+          description: title of the note
+          example: Title of my first note
+        content:
+          type: string
+          description: content of the note
+          example: Contents of my first note
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User identifier
+          example: 99
+        username:
+          type: string
+          description: Username
+          example: user1
+        role:
+          type: string
+          description: role of the user can be USER or ADMIN
+          example: USER
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+    basicAuth:
+      type: http
+      scheme: basic
+
+security:
+  - basicAuth: [ ]
+  - cookieAuth: [ ]
+
+servers:
+  - url: http://localhost:8080
