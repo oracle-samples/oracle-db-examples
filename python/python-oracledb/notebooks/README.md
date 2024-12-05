@@ -67,7 +67,7 @@ Install the schema:
 
 ### Start Jupyter
 
-    cd sample_notebooks
+    cd notebooks
     jupyter notebook
 
 If Jupyter is not in your path, you may need to find it on your computer and

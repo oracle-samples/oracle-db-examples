@@ -45,11 +45,12 @@ async def main():
         user=sample_env.get_main_user(),
         password=sample_env.get_main_password(),
         dsn=sample_env.get_connect_string(),
+        params=sample_env.get_connect_params(),
     )
 
-    # this script only works with Oracle Database 23.4 or later
-    if sample_env.get_server_version() < (23, 4):
-        sys.exit("This example requires Oracle Database 23.4 or later.")
+    # this script only works with Oracle Database 23.5 or later
+    if sample_env.get_server_version() < (23, 5):
+        sys.exit("This example requires Oracle Database 23.5 or later.")
 
     # Convert from NumPy ndarray types to array types when inserting vectors
     def numpy_converter_in(value):
@@ -57,6 +58,8 @@ async def main():
             dtype = "d"
         elif value.dtype == numpy.float32:
             dtype = "f"
+        elif value.dtype == numpy.uint8:
+            dtype = "B"
         else:
             dtype = "b"
         return array.array(dtype, value)
@@ -73,13 +76,7 @@ async def main():
 
     # Convert from array types to NumPy ndarray types when fetching vectors
     def numpy_converter_out(value):
-        if value.typecode == "b":
-            dtype = numpy.int8
-        elif value.typecode == "f":
-            dtype = numpy.float32
-        else:
-            dtype = numpy.float64
-        return numpy.array(value, copy=False, dtype=dtype)
+        return numpy.array(value, copy=False, dtype=value.typecode)
 
     def output_type_handler(cursor, metadata):
         if metadata.type_code is oracledb.DB_TYPE_VECTOR:
@@ -93,13 +90,15 @@ async def main():
 
     with connection.cursor() as cursor:
         # Insert
-        vector_data_32 = numpy.array([1.625, 1.5, 1.0])
-        vector_data_64 = numpy.array([11.25, 11.75, 11.5])
-        vector_data_8 = numpy.array([1, 2, 3])
+        vector_data_32 = numpy.array([1.625, 1.5, 1.0], dtype=numpy.float32)
+        vector_data_64 = numpy.array([11.25, 11.75, 11.5], dtype=numpy.float64)
+        vector_data_8 = numpy.array([1, 2, 3], dtype=numpy.int8)
+        vector_data_vb = numpy.array([180, 150, 100], dtype=numpy.uint8)
 
         await cursor.execute(
-            "insert into SampleVectorTab (v32, v64, v8) values (:1, :2, :3)",
-            [vector_data_32, vector_data_64, vector_data_8],
+            """insert into SampleVectorTab (v32, v64, v8, vbin)
+               values (:1, :2, :3, :4)""",
+            [vector_data_32, vector_data_64, vector_data_8, vector_data_vb],
         )
 
         # Query
