@@ -29,7 +29,7 @@
 # Simple Oracle Document Access (SODA).
 #
 # Oracle Client must be at 23.4 or higher.
-# Oracle Database must be at 23.4 or higher.
+# Oracle Database must be at 23.5 or higher.
 # The user must have been granted the SODA_APP privilege.
 #
 # Also see json_duality.py
