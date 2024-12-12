@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2016, 2024, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -49,6 +49,7 @@ connection = oracledb.connect(
     user=sample_env.get_main_user(),
     password=sample_env.get_main_password(),
     dsn=sample_env.get_connect_string(),
+    params=sample_env.get_connect_params(),
 )
 
 obj_type = connection.gettype("UDT_BUILDING")
