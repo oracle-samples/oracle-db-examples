@@ -27,14 +27,15 @@
  *
  * Performs the actual work of creating and populating the schemas with the
  * database objects used by the python-oracledb samples that require Oracle
- * Database 23.4 or higher. It is executed by the Python script
+ * Database 23.5 or higher. It is executed by the Python script
  * create_schema.py.
  *---------------------------------------------------------------------------*/
 
 create table &main_user..SampleVectorTab (
-    v32 vector(3, float32),
-    v64 vector(3, float64),
-    v8  vector(3, int8)
+    v32  vector(3, float32),
+    v64  vector(3, float64),
+    v8   vector(3, int8),
+    vbin vector(24, binary)
 )
 /
 
@@ -51,26 +52,20 @@ create table &main_user..SampleJRDVBookTab (
 )
 /
 
-insert into &main_user..SampleJRDVAuthorTab values (1, 'Isabel M. Rich')
-/
-insert into &main_user..SampleJRDVAuthorTab values (2, 'Bobbie Cool')
-/
-insert into &main_user..SampleJRDVAuthorTab values (3, 'Charlie Shore')
+insert into &main_user..SampleJRDVAuthorTab values
+    (1, 'Isabel M. Rich'),
+    (2, 'Bobbie Cool'),
+    (3, 'Charlie Shore')
 /
 
-insert into &main_user..SampleJRDVBookTab values (1, 'The Mysterious Dog', 1)
-/
-insert into &main_user..SampleJRDVBookTab values (2, 'The Mysterious Pony', 1)
-/
-insert into &main_user..SampleJRDVBookTab values (3, 'The Mysterious Tiger', 1)
-/
-insert into &main_user..SampleJRDVBookTab values (4, 'Self Help for Programmers', 2)
-/
-insert into &main_user..SampleJRDVBookTab values (5, 'More Self Help for Programmers', 2)
-/
-insert into &main_user..SampleJRDVBookTab values (6, 'Travel Guide Volume I', 3)
-/
-insert into &main_user..SampleJRDVBookTab values (7, 'Travel Guide Volume II', 3)
+insert into &main_user..SampleJRDVBookTab values
+    (1, 'The Mysterious Dog', 1),
+    (2, 'The Mysterious Pony', 1),
+    (3, 'The Mysterious Tiger', 1),
+    (4, 'Self Help for Programmers', 2),
+    (5, 'More Self Help for Programmers', 2),
+    (6, 'Travel Guide Volume I', 3),
+    (7, 'Travel Guide Volume II', 3)
 /
 
 commit

@@ -46,6 +46,7 @@ connection = oracledb.connect(
     user=sample_env.get_main_user(),
     password=sample_env.get_main_password(),
     dsn=sample_env.get_connect_string(),
+    params=sample_env.get_connect_params(),
 )
 
 # this script only works with Oracle Database 23.5 or later
