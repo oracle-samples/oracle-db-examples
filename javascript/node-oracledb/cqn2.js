@@ -1,17 +1,24 @@
-/* Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved. */
+/* Copyright (c) 2018, 2023, Oracle and/or its affiliates. */
 
 /******************************************************************************
  *
- * You may not use the identified files except in compliance with the Apache
- * License, Version 2.0 (the "License.")
+ * This software is dual-licensed to you under the Universal Permissive License
+ * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
+ * 2.0 as shown at http://www.apache.org/licenses/LICENSE-2.0. You may choose
+ * either license.
  *
+ * If you elect to accept the software under the Apache License, Version 2.0,
+ * the following applies:
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -25,36 +32,38 @@
  *
  *   The user must have been granted CHANGE NOTIFICATION.
  *   The node-oracledb host must be resolvable by the database host.
+ *   See https://node-oracledb.readthedocs.io/en/latest/user_guide/cqn.html
  *
  *   Run this script and when the subscription has been created, run
  *   these statements in a SQL*Plus session:
  *      INSERT INTO NO_CQNTABLE VALUES (1);
  *      COMMIT;
  *
- *   This example requires node-oracledb 2.3 or later.
- *
- *   This example uses Node 8's async/await syntax.
- *
  *****************************************************************************/
 
-const fs = require('fs');
+'use strict';
+
+Error.stackTraceLimit = 50;
+
 const oracledb = require("oracledb");
 const dbConfig = require('./dbconfig.js');
 
-// On Windows and macOS, you can specify the directory containing the Oracle
-// Client Libraries at runtime, or before Node.js starts.  On other platforms
-// the system library search path must always be set before Node.js is started.
-// See the node-oracledb installation documentation.
-// If the search path is not correct, you will get a DPI-1047 error.
-let libPath;
-if (process.platform === 'win32') {           // Windows
-  libPath = 'C:\\oracle\\instantclient_19_12';
-} else if (process.platform === 'darwin') {   // macOS
-  libPath = process.env.HOME + '/Downloads/instantclient_19_8';
+// This example requires node-oracledb Thick mode.
+//
+// Thick mode requires Oracle Client or Oracle Instant Client libraries.  On
+// Windows and macOS Intel you can specify the directory containing the
+// libraries at runtime or before Node.js starts.  On other platforms (where
+// Oracle libraries are available) the system library search path must always
+// include the Oracle library path before Node.js starts.  If the search path
+// is not correct, you will get a DPI-1047 error.  See the node-oracledb
+// installation documentation.
+let clientOpts = {};
+// On Windows and macOS Intel platforms, set the environment
+// variable NODE_ORACLEDB_CLIENT_LIB_DIR to the Oracle Client library path
+if (process.platform === 'win32' || (process.platform === 'darwin' && process.arch === 'x64')) {
+  clientOpts = { libDir: process.env.NODE_ORACLEDB_CLIENT_LIB_DIR };
 }
-if (libPath && fs.existsSync(libPath)) {
-  oracledb.initOracleClient({ libDir: libPath });
-}
+oracledb.initOracleClient(clientOpts);  // enable node-oracledb Thick mode
 
 dbConfig.events = true;  // CQN needs events mode
 
@@ -91,18 +100,18 @@ function myCallback(message) {
 }
 
 const options = {
-  callback : myCallback,
+  callback: myCallback,
   sql: "SELECT * FROM no_cqntable",
   // ipAddress: '127.0.0.1',
   // Stop after 60 seconds
-  timeout : 60,
+  timeout: 60,
   // Return ROWIDs in the notification message
-  qos : oracledb.SUBSCR_QOS_ROWIDS,
+  qo: oracledb.SUBSCR_QOS_ROWIDS,
   // Group notifications in batches covering 10 second
   // intervals, and send a summary
-  groupingClass : oracledb.SUBSCR_GROUPING_CLASS_TIME,
-  groupingValue : 10,
-  groupingType  : oracledb.SUBSCR_GROUPING_TYPE_SUMMARY
+  groupingClass: oracledb.SUBSCR_GROUPING_CLASS_TIME,
+  groupingValue: 10,
+  groupingType: oracledb.SUBSCR_GROUPING_TYPE_SUMMARY
 };
 
 async function setup(connection) {
@@ -149,11 +158,11 @@ async function runTest() {
 }
 
 process
-  .on('SIGTERM', function() {
+  .once('SIGTERM', function() {
     console.log("\nTerminating");
     process.exit(0);
   })
-  .on('SIGINT', function() {
+  .once('SIGINT', function() {
     console.log("\nTerminating");
     process.exit(0);
   });

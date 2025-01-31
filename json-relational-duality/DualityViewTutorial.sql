@@ -1,5 +1,5 @@
 /*
-** Copyright (c) 2023 Oracle and/or its affiliates
+** Copyright (c) 2024 Oracle and/or its affiliates
 ** The Universal Permissive License (UPL), Version 1.0
 **
 ** Subject to the condition set forth below, permission is hereby granted to any
@@ -44,7 +44,7 @@
 --      through SQL.
 --
 --    PREREQUISITES
---      Ensure that you have Oracle database 23c installed and running on a
+--      Ensure that you have Oracle database 23ai installed and running on a
 --      port. Ensure that the compatible parameter is set to 23.0.0.0.
 --
 --    USAGE
@@ -55,13 +55,6 @@
 --         DIRECTORY, DROP ANY DIRECTORY, DBA TO janus IDENTIFIED BY janus;
 --
 --    NOTES
---      Oracle Database 23c Free - Developer Release is the first release of
---      the next-generation Oracle Database, allowing developers a head-start
---      on building applications with innovative 23c features that simplify
---      development of modern data-driven apps. The entire feature set of
---      Oracle Database 23c is planned to be generally available within the
---      next 12 months.
---
 --      Please go through the duality view documentation
 --      (https://docs.oracle.com/en/database/oracle/oracle-database/23/jsnvu/index.html)
 --      to learn more about duality views and their advantages.
@@ -137,6 +130,14 @@ CREATE TABLE driver_race_map
 -- Create a trigger on the driver_race_map table to populate
 -- the points fields in team and driver based on race results.
 --
+-- For people that are not familiar with Formula One: Depending on the position in a race,
+-- both the racing team and the driver get points. There are two championships in Formula One: 
+-- one for the drivers and one for the teams. The team championship is called the Constructors' 
+-- Championship and the scoring system is the same as in the Drivers' Championship — except the 
+-- points from both drivers on a team are tallied together.
+-- If you want to read up more, then check out 
+-- - https://www.redbull.com/in-en/formula-1-points-system-guide
+--
 CREATE OR REPLACE TRIGGER driver_race_map_trigger
   BEFORE INSERT ON driver_race_map
   FOR EACH ROW
@@ -182,7 +183,7 @@ END;
 
 -- Creation using SQL syntax
 CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW race_dv AS
-  SELECT JSON {'raceId' : r.race_id,
+  SELECT JSON {'_id' : r.race_id,
                'name'   : r.name,
                'laps'   : r.laps WITH NOUPDATE,
                'date'   : r.race_date,
@@ -204,7 +205,7 @@ CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW race_dv AS
 CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW race_dv AS
   race @insert @update @delete
   {
-    raceId : race_id
+    _id : race_id
     name   : name
     laps   : laps @noUpdate
     date   : race_date
@@ -229,7 +230,7 @@ CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW race_dv AS
 
 -- Creation using SQL syntax
 CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW driver_dv AS
-  SELECT JSON {'driverId' : d.driver_id,
+  SELECT JSON {'_id' : d.driver_id,
                'name'     : d.name,
                'points'   : d.points,
                UNNEST
@@ -254,7 +255,7 @@ CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW driver_dv AS
 CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW driver_dv AS
   driver @insert @update @delete
   {
-    driverId : driver_id
+    _id : driver_id
     name     : name
     points   : points
     team @noInsert @noUpdate @noDelete @unnest
@@ -282,7 +283,7 @@ CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW driver_dv AS
 
 -- Creation using SQL syntax
 CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW team_dv AS
-  SELECT JSON {'teamId' : t.team_id,
+  SELECT JSON {'_id' : t.team_id,
                'name'   : t.name,
                'points' : t.points,
                'driver' :
@@ -298,7 +299,7 @@ CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW team_dv AS
 CREATE OR REPLACE JSON RELATIONAL DUALITY VIEW team_dv AS
   team @insert @update @delete
   {
-    teamId : team_id
+    _id : team_id
     name   : name
     points : points
     driver : driver @insert @update
@@ -330,7 +331,7 @@ SELECT json_serialize(data PRETTY) FROM team_dv;
 -- This automatically populates the driver and team table as well as the
 -- driver collection.
 --
-INSERT INTO team_dv VALUES ('{"teamId" : 301,
+INSERT INTO team_dv VALUES ('{"_id" : 301,
                               "name"   : "Red Bull",
                               "points" : 0,
                               "driver" : [ {"driverId" : 101,
@@ -340,7 +341,7 @@ INSERT INTO team_dv VALUES ('{"teamId" : 301,
                                             "name"     : "Sergio Perez",
                                             "points"   : 0} ]}');
 
-INSERT INTO team_dv VALUES ('{"teamId" : 302,
+INSERT INTO team_dv VALUES ('{"_id" : 302,
                               "name"   : "Ferrari",
                               "points" : 0,
                               "driver" : [ {"driverId" : 103,
@@ -350,7 +351,7 @@ INSERT INTO team_dv VALUES ('{"teamId" : 302,
                                             "name"     : "Carlos Sainz Jr",
                                             "points"   : 0} ]}');
 
-INSERT INTO team_dv VALUES ('{"teamId" : 2,
+INSERT INTO team_dv VALUES ('{"_id" : 2,
                               "name"   : "Mercedes",
                               "points" : 0,
                               "driver" : [ {"driverId" : 105,
@@ -363,19 +364,19 @@ INSERT INTO team_dv VALUES ('{"teamId" : 2,
 -- Insert a collection of race documents into RACE_DV.
 -- This automatically populates the race table.
 --
-INSERT INTO race_dv VALUES ('{"raceId" : 201,
+INSERT INTO race_dv VALUES ('{"_id" : 201,
                               "name"   : "Bahrain Grand Prix",
                               "laps"   : 57,
                               "date"   : "2022-03-20T00:00:00",
                               "podium" : {}}');
 
-INSERT INTO race_dv VALUES ('{"raceId" : 202,
+INSERT INTO race_dv VALUES ('{"_id" : 202,
                               "name"   : "Saudi Arabian Grand Prix",
                               "laps"   : 50,
                               "date"   : "2022-03-27T00:00:00",
                               "podium" : {}}');
 
-INSERT INTO race_dv VALUES ('{"raceId" : 203,
+INSERT INTO race_dv VALUES ('{"_id" : 203,
                               "name"   : "Australian Grand Prix",
                               "laps"   : 58,
                               "date"   : "2022-04-09T00:00:00",
@@ -413,7 +414,7 @@ SELECT json_serialize(data PRETTY) FROM race_dv;
 -- is used by the REST interface to translate QBEs.
 --
 SELECT json_serialize(data PRETTY)
-  FROM race_dv WHERE json_value(data, '$.raceId') = 201;
+  FROM race_dv WHERE json_value(data, '$._id') = 201;
 
 -- Project specific document fields.
 -- In SQL, specific documents fields can be requested using the KEEP operator
@@ -448,7 +449,7 @@ SELECT json_serialize(json_transform(data, KEEP '$.name', '$.team') PRETTY)
 --
 UPDATE race_dv dv
   SET data = ('{_metadata : {"etag" : "2E8DC09543DD25DC7D588FB9734D962B"},
-                "raceId" : 201,
+                "_id" : 201,
                 "name"   : "Bahrain Grand Prix",
                 "laps"   : 57,
                 "date"   : "2022-03-20T00:00:00",
@@ -475,7 +476,7 @@ UPDATE race_dv dv
                               "position"        : 4,
                               "driverId"        : 105,
                               "name"            : "George Russell"} ]}')
-    WHERE dv.data.raceId = 201;
+    WHERE dv.data."_id" = 201;
 
 COMMIT;
 
@@ -483,8 +484,7 @@ COMMIT;
 -- You can use a predicate on the primary key field to query by ID.
 --
 SELECT json_serialize(data PRETTY)
-  FROM race_dv dv WHERE dv.data.raceId = 201;
-
+  FROM race_dv dv WHERE dv.data."_id" = 201;
 
 ------------------------------------------------------------------------------
 -- Step 7: Update specific fields in the document identified by a predicate --
@@ -542,7 +542,7 @@ SELECT json_serialize(data PRETTY) FROM team_dv dv
 --
 UPDATE team_dv dv
   SET data = ('{_metadata : {"etag" : "855840B905C8CAFA99FB9CBF813992E5"},
-                "teamId" : 2,
+                "_id" : 2,
                 "name"   : "Mercedes",
                 "points" : 40,
                 "driver" : [ {"driverId" : 106,
@@ -555,7 +555,7 @@ UPDATE team_dv dv
 
 UPDATE team_dv dv
   SET data = ('{_metadata : {"etag" : "DA69DD103E8BAE95A0C09811B7EC9628"},
-                "teamId" : 302,
+                "_id" : 302,
                 "name"   : "Ferrari",
                 "points" : 30,
                 "driver" : [ {"driverId" : 105,
@@ -594,7 +594,7 @@ SELECT json_serialize(data PRETTY) FROM driver_dv dv
 --
 UPDATE driver_dv dv
   SET DATA = ('{_metadata : {"etag" : "FCD4CEC63897F60DEA1EC2F64D3CE53A"},
-                "driverId" : 103,
+                "_id" : 103,
                 "name" : "Charles Leclerc",
                 "points" : 25,
                 "teamId" : 2,
@@ -609,7 +609,7 @@ UPDATE driver_dv dv
                   }
                 ]
             }')
-  WHERE dv.data.driverId = 103;
+  WHERE dv.data."_id" = 103;
 
 
 ----------------------------------
@@ -623,7 +623,7 @@ UPDATE driver_dv dv
 -- valid SQL expression, e.g. equality on primary key, some condition using
 -- simplified syntax, or JSON function, such as json_value or json_exists.
 --
-DELETE FROM race_dv dv WHERE dv.data.raceId = 201;
+DELETE FROM race_dv dv WHERE dv.data."_id" = 201;
 
 SELECT json_serialize(data PRETTY) FROM race_dv;
 SELECT json_serialize(data PRETTY) FROM driver_dv;
