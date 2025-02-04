@@ -29,7 +29,7 @@
 # Simple Oracle Document Access (SODA).
 #
 # Oracle Client must be at 23.4 or higher.
-# Oracle Database must be at 23.4 or higher.
+# Oracle Database must be at 23.5 or higher.
 # The user must have been granted the SODA_APP privilege.
 #
 # Also see json_duality.py
@@ -42,9 +42,9 @@ import sample_env
 # this script is currently only supported in python-oracledb thick mode
 oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-# this script only works with Oracle Database & Client 23.4 or later
-if sample_env.get_server_version() < (23, 4):
-    sys.exit("This example requires Oracle Database 23.4 or later.")
+# this script only works with Oracle Database 23.5 & Client 23.4 or later
+if sample_env.get_server_version() < (23, 5):
+    sys.exit("This example requires Oracle Database 23.5 or later")
 if oracledb.clientversion()[:2] < (23, 4):
     sys.exit("This example requires Oracle Client 23.4 or later")
 

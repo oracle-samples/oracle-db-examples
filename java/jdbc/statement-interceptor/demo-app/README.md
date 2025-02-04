@@ -1,10 +1,10 @@
 # JDBC interceptor demo application
 
 How to transparently secure database exchanges by filtering out bad or insecure SQL statements
-issued by an application ?
+issued by an application?
 
-This simple web application fulfill that use case and demonstrates how JDBC trace event listener
-can be used to analyse and may be intercept SQL statements that are sent by an application
+This simple web application fulfills that use case and demonstrates how JDBC trace event listener
+can be used to analyze and may be intercepted SQL statements that are sent by an application
 to oracle database server. 
 
 =================================================================================================
@@ -30,7 +30,7 @@ Employees with 'visible' attributes set to 0 must not be seen. This flag will be
 used to demonstrate how SQL injection can lead to unexpected response.
 See section [Testing the interceptor]()
 
-The SQL statement sent to the server are intercept and analyse according the "security" rules.
+The SQL statement sent to the server is intercepted and analyzed according to the "security" rules.
 
 ## The statement interceptor
 
@@ -44,7 +44,7 @@ The pool configuration is taken from
 Please change it accordingly.
 
 Each connection delivered by this pool will have the Statement
-interceptor trace event listener  attached. 
+interceptor trace event listener attached. 
 
 The interceptor rules are defined in 
 > src/main/resources/statementRules.json
@@ -80,8 +80,8 @@ Note:
     application.properties file.
 
 ### Testing the interceptor
-This application host two datasources, one with an interceptor in place.
-There is a checkbox that allow you to switch from one datasource to another
+This application hosts two datasources, one with an interceptor in place.
+There is a checkbox that allows you to switch from one datasource to another
 
 
 You can issue some search that will be intercepted by the listener
@@ -90,19 +90,19 @@ You can issue some search that will be intercepted by the listener
 An example is a search like 
 >_' or 'a'='a_
 
-When the interceptor is not enabled you will see that this search return all 
+When the interceptor is not enabled, you will see that this search return all 
 employees including the ones that are not supposed to be visible 
 
 ![SQL injection not intercepted](assets/img/injection_1.png)
 
-When the interceptor is enabled you will see the security error thrown
-by the interceptor and that the request do not reach the server.
+When the interceptor is enabled, you will see the security error thrown
+by the interceptor and that the request does not reach the server.
 
 ![SQL injection not intercepted](assets/img/injection_2.png)
 
 #### fixed token example
 
-By issuing "BabEmployee" as search criteria you will see how security log record  can be intercepted.
+By issuing "BabEmployee" as search criteria, you will see how security log record can be intercepted.
 
 ![token sample](assets/img/token_1.png)
 

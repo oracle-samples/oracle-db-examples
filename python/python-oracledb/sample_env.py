@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2017, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2017, 2024, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -40,6 +40,8 @@
 #   PYO_SAMPLES_EDITION_USER: user to be created for editiong samples
 #   PYO_SAMPLES_EDITION_PASSWORD: password of PYO_SAMPLES_EDITION_USER
 #   PYO_SAMPLES_EDITION_NAME: name of edition for editioning samples
+#   PYO_SAMPLES_WALLET_LOCATION: location of wallet file (thin mode, mTLS)
+#   PYO_SAMPLES_WALLET_PASSWORD: password for wallet file (thin mode, mTLS)
 #   PYO_SAMPLES_DRIVER_MODE: python-oracledb mode (Thick or thin) to use
 #
 # - On Windows set PYO_SAMPLES_ORACLE_CLIENT_PATH if Oracle libraries are not
@@ -156,6 +158,21 @@ def get_edition_name():
     )
 
 
+def get_connect_params(cls=oracledb.ConnectParams):
+    wallet_location = get_wallet_location()
+    if wallet_location is not None:
+        return cls(
+            config_dir=wallet_location,
+            wallet_location=wallet_location,
+            wallet_password=get_wallet_password(),
+            disable_oob=True,
+        )
+
+
+def get_pool_params():
+    return get_connect_params(cls=oracledb.PoolParams)
+
+
 def get_connect_string():
     return get_value(
         "PYO_SAMPLES_CONNECT_STRING", "Connect String", DEFAULT_CONNECT_STRING
@@ -227,6 +244,18 @@ def get_server_version():
         value = tuple(int(s) for s in conn.version.split("."))[:2]
         PARAMETERS[name] = value
     return value
+
+
+def get_wallet_location():
+    if get_is_thin():
+        return get_value("PYO_SAMPLES_WALLET_LOCATION", "Wallet Location")
+
+
+def get_wallet_password():
+    if get_is_thin() and get_wallet_location():
+        return get_value(
+            "PYO_SAMPLES_WALLET_PASSWORD", "Wallet Password", password=True
+        )
 
 
 def run_sql_script(conn, script_name, **kwargs):

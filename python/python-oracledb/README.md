@@ -34,8 +34,8 @@ build a container with the samples and a running Oracle Database.
 
 ### Notebooks
 
-The [sample_notebooks](./sample_notebooks) directory has Jupyter notebooks with
-runnable examples.
+The [notebooks](./notebooks) directory has Jupyter notebooks with runnable
+examples.
 
 ## About python-oracledb
 
