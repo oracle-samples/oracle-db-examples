@@ -31,8 +31,8 @@ If you're interested in contributing to the Oracle Exadata demo project:
 
 You can get involved with Exadata.
 
-- Reach out to the [ExadataPM](https://twitter.com/ExadataPM) team on twitter:
-  - [@Alex_Blyth](https://twitter.com/alex_blyth)
+- Reach out to the [ExadataPM](https://bsky.app/profile/exadata.bsky.social) team on Bluesky:
+  - [@Alex_Blyth](https://bsky.app/profile/alexblyth.net)
   - [@Seth_M_Miller](https://twitter.com/Seth_M_Miller)
 - Read and subscribe to the [Exadata Product Management blog](https://blogs.oracle.com/exadata/)
 - Check out the updated technical pages for [Exadata](https://www.oracle.com/database/technologies/exadata)
