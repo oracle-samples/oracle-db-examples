@@ -1,10 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016, 2025, Oracle and/or its affiliates.
-#
-# Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
-#
-# Portions Copyright 2001-2007, Computronix (Canada) Ltd., Edmonton, Alberta,
-# Canada. All rights reserved.
+# Copyright (c) 2025, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -28,13 +23,16 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# object_aq.py
+# dataframe_parquet_write.py
 #
-# Demonstrates how to use advanced queuing with objects. It makes use of a
-# simple type and queue created in the sample setup.
+# Shows how to use connection.fetch_df_batches() to write files in Parquet
+# format.
 # -----------------------------------------------------------------------------
 
-import decimal
+import os
+
+import pyarrow
+import pyarrow.parquet as pq
 
 import oracledb
 import sample_env
@@ -43,56 +41,47 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-BOOK_TYPE_NAME = "UDT_BOOK"
-QUEUE_NAME = "DEMO_BOOK_QUEUE"
-BOOK_DATA = [
-    (
-        "The Fellowship of the Ring",
-        "Tolkien, J.R.R.",
-        decimal.Decimal("10.99"),
-    ),
-    (
-        "Harry Potter and the Philosopher's Stone",
-        "Rowling, J.K.",
-        decimal.Decimal("7.99"),
-    ),
-]
-
-# connect to database
 connection = oracledb.connect(
     user=sample_env.get_main_user(),
     password=sample_env.get_main_password(),
     dsn=sample_env.get_connect_string(),
+    params=sample_env.get_connect_params(),
 )
 
-# create a queue
-books_type = connection.gettype(BOOK_TYPE_NAME)
-queue = connection.queue(QUEUE_NAME, payload_type=books_type)
-queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
-queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
+PARQUET_FILE_NAME = "sample.parquet"
 
-# dequeue all existing messages to ensure the queue is empty, just so that
-# the results are consistent
-while queue.deqone():
-    pass
+if os.path.isfile(PARQUET_FILE_NAME):
+    os.remove(PARQUET_FILE_NAME)
 
-# enqueue a few messages
-print("Enqueuing messages...")
-for title, authors, price in BOOK_DATA:
-    book = books_type.newobject()
-    book.TITLE = title
-    book.AUTHORS = authors
-    book.PRICE = price
-    print(title)
-    queue.enqone(connection.msgproperties(payload=book))
-connection.commit()
+# Tune this for your query
+FETCH_BATCH_SIZE = 10
 
-# dequeue the messages
-print("\nDequeuing messages...")
-while True:
-    props = queue.deqone()
-    if not props:
-        break
-    print(props.payload.TITLE)
-connection.commit()
-print("\nDone.")
+SQL = "select id, name from SampleQueryTab order by id"
+pqwriter = None
+
+for odf in connection.fetch_df_batches(statement=SQL, size=FETCH_BATCH_SIZE):
+
+    pyarrow_table = pyarrow.Table.from_arrays(
+        arrays=odf.column_arrays(), names=odf.column_names()
+    )
+
+    if not pqwriter:
+        pqwriter = pq.ParquetWriter(PARQUET_FILE_NAME, pyarrow_table.schema)
+
+    print(f"Writing a batch of {odf.num_rows()} rows")
+    pqwriter.write_table(pyarrow_table)
+
+pqwriter.close()
+
+# -----------------------------------------------------------------------------
+# Check the file was created
+
+print("\nParquet file metadata:")
+print(pq.read_metadata(PARQUET_FILE_NAME))
+
+# -----------------------------------------------------------------------------
+# Read the file
+
+print("\nParquet file data:")
+t = pq.read_table(PARQUET_FILE_NAME, columns=["ID", "NAME"])
+print(t)

@@ -76,7 +76,7 @@ async def main():
     results = await connection.run_pipeline(pipeline, continue_on_error=True)
 
     for i, result in enumerate(results):
-        statement = pipeline.operations[i].statement
+        statement = result.operation.statement
         if result.warning:
             print(
                 f"Warning {result.warning.full_code} " f"in operation {i+1}:\n"

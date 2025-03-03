@@ -54,7 +54,7 @@ if sample_env.get_server_version() >= (21, 0):
     sample_env.run_sql_script(
         conn, "create_schema_21", main_user=sample_env.get_main_user()
     )
-if sample_env.get_server_version() >= (23, 5):
+if sample_env.get_server_version() >= (23, 7):
     sample_env.run_sql_script(
         conn, "create_schema_23", main_user=sample_env.get_main_user()
     )
