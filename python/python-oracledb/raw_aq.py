@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2019, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2019, 2025, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -37,8 +37,9 @@
 import oracledb
 import sample_env
 
-# this script is currently only supported in python-oracledb thick mode
-oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
+# determine whether to use python-oracledb thin mode or thick mode
+if not sample_env.get_is_thin():
+    oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 QUEUE_NAME = "DEMO_RAW_QUEUE"
 PAYLOAD_DATA = [
@@ -55,31 +56,28 @@ connection = oracledb.connect(
 )
 
 # create a queue
-with connection.cursor() as cursor:
-    queue = connection.queue(QUEUE_NAME)
-    queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
-    queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
+queue = connection.queue(QUEUE_NAME)
+queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
+queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
 
-    # dequeue all existing messages to ensure the queue is empty, just so that
-    # the results are consistent
-    while queue.deqone():
-        pass
+# dequeue all existing messages to ensure the queue is empty, just so that
+# the results are consistent
+while queue.deqone():
+    pass
 
 # enqueue a few messages
 print("Enqueuing messages...")
-with connection.cursor() as cursor:
-    for data in PAYLOAD_DATA:
-        print(data)
-        queue.enqone(connection.msgproperties(payload=data))
-    connection.commit()
+for data in PAYLOAD_DATA:
+    print(data)
+    queue.enqone(connection.msgproperties(payload=data))
+connection.commit()
 
 # dequeue the messages
 print("\nDequeuing messages...")
-with connection.cursor() as cursor:
-    while True:
-        props = queue.deqone()
-        if not props:
-            break
-        print(props.payload.decode())
-    connection.commit()
-    print("\nDone.")
+while True:
+    props = queue.deqone()
+    if not props:
+        break
+    print(props.payload.decode())
+connection.commit()
+print("\nDone.")

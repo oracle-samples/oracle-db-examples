@@ -66,23 +66,90 @@ async def main():
 
     # pipeline.add_commit()  # uncomment to persist data
 
+    pipeline.add_execute(
+        """create or replace procedure myprocerr as
+           begin
+              bogus;
+           end;"""
+    )
+
+    pipeline.add_execute(
+        """create or replace procedure myproc2 (p in number) as
+           begin
+              null;
+           end;"""
+    )
+
+    pipeline.add_execute(
+        """create or replace function myfunc (p in number) return number as
+           begin
+              return p;
+           end;"""
+    )
+
+    pipeline.add_callproc("myproc2", [123])
+
+    pipeline.add_callfunc("myfunc", oracledb.DB_TYPE_NUMBER, [456])
+
+    pipeline.add_fetchall("select 3 from does_not_exist")
+
     pipeline.add_fetchall("select * from mytab")
 
     # Run the operations in the pipeline.
     # Note although the database receives all the operations at the same time,
     # it will execute each operation sequentially
-    results = await connection.run_pipeline(pipeline)
+    results = await connection.run_pipeline(pipeline, continue_on_error=True)
 
     # Print the query results
     for i, result in enumerate(results):
-        if result.rows:
-            statement = pipeline.operations[i].statement
-            print(f"\nRows from operation {i+1} '{statement}':\n")
+        statement = result.operation.statement
+        op_type = result.operation.op_type
+
+        if result.warning:
+            print(f"\n-> OPERATION {i+1}: WARNING\n")
+            print(statement)
+            print(f"{result.warning}\n")
+
+        elif result.error:
+            # This will only be invoked if the pipeline is run with
+            # continue_on_error=True
+            offset = result.error.offset
+            print(f"\n-> OPERATION {i+1}: ERROR AT POSITION {offset}:\n")
+            print(statement, "\n")
+            print(f"{result.error}\n")
+
+        elif op_type == oracledb.PipelineOpType.EXECUTE:
+            print(f"\n-> OPERATION {i+1}: EXECUTE\n")
+            print(statement)
+
+        elif op_type == oracledb.PipelineOpType.EXECUTE_MANY:
+            print(f"\n-> OPERATION {i+1}: EXECUTE_MANY\n")
+            print(statement)
+
+        elif result.rows:
+            print(f"\n-> OPERATION {i+1}: ROWS\n")
+            print(statement, "\n")
             headings = [col.name for col in result.columns]
             print(*headings, sep="\t")
             print("--")
             for row in result.rows:
                 print(*row, sep="\t")
+
+        elif op_type == oracledb.PipelineOpType.CALL_PROC:
+            print(f"\n-> OPERATION {i+1}: CALL_PROC\n")
+            print(result.operation.name)
+
+        elif op_type == oracledb.PipelineOpType.CALL_FUNC:
+            print(f"\n-> OPERATION {i+1}: CALL_FUNC\n")
+            print(result.operation.name)
+            print(result.return_value)
+
+        elif op_type == oracledb.PipelineOpType.COMMIT:
+            print(f"\n-> OPERATION {i+1}: COMMIT")
+
+        else:
+            print(f"\n-> OPERATION {i+1}: Unknown\n")
+            print(f"Operation type: {op_type}")
 
     # ------------------------------------------------------------
 
