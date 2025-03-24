@@ -1,3 +1,10 @@
+/*
+ ** Setup User and Queues for AQ-JMS
+ **
+ ** Copyright (c) 2019, 2025 Oracle and/or its affiliates.
+ ** Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+ */
+
 -- Create database user
 create user aqjmsuser identified by Welcome_123#;
 grant connect, resource to aqjmsuser;
