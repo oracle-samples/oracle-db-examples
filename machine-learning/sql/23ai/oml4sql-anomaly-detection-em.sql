@@ -9,15 +9,7 @@
 --
 --   https://oss.oracle.com/licenses/upl
 -----------------------------------------------------------------------
-SET ECHO ON
-SET FEEDBACK 1
-SET NUMWIDTH 10
-SET LINESIZE 80
-SET TRIMSPOOL ON
-SET TAB OFF
-SET PAGESIZE 100
-SET serveroutput ON
-SET pages 10000
+
 -----------------------------------------------------------------------
 --                            SAMPLE PROBLEM
 -----------------------------------------------------------------------
@@ -101,9 +93,9 @@ END;
 -- DISPLAY MODEL DETAILS
 --
 
-SELECT * 
-FROM  TABLE(dbms_data_mining.get_model_details_global('CUSTOMERS360MODEL_AD'))
-ORDER BY global_detail_name;
+SELECT NAME, NUMERIC_VALUE
+FROM  DM$VGCUSTOMERS360MODEL_AD
+ORDER BY NAME;
 
 ---------------------------------------------
 -- DISPLAY THE TOP 5 MOST ANOMALOUS CUSTOMERS
@@ -114,7 +106,7 @@ FROM (SELECT CUST_ID, round(prob_anomalous,2) prob_anomalous,
              YRS_RESIDENCE, CUST_MARITAL_STATUS, 
              rank() over (ORDER BY prob_anomalous DESC) rnk 
       FROM (SELECT CUST_ID, HOUSEHOLD_SIZE, YRS_RESIDENCE, CUST_GENDER, CUST_MARITAL_STATUS, 
-                   prediction_probability(CUSTOMERS360MODEL, '0' USING *) prob_anomalous
+                   prediction_probability(CUSTOMERS360MODEL_AD, '0' USING *) prob_anomalous
             FROM CUSTOMERS360_V))
 WHERE rnk <= 5
 ORDER BY prob_anomalous DESC;
@@ -147,10 +139,10 @@ SELECT CUST_ID, PREDICTION,
        RTRIM(TRIM(SUBSTR(OUTPRED."Attribute2",17,100)),'rank="2"/>') SECOND_ATTRIBUTE,
        RTRIM(TRIM(SUBSTR(OUTPRED."Attribute3",17,100)),'rank="3"/>') THIRD_ATTRIBUTE
 FROM (SELECT CUST_ID, 
-             PREDICTION(CUSTOMERS360MODEL USING *) PREDICTION,
-             PREDICTION_DETAILS(CUSTOMERS360MODEL, '0' USING *) PREDICTION_DETAILS 
+             PREDICTION(CUSTOMERS360MODEL_AD USING *) PREDICTION,
+             PREDICTION_DETAILS(CUSTOMERS360MODEL_AD, '0' USING *) PREDICTION_DETAILS 
       FROM   CUSTOMERS360_V
-      WHERE  PREDICTION_PROBABILITY(CUSTOMERS360MODEL, '0' USING *) > 0.50
+      WHERE  PREDICTION_PROBABILITY(CUSTOMERS360MODEL_AD, '0' USING *) > 0.50
       AND OCCUPATION = 'TechSup'
       ORDER BY CUST_ID) OUT,
       XMLTABLE('/Details'
