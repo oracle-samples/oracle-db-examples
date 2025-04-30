@@ -43,8 +43,8 @@
    NOTES
    Use JDK 13 and above on Windows. Check presence of sspi_bridge.dll in JDK intalation
 
- MODIFIED    (MM/DD/YY)
- ibre5041    18/04/2025 - Creation
+   MODIFIED    (MM/DD/YY)
+   ibre5041    18/04/2025 - Creation
 */
 
 package kerb;
@@ -65,71 +65,71 @@ import oracle.jdbc.pool.OracleDataSource;
 import oracle.net.ano.AnoServices;
 
 public class GSSAuthSSPIConnectSample {
-    // This should return your AD LOGIN
-    String username = System.getProperty("user.name");
-    // This should return your AD KERBEROS REALM
-    String domain = System.getenv("USERDNSDOMAIN");
-	// Your Database JDBC URL here
-    String url = "jdbc:oracle:thin:@//dbhost1:1521/DBSERVICE";
+  // This should return your AD LOGIN
+  String username = System.getProperty("user.name");
+  // This should return your AD KERBEROS REALM
+  String domain = System.getenv("USERDNSDOMAIN");
+  // Your Database JDBC URL here
+  String url = "jdbc:oracle:thin:@//dbhost1:1521/DBSERVICE";
 
-    public GSSAuthSSPIConnectSample() {
-    }
+  public GSSAuthSSPIConnectSample() {
+  }
+  
+  public void doit() throws Exception
+  {
+    // Use env variable SSPI_BRIDGE_TRACE=1 in order to trace Java's sspi_bridge.dll plugin
+    // export SSPI_BRIDGE_TRACE=1
+    
+    // Various useful tracing options
+    // System.setProperty("oracle.jdbc.Trace", "true");
+    // System.setProperty("sun.security.krb5.debug", "true");
+    // System.setProperty("sun.security.spnego.debug", "true");
+    // System.setProperty("sun.security.jgss.debug", "true");
+    // System.setProperty("java.security.debug", "true");
+    // System.setProperty("sun.security.nativegss.debug", "true");
 
-    public void doit() throws Exception
-    {
-	// Use env variable SSPI_BRIDGE_TRACE=1 in order to trace Java's sspi_bridge.dll plugin
-	// export SSPI_BRIDGE_TRACE=1
+    // Activate SSPI bridge, your Kerberos token will be created using Windows SSPI API
+    System.setProperty("sun.security.jgss.native", "true");
+    System.setProperty("sun.security.jgss.lib", "sspi_bridge.dll");
 
-	// Various useful tracing options
-	// System.setProperty("oracle.jdbc.Trace", "true");
-	// System.setProperty("sun.security.krb5.debug", "true");
-	// System.setProperty("sun.security.spnego.debug", "true");
-	// System.setProperty("sun.security.jgss.debug", "true");
-	// System.setProperty("java.security.debug", "true");
-	// System.setProperty("sun.security.nativegss.debug", "true");
+    Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
+    GSSManager manager = GSSManager.getInstance();
 
-	// Activate SSPI bridge, your Kerberos token will be created using Windows SSPI API
-	System.setProperty("sun.security.jgss.native", "true");
-	System.setProperty("sun.security.jgss.lib", "sspi_bridge.dll");
+    GSSName srcName = manager.createName(username + "@" + domain, GSSName.NT_USER_NAME);
+    GSSCredential cred = manager.createCredential(srcName
+						  , GSSCredential.DEFAULT_LIFETIME
+						  , krb5Oid, GSSCredential.INITIATE_ONLY);
 
-	Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
-	GSSManager manager = GSSManager.getInstance();
+    Properties prop = new Properties();
+    prop.setProperty(AnoServices.AUTHENTICATION_PROPERTY_SERVICES, "(" + AnoServices.AUTHENTICATION_KERBEROS5 + ")");
+    prop.setProperty(OracleConnection.CONNECTION_PROPERTY_THIN_NET_AUTHENTICATION_SERVICES,"( " + AnoServices.AUTHENTICATION_KERBEROS5 + " )");
+    prop.setProperty(OracleConnection.CONNECTION_PROPERTY_THIN_NET_AUTHENTICATION_KRB5_MUTUAL, "true");
 
-	GSSName srcName = manager.createName(username + "@" + domain, GSSName.NT_USER_NAME);
-	GSSCredential cred = manager.createCredential(srcName
-						      , GSSCredential.DEFAULT_LIFETIME
-						      , krb5Oid, GSSCredential.INITIATE_ONLY);
-
-	Properties prop = new Properties();
-	prop.setProperty(AnoServices.AUTHENTICATION_PROPERTY_SERVICES, "(" + AnoServices.AUTHENTICATION_KERBEROS5 + ")");
-	prop.setProperty(OracleConnection.CONNECTION_PROPERTY_THIN_NET_AUTHENTICATION_SERVICES,"( " + AnoServices.AUTHENTICATION_KERBEROS5 + " )");
-	prop.setProperty(OracleConnection.CONNECTION_PROPERTY_THIN_NET_AUTHENTICATION_KRB5_MUTUAL, "true");
-
-        OracleDataSource ods = new OracleDataSource();
-        ods.setURL(url);
-        ods.setConnectionProperties(prop);
-        OracleConnectionBuilder builder = ods.createConnectionBuilder();
-        OracleConnection conn = builder.gssCredential(cred).build();
+    OracleDataSource ods = new OracleDataSource();
+    ods.setURL(url);
+    ods.setConnectionProperties(prop);
+    OracleConnectionBuilder builder = ods.createConnectionBuilder();
+    OracleConnection conn = builder.gssCredential(cred).build();
         
-	String auth = ((OracleConnection)conn).getAuthenticationAdaptorName();
-	System.out.println("Authentication adaptor:"+auth);
+    String auth = ((OracleConnection)conn).getAuthenticationAdaptorName();
+    System.out.println("Authentication adaptor:"+auth);
 
-	String sql = "select user from dual";
-	Statement stmt = conn.createStatement();
-	ResultSet rs = stmt.executeQuery(sql);
-	while (rs.next())
-	    System.out.println("whoami: " + rs.getString(1));
+    String sql = "select user from dual";
+    Statement stmt = conn.createStatement();
+    ResultSet rs = stmt.executeQuery(sql);
+    while (rs.next())
+      System.out.println("whoami: " + rs.getString(1));
 
-	conn.close();
+    conn.close();
+  }
+
+  public static void main(String[] args) {
+    GSSAuthSSPIConnectSample test = new GSSAuthSSPIConnectSample();
+    try {
+      test.doit();
+      System.out.println("Done");
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-
-    public static void main(String[] args) {
-	GSSAuthSSPIConnectSample test = new GSSAuthSSPIConnectSample();
-	try {
-	    test.doit();
-	    System.out.println("Done");
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
+  }
 }
