@@ -90,7 +90,8 @@ public class GSSAuthSSPIConnectSample {
 
     // Activate SSPI bridge, your Kerberos token will be created using Windows SSPI API
     System.setProperty("sun.security.jgss.native", "true");
-    System.setProperty("sun.security.jgss.lib", "sspi_bridge.dll");
+    // Uncomment this this line for JDK 11, for newer JDK versions this value should be default
+    // System.setProperty("sun.security.jgss.lib", "sspi_bridge.dll");
 
     Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
     GSSManager manager = GSSManager.getInstance();
