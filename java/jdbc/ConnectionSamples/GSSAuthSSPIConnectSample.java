@@ -78,7 +78,7 @@ public class GSSAuthSSPIConnectSample {
   public void doit() throws Exception
   {
     // Use env variable SSPI_BRIDGE_TRACE=1 in order to trace Java's sspi_bridge.dll plugin
-    // export SSPI_BRIDGE_TRACE=1
+    // set SSPI_BRIDGE_TRACE=1
     
     // Various useful tracing options
     // System.setProperty("oracle.jdbc.Trace", "true");
