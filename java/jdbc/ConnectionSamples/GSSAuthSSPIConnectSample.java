@@ -21,12 +21,12 @@
 
 /*
   DESCRIPTION
-  This sample shows how to use SSO uging Kerberos in Windows.
+  This sample shows how to use SSO uging Kerberos on Windows.
   Since WIN2019 allowtgtsessionkey registry key is not available 
   and the only option how to acces Kerberos TGT is via Java's SSPI bridge.
 	
   PREREQUISITIES
-  - Confirure Kerberos authentication for Oracle database as describe here:
+  - Configure Kerberos authentication for Oracle database as described here:
   https://blog.pythian.com/part-4-implementing-oracle-database-single-sign-on-using-kerberos-active-directory-and-oracle-cmu/
       
   - Create DB user identified extenally as:
@@ -41,7 +41,7 @@
   Java's SSPI bridge(sspi_bridge.dll) should be used to renerate required Kerberos ticket for SSO.
 
    NOTES
-   Use JDK 13 and above on Windows. Check presence of sspi_bridge.dll in JDK intalation
+   Use JDK 13 and above on Windows. Check presence of sspi_bridge.dll in JDK intalation.
 
    MODIFIED    (MM/DD/YY)
    ibre5041    18/04/2025 - Creation
