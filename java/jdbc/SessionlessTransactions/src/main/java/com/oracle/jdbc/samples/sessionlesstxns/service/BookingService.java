@@ -41,13 +41,14 @@ public class BookingService {
 
   public StartTransactionResponseDTO startTransaction(StartTransactionRequestDTO body) {
     try (OracleConnection conn = (OracleConnection) connectionPool.getConnection();
-         AutoCloseable suspend = conn::suspendTransaction;) {
+         AutoCloseable rollback = conn::rollback;) {
       conn.setAutoCommit(false);
       byte[] gtrid = conn.startTransaction(body.timeout() * 60);
 
       long bookingId = createBooking(conn);
 
       List<Long> seats = lockAndBookSeats(conn, bookingId, body.flightId(), body.count());
+      conn.suspendTransaction();
 
       return new StartTransactionResponseDTO(bookingId, Util.byteArrayToHex(gtrid), seats.size(), seats);
     } catch (APIException ex) {
