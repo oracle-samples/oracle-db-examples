@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2020, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2020, 2025, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -37,8 +37,9 @@
 import oracledb
 import sample_env
 
-# this script is currently only supported in python-oracledb thick mode
-oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
+# determine whether to use python-oracledb thin mode or thick mode
+if not sample_env.get_is_thin():
+    oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 QUEUE_NAME = "DEMO_RAW_QUEUE_MULTI"
 PAYLOAD_DATA = [
@@ -61,35 +62,32 @@ queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
 queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
 
 # enqueue a few messages
-with connection.cursor() as cursor:
-    print("Enqueuing messages...")
-    for data in PAYLOAD_DATA:
-        print(data)
-        queue.enqone(connection.msgproperties(payload=data))
-    connection.commit()
-    print()
+print("Enqueuing messages...")
+for data in PAYLOAD_DATA:
+    print(data)
+    queue.enqone(connection.msgproperties(payload=data))
+connection.commit()
+print()
 
 # dequeue the messages for consumer A
-with connection.cursor() as cursor:
-    print("Dequeuing the messages for consumer A...")
-    queue.deqoptions.consumername = "SUBSCRIBER_A"
-    while True:
-        props = queue.deqone()
-        if not props:
-            break
-        print(props.payload.decode())
-    connection.commit()
-    print()
+print("Dequeuing the messages for consumer A...")
+queue.deqoptions.consumername = "SUBSCRIBER_A"
+while True:
+    props = queue.deqone()
+    if not props:
+        break
+    print(props.payload.decode())
+connection.commit()
+print()
 
 # dequeue the message for consumer B
-with connection.cursor() as cursor:
-    print("Dequeuing the messages for consumer B...")
-    queue.deqoptions.consumername = "SUBSCRIBER_B"
-    while True:
-        props = queue.deqone()
-        if not props:
-            break
-        print(props.payload.decode())
-    connection.commit()
+print("Dequeuing the messages for consumer B...")
+queue.deqoptions.consumername = "SUBSCRIBER_B"
+while True:
+    props = queue.deqone()
+    if not props:
+        break
+    print(props.payload.decode())
+connection.commit()
 
 print("\nDone.")

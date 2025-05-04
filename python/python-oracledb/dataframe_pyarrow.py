@@ -1,10 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016, 2025, Oracle and/or its affiliates.
-#
-# Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
-#
-# Portions Copyright 2001-2007, Computronix (Canada) Ltd., Edmonton, Alberta,
-# Canada. All rights reserved.
+# Copyright (c) 2025, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -28,13 +23,13 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# object_aq.py
+# dataframe_pyarrow.py
 #
-# Demonstrates how to use advanced queuing with objects. It makes use of a
-# simple type and queue created in the sample setup.
+# Shows how to use connection.fetch_df_all() to create PyArrow tables and
+# arrays.
 # -----------------------------------------------------------------------------
 
-import decimal
+import pyarrow
 
 import oracledb
 import sample_env
@@ -43,56 +38,60 @@ import sample_env
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-BOOK_TYPE_NAME = "UDT_BOOK"
-QUEUE_NAME = "DEMO_BOOK_QUEUE"
-BOOK_DATA = [
-    (
-        "The Fellowship of the Ring",
-        "Tolkien, J.R.R.",
-        decimal.Decimal("10.99"),
-    ),
-    (
-        "Harry Potter and the Philosopher's Stone",
-        "Rowling, J.K.",
-        decimal.Decimal("7.99"),
-    ),
-]
-
-# connect to database
 connection = oracledb.connect(
     user=sample_env.get_main_user(),
     password=sample_env.get_main_password(),
     dsn=sample_env.get_connect_string(),
+    params=sample_env.get_connect_params(),
 )
 
-# create a queue
-books_type = connection.gettype(BOOK_TYPE_NAME)
-queue = connection.queue(QUEUE_NAME, payload_type=books_type)
-queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
-queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
+# -----------------------------------------------------------------------------
+#
+# Creating a PyArrow table
 
-# dequeue all existing messages to ensure the queue is empty, just so that
-# the results are consistent
-while queue.deqone():
-    pass
+SQL1 = "select id, name from SampleQueryTab order by id"
 
-# enqueue a few messages
-print("Enqueuing messages...")
-for title, authors, price in BOOK_DATA:
-    book = books_type.newobject()
-    book.TITLE = title
-    book.AUTHORS = authors
-    book.PRICE = price
-    print(title)
-    queue.enqone(connection.msgproperties(payload=book))
-connection.commit()
+# Get an OracleDataFrame
+# Adjust arraysize to tune the query fetch performance
+odf = connection.fetch_df_all(statement=SQL1, arraysize=100)
 
-# dequeue the messages
-print("\nDequeuing messages...")
-while True:
-    props = queue.deqone()
-    if not props:
-        break
-    print(props.payload.TITLE)
-connection.commit()
-print("\nDone.")
+# Create a PyArrow table
+pyarrow_table = pyarrow.Table.from_arrays(
+    arrays=odf.column_arrays(), names=odf.column_names()
+)
+
+print("Type:")
+print(type(pyarrow_table))  # <class 'pyarrow.lib.Table'>
+
+# Perform various PyArrow operations
+
+print("\nColumn names:")
+print(pyarrow_table.column_names)
+
+print("\nNumber of rows and columns:")
+(r, c) = pyarrow_table.shape
+print(f"{r} rows, {c} columns")
+
+# -----------------------------------------------------------------------------
+#
+# Creating a PyArrow array
+
+SQL2 = "select id from SampleQueryTab order by id"
+
+# Get an OracleDataFrame
+# Adjust arraysize to tune the query fetch performance
+odf = connection.fetch_df_all(statement=SQL2, arraysize=100)
+
+# Create a PyArrow array
+pyarrow_array = pyarrow.array(odf.get_column_by_name("ID"))
+
+print("Type:")
+print(type(pyarrow_array))  # <class 'pyarrow.lib.DoubleArray'>
+
+# Perform various PyArrow operations
+
+print("\nSum:")
+print(pyarrow_array.sum())
+
+print("\nFirst three elements:")
+print(pyarrow_array.slice(0, 3))
