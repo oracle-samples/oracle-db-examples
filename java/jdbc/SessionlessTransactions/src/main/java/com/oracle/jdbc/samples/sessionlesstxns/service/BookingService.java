@@ -220,8 +220,6 @@ public class BookingService {
       }
     }
 
-    // FIXME: The updated row would still be locked by the transaction until it is committed or rolledback.
-    // Is there a way to work around this?
     final String updateSeatDML = "UPDATE seats SET available=TRUE WHERE id = ?";
     try (PreparedStatement stmt = conn.prepareStatement(updateSeatDML)) {
       stmt.setLong(1, seatId);
