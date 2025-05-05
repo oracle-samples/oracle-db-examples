@@ -1,11 +1,11 @@
 package com.oracle.jdbc.samples.sessionlesstxns.service;
 
-import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutRequestDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutResponseDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionRequestDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsRequestDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsResponseDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionResponseDTO;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutRequest;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutResponse;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionRequest;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsRequest;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsResponse;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionResponse;
 import com.oracle.jdbc.samples.sessionlesstxns.exception.APIException;
 import com.oracle.jdbc.samples.sessionlesstxns.exception.BookingNotFoundException;
 import com.oracle.jdbc.samples.sessionlesstxns.exception.NoFreeSeatFoundException;
@@ -39,7 +39,7 @@ public class BookingService {
     this.paymentService = paymentService;
   }
 
-  public StartTransactionResponseDTO startTransaction(StartTransactionRequestDTO body) {
+  public StartTransactionResponse startTransaction(StartTransactionRequest body) {
     try (OracleConnection conn = (OracleConnection) connectionPool.getConnection();
          AutoCloseable rollback = conn::rollback;) {
       conn.setAutoCommit(false);
@@ -50,7 +50,7 @@ public class BookingService {
       List<Long> seats = lockAndBookSeats(conn, bookingId, body.flightId(), body.count());
       conn.suspendTransaction();
 
-      return new StartTransactionResponseDTO(bookingId, Util.byteArrayToHex(gtrid), seats.size(), seats);
+      return new StartTransactionResponse(bookingId, Util.byteArrayToHex(gtrid), seats.size(), seats);
     } catch (APIException ex) {
       throw ex;
     } catch (Exception ex) {
@@ -58,7 +58,7 @@ public class BookingService {
     }
   }
 
-  public RequestTicketsResponseDTO requestTickets(Long bookingId, RequestTicketsRequestDTO body) {
+  public RequestTicketsResponse requestTickets(Long bookingId, RequestTicketsRequest body) {
     try (OracleConnection conn = (OracleConnection) connectionPool.getConnection();
          AutoCloseable suspend = conn::suspendTransaction;) {
       conn.setAutoCommit(false);
@@ -67,7 +67,7 @@ public class BookingService {
 
       List<Long> seats = lockAndBookSeats(conn, bookingId, body.flightId(), body.count());
 
-      return new RequestTicketsResponseDTO(seats.size(), seats);
+      return new RequestTicketsResponse(seats.size(), seats);
     } catch (SQLException ex) {
       if (ex.getErrorCode() == TRANSACTION_NOT_FOUND_ERROR) {
         throw new TransactionNotFoundException(body.transactionId());
@@ -99,18 +99,18 @@ public class BookingService {
     }
   }
 
-  public CheckoutResponseDTO checkout(Long bookingId, CheckoutRequestDTO checkoutDetails) {
+  public CheckoutResponse checkout(Long bookingId, CheckoutRequest checkoutDetails) {
     float sum;
     byte[] gtrid = Util.hexToByteArray(checkoutDetails.transactionId());
     String receipt;
-    List<CheckoutResponseDTO.TicketDTO> tickets;
+    List<CheckoutResponse.TicketDTO> tickets;
 
     try (OracleConnection conn = (OracleConnection) connectionPool.getConnection();) {
       conn.setAutoCommit(false);
       conn.resumeTransaction(gtrid);
       try {
         tickets = getTickets(conn, bookingId);
-        sum = tickets.stream().map(CheckoutResponseDTO.TicketDTO::price).reduce(0F, Float::sum);
+        sum = tickets.stream().map(CheckoutResponse.TicketDTO::price).reduce(0F, Float::sum);
         receipt = paymentService.pay(sum, checkoutDetails.paymentMethod());
         saveReceipt(conn, receipt, sum, bookingId, checkoutDetails.paymentMethod());
       } catch (Exception ex) {
@@ -129,7 +129,7 @@ public class BookingService {
       throw new UnexpectedException(ex);
     }
 
-    return new CheckoutResponseDTO(bookingId, tickets, sum, receipt, checkoutDetails.paymentMethod());
+    return new CheckoutResponse(bookingId, tickets, sum, receipt, checkoutDetails.paymentMethod());
   }
 
   public void cancelBooking(String transactionId) {
@@ -273,7 +273,7 @@ public class BookingService {
   }
 
 
-  private List<CheckoutResponseDTO.TicketDTO> getTickets(OracleConnection conn, long bookingId) throws SQLException {
+  private List<CheckoutResponse.TicketDTO> getTickets(OracleConnection conn, long bookingId) throws SQLException {
     final String ticketsQuery = """
         SELECT t1.seat_id, t2.flight_id, t3.price
         FROM tickets t1
@@ -281,13 +281,13 @@ public class BookingService {
              JOIN flights t3 ON t2.flight_id = t3.id
         WHERE t1.booking_id = ?
     """;
-    List<CheckoutResponseDTO.TicketDTO> tickets = new ArrayList<>();
+    List<CheckoutResponse.TicketDTO> tickets = new ArrayList<>();
 
     try (PreparedStatement stmt = conn.prepareStatement(ticketsQuery)) {
       stmt.setLong(1, bookingId);
       ResultSet rs = stmt.executeQuery();
       while (rs.next()) {
-        tickets.add(new CheckoutResponseDTO.TicketDTO(rs.getLong(1), rs.getLong(2), rs.getFloat(3)));
+        tickets.add(new CheckoutResponse.TicketDTO(rs.getLong(1), rs.getLong(2), rs.getFloat(3)));
       }
     }
 

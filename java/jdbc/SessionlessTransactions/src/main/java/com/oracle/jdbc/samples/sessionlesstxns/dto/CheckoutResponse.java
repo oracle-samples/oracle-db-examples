@@ -38,9 +38,18 @@
 
 package com.oracle.jdbc.samples.sessionlesstxns.dto;
 
-public record ErrorResponseDTO(
-        int statusCode,
-        String error,
-        String message
+import java.util.List;
+
+public record CheckoutResponse(
+    Long id,
+    List<TicketDTO> tickets,
+    double total,
+    String receiptNumber,
+    Long paymentMethod
 ) {
+  public static record TicketDTO(
+          Long seatId,
+          Long flightId,
+          Float price
+  ) {}
 }

@@ -38,12 +38,8 @@
 
 package com.oracle.jdbc.samples.sessionlesstxns.dto;
 
-import java.util.List;
-
-public record StartTransactionResponseDTO(
-        Long bookingId,
-        String transactionId,
-        Integer count,
-        List<Long> seatIds
-) {
-}
+public record StartTransactionRequest(
+        int timeout,
+        long flightId,
+        int count
+) {}

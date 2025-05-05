@@ -38,8 +38,8 @@
 
 package com.oracle.jdbc.samples.sessionlesstxns.dto;
 
-public record StartTransactionRequestDTO(
-        int timeout,
-        long flightId,
-        int count
-) { }
+public record ErrorResponse(
+        int statusCode,
+        String error,
+        String message
+) {}

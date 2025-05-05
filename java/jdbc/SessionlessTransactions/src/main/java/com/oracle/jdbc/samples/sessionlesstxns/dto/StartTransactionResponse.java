@@ -38,8 +38,11 @@
 
 package com.oracle.jdbc.samples.sessionlesstxns.dto;
 
-public record RemoveTicketRequestDTO(
+import java.util.List;
+
+public record StartTransactionResponse(
+        Long bookingId,
         String transactionId,
-        Long seatId
-) {
-}
+        Integer count,
+        List<Long> seatIds
+) {}

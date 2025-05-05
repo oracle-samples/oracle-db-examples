@@ -1,12 +1,12 @@
 package com.oracle.jdbc.samples.sessionlesstxns;
 
-import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutRequestDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutResponseDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.RemoveTicketRequestDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionRequestDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsRequestDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsResponseDTO;
-import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionResponseDTO;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutRequest;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.CheckoutResponse;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.RemoveTicketRequest;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionRequest;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsRequest;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.RequestTicketsResponse;
+import com.oracle.jdbc.samples.sessionlesstxns.dto.StartTransactionResponse;
 import com.oracle.jdbc.samples.sessionlesstxns.exception.PaymentFailedException;
 import com.oracle.jdbc.samples.sessionlesstxns.service.PaymentService;
 import io.restassured.RestAssured;
@@ -208,10 +208,10 @@ public class TestApis {
     }
   }
 
-  private StartTransactionResponseDTO testAPIStartTransaction(int timeout, long flightId, int count, HttpStatus expectedStatus) {
+  private StartTransactionResponse testAPIStartTransaction(int timeout, long flightId, int count, HttpStatus expectedStatus) {
     var request = RestAssured.given()
             .contentType(ContentType.JSON)
-            .body(new StartTransactionRequestDTO(timeout, flightId, count))
+            .body(new StartTransactionRequest(timeout, flightId, count))
             .when()
             .post("/api/v1/bookings");
 
@@ -222,18 +222,18 @@ public class TestApis {
               .and()
               .extract()
               .response()
-              .body().as(StartTransactionResponseDTO.class);
+              .body().as(StartTransactionResponse.class);
     }
 
     request.then().statusCode(expectedStatus.value());
     return null;
   }
 
-  private RequestTicketsResponseDTO testAPIRequestTickets(
+  private RequestTicketsResponse testAPIRequestTickets(
           String transactionId, long flightId, int count, long bookingId, HttpStatus expectedStatus) {
     var request = RestAssured.given()
             .contentType(ContentType.JSON)
-            .body(new RequestTicketsRequestDTO(transactionId, flightId, count))
+            .body(new RequestTicketsRequest(transactionId, flightId, count))
             .pathParam("bookingId", bookingId)
             .when()
             .post("/api/v1/bookings/{bookingId}");
@@ -246,7 +246,7 @@ public class TestApis {
               .and()
               .extract()
               .response()
-              .body().as(RequestTicketsResponseDTO.class);
+              .body().as(RequestTicketsResponse.class);
     }
 
     request.then().statusCode(expectedStatus.value());
@@ -256,7 +256,7 @@ public class TestApis {
   private void testAPIRemoveTicket(String transactionId, long bookingId, long seatId, HttpStatus expectedStatus) {
     RestAssured.given()
             .contentType(ContentType.JSON)
-            .body(new RemoveTicketRequestDTO(transactionId, seatId))
+            .body(new RemoveTicketRequest(transactionId, seatId))
             .pathParams("bookingId", bookingId)
             .when()
             .delete("/api/v1/bookings/{bookingId}")
@@ -264,11 +264,11 @@ public class TestApis {
             .statusCode(expectedStatus.value());
   }
 
-  private CheckoutResponseDTO testAPICheckout(
+  private CheckoutResponse testAPICheckout(
           String transactionId, long paymentMethodId, long bookingId, HttpStatus expectedStatus) {
     var request = RestAssured.given()
             .contentType(ContentType.JSON)
-            .body(new CheckoutRequestDTO(transactionId, paymentMethodId))
+            .body(new CheckoutRequest(transactionId, paymentMethodId))
             .pathParam("bookingId", bookingId)
             .when()
             .post("/api/v1/bookings/{bookingId}/checkout");
@@ -280,7 +280,7 @@ public class TestApis {
               .and()
               .extract()
               .response()
-              .body().as(CheckoutResponseDTO.class);
+              .body().as(CheckoutResponse.class);
     }
 
     request.then().statusCode(expectedStatus.value());

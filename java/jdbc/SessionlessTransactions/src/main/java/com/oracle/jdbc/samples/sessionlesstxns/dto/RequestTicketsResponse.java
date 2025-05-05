@@ -40,7 +40,7 @@ package com.oracle.jdbc.samples.sessionlesstxns.dto;
 
 import java.util.List;
 
-public record RequestTicketsResponseDTO(
+public record RequestTicketsResponse(
         Integer count,
         List<Long> seatIds
 ) {}

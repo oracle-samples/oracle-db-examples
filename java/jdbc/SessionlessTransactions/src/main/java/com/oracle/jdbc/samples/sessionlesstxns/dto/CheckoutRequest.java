@@ -38,9 +38,7 @@
 
 package com.oracle.jdbc.samples.sessionlesstxns.dto;
 
-public record RequestTicketsRequestDTO(
+public record CheckoutRequest(
         String transactionId,
-        Long flightId,
-        int count
-) {
-}
+        Long paymentMethod
+) {}

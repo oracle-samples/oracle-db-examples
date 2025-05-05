@@ -38,19 +38,7 @@
 
 package com.oracle.jdbc.samples.sessionlesstxns.dto;
 
-import java.util.Date;
-import java.util.List;
-
-public record CheckoutResponseDTO(
-    Long id,
-    List<TicketDTO> tickets,
-    double total,
-    String receiptNumber,
-    Long paymentMethod
-) {
-  public static record TicketDTO(
-          Long seatId,
-          Long flightId,
-          Float price
-  ) {}
-}
+public record RemoveTicketRequest(
+        String transactionId,
+        Long seatId
+) {}
