@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 Oracle, Inc.
+ * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+ */
+
 INSERT INTO flights (id, flight_number, price) values (0, 122, 1000);
 INSERT INTO flights (id, flight_number, price) values (1, 123, 2300);
 INSERT INTO flights (id, flight_number, price) values (2, 124, 455);

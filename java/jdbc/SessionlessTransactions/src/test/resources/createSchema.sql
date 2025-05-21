@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 Oracle, Inc.
+ * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+ */
+
 CREATE TABLE bookings (
     id NUMBER GENERATED ALWAYS AS IDENTITY,
     created_at DATE,
