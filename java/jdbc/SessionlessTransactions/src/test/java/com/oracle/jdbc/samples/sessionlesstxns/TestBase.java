@@ -25,6 +25,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Scanner;
 
@@ -54,10 +58,10 @@ public class TestBase {
     dropSchema();
   }
 
-  public void runSQLScript(String fileName) {
+  public void runSQLScript(String fileName, String delimiter) {
     InputStream inputStream = TestBase.class.getClassLoader().getResourceAsStream(fileName);
-    List<String> instructions = new Scanner(inputStream).useDelimiter(";").tokens().toList();
-        jdbcTemplate.batchUpdate(instructions.toArray(new String[0]));
+    List<String> instructions = new Scanner(inputStream).useDelimiter(delimiter).tokens().toList();
+    jdbcTemplate.batchUpdate(instructions.toArray(new String[0]));
   }
 
   public static StartTransactionResponse testAPIStartTransaction(int timeout, long flightId, int count, HttpStatus expectedStatus) {
@@ -149,10 +153,10 @@ public class TestBase {
   }
 
   private void createSchema() {
-    runSQLScript("createSchema.sql");
+    runSQLScript("createSchema.sql", ";/");
   }
 
   private void dropSchema() {
-    runSQLScript("dropSchema.sql");
+    runSQLScript("dropSchema.sql", ";");
   }
 }
