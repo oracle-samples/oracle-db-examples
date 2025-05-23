@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class TestConcurrency extends TestBase {
 
@@ -117,10 +116,10 @@ public class TestConcurrency extends TestBase {
   }
 
   private void loadData() {
-    runSQLScript("hundredsSeats.sql");
+    runSQLScript("hundredsSeats.sql", ";");
   }
 
   private void cleanTables() {
-    runSQLScript("dataCleaner.sql");
+    runSQLScript("dataCleaner.sql", ";");
   }
 }
