@@ -60,7 +60,7 @@ CREATE OR REPLACE PROCEDURE fetch_seats(
 ) AS
   CURSOR c IS
     SELECT id FROM seats
-    WHERE available = 1 AND flight_id = f_id
+    WHERE available = true AND flight_id = f_id
     FOR UPDATE SKIP LOCKED;
 BEGIN
     OPEN c;
