@@ -180,7 +180,7 @@ public class BookingService {
   private void saveReceipt(OracleConnection conn, String receiptNumber, double sum, long bookingId, long paymentMethodId)
           throws SQLException {
     final String saveReceiptDML = """
-          INSERT INTO receipts (created_at, receipt_number, total, booking_id, payment_method_id) values (?, ?, ?, ?, ?);
+          INSERT INTO receipts (created_at, receipt_number, total, booking_id, payment_method_id) values (?, ?, ?, ?, ?)
     """;
 
     try (OraclePreparedStatement stmt = (OraclePreparedStatement) conn.prepareStatement(saveReceiptDML)) {
