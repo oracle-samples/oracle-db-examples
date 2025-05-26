@@ -144,10 +144,10 @@ public class TestApis extends TestBase {
   }
 
   private void loadData() {
-    runSQLScript("dataLoader.sql");
+    runSQLScript("dataLoader.sql", ";");
   }
 
   private void cleanTables() {
-    runSQLScript("dataCleaner.sql");
+    runSQLScript("dataCleaner.sql", ";");
   }
 }
