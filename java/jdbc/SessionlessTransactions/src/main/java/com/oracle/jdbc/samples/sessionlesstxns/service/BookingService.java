@@ -20,9 +20,13 @@ import com.oracle.jdbc.samples.sessionlesstxns.exception.UnexpectedException;
 import com.oracle.jdbc.samples.sessionlesstxns.util.Util;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OraclePreparedStatement;
+import oracle.jdbc.OracleTypes;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
+import java.sql.Array;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +34,7 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -175,7 +180,7 @@ public class BookingService {
   private void saveReceipt(OracleConnection conn, String receiptNumber, double sum, long bookingId, long paymentMethodId)
           throws SQLException {
     final String saveReceiptDML = """
-          INSERT INTO receipts (created_at, receipt_number, total, booking_id, payment_method_id) values (?, ?, ?, ?, ?);
+          INSERT INTO receipts (created_at, receipt_number, total, booking_id, payment_method_id) values (?, ?, ?, ?, ?)
     """;
 
     try (OraclePreparedStatement stmt = (OraclePreparedStatement) conn.prepareStatement(saveReceiptDML)) {
@@ -243,20 +248,24 @@ public class BookingService {
    * availability of the tickets in the database.
    */
   private List<Long> getFreeSeats(OracleConnection conn, long flightId, int count) throws SQLException {
-    final String getFreeSeatsQuery = """
-      SELECT id FROM seats
-      WHERE available = true AND flight_id = ?
-      FETCH FIRST ? ROW ONLY
-      FOR UPDATE SKIP LOCKED;""";
+    final String procedureCall = "{call fetch_seats(?, ?, ?)}";
+    List<Long> seats = null;
 
-    List<Long> seats = new ArrayList<>();
-
-    try(PreparedStatement stmt = conn.prepareStatement(getFreeSeatsQuery);) {
+    try (CallableStatement stmt = conn.prepareCall(procedureCall)) {
+      // Set input parameters
       stmt.setLong(1, flightId);
       stmt.setInt(2, count);
-      ResultSet rs = stmt.executeQuery();
-      while (rs.next()) {
-        seats.add(rs.getLong(1));
+      // Register the OUT parameter (Oracle NUMBER_TABLE)
+      stmt.registerOutParameter(3, OracleTypes.ARRAY, "DBMS_SQL.NUMBER_TABLE");
+      // Execute the procedure
+      stmt.execute();
+
+      // Retrieve the results
+      Array resultArray = stmt.getArray(3);
+
+      if (resultArray != null) {
+        seats = Arrays.stream((BigDecimal[]) resultArray.getArray()).map(BigDecimal::longValue).toList();
+        resultArray.free();
       }
     }
 
