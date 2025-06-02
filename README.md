@@ -4,22 +4,25 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | Repo/Folder name  | Description |
 | ------------- | ------------- |
 | [C](./C) | C examples |
+| [Multicloud](./Multicloud) | Multicloud examples |
 | [apex](./apex) | APEX examples |
 | [db-sample-schemas](https://github.com/oracle/db-sample-schemas) | Git submodule of the Oracle Database Sample Schemas |
-| [dotnet](https://github.com/oracle/dotnet-db-samples) | .NET based examples |
 | [exadata](./exadata) | Exadata examples |
 | [java](./java)  | Java examples |
 | [javascript](./javascript) | JavaScript examples |
+| [json-relational-duality](./json-relational-duality) | JSON Relational Duality examples
 | [machine-learning](./machine-learning) | Oracle Machine Learning examples |
 | [optimizer](./optimizer) | Oracle Optmizer and Optimizer Stats examples |
 | [plsql](./plsql) | PL/SQL examples |
 | [python](./python) | Python examples |
 | [ruby](./ruby) | Ruby examples |
-| [sagas](./sagas) | Saga examples |
+| [sagas](./sagas) | Sagas examples |
 | [security](./security) | Security features examples |
 | [spatial](./spatial) | Spatial features examples |
+| [sql-firewall](./sql-firewall) | SQL Firewall examples |
 | [sql](./sql) | SQL examples |
 | [sqldeveloper](./sqldeveloper) | [SQL Developer](http://www.oracle.com/technetwork/developer-tools/sql-developer/) examples |
+| [text](./text) | Oracle Text examples |
 | [txeventq](./txeventq) | TxEventQ examples |
 
 ## Documentation
