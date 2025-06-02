@@ -45,16 +45,21 @@ connection = oracledb.connect(
     params=sample_env.get_connect_params(),
 )
 
-# this script only works with Oracle Database 23.5 or later
-if sample_env.get_server_version() < (23, 5):
-    sys.exit("This example requires Oracle Database 23.5 or later.")
+# this script only works with Oracle Database 23.7 or later
+#
+# The VECTOR datatype was initially introduced in Oracle Database 23.4.
+# The BINARY vector format was introduced in Oracle Database 23.5.
+# The SPARSE vector format was introduced in Oracle Database 23.7.
 
-# this script works with thin mode, or with thick mode using Oracle Client 23.5
+if sample_env.get_server_version() < (23, 7):
+    sys.exit("This example requires Oracle Database 23.7 or later.")
+
+# this script works with thin mode, or with thick mode using Oracle Client 23.7
 # or later
-if not connection.thin and oracledb.clientversion()[:2] < (23, 5):
+if not connection.thin and oracledb.clientversion()[:2] < (23, 7):
     sys.exit(
         "This example requires python-oracledb thin mode, or Oracle Client"
-        " 23.5 or later"
+        " 23.7 or later"
     )
 
 with connection.cursor() as cursor:
@@ -63,11 +68,20 @@ with connection.cursor() as cursor:
     vector1_data_64 = array.array("d", [11.25, 11.75, 11.5])
     vector1_data_8 = array.array("b", [1, 2, 3])
     vector1_data_bin = array.array("B", [180, 150, 100])
+    vector1_data_sparse64 = oracledb.SparseVector(
+        30, [9, 16, 24], array.array("d", [19.125, 78.5, 977.375])
+    )
 
     cursor.execute(
-        """insert into SampleVectorTab (v32, v64, v8, vbin)
-           values (:1, :2, :3, :4)""",
-        [vector1_data_32, vector1_data_64, vector1_data_8, vector1_data_bin],
+        """insert into SampleVectorTab (v32, v64, v8, vbin, v64sparse)
+           values (:1, :2, :3, :4, :5)""",
+        [
+            vector1_data_32,
+            vector1_data_64,
+            vector1_data_8,
+            vector1_data_bin,
+            vector1_data_sparse64,
+        ],
     )
 
     # Multi-row insert
@@ -75,26 +89,45 @@ with connection.cursor() as cursor:
     vector2_data_64 = array.array("d", [22.25, 22.75, 22.5])
     vector2_data_8 = array.array("b", [4, 5, 6])
     vector2_data_bin = array.array("B", [40, 15, 255])
+    vector2_data_sparse64 = oracledb.SparseVector(
+        30, [3, 10, 12], array.array("d", [2.5, 2.5, 1.0])
+    )
 
     vector3_data_32 = array.array("f", [3.625, 3.5, 3.0])
     vector3_data_64 = array.array("d", [33.25, 33.75, 33.5])
     vector3_data_8 = array.array("b", [7, 8, 9])
     vector3_data_bin = array.array("B", [0, 17, 101])
+    vector3_data_sparse64 = oracledb.SparseVector(
+        30, [8, 15, 29], array.array("d", [1.125, 200.5, 100.0])
+    )
 
     rows = [
-        (vector2_data_32, vector2_data_64, vector2_data_8, vector2_data_bin),
-        (vector3_data_32, vector3_data_64, vector3_data_8, vector3_data_bin),
+        (
+            vector2_data_32,
+            vector2_data_64,
+            vector2_data_8,
+            vector2_data_bin,
+            vector2_data_sparse64,
+        ),
+        (
+            vector3_data_32,
+            vector3_data_64,
+            vector3_data_8,
+            vector3_data_bin,
+            vector3_data_sparse64,
+        ),
     ]
 
     cursor.executemany(
-        """insert into SampleVectorTab (v32, v64, v8, vbin)
-           values (:1, :2, :3, :4)""",
+        """insert into SampleVectorTab (v32, v64, v8, vbin, v64sparse)
+           values (:1, :2, :3, :4, :5)""",
         rows,
     )
 
     # Query
     cursor.execute("select * from SampleVectorTab")
 
-    # Each vector is represented as an array.array type
+    # Each non-sparse vector is represented as an array.array type.
+    # Sparse vectors are represented as oracledb.SparseVector() instances
     for row in cursor:
         print(row)
