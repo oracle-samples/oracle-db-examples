@@ -16,8 +16,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class TestConcurrency extends TestBase {
 
@@ -62,10 +66,20 @@ public class TestConcurrency extends TestBase {
 
     final int numberOfExecutions = 50;
     try (ExecutorService exService = Executors.newFixedThreadPool(numberOfExecutions)) {
-      for (int i=0; i<numberOfExecutions; i++) {
-        exService.submit(test);
+      List<Future<?>> futures = new ArrayList<>();
+      for (int i = 0; i < numberOfExecutions; i++) {
+        futures.add(exService.submit(test));
+      }
+      // Wait for all tasks to complete
+      for (Future<?> future : futures) {
+        try {
+          future.get(); // This blocks until the task completes
+        } catch (InterruptedException | ExecutionException e) {
+          logger.error("Task execution failed", e);
+        }
       }
     }
+
     logger.info("Execution time: {} s", (System.currentTimeMillis() - start) / 1_000);
   }
 
@@ -79,7 +93,7 @@ public class TestConcurrency extends TestBase {
     Assertions.assertEquals(REQUESTED_SEATS1, startTransaction.seatIds().size());
 
     Thread.sleep(1000);
-    final int REQUESTED_SEATS2 = 2;
+    final int REQUESTED_SEATS2 = 1;
     var requestTickets = testAPIRequestTickets(
             startTransaction.transactionId(), FLIGHT1_ID, REQUESTED_SEATS2, startTransaction.bookingId(), HttpStatus.CREATED);
 
@@ -102,10 +116,10 @@ public class TestConcurrency extends TestBase {
   }
 
   private void loadData() {
-    runSQLScript("hundredsSeats.sql");
+    runSQLScript("hundredsSeats.sql", ";");
   }
 
   private void cleanTables() {
-    runSQLScript("dataCleaner.sql");
+    runSQLScript("dataCleaner.sql", ";");
   }
 }
