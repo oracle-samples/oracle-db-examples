@@ -1,6 +1,6 @@
-/* Copyright (c) 2022, Oracle. All rights reserved. */
+/* Copyright (c) 2022, 2025, Oracle. All rights reserved. */
 
-/* drcp.c */
+/* drcpDemo.c */
 
 /* Oracle OCI Database Resident Connection Pooling (DRCP) Example */
 /* Christopher Jones, 2022 */
@@ -11,8 +11,8 @@
 #include <unistd.h>
 #include <oci.h>
 
-// const OraText userName[] = "SCOTT";
-// const OraText userPassword[] = "TIGER";
+// const OraText userName[] = "<username>";
+// const OraText userPassword[] = "<password>";
 
 /* Take the user credentials as inputs*/
 OraText userName[129];
