@@ -11,6 +11,8 @@
  *  data base. Checking is done to validate the integrity of the data base.
  *  The employee numbers are automatically selected using the current
  *  maximum employee number as the start.
+ *  For the required setup, see the blog:
+ *  https://medium.com/oracledevs/oracle-call-interface-for-c-developers-simple-database-connection-and-query-58be8243a393
  *
  *  The program queries the user for data as follows:
  *
