@@ -6,15 +6,19 @@
 IC=$(HOME)/instantclient_19_26
 OLIB=$(IC)
 OINC=$(IC)/sdk/include
-DEMOS=drcpDemo simpleConnDemo sessionPoolingDemo 
+DEMOS=drcpDemo simpleConnDemo sessionPoolingDemo
 
 #OH=/u01/app/oracle/product/19.26.0/dbhome_1
 #OLIB=$(OH)/lib
 #OINC=$(OH)/rdbms/public
 
-$(DEMOS): clean
-	$(CC) -Wall -Wextra -c -I$(OINC) $@.c
+.PHONY: all clean
+
+all: $(DEMOS)
+
+$(DEMOS): %: %.c
+	$(CC) -Wall -Wextra -c -I$(OINC) $<
 	$(CC) -o $@ $@.o -Wl,--rpath -Wl,$(OLIB) -L$(OLIB) -lclntsh
 
-clean: $(DEMOS)
+clean:
 	rm -f $(DEMOS) *.o
