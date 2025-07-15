@@ -1,4 +1,4 @@
-##Create redaction policy 
+--Create a redaction policy 
 BEGIN 
     DBMS_REDACT.ADD_POLICY( 
       object_schema => 'SH', 
@@ -9,7 +9,7 @@ BEGIN
 END; 
 / 
 
-##Create redaction policy 
+--Create a view
 CREATE OR REPLACE VIEW sh.customer_view AS 
  SELECT
   cust_id, 
@@ -25,6 +25,7 @@ CREATE OR REPLACE VIEW sh.customer_view AS
   cust_credit_limit AS CREDIT_LIMIT 
  FROM sh.customers; 
 
+--Add column to the readaction policy
 BEGIN 
  DBMS_REDACT.ALTER_POLICY ( 
    object_schema          => 'SH', 
@@ -35,3 +36,8 @@ BEGIN
    function_type          => DBMS_REDACT.FULL); 
 END; 
 / 
+
+--Query the view
+SELECT CUST_ID, FIRST_NAME, LAST_NAME, EMAIL, MARITAL_STATUS 
+ FROM sh.customer_view 
+ WHERE cust_id IN (101, 103, 176, 201); 
