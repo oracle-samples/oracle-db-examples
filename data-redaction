@@ -1,0 +1,37 @@
+##Create redaction policy 
+BEGIN 
+    DBMS_REDACT.ADD_POLICY( 
+      object_schema => 'SH', 
+      object_name   => 'CUSTOMERS', 
+      policy_name   => 'REDACT_SENSITIVE_DATA', 
+         expression     => 'SYS_CONTEXT(''USERENV'',''SESSION_USER'') != ''SH''' 
+    ); 
+END; 
+/ 
+
+##Create redaction policy 
+CREATE OR REPLACE VIEW sh.customer_view AS 
+ SELECT
+  cust_id, 
+  UPPER(cust_first_name) AS FIRST_NAME, 
+  UPPER(cust_last_name) AS LAST_NAME, 
+   CASE 
+    WHEN cust_marital_status IS NULL OR TRIM(cust_marital_status) = '' THEN 'UNKNOWN' 
+    ELSE UPPER(cust_marital_status) 
+   END AS marital_status, 
+  cust_gender AS GENDER, 
+  cust_email AS EMAIL, 
+  cust_postal_code AS POSTAL_CODE, 
+  cust_credit_limit AS CREDIT_LIMIT 
+ FROM sh.customers; 
+
+BEGIN 
+ DBMS_REDACT.ALTER_POLICY ( 
+   object_schema          => 'SH', 
+   object_name            => 'CUSTOMERS', 
+   policy_name            => 'REDACT_SENSITIVE_DATA', 
+   column_name            => 'CUST_MARITAL_STATUS', 
+   action                 => DBMS_REDACT.ADD_COLUMN, 
+   function_type          => DBMS_REDACT.FULL); 
+END; 
+/ 
