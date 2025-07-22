@@ -1,3 +1,4 @@
+--Example: Expression-based view
 --Create a redaction policy 
 BEGIN 
     DBMS_REDACT.ADD_POLICY( 
@@ -10,34 +11,114 @@ END;
 / 
 
 --Create a view
-CREATE OR REPLACE VIEW sh.customer_view AS 
+CREATE OR REPLACE VIEW sh.customer_view AS
  SELECT
-  cust_id, 
-  UPPER(cust_first_name) AS FIRST_NAME, 
-  UPPER(cust_last_name) AS LAST_NAME, 
-   CASE 
-    WHEN cust_marital_status IS NULL OR TRIM(cust_marital_status) = '' THEN 'UNKNOWN' 
-    ELSE UPPER(cust_marital_status) 
-   END AS marital_status, 
-  cust_gender AS GENDER, 
-  cust_email AS EMAIL, 
-  cust_postal_code AS POSTAL_CODE, 
-  cust_credit_limit AS CREDIT_LIMIT 
- FROM sh.customers; 
+  cust_id,
+  CONCAT(UPPER(cust_first_name), ' ', UPPER(cust_last_name)) AS FULL_NAME,
+  UPPER(cust_marital_status) AS MARITAL_STATUS,
+   FROM sh.customers;
+
 
 --Add column to the readaction policy
-BEGIN 
- DBMS_REDACT.ALTER_POLICY ( 
-   object_schema          => 'SH', 
-   object_name            => 'CUSTOMERS', 
-   policy_name            => 'REDACT_SENSITIVE_DATA', 
-   column_name            => 'CUST_MARITAL_STATUS', 
-   action                 => DBMS_REDACT.ADD_COLUMN, 
-   function_type          => DBMS_REDACT.FULL); 
-END; 
-/ 
+BEGIN
+ DBMS_REDACT.ALTER_POLICY (
+   object_schema          => 'SH',
+   object_name            => 'CUSTOMERS',
+   policy_name            => 'REDACT_SENSITIVE_DATA',
+   column_name            => 'CUST_MARITAL_STATUS',
+   action                 => DBMS_REDACT.ADD_COLUMN,
+   function_type          => DBMS_REDACT.FULL);
+END;
+/
+-- You can use update_full_redaction_values to change the default value returned from Oracle. Here, it's been changed to return 'XXXX' for the varchar datatype
+BEGIN
+  DBMS_REDACT.UPDATE_FULL_REDACTION_VALUES (
+    column_datatype  => DBMS_REDACT.VARCHAR2_TYPE,
+    value            => 'XXXX');
+END;
+/
 
 --Query the view
 SELECT CUST_ID, FIRST_NAME, LAST_NAME, EMAIL, MARITAL_STATUS 
  FROM sh.customer_view 
  WHERE cust_id IN (101, 103, 176, 201); 
+
+
+-- Example: Extended statistics and function-based indexes on redacted columns
+--Create a function-based index on customer last name
+CREATE INDEX last_name_idx 
+  ON customers (UPPER(cust_last_name));
+
+-- Add a virtual column for salary
+ALTER TABLE sh.customers ADD (
+  rounded_salary AS (ROUND(salary, -3)));
+
+-- Apply redaction policy to the base last name and salary columns
+BEGIN
+    DBMS_REDACT.ALTER_POLICY(
+      object_schema => 'SH',
+      object_name   => 'CUSTOMERS',
+      column_name   => 'cust_last_name',
+      policy_name   => 'REDACT_SENSITIVE_DATA',
+      action        =>  DBMS_REDACT.ADD_COLUMN,
+      function_type => DBMS_REDACT.FULL
+    );
+END;
+/
+
+BEGIN
+    DBMS_REDACT.ALTER_POLICY(
+      object_schema => 'SH',
+      object_name   => 'CUSTOMERS',
+      column_name   => 'SALARY',
+      policy_name   => 'REDACT_SENSITIVE_DATA',      
+      action        =>  DBMS_REDACT.ADD_COLUMN,
+      function_type => DBMS_REDACT.FULL
+    );
+END;
+/
+
+-- Here, you can use update_full_redaction_values to change the default value to 'XXXX'.
+BEGIN
+  DBMS_REDACT.UPDATE_FULL_REDACTION_VALUES (
+    column_datatype  => DBMS_REDACT.VARCHAR2_TYPE,
+    value            => 'XXXX');
+END;
+/
+										
+-- Query the Table
+SELECT cust_id, UPPER(cust_last_name)AS last_name, rounded_salary
+FROM sh.customers
+WHERE cust_id IN (101, 103, 176, 201);
+
+
+-- Example: Advaced SQL support
+-- Apply redaction policy to the CUST_CREDIT_LIMIT column 
+BEGIN
+DBMS_REDACT.ALTER_POLICY (
+   object_schema          => 'SH',
+   object_name            => 'CUSTOMERS',
+   policy_name            => 'REDACT_SENSITIVE_DATA',
+   column_name            => 'CUST_CREDIT_LIMIT',
+   action                 => DBMS_REDACT.ADD_COLUMN,
+   function_type          => DBMS_REDACT.FULL);
+END;
+/
+
+-- Query the Table
+SELECT
+    COUNT(*) AS total_customer_count,
+    AVG(cust_credit_limit ) AS avg_credit_limit,
+    SUM(CASE WHEN cust_credit_limit > (SELECT AVG(cust_credit_limit ) FROM sh.customers) THEN 1 ELSE 0 END) AS ABOVE_AVERAGE,
+    SUM(CASE WHEN cust_credit_limit < (SELECT AVG(cust_credit_limit ) FROM sh.customers) THEN 1 ELSE 0 END) AS BELOW_AVERAGE
+FROM sh.customers;
+
+
+-- Example: Redacting queries with DISTINCT, GROUP BY, and ORDER BY clauses
+-- Query over redacted column
+SELECT cust_postal_code, SUM(cust_credit_limit) AS TOTAL_CREDIT_LIMIT
+FROM sh.customers
+GROUP BY cust_postal_code
+ORDER BY total_credit_limit DESC
+FETCH FIRST 5 ROWS ONLY;
+
