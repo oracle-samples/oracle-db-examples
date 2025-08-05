@@ -23,16 +23,15 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# dataframe_numpy.py
+# dataframe_insert.py
 #
-# Shows how to use connection.fetch_df_all() to put data into a NumPy ndarray
+# Shows how executemany() can be used to insert a Pandas dataframe directly
+# into Oracle Database. The same technique can be used with data frames from
+# many other libraries.
 # -----------------------------------------------------------------------------
 
-import array
 import sys
-
-import numpy
-import pyarrow
+import pandas
 
 import oracledb
 import sample_env
@@ -40,6 +39,7 @@ import sample_env
 # determine whether to use python-oracledb thin mode or thick mode
 if not sample_env.get_is_thin():
     oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
+
 
 connection = oracledb.connect(
     user=sample_env.get_main_user(),
@@ -50,37 +50,31 @@ connection = oracledb.connect(
 
 # -----------------------------------------------------------------------------
 #
-# Fetching all records
+# Inserting a simple DataFrame
 
-# Get a python-oracledb DataFrame
-# Adjust arraysize to tune the query fetch performance
-sql = "select id from SampleQueryTab order by id"
-odf = connection.fetch_df_all(statement=sql, arraysize=100)
+with connection.cursor() as cursor:
 
-# Convert to an ndarray via the Python DLPack specification
-pyarrow_array = pyarrow.array(odf.get_column_by_name("ID"))
-np = numpy.from_dlpack(pyarrow_array)
+    # Create a Pandas DataFrame
+    print("Pandas Dataframe 1:")
+    d = {"A": [101, 213, 394], "B": ["Christie", "Cindy", "Kate"]}
+    pdf = pandas.DataFrame(data=d)
+    print(pdf)
 
-# If the array has nulls, an alternative is:
-# np = pyarrow_array.to_numpy(zero_copy_only=False)
+    # Insert data into NUMBER and VARCHAR2(20) columns using Oracle Database's
+    # efficient "Array DML" method
+    cursor.executemany("insert into mytab (id, data) values (:1, :2)", pdf)
 
-print("Type:")
-print(type(np))  # <class 'numpy.ndarray'>
-
-print("Values:")
-print(np)
-
-# Perform various NumPy operations on the ndarray
-
-print("\nSum:")
-print(numpy.sum(np))
-
-print("\nLog10:")
-print(numpy.log10(np))
+    # Check data
+    print("\nOracle Database Query:")
+    cursor.execute("select * from mytab order by id")
+    columns = [col.name for col in cursor.description]
+    print(columns)
+    for r in cursor:
+        print(r)
 
 # -----------------------------------------------------------------------------
 #
-# Fetching VECTORs
+# Inserting VECTORs
 
 # The VECTOR example only works with Oracle Database 23.4 or later
 if sample_env.get_server_version() < (23, 4):
@@ -94,29 +88,20 @@ if not connection.thin and oracledb.clientversion()[:2] < (23, 4):
         " 23.4 or later"
     )
 
-# Insert sample data
-rows = [
-    (array.array("d", [11.25, 11.75, 11.5]),),
-    (array.array("d", [12.25, 12.75, 12.5]),),
-]
-
 with connection.cursor() as cursor:
-    cursor.executemany("insert into SampleVectorTab (v64) values (:1)", rows)
 
-# Get a python-oracledb DataFrame
-# Adjust arraysize to tune the query fetch performance
-sql = "select v64 from SampleVectorTab order by id"
-odf = connection.fetch_df_all(statement=sql, arraysize=100)
+    # Create a Pandas DataFrame
+    print("\nPandas Dataframe 2:")
+    d = {"v": [[3.3, 1.32, 5.0], [2.2, 2.32, 2.0]]}
+    pdf = pandas.DataFrame(data=d)
+    print(pdf)
 
-# Convert to a NumPy ndarray
-pyarrow_array = pyarrow.array(odf.get_column_by_name("V64"))
-np = pyarrow_array.to_numpy(zero_copy_only=False)
+    # Insert data into a VECTOR column using Oracle Database's
+    # efficient "Array DML" method
+    cursor.executemany("insert into SampleVectorTab (v64) values (:1)", pdf)
 
-print("Type:")
-print(type(np))  # <class 'numpy.ndarray'>
-
-print("Values:")
-print(np)
-
-print("\nSum:")
-print(numpy.sum(np))
+    # Check data
+    print("\nOracle Database Query:")
+    cursor.execute("select v64 from SampleVectorTab order by id")
+    for (r,) in cursor:
+        print(r)

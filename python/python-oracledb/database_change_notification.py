@@ -55,7 +55,7 @@ def callback(message):
         registered = False
         return
     print("Message database name:", message.dbname)
-    print("Message tranasction id:", message.txid)
+    print("Message transaction id:", message.txid)
     print("Message tables:")
     for table in message.tables:
         print("--> Table Name:", table.name)

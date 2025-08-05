@@ -85,8 +85,8 @@ WORKDIR /samples/
 
 RUN curl -LO https://github.com/oracle/python-oracledb/archive/refs/heads/main.zip && \
     unzip main.zip && \
-    cp python-oracledb-main/samples/sample_container/setup.py . && \
-    /bin/rm -rf python-oracledb-main/samples/sample_container/ python-oracledb-main/samples/notebooks/ && \
+    cp python-oracledb-main/samples/containers/samples_and_db/setup.py . && \
+    /bin/rm -rf python-oracledb-main/samples/containers/ python-oracledb-main/samples/notebooks/ && \
     mv python-oracledb-main/samples/* . && \
     /bin/rm -rf python-oracledb-main samples main.zip && \
     cat create_schema.py >> /samples/setup.py && \
