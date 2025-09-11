@@ -51,14 +51,12 @@ connection = oracledb.connect(
 
 SQL1 = "select id, name from SampleQueryTab order by id"
 
-# Get an OracleDataFrame
+# Get a python-oracledb DataFrame
 # Adjust arraysize to tune the query fetch performance
 odf = connection.fetch_df_all(statement=SQL1, arraysize=100)
 
 # Create a PyArrow table
-pyarrow_table = pyarrow.Table.from_arrays(
-    arrays=odf.column_arrays(), names=odf.column_names()
-)
+pyarrow_table = pyarrow.table(odf)
 
 print("Type:")
 print(type(pyarrow_table))  # <class 'pyarrow.lib.Table'>
@@ -78,7 +76,7 @@ print(f"{r} rows, {c} columns")
 
 SQL2 = "select id from SampleQueryTab order by id"
 
-# Get an OracleDataFrame
+# Get a python-oracledb DataFrame
 # Adjust arraysize to tune the query fetch performance
 odf = connection.fetch_df_all(statement=SQL2, arraysize=100)
 

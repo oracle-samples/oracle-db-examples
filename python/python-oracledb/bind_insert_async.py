@@ -92,7 +92,7 @@ async def main():
     # Inserting a single bind still needs tuples
     # -------------------------------------------------------------------------
 
-    rows = [("Eleventh",), ("Twelth",)]
+    rows = [("Eleventh",), ("Twelfth",)]
 
     await connection.executemany(
         "insert into mytab(id, data) values (12, :1)", rows

@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2019, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2025, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -28,11 +28,14 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# bulk_aq.py
+# bulk_aq_async.py
 #
 # Demonstrates how to use bulk enqueuing and dequeuing of messages with
-# advanced queuing. It makes use of a RAW queue created in the sample setup.
+# advanced queuing using asyncio. It makes use of a RAW queue created in the
+# sample setup.
 # -----------------------------------------------------------------------------
+
+import asyncio
 
 import oracledb
 import sample_env
@@ -53,48 +56,52 @@ PAYLOAD_DATA = [
     "The twelfth and final message",
 ]
 
-# determine whether to use python-oracledb thin mode or thick mode
-if not sample_env.get_is_thin():
-    oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
-# connect to database
-connection = oracledb.connect(
-    user=sample_env.get_main_user(),
-    password=sample_env.get_main_password(),
-    dsn=sample_env.get_connect_string(),
-)
+async def main():
 
-# create a queue
-queue = connection.queue(QUEUE_NAME)
-queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
-queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
+    # connect to database
+    async with oracledb.connect_async(
+        user=sample_env.get_main_user(),
+        password=sample_env.get_main_password(),
+        dsn=sample_env.get_connect_string(),
+    ) as connection:
 
-# dequeue all existing messages to ensure the queue is empty, just so that
-# the results are consistent
-while queue.deqone():
-    pass
+        # create a queue
+        queue = connection.queue(QUEUE_NAME)
+        queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
+        queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
 
-# enqueue a few messages
-print("Enqueuing messages...")
-batch_size = 6
-data_to_enqueue = PAYLOAD_DATA
-while data_to_enqueue:
-    batch_data = data_to_enqueue[:batch_size]
-    data_to_enqueue = data_to_enqueue[batch_size:]
-    messages = [connection.msgproperties(payload=d) for d in batch_data]
-    for data in batch_data:
-        print(data)
-    queue.enqmany(messages)
-connection.commit()
+        # dequeue all existing messages to ensure the queue is empty, just so
+        # that the results are consistent
+        while await queue.deqone():
+            pass
 
-# dequeue the messages
-print("\nDequeuing messages...")
-batch_size = 8
-while True:
-    messages = queue.deqmany(batch_size)
-    if not messages:
-        break
-    for props in messages:
-        print(props.payload.decode())
-connection.commit()
-print("\nDone.")
+        # enqueue a few messages
+        print("Enqueuing messages...")
+        batch_size = 6
+        data_to_enqueue = PAYLOAD_DATA
+        while data_to_enqueue:
+            batch_data = data_to_enqueue[:batch_size]
+            data_to_enqueue = data_to_enqueue[batch_size:]
+            messages = [
+                connection.msgproperties(payload=d) for d in batch_data
+            ]
+            for data in batch_data:
+                print(data)
+            await queue.enqmany(messages)
+        await connection.commit()
+
+        # dequeue the messages
+        print("\nDequeuing messages...")
+        batch_size = 8
+        while True:
+            messages = await queue.deqmany(batch_size)
+            if not messages:
+                break
+            for props in messages:
+                print(props.payload.decode())
+        await connection.commit()
+        print("\nDone.")
+
+
+asyncio.run(main())
