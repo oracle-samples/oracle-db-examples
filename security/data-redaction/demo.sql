@@ -9,11 +9,26 @@
 --------------------------------------------------------------------------------
 -- 0. Verify setup
 --------------------------------------------------------------------------------
--- Confirm version
-SELECT * FROM v$version;
+SET SERVEROUTPUT ON;
 
--- Confirm HR schema exists
-SELECT username FROM all_users WHERE username = 'HR';
+DECLARE
+    v_count   NUMBER;
+    v_version NUMBER;
+BEGIN
+    -- Check HR schema
+    SELECT COUNT(*) INTO v_count FROM all_users WHERE username = 'HR';
+    IF v_count = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'ERROR: HR schema not found. Exiting.');
+    END IF;
+
+    -- Check DB version >= 23
+    SELECT TO_NUMBER(REGEXP_SUBSTR(version, '^[0-9]+')) INTO v_version FROM v$instance;
+    IF v_version < 23 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'ERROR: Requires DB version 23 or higher. Exiting.');
+    END IF;
+END;
+/
+--------------------------------------------------------------------------------
 
 
 --------------------------------------------------------------------------------
