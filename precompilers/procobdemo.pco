@@ -1,0 +1,99 @@
+      *****************************************************************
+      * Copyright (c) 2025, Oracle and/or its affiliates..            *
+      * All rights reserved.                                          *
+      *                                                               *
+      * procobdemo.pco - Pro*COBOL demo file.                         *
+      *                                                               *
+      * DESCRIPTION:                                                  *
+      * This program logs on to ORACLE, declares and opens a cursor,  *
+      * fetches the names, salaries, and commissions of all           *
+      * salespeople, displays the results, then closes the cursor.    * 
+      *****************************************************************
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CURSOR-OPS.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+           EXEC SQL BEGIN DECLARE SECTION END-EXEC.
+       01  USERNAME          PIC X(256) VARYING.
+       01  PASSWD            PIC X(256) VARYING.
+       01  EMP-REC-VARS.
+           05  EMP-NAME      PIC X(10) VARYING.
+           05  SALARY        PIC S9(6)V99
+                             DISPLAY SIGN LEADING SEPARATE.
+           05  COMMISSION    PIC S9(6)V99
+                             DISPLAY SIGN LEADING SEPARATE.
+           EXEC SQL VAR SALARY IS DISPLAY(8,2) END-EXEC.
+           EXEC SQL VAR COMMISSION IS DISPLAY(8,2) END-EXEC.
+           EXEC SQL END DECLARE SECTION END-EXEC.
+
+           EXEC SQL INCLUDE SQLCA END-EXEC.
+
+       01  DISPLAY-VARIABLES.
+           05  D-EMP-NAME    PIC X(10).
+           05  D-SALARY      PIC Z(4)9.99.
+           05  D-COMMISSION  PIC Z(4)9.99.
+
+       PROCEDURE DIVISION.
+
+       BEGIN-PGM.
+           EXEC SQL WHENEVER SQLERROR
+               DO PERFORM SQL-ERROR END-EXEC.
+           PERFORM LOGON.
+           EXEC SQL DECLARE SALESPEOPLE CURSOR FOR
+               SELECT ENAME, SAL, COMM
+               FROM EMP
+               WHERE JOB LIKE 'SALES%'
+           END-EXEC.
+           EXEC SQL OPEN SALESPEOPLE END-EXEC.
+           DISPLAY " ".
+           DISPLAY "SALESPERSON  SALARY      COMMISSION".
+           DISPLAY "-----------  ----------  ----------".
+
+       FETCH-LOOP.
+           EXEC SQL WHENEVER NOT FOUND
+               DO PERFORM SIGN-OFF END-EXEC.
+           EXEC SQL FETCH SALESPEOPLE
+               INTO :EMP-NAME, :SALARY, :COMMISSION
+           END-EXEC.
+           MOVE EMP-NAME-ARR TO D-EMP-NAME.
+           MOVE SALARY TO D-SALARY.
+           MOVE COMMISSION TO D-COMMISSION.
+           DISPLAY D-EMP-NAME, "     ", D-SALARY, "    ", D-COMMISSION.
+           MOVE SPACES TO EMP-NAME-ARR.
+           GO TO FETCH-LOOP.
+
+       LOGON.
+      *****************************************************************
+      * Application user: Set the database credentials here.          *
+      * CAUTION: Username and password buffers are 256 bytes.         *
+      * Do not paste credentials longer than 256 characters.          *
+      *****************************************************************
+           MOVE "<username>" TO USERNAME-ARR.
+           MOVE LENGTH OF "<username>" TO USERNAME-LEN.
+           MOVE "<password>" TO PASSWD-ARR.
+           MOVE LENGTH OF "<password>" TO PASSWD-LEN.
+           EXEC SQL
+               CONNECT :USERNAME IDENTIFIED BY :PASSWD
+           END-EXEC.
+           DISPLAY " ".
+           DISPLAY "CONNECTED TO ORACLE AS USER:  ", USERNAME-ARR.
+
+       SIGN-OFF.
+           EXEC SQL CLOSE SALESPEOPLE END-EXEC. 
+           DISPLAY " ".
+           DISPLAY "HAVE A GOOD DAY.".
+           DISPLAY " ".
+           EXEC SQL COMMIT WORK RELEASE END-EXEC.
+           STOP RUN.
+
+       SQL-ERROR.
+           EXEC SQL WHENEVER SQLERROR CONTINUE END-EXEC.
+           DISPLAY " ".
+           DISPLAY "ORACLE ERROR DETECTED:".
+           DISPLAY " ".
+           DISPLAY SQLERRMC.
+           EXEC SQL ROLLBACK WORK RELEASE END-EXEC.
+           STOP RUN.
