@@ -48,7 +48,7 @@ connection = oracledb.connect(
 
 SQL = "select id from SampleQueryTab order by id"
 
-# Get an OracleDataFrame
+# Get a python-oracledb DataFrame
 # Adjust arraysize to tune the query fetch performance
 odf = connection.fetch_df_all(statement=SQL, arraysize=100)
 

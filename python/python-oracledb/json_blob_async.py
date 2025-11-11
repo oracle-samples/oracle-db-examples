@@ -54,7 +54,7 @@ async def main():
         params=sample_env.get_connect_params(),
     )
 
-    # Minimum database vesion is 12
+    # Minimum database version is 12
     db_version = int(connection.version.split(".")[0])
     if db_version < 12:
         sys.exit("This example requires Oracle Database 12.1.0.2 or later")

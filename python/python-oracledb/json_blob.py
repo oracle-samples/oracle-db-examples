@@ -57,7 +57,7 @@ if not connection.thin:
     client_version = oracledb.clientversion()[0]
 db_version = int(connection.version.split(".")[0])
 
-# Minimum database vesion is 12
+# Minimum database version is 12
 if db_version < 12:
     sys.exit("This example requires Oracle Database 12.1.0.2 or later")
 

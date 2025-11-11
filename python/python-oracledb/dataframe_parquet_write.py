@@ -61,9 +61,7 @@ pqwriter = None
 
 for odf in connection.fetch_df_batches(statement=SQL, size=FETCH_BATCH_SIZE):
 
-    pyarrow_table = pyarrow.Table.from_arrays(
-        arrays=odf.column_arrays(), names=odf.column_names()
-    )
+    pyarrow_table = pyarrow.table(odf)
 
     if not pqwriter:
         pqwriter = pq.ParquetWriter(PARQUET_FILE_NAME, pyarrow_table.schema)

@@ -29,6 +29,10 @@
 # to create Pandas dataframes.
 # -----------------------------------------------------------------------------
 
+import array
+import sys
+
+import numpy
 import pandas
 import pyarrow
 
@@ -46,20 +50,17 @@ connection = oracledb.connect(
     params=sample_env.get_connect_params(),
 )
 
-SQL = "select id, name from SampleQueryTab order by id"
-
 # -----------------------------------------------------------------------------
 #
 # Fetching all records
 
-# Get an OracleDataFrame.
+# Get a python-oracledb DataFrame.
 # Adjust arraysize to tune the query fetch performance
-odf = connection.fetch_df_all(statement=SQL, arraysize=100)
+sql = "select id, name from SampleQueryTab order by id"
+odf = connection.fetch_df_all(statement=sql, arraysize=100)
 
 # Get a Pandas DataFrame from the data
-df = pyarrow.Table.from_arrays(
-    odf.column_arrays(), names=odf.column_names()
-).to_pandas()
+df = pyarrow.table(odf).to_pandas()
 
 # Perform various Pandas operations on the DataFrame
 
@@ -88,10 +89,9 @@ df = pandas.DataFrame()
 
 # Tune 'size' for your data set. Here it is small to show the batch fetch
 # behavior on the sample table.
-for odf in connection.fetch_df_batches(statement=SQL, size=10):
-    df_b = pyarrow.Table.from_arrays(
-        odf.column_arrays(), names=odf.column_names()
-    ).to_pandas()
+sql = "select id, name from SampleQueryTab order by id"
+for odf in connection.fetch_df_batches(statement=sql, size=10):
+    df_b = pyarrow.table(odf).to_pandas()
     print(f"Appending {df_b.shape[0]} rows")
     df = pandas.concat([df, df_b], ignore_index=True)
 
@@ -100,3 +100,78 @@ print(f"{r} rows, {c} columns")
 
 print("\nLast three rows:")
 print(df.tail(3))
+
+# -----------------------------------------------------------------------------
+#
+# Fetching VECTORs
+
+# The VECTOR example only works with Oracle Database 23.4 or later
+if sample_env.get_server_version() < (23, 4):
+    sys.exit("This example requires Oracle Database 23.4 or later.")
+
+# The VECTOR example works with thin mode, or with thick mode using Oracle
+# Client 23.4 or later
+if not connection.thin and oracledb.clientversion()[:2] < (23, 4):
+    sys.exit(
+        "This example requires python-oracledb thin mode, or Oracle Client"
+        " 23.4 or later"
+    )
+
+# Insert sample data
+rows = [
+    (array.array("d", [11.25, 11.75, 11.5]),),
+    (array.array("d", [12.25, 12.75, 12.5]),),
+]
+
+with connection.cursor() as cursor:
+    cursor.executemany("insert into SampleVectorTab (v64) values (:1)", rows)
+
+
+# Get a python-oracledb DataFrame.
+# Adjust arraysize to tune the query fetch performance
+sql = "select id, v64 from SampleVectorTab order by id"
+odf = connection.fetch_df_all(statement=sql, arraysize=100)
+
+# Get a Pandas DataFrame from the data
+df = pyarrow.table(odf).to_pandas()
+
+# Perform various Pandas operations on the DataFrame
+
+print("\nDataFrame:")
+print(df)
+
+print("\nMean:")
+print(pandas.DataFrame(df["V64"].tolist()).mean())
+
+print("\nList:")
+df2 = pandas.DataFrame(df["V64"].tolist()).T
+print(df2)
+print(df2.sum())
+
+# You can manipulate vectors using Pandas's apply or list comprehension with
+# NumPy for efficient array operations.
+
+# Scaling all vectors by a factor of two
+print("\nScaled:")
+df["SCALED_V64_COL"] = df["V64"] * 2
+print(df)
+
+# Calculating vector norms
+#
+# L2_NORM = Straight line distance from the origin to vector's endpoint
+# L1_NORM = Sum of absolute values of the vector's components
+# Linf_NORM = Largest absolute component of the vector; useful in scenarios
+# where maximum deviation matters
+print("\nNorms:")
+df["L2_NORM"] = df["V64"].apply(lambda x: numpy.linalg.norm(x, ord=2))
+df["L1_NORM"] = df["V64"].apply(lambda x: numpy.linalg.norm(x, ord=1))
+df["Linf_NORM"] = df["V64"].apply(
+    lambda x: numpy.linalg.norm(x, ord=numpy.inf)
+)
+print(df)
+
+# Calculating the vector dot product with a reference vector
+print("\nDot product:")
+ref_vector = numpy.array([1, 10, 10])
+df["DOT_PRODUCT"] = df["V64"].apply(lambda x: numpy.dot(x, ref_vector))
+print(df)

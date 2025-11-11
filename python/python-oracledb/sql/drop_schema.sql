@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------------------
- * Copyright 2017, 2022, Oracle and/or its affiliates.
+ * Copyright 2017, 2025, Oracle and/or its affiliates.
  *
  * This software is dual-licensed to you under the Universal Permissive License
  * (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -43,7 +43,9 @@ begin
     for r in
             ( select edition_name
               from dba_editions
-              where edition_name in (upper('&edition_name'))
+	          start with edition_name = upper('&edition_name')
+	          connect by prior edition_name = parent_edition_name
+	          order by level desc
             ) loop
         execute immediate 'drop edition ' || r.edition_name || ' cascade';
     end loop;

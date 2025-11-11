@@ -86,7 +86,7 @@ with connection.cursor() as cursor:
 # Inserting a single bind still needs tuples
 # -----------------------------------------------------------------------------
 
-rows = [("Eleventh",), ("Twelth",)]
+rows = [("Eleventh",), ("Twelfth",)]
 
 with connection.cursor() as cursor:
     cursor.executemany("insert into mytab(id, data) values (12, :1)", rows)

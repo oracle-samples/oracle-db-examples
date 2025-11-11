@@ -93,6 +93,9 @@ except Exception:
 
 input("Press ENTER when complete.")
 
+ltxid = connection.ltxid
+if not ltxid:
+    sys.exit("Logical transaction not available. Terminating.")
 try:
     connection.commit()  # this should fail
     sys.exit("Session was not killed. Sample cannot continue.")
@@ -101,9 +104,6 @@ except oracledb.DatabaseError as e:
     print("Session is recoverable:", error_obj.isrecoverable)
     if not error_obj.isrecoverable:
         sys.exit("Session is not recoverable. Terminating.")
-ltxid = connection.ltxid
-if not ltxid:
-    sys.exit("Logical transaction not available. Terminating.")
 pool.drop(connection)
 
 # check if previous transaction completed
