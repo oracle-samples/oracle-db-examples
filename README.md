@@ -13,6 +13,7 @@ This repository stores a variety of examples demonstrating how to use the Oracle
 | [json-relational-duality](./json-relational-duality) | JSON Relational Duality examples
 | [machine-learning](./machine-learning) | Oracle Machine Learning examples |
 | [optimizer](./optimizer) | Oracle Optimizer and Optimizer Stats examples |
+| [precompilers](./precompilers) | Oracle Pro\*C and Pro\*COBOL precompiler examples |
 | [plsql](./plsql) | PL/SQL examples |
 | [python](./python) | Python examples |
 | [ruby](./ruby) | Ruby examples |
