@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2016, 2025, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -39,8 +39,9 @@ import decimal
 import oracledb
 import sample_env
 
-# this script is currently only supported in python-oracledb thick mode
-oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
+# determine whether to use python-oracledb thin mode or thick mode
+if not sample_env.get_is_thin():
+    oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 BOOK_TYPE_NAME = "UDT_BOOK"
 QUEUE_NAME = "DEMO_BOOK_QUEUE"

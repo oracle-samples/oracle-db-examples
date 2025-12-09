@@ -45,6 +45,7 @@ grant
     create procedure,
     create type,
     create sequence,
+    create view,
     select any dictionary,
     change notification,
     unlimited tablespace
@@ -389,6 +390,44 @@ insert into &main_user..SampleQueryTab values (5, 'Erin')
 insert into &main_user..SampleQueryTab values (6, 'Frankie')
 /
 insert into &main_user..SampleQueryTab values (7, 'Gerri')
+/
+insert into &main_user..SampleQueryTab values (8, 'Harriet')
+/
+insert into &main_user..SampleQueryTab values (9, 'Isabelle')
+/
+insert into &main_user..SampleQueryTab values (10, 'Jarek')
+/
+insert into &main_user..SampleQueryTab values (11, 'Krishna')
+/
+insert into &main_user..SampleQueryTab values (12, 'Leo')
+/
+insert into &main_user..SampleQueryTab values (13, 'Mia')
+/
+insert into &main_user..SampleQueryTab values (14, 'Nathalie')
+/
+insert into &main_user..SampleQueryTab values (15, 'Oscar')
+/
+insert into &main_user..SampleQueryTab values (16, 'Pia')
+/
+insert into &main_user..SampleQueryTab values (17, 'Quentin')
+/
+insert into &main_user..SampleQueryTab values (18, 'Roger')
+/
+insert into &main_user..SampleQueryTab values (19, 'Sally')
+/
+insert into &main_user..SampleQueryTab values (20, 'Tully')
+/
+insert into &main_user..SampleQueryTab values (21, 'Una')
+/
+insert into &main_user..SampleQueryTab values (22, 'Valerie')
+/
+insert into &main_user..SampleQueryTab values (23, 'William')
+/
+insert into &main_user..SampleQueryTab values (24, 'Xavier')
+/
+insert into &main_user..SampleQueryTab values (25, 'Yasmin')
+/
+insert into &main_user..SampleQueryTab values (26, 'Zach')
 /
 
 commit

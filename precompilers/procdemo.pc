@@ -1,0 +1,125 @@
+/* Copyright (c) 2025, Oracle and/or its affiliates.*/
+/* All rights reserved.*/
+
+/*   NAME
+ *   procdemo.pc - Pro*C demo program
+ *
+ *  DESCRIPTION
+ *  This program connects to ORACLE, declares and opens a cursor, 
+ *  fetches the names, salaries, and commissions of all
+ *  salespeople, displays the results, then closes the cursor. 
+ *
+ */ 
+
+#include <stdio.h>
+#include <string.h>
+#include <sqlca.h>
+#include <stdlib.h>
+#include <sqlda.h>
+#include <sqlcpr.h>
+
+#define UNAME_PWD_LEN      256 
+ 
+/*
+ * Use the precompiler typedef'ing capability to create
+ * null-terminated strings for the authentication host
+ * variables. (This isn't really necessary--plain char *'s
+ * would work as well. This is just for illustration.)
+ */
+typedef char asciiz[UNAME_PWD_LEN]; 
+
+EXEC SQL TYPE asciiz IS CHARZ(UNAME_PWD_LEN) REFERENCE; 
+asciiz     username; 
+asciiz     password; 
+
+struct emp_info 
+{ 
+    asciiz     emp_name; 
+    float      salary; 
+    float      commission; 
+}; 
+
+void sql_error(msg) 
+    char *msg;
+{ 
+    char err_msg[512];
+    size_t buf_len, msg_len;
+
+    EXEC SQL WHENEVER SQLERROR CONTINUE;
+
+    printf("\n%s\n", msg);
+
+/* Call sqlglm() to get the complete text of the
+ * error message.
+ */
+    buf_len = sizeof (err_msg);
+    sqlglm(err_msg, &buf_len, &msg_len);
+    printf("%.*s\n", msg_len, err_msg);
+
+    EXEC SQL ROLLBACK RELEASE;
+    exit(EXIT_FAILURE);
+} 
+
+void main() 
+{ 
+    struct emp_info *emp_rec_ptr; 
+
+/* Allocate memory for emp_info struct. */ 
+    if ((emp_rec_ptr = 
+        (struct emp_info *) malloc(sizeof(struct emp_info))) == 0)
+    { 
+        fprintf(stderr, "Memory allocation error.\n"); 
+        exit(EXIT_FAILURE); 
+    } 
+ 
+/* application user to set the database credentials here       */ 
+/* CAUTION: Username and password buffers are 256 characters.  */
+/* Do not paste credentials longer than 256 characters.        */
+
+    strcpy(username, "<username>"); 
+    strcpy(password, "<password>"); 
+ 
+    EXEC SQL WHENEVER SQLERROR DO sql_error("ORACLE error--");
+ 
+    EXEC SQL CONNECT :username IDENTIFIED BY :password; 
+    printf("\nConnected to ORACLE as user: %s\n", username); 
+ 
+/* Declare the cursor. All static SQL explicit cursors
+ * contain SELECT commands. 'salespeople' is a SQL identifier,
+ * not a (C) host variable.
+ */
+    EXEC SQL DECLARE salespeople CURSOR FOR 
+        SELECT ENAME, SAL, COMM 
+            FROM EMP 
+            WHERE JOB LIKE 'SALES%'; 
+ 
+/* Open the cursor. */
+    EXEC SQL OPEN salespeople; 
+ 
+/* Get ready to print results. */
+    printf("\n\nThe company's salespeople are--\n\n");
+    printf("Salesperson   Salary   Commission\n"); 
+    printf("-----------   ------   ----------\n"); 
+ 
+/* Loop, fetching all salesperson's statistics.
+ * Cause the program to break the loop when no more
+ * data can be retrieved on the cursor.
+ */
+    EXEC SQL WHENEVER NOT FOUND DO break; 
+
+    for (;;) 
+    { 
+        EXEC SQL FETCH salespeople INTO :emp_rec_ptr; 
+        printf("%s %9.2f %12.2f\n", emp_rec_ptr->emp_name, 
+                emp_rec_ptr->salary, emp_rec_ptr->commission); 
+    } 
+ 
+/* Close the cursor. */
+    EXEC SQL CLOSE salespeople; 
+ 
+    printf("\nGOOD-BYE!!\n\n");
+
+    EXEC SQL COMMIT WORK RELEASE; 
+    exit(EXIT_SUCCESS); 
+} 
+

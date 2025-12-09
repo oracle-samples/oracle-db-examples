@@ -29,13 +29,14 @@ Oracle Database.
 
 ### Examples in a Container
 
-The [sample_container](./sample_container) directory has a Dockerfile that will
-build a container with the samples and a running Oracle Database.
+The [containers/samples_and_db](./containers/samples_and_db) directory has a
+Dockerfile for building a container with the samples and a running Oracle
+Database.
 
 ### Notebooks
 
-The [sample_notebooks](./sample_notebooks) directory has Jupyter notebooks with
-runnable examples.
+The [notebooks](./notebooks) directory has Jupyter notebooks with runnable
+examples.
 
 ## About python-oracledb
 

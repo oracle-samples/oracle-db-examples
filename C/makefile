@@ -1,18 +1,27 @@
-# Copyright (c) 2022, Oracle. All rights reserved.
-# Makefile for Oracle OCI Database Resident Connection Pooling (DRCP) Example
+# Copyright (c) 2022, 2025, Oracle. All rights reserved.
+# Makefile for Oracle Call Interface examples
 # Christopher Jones, 2022
+# Sharad Chandran R, 2025
 
-IC=$(HOME)/instantclient_19_11
+# Update the instant client path here
+IC=$(HOME)/instantclient_19_26
 OLIB=$(IC)
 OINC=$(IC)/sdk/include
+DEMOS=drcpDemo simpleConnDemo sessionPoolingDemo
 
-#OH=/u01/app/oracle/product/12.1.0/dbhome_1
+# Uncomment the following 3 lines if you are using an
+# Oracle Database home
+#OH=/u01/app/oracle/product/19.26.0/dbhome_1
 #OLIB=$(OH)/lib
 #OINC=$(OH)/rdbms/public
 
-drcp: clean
-	$(CC) -Wall -Wextra -c -I$(OINC) drcp.c
-	$(CC) -o drcp drcp.o -Wl,--rpath -Wl,$(OLIB) -L$(OLIB) -lclntsh
+.PHONY: all clean
+
+all: $(DEMOS)
+
+$(DEMOS): %: %.c
+	$(CC) -Wall -Wextra -c -I$(OINC) $<
+	$(CC) -o $@ $@.o -Wl,--rpath -Wl,$(OLIB) -L$(OLIB) -lclntsh
 
 clean:
-	rm -f drcp.o drcp
+	rm -f $(DEMOS) *.o

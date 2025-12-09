@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 #
 # This software is dual-licensed to you under the Universal Permissive License
 # (UPL) 1.0 as shown at https://oss.oracle.com/licenses/upl and Apache License
@@ -27,8 +27,13 @@
 #
 # Demonstrates using a connection pool with asyncio and gather().
 #
-# Multiple database sessions will be opened and used by each coroutine.  The
-# number of connections opened can depend on the speed of your environment.
+# This also shows the use of pool_alias for connection pool caching, so the
+# pool handle does not need to passed through the app.
+#
+# Each coroutine invocation will acquire a connection from the connection pool.
+# The number of connections in the pool will depend on the speed of your
+# environment. In some cases existing connections will get reused. In other
+# cases up to CONCURRENCY connections will be created by the pool.
 # -----------------------------------------------------------------------------
 
 import asyncio
@@ -36,45 +41,53 @@ import asyncio
 import oracledb
 import sample_env
 
+# Pool name for the connection pool cache
+POOL_ALIAS_NAME = "mypool"
+
 # Number of coroutines to run
 CONCURRENCY = 5
 
 # Query the unique session identifier/serial number combination of a connection
-SQL = """SELECT UNIQUE CURRENT_TIMESTAMP AS CT, sid||'-'||serial# AS SIDSER
-         FROM v$session_connect_info
-         WHERE sid = SYS_CONTEXT('USERENV', 'SID')"""
+SQL = """select unique current_timestamp as ct, sid||'-'||serial# as sidser
+         from v$session_connect_info
+         where sid = sys_context('userenv', 'sid')"""
 
 
 # Show the unique session identifier/serial number of each connection that the
-# pool opens
+# pool creates
 async def init_session(connection, requested_tag):
     res = await connection.fetchone(SQL)
     print(res[0].strftime("%H:%M:%S.%f"), "- init_session SID-SERIAL#", res[1])
 
 
 # The coroutine simply shows the session identifier/serial number of the
-# connection returned by the pool.acquire() call
-async def query(pool):
-    async with pool.acquire() as connection:
+# connection returned from the pool
+async def query():
+    async with oracledb.connect_async(
+        pool_alias=POOL_ALIAS_NAME
+    ) as connection:
         await connection.callproc("dbms_session.sleep", [1])
         res = await connection.fetchone(SQL)
         print(res[0].strftime("%H:%M:%S.%f"), "- query SID-SERIAL#", res[1])
 
 
 async def main():
-    pool = oracledb.create_pool_async(
+    oracledb.create_pool_async(
         user=sample_env.get_main_user(),
         password=sample_env.get_main_password(),
         dsn=sample_env.get_connect_string(),
+        params=sample_env.get_pool_params(),
         min=1,
         max=CONCURRENCY,
         session_callback=init_session,
+        pool_alias=POOL_ALIAS_NAME,
     )
 
-    coroutines = [query(pool) for i in range(CONCURRENCY)]
+    coroutines = [query() for i in range(CONCURRENCY)]
 
     await asyncio.gather(*coroutines)
 
+    pool = oracledb.get_pool(POOL_ALIAS_NAME)
     await pool.close()
 
 

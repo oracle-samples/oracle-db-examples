@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Copyright (c) 2019, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2019, 2025, Oracle and/or its affiliates.
 #
 # Portions Copyright 2007-2015, Anthony Tuininga. All rights reserved.
 #
@@ -53,8 +53,9 @@ PAYLOAD_DATA = [
     "The twelfth and final message",
 ]
 
-# this script is currently only supported in python-oracledb thick mode
-oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
+# determine whether to use python-oracledb thin mode or thick mode
+if not sample_env.get_is_thin():
+    oracledb.init_oracle_client(lib_dir=sample_env.get_oracle_client())
 
 # connect to database
 connection = oracledb.connect(
@@ -64,39 +65,36 @@ connection = oracledb.connect(
 )
 
 # create a queue
-with connection.cursor() as cursor:
-    queue = connection.queue(QUEUE_NAME)
-    queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
-    queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
+queue = connection.queue(QUEUE_NAME)
+queue.deqoptions.wait = oracledb.DEQ_NO_WAIT
+queue.deqoptions.navigation = oracledb.DEQ_FIRST_MSG
 
-    # dequeue all existing messages to ensure the queue is empty, just so that
-    # the results are consistent
-    while queue.deqone():
-        pass
+# dequeue all existing messages to ensure the queue is empty, just so that
+# the results are consistent
+while queue.deqone():
+    pass
 
 # enqueue a few messages
-with connection.cursor() as cursor:
-    print("Enqueuing messages...")
-    batch_size = 6
-    data_to_enqueue = PAYLOAD_DATA
-    while data_to_enqueue:
-        batch_data = data_to_enqueue[:batch_size]
-        data_to_enqueue = data_to_enqueue[batch_size:]
-        messages = [connection.msgproperties(payload=d) for d in batch_data]
-        for data in batch_data:
-            print(data)
-        queue.enqmany(messages)
-    connection.commit()
+print("Enqueuing messages...")
+batch_size = 6
+data_to_enqueue = PAYLOAD_DATA
+while data_to_enqueue:
+    batch_data = data_to_enqueue[:batch_size]
+    data_to_enqueue = data_to_enqueue[batch_size:]
+    messages = [connection.msgproperties(payload=d) for d in batch_data]
+    for data in batch_data:
+        print(data)
+    queue.enqmany(messages)
+connection.commit()
 
 # dequeue the messages
-with connection.cursor() as cursor:
-    print("\nDequeuing messages...")
-    batch_size = 8
-    while True:
-        messages = queue.deqmany(batch_size)
-        if not messages:
-            break
-        for props in messages:
-            print(props.payload.decode())
-    connection.commit()
-    print("\nDone.")
+print("\nDequeuing messages...")
+batch_size = 8
+while True:
+    messages = queue.deqmany(batch_size)
+    if not messages:
+        break
+    for props in messages:
+        print(props.payload.decode())
+connection.commit()
+print("\nDone.")
