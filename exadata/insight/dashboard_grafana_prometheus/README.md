@@ -9,6 +9,7 @@ For the dashboards in this folder to work correctly, the following applications 
 - Grafana (minimum version 10.0.2), which includes the Prometheus plugin for Grafana.
 - Prometheus (minimum version 2.45.0)
 - Oracle Exadata System Software 22.1.0+. Follow the instructions for [Using Real-Time Insight](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-8448C324-784E-44F5-9D44-9CB5C697E436) in the *Oracle Exadata System Software User's Guide* to configure the metric collection and upload parameters.
+- Some of the dashboard may use metrics introduced in newer releases
 
 ## Example Grafana Dashboard
 
@@ -26,7 +27,13 @@ The following dashboards are included:
 - Compute: Provides a compute-node view that shows CPU and network utilization for the compute nodes.
 - Storage Server: Provides a storage-server-centric view that focuses on storage server CPU and I/O metrics, as well as Exadata metrics for Smart Flash Cache, Smart Flash Log, and Smart I/O.
 - Cell Disk: Shows cell disk I/O metrics on the storage server.
+- Cell Disk (Aggr): Shows aggregated cell disk I/O metrics on the storage server.
+- Disk IO: Shows sources of disk I/O on the storage server.
 - Flash Cache: Shows flash cache metrics on the storage server.
+- IO Profile: Shows cell disk and OS I/O statistics on the storage server.
+- IORM Database: Shows IO Resource Manager database metrics on the storage server.
+- IO Statistics: Shows OS I/O statistics on the storage server.
+- IO Statistics (Aggr): Shows aggregated OS I/O metrics on the storage server.
 - Smart Scan: Shows smart scan metrics on the storage server.
 - Network: Provides a network-centric view that focuses on network throughput.
 
@@ -34,7 +41,7 @@ The following dashboards are included:
 
 ## Navigating the Environment
 
-The dashboards have selectors for `fleet`, `pod`, `cluster`, and `server` that enable users to navigate within the environment. To use these navigation selectors in the dashboards, you need to set `fleet`, `pod`, and `cluster` as metric tags on your servers. To configure metric tags, see [Tagging Metric Observations](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-737B58F4-3FE3-4F42-8CB5-294D6CEECFCA).
+The dashboards have selectors for `datasource`, `fleet`, `pod`, `cluster`, and `server` that enable users to navigate within the environment. To use these navigation selectors in the dashboards, you need to set `fleet`, `pod`, and `cluster` as metric tags on your servers. To configure metric tags, see [Tagging Metric Observations](https://www.oracle.com/pls/topic/lookup?ctx=en/engineered-systems/exadata-database-machine&id=SAGUG-GUID-737B58F4-3FE3-4F42-8CB5-294D6CEECFCA). 
 
 The following example shows one way to use the `fleet`, `pod`, and `cluster` selectors:
 
@@ -42,13 +49,13 @@ The following example shows one way to use the `fleet`, `pod`, and `cluster` sel
 - You can use `pod` to group interconnected Exadata nodes.
   - For bare metal, this can be the compute nodes and storage servers.
   - For virtualized environments, this can include the KVM hosts, KVM guests, and storage servers.
-- You can use `cluster` to define the nodes in an Oracle Real Application Clusters (Oracle RAC) cluster.
+- You can use `cluster` to define the nodes in an Oracle Real Application Clusters (Oracle RAC) cluster. 
+
+The `datasource` is the Prometheus datasource for the data to display.
 
 ## Importing Dashboards
 
-When you import the dashboards into your Grafana installation, you are prompted for the Prometheus data source.
-
-In addition, when importing the Exadata Cluster dashboard, you are prompted for the links for the Compute and Storage Server dashboards in the linkComputeDetails and linkCellDetails variables. These variables should already contain the correct dashboard UIDs. However, you may need to modify the links if you changed the UIDs when importing the other dashboards or if you have a different orgId value in Grafana. You can also modify these dashboard variables after importing. For more information, see the Grafana documentation on [dashboard variables](https://grafana.com/docs/grafana/latest/variables/).
+The Exadata Cluster dashboard, has links for the Compute and Storage Server dashboards in the linkComputeDetails and linkCellDetails variables. These variables should already contain the correct dashboard UIDs. However, you may need to modify the links if you changed the UIDs when importing the other dashboards or if you have a different orgId value in Grafana. You can also modify these dashboard variables after importing. For more information, see the Grafana documentation on [dashboard variables](https://grafana.com/docs/grafana/latest/variables/).
 
 
 
