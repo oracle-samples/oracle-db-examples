@@ -6,14 +6,14 @@
     "canAdmin": true,
     "canStar": true,
     "canDelete": true,
-    "slug": "network",
-    "url": "/d/exapNet/network",
+    "slug": "disk-io",
+    "url": "/d/exapDiskIO/disk-io",
     "expires": "0001-01-01T00:00:00Z",
-    "created": "2022-03-28T13:27:22-07:00",
-    "updated": "2025-10-29T20:34:04-07:00",
+    "created": "2022-10-06T10:36:57-07:00",
+    "updated": "2025-10-29T20:38:04-07:00",
     "updatedBy": "admin",
-    "createdBy": "admin",
-    "version": 34,
+    "createdBy": "cecilia.gervasio@oracle.com",
+    "version": 12,
     "hasAcl": false,
     "isFolder": false,
     "folderId": 1,
@@ -60,23 +60,26 @@
       }
     ]
   },
-  "description": "Network Information",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 29,
+  "id": 41,
   "links": [
     {
-      "asDropdown": false,
-      "icon": "dashboard",
-      "includeVars": false,
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
       "keepTime": true,
-      "tags": [],
+      "tags": [
+        "exadata",
+        "prometheus",
+        "storage"
+      ],
       "targetBlank": true,
-      "title": "RoCE switch",
+      "title": "Dashboards",
       "tooltip": "",
-      "type": "link",
-      "url": "d/exaNetSwitch/RoCE-switch?orgId=1&var-cluster=$cluster"
+      "type": "dashboards",
+      "url": ""
     }
   ],
   "liveNow": false,
@@ -91,16 +94,15 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 5
       },
-      "id": 21,
+      "id": 16,
       "panels": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${ds}"
           },
-          "description": "EXAREL: RoCE bytes received",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -113,7 +115,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -130,7 +132,7 @@
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
-                  "mode": "none"
+                  "mode": "normal"
                 },
                 "thresholdsStyle": {
                   "mode": "off"
@@ -149,127 +151,15 @@
                   }
                 ]
               },
-              "unit": "MiBs"
+              "unit": "reqps"
             },
             "overrides": []
           },
           "gridPos": {
-            "h": 7,
-            "w": 12,
+            "h": 8,
+            "w": 6,
             "x": 0,
-            "y": 1
-          },
-          "id": 2,
-          "options": {
-            "legend": {
-              "calcs": [
-                "min",
-                "max",
-                "mean",
-                "last"
-              ],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "constant": 6.5,
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "EXW_ROCE_RX_BY_SEC{server=~\"$server\", objectName=~\"${interface}.*\"}",
-              "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
-              "refId": "A",
-              "withStreaming": false
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "N_IB_MB_RCV_SEC{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
-              "refId": "B"
-            }
-          ],
-          "title": "RX Bytes - ($interface)",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${ds}"
-          },
-          "description": "EXAREL: RoCE bytes transmitted",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "MiBs"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 1
+            "y": 6
           },
           "id": 4,
           "options": {
@@ -281,7 +171,7 @@
                 "last"
               ],
               "displayMode": "table",
-              "placement": "right",
+              "placement": "bottom",
               "showLegend": true
             },
             "tooltip": {
@@ -297,9 +187,9 @@
                 "uid": "${ds}"
               },
               "exemplar": true,
-              "expr": "EXW_ROCE_TX_BY_SEC{server=~\"$server\",objectName=~\"${interface}.*\"}",
+              "expr": "sum by (server) (CD_IO_RQ_R_SM_SEC{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "Small Reads-{{server}}",
               "refId": "A",
               "withStreaming": false
             },
@@ -309,50 +199,45 @@
                 "uid": "${ds}"
               },
               "exemplar": true,
-              "expr": "N_IB_MB_TRANS_SEC{server=~\"$server\"}",
+              "expr": "sum by (server) (CD_IO_RQ_R_LG_SEC{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "Large Reads-{{server}}",
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_RQ_W_SM_SEC{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Small Writes-{{server}}",
               "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_RQ_W_LG_SEC{server=~\"$server\",objectName=~\"CD_.*\"})\n",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Large Writes-{{server}}",
+              "refId": "D"
             }
           ],
-          "title": "TX Bytes - ($interface)",
+          "title": "IOPs",
           "type": "timeseries"
-        }
-      ],
-      "repeat": "interface",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "oe75iKL7k"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "RDMA Network ${interface}",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "oe75iKL7k"
-      },
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 2
-      },
-      "id": 99,
-      "panels": [
+        },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${ds}"
           },
-          "description": "EXAREL: RoCE Pause Frames or IB Pauses",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -365,7 +250,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -382,7 +267,7 @@
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
-                  "mode": "none"
+                  "mode": "normal"
                 },
                 "thresholdsStyle": {
                   "mode": "off"
@@ -400,18 +285,18 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unit": "reqps"
             },
             "overrides": []
           },
           "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 0,
-            "y": 3
+            "h": 8,
+            "w": 6,
+            "x": 6,
+            "y": 6
           },
           "id": 8,
-          "maxPerRow": 2,
           "options": {
             "legend": {
               "calcs": [
@@ -421,7 +306,7 @@
                 "last"
               ],
               "displayMode": "table",
-              "placement": "right",
+              "placement": "bottom",
               "showLegend": true
             },
             "tooltip": {
@@ -429,8 +314,6 @@
               "sort": "none"
             }
           },
-          "repeat": "interface",
-          "repeatDirection": "h",
           "targets": [
             {
               "constant": 6.5,
@@ -438,17 +321,395 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
-              "editorMode": "code",
               "exemplar": true,
-              "expr": "rate(EXW_ROCE_PAUSE{server=~\"$server\",objectName=~\"${interface}.*\"}[1m])",
+              "expr": "FC_IO_RQ_R_MISS_SEC{server=~\"$server\"}",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
-              "range": true,
+              "legendFormat": "OLTP misses-{{server}}",
               "refId": "A",
               "withStreaming": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "FC_IO_RQ_R_SKIP_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Read Skips-{{server}}",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "SIO_IO_RD_RQ_HD_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Smart Scans-{{server}}",
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_RQ_R_SCRUB_SEC{server=~\"$server\",objectName=~\"CD_.*\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Scrub-{{server}}",
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "FC_IO_RQ_W_SKIP_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Write Skips-{{server}}",
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "FC_IO_RQ_W_DISK_WRITER_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Disk Writer-{{server}}",
+              "refId": "F"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "editorMode": "code",
+              "expr": "FC_IO_RQ_R_MISS_DW_SEC{server=~\"$server\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "DW misses-{{server}}",
+              "range": true,
+              "refId": "G"
             }
           ],
-          "title": "Pauses ($interface)",
+          "title": "Disk IO",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "MiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 12,
+            "y": 6
+          },
+          "id": 6,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_BY_R_SM_SEC{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
+              "interval": "",
+              "legendFormat": "Small Reads-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_BY_R_LG_SEC{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})\n",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Large Reads-{{server}}",
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_BY_W_SM_SEC{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})\n",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Small Writes-{{server}}",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_BY_W_LG_SEC{server=~\"$server\",objectName=~\"CD_.*\"})\n",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Large Writes-{{server}}",
+              "refId": "D"
+            }
+          ],
+          "title": "MiB/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "MiBs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 18,
+            "y": 6
+          },
+          "id": 10,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "constant": 6.5,
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "FC_IO_BY_R_MISS_SEC{server=~\"$server\"}",
+              "interval": "",
+              "legendFormat": "OLTP misses-{{server}}",
+              "refId": "A",
+              "withStreaming": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "FC_IO_BY_R_SKIP_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Read skips-{{server}}",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "SIO_IO_RD_HD_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Smart Scan-{{server}}",
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "sum by (server) (CD_IO_BY_R_SCRUB_SEC{server=~\"$server\",objectName=~\"CD_.*\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Scrub-{{server}}",
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "FC_IO_BY_W_SKIP_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Write Skips-{{server}}",
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "exemplar": true,
+              "expr": "FC_IO_BY_W_DISK_WRITER_SEC{server=~\"$server\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Disk Writer-{{server}}",
+              "refId": "F"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds}"
+              },
+              "editorMode": "code",
+              "expr": "FC_IO_BY_R_MISS_DW_SEC{server=~\"$server\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "DW misses-{{server}}",
+              "range": true,
+              "refId": "G"
+            }
+          ],
+          "title": "Disk MiB/s",
           "type": "timeseries"
         },
         {
@@ -503,17 +764,18 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unit": "µs"
             },
             "overrides": []
           },
           "gridPos": {
             "h": 8,
-            "w": 24,
+            "w": 12,
             "x": 0,
-            "y": 10
+            "y": 14
           },
-          "id": 37,
+          "id": 53,
           "options": {
             "legend": {
               "calcs": [
@@ -523,7 +785,7 @@
                 "last"
               ],
               "displayMode": "table",
-              "placement": "right",
+              "placement": "bottom",
               "showLegend": true
             },
             "tooltip": {
@@ -537,12 +799,10 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
-              "editorMode": "code",
               "exemplar": true,
-              "expr": "rate(EXW_ROCE_NP_CNP_SENT{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "expr": "avg by (server) (CD_IO_TM_R_SM_RQ{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
               "interval": "",
-              "legendFormat": "np_cnp_sent-{{objectName}}-{{server}}",
-              "range": true,
+              "legendFormat": "Small Reads-{{server}}",
               "refId": "A"
             },
             {
@@ -550,13 +810,11 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
-              "editorMode": "code",
               "exemplar": true,
-              "expr": "rate(EXW_ROCE_NP_ECN_MARKED_ROCE_PACKETS{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "expr": "avg by (server) (CD_IO_TM_R_LG_RQ{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "np_ecn_marked_roce_packets-{{objectName}}-{{server}}",
-              "range": true,
+              "legendFormat": "Large Reads-{{server}}",
               "refId": "B"
             },
             {
@@ -564,13 +822,11 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
-              "editorMode": "code",
               "exemplar": true,
-              "expr": "rate(EXW_ROCE_RP_CNP_HANDLED{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "expr": "avg by (server) (CD_IO_TM_W_SM_RQ{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "rp_cnp_handled-{{objectName}}-{{server}}",
-              "range": true,
+              "legendFormat": "Small Writes-{{server}}",
               "refId": "C"
             },
             {
@@ -578,20 +834,19 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
-              "editorMode": "code",
               "exemplar": true,
-              "expr": "rate(EXW_ROCE_RP_CNP_IGNORED{server=~\"$server\",objectName!=\".*eth.*\"}[1m])",
+              "expr": "avg by (server) (CD_IO_TM_W_LG_RQ{server=~\"$server\",objectName=~\"CD_.*|CF_.*\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "rp_cnp_ignored-{{objectName}}-{{server}}",
-              "range": true,
+              "legendFormat": "Large Writes-{{server}}",
               "refId": "D"
             }
           ],
-          "title": "RoCE Congestion",
+          "title": "Disk Latency",
           "type": "timeseries"
         }
       ],
+      "repeat": "server",
       "targets": [
         {
           "datasource": {
@@ -601,218 +856,7 @@
           "refId": "A"
         }
       ],
-      "title": "Pauses and RoCE Congestion",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "oe75iKL7k"
-      },
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 3
-      },
-      "id": 29,
-      "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${ds}"
-          },
-          "description": "EXAREL: rds-info counters",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ops"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 24,
-            "x": 0,
-            "y": 4
-          },
-          "id": 6,
-          "options": {
-            "legend": {
-              "calcs": [
-                "min",
-                "max",
-                "mean",
-                "last"
-              ],
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "constant": 6.5,
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "rate(EXW_RDS_CONG_SEND_BLOCKED{server=~\"$server\"}[1m])",
-              "interval": "",
-              "legendFormat": "RDS_CONG_SEND_BLKD-{{server}}",
-              "refId": "A",
-              "withStreaming": false
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "rate(EXW_RDS_CONG_SEND_ERROR{server=~\"$server\"}[1m])",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "RDS_CONG_SEND_ERROR-{{server}}",
-              "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "rate(EXW_RDS_IB_MR_1M_POOL_DEPLETED{server=~\"$server\"}[1m])",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "RDS_IB_MR_1M_POOL_DEPLETED-{{server}}",
-              "refId": "C"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "rate(EXW_RDS_IB_RDMA_MR_8K_POOL_DEPLETED{server=~\"$server\"}[1m])",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "RDS_IB_RDMA_MR_8K_POOL_DEPLETED({{server}})",
-              "refId": "D"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "rate(EXW_RDS_IB_TX_STALLED{server=~\"$server\"}[1m])",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "RDS_IB_TX_STALLED-{{server}}",
-              "refId": "E"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "rate(EXW_ROCE_RNR_NAK_RETRY_ERR{server=~\"$server\"}[1m])",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "RNR_NAK_RETRY_ERR-{{server}}-{{objectName}}",
-              "refId": "F"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "rate(EXW_ROCE_LOCAL_ACK_TIMEOUT_ERR{server=~\"$server\"}[1m])",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "LOCAL_ACK_TIMEOUT_ERR-{{server}}-{{objectName}}",
-              "refId": "G"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${ds}"
-              },
-              "exemplar": true,
-              "expr": "EXW_RDS_CONN_RESET{server=~\"$server\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "EXW_RDS_CONN_RESET-{{server}}",
-              "refId": "H"
-            }
-          ],
-          "title": "RDS Errors",
-          "type": "timeseries"
-        }
-      ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "oe75iKL7k"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "RDS",
+      "title": "$server",
       "type": "row"
     }
   ],
@@ -820,11 +864,10 @@
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
+    "diskio",
     "exadata",
-    "prometheus",
-    "compute",
     "storage",
-    "network"
+    "prometheus"
   ],
   "templating": {
     "list": [
@@ -857,14 +900,14 @@
           "type": "prometheus",
           "uid": "${ds}"
         },
-        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\"},fleet)",
+        "definition": "label_values(CL_CPUT,fleet)",
         "hide": 0,
         "includeAll": false,
-        "multi": true,
+        "multi": false,
         "name": "fleet",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\"},fleet)",
+          "query": "label_values(CL_CPUT,fleet)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -883,14 +926,14 @@
           "type": "prometheus",
           "uid": "${ds}"
         },
-        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\"},pod)",
+        "definition": "label_values(CL_CPUT{fleet=\"$fleet\"},pod)",
         "hide": 0,
         "includeAll": false,
-        "multi": true,
+        "multi": false,
         "name": "pod",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\"},pod)",
+          "query": "label_values(CL_CPUT{fleet=\"$fleet\"},pod)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -909,20 +952,20 @@
           "type": "prometheus",
           "uid": "${ds}"
         },
-        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\"},cluster)",
+        "definition": "label_values(CL_CPUT{fleet=\"$fleet\",pod=\"$pod\"},cluster)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "cluster",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\"},cluster)",
+          "query": "label_values(CL_CPUT{fleet=\"$fleet\",pod=\"$pod\"},cluster)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
+        "sort": 0,
         "type": "query"
       },
       {
@@ -935,44 +978,19 @@
           "type": "prometheus",
           "uid": "${ds}"
         },
-        "definition": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\"},server)",
+        "definition": "label_values(CL_CPUT{fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\"},server)",
+        "description": "Each server is displayed in its own row. When viewing/editing a single panel, the selection is tied to the panel that was expanded, and the selector will not change the contents of the panel.",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "server",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"CL_CPUT|DS_CPUT\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\"},server)",
+          "query": "label_values(CL_CPUT{fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\"},server)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${ds}"
-        },
-        "definition": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "interface",
-        "options": [],
-        "query": {
-          "query": "{__name__=~\"EXW_ROCE_RX_BY_SEC|EXW_ROCE_TX_BY_SEC\",fleet=~\"$fleet\",pod=~\"$pod\",cluster=~\"$cluster\",server=~\"$server\"}",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "/.*[\\W|,]objectName=\"([^:\"]*).*/",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
@@ -985,8 +1003,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Network",
-  "uid": "exapNet",
-  "version": 34,
+  "title": "Disk IO",
+  "uid": "exapDiskIO",
+  "version": 12,
   "weekStart": ""
 }

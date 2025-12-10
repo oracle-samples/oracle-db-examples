@@ -6,14 +6,14 @@
     "canAdmin": true,
     "canStar": true,
     "canDelete": true,
-    "slug": "io-statistics",
-    "url": "/d/exapIO/io-statistics",
+    "slug": "io-statistics-aggr",
+    "url": "/d/f696e26b-26e2-48f6-906c-ce65668edbb6/io-statistics-aggr",
     "expires": "0001-01-01T00:00:00Z",
-    "created": "2022-07-12T16:39:36-07:00",
-    "updated": "2025-12-04T10:52:21-08:00",
-    "updatedBy": "cecilia.gervasio@oracle.com",
+    "created": "2024-09-20T11:11:39-07:00",
+    "updated": "2025-10-29T20:35:31-07:00",
+    "updatedBy": "admin",
     "createdBy": "cecilia.gervasio@oracle.com",
-    "version": 26,
+    "version": 4,
     "hasAcl": false,
     "isFolder": false,
     "folderId": 1,
@@ -64,7 +64,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 34,
+  "id": 46,
   "links": [
     {
       "asDropdown": true,
@@ -86,31 +86,6 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "e2dddbca-ebed-45d1-bbd6-07761a869ca0"
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 15,
-        "x": 0,
-        "y": 0
-      },
-      "id": 63,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "The diskType is based on the diskName (sd.* and nvme.*). For systems prior to X-5, the flash devices will be incorrectly categorized as 'disk'.\n\nSimilarly, for X10M-EF, all devices will be 'flash'\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "10.0.2",
-      "title": "Note",
-      "type": "text"
-    },
-    {
       "collapsed": true,
       "datasource": {
         "type": "prometheus",
@@ -120,7 +95,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 4
       },
       "id": 4,
       "panels": [
@@ -169,8 +144,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -186,7 +160,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 3
+            "y": 5
           },
           "id": 29,
           "options": {
@@ -213,10 +187,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "sum by (objectName,server) ({__name__ =~\"OS_IO_RQ_R_SEC|OS_IO_RQ_W_SEC\", server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"})",
+              "expr": "sum by (server) ({__name__ =~\"OS_IO_RQ_R_SEC|OS_IO_RQ_W_SEC\", server=~\"$server\", objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}-$diskType",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -269,8 +245,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -286,7 +261,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 3
+            "y": 5
           },
           "id": 30,
           "options": {
@@ -313,10 +288,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "sum by (objectName,server) ({__name__ =~\"OS_IO_BY_R_SEC|OS_IO_BY_W_SEC\", server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"})",
+              "expr": "sum by (server) ({__name__ =~\"OS_IO_BY_R_SEC|OS_IO_BY_W_SEC\", server=~\"$server\", objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -369,8 +346,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -386,7 +362,7 @@
             "h": 9,
             "w": 6,
             "x": 0,
-            "y": 12
+            "y": 14
           },
           "id": 2,
           "options": {
@@ -413,10 +389,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "OS_IO_RQ_R_SEC{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "sum by (server) (OS_IO_RQ_R_SEC{server=~\"$server\", objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -469,8 +447,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -486,7 +463,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 12
+            "y": 14
           },
           "id": 10,
           "options": {
@@ -513,10 +490,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "OS_IO_RQ_W_SEC{server=~\"$server\",objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "sum by (server) (OS_IO_RQ_W_SEC{server=~\"$server\",objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -569,8 +548,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -586,7 +564,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 12
+            "y": 14
           },
           "id": 12,
           "options": {
@@ -613,10 +591,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "OS_IO_BY_R_SEC{server=~\"$server\",objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "sum by (server) (OS_IO_BY_R_SEC{server=~\"$server\",objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -669,8 +649,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -686,7 +665,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 12
+            "y": 14
           },
           "id": 14,
           "options": {
@@ -713,10 +692,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "OS_IO_BY_W_SEC{server=~\"$server\",objectName=~\"${diskType}.*\",objectName=~\"$diskName\"}",
+              "expr": "sum by (server) (OS_IO_BY_W_SEC{server=~\"$server\",objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -769,8 +750,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "yellow",
@@ -790,7 +770,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 21
+            "y": 23
           },
           "id": 52,
           "options": {
@@ -817,10 +797,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "OS_IO_UTIL_PCT{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "avg by (server) (OS_IO_UTIL_PCT{server=~\"$server\", objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -873,8 +855,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -890,7 +871,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 21
+            "y": 23
           },
           "id": 31,
           "options": {
@@ -917,10 +898,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "OS_IO_WT_R_RQ{server=~\"$server\",objectName=~\"${diskType}.*\",objectName=~\"$diskName\"}",
+              "expr": "avg by (server) (OS_IO_WT_R_RQ{server=~\"$server\",objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -973,8 +956,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -990,7 +972,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 21
+            "y": 23
           },
           "id": 32,
           "options": {
@@ -1017,10 +999,12 @@
                 "type": "prometheus",
                 "uid": "${ds}"
               },
+              "editorMode": "code",
               "exemplar": true,
-              "expr": "OS_IO_WT_W_RQ{server=~\"$server\",objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "avg by (server) (OS_IO_WT_W_RQ{server=~\"$server\",objectName=~\"${diskType}.*\"})",
               "interval": "",
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
+              "range": true,
               "refId": "A",
               "withStreaming": false
             }
@@ -1031,7 +1015,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "oe75iKL7k"
+            "uid": "e2dddbca-ebed-45d1-bbd6-07761a869ca0"
           },
           "fieldConfig": {
             "defaults": {
@@ -1073,8 +1057,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1086,10 +1069,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
+            "h": 9,
             "w": 12,
             "x": 0,
-            "y": 30
+            "y": 32
           },
           "id": 76,
           "options": {
@@ -1116,9 +1099,9 @@
                 "uid": "e2dddbca-ebed-45d1-bbd6-07761a869ca0"
               },
               "editorMode": "code",
-              "expr": "OS_IO_AQU_SZ{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "avg by (server) (OS_IO_AQU_SZ{server=~\"$server\",objectName=~\"${diskType}.*\"})",
               "instant": false,
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
               "range": true,
               "refId": "A"
             }
@@ -1129,7 +1112,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "oe75iKL7k"
+            "uid": "e2dddbca-ebed-45d1-bbd6-07761a869ca0"
           },
           "fieldConfig": {
             "defaults": {
@@ -1171,8 +1154,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1188,7 +1170,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 30
+            "y": 32
           },
           "id": 74,
           "options": {
@@ -1215,9 +1197,9 @@
                 "uid": "e2dddbca-ebed-45d1-bbd6-07761a869ca0"
               },
               "editorMode": "code",
-              "expr": "OS_IO_RQ_R_SZ{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "avg by (server) (OS_IO_RQ_R_SZ{server=~\"$server\", objectName=~\"${diskType}.*\"})",
               "instant": false,
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
               "range": true,
               "refId": "A"
             }
@@ -1228,7 +1210,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "oe75iKL7k"
+            "uid": "e2dddbca-ebed-45d1-bbd6-07761a869ca0"
           },
           "fieldConfig": {
             "defaults": {
@@ -1270,8 +1252,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1287,7 +1268,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 30
+            "y": 32
           },
           "id": 75,
           "options": {
@@ -1314,9 +1295,9 @@
                 "uid": "e2dddbca-ebed-45d1-bbd6-07761a869ca0"
               },
               "editorMode": "code",
-              "expr": "OS_IO_RQ_W_SZ{server=~\"$server\", objectName=~\"${diskType}.*\", objectName=~\"$diskName\"}",
+              "expr": "avg by (server) (OS_IO_RQ_W_SZ{server=~\"$server\", objectName=~\"${diskType}.*\"})",
               "instant": false,
-              "legendFormat": "{{objectName}}-{{server}}",
+              "legendFormat": "{{server}}",
               "range": true,
               "refId": "A"
             }
@@ -1363,7 +1344,6 @@
         "name": "ds",
         "options": [],
         "query": "prometheus",
-        "queryValue": "",
         "refresh": 1,
         "regex": "/Prometheus.*/",
         "skipUrlSync": false,
@@ -1498,32 +1478,6 @@
         "skipUrlSync": false,
         "sort": 2,
         "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${ds}"
-        },
-        "definition": "{__name__ =~ \"OS_IO_RQ_R_SEC|OS_IO_RQ_R_W_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\",objectName=~\"$diskType.*\"}",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "diskName",
-        "options": [],
-        "query": {
-          "query": "{__name__ =~ \"OS_IO_RQ_R_SEC|OS_IO_RQ_R_W_SEC\",fleet=\"$fleet\",pod=\"$pod\",cluster=~\"$cluster\",server=~\"$server\",objectName=~\"$diskType.*\"}",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "/.*[\\W|,]objectName=\"([^\"]*).*/",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -1533,8 +1487,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "IO Statistics",
-  "uid": "exapIO",
-  "version": 26,
+  "title": "IO Statistics (Aggr)",
+  "uid": "exapIOAggr",
+  "version": 4,
   "weekStart": ""
 }
