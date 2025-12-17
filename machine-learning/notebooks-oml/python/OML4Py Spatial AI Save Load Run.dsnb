@@ -1,0 +1,862 @@
+[
+  {
+    "name" : "OML4Py Spatial AI Save Load Run",
+    "description" : null,
+    "tags" : null,
+    "version" : "7",
+    "layout" : null,
+    "type" : "low",
+    "snapshot" : false,
+    "isEditable" : true,
+    "isRunnable" : true,
+    "template" : null,
+    "templateConfig" : null,
+    "paragraphs" : [
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : null,
+        "hasTitle" : false,
+        "message" : [
+          "%md",
+          "",
+          "# Save Load Run - Spatial AI in Oracle Machine Learning for Python (OML4Py)",
+          "",
+          "Oracle Machine Learning for Python (OML4Py) makes the Python environment ready for the enterprise. OML4Py integrates Python with Oracle Autonomous Database, enabling the use of Python for machine learning and visualization from database tables and views. Spatial AI is a feature of OML4Py providing algorithms and APIs to analyze, make predictions, and detect patterns from geospatial data. ",
+          "",
+          "This notebook provides basic examples of:",
+          "* Saving, loading, and running a spatial model",
+          "* Saving predictions from a spatial model to a database table",
+          "* Saving and invoking spatial model with embedded execution",
+          "",
+          "The model used is a spatial lag regression. For a thorough example of working with spatial lag regression see the sample notebook OML4Py Spatial AI Spatial Lag Regressor.",
+          "",
+          "",
+          "",
+          "**Copyright (c) 2025 Oracle Corporation**",
+          "[The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)",
+          " "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<h1 id=\"save-load-run---spatial-ai-in-oracle-machine-learning-for-python-oml4py\">Save Load Run - Spatial AI in Oracle Machine Learning for Python (OML4Py)</h1>\n<p>Oracle Machine Learning for Python (OML4Py) makes the Python environment ready for the enterprise. OML4Py integrates Python with Oracle Autonomous Database, enabling the use of Python for machine learning and visualization from database tables and views. Spatial AI is a feature of OML4Py providing algorithms and APIs to analyze, make predictions, and detect patterns from geospatial data.</p>\n<p>This notebook provides basic examples of:</p>\n<ul>\n<li>Saving, loading, and running a spatial model</li>\n<li>Saving predictions from a spatial model to a database table</li>\n<li>Saving and invoking spatial model with embedded execution</li>\n</ul>\n<p>The model used is a spatial lag regression. For a thorough example of working with spatial lag regression see the sample notebook OML4Py Spatial AI Spatial Lag Regressor.</p>\n<p><strong>Copyright (c) 2025 Oracle Corporation</strong>\n<a href=\"https://oss.oracle.com/licenses/upl/\">The Universal Permissive License (UPL), Version 1.0</a></p>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 0,
+        "title" : "Before you begin",
+        "hasTitle" : true,
+        "message" : [
+          "%md",
+          " ",
+          "Run the notebook **OML4Py Spatial AI Run-me-first** which loads data used in all sample notebooks. "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : true,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<p>Run the notebook <strong>OML4Py Spatial AI Run-me-first</strong> which loads data used in all sample notebooks.</p>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Import required libraries",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "import os",
+          "import oml",
+          "import geopandas",
+          "import matplotlib.pyplot as plt",
+          "import numpy as np",
+          "import sklearn.metrics as metrics",
+          "from sklearn.preprocessing import RobustScaler",
+          "from libpysal import weights",
+          "import pandas as pd",
+          "",
+          "# Libraries and constants for reproducibility.",
+          "import random",
+          "random_state = 456",
+          "random.seed(random_state)",
+          "",
+          "import oml",
+          "",
+          "# Spatial AI imports",
+          "from oraclesai import SpatialDataFrame, DBSpatialDataset, FileSpatialDataset",
+          "from oraclesai.pipeline import SpatialPipeline",
+          "from oraclesai.metrics import aic",
+          "from oraclesai.regression import SpatialLagRegressor",
+          "from oraclesai.weights import SpatialWeights, KNNWeightsDefinition, DistanceBandWeightsDefinition, QueenWeightsDefinition, RookWeightsDefinition",
+          "from oraclesai.vis import elocation",
+          "from oraclesai import enable_geodataframes",
+          "enable_geodataframes(z)"
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [ ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : null,
+        "hasTitle" : false,
+        "message" : [
+          "%md",
+          "",
+          "##### Create a model",
+          "",
+          "Begin by creating a spatial regression model to predict income. You use for the city of Los Angeles from the US Census Bureau. The data includes median income and a variety of other demographic features for areas called block groups.",
+          " "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<h5 id=\"create-a-model\">Create a model</h5>\n<p>Begin by creating a spatial regression model to predict income. You use for the city of Los Angeles from the US Census Bureau. The data includes median income and a variety of other demographic features for areas called block groups.</p>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Create a SpatialDataFrame and split to train, test, validation sets",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "block_groups = SpatialDataFrame.create(DBSpatialDataset( table='la_block_groups'))",
+          "X = block_groups[['GEOID','MEDIAN_INCOME', 'MEAN_AGE', 'MEAN_EDUCATION_LEVEL', 'HOUSE_VALUE', 'INTERNET', 'geometry']]",
+          "X_train, X_test, X_valid = X.split(ratio=(0.7, 0.2, 0.1), seed=random_state)"
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [ ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Train a spatial regression model",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "",
+          "slr_pipeline = SpatialPipeline([(\"scaler\", RobustScaler()), \\",
+          "                                        (\"spatial_lag_regressor\", SpatialLagRegressor(KNNWeightsDefinition(k=5)))])",
+          "slr_pipeline.fit(X_train.drop(\"GEOID\"), \"MEDIAN_INCOME\")",
+          " "
+        ],
+        "selectedVisualization" : "raw",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "SpatialPipeline(steps=[('scaler', RobustScaler()),\n                       ('spatial_lag_regressor',\n                        SpatialLagRegressor(spatial_weights_definition=<oraclesai.weights.weights_definition.KNNWeightsDefinition object at 0x7f40030a9fd0>))])\n",
+              "type" : "TEXT"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "View the model summary",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "print(slr_pipeline.named_steps[\"spatial_lag_regressor\"].summary)",
+          " "
+        ],
+        "selectedVisualization" : "raw",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "REGRESSION RESULTS\n------------------\n\nSUMMARY OF OUTPUT: MAXIMUM LIKELIHOOD SPATIAL LAG (METHOD = FULL)\n-----------------------------------------------------------------\nData set            :     unknown\nWeights matrix      :     unknown\nDependent Variable  :     dep_var                Number of Observations:        2438\nMean dependent var  :  69108.4746                Number of Variables   :           6\nS.D. dependent var  :  39883.6240                Degrees of Freedom    :        2432\nPseudo R-squared    :      0.6911\nSpatial Pseudo R-squared:  0.6203\nLog likelihood      : -27892.5395\nSigma-square ML     :491418429.4577                Akaike info criterion :   55797.079\nS.E of regression   :  22167.9595                Schwarz criterion     :   55831.873\n\n------------------------------------------------------------------------------------\n            Variable     Coefficient       Std.Error     z-Statistic     Probability\n------------------------------------------------------------------------------------\n            CONSTANT     38034.61195      1473.22756        25.81720         0.00000\n            MEAN_AGE      2668.98082       778.85538         3.42680         0.00061\nMEAN_EDUCATION_LEVEL      3227.76860      1556.48501         2.07376         0.03810\n         HOUSE_VALUE     12447.64626       650.05460        19.14862         0.00000\n            INTERNET     11396.13170       988.90748        11.52396         0.00000\n           W_dep_var         0.40284         0.02153        18.70871         0.00000\n------------------------------------------------------------------------------------\n\nSPATIAL LAG MODEL IMPACTS\nImpacts computed using the 'simple' method.\n            Variable         Direct        Indirect          Total\n            MEAN_AGE      2668.9808       1800.4503       4469.4311\nMEAN_EDUCATION_LEVEL      3227.7686       2177.3993       5405.1679\n         HOUSE_VALUE     12447.6463       8396.9762      20844.6225\n            INTERNET     11396.1317       7687.6419      19083.7736\n================================ END OF REPORT =====================================\n",
+              "type" : "TEXT"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Perform test predictions",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "",
+          "test_predictions = slr_pipeline.predict(X_test.drop(\"MEDIAN_INCOME\").drop(\"GEOID\")).flatten()",
+          "test_predictions_sdf = X_test[[\"GEOID\"]].add_column('PREDICTION',test_predictions)",
+          "z.show(test_predictions_sdf.head())",
+          " "
+        ],
+        "selectedVisualization" : "table",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "GEOID\tPREDICTION\tgeometry\n060373201002\t57052.555\tPOLYGON ((-118.436 34.297, -118.429 34.302, -118.426 34.299, -118.433 34.294, -118.434 34.295, -118.436 34.297))\n060376214002\t108972.653\tPOLYGON ((-118.386 33.825, -118.382 33.824, -118.379 33.821, -118.377 33.821, -118.377 33.818, -118.38 33.818, -118.384 33.821, -118.385 33.821, -118.386 33.825))\n060376500012\t79280.613\tPOLYGON ((-118.326 33.883, -118.318 33.886, -118.318 33.882, -118.322 33.882, -118.322 33.88, -118.326 33.88, -118.326 33.883))\n060376503002\t84953.868\tPOLYGON ((-118.352 33.873, -118.344 33.873, -118.344 33.867, -118.347 33.867, -118.347 33.869, -118.352 33.869, -118.352 33.873))\n060377010002\t133139.797\tPOLYGON ((-118.414 34.064, -118.41 34.067, -118.403 34.067, -118.403 34.062, -118.407 34.062, -118.407 34.065, -118.41 34.066, -118.413 34.063, -118.414 34.063, -118.414 34.064))\n",
+              "type" : "TABLE"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : null,
+        "hasTitle" : false,
+        "message" : [
+          "%md",
+          " ",
+          "##### Save predictions to a table "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<h5 id=\"save-predictions-to-a-table\">Save predictions to a table</h5>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Save test prediction results to a database table",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "test_predictions_sdf.write(DBSpatialDataset(table='test_predictions'), if_exists='replace')",
+          "",
+          "",
+          " "
+        ],
+        "selectedVisualization" : "raw",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "Data out of bounds. Dimension Element: [ name:X, lower bounds: -180.0, upper bounds:180.0 ],  Data: [ lower bounds: -118.558813, upper bounds: -118.167357\nData out of bounds. Dimension Element: [ name:Y, lower bounds: -90.0, upper bounds:90.0 ],  Data: [ lower bounds: 33.706979, upper bounds: 34.33389\n",
+              "type" : "TEXT"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Verify row count in predictions table",
+        "hasTitle" : true,
+        "message" : [
+          "%sql",
+          "",
+          "select count(*) from test_predictions;"
+        ],
+        "selectedVisualization" : "raw",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "sql.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "COUNT(*)\n667\n",
+              "type" : "TABLE"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "View content in predictions table",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "z.show(SpatialDataFrame.create(DBSpatialDataset( table='test_predictions')).head())",
+          "",
+          " "
+        ],
+        "selectedVisualization" : "table",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "GEOID\tPREDICTION\tgeometry\n060371066451\t83009.742\tPOLYGON ((-118.49 34.289, -118.489 34.291, -118.484 34.286, -118.485 34.282, -118.484 34.28, -118.485 34.28, -118.485 34.279, -118.486 34.278, -118.486 34.277, -118.489 34.277, -118.489 34.279, -118.489 34.282, -118.49 34.287, -118.49 34.289))\n060371863011\t76971.291\tPOLYGON ((-118.253 34.124, -118.239 34.126, -118.237 34.125, -118.232 34.125, -118.231 34.123, -118.23 34.121, -118.231 34.12, -118.235 34.118, -118.236 34.119, -118.24 34.121, -118.241 34.122, -118.242 34.123, -118.244 34.121, -118.247 34.119, -118.25 34.122, -118.253 34.124))\n060371871022\t75497.57\tPOLYGON ((-118.256 34.109, -118.254 34.113, -118.252 34.117, -118.247 34.113, -118.247 34.112, -118.244 34.113, -118.244 34.111, -118.238 34.105, -118.238 34.104, -118.238 34.103, -118.237 34.102, -118.235 34.1, -118.234 34.098, -118.23 34.094, -118.227 34.091, -118.226 34.089, -118.226 34.086, -118.226 34.083, -118.228 34.083, -118.228 34.083, -118.229 34.088, -118.229 34.09, -118.231 34.092, -118.234 34.094, -118.239 34.095, -118.24 34.097, -118.242 34.1, -118.242 34.104, -118.243 34.105, -118.247 34.108, -118.25 34.108, -118.255 34.108, -118.257 34.108, -118.256 34.109))\n060377018022\t98762.11\tPOLYGON ((-118.482 34.016, -118.477 34.02, -118.475 34.02, -118.473 34.018, -118.474 34.017, -118.479 34.014, -118.482 34.016))\n060377022021\t109413.639\tPOLYGON ((-118.475 34.008, -118.474 34.007, -118.472 34.007, -118.469 34.003, -118.469 34.003, -118.47 34.002, -118.47 34.002, -118.472 34.004, -118.474 34.005, -118.476 34.007, -118.475 34.008))\n",
+              "type" : "TABLE"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : null,
+        "hasTitle" : false,
+        "message" : [
+          "%md",
+          " ",
+          "##### Save model to Datastore "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<h5 id=\"save-model-to-datastore\">Save model to Datastore</h5>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Save your model to an OML Datastore",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "oml.ds.save({'slr_pipeline': slr_pipeline}, 'slr_ds', description=' ', overwrite=True)",
+          "print(oml.ds.describe('slr_ds'))",
+          " "
+        ],
+        "selectedVisualization" : "raw",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "    object_name            class     size  length  row_count  col_count\n0  slr_pipeline  SpatialPipeline  1149751       1          1          1\n",
+              "type" : "TEXT"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Load and score your model from your OML Datastore",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "objs = oml.ds.load('slr_ds', objs=['slr_pipeline'], to_globals=False)",
+          "load_slr_pipeline = objs['slr_pipeline']",
+          "print('score: ', load_slr_pipeline.score(X_test.drop(\"GEOID\"), y=\"MEDIAN_INCOME\"))"
+        ],
+        "selectedVisualization" : "raw",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "score:  0.6180254554626836\n",
+              "type" : "TEXT"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : null,
+        "hasTitle" : false,
+        "message" : [
+          "%md",
+          "",
+          "##### Store model for embedded execution",
+          " "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<h5 id=\"store-model-for-embedded-execution\">Store model for embedded execution</h5>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Store your model as a script for embedded execution",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "slr_model_fn = \"\"\"def slr_pipeline_predict_(X):",
+          "                  import oml",
+          "                  objs = oml.ds.load('slr_ds', objs=['slr_pipeline'], to_globals=False)",
+          "                  return objs['slr_pipeline'].predict(X)\"\"\"",
+          " ",
+          "oml.script.create(\"slrModelPredict\", slr_model_fn, is_global=True, overwrite=True)",
+          " "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [ ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Invoke your model with embedded execution",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "slr_prediction = oml.do_eval(func='slrModelPredict', X=X_test.drop(\"MEDIAN_INCOME\").drop(\"GEOID\"))",
+          "slr_prediction.flatten()[:10]",
+          "",
+          "",
+          " "
+        ],
+        "selectedVisualization" : "raw",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "array([ 57052.5554592 , 108972.65263617,  79280.61322168,  84953.86779151,\n       133139.79708008, 110716.01911665, 148665.70680954, 141737.78796968,\n        94883.8143976 ,  75982.94208938])\n",
+              "type" : "TEXT"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : null,
+        "hasTitle" : false,
+        "message" : [
+          "%md",
+          "",
+          "##### Cleanup",
+          " "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<h5 id=\"cleanup\">Cleanup</h5>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Drop predictions table",
+        "hasTitle" : true,
+        "message" : [
+          "%sql",
+          "",
+          "drop table test_predictions;",
+          " "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "sql.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [ ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 12,
+        "title" : "Remove your datastore and script",
+        "hasTitle" : true,
+        "message" : [
+          "%python",
+          "",
+          "",
+          "oml.ds.delete('slr_ds')",
+          "oml.script.drop(\"slrModelPredict\", is_global=True)"
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : false,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "python.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [ ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      },
+      {
+        "row" : 0,
+        "col" : 0,
+        "sizeX" : 0,
+        "width" : 0,
+        "title" : null,
+        "hasTitle" : false,
+        "message" : [
+          "%md",
+          "",
+          "## End of Script",
+          " "
+        ],
+        "selectedVisualization" : "html",
+        "visualizationConfig" : null,
+        "hideCode" : true,
+        "hideResult" : false,
+        "hideGutter" : true,
+        "hideVizConfig" : false,
+        "hideInIFrame" : false,
+        "enabled" : true,
+        "forms" : "[]",
+        "result" : {
+          "interpreter" : "md.low",
+          "taskStatus" : "SUCCESS",
+          "status" : "SUCCESS",
+          "results" : [
+            {
+              "message" : "<h2 id=\"end-of-script\">End of Script</h2>\n",
+              "type" : "HTML"
+            }
+          ],
+          "forms" : "[]"
+        },
+        "relations" : [ ],
+        "dynamicFormParams" : "{}"
+      }
+    ]
+  }
+]
