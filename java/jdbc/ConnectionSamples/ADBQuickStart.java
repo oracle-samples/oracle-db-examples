@@ -53,18 +53,22 @@ import oracle.ucp.jdbc.PoolDataSource;
 public class ADBQuickStart {  
  
   public static void main(String args[]) throws Exception {
-    // Make sure to have Oracle JDBC driver 18c or above 
-    // to pass TNS_ADMIN as part of a connection URL.
-    // TNS_ADMIN - Should be the path where the client credentials zip (wallet_dbname.zip) file is downloaded. 
+    // Case 1: Use the below URL when Mutual Authentication is enabled and Oracle Wallets are required. 
+    // Make sure to have Oracle JDBC driver 18c or above to pass TNS_ADMIN as part of a connection URL.
+    // TNS_ADMIN - Should be the path where the client credentials zip (wallet_dbname.zip) file is downloaded 
+    // and the required Oracle SSO Wallets are available. 
     // dbname_medium - It is the TNS alias present in tnsnames.ora.
-    // NOTE: Use the connection URL below when Mutual Authentication is enabled and Oracle Wallets are required. 
     final String DB_URL="jdbc:oracle:thin:@dbname_medium?TNS_ADMIN=/Users/test/wallet_dbname/";
-    // Use the below connection URL when One-way Authentication is enabled and Oracle Wallets are not required. 
-    // Copy the URL 
-    final String DB_URL="jdbc:oracle:thin:@dbname_medium?TNS_ADMIN=/Users/test/wallet_dbname/";
+   
+    // Case 2: Use below URL when One-way Authentication is enabled and Oracle Wallets are not required. 
+    // Copy the URL Copy the TLS URL from the OCI console by navigating to your Autonomous AI Database Details page 
+    // and clicking on Database Connection. Under TLS Authentication, select TLS to copy the connection string for the database. 
+    // The connection string looks like the one below. 
+    // final String DB_URL="jdbc:oracle:thin:@(description=(retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data(service_name=testservice_jdbctestdb_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))";
+   
     // Update the Database Username and Password to point to your Autonomous Database
     final String DB_USER = "admin";
-    String DB_PASSWORD = null ;
+    String DB_PASSWORD = "changepassword" ;
     final String CONN_FACTORY_CLASS_NAME="oracle.jdbc.pool.OracleDataSource";
     
     // For security purposes, you must enter the password through the console 
