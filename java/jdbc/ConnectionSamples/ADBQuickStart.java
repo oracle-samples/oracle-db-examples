@@ -4,7 +4,7 @@ as shown at http://oss.oracle.com/licenses/upl */
 
 /*
  DESCRIPTION
- The code sample demonstrates establishing a connection to Autonomous Database (ATP/ADW) using
+ The code sample demonstrates establishing a connection to Oracle Autonomous Database using
  Oracle JDBC driver and Universal Connection Pool (UCP). It does the following.  
  
  (a) Set the connection factory class name to 
@@ -17,8 +17,11 @@ as shown at http://oss.oracle.com/licenses/upl */
  Step 1: Enter the Database details DB_URL and DB_USER. 
  You will need to enter the DB_PASSWORD of your Autonomous Database through console
  while running the sample.  
- Step 2: Download the latest Oracle JDBC driver(ojdbc8.jar) and UCP (ucp.jar) 
+ Step 2: Download the latest Oracle JDBC driver(ojdbc17.jar) and UCP (ucp17.jar) from Oracle 26ai release. 
  along with oraclepki.jar, osdt_core.jar and osdt_cert.jar and add to your classpath.  
+ https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+ -- For 26ai and 23ai clients: only oraclepki.jar is required in the classpath.
+ -- Older versions, 21c or 19c: oraclepki.jar, osdt_core.jar, and osdt_cert.jar are required in the classpath.
  Refer to https://www.oracle.com/database/technologies/maven-central-guide.html               
  Step 3: Compile and Run the sample. 
  
@@ -34,6 +37,7 @@ as shown at http://oss.oracle.com/licenses/upl */
   
  MODIFIED    (MM/DD/YY)
  nbsundar    11/09/2020 - Creation 
+ nbsundar    2/6/2026 - Update 
  */
 package com.oracle.jdbctest;
 
@@ -61,7 +65,7 @@ public class ADBQuickStart {
     final String DB_URL="jdbc:oracle:thin:@dbname_medium?TNS_ADMIN=/Users/test/wallet_dbname/";
    
     // Case 2: Use below URL when One-way Authentication is enabled and Oracle Wallets are not required. 
-    // Copy the URL Copy the TLS URL from the OCI console by navigating to your Autonomous AI Database Details page 
+    // Copy the TLS URL from the OCI console by navigating to your Autonomous AI Database Details page 
     // and clicking on Database Connection. Under TLS Authentication, select TLS to copy the connection string for the database. 
     // The connection string looks like the one below. 
     // final String DB_URL="jdbc:oracle:thin:@(description=(retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data(service_name=testservice_jdbctestdb_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))";
