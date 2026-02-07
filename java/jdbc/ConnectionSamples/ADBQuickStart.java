@@ -57,6 +57,10 @@ public class ADBQuickStart {
     // to pass TNS_ADMIN as part of a connection URL.
     // TNS_ADMIN - Should be the path where the client credentials zip (wallet_dbname.zip) file is downloaded. 
     // dbname_medium - It is the TNS alias present in tnsnames.ora.
+    // NOTE: Use the connection URL below when Mutual Authentication is enabled and Oracle Wallets are required. 
+    final String DB_URL="jdbc:oracle:thin:@dbname_medium?TNS_ADMIN=/Users/test/wallet_dbname/";
+    // Use the below connection URL when One-way Authentication is enabled and Oracle Wallets are not required. 
+    // Copy the URL 
     final String DB_URL="jdbc:oracle:thin:@dbname_medium?TNS_ADMIN=/Users/test/wallet_dbname/";
     // Update the Database Username and Password to point to your Autonomous Database
     final String DB_USER = "admin";
