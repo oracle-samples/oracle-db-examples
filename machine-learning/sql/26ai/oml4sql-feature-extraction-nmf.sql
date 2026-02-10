@@ -3,7 +3,7 @@
 -- 
 --   Feature Extraction - Non-Negative Matrix Factorization Algorithm - dmnmdemo.sql
 --   
---   Copyright (c) 2025 Oracle Corporation and/or its affilitiates.
+--   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
 --
 --  The Universal Permissive License (UPL), Version 1.0
 --

@@ -4,7 +4,7 @@
 --   Time Series Regression - Using Exponential Smoothing with 
 --      Generalized Linear Model and Extreme Gradient Boosting
 --
---   Copyright (c) 2025 Oracle Corporation and/or its affilitiates.
+--   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
 --
 --   The Universal Permissive License (UPL), Version 1.0
 --

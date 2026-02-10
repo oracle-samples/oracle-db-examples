@@ -15,20 +15,30 @@ Applicable OML components are included with your Oracle Autonomous Database subs
 
 ## Components
 OML provides support for the top three data science languages: SQL, R, and Python. OML4SQL provides a SQL interface to the in-database, parallelized algorithms, which keeps data under database control – eliminating the need to extract data to separate machine learning engines. This enables scalability while reducing complexity. 
+- Sample SQL code under ./sql
 
-OML4Py and OML4R are Python and R language interfaces, respectively. These allow you to explore and prepare database tables and views using familiar Python and R functions on DataFrame proxy objects, along with native APIs to use the in-database algorithms. OML4Py and OML4R also enable having the database spawn Python and R engines to run user-defined functions that may leverage additional third-party packages. Such user-defined functions can be invoked from native APIs as well as SQL, and on Autonomous Database, REST APIs to facilitate solution deployment. OML4Py also supports automated machine learning (AutoML) through a Python API. 
+OML4Py and OML4R are Python and R language interfaces, respectively. These allow you to explore and prepare database tables and views using familiar Python and R functions on DataFrame proxy objects, along with native APIs to use the in-database algorithms. OML4Py and OML4R also enable having the database spawn Python and R engines to run user-defined functions that may leverage additional third-party packages. Such user-defined functions can be invoked from native APIs as well as SQL, and on Autonomous Database, REST APIs to facilitate solution deployment. OML4Py also supports automated machine learning (AutoML) through a Python API.
+- Sample Python code is in Notebooks under ./notebooks-oml/python
+- Sample Python LiveLab code for "Introduction to OML4Py on Autonomous AI Database" under ./labs
+- Sample R code under ./r and in Notebooks under ./notebooks-oml/r
 
-For use on Autonomous Database Serverless, OML Notebooks supports SQL, PL/SQL, Python, R, conda, and markdown interpreters. The same notebook can contain paragraphs with all or any of these interpreters – allowing users to choose the most effective language for the task. 
+For use on Autonomous Database Serverless, OML Notebooks supports SQL, PL/SQL, Python, R, conda, and markdown interpreters. The same notebook can contain paragraphs with all or any of these interpreters – allowing users to choose the most effective language for the task.
+- Sample Notebooks under ./notebooks-oml
 
 Oracle Data Miner is a SQL Developer extension that enables users to create, schedule, and deploy analytical workflows through a drag-and-drop user interface. It can be used with Oracle Database and Oracle Autonomous Database. 
+- Sample Workflows under ./odmr
 
 OML AutoML UI is a no-code user interface that automates the model building, selection, and deployment process. It is available on Oracle Autonomous Database Serverless. 
 
-OML Data Monitoring UI is a no-code user interface on Autonomous Database Serverless that provides insight into how your  data evolves over time. Data monitoring helps ensure data integrity for your applications and dashboards.   
+OML Data Monitoring UI is a no-code user interface on Autonomous Database Serverless that provides insight into how your  data evolves over time. Data monitoring helps ensure data integrity for your applications and dashboards.
+- Sample Data Monitoring code in Notebooks under ./notebooks-oml/rest
 
 OML Model Monitoring UI is a no-code user interface on Autonomous Database Serverless that helps you maintain the accuracy of your models and the effectiveness of your applications. It makes getting started simple so you can gain insight into how your machine learning model performance changes over time as well as possible causes of those changes. 
+- Sample Model Monitoring code in Notebooks under ./notebooks-oml/rest
 
 OML Services is a RESTful service for model deployment and management, data and model monitoring, and cognitive text analytics. Users can deploy a model from the AutoML UI directly to OML Services in just a few clicks. It is available on Oracle Autonomous Database Serverless.
+- Sample OML Services code in Notebook format under ./oml-services
+
 
 ## Optimizations
 Oracle Machine Learning is the only machine learning toolkit specifically designed to take advantage of Oracle Real Application Clusters and the Exadata platform.
@@ -63,6 +73,6 @@ For more information please visit:
 
 
 
-#### Copyright (c) 2024 Oracle Corporation and/or its affilitiates.
+#### Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
 
 ###### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)

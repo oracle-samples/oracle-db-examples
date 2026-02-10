@@ -53,7 +53,7 @@ Files on the current folder:
  * oml4sql-time-series-regression-dataset.sql - Time Series Regression - Dataset
  * oml4sql-time-series-regression.sql - Time Series Regression - Using a combination of ESM and GLM algorithms
 
-#### Copyright (c) 2025 Oracle Corporation and its affiliates
+#### Copyright (c) 2026 Oracle Corporation and its affiliates
 
 ##### [The Universal Permissive License (UPL), Version 1.0](https://oss.oracle.com/licenses/upl/)
 
