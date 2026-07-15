@@ -4,4 +4,4 @@
 
 ## Container Overview
 
-The sample containers assume the use of Podman. They should work with minimal modification to work with any Linux container sowftware including Docker and containerd.
+The sample containers assume the use of Podman. They should work with minimal modification to work with any Linux container software, including Docker and containerd.
