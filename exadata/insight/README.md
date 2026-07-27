@@ -12,6 +12,11 @@ Real-time insight provides infrastructure to:
 
 - **Integrate** Exadata metrics with popular observability platforms, time-series databases, and visualization applications
 
+## Resources
+
+- [Quick Start](./quick_start/): Deploy Prometheus and Grafana containers and configure Exadata nodes.
+- [Grafana dashboards](./dashboard_grafana_prometheus/): Importable dashboards and their required metrics.
+
 ## Get started
 
 - [Exadata 22.1 Software Release](https://docs.oracle.com/en/engineered-systems/exadata-database-machine/dbmso/new-features.html)
