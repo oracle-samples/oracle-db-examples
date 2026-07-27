@@ -29,7 +29,6 @@ You can get involved with Exadata.
 
 - Reach out to the [ExadataPM](https://bsky.app/profile/exadata.bsky.social) team on Bluesky:
   - [@Alex_Blyth](https://bsky.app/profile/alexblyth.net)
-  - [@Seth_M_Miller](https://twitter.com/Seth_M_Miller)
 - Read and subscribe to the [Exadata Product Management blog](https://blogs.oracle.com/exadata/)
 - Check out the updated technical pages for [Exadata](https://www.oracle.com/database/technologies/exadata)
 - Connect with your local Oracle Sales team to discuss the benefits of Exadata
