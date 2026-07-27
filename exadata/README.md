@@ -7,6 +7,7 @@ This directory includes the supplemental materials and demo contents for Oracle 
 ## Examples
 
 - [Oracle Exadata Real-Time Insight](./insight) - Exadata SW 22.1 feature to enable real-time monitoring of your Exadata systems.
+- [Exadata Exascale Labs](./exascale-labs/) - Hands-on Oracle AI Database 26ai labs for Exadata Exascale snapshot and cloning workflows.
 
 ## Get started
 

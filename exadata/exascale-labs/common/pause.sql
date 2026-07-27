@@ -1,0 +1,7 @@
+SET ECHO OFF
+
+-- Shared interactive pause helper.
+
+PAUSE &&LAB_PAUSE_MESSAGE
+
+UNDEFINE LAB_PAUSE_MESSAGE
