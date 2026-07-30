@@ -31,6 +31,7 @@ The following database and environment configuration is assumed throughout the l
 - Ability to create and drop PDBs
 - Ability to create snapshots and thin clones
 - Exadata Exascale storage configured and available
+- Passwordless SSH equivalence from the central database server to each database server as `root`, and to each storage server as `celladmin` or `root`
 
 ## Starting Environment
 
@@ -94,7 +95,7 @@ cd setup
   --cells-nodes cell01,cell02,cell03
 ```
 
-The script uses `dcli` to run `dbmcli` across database servers and `cellcli` across storage servers. It fails if any reported version is below 24.1.
+The script uses `dcli` to run `dbmcli` across database servers and `cellcli` across storage servers. It fails if any reported version is below 24.1. It requires passwordless SSH equivalence from the central database server: `root` for database servers and `celladmin` for storage servers by default. Use `--cells-user root` when storage-server SSH equivalence is configured for `root` instead.
 
 Supply either comma-separated node lists or existing `dcli` group files. No group-file location is assumed by default. For example:
 

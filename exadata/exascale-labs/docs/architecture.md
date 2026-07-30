@@ -14,14 +14,10 @@ This refreshed PDB becomes the authoritative source for all subsequent snapshot 
 
 <!-- Figure 1: Reference Architecture -->
 
-```text
-                    Production
-                         │
-                         │
-          Weekly Refresh and Data Masking
-                         │
-                         ▼
-                    SALES_MAIN
+```mermaid
+flowchart TD
+    production["Production"] --> refresh["Weekly Refresh and Data Masking"]
+    refresh --> salesMain["SALES_MAIN"]
 ```
 
 `SALES_MAIN` represents the main development database for the current refresh cycle.
@@ -36,11 +32,9 @@ Each snapshot provides a stable foundation for creating one or more independent 
 
 <!-- Figure 2: Snapshot Workflow -->
 
-```text
-                    SALES_MAIN
-                         │
-                         ▼
-               SALES_WEEKLY_SNAP
+```mermaid
+flowchart TD
+    salesMain["SALES_MAIN"] --> weeklySnapshot["SALES_WEEKLY_SNAP"]
 ```
 
 For simplicity, the early labs use a single snapshot.
@@ -55,11 +49,13 @@ Each clone is a fully independent read-write PDB while initially sharing unchang
 
 <!-- Figure 3: Thin Clone Workflow -->
 
-```text
-                SALES_WEEKLY_SNAP
-                 ┌─────┼─────┬──────────┐
-                 ▼     ▼     ▼          ▼
-            DEV_ALEX DEV_SARAH  QA  CI_PIPELINE
+```mermaid
+flowchart TD
+    weeklySnapshot["SALES_WEEKLY_SNAP"]
+    weeklySnapshot --> devAlex["DEV_ALEX"]
+    weeklySnapshot --> devSarah["DEV_SARAH"]
+    weeklySnapshot --> qa["QA"]
+    weeklySnapshot --> ciPipeline["CI_PIPELINE"]
 ```
 
 As applications modify data, only changed blocks consume additional storage.
@@ -70,7 +66,7 @@ This enables many independent development and test environments to be provisione
 
 The repository has been designed as a progressive workshop.
 
-Each lab builds on the previous one.
+Each lab uses the common setup environment and introduces an additional snapshot or cloning workflow.
 
 | Lab | Topic |
 |------|-------|
@@ -84,22 +80,15 @@ The following diagram illustrates how objects are created during the workshop.
 
 <!-- Figure 4: Object Lifecycle -->
 
-```text
-Production
-     │
-     ▼
-Refresh + Mask
-     │
-     ▼
-SALES_MAIN
-     │
-     ▼
-SALES_WEEKLY_SNAP
-     │
-     ├────────► DEV_ALEX
-     ├────────► DEV_SARAH
-     ├────────► QA
-     └────────► CI_PIPELINE
+```mermaid
+flowchart TD
+    production["Production"] --> refreshMask["Refresh and Mask"]
+    refreshMask --> salesMain["SALES_MAIN"]
+    salesMain --> weeklySnapshot["SALES_WEEKLY_SNAP"]
+    weeklySnapshot --> devAlex["DEV_ALEX"]
+    weeklySnapshot --> devSarah["DEV_SARAH"]
+    weeklySnapshot --> qa["QA"]
+    weeklySnapshot --> ciPipeline["CI_PIPELINE"]
 ```
 
 The setup scripts create `SALES_MAIN`.
@@ -140,8 +129,8 @@ Each lab includes its own README describing the objectives, prerequisites, execu
 - Every significant operation is followed by a verification step.
 - Reusable verification queries are maintained in the `common` directory.
 
-## Future Graphics
+## Diagram Format
 
-The ASCII diagrams in this document are placeholders that allow the architecture to evolve during development.
+Use Mermaid diagrams for architecture and workflow visuals in this repository. Keep diagrams in the Markdown source so they remain reviewable and evolve with the labs.
 
-As the accompanying blog series is written, these diagrams will be replaced with professionally illustrated SVG graphics stored under `docs/images/`.
+SVG artwork stored under `docs/images/` may supplement Mermaid diagrams where a presentation-quality illustration is needed.

@@ -75,8 +75,8 @@ with the SQL and shell scripts it describes.
 
 - Every significant operation needs a verification step.
 - Documentation should explain why an operation matters, not only how to run it.
-- Use ASCII diagrams first when explaining architecture or workflow.
-- SVG artwork may replace diagrams later under `docs/images/`.
+- Use Mermaid diagrams for architecture and workflow explanations.
+- SVG artwork under `docs/images/` may supplement Mermaid diagrams when a presentation-quality illustration is needed.
 - Link to existing docs instead of duplicating large sections of them.
 
 ## 6. Repository Structure

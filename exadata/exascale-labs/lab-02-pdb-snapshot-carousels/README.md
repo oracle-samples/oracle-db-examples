@@ -4,19 +4,13 @@ This lab demonstrates how to enable the database-managed PDB snapshot carousel
 for `SALES_MAIN`, capture an optional precise post-refresh snapshot, and
 provision a QA thin clone from the newest available snapshot.
 
-The workflow extends the Lab 01 source PDB:
+The workflow uses the common `SALES_MAIN` source PDB created by setup:
 
-```text
-SALES_MAIN
-     |
-     v
-MAX_PDB_SNAPSHOTS = 48
-SNAPSHOT MODE EVERY 1 HOURS
-     |
-     +--> database-managed PDB snapshots
-              |
-              v
-              QA
+```mermaid
+flowchart TD
+    salesMain["SALES_MAIN"] --> carouselSettings["MAX_PDB_SNAPSHOTS = 48<br/>SNAPSHOT MODE EVERY 1 HOURS"]
+    carouselSettings --> managedSnapshots["Database-managed PDB snapshots"]
+    managedSnapshots --> qa["QA"]
 ```
 
 `SALES_MAIN` is the masked development source created by the setup scripts.

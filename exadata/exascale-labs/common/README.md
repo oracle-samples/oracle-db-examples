@@ -14,7 +14,9 @@ This directory contains reusable configuration, formatting, and verification scr
 | `verify-storage.sql` | Summarizes allocated and autoextend storage by PDB |
 | `verify-datafiles.sql` | Lists PDB datafiles, tablespaces, sizes, and OMF paths |
 | `disable-snapshot-carousel.sql` | Disables automated snapshot mode for the configured source PDB |
+| `drop-snapshot.sql` | Drops the configured named PDB snapshot from the configured source PDB |
 | `skip-snapshot-carousel.sql` | Reports that automated snapshot mode cleanup was skipped |
+| `skip-snapshot.sql` | Reports that a configured named PDB snapshot was not found |
 | `pause.sql` | Waits for Return during interactive walkthroughs |
 | `pause-off.sql` | Prints pause text without waiting for non-interactive runs |
 

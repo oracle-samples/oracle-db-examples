@@ -6,7 +6,7 @@ Hands-on labs demonstrating Oracle AI Database 26ai snapshot and cloning capabil
 
 This repository accompanies the Exadata Exascale snapshots and clones blog series. It provides practical, end-to-end labs that demonstrate how to provision, manage, and refresh Oracle Multitenant databases using native Exadata Exascale snapshot and cloning capabilities.
 
-Each lab builds on the previous one, progressing from basic PDB thin cloning through operational workflows such as snapshot carousels and cross-CDB cloning.
+Each lab uses the common setup environment while progressing from PDB thin cloning through operational workflows such as snapshot carousels and cross-CDB cloning.
 
 ## Target Environment
 
