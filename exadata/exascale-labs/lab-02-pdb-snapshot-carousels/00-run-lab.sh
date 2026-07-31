@@ -48,6 +48,7 @@ find_sql_client() {
 }
 
 sql_bin=$(find_sql_client)
+read -r -a connect_args <<< "$sql_connect"
 workdir=$(mktemp -d "${TMPDIR:-/tmp}/exadata-lab02.XXXXXX")
 
 cleanup() {
@@ -113,8 +114,17 @@ run_sql() {
     (
         cd "$workdir/lab-02-pdb-snapshot-carousels"
         printf '@%s\nEXIT SQL.SQLCODE\n' "$script_name" |
-            "$sql_bin" -s "$sql_connect"
+            "$sql_bin" -s "${connect_args[@]}"
     )
+}
+
+run_clusterware() {
+    local command_name=$1
+    local pdb_names=$2
+
+    echo
+    echo "==> Clusterware: ${command_name} ${pdb_names}"
+    "$workdir/common/manage-pdb-clusterware.sh" "$command_name" "$pdb_names"
 }
 
 echo "Running Lab 02 without interactive pauses"
@@ -127,9 +137,12 @@ fi
 
 run_sql .connectivity.sql
 run_sql .preflight.sql
+run_clusterware ensure-and-start "SALES_MAIN"
+run_clusterware stop-and-remove "QA"
 run_sql 04-cleanup.sql
 run_sql 01-enable-snapshot-carousel.sql
 run_sql 02-verify-snapshot-carousel.sql
+run_clusterware verify "SALES_MAIN"
 
 echo
 echo "Lab 02 complete. Automated snapshot carousel is enabled for inspection."

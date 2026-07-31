@@ -8,15 +8,14 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 
 PROMPT Cleaning up Lab 01 PDBs
+PROMPT Clusterware lifecycle before this SQL script:
+PROMPT   ../common/manage-pdb-clusterware.sh stop-and-remove &&DEV_CLONE_CHILD,&&DEV_CLONE_2,&&DEV_CLONE_1
 PROMPT SQL/DDL:
 PROMPT   If &&DEV_CLONE_CHILD exists:
-PROMPT     ALTER PLUGGABLE DATABASE &&DEV_CLONE_CHILD CLOSE IMMEDIATE INSTANCES = ALL;
 PROMPT     DROP PLUGGABLE DATABASE &&DEV_CLONE_CHILD INCLUDING DATAFILES;
 PROMPT   If &&DEV_CLONE_2 exists:
-PROMPT     ALTER PLUGGABLE DATABASE &&DEV_CLONE_2 CLOSE IMMEDIATE INSTANCES = ALL;
 PROMPT     DROP PLUGGABLE DATABASE &&DEV_CLONE_2 INCLUDING DATAFILES;
 PROMPT   If &&DEV_CLONE_1 exists:
-PROMPT     ALTER PLUGGABLE DATABASE &&DEV_CLONE_1 CLOSE IMMEDIATE INSTANCES = ALL;
 PROMPT     DROP PLUGGABLE DATABASE &&DEV_CLONE_1 INCLUDING DATAFILES;
 
 DECLARE
@@ -24,7 +23,6 @@ DECLARE
 
     PROCEDURE drop_pdb_if_exists(p_pdb_name IN VARCHAR2) IS
         l_count      NUMBER;
-        l_open_count NUMBER;
     BEGIN
         SELECT COUNT(*)
         INTO   l_count
@@ -34,18 +32,6 @@ DECLARE
         IF l_count = 0 THEN
             dbms_output.put_line('Skipping ' || UPPER(p_pdb_name) || ': not found');
             RETURN;
-        END IF;
-
-        SELECT COUNT(*)
-        INTO   l_open_count
-        FROM   gv$pdbs
-        WHERE  name = UPPER(p_pdb_name)
-        AND    open_mode <> 'MOUNTED';
-
-        IF l_open_count > 0 THEN
-            EXECUTE IMMEDIATE
-                'ALTER PLUGGABLE DATABASE ' || dbms_assert.simple_sql_name(UPPER(p_pdb_name)) ||
-                ' CLOSE IMMEDIATE INSTANCES = ALL';
         END IF;
 
         EXECUTE IMMEDIATE

@@ -16,7 +16,7 @@ DBS_GROUP=${DBS_GROUP:-}
 CELLS_GROUP=${CELLS_GROUP:-}
 DBS_NODES=${DBS_NODES:-}
 CELLS_NODES=${CELLS_NODES:-}
-DBS_USER=${DBS_USER:-root}
+DBS_USER=${DBS_USER:-oracle}
 CELLS_USER=${CELLS_USER:-celladmin}
 
 CHECK_DBSERVERS=1
@@ -35,7 +35,7 @@ Options:
   --cells-group FILE        dcli group file for storage servers.
   --dbs-nodes LIST          Comma-separated database server host names.
   --cells-nodes LIST        Comma-separated storage server host names.
-  --dbs-user USER           SSH user for database servers. Default: ${DBS_USER}
+  --dbs-user USER           SSH user for database servers; must have passwordless sudo access to dbmcli. Default: ${DBS_USER}
   --cells-user USER         SSH user for storage servers. Default: ${CELLS_USER}
   --skip-dbservers          Skip dbmcli checks on database servers.
   --skip-cells              Skip cellcli checks on storage servers.
@@ -44,6 +44,10 @@ Options:
 The same values can be supplied with environment variables:
   DCLI_BIN, MIN_EXADATA_VERSION, DBS_GROUP, CELLS_GROUP, DBS_NODES,
   CELLS_NODES, DBS_USER, CELLS_USER
+
+Database-server checks run 'sudo -n dbmcli'. Configure passwordless sudo for
+the selected database-server user. The -n option reports missing sudo access
+without prompting for a password.
 USAGE
 }
 
@@ -307,7 +311,7 @@ if [ "$CHECK_DBSERVERS" -eq 1 ]; then
         "database server software" \
         "$DBS_GROUP" \
         "$DBS_USER" \
-        "dbmcli -e 'list dbserver attributes name,releaseVersion'"; then
+        "sudo -n dbmcli -e 'list dbserver attributes name,releaseVersion'"; then
         overall_status=1
     fi
 fi

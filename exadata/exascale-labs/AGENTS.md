@@ -57,7 +57,13 @@ Follow the conventions already established in `README.md`,
 `CONTRIBUTING.md`, `docs/prerequisites.md`, and `docs/architecture.md`.
 
 - Prefer `GV$` views over `V$` views where RAC awareness is required.
-- Use `INSTANCES=ALL` when opening or closing PDBs across the cluster.
+- Use `INSTANCES=ALL` only for exceptional SQL DDL that explicitly requires a
+  cluster-wide PDB state change. Routine availability is Clusterware-managed.
+- Use `common/manage-pdb-clusterware.sh` for routine PDB availability and PDB
+  service lifecycle management. It creates, starts, stops, verifies, and
+  removes Clusterware PDB resources and services using `srvctl`.
+- Reserve `ALTER PLUGGABLE DATABASE` for snapshot, clone, refresh, and drop
+  DDL. Do not use it for routine PDB open, close, or saved-state management.
 - Always explicitly set container context before container-specific work.
 - Do not hardcode object names when `common/config.sql` provides them.
 - Reuse scripts from `common/` wherever possible.

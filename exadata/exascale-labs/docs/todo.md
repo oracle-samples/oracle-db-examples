@@ -34,17 +34,6 @@ project-level owner, context, and acceptance criteria here.
     management from SQL DDL that specifically requires
     `ALTER PLUGGABLE DATABASE`.
 
-### Add sudo support for database-server software checks
-
-- Area: setup pre-flight
-- References: `setup/03-verify-exadata-software.sh`
-- Context: the script currently uses `dcli` to connect to database servers as
-  `root` and run `dbmcli`. Support an unprivileged SSH user that can use `sudo`
-  for the required database-server command.
-- Done when: the script offers an explicit, documented option for sudo-based
-  database-server checks, preserves the existing root-based behavior, and
-  returns a clear error when the configured user lacks the required sudo access.
-
 ### Add Exadata Exascale physical storage metrics
 
 - Area: common verification

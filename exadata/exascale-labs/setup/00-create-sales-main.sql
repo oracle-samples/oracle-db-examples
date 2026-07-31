@@ -75,76 +75,19 @@ CREATE PLUGGABLE DATABASE &&MAIN_PDB
     ADMIN USER &&APP_NAME._ADMIN IDENTIFIED BY "&&PDB_ADMIN_PASSWORD"
     ROLES = (DBA);
 
-DEFINE LAB_PAUSE_MESSAGE = "Press Return to open &&MAIN_PDB across all RAC instances."
-@@../common/&&LAB_PAUSE_SCRIPT
-
 PROMPT
 PROMPT ============================================================
-PROMPT Open &&MAIN_PDB
-PROMPT ============================================================
-PROMPT SQL/DDL:
-PROMPT   ALTER PLUGGABLE DATABASE &&MAIN_PDB OPEN INSTANCES = ALL;
-PROMPT
-
-ALTER PLUGGABLE DATABASE &&MAIN_PDB OPEN INSTANCES = ALL;
-
-DEFINE LAB_PAUSE_MESSAGE = "Press Return to save &&MAIN_PDB state across all RAC instances."
-@@../common/&&LAB_PAUSE_SCRIPT
-
-PROMPT
-PROMPT ============================================================
-PROMPT Save state across instances
-PROMPT ============================================================
-PROMPT SQL/DDL:
-PROMPT   ALTER PLUGGABLE DATABASE &&MAIN_PDB SAVE STATE INSTANCES = ALL;
-PROMPT
-
-ALTER PLUGGABLE DATABASE &&MAIN_PDB SAVE STATE INSTANCES = ALL;
-
-DEFINE LAB_PAUSE_MESSAGE = "Press Return to verify &&MAIN_PDB."
-@@../common/&&LAB_PAUSE_SCRIPT
-
-PROMPT
-PROMPT ============================================================
-PROMPT Verify &&MAIN_PDB
+PROMPT Clusterware availability
 PROMPT ============================================================
 PROMPT
-
-PROMPT GV$PDBS open state by RAC instance
-PROMPT ============================================================
-PROMPT
-
-SELECT inst_id,
-       con_id,
-       name,
-       open_mode,
-       restricted,
-       open_time
-FROM   gv$pdbs
-WHERE  name = UPPER('&&MAIN_PDB')
-ORDER  BY inst_id;
-
-PROMPT
-PROMPT GV$SERVICES service placement by RAC instance
-PROMPT ============================================================
-PROMPT
-
-SELECT inst_id,
-       con_id,
-       name,
-       network_name,
-       pdb
-FROM   gv$services
-WHERE  pdb = UPPER('&&MAIN_PDB')
-ORDER  BY inst_id, name;
-
-DEFINE LAB_PAUSE_MESSAGE = "Press Return to show the final setup summary."
-@@../common/&&LAB_PAUSE_SCRIPT
+PROMPT Run this command from the operating system to create the PDB resource,
+PROMPT start &&MAIN_PDB, and start its configured PDB service:
+PROMPT   ../common/manage-pdb-clusterware.sh ensure-and-start &&MAIN_PDB
 
 PROMPT
 PROMPT ============================================================
 PROMPT Final success summary
 PROMPT ============================================================
-PROMPT &&MAIN_PDB was created, opened, and saved across all RAC instances.
-PROMPT The PDB is ready to use as the Lab 1 source database.
+PROMPT &&MAIN_PDB was created. Use the Clusterware lifecycle command above to
+PROMPT make it available across its configured RAC placement before Lab 1.
 PROMPT

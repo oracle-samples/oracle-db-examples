@@ -112,18 +112,39 @@ run_sql() {
     )
 }
 
+run_clusterware() {
+    local command_name=$1
+    local pdb_names=$2
+
+    echo
+    echo "==> Clusterware: ${command_name} ${pdb_names}"
+    "$workdir/common/manage-pdb-clusterware.sh" "$command_name" "$pdb_names"
+}
+
 echo "Running Lab 01 without interactive pauses"
 echo "SQL client: $sql_bin"
 echo "Connect: $sql_connect"
 
 run_sql .preflight.sql
+run_clusterware ensure-and-start "SALES_MAIN"
+run_clusterware stop-and-remove "DEV_JORDAN,DEV_SARAH,DEV_ALEX"
 run_sql 07-cleanup.sql
 run_sql 01-create-snapshot.sql
 run_sql 02-create-consistent-snapshot.sql
 run_sql 03-create-clones.sql
+run_clusterware ensure-and-start "DEV_ALEX,DEV_SARAH"
+run_sql 03-verify-clones.sql
 run_sql 04-verify-independence.sql
+run_clusterware stop-and-remove "DEV_JORDAN"
 run_sql 05-create-clone-of-clone.sql
+run_clusterware ensure-and-start "DEV_JORDAN"
+run_clusterware stop-and-remove "DEV_SARAH"
+run_sql 05-drop-source-clone.sql
+run_clusterware stop-and-remove "DEV_ALEX"
 run_sql 06-refresh-clone.sql
+run_clusterware ensure-and-start "DEV_ALEX"
+run_sql 06-verify-refresh.sql
+run_clusterware verify "DEV_JORDAN,DEV_ALEX"
 
 echo
 echo "Lab 01 complete. Snapshot and clone state is ready for the next lab."

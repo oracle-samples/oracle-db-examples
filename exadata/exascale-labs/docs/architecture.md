@@ -125,7 +125,7 @@ Each lab includes its own README describing the objectives, prerequisites, execu
 - Oracle Managed Files (OMF) are assumed.
 - Commands are executed from `CDB$ROOT` unless stated otherwise.
 - `GV$` views are preferred over `V$` where instance awareness is required.
-- `INSTANCES=ALL` is used for operations that affect PDB state across the cluster.
+- Clusterware PDB resources and PDB services manage routine PDB availability and RAC placement; SQL remains responsible for snapshot, clone, refresh, and drop DDL.
 - Every significant operation is followed by a verification step.
 - Reusable verification queries are maintained in the `common` directory.
 

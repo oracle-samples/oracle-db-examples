@@ -53,8 +53,43 @@ Examples assume Oracle RAC.
 Where appropriate:
 
 - `GV$` views are used instead of `V$`
-- `INSTANCES=ALL` is specified when opening and closing PDBs
+- Oracle Clusterware PDB resources and PDB services manage routine PDB availability and placement
 - Examples are written to operate correctly across all cluster instances
+
+Set `CDB_UNIQUE_NAME` for the target CDB `DB_UNIQUE_NAME`. The account running
+the shell runners and manual lifecycle commands must be able to run `srvctl`
+for that CDB.
+
+### Clusterware Shell Prerequisite
+
+Before running a shell runner or `setup/99-reset-lab.sh`, set the target CDB
+`DB_UNIQUE_NAME` in the environment. This avoids modifying the tracked shared
+configuration for a local environment:
+
+```bash
+export CDB_UNIQUE_NAME=MYCDB
+export RAC_SERVICE_PREFERRED=mycdb1,mycdb2
+```
+
+Find the value from `CDB$ROOT` when needed:
+
+```sql
+SELECT value
+FROM   v$parameter
+WHERE  name = 'db_unique_name';
+```
+
+Find the RAC instance names for `RAC_SERVICE_PREFERRED` with:
+
+```bash
+srvctl config database -db "$CDB_UNIQUE_NAME"
+```
+
+The shell helpers use this environment variable first. If it is not set, they
+use the corresponding values from `common/config.sql`. The default
+`RAC_PDB_PLACEMENT=AUTO` creates the PDB resource without `-cardinality` and
+uses the preferred instance list for its service. This is required when the CDB
+already has PDB resources created without `-cardinality`.
 
 ### Container Context
 
@@ -95,7 +130,7 @@ cd setup
   --cells-nodes cell01,cell02,cell03
 ```
 
-The script uses `dcli` to run `dbmcli` across database servers and `cellcli` across storage servers. It fails if any reported version is below 24.1. It requires passwordless SSH equivalence from the central database server: `root` for database servers and `celladmin` for storage servers by default. Use `--cells-user root` when storage-server SSH equivalence is configured for `root` instead.
+The script uses `dcli` to run `sudo -n dbmcli` across database servers and `cellcli` across storage servers. It fails if any reported version is below 24.1. It requires passwordless SSH equivalence from the central database server: `oracle` for database servers and `celladmin` for storage servers by default. The database-server user must have passwordless sudo access to `dbmcli`; `sudo -n` reports missing access without prompting for a password. Use `--cells-user root` when storage-server SSH equivalence is configured for `root` instead.
 
 Supply either comma-separated node lists or existing `dcli` group files. No group-file location is assumed by default. For example:
 

@@ -1,5 +1,7 @@
 -- Reset the lab by dropping workshop PDBs.
 --
+-- Run 99-reset-lab.sh for the supported non-interactive reset workflow. It
+-- removes Clusterware PDB resources and services before this SQL runs.
 -- Run from CDB$ROOT as a user with privileges to close and drop PDBs.
 -- Oracle Managed Files is assumed; dropped PDBs include datafiles.
 
@@ -9,17 +11,19 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 
 PROMPT Resetting Exadata Exascale lab PDBs
+PROMPT Use 99-reset-lab.sh for the supported non-interactive reset workflow.
 PROMPT SQL/DDL:
 PROMPT   For each existing lab clone or future PDB:
-PROMPT     ALTER PLUGGABLE DATABASE <pdb_name> CLOSE IMMEDIATE INSTANCES = ALL;
 PROMPT     DROP PLUGGABLE DATABASE <pdb_name> INCLUDING DATAFILES;
+PROMPT
+PROMPT Clusterware lifecycle before this SQL script:
+PROMPT   ../common/manage-pdb-clusterware.sh stop-and-remove &&DEV_CLONE_CHILD,&&DEV_CLONE_2,&&DEV_CLONE_1,&&QA_PDB,&&CI_PDB,&&MAIN_PDB
 
 DECLARE
     l_container_name VARCHAR2(128);
 
     PROCEDURE drop_pdb_if_exists(p_pdb_name IN VARCHAR2) IS
         l_count      NUMBER;
-        l_open_count NUMBER;
     BEGIN
         SELECT COUNT(*)
         INTO   l_count
@@ -32,18 +36,6 @@ DECLARE
         END IF;
 
         dbms_output.put_line('Dropping ' || UPPER(p_pdb_name));
-
-        SELECT COUNT(*)
-        INTO   l_open_count
-        FROM   gv$pdbs
-        WHERE  name = UPPER(p_pdb_name)
-        AND    open_mode <> 'MOUNTED';
-
-        IF l_open_count > 0 THEN
-            EXECUTE IMMEDIATE
-                'ALTER PLUGGABLE DATABASE ' || dbms_assert.simple_sql_name(UPPER(p_pdb_name)) ||
-                ' CLOSE IMMEDIATE INSTANCES = ALL';
-        END IF;
 
         EXECUTE IMMEDIATE
             'DROP PLUGGABLE DATABASE ' || dbms_assert.simple_sql_name(UPPER(p_pdb_name)) ||
@@ -147,7 +139,6 @@ WHERE  pdb_name = '&&MAIN_PDB';
 
 PROMPT SQL/DDL:
 PROMPT   If &&MAIN_PDB exists:
-PROMPT     ALTER PLUGGABLE DATABASE &&MAIN_PDB CLOSE IMMEDIATE INSTANCES = ALL;
 PROMPT     DROP PLUGGABLE DATABASE &&MAIN_PDB INCLUDING DATAFILES;
 
 DECLARE
@@ -155,7 +146,6 @@ DECLARE
 
     PROCEDURE drop_pdb_if_exists(p_pdb_name IN VARCHAR2) IS
         l_count      NUMBER;
-        l_open_count NUMBER;
     BEGIN
         SELECT COUNT(*)
         INTO   l_count
@@ -168,18 +158,6 @@ DECLARE
         END IF;
 
         dbms_output.put_line('Dropping ' || UPPER(p_pdb_name));
-
-        SELECT COUNT(*)
-        INTO   l_open_count
-        FROM   gv$pdbs
-        WHERE  name = UPPER(p_pdb_name)
-        AND    open_mode <> 'MOUNTED';
-
-        IF l_open_count > 0 THEN
-            EXECUTE IMMEDIATE
-                'ALTER PLUGGABLE DATABASE ' || dbms_assert.simple_sql_name(UPPER(p_pdb_name)) ||
-                ' CLOSE IMMEDIATE INSTANCES = ALL';
-        END IF;
 
         EXECUTE IMMEDIATE
             'DROP PLUGGABLE DATABASE ' || dbms_assert.simple_sql_name(UPPER(p_pdb_name)) ||

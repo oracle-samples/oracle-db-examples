@@ -11,15 +11,15 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 
 PROMPT Cleaning up Lab 02 PDBs and snapshot carousel
+PROMPT Clusterware lifecycle before this SQL script:
+PROMPT   ../common/manage-pdb-clusterware.sh stop-and-remove &&QA_PDB
 PROMPT SQL/DDL:
 PROMPT   If &&QA_PDB exists:
-PROMPT     ALTER PLUGGABLE DATABASE &&QA_PDB CLOSE IMMEDIATE INSTANCES = ALL;
 PROMPT     DROP PLUGGABLE DATABASE &&QA_PDB INCLUDING DATAFILES;
 
 DECLARE
     l_container_name VARCHAR2(128);
     l_count          NUMBER;
-    l_open_count     NUMBER;
 BEGIN
     SELECT sys_context('USERENV', 'CON_NAME')
     INTO   l_container_name
@@ -41,16 +41,6 @@ BEGIN
     IF l_count = 0 THEN
         dbms_output.put_line('Skipping &&QA_PDB: not found');
     ELSE
-        SELECT COUNT(*)
-        INTO   l_open_count
-        FROM   gv$pdbs
-        WHERE  name = UPPER('&&QA_PDB')
-        AND    open_mode <> 'MOUNTED';
-
-        IF l_open_count > 0 THEN
-            EXECUTE IMMEDIATE 'ALTER PLUGGABLE DATABASE &&QA_PDB CLOSE IMMEDIATE INSTANCES = ALL';
-        END IF;
-
         EXECUTE IMMEDIATE 'DROP PLUGGABLE DATABASE &&QA_PDB INCLUDING DATAFILES';
     END IF;
 END;

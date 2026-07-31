@@ -39,12 +39,13 @@ DEFINE LAB_PAUSE_MESSAGE = "Press Return to remove &&QA_PDB if it already exists
 
 PROMPT SQL/DDL:
 PROMPT   If &&QA_PDB exists:
-PROMPT     ALTER PLUGGABLE DATABASE &&QA_PDB CLOSE IMMEDIATE INSTANCES = ALL;
 PROMPT     DROP PLUGGABLE DATABASE &&QA_PDB INCLUDING DATAFILES;
+PROMPT
+PROMPT Clusterware lifecycle before this SQL script:
+PROMPT   ../common/manage-pdb-clusterware.sh stop-and-remove &&QA_PDB
 
 DECLARE
-    l_count      NUMBER;
-    l_open_count NUMBER;
+    l_count NUMBER;
 BEGIN
     SELECT COUNT(*)
     INTO   l_count
@@ -54,16 +55,6 @@ BEGIN
     IF l_count = 0 THEN
         dbms_output.put_line('Skipping &&QA_PDB: not found');
     ELSE
-        SELECT COUNT(*)
-        INTO   l_open_count
-        FROM   gv$pdbs
-        WHERE  name = UPPER('&&QA_PDB')
-        AND    open_mode <> 'MOUNTED';
-
-        IF l_open_count > 0 THEN
-            EXECUTE IMMEDIATE 'ALTER PLUGGABLE DATABASE &&QA_PDB CLOSE IMMEDIATE INSTANCES = ALL';
-        END IF;
-
         EXECUTE IMMEDIATE 'DROP PLUGGABLE DATABASE &&QA_PDB INCLUDING DATAFILES';
     END IF;
 END;
@@ -83,38 +74,6 @@ CREATE PLUGGABLE DATABASE &&QA_PDB
     USING SNAPSHOT &&LATEST_CAROUSEL_SNAPSHOT
     SNAPSHOT COPY;
 
-DEFINE LAB_PAUSE_MESSAGE = "Press Return to open &&QA_PDB across all RAC instances."
-@@../common/&&LAB_PAUSE_SCRIPT
-
-PROMPT SQL/DDL:
-PROMPT   ALTER PLUGGABLE DATABASE &&QA_PDB OPEN READ WRITE INSTANCES = ALL;
-
-DECLARE
-    l_attempts CONSTANT PLS_INTEGER := 30;
-BEGIN
-    FOR i IN 1 .. l_attempts LOOP
-        BEGIN
-            EXECUTE IMMEDIATE 'ALTER PLUGGABLE DATABASE &&QA_PDB OPEN READ WRITE INSTANCES = ALL';
-            dbms_output.put_line('Opened &&QA_PDB across all RAC instances.');
-            RETURN;
-        EXCEPTION
-            WHEN OTHERS THEN
-                IF SQLCODE = -65011 AND i < l_attempts THEN
-                    dbms_session.sleep(1);
-                ELSE
-                    RAISE;
-                END IF;
-        END;
-    END LOOP;
-END;
-/
-
-DEFINE LAB_PAUSE_MESSAGE = "Press Return to verify &&QA_PDB and snapshot carousel state."
-@@../common/&&LAB_PAUSE_SCRIPT
-
-@@../common/verify-pdbs.sql
-@@../common/verify-pdb-services.sql
-@@../common/verify-snapshots.sql
-@@../common/verify-storage.sql
-
-PROMPT QA clone created from the latest available snapshot
+PROMPT Clusterware lifecycle after this SQL script:
+PROMPT   ../common/manage-pdb-clusterware.sh ensure-and-start &&QA_PDB
+PROMPT Then run 03-verify-qa.sql after the service is online.

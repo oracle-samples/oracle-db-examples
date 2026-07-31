@@ -7,6 +7,7 @@ This directory contains reusable configuration, formatting, and verification scr
 | File | Purpose |
 |------|---------|
 | `config.sql` | Shared object names used across the workshop |
+| `manage-pdb-clusterware.sh` | Creates, starts, stops, verifies, and removes RAC PDB resources and PDB services with `srvctl` |
 | `helpers.sql` | SQLcl and SQL*Plus formatting used by the lab scripts |
 | `verify-pdbs.sql` | Displays PDB open state on every RAC instance and summarizes read-write placement |
 | `verify-pdb-services.sql` | Displays PDB services on every RAC instance and summarizes service placement |
@@ -39,9 +40,27 @@ Verification checks can then be run as needed:
 @@../common/verify-datafiles.sql
 ```
 
+Use the Clusterware helper after setting `CDB_UNIQUE_NAME` in `config.sql`:
+
+```bash
+./manage-pdb-clusterware.sh ensure-and-start SALES_MAIN
+./manage-pdb-clusterware.sh verify SALES_MAIN
+./manage-pdb-clusterware.sh stop-and-remove DEV_ALEX
+```
+
+For automated environments, `CDB_UNIQUE_NAME` can be supplied as an environment
+variable instead of editing `config.sql`.
+
+The default `RAC_PDB_PLACEMENT=AUTO` is compatible with CDBs that already have
+PDB resources created without `-cardinality`. Set the service placement with
+`RAC_SERVICE_PREFERRED`, either in `config.sql` or as an environment variable.
+Use `RAC_PDB_PLACEMENT=ALL` only for CDBs already using cardinality-based PDB
+resources.
+
 ## Notes
 
 - The labs assume Oracle RAC, so the verification queries use `GV$` views where instance awareness matters.
+- The Clusterware helper uses the PDB and service names in `config.sql`. It owns routine PDB availability and service placement; SQL scripts retain snapshot, clone, refresh, and drop DDL.
 - The labs assume Oracle Managed Files, so datafile verification reports generated file names rather than requiring user-supplied paths.
 - Commands are expected to run from `CDB$ROOT` unless a lab explicitly says otherwise.
 - The scripts are written for SQLcl while remaining readable in SQL*Plus.
