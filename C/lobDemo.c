@@ -2,11 +2,12 @@
 /* All rights reserved.*/
 
 /*
-     NAME
-	ociLobDemo.c - C Demo program to illustrate the OCI Lob interface.
-     DESCRIPTION
+  NAME
+	lobDemo.c - C Demo program to illustrate the OCI Lob interface.
+
+  DESCRIPTION
 	This C file contains code to demonstrate the use of the OCI Large
-        Objects (LOBs).
+    Objects (LOBs).
 */
 
 #ifndef OCI_ORACLE
