@@ -8,4 +8,5 @@ List of files
 |-----------|-------------|
 |[simpleConnDemo.c](./simpleConnDemo.c)| Shows a simple connection and query to Oracle Database using OCI. For explanation and the required setup, see the [blog](https://medium.com/oracledevs/oracle-call-interface-for-c-developers-simple-database-connection-and-query-58be8243a393).|
 |[sessionPoolingDemo.c](./sessionPoolingDemo.c)| Shows session pooling with Oracle Database using OCI Threads. For explanation and the required setup, see the [blog](https://medium.com/oracledevs/oracle-call-interface-for-c-developers-session-pooling-and-multithreading-87f56cec993a).|
+|[lobDemo.c](./lobDemo.c)| show the insert and fetch of Large Objects (LOBs) with polling mode. For explanation and the required setup, see the [blog](https://medium.com/oracledevs/oracle-call-interface-for-c-developers-large-objects-lobs-handling-20217c0391a7).|
 |[drcpDemo.c](./drcpDemo.c)| Shows a simple query with DRCP connection to Oracle Database using OCI|
