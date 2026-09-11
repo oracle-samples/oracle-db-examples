@@ -1,14 +1,17 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 26ai
--- 
---   OML R Extensible - Attribute Importance via RF Algorithm - dmraidemo.sql
---   
---   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
+--   OML R Extensible - Attribute Importance via RF Algorithm - dmraidemo.sql  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
 --
---  The Universal Permissive License (UPL), Version 1.0
---
---  https://oss.oracle.com/licenses/upl/
+--   The Universal Permissive License (UPL), Version 1.0
+--   https://oss.oracle.com/licenses/upl/
 -----------------------------------------------------------------------
+
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
 SET ECHO ON
 SET FEEDBACK 1
 SET NUMWIDTH 10
@@ -20,13 +23,17 @@ SET PAGESIZE 100
 -------------------------------------------------------------------------------
 --                         ATTRIBUTE IMPORTANCE DEMO
 -------------------------------------------------------------------------------
+
 -- Explaination:
 -- This demo shows how to implement the attribute importance algorithm in 
 -- Oracle Data Mining using R randomForest algorithm
 
 -- Cleanup old output tables/scripts/models for repeat runs -------------------
-BEGIN EXECUTE IMMEDIATE 'DROP TABLE AI_RDEMO_SETTINGS';  
-EXCEPTION WHEN OTHERS THEN NULL; END;
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE AI_RDEMO_SETTINGS';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
 /
 
 BEGIN
@@ -35,20 +42,9 @@ BEGIN
 END;
 /
 
-BEGIN DBMS_DATA_MINING.DROP_MODEL('AI_RDEMO');
-EXCEPTION WHEN OTHERS THEN NULL; END;
-/
 
 -- Create setting table -------------------------------------------------------
-create table AI_RDEMO_SETTINGS(
-        setting_name varchar2(30),
-        setting_value varchar2(4000));
 
-BEGIN
- INSERT INTO AI_RDEMO_SETTINGS VALUES
-  ('ALGO_EXTENSIBLE_LANG', 'R');
-END;
-/
 
 BEGIN
 -- Build R Function -----------------------------------------------------------
@@ -77,38 +73,99 @@ BEGIN
    mod <- object;
    data.frame(row_name=row.names(mod$importance), importance=mod$importance)}');
 
-   INSERT INTO AI_RDEMO_SETTINGS 
-     VALUES(dbms_data_mining.ralg_build_function, 'AI_RDEMO_BUILD_FUNCTION');
-   INSERT INTO AI_RDEMO_SETTINGS 
-     VALUES(dbms_data_mining.ralg_details_function, 'AI_RDEMO_DETAILS_FUNCTION');
-
 -- Once this setting is specified, a model view will be created. This model
 -- view will be generated to display the model details, which contains the 
 -- attribute names and the corresponding importance.
 
-   INSERT INTO AI_RDEMO_SETTINGS 
-     VALUES(dbms_data_mining.ralg_details_format, 
-     'select cast(''a'' as varchar2(100)) name, 1 importance from dual');
 END;
 /
 
 -------------------------------------------------------------------------------
 --                              MODEL BUILD
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Build the model using the R script user defined. Here R script 
 -- AI_RDEMO_BUILD_FUNCTION will be used to create the model AI_RDEMO, using 
 -- dataset mining_data_build_v.
 
-begin
-  dbms_data_mining.create_model(
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL2 EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL2 is useful when you want to provide a data query
+-- and an explicit settings list instead of maintaining settings in a table.
+
+BEGIN
+  DBMS_DATA_MINING.DROP_MODEL('AI_RDEMO');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+DECLARE
+  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+BEGIN
+  v_setlst('ALGO_EXTENSIBLE_LANG') := 'R';
+  v_setlst(dbms_data_mining.ralg_build_function) := 'AI_RDEMO_BUILD_FUNCTION';
+  v_setlst(dbms_data_mining.ralg_details_function) := 'AI_RDEMO_DETAILS_FUNCTION';
+  v_setlst(dbms_data_mining.ralg_details_format) := 'SELECT cast(''a'' as varchar2(100)) name, 1 importance FROM dual';
+  DBMS_DATA_MINING.CREATE_MODEL2(
     model_name          => 'AI_RDEMO',
     mining_function     => dbms_data_mining.regression,
-    data_table_name     => 'mining_data_build_v',
+    data_query          => 'SELECT * FROM mining_data_build_v',
     case_id_column_name => 'CUST_ID',
     target_column_name  => 'AFFINITY_CARD',
-    settings_table_name => 'AI_RDEMO_SETTINGS');
-end;
+    set_list            => v_setlst
+    );
+END;
+/
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL is useful for application development when model settings
+-- are separated into a settings table for convenient updating.
+-- This build intentionally replaces the model created by the preceding CREATE_MODEL2 example.
+
+-- Drop settings table if it exists
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE AI_RDEMO_SETTINGS';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.DROP_MODEL('AI_RDEMO');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE AI_RDEMO_SETTINGS (setting_name VARCHAR2(30), setting_value VARCHAR2(4000))';
+END;
+/
+
+BEGIN
+INSERT INTO AI_RDEMO_SETTINGS (setting_name, setting_value) VALUES
+    ('ALGO_EXTENSIBLE_LANG', 'R');
+    INSERT INTO AI_RDEMO_SETTINGS (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_build_function, 'AI_RDEMO_BUILD_FUNCTION');
+    INSERT INTO AI_RDEMO_SETTINGS (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_details_function, 'AI_RDEMO_DETAILS_FUNCTION');
+    INSERT INTO AI_RDEMO_SETTINGS (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_details_format, 'SELECT cast(''a'' as varchar2(100)) name, 1 importance FROM dual');
+END;
+/
+BEGIN
+  dbms_data_mining.create_model(
+      model_name          => 'AI_RDEMO',
+      mining_function     => dbms_data_mining.regression,
+      data_table_name     => 'mining_data_build_v',
+      case_id_column_name => 'CUST_ID',
+      target_column_name  => 'AFFINITY_CARD',
+      settings_table_name => 'AI_RDEMO_SETTINGS');
+END;
 /
 
 -------------------------------------------------------------------------------
@@ -121,6 +178,25 @@ end;
 -- AI_RDEMO_DETAIL_FUNCTION will be used to provide the attribute importance.
 
 column name format a30;
-select name, round(importance, 3) as importance, 
+
+SELECT name, round(importance, 3) as importance, 
 rank() OVER (ORDER BY importance DESC) rank 
-from DM$VDAI_RDEMO order by importance desc, name;
+FROM DM$VDAI_RDEMO ORDER BY importance DESC, name;
+
+-----------------------------------------------------------------------
+-- OPTIONAL CLEANUP (DISABLED)
+-----------------------------------------------------------------------
+-- Uncomment this section to remove models and named tables/views created
+-- by this script. Shared MINING_* views created by dmsh.sql are intentionally not included.
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('AI_RDEMO');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE AI_RDEMO_SETTINGS';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /

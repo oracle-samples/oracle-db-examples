@@ -1,18 +1,21 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 26ai
+--   Time Series Regression - dataset creation  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
 --
---   Time Series Regression - dataset creation
---
---   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
---
---   The Universal Permissive License (UPL), Version 1.0
---
---   https://oss.oracle.com/licenses/upl
+--  The Universal Permissive License (UPL), Version 1.0
+--  https://oss.oracle.com/licenses/upl/
 -----------------------------------------------------------------------
 
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
 
-DROP TABLE EUSTOCK;
-  CREATE TABLE EUSTOCK 
+BEGIN EXECUTE IMMEDIATE 'DROP TABLE EUSTOCK';
+EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+CREATE TABLE EUSTOCK 
    (	"DAX" NUMBER(38,2), 
 	"SMI" NUMBER(38,1), 
 	"CAC" NUMBER(38,1), 
@@ -1887,3 +1890,15 @@ Insert into EUSTOCK (DAX,SMI,CAC,FTSE,DATES) values (2436.09,3260.1,1983.3,3747.
 Insert into EUSTOCK (DAX,SMI,CAC,FTSE,DATES) values (2427.77,3266.1,1956.4,3745,to_date('20-AUG-96','DD-MON-RR'));
 Insert into EUSTOCK (DAX,SMI,CAC,FTSE,DATES) values (2426.51,3272.2,1964.2,3779.8,to_date('21-AUG-96','DD-MON-RR'));
 Insert into EUSTOCK (DAX,SMI,CAC,FTSE,DATES) values (2423.6,3280.3,1952.5,3770.9,to_date('22-AUG-96','DD-MON-RR'));
+
+-----------------------------------------------------------------------
+-- OPTIONAL CLEANUP (DISABLED)
+-----------------------------------------------------------------------
+-- Uncomment this section to remove models and named tables/views created
+-- by this script. Shared MINING_* views created by dmsh.sql are intentionally not included.
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE EUSTOCK';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
