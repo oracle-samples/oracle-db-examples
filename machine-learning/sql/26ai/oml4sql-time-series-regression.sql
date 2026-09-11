@@ -1,15 +1,16 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 26ai
+--   Time Series Regression - Using Exponential Smoothing with Generalized Linear Model and Extreme Gradient Boosting  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
 --
---   Time Series Regression - Using Exponential Smoothing with 
---      Generalized Linear Model and Extreme Gradient Boosting
---
---   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
---
---   The Universal Permissive License (UPL), Version 1.0
---
---   https://oss.oracle.com/licenses/upl
+--  The Universal Permissive License (UPL), Version 1.0
+--  https://oss.oracle.com/licenses/upl/
 -----------------------------------------------------------------------
+
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
 
 SET ECHO ON 
 SET FEEDBACK 1
@@ -40,31 +41,35 @@ col x2 format 990.99999
 -----------------------------------------------------------------------
 --                            SAMPLE PROBLEM
 -----------------------------------------------------------------------
+
 -- Perform Time Series Regression using a combination of ESM and GLM algorithms.
 -- See documentation on "Multiple Time Seriess Models" at 
 -- https://docs.oracle.com/en/database/oracle/machine-learning/oml4sql/23/dmcon/exponential-smoothing.html
-​
+
 -----------------------------------------------------------------------
 --                            EXAMPLE IN THIS SCRIPT
 -----------------------------------------------------------------------
+
 -- Create the time series dataset
 -- Build an ESM model using multiple time series forecasting
 -- Build a GLM model using the ESM result
 -- Explore the model views
 -- Compare the regression forecast to the baseline (ESM) forecast
 -- Build an XGBOOST model and compare to ESM forecast
-​
+
 -----------------------------------------------------------------------
+
 -- Create Time Series Dataset-- Invoke this script 
 --
 
-@time-series-regression-dataset.sql
+@@oml4sql-time-series-regression-dataset.sql
 /
 -----------------------------------------------------------------------
 --                            BUILD THE MODEL
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
+
 -- Multiple time series model (MSDEMO_MODEL) is built using an interval 
 -- of days, which corresponds to the dataset interval. By specifying
 -- a series list (parameter EXSM_SERIES_LIST), we can include additional 
@@ -73,13 +78,16 @@ col x2 format 990.99999
 
 -------------------------
 -- BUILD ESM MODEL
---
+-------------------------
+
 
 SET echo OFF;
+
 BEGIN DBMS_DATA_MINING.DROP_MODEL('MSDEMO_MODEL'); 
 EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 SET echo ON;
+
 DECLARE
     v_setlst DBMS_DATA_MINING.SETTING_LIST;
 BEGIN
@@ -101,6 +109,7 @@ END;
 /
 
 -------------------------
+
 -- Model Results:
 -- DM$VRNSDEMO compares the actuals to the prediction
 --
@@ -114,7 +123,7 @@ FETCH FIRST 10 ROWS ONLY;
 -- DM models show the forcast for the target column
 --
 
-BEGIN DROP TABLE tmesm_ms_train;
+BEGIN EXECUTE IMMEDIATE 'DROP TABLE tmesm_ms_train';
 EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 CREATE TABLE tmesm_ms_train as
@@ -154,13 +163,16 @@ WHERE  a.case_id=b.case_id;
 
 -------------------------
 -- BUILD GLM MODEL
---
+-------------------------
+
 
 SET echo OFF;
+
 BEGIN DBMS_DATA_MINING.DROP_MODEL('MS_GLM_MODEL');
 EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 SET echo ON;
+
 DECLARE
     v_setlst DBMS_DATA_MINING.SETTING_LIST;
 BEGIN
@@ -182,7 +194,8 @@ END;
 
 -------------------------
 -- DISPLAY MODEL VIEWS
---
+-------------------------
+
 
 SELECT VIEW_NAME, VIEW_TYPE 
 FROM   USER_MINING_MODEL_VIEWS
@@ -191,7 +204,8 @@ ORDER BY VIEW_NAME;
 /
 -------------------------
 -- DISPLAY BACKCASTS
---
+-------------------------
+
 
 SELECT * 
 FROM   DM$VRMSDEMO_MODEL
@@ -200,7 +214,8 @@ FETCH FIRST 10 ROWS ONLY;
 /
 -------------------------
 -- DISPLAY FORECASTS
---
+-------------------------
+
 
 SELECT * 
 FROM DM$VTMSDEMO_MODEL
@@ -209,7 +224,8 @@ FETCH FIRST 10 ROWS ONLY;
 /
 -------------------------
 -- COMPARE REGRESSION FORECAST (GLM) TO BASELINE (EXPONENTIAL SMOOTHING) FORECAST
---
+-------------------------
+
 
 SELECT CASE_ID, DAX, regression_forecast, baseline_forecast,
        DAX - regression_forecast AS regression_error,
@@ -217,18 +233,21 @@ SELECT CASE_ID, DAX, regression_forecast, baseline_forecast,
 FROM (SELECT CASE_ID, DAX, 
              PREDICTION(MS_GLM_model using *) regression_forecast, 
              DM$DAX baseline_forecast
-      FROM   tmesm_ms_test 
-      ORDER BY CASE_ID);
+FROM   tmesm_ms_test 
+ORDER BY CASE_ID);
 /
 -------------------------
 -- BUILD XGBOOST MODEL
---
+-------------------------
+
 
 SET echo OFF;
+
 BEGIN DBMS_DATA_MINING.DROP_MODEL('MS_XGB_MODEL');
 EXCEPTION WHEN OTHERS THEN NULL; END;
 /
 SET echo ON;
+
 DECLARE
     v_setlst DBMS_DATA_MINING.SETTING_LIST;
 BEGIN
@@ -246,7 +265,8 @@ END;
 	  
 -------------------------
 -- COMPARE REGRESSION FORECAST (XGB) TO BASELINE (EXPONENTIAL SMOOTHING) FORECAST
---
+-------------------------
+
 
 SELECT CASE_ID, DAX, regression_forecast, baseline_forecast,
        DAX - regression_forecast AS regression_error,
@@ -254,9 +274,51 @@ SELECT CASE_ID, DAX, regression_forecast, baseline_forecast,
 FROM (SELECT CASE_ID, DAX, 
              PREDICTION(MS_XGB_model using *) regression_forecast, 
              DM$DAX baseline_forecast
-      FROM   tmesm_ms_test 
-      ORDER BY CASE_ID);
+FROM   tmesm_ms_test 
+ORDER BY CASE_ID);
 /
 -----------------------------------------------------------------------
+
 --   End of script
 -------------------------------------------------------------------------
+-----------------------------------------------------------------------
+-- OPTIONAL CLEANUP (DISABLED)
+-----------------------------------------------------------------------
+-- Uncomment this section to remove models and named tables/views created
+-- by this script. Shared MINING_* views created by dmsh.sql are intentionally not included.
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('MSDEMO_MODEL');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('MS_GLM_MODEL');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('MS_XGB_MODEL');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE TMESM_MS_TRAIN';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE TMESM_MS_ACTUAL';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE TMESM_MS_TEST';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /

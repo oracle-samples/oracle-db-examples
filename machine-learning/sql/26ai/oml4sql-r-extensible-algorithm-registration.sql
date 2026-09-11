@@ -1,14 +1,17 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 26ai
--- 
---   OML R Extensible - Algorithm Registration - dmralgregdemo.sql
---   
---   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
+--   OML R Extensible - Algorithm Registration - dmralgregdemo.sql  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
 --
---  The Universal Permissive License (UPL), Version 1.0
---
---  https://oss.oracle.com/licenses/upl/
+--   The Universal Permissive License (UPL), Version 1.0
+--   https://oss.oracle.com/licenses/upl/
 -----------------------------------------------------------------------
+
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
 SET ECHO ON
 SET FEEDBACK 1
 SET NUMWIDTH 10
@@ -24,25 +27,30 @@ column algorithm_type format a15;
 column description format a11;
 column algorithm_metadata format a20;
 
-connect sys/knl_test7 as sysdba;
-GRANT rqadmin TO dmuser;
-connect dmuser/dmuser
+-- Prerequisite: an administrator must grant RQADMIN to the schema that will
+-- run this demo. Use your own credentials; do not add passwords to this file.
+--
+-- 1. Connect as SYSDBA:
+--      CONNECT sys/<your_sys_password> AS SYSDBA
+-- 2. Grant the role to the demo schema:
+--      GRANT RQADMIN TO <your_demo_schema>;
+-- 3. Connect as that demo schema, then run the remainder of this script.
 
 -------------------------------------------------------------------------------
 --                        R Algorithm Registration DEMO 1
 -------------------------------------------------------------------------------
+
 -- Explaination:
 -- This demo shows how to register a new GLM algorithm and use it to create models.
 
 -- Cleanup old output tables/scripts/models for repeat runs -------------------
 
-BEGIN EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';  
-EXCEPTION WHEN OTHERS THEN NULL; END;
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
 /
 
-BEGIN DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
-EXCEPTION WHEN OTHERS THEN NULL; END;
-/
 
 BEGIN
   DBMS_DATA_MINING.drop_algorithm(
@@ -72,54 +80,96 @@ END;
 
 -- Model Settings -------------------------------------------------------------
 
-CREATE TABLE GLM_RDEMO_SETTINGS_CL (
-  setting_name  VARCHAR2(30),
-  setting_value VARCHAR2(4000));
-
-BEGIN
- INSERT INTO GLM_RDEMO_SETTINGS_CL VALUES
-  ('ALGO_EXTENSIBLE_LANG', 'R');
-END;
-/
-
-BEGIN
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.algo_name, 't1');
-END;
-/
-
-BEGIN
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.r_formula, 'AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION');
-END;
-/
-
-BEGIN
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES('ralg_parameter_keep.model', 1);
-END;
-/
-
 -------------------------------------------------------------------------------
 --                              MODEL BUILD
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Build the model using the R build function script user has already registered. 
 
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL2 EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL2 is useful when you want to provide a data query
+-- and an explicit settings list instead of maintaining settings in a table.
+
 BEGIN
-  DBMS_DATA_MINING.CREATE_MODEL(
+  DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+DECLARE
+  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+BEGIN
+  v_setlst('ALGO_EXTENSIBLE_LANG') := 'R';
+  v_setlst(dbms_data_mining.algo_name) := 't1';
+  v_setlst(dbms_data_mining.r_formula) := 'AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION';
+  v_setlst('ralg_parameter_keep.model') := '1';
+  DBMS_DATA_MINING.CREATE_MODEL2(
     model_name          => 'GLM_RDEMO_CLASSIFICATION',
     mining_function     => dbms_data_mining.classification,
-    data_table_name     => 'mining_data_build_v',
+    data_query          => 'SELECT * FROM mining_data_build_v',
     case_id_column_name => 'CUST_ID',
     target_column_name  => 'AFFINITY_CARD',
-    settings_table_name => 'GLM_RDEMO_SETTINGS_CL');
+    set_list            => v_setlst
+    );
+END;
+/
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL is useful for application development when model settings
+-- are separated into a settings table for convenient updating.
+-- This build intentionally replaces the model created by the preceding CREATE_MODEL2 example.
+
+-- Drop settings table if it exists
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE GLM_RDEMO_SETTINGS_CL (setting_name VARCHAR2(30), setting_value VARCHAR2(4000))';
+END;
+/
+
+BEGIN
+INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    ('ALGO_EXTENSIBLE_LANG', 'R');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.algo_name, 't1');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.r_formula, 'AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    ('ralg_parameter_keep.model', 1);
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.CREATE_MODEL(
+      model_name          => 'GLM_RDEMO_CLASSIFICATION',
+      mining_function     => dbms_data_mining.classification,
+      data_table_name     => 'mining_data_build_v',
+      case_id_column_name => 'CUST_ID',
+      target_column_name  => 'AFFINITY_CARD',
+      settings_table_name => 'GLM_RDEMO_SETTINGS_CL');
 END;
 /
 
 -------------------------------------------------------------------------------
 --                              MODEL SCORE
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Score the model using the R score function script user has already registered. 
 
@@ -127,11 +177,11 @@ SELECT CUST_ID, AFFINITY_CARD as AFFINITY_CARD_act,
 PREDICTION(GLM_RDEMO_CLASSIFICATION USING *) AFFINITY_CARD_pred,
 round(PREDICTION_PROBABILITY(GLM_RDEMO_CLASSIFICATION USING *), 3) 
 as AFFINITY_CARD_prob 
-FROM mining_data_apply_v where CUST_ID <= 100010 
-order by CUST_ID;
+FROM mining_data_apply_v WHERE CUST_ID <= 100010 
+ORDER BY CUST_ID;
 
 
------------------------- Drop Models and Algorithms ---------------------------
+-- -------------------- Drop Models and Algorithms ---------------------------
 
 BEGIN
   DBMS_DATA_MINING.drop_algorithm(
@@ -143,18 +193,18 @@ END;
 -------------------------------------------------------------------------------
 --                        R Algorithm Registration DEMO 2
 -------------------------------------------------------------------------------
+
 -- Explaination:
 -- This demo shows how to register a new DT algorithm and use it to create models.
 
 -- Cleanup old output tables/scripts/models for repeat runs -------------------
 
-BEGIN EXECUTE IMMEDIATE 'DROP TABLE DT_RDEMO_SETTINGS_CL';  
-EXCEPTION WHEN OTHERS THEN NULL; END;
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE DT_RDEMO_SETTINGS_CL';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
 /
 
-BEGIN DBMS_DATA_MINING.DROP_MODEL('DT_RDEMO_CLASSIFICATION');
-EXCEPTION WHEN OTHERS THEN NULL; END;
-/
 
 BEGIN
   DBMS_DATA_MINING.drop_algorithm(
@@ -188,74 +238,122 @@ END;
 
 -- Model Settings -------------------------------------------------------------
 
-CREATE TABLE DT_RDEMO_SETTINGS_CL (
-  setting_name  VARCHAR2(30),
-  setting_value VARCHAR2(4000));
-
-
-BEGIN
- INSERT INTO DT_RDEMO_SETTINGS_CL VALUES
-  ('ALGO_EXTENSIBLE_LANG', 'R');
-END;
-/
-
-BEGIN
-  INSERT INTO DT_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.algo_name, 't1');
-END;
-/
-
-BEGIN
-  INSERT INTO DT_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.r_formula, 'AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION');
-END;
-/
-
 -------------------------------------------------------------------------------
 --                              MODEL BUILD
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Build the model using the R build script user has already registered. 
 
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL2 EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL2 is useful when you want to provide a data query
+-- and an explicit settings list instead of maintaining settings in a table.
+
 BEGIN
-  DBMS_DATA_MINING.CREATE_MODEL(
+  DBMS_DATA_MINING.DROP_MODEL('DT_RDEMO_CLASSIFICATION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+DECLARE
+  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+BEGIN
+  v_setlst('ALGO_EXTENSIBLE_LANG') := 'R';
+  v_setlst(dbms_data_mining.algo_name) := 't1';
+  v_setlst(dbms_data_mining.r_formula) := 'AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION';
+  DBMS_DATA_MINING.CREATE_MODEL2(
     model_name          => 'DT_RDEMO_CLASSIFICATION',
     mining_function     => dbms_data_mining.classification,
-    data_table_name     => 'mining_data_build_v',
+    data_query          => 'SELECT * FROM mining_data_build_v',
     case_id_column_name => 'CUST_ID',
     target_column_name  => 'AFFINITY_CARD',
-    settings_table_name => 'DT_RDEMO_SETTINGS_CL');
+    set_list            => v_setlst
+    );
+END;
+/
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL is useful for application development when model settings
+-- are separated into a settings table for convenient updating.
+-- This build intentionally replaces the model created by the preceding CREATE_MODEL2 example.
+
+-- Drop settings table if it exists
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE DT_RDEMO_SETTINGS_CL';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.DROP_MODEL('DT_RDEMO_CLASSIFICATION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE DT_RDEMO_SETTINGS_CL (setting_name VARCHAR2(30), setting_value VARCHAR2(4000))';
+END;
+/
+
+BEGIN
+INSERT INTO DT_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    ('ALGO_EXTENSIBLE_LANG', 'R');
+    INSERT INTO DT_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.algo_name, 't1');
+    INSERT INTO DT_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.r_formula, 'AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION');
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.CREATE_MODEL(
+      model_name          => 'DT_RDEMO_CLASSIFICATION',
+      mining_function     => dbms_data_mining.classification,
+      data_table_name     => 'mining_data_build_v',
+      case_id_column_name => 'CUST_ID',
+      target_column_name  => 'AFFINITY_CARD',
+      settings_table_name => 'DT_RDEMO_SETTINGS_CL');
 END;
 /
 
 -------------------------------------------------------------------------------
 --                              MODEL DETAIL
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Display the model details using R detail function user has already registered
 
 column SPLIT format a12;
-select to_number(node) as node, split, nodecnt, leftnodecnt, rightnodecnt 
-from DM$V0DT_RDEMO_CLASSIFICATION
-order by node, split;
+
+SELECT to_number(node) as node, split, nodecnt, leftnodecnt, rightnodecnt 
+FROM DM$V0DT_RDEMO_CLASSIFICATION
+ORDER BY node, split;
 
 column SPLIT format a12;
-select to_number(node) as node, split, nodecnt, leftnodecnt, rightnodecnt 
-from DM$V1DT_RDEMO_CLASSIFICATION
-order by node, split;
+
+SELECT to_number(node) as node, split, nodecnt, leftnodecnt, rightnodecnt 
+FROM DM$V1DT_RDEMO_CLASSIFICATION
+ORDER BY node, split;
 
 -------------------------------------------------------------------------------
 --                              MODEL SCORE
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Score the model using the R score and weight function scripts user registered. 
 
 column pred_det format a65;
-SELECT CUST_ID, PREDICTION_DETAILS(DT_RDEMO_CLASSIFICATION, '1' USING *) pred_det
-FROM mining_data_apply_v where EDUCATION = 'Bach.' and HOUSEHOLD_SIZE = '3'
-and CUST_ID <= 100080 order by CUST_ID;
 
------------------------- Drop Models and Algorithms ---------------------------
+SELECT CUST_ID, PREDICTION_DETAILS(DT_RDEMO_CLASSIFICATION, '1' USING *) pred_det
+FROM mining_data_apply_v WHERE EDUCATION = 'Bach.' and HOUSEHOLD_SIZE = '3'
+and CUST_ID <= 100080 ORDER BY CUST_ID;
+
+-- -------------------- Drop Models and Algorithms ---------------------------
 
 BEGIN
   DBMS_DATA_MINING.drop_algorithm(
@@ -263,3 +361,33 @@ BEGIN
     CASCADE => TRUE);
 END;
 /
+
+-----------------------------------------------------------------------
+-- OPTIONAL CLEANUP (DISABLED)
+-----------------------------------------------------------------------
+-- Uncomment this section to remove models and named tables/views created
+-- by this script. Shared MINING_* views created by dmsh.sql are intentionally not included.
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('DT_RDEMO_CLASSIFICATION');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE DT_RDEMO_SETTINGS_CL';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /

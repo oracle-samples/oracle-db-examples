@@ -1,25 +1,28 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 26ai
+--   Automated Model Search- Time Series Algorithm ESM  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
 --
---   Automated Model Search- Time Series Algorithm ESM
---
---   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
---
---   The Universal Permissive License (UPL), Version 1.0
---
---   https://oss.oracle.com/licenses/upl
+--  The Universal Permissive License (UPL), Version 1.0
+--  https://oss.oracle.com/licenses/upl/
 -----------------------------------------------------------------------
 
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
 
 -----------------------------------------------------------------------
 --                            SAMPLE PROBLEM
 -----------------------------------------------------------------------
+
 -- Create an ESM Time Series Model with Automated Model Search, which is
 --   also the default behavior when no ESM model type is specified
 
 -----------------------------------------------------------------------
 --                            EXAMPLE IN THIS SCRIPT
 -----------------------------------------------------------------------
+
 -- Create an ESM model with CREATE_MODEL2 and Model Search Enabled
 -- Evaluate the model 
 
@@ -29,7 +32,8 @@
 
 -------------------------
 -- CREATE VIEW
---
+-------------------------
+
 
 CREATE OR REPLACE VIEW ESM_SH_DATA AS 
 SELECT TIME_ID, AMOUNT_SOLD 
@@ -38,7 +42,8 @@ FROM   SH.SALES;
 
 -------------------------
 -- CREATE MODEL
---
+-------------------------
+
 
 BEGIN DBMS_DATA_MINING.DROP_MODEL('ESM_SALES_FORECAST_1');
 EXCEPTION WHEN OTHERS THEN NULL; END;
@@ -62,9 +67,11 @@ END;
 -----------------------------------------------------------------------
 --                            ANALYZE THE MODEL
 -----------------------------------------------------------------------
+
 -------------------------
 -- GET MODEL DETAILS
---
+-------------------------
+
 
 SELECT setting_name, setting_value, setting_type
 FROM   user_mining_model_settings
@@ -76,7 +83,8 @@ ORDER BY setting_name;
 
 -------------------------
 -- COMPUTED SETTINGS AND OTHER GLOBAL STATISTICS
---
+-------------------------
+
 
 SELECT name, ROUND(numeric_value,3) numeric_value, string_value 
 FROM DM$VGESM_SALES_FORECAST_1
@@ -84,5 +92,23 @@ ORDER BY name;
 /
 
 -----------------------------------------------------------------------
+
 --   End of script
 -----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-- OPTIONAL CLEANUP (DISABLED)
+-----------------------------------------------------------------------
+-- Uncomment this section to remove models and named tables/views created
+-- by this script. Shared MINING_* views created by dmsh.sql are intentionally not included.
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('ESM_SALES_FORECAST_1');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP VIEW ESM_SH_DATA';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /

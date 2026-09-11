@@ -1,14 +1,17 @@
 -----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 26ai
--- 
---   OML R Extensible - Generalized Linear Model Algorithm - dmrglmdemo.sql
---   
---   Copyright (c) 2026 Oracle Corporation and/or its affilitiates.
+--   OML R Extensible - Generalized Linear Model Algorithm - dmrglmdemo.sql  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
 --
---  The Universal Permissive License (UPL), Version 1.0
---
---  https://oss.oracle.com/licenses/upl/
+--   The Universal Permissive License (UPL), Version 1.0
+--   https://oss.oracle.com/licenses/upl/
 -----------------------------------------------------------------------
+
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
 SET ECHO ON
 SET FEEDBACK 1
 SET NUMWIDTH 10
@@ -21,13 +24,17 @@ SET LONG 10000
 -------------------------------------------------------------------------------
 --                         GLM REGRESSION DEMO
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- This demo shows how to implement the GLM regression algorithm in Oracle Data 
 -- Mining using R glm algorithm.
 
 -- Cleanup old output tables/scripts/models for repeat runs -------------------
-BEGIN EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_RE';  
-EXCEPTION WHEN OTHERS THEN NULL; END;
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_RE';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
 /
 
 Begin
@@ -37,20 +44,9 @@ Begin
 End;
 /
 
-BEGIN DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_REGRESSION');
-EXCEPTION WHEN OTHERS THEN NULL; END;
-/
 
 -- Model Settings -------------------------------------------------------------
-CREATE TABLE GLM_RDEMO_SETTINGS_RE (
-  setting_name  VARCHAR2(30),
-  setting_value VARCHAR2(4000));
 
-BEGIN
- INSERT INTO GLM_RDEMO_SETTINGS_RE VALUES
-  ('ALGO_EXTENSIBLE_LANG', 'R');
-END;
-/
 
 Begin
 -- Build R Function -----------------------------------------------------------
@@ -70,7 +66,7 @@ Begin
 -- User can define their own R script function to do the scoring using the built
 -- model. For example, here a script named GLM_RDEMO_SCORE_REGRESSION is defined. 
 -- This function creates and returns an R data.frame containing the target 
--- predictions with se.fit on. User can also define other prediction functions
+-- predictions with se.fit on. User can also define other PREDICTION functions
 -- with different settings.
 
   sys.rqScriptCreate('GLM_RDEMO_SCORE_REGRESSION', 'function(mod, dat) {
@@ -89,62 +85,127 @@ Begin
    data.frame(name=names(mod$coefficients), 
    coef=mod$coefficients)}');
 
-  INSERT INTO GLM_RDEMO_SETTINGS_RE 
-    VALUES(dbms_data_mining.ralg_build_function, 'GLM_RDEMO_BUILD_REGRESSION');
-  INSERT INTO GLM_RDEMO_SETTINGS_RE 
-    VALUES(dbms_data_mining.ralg_score_function, 'GLM_RDEMO_SCORE_REGRESSION');
-  INSERT INTO GLM_RDEMO_SETTINGS_RE 
-    VALUES(dbms_data_mining.ralg_details_function, 'GLM_RDEMO_DETAILS_REGRESSION');
-
 -- Once this setting is specified, a model view will be created. This model
 -- view will be generated to display the model details, which contains the 
 -- attribute names and the corresponding coefficients.
 
-  INSERT INTO GLM_RDEMO_SETTINGS_RE 
-    VALUES(dbms_data_mining.ralg_details_format, 
-    'select cast(''a'' as varchar2(200)) attr, 1 coef from dual');
-
 -- Column YRS_RESIDENCE has row weights.
 
-  INSERT INTO GLM_RDEMO_SETTINGS_RE 
-    VALUES('ODMS_ROW_WEIGHT_COLUMN_NAME', 'YRS_RESIDENCE');
 End;
 /
 
 -------------------------------------------------------------------------------
 --                              MODEL BUILD
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Build the model using the R script user defined. Here R script 
 -- GLM_RDEMO_BUILD_REGRESSION will be used to create the GLM regression model 
 -- GLM_RDEMO_REGRESSION using dataset mining_data_build_v.
 
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL2 EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL2 is useful when you want to provide a data query
+-- and an explicit settings list instead of maintaining settings in a table.
+
 BEGIN
-  DBMS_DATA_MINING.CREATE_MODEL(
+  DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_REGRESSION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+DECLARE
+  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+BEGIN
+  v_setlst('ALGO_EXTENSIBLE_LANG') := 'R';
+  v_setlst(dbms_data_mining.ralg_build_function) := 'GLM_RDEMO_BUILD_REGRESSION';
+  v_setlst(dbms_data_mining.ralg_score_function) := 'GLM_RDEMO_SCORE_REGRESSION';
+  v_setlst(dbms_data_mining.ralg_details_function) := 'GLM_RDEMO_DETAILS_REGRESSION';
+  v_setlst(dbms_data_mining.ralg_details_format) := 'SELECT cast(''a'' as varchar2(200)) attr, 1 coef FROM dual';
+  v_setlst('ODMS_ROW_WEIGHT_COLUMN_NAME') := 'YRS_RESIDENCE';
+  DBMS_DATA_MINING.CREATE_MODEL2(
     model_name          => 'GLM_RDEMO_REGRESSION',
     mining_function     => dbms_data_mining.regression,
-    data_table_name     => 'mining_data_build_v',
+    data_query          => 'SELECT * FROM mining_data_build_v',
     case_id_column_name => 'CUST_ID',
     target_column_name  => 'AGE',
-    settings_table_name => 'GLM_RDEMO_SETTINGS_RE');
+    set_list            => v_setlst
+    );
+END;
+/
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL is useful for application development when model settings
+-- are separated into a settings table for convenient updating.
+-- This build intentionally replaces the model created by the preceding CREATE_MODEL2 example.
+
+-- Drop settings table if it exists
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_RE';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_REGRESSION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE GLM_RDEMO_SETTINGS_RE (setting_name VARCHAR2(30), setting_value VARCHAR2(4000))';
+END;
+/
+
+BEGIN
+INSERT INTO GLM_RDEMO_SETTINGS_RE (setting_name, setting_value) VALUES
+    ('ALGO_EXTENSIBLE_LANG', 'R');
+    INSERT INTO GLM_RDEMO_SETTINGS_RE (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_build_function, 'GLM_RDEMO_BUILD_REGRESSION');
+    INSERT INTO GLM_RDEMO_SETTINGS_RE (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_score_function, 'GLM_RDEMO_SCORE_REGRESSION');
+    INSERT INTO GLM_RDEMO_SETTINGS_RE (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_details_function, 'GLM_RDEMO_DETAILS_REGRESSION');
+    INSERT INTO GLM_RDEMO_SETTINGS_RE (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_details_format, 'SELECT cast(''a'' as varchar2(200)) attr, 1 coef FROM dual');
+    INSERT INTO GLM_RDEMO_SETTINGS_RE (setting_name, setting_value) VALUES
+    ('ODMS_ROW_WEIGHT_COLUMN_NAME', 'YRS_RESIDENCE');
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.CREATE_MODEL(
+      model_name          => 'GLM_RDEMO_REGRESSION',
+      mining_function     => dbms_data_mining.regression,
+      data_table_name     => 'mining_data_build_v',
+      case_id_column_name => 'CUST_ID',
+      target_column_name  => 'AGE',
+      settings_table_name => 'GLM_RDEMO_SETTINGS_RE');
 END;
 /
 
 -------------------------------------------------------------------------------
 --                              MODEL DETAIL
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Display the details of the built model using the R script user defined. 
 -- Here R script GLM_RDEMO_DETAIL_REGRESSION will be used to display the model 
 -- details.
 
 column attr format a40
-select attr, round(coef, 3) as coef from DM$VDGLM_RDEMO_REGRESSION 
-order by attr;
+
+SELECT attr, round(coef, 3) as coef FROM DM$VDGLM_RDEMO_REGRESSION 
+ORDER BY attr;
 
 -------------------------------------------------------------------------------
 --                              MODEL SCORE
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Score the model using the R script user defined. Here R script 
 -- GLM_RDEMO_SCORE_REGRESSION will be used to do the scoring. 
@@ -155,8 +216,8 @@ order by attr;
 
 SELECT CUST_ID, round(PREDICTION(GLM_RDEMO_REGRESSION USING *), 3) as AGE_pred, 
 AGE as AGE_act 
-FROM mining_data_apply_v where CUST_ID <= 100010 
-order by CUST_ID;
+FROM mining_data_apply_v WHERE CUST_ID <= 100010 
+ORDER BY CUST_ID;
 
 -- PREDICTION_BOUND -----------------------------------------------------------
 -- Explanation:
@@ -167,31 +228,35 @@ SELECT CUST_ID, AGE,
        round(PREDICTION(GLM_RDEMO_REGRESSION USING *), 3) as AGE_pred,
        round(PREDICTION_BOUNDS(GLM_RDEMO_REGRESSION USING *).UPPER, 3) as upp, 
        round(PREDICTION_BOUNDS(GLM_RDEMO_REGRESSION USING *).LOWER, 3) as low 
-FROM mining_data_apply_v where CUST_ID <= 100010 
-order by CUST_ID;
+FROM mining_data_apply_v WHERE CUST_ID <= 100010 
+ORDER BY CUST_ID;
 
 -- Specify Confidence Level 0.9 -----------------------------------------------
 -- Explanation:
 -- Show predicted target values, bounds, middle value. 
 
-select CUST_ID, round(AGE_pred, 3) as AGE_pred, 
+SELECT CUST_ID, round(AGE_pred, 3) as AGE_pred, 
 round((upp - low)/2, 3) as bound, round((low+upp)/2, 3) as pred_mid
-from (select CUST_ID, PREDICTION(GLM_RDEMO_REGRESSION USING *) AGE_pred,
+FROM (SELECT CUST_ID, PREDICTION(GLM_RDEMO_REGRESSION USING *) AGE_pred,
              PREDICTION_BOUNDS(GLM_RDEMO_REGRESSION, 0.9 USING *).LOWER low,
              PREDICTION_BOUNDS(GLM_RDEMO_REGRESSION, 0.9 USING *).UPPER upp
-FROM mining_data_apply_v where CUST_ID <= 100010) 
-order by CUST_ID;
+FROM mining_data_apply_v WHERE CUST_ID <= 100010) 
+ORDER BY CUST_ID;
 
 -------------------------------------------------------------------------------
 --                        GLM CLASSIFICATION DEMO
 -------------------------------------------------------------------------------
+
 -- Explaination:
 -- This demo shows how to implement the GLM classification algorithm in Oracle 
 -- Data Mining using R glm algorithm.
 
 -- Cleanup old output tables/scripts/models for repeat runs -------------------
-BEGIN EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';  
-EXCEPTION WHEN OTHERS THEN NULL; END;
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
 /
 
 Begin
@@ -202,20 +267,9 @@ Begin
 End;
 /
 
-BEGIN DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
-EXCEPTION WHEN OTHERS THEN NULL; END;
-/
 
 -- Model Settings -------------------------------------------------------------
-CREATE TABLE GLM_RDEMO_SETTINGS_CL (
-  setting_name  VARCHAR2(30),
-  setting_value VARCHAR2(4000));
 
-BEGIN
- INSERT INTO GLM_RDEMO_SETTINGS_CL VALUES
-  ('ALGO_EXTENSIBLE_LANG', 'R');
-END;
-/
 
 Begin
 -- Build R Function -----------------------------------------------------------
@@ -238,7 +292,7 @@ Begin
 -- User can define their own R script function to do the scoring using the built
 -- model. For example, here a script named GLM_RDEMO_SCORE_CLASSIFICATION is 
 -- defined. This function creates and returns an R data.frame containing the 
--- target predictions using type response. User can also define other prediction 
+-- target predictions using type response. User can also define other PREDICTION 
 -- functions with different types.
 
   sys.rqScriptCreate('GLM_RDEMO_SCORE_CLASSIFICATION', 'function(mod, dat) {
@@ -282,101 +336,198 @@ Begin
    names(res) <- names(dat);
    res}');
 
-  INSERT INTO GLM_RDEMO_SETTINGS_CL  
-    VALUES(dbms_data_mining.ralg_build_function, 'GLM_RDEMO_BUILD_CLASSIFICATION');
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.ralg_score_function, 'GLM_RDEMO_SCORE_CLASSIFICATION');
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.ralg_details_function, 'GLM_RDEMO_DETAILS_CLASSIFICATION');
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.ralg_weight_function, 'GLM_RDEMO_WEIGHT_CLASSIFICATION');
-
 -- Once this setting is specified, a model view will be created. This model
 -- view will be generated to display the model details, which contains the 
 -- attribute names and the corresponding coefficients.
 
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.ralg_details_format, 
-    'select cast(''a'' as varchar2(200)) attr, 1 coef from dual');
-
--- In this setting, a formula is specified,  which will be passed as a parameter 
+-- In this setting, a formula is specified, which will be passed as a parameter 
 -- to the model build function to build the model.
 
-  INSERT INTO GLM_RDEMO_SETTINGS_CL 
-    VALUES(dbms_data_mining.ralg_build_parameter, 
-    'select ''AFFINITY_CARD ~ AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION'' ' ||
-    '"form", 0 "keep.model" from dual');
 End;
 /
 
 -------------------------------------------------------------------------------
 --                              MODEL BUILD
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Build the model using the R script user defined. Here R script 
 -- GLM_RDEMO_BUILD_CLASSIFICATION will be used to create the GLM classification
 -- model GLM_RDEMO_CLASSIFICATION using dataset mining_data_build_v.
 
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL2 EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL2 is useful when you want to provide a data query
+-- and an explicit settings list instead of maintaining settings in a table.
+
 BEGIN
-  DBMS_DATA_MINING.CREATE_MODEL(
+  DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+DECLARE
+  v_setlst DBMS_DATA_MINING.SETTING_LIST;
+BEGIN
+  v_setlst('ALGO_EXTENSIBLE_LANG') := 'R';
+  v_setlst(dbms_data_mining.ralg_build_function) := 'GLM_RDEMO_BUILD_CLASSIFICATION';
+  v_setlst(dbms_data_mining.ralg_score_function) := 'GLM_RDEMO_SCORE_CLASSIFICATION';
+  v_setlst(dbms_data_mining.ralg_details_function) := 'GLM_RDEMO_DETAILS_CLASSIFICATION';
+  v_setlst(dbms_data_mining.ralg_weight_function) := 'GLM_RDEMO_WEIGHT_CLASSIFICATION';
+  v_setlst(dbms_data_mining.ralg_details_format) := 'SELECT cast(''a'' as varchar2(200)) attr, 1 coef FROM dual';
+  v_setlst(dbms_data_mining.ralg_build_parameter) := 'SELECT ''AFFINITY_CARD ~ AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION'' ' ||
+  '"form", 0 "keep.model" FROM dual';
+  DBMS_DATA_MINING.CREATE_MODEL2(
     model_name          => 'GLM_RDEMO_CLASSIFICATION',
     mining_function     => dbms_data_mining.classification,
-    data_table_name     => 'mining_data_build_v',
+    data_query          => 'SELECT * FROM mining_data_build_v',
     case_id_column_name => 'CUST_ID',
     target_column_name  => 'AFFINITY_CARD',
-    settings_table_name => 'GLM_RDEMO_SETTINGS_CL');
+    set_list            => v_setlst
+    );
+END;
+/
+
+-----------------------------------------------------------------------
+-- CREATE_MODEL EXAMPLE
+-----------------------------------------------------------------------
+
+-- CREATE_MODEL is useful for application development when model settings
+-- are separated into a settings table for convenient updating.
+-- This build intentionally replaces the model created by the preceding CREATE_MODEL2 example.
+
+-- Drop settings table if it exists
+BEGIN
+  EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
+  EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE GLM_RDEMO_SETTINGS_CL (setting_name VARCHAR2(30), setting_value VARCHAR2(4000))';
+END;
+/
+
+BEGIN
+INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    ('ALGO_EXTENSIBLE_LANG', 'R');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_build_function, 'GLM_RDEMO_BUILD_CLASSIFICATION');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_score_function, 'GLM_RDEMO_SCORE_CLASSIFICATION');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_details_function, 'GLM_RDEMO_DETAILS_CLASSIFICATION');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_weight_function, 'GLM_RDEMO_WEIGHT_CLASSIFICATION');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_details_format, 'SELECT cast(''a'' as varchar2(200)) attr, 1 coef FROM dual');
+    INSERT INTO GLM_RDEMO_SETTINGS_CL (setting_name, setting_value) VALUES
+    (dbms_data_mining.ralg_build_parameter, 'SELECT ''AFFINITY_CARD ~ AGE + EDUCATION + HOUSEHOLD_SIZE + OCCUPATION'' ' ||
+    '"form", 0 "keep.model" FROM dual');
+END;
+/
+BEGIN
+  DBMS_DATA_MINING.CREATE_MODEL(
+      model_name          => 'GLM_RDEMO_CLASSIFICATION',
+      mining_function     => dbms_data_mining.classification,
+      data_table_name     => 'mining_data_build_v',
+      case_id_column_name => 'CUST_ID',
+      target_column_name  => 'AFFINITY_CARD',
+      settings_table_name => 'GLM_RDEMO_SETTINGS_CL');
 END;
 /
 
 -------------------------------------------------------------------------------
 --                              MODEL DETAIL
 -------------------------------------------------------------------------------
+
 -- Display the details of the built model using the R script user defined. 
 -- Here R script GLM_RDEMO_DETAIL_CLASSIFICATION will be used to display the 
 -- model details.
 
 column attr format a40
-select attr, round(coef, 3) as coef from DM$VDGLM_RDEMO_CLASSIFICATION 
-order by attr;
+
+SELECT attr, round(coef, 3) as coef FROM DM$VDGLM_RDEMO_CLASSIFICATION 
+ORDER BY attr;
 
 -------------------------------------------------------------------------------
 --                              MODEL SCORE
 -------------------------------------------------------------------------------
+
 -- Explanation:
 -- Score the model using the R script user defined. 
 
 -- PREDICTION/PREDICTION_PROBABILITY ------------------------------------------
 -- Explanation:
--- Here R script GLM_RDEMO_SCORE_CLASSIFICATION is used to get the prediction 
--- value and the prediction probability. Actual target value and predicted 
+-- Here R script GLM_RDEMO_SCORE_CLASSIFICATION is used to get the PREDICTION 
+-- value and the PREDICTION probability. Actual target value and predicted 
 -- target values are provided.
 
 SELECT CUST_ID, AFFINITY_CARD as AFFINITY_CARD_act, 
 PREDICTION(GLM_RDEMO_CLASSIFICATION USING *) AFFINITY_CARD_pred,
 round(PREDICTION_PROBABILITY(GLM_RDEMO_CLASSIFICATION USING *), 3) 
 as AFFINITY_CARD_prob 
-FROM mining_data_apply_v where CUST_ID <= 100010 
-order by CUST_ID;
+FROM mining_data_apply_v WHERE CUST_ID <= 100010 
+ORDER BY CUST_ID;
 
 -- PREDICTION_SET -------------------------------------------------------------
 -- Explanation:
 -- Here R script GLM_RDEMO_SCORE_CLASSIFICATION is used to get the 
--- prediction set. Actual target value and predicted target values are provided.
+-- PREDICTION set. Actual target value and predicted target values are provided.
 
-select T.CUST_ID, T.AFFINITY_CARD, S.prediction, 
+SELECT T.CUST_ID, T.AFFINITY_CARD, S.PREDICTION, 
 round(S.probability, 3) as probability 
-from (select CUST_ID, AFFINITY_CARD, 
+FROM (SELECT CUST_ID, AFFINITY_CARD, 
 PREDICTION_SET(GLM_RDEMO_CLASSIFICATION USING *) pset 
-from mining_data_apply_v where CUST_ID <= 100010) T, TABLE(T.pset) S
-where S.probability > 0 
-order by T.CUST_ID, S.prediction;
+FROM mining_data_apply_v WHERE CUST_ID <= 100010) T, TABLE(T.pset) S
+WHERE S.probability > 0 
+ORDER BY T.CUST_ID, S.PREDICTION;
 
 -- PREDICTION_DETAILS ---------------------------------------------------------
 -- Explanation:
--- The R script GLM_RDEMO_WEIGHT_CLASSIFICATION is used to get the prediction 
--- details. The CUST_ID and the prediction details with the weight of each 
--- attribute are provided.
+-- The R script GLM_RDEMO_WEIGHT_CLASSIFICATION is used to get the PREDICTION 
+-- details. The CUST_ID and PREDICTION details with each attribute weight
+-- are provided.
 
 column pred_det format a65;
+
 SELECT CUST_ID, PREDICTION_DETAILS(GLM_RDEMO_CLASSIFICATION, '0' USING *) pred_det
-FROM mining_data_apply_v where CUST_ID <= 100010 order by CUST_ID;
+FROM mining_data_apply_v WHERE CUST_ID <= 100010 ORDER BY CUST_ID;
+
+-----------------------------------------------------------------------
+-- OPTIONAL CLEANUP (DISABLED)
+-----------------------------------------------------------------------
+-- Uncomment this section to remove models and named tables/views created
+-- by this script. Shared MINING_* views created by dmsh.sql are intentionally not included.
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_REGRESSION');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('GLM_RDEMO_CLASSIFICATION');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_RE';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE GLM_RDEMO_SETTINGS_CL';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /

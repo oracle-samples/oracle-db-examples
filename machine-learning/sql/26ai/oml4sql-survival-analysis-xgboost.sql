@@ -1,14 +1,58 @@
------------------------------------------------------------------------------
+-----------------------------------------------------------------------
 --   Oracle Machine Learning for SQL (OML4SQL) 26ai
---
---   Survival Analysis Modeling using XGBoost
---  
+--   oml4sql-survival-analysis-xgboost  
 --   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
---   The Universal Permissive License (UPL), Version 1.0
 --
---   https://oss.oracle.com/licenses/upl/
+--  The Universal Permissive License (UPL), Version 1.0
+--  https://oss.oracle.com/licenses/upl/
+-----------------------------------------------------------------------
 
------------------------------------------------------------------------------
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
+  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
+--
+
+--  The Universal Permissive License (UPL), Version 1.0
+--  https://oss.oracle.com/licenses/upl/
+-----------------------------------------------------------------------
+
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
+  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
+--
+
+--  The Universal Permissive License (UPL), Version 1.0
+--  https://oss.oracle.com/licenses/upl/
+-----------------------------------------------------------------------
+
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
+---- Survival Analysis Modeling using XGBoost ---------------------------------------------------------------------  
+--   Copyright (c) 2026 Oracle Corporation and/or its affiliates.
+--
+
+--  The Universal Permissive License (UPL), Version 1.0
+--  https://oss.oracle.com/licenses/upl/
+-----------------------------------------------------------------------
+
+SET serveroutput ON
+SET trimspool ON  
+SET pages 10000
+SET echo ON
+
+------
+
 -- For more information...
 
 -- Oracle ADW Documentation: 
@@ -29,6 +73,7 @@
 -----------------------------------------------------------------------------
 --                   EXAMPLES IN THIS SCRIPT
 -----------------------------------------------------------------------------
+
 -- Create a Survival Analysis XGBoost Model using CREATE_MODEL2
 -- Walk through XGB algorithm settings with the model
 -- Survival analysis with AFT model
@@ -112,6 +157,7 @@ INSERT INTO SURVIVAL_DATA VALUES(26, 356, 53, 2, 1,  90,  90, NULL,   2,  NULL);
 INSERT INTO SURVIVAL_DATA VALUES(13, 387, 56, 1, 2,  80,  60, 1075, NULL, 387);
 
 -----------------------------------------------------------------------------
+
 --             Build an XGBoost survival model with survival:aft
 -----------------------------------------------------------------------------
 
@@ -147,6 +193,7 @@ END;
 -----------------------------------------------------------------------------
 --                    Get Prediction Details 
 -----------------------------------------------------------------------------
+
 --  NULL value in rbound (aft_right_bound_column_name) column 
 --    is intepreted as infinity.
 
@@ -175,6 +222,7 @@ SELECT LBOUND, RBOUND, WTLOSS,
 FROM  SURVIVAL_DATA;
 
 -----------------------------------------------------------------------------
+
 -- Build an XGBoost model using nested numeric data
 -----------------------------------------------------------------------------
 
@@ -211,6 +259,7 @@ END;
 -----------------------------------------------------------------------------
 --                    Get Prediction Details 
 -----------------------------------------------------------------------------
+
 -- NULL value in rbound (aft_right_bound_column_name) column
 --   is intepreted as infinity.
 
@@ -223,6 +272,7 @@ SELECT LBOUND, RBOUND,
 FROM   SURVIVAL_NUMERIC;
 
 -----------------------------------------------------------------------------
+
 --    Build an XGBoost model with no eval_metric specified
 -----------------------------------------------------------------------------
 
@@ -263,6 +313,7 @@ SELECT LBOUND, RBOUND,
 FROM   SURVIVAL_DATA;
 
 -----------------------------------------------------------------------------
+
 --    Build an XGBoost model with aft_loss_distribution = logistic
 -----------------------------------------------------------------------------
 
@@ -305,6 +356,7 @@ SELECT LBOUND, RBOUND,
 FROM   SURVIVAL_DATA;
 
 -----------------------------------------------------------------------------
+
 --    Build an XGBoost model with aft_loss_distribution = extreme
 -----------------------------------------------------------------------------
 
@@ -347,6 +399,7 @@ SELECT LBOUND, RBOUND,
 FROM   SURVIVAL_DATA;
 
 -----------------------------------------------------------------------------
+
 --    Build an XGBoost model with aft_loss_distribution_scale = 0 
 -----------------------------------------------------------------------------
 
@@ -385,13 +438,15 @@ END;
 
 SELECT LBOUND, RBOUND, 
        ROUND(PREDICTION(XGB_SURVIVAL_MODEL  USING *),3) PRED 
-From   SURVIVAL_DATA;
+FROM   SURVIVAL_DATA;
 
 -----------------------------------------------------------------------------
 --          Create a table with only one numerical column
 -----------------------------------------------------------------------------
 
-DROP TABLE SURVIVAL_DATA;
+BEGIN EXECUTE IMMEDIATE 'DROP TABLE SURVIVAL_DATA';
+EXCEPTION WHEN OTHERS THEN NULL; END;
+/
 CREATE TABLE SURVIVAL_DATA (LBOUND NUMBER, RBOUND NUMBER);                
 INSERT INTO SURVIVAL_DATA VALUES(235, NULL);
 INSERT INTO SURVIVAL_DATA VALUES(444, 444);
@@ -405,6 +460,7 @@ INSERT INTO SURVIVAL_DATA VALUES(356, NULL);
 INSERT INTO SURVIVAL_DATA VALUES(387, 387);
 
 -----------------------------------------------------------------------------
+
 --        Build an XGBoost model using numerical table  
 -----------------------------------------------------------------------------
 
@@ -447,5 +503,30 @@ SELECT LBOUND, RBOUND,
 FROM   SURVIVAL_DATA;
 
 -----------------------------------------------------------------------
+
 --   End of script
 -----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+-- OPTIONAL CLEANUP (DISABLED)
+-----------------------------------------------------------------------
+-- Uncomment this section to remove models and named tables/views created
+-- by this script. Shared MINING_* views created by dmsh.sql are intentionally not included.
+
+-- BEGIN
+--   DBMS_DATA_MINING.DROP_MODEL('XGB_SURVIVAL_MODEL');
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP VIEW SURVIVAL_NUMERIC';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
+
+-- BEGIN
+--   EXECUTE IMMEDIATE 'DROP TABLE SURVIVAL_DATA';
+--   EXCEPTION WHEN OTHERS THEN NULL;
+-- END;
+-- /
