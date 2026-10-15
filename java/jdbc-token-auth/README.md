@@ -103,6 +103,28 @@ For other SDK identities copy the profile to `config/oci-sdk.local.properties`, 
 
 Run the applicable command in its intended environment. Each file uses `oracle.jdbc.tokenAuthentication` to select `OCI_API_KEY`, `OCI_INSTANCE_PRINCIPAL`, `OCI_RESOURCE_PRINCIPAL`, `OCI_DELEGATION_TOKEN` (Cloud Shell), or `OCI_INTERACTIVE`. The driver selects the matching provider automatically; retain the OCI provider JAR, but omit the explicit access-token-provider properties. Set `oracle.jdbc.ociCompartment` and `oracle.jdbc.ociDatabase` to restrict scope. The API-key profile also sets `oracle.jdbc.ociConfigFile` and `oracle.jdbc.ociProfile`. The provider acquires and caches tokens. Cloud Shell uses its managed session; interactive authentication opens a browser and requires a usable desktop callback. The config-file provider path is for API-key configuration; use SDK `session-token` mode for an OCI CLI session-token profile.
 
+For a simple JDBC or UCP connection, select the provider in the EZConnect+ URL with `token_auth` and pass the database scope as JDBC properties:
+
+```text
+jdbc:oracle:thin:@tcps://<host>:<port>/<service>?token_auth=oci_instance_principal
+```
+
+For a resource principal, use `token_auth=oci_resource_principal`. The equivalent data source setup is:
+
+```java
+OracleDataSource ds = new OracleDataSource();
+ds.setURL("jdbc:oracle:thin:@tcps://<host>:<port>/<service>?token_auth=oci_instance_principal");
+Properties properties = new Properties();
+properties.setProperty("oracle.jdbc.ociCompartment", "<compartment-ocid>");
+properties.setProperty("oracle.jdbc.ociDatabase", "<database-ocid>");
+ds.setConnectionProperties(properties);
+try (Connection connection = ds.getConnection()) {
+    // Run a query.
+}
+```
+
+Use the same URL and properties with UCP's `PoolDataSource`; the OCI provider obtains and caches tokens from the runtime identity. Keep the OCI provider dependency on the classpath.
+
 ## 4. Microsoft Entra ID provider
 
 Use the URL of the **Entra-configured** database. Set these non-secret identifiers:
@@ -141,6 +163,14 @@ Other examples:
 ```
 
 These profiles use `oracle.jdbc.tokenAuthentication=AZURE_SERVICE_PRINCIPAL`, `AZURE_MANAGED_IDENTITY`, `AZURE_INTERACTIVE`, or `AZURE_DEVICE_CODE`, plus `oracle.jdbc.azureDatabaseApplicationIdUri`. Do not put `/.default` or `/session:scope:connect` into that resource-URI property. Public-client profiles additionally set `oracle.jdbc.tenantId`, `oracle.jdbc.clientId`, and, for browser login, `oracle.jdbc.redirectUri`. The Azure provider JAR is still required; explicit `oracle.jdbc.provider.accessToken` properties are not.
+
+For a concise managed-identity connection, put the provider mode in the EZConnect+ URL and keep the database resource URI in JDBC properties:
+
+```text
+jdbc:oracle:thin:@tcps://<host>:<port>/<service>?token_auth=azure_managed_identity
+```
+
+Replace the value with `azure_service_principal`, `azure_interactive`, or `azure_device_code` for the corresponding flow. A user-assigned managed identity or public-client flow may also need client and tenant properties. Never put client secrets or certificate material in the URL. The same URL and properties can be used with JDBC or UCP.
 
 Browser/device-code paths authenticate a human; service-principal/managed-identity paths authenticate a workload. Never use the database resource ID as the Java client's ID. See [setup](docs/setup.md#microsoft-entra-id) for registration, roles, consent and token-version details.
 
