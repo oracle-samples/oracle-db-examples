@@ -47,6 +47,7 @@ public record Settings(String url, String mode, Properties jdbc, Properties app)
                 throw new IllegalArgumentException("TLS server identity verification must remain enabled");
             jdbc.setProperty(key, values.getProperty(key));
         }
+        jdbc.setProperty("v$session.program", "devrel-developerhub-java-jdbc-token-auth");
         jdbc.putIfAbsent("oracle.net.CONNECT_TIMEOUT", "15000");
         jdbc.putIfAbsent("oracle.jdbc.ReadTimeout", "30000");
         String tokenAuth = jdbc.getProperty("oracle.jdbc.tokenAuthentication");

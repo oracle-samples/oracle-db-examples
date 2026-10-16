@@ -14,6 +14,8 @@ public final class NativeConfigFileDemo {
             throw new IllegalArgumentException("Supply a readable, trusted JDBC properties file");
         OracleDataSource ds = new OracleDataSource();
         ds.setURL(url);
+        ds.setConnectionProperty(OracleConnection.CONNECTION_PROPERTY_THIN_VSESSION_PROGRAM,
+                "devrel-developerhub-java-jdbc-token-auth");
         ds.setConnectionProperty(OracleConnection.CONNECTION_PROPERTY_CONFIG_FILE,
                 file.toAbsolutePath().toString());
         return ds;

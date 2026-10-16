@@ -28,6 +28,7 @@ public final class OciWorkloadPrincipalDemo {
         if (!expected.matches("[A-Z][A-Z0-9_]{0,127}"))
             throw new IllegalArgumentException("EXPECTED_DB_USER must be an uppercase unquoted schema name");
         Properties properties = new Properties();
+        properties.setProperty("v$session.program", "devrel-developerhub-java-jdbc-token-auth");
         properties.setProperty("oracle.jdbc.tokenAuthentication", method);
         properties.setProperty("oracle.jdbc.ociCompartment", required(env, "OCI_COMPARTMENT_ID"));
         properties.setProperty("oracle.jdbc.ociDatabase", required(env, "OCI_DATABASE_ID"));
