@@ -133,7 +133,6 @@ public final class TokenAuthDemo {
                        SYS_CONTEXT('USERENV','AUTHENTICATION_METHOD'),
                        SYS_CONTEXT('USERENV','SID'), ? FROM dual
                 """)) {
-            statement.setQueryTimeout(20);
             statement.setInt(1, round);
             try (var rows = statement.executeQuery()) {
                 if (!rows.next()) throw new SQLException("Identity query returned no rows");

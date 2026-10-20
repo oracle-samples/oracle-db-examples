@@ -31,7 +31,6 @@ public final class NativeConfigFileDemo {
              var statement = connection.prepareStatement(
                      "SELECT SYS_CONTEXT('USERENV','SESSION_USER'), "
                      + "SYS_CONTEXT('USERENV','AUTHENTICATION_METHOD') FROM dual")) {
-            statement.setQueryTimeout(30);
             try (var rows = statement.executeQuery()) {
                 if (rows.next()) System.out.println("Session user: " + rows.getString(1)
                         + "; authentication: " + rows.getString(2));

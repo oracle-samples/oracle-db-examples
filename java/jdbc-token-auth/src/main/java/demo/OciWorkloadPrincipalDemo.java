@@ -104,7 +104,6 @@ public final class OciWorkloadPrincipalDemo {
                 SELECT SYS_CONTEXT('USERENV','SESSION_USER'),
                        SYS_CONTEXT('USERENV','AUTHENTICATION_METHOD') FROM dual
                 """)) {
-            statement.setQueryTimeout(20);
             try (var rows = statement.executeQuery()) {
                 if (!rows.next()) throw new SQLException("Identity query returned no row");
                 verifyIdentity(expected, rows.getString(1), rows.getString(2));
