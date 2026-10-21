@@ -9,7 +9,7 @@ import oracle.jdbc.pool.OracleDataSource;
 /** Delegate JDBC property-file loading and substitution to the driver. */
 public final class NativeConfigFileDemo {
     static OracleDataSource dataSource(String url, Path file) throws SQLException {
-        Settings.validateUrl(url);
+        Settings.validateUrlWithoutTokenAuth(url);
         if (!Files.isRegularFile(file) || !Files.isReadable(file))
             throw new IllegalArgumentException("Supply a readable, trusted JDBC properties file");
         OracleDataSource ds = new OracleDataSource();

@@ -16,7 +16,7 @@ class OciWorkloadPrincipalDemoTest {
     @Test void selectsOnlyInstanceProvider() {
         var settings = OciWorkloadPrincipalDemo.configure("instance", env());
         assertEquals("OCI_INSTANCE_PRINCIPAL", settings.properties().getProperty("oracle.jdbc.tokenAuthentication"));
-        assertEquals(5, settings.properties().size());
+        assertEquals(6, settings.properties().size());
         assertFalse(settings.properties().containsKey("oracle.jdbc.provider.accessToken"));
         assertFalse(settings.properties().containsKey("oracle.jdbc.ociConfigFile"));
     }
@@ -27,7 +27,7 @@ class OciWorkloadPrincipalDemoTest {
         env.put("OCI_PROFILE", "DEFAULT");
         var settings = OciWorkloadPrincipalDemo.configure("resource", env);
         assertEquals("OCI_RESOURCE_PRINCIPAL", settings.properties().getProperty("oracle.jdbc.tokenAuthentication"));
-        assertEquals(5, settings.properties().size());
+        assertEquals(6, settings.properties().size());
     }
 
     @Test void rejectsDefaultAndApiKeySelection() {
@@ -48,6 +48,12 @@ class OciWorkloadPrincipalDemoTest {
             var bad = env(); bad.put("ADB_JDBC_URL", url);
             assertThrows(IllegalArgumentException.class, () -> OciWorkloadPrincipalDemo.configure("instance", bad));
         }
+    }
+
+    @Test void rejectsUrlProviderMismatch() {
+        var env = env();
+        env.put("ADB_JDBC_URL", "jdbc:oracle:thin:@tcps://db.example.test:1521/service_low?token_auth=azure_managed_identity");
+        assertThrows(IllegalArgumentException.class, () -> OciWorkloadPrincipalDemo.configure("instance", env));
     }
 
     @Test void enforcesExpectedGlobalTokenIdentity() throws Exception {

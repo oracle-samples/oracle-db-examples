@@ -63,6 +63,28 @@ class SettingsTest {
         var s=load(BASE.replace("/service", "/service?connect_timeout=10sec&retry_count=2"), Map.of());
         assertTrue(s.url().contains("connect_timeout=10sec"));
     }
+    @Test void infersOciProviderModeFromUrl() throws Exception {
+        String config = "app.url=jdbc:oracle:thin:@tcps://example.invalid:1522/service?token_auth=oci_instance_principal\n"
+                + "app.mode=provider\noracle.jdbc.ociCompartment=compartment\noracle.jdbc.ociDatabase=database\n";
+        var settings = load(config, Map.of());
+        assertEquals("OCI_INSTANCE_PRINCIPAL", settings.jdbc().getProperty("oracle.jdbc.tokenAuthentication"));
+    }
+    @Test void infersEntraProviderModeFromUrl() throws Exception {
+        String config = "app.url=jdbc:oracle:thin:@tcps://example.invalid:1522/service?token_auth=azure_managed_identity\n"
+                + "app.mode=provider\noracle.jdbc.azureDatabaseApplicationIdUri=https://example.invalid/database\n";
+        var settings = load(config, Map.of());
+        assertEquals("AZURE_MANAGED_IDENTITY", settings.jdbc().getProperty("oracle.jdbc.tokenAuthentication"));
+    }
+    @Test void rejectsUrlAndProfileProviderMismatch() {
+        String config = "app.url=jdbc:oracle:thin:@tcps://example.invalid:1522/service?token_auth=oci_instance_principal\n"
+                + "app.mode=provider\noracle.jdbc.tokenAuthentication=AZURE_MANAGED_IDENTITY\n";
+        assertThrows(IllegalArgumentException.class, () -> load(config, Map.of()));
+    }
+    @Test void rejectsUrlProviderModeWithNonProviderAcquisition() {
+        String config = "app.url=jdbc:oracle:thin:@tcps://example.invalid:1522/service?token_auth=azure_managed_identity\n"
+                + "app.mode=file\noracle.jdbc.tokenLocation=/tmp/token\n";
+        assertThrows(IllegalArgumentException.class, () -> load(config, Map.of()));
+    }
     @Test void rejectsDescriptorsAliasesAndCredentialOverrides() {
         for(String url:java.util.List.of("jdbc:oracle:thin:@alias", "jdbc:oracle:thin:@(description=(address=(protocol=tcps)))",
                 "jdbc:oracle:thin:@tcps://example.invalid:1522/service?user=ADMIN",

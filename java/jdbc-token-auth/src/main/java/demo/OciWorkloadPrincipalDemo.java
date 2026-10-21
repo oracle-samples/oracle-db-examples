@@ -23,7 +23,7 @@ public final class OciWorkloadPrincipalDemo {
             default -> throw new IllegalArgumentException("Use instance or resource");
         };
         String url = required(env, "ADB_JDBC_URL");
-        Settings.validateUrl(url);
+        Settings.validateUrl(url, method);
         String expected = required(env, "EXPECTED_DB_USER");
         if (!expected.matches("[A-Z][A-Z0-9_]{0,127}"))
             throw new IllegalArgumentException("EXPECTED_DB_USER must be an uppercase unquoted schema name");
