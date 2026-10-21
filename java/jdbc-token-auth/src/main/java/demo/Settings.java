@@ -10,6 +10,10 @@ import java.util.regex.Pattern;
 /** Loads a sample configuration without ever printing credential values. */
 public record Settings(String url, String mode, Properties jdbc, Properties app) {
     private static final Pattern VARIABLE = Pattern.compile("\\$\\{([A-Z][A-Z0-9_]*)}");
+    private static final java.util.Set<String> URL_TOKEN_AUTH = java.util.Set.of(
+            "oci_api_key", "oci_instance_principal", "oci_resource_principal", "oci_delegation_token",
+            "oci_interactive", "azure_service_principal", "azure_managed_identity", "azure_interactive",
+            "azure_device_code");
 
     public static Settings load(Path path, Map<String, String> env) throws IOException {
         Properties values = new Properties();
@@ -28,6 +32,7 @@ public record Settings(String url, String mode, Properties jdbc, Properties app)
         }
         String url = required(values, "app.url");
         validateUrl(url);
+        String urlTokenAuth = urlTokenAuth(url);
         String mode = values.getProperty("app.mode", "provider");
         if (!java.util.Set.of("file", "provider", "sdk", "entra-sdk").contains(mode))
             throw new IllegalArgumentException("app.mode must be file, provider, sdk, or entra-sdk");
@@ -46,6 +51,14 @@ public record Settings(String url, String mode, Properties jdbc, Properties app)
                     && !java.util.Set.of("true", "yes", "on").contains(values.getProperty(key).toLowerCase(java.util.Locale.ROOT)))
                 throw new IllegalArgumentException("TLS server identity verification must remain enabled");
             jdbc.setProperty(key, values.getProperty(key));
+        }
+        if (urlTokenAuth != null) {
+            if (!mode.equals("provider"))
+                throw new IllegalArgumentException("URL token_auth requires app.mode=provider");
+            String configured = jdbc.getProperty("oracle.jdbc.tokenAuthentication");
+            if (configured != null && !configured.equals(urlTokenAuth))
+                throw new IllegalArgumentException("URL token_auth conflicts with oracle.jdbc.tokenAuthentication");
+            jdbc.setProperty("oracle.jdbc.tokenAuthentication", urlTokenAuth);
         }
         jdbc.setProperty("v$session.program", "devrel-developerhub-java-jdbc-token-auth");
         jdbc.putIfAbsent("oracle.net.CONNECT_TIMEOUT", "15000");
@@ -78,6 +91,21 @@ public record Settings(String url, String mode, Properties jdbc, Properties app)
     }
 
     static void validateUrl(String url) {
+        validateUrl(url, true);
+    }
+
+    static void validateUrl(String url, String expectedTokenAuth) {
+        validateUrl(url, true);
+        String actualTokenAuth = urlTokenAuth(url);
+        if (actualTokenAuth != null && !actualTokenAuth.equals(expectedTokenAuth))
+            throw new IllegalArgumentException("URL token_auth conflicts with the selected OCI principal");
+    }
+
+    static void validateUrlWithoutTokenAuth(String url) {
+        validateUrl(url, false);
+    }
+
+    private static void validateUrl(String url, boolean allowTokenAuth) {
         String[] parts = url.split("\\?", -1);
         if (parts.length > 2 || !parts[0].matches("jdbc:oracle:thin:@tcps://[A-Za-z0-9.-]+:[0-9]+/[A-Za-z0-9_.-]+"))
             throw new IllegalArgumentException("Use EZConnect+: jdbc:oracle:thin:@tcps://host:port/service (no credentials, aliases, or descriptors)");
@@ -86,11 +114,29 @@ public record Settings(String url, String mode, Properties jdbc, Properties app)
             for (String option : parts[1].split("&", -1)) {
                 String[] pair = option.split("=", -1);
                 String key = pair[0].toLowerCase(java.util.Locale.ROOT);
-                if (pair.length != 2 || !java.util.Set.of("connect_timeout", "transport_connect_timeout", "retry_count", "retry_delay").contains(key)
-                        || !pair[1].matches("[0-9]+(?:ms|sec|min)?") || !seen.add(key))
-                    throw new IllegalArgumentException("Only bounded transport options are accepted in the EZConnect+ URL; keep token settings in properties");
+                if (pair.length != 2 || !seen.add(key))
+                    throw new IllegalArgumentException("Use only supported EZConnect+ options; duplicate or malformed options are not accepted");
+                if (key.equals("token_auth")) {
+                    if (!allowTokenAuth || !URL_TOKEN_AUTH.contains(pair[1].toLowerCase(java.util.Locale.ROOT)))
+                        throw new IllegalArgumentException("Unsupported token_auth provider mode");
+                } else if (!java.util.Set.of("connect_timeout", "transport_connect_timeout", "retry_count", "retry_delay").contains(key)
+                        || !pair[1].matches("[0-9]+(?:ms|sec|min)?")) {
+                    throw new IllegalArgumentException("Only bounded transport options and supported token_auth modes are accepted in the EZConnect+ URL");
+                }
             }
         }
+    }
+
+    private static String urlTokenAuth(String url) {
+        String[] parts = url.split("\\?", -1);
+        if (parts.length == 2) {
+            for (String option : parts[1].split("&", -1)) {
+                String[] pair = option.split("=", -1);
+                if (pair[0].equalsIgnoreCase("token_auth"))
+                    return pair[1].toUpperCase(java.util.Locale.ROOT);
+            }
+        }
+        return null;
     }
 
     static String required(Properties values, String key) {
